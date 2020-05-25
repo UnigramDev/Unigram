@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -13,13 +14,13 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class ThemePreviewView : TLContentDialog
+    public sealed partial class ThemePreviewPopup : TLContentDialog
     {
         private string _path;
 
-        public ThemePreviewView(string path)
+        public ThemePreviewPopup(string path)
         {
             InitializeComponent();
             Initialize(path);

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Settings;
@@ -128,7 +128,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(libtgvoip.DataSavingMode.Always, Strings.Resources.UseLessDataAlways, UseLessData == libtgvoip.DataSavingMode.Always),
             };
 
-            var dialog = new SelectRadioView(items);
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.VoipUseLessData;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

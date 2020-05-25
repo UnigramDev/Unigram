@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.ViewModels.Delegates;
@@ -74,7 +74,7 @@ namespace Unigram.ViewModels
         {
             if (ShareLink != null)
             {
-                await ShareView.GetForCurrentView().ShowAsync(ShareLink, ShareTitle);
+                await SharePopup.GetForCurrentView().ShowAsync(ShareLink, ShareTitle);
             }
         }
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Unigram.Common;
+using Unigram.Controls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -17,11 +18,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class SettingsPasscodeInputView : TLContentDialog
+    public sealed partial class SettingsPasscodeInputPopup : TLContentDialog
     {
-        public SettingsPasscodeInputView()
+        public SettingsPasscodeInputPopup()
         {
             InitializeComponent();
 

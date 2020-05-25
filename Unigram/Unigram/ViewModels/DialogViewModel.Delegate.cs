@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.ViewModels.Dialogs;
 using Unigram.Views;
 using Windows.Storage;
@@ -240,7 +240,7 @@ namespace Unigram.ViewModels
             {
                 if (file.Local.Path.EndsWith(".unigram-theme"))
                 {
-                    await new ThemePreviewView(file.Local.Path).ShowQueuedAsync();
+                    await new ThemePreviewPopup(file.Local.Path).ShowQueuedAsync();
                     return;
                 }
 
@@ -283,7 +283,7 @@ namespace Unigram.ViewModels
         {
             if (sticker.SetId != 0)
             {
-                await StickerSetView.GetForCurrentView().ShowAsync(sticker.SetId, Sticker_Click);
+                await StickerSetPopup.GetForCurrentView().ShowAsync(sticker.SetId, Sticker_Click);
             }
         }
 
@@ -504,7 +504,7 @@ namespace Unigram.ViewModels
         {
             if (message.Content is MessagePoll poll)
             {
-                await new PollResultsView(ProtoService, CacheService, Settings, Aggregator, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
+                await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
                 return;
             }
 

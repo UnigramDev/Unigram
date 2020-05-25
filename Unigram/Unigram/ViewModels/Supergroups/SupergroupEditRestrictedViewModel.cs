@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
@@ -358,7 +358,7 @@ namespace Unigram.ViewModels.Supergroups
         public RelayCommand EditUntilCommand { get; }
         private async void EditUntilExecute()
         {
-            var dialog = new SupergroupEditRestrictedUntilView(_untilDate);
+            var dialog = new SupergroupEditRestrictedUntilPopup(_untilDate);
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {

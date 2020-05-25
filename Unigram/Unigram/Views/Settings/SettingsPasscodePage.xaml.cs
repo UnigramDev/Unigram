@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;

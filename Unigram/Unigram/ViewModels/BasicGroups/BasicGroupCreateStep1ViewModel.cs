@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Chats;
@@ -63,7 +63,7 @@ namespace Unigram.ViewModels.BasicGroups
         public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
-            var chats = await ShareView.PickChatsAsync(Strings.Resources.SelectContacts, Items.Select(x => x.Id).ToArray());
+            var chats = await SharePopup.PickChatsAsync(Strings.Resources.SelectContacts, Items.Select(x => x.Id).ToArray());
             if (chats != null)
             {
                 Items.ReplaceWith(chats);

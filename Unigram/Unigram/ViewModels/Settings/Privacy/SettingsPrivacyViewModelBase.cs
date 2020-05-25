@@ -10,7 +10,7 @@ using Unigram.Views.Settings.Privacy;
 using Unigram.Controls;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.ViewModels.Settings.Privacy;
 using Unigram.Collections;
 
@@ -261,7 +261,7 @@ namespace Unigram.ViewModels.Settings
                 chats.Add(id);
             }
 
-            var dialog = ShareView.GetForCurrentView();
+            var dialog = SharePopup.GetForCurrentView();
             dialog.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
@@ -326,7 +326,7 @@ namespace Unigram.ViewModels.Settings
                 chats.Add(id);
             }
 
-            var dialog = ShareView.GetForCurrentView();
+            var dialog = SharePopup.GetForCurrentView();
 
             switch (_inputKey)
             {

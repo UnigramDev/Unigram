@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.UI.ViewManagement;
@@ -11,13 +12,13 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class AttachedStickersView : TLContentDialog
+    public sealed partial class AttachedStickersPopup : TLContentDialog
     {
         public AttachedStickersViewModel ViewModel => DataContext as AttachedStickersViewModel;
 
-        private AttachedStickersView()
+        private AttachedStickersPopup()
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<AttachedStickersViewModel>();
@@ -30,17 +31,17 @@ namespace Unigram.Controls.Views
             //};
         }
 
-        private static Dictionary<int, WeakReference<AttachedStickersView>> _windowContext = new Dictionary<int, WeakReference<AttachedStickersView>>();
-        public static AttachedStickersView GetForCurrentView()
+        private static Dictionary<int, WeakReference<AttachedStickersPopup>> _windowContext = new Dictionary<int, WeakReference<AttachedStickersPopup>>();
+        public static AttachedStickersPopup GetForCurrentView()
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out WeakReference<AttachedStickersView> reference) && reference.TryGetTarget(out AttachedStickersView value))
+            if (_windowContext.TryGetValue(id, out WeakReference<AttachedStickersPopup> reference) && reference.TryGetTarget(out AttachedStickersPopup value))
             {
                 return value;
             }
 
-            var context = new AttachedStickersView();
-            _windowContext[id] = new WeakReference<AttachedStickersView>(context);
+            var context = new AttachedStickersPopup();
+            _windowContext[id] = new WeakReference<AttachedStickersPopup>(context);
 
             return context;
         }
@@ -90,7 +91,7 @@ namespace Unigram.Controls.Views
             var item = e.ClickedItem as Sticker;
             if (item != null)
             {
-                await StickerSetView.GetForCurrentView().ShowAsync(item.SetId);
+                await StickerSetPopup.GetForCurrentView().ShowAsync(item.SetId);
             }
         }
 

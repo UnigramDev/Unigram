@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -19,11 +20,11 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class DeleteChatView : TLContentDialog
+    public sealed partial class DeleteChatPopup : TLContentDialog
     {
-        public DeleteChatView(IProtoService protoService, Chat chat, bool clear, bool asOwner = false)
+        public DeleteChatPopup(IProtoService protoService, Chat chat, bool clear, bool asOwner = false)
         {
             InitializeComponent();
 

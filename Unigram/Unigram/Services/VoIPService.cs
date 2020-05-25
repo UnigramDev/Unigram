@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services.Updates;
 using Unigram.Services.ViewService;
 using Unigram.ViewModels;
@@ -272,7 +272,8 @@ namespace Unigram.Services
 
         private async Task SendRatingAsync(int callId)
         {
-            var dialog = new CallRatingView();
+            var dialog = new CallRatingPopup();
+
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {

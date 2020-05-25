@@ -5,7 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Services.Navigation;
 using Unigram.Services.ViewService;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Settings;
@@ -204,7 +204,7 @@ namespace Unigram.Common
         {
             if (_passcodeService.IsEnabled)
             {
-                var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(!_passcodeService.Check(passcode)), _passcodeService.IsSimple);
+                var dialog = new SettingsPasscodeConfirmPopup(passcode => Task.FromResult(!_passcodeService.Check(passcode)), _passcodeService.IsSimple);
                 dialog.IsSimple = _passcodeService.IsSimple;
 
                 var confirm = await dialog.ShowAsync();

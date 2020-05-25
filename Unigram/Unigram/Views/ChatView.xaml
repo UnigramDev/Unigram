@@ -5,7 +5,6 @@
     xmlns:local="using:Unigram.Views"
     xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:views="using:Unigram.Controls.Views"
     xmlns:chats="using:Unigram.Controls.Chats"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:selectors="using:Unigram.Selectors"
@@ -861,7 +860,7 @@
                   Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
                   Margin="12,0,12,-12"
                   CornerRadius="8,8,0,0">
-                <views:InlineBotResultsView
+                <controls:InlineBotResultsView
                     x:Name="ListInline"
                     Visibility="{x:Bind ViewModel.InlineBotResultsVisibility, Mode=OneWay}"
                     ItemClick="InlineBotResults_ItemClick"

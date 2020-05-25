@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
@@ -12,6 +11,7 @@ using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Host;
 using Unigram.Views.Passport;
+using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -768,7 +768,7 @@ namespace Unigram.Common
 
         public static async void NavigateToStickerSet(string text)
         {
-            await StickerSetView.GetForCurrentView().ShowAsync(text);
+            await StickerSetPopup.GetForCurrentView().ShowAsync(text);
         }
 
         public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string post, string game, PageKind kind = PageKind.Dialog)
@@ -792,7 +792,7 @@ namespace Unigram.Common
                     {
                         if (kind == PageKind.Search)
                         {
-                            await ShareView.GetForCurrentView().ShowAsync(user, accessToken);
+                            await SharePopup.GetForCurrentView().ShowAsync(user, accessToken);
                         }
                         else
                         {
@@ -838,7 +838,7 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    var dialog = new JoinChatView(protoService, info);
+                    var dialog = new JoinChatPopup(protoService, info);
 
                     var confirm = await dialog.ShowQueuedAsync();
                     if (confirm != ContentDialogResult.Primary)

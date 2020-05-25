@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Views;
 using Unigram.ViewModels;
 using Unigram.Views.Settings;
@@ -29,6 +29,8 @@ using Unigram.Controls.Gallery;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
 using Unigram.Converters;
+using Unigram.Views.Folders;
+using Unigram.Views.Popups;
 
 namespace Unigram.Views
 {
@@ -114,7 +116,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var dialog = new EditUserNameView(user.FirstName, user.LastName);
+                var dialog = new EditUserNamePopup(user.FirstName, user.LastName);
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
@@ -140,7 +142,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var dialog = new EditYourAboutView(user.Bio);
+                var dialog = new EditYourAboutPopup(user.Bio);
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
@@ -229,7 +231,7 @@ namespace Unigram.Views
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditMediaView(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary && dialog.Result != null)
@@ -249,7 +251,7 @@ namespace Unigram.Views
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (file != null)
             {
-                var dialog = new EditMediaView(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary && dialog.Result != null)

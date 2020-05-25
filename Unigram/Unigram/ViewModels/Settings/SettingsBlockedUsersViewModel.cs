@@ -7,7 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Services.Navigation;
 using Unigram.ViewModels.Delegates;
@@ -102,7 +102,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand BlockCommand { get; }
         private async void BlockExecute()
         {
-            var selected = await ShareView.PickChatAsync(Strings.Resources.BlockUser);
+            var selected = await SharePopup.PickChatAsync(Strings.Resources.BlockUser);
             var user = CacheService.GetUser(selected);
 
             if (user == null)

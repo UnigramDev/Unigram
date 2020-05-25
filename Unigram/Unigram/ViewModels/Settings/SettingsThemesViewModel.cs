@@ -8,7 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Storage;
@@ -170,7 +170,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeCustomInfo> ThemeShareCommand { get; }
         private async void ThemeShareExecute(ThemeCustomInfo theme)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, null));
+            await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, null));
         }
 
         public RelayCommand<ThemeCustomInfo> ThemeEditCommand { get; }

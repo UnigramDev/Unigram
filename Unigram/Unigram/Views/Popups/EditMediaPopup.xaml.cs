@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Services;
@@ -14,9 +15,9 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class EditMediaView : OverlayPage
+    public sealed partial class EditMediaPopup : OverlayPage
     {
         public StorageFile Result { get; private set; }
         public StorageMedia ResultMedia { get; private set; }
@@ -27,7 +28,7 @@ namespace Unigram.Controls.Views
         private BitmapRotation _rotation = BitmapRotation.None;
         private BitmapFlip _flip = BitmapFlip.None;
 
-        public EditMediaView(StorageFile file, BitmapProportions proportions = BitmapProportions.Custom, ImageCropperMask mask = ImageCropperMask.Rectangle)
+        public EditMediaPopup(StorageFile file, BitmapProportions proportions = BitmapProportions.Custom, ImageCropperMask mask = ImageCropperMask.Rectangle)
         {
             InitializeComponent();
 
@@ -48,7 +49,7 @@ namespace Unigram.Controls.Views
             };
         }
 
-        public EditMediaView(StorageMedia media)
+        public EditMediaPopup(StorageMedia media)
         {
             InitializeComponent();
 

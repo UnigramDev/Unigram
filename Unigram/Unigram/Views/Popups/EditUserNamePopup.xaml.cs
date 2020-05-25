@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Controls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -15,11 +16,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class EditUserNameView : TLContentDialog
+    public sealed partial class EditUserNamePopup : TLContentDialog
     {
-        public EditUserNameView()
+        public EditUserNamePopup()
         {
             InitializeComponent();
 
@@ -28,7 +29,7 @@ namespace Unigram.Controls.Views
             SecondaryButtonText = Strings.Resources.Cancel;
         }
 
-        public EditUserNameView(string firstName, string lastName, bool showShare = false)
+        public EditUserNamePopup(string firstName, string lastName, bool showShare = false)
         {
             InitializeComponent();
 

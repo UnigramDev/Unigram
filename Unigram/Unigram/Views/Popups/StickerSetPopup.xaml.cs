@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -13,16 +14,16 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class StickerSetView : TLContentDialog, IHandle<UpdateFile>
+    public sealed partial class StickerSetPopup : TLContentDialog, IHandle<UpdateFile>
     {
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 
         private AnimatedListHandler<Sticker> _handler;
         private DispatcherTimer _throttler;
 
-        private StickerSetView()
+        private StickerSetPopup()
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<StickerSetViewModel>();
@@ -61,19 +62,19 @@ namespace Unigram.Controls.Views
 
         #region Show
 
-        private static Dictionary<int, WeakReference<StickerSetView>> _windowContext = new Dictionary<int, WeakReference<StickerSetView>>();
-        public static StickerSetView GetForCurrentView()
+        private static Dictionary<int, WeakReference<StickerSetPopup>> _windowContext = new Dictionary<int, WeakReference<StickerSetPopup>>();
+        public static StickerSetPopup GetForCurrentView()
         {
-            return new StickerSetView();
+            return new StickerSetPopup();
 
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out WeakReference<StickerSetView> reference) && reference.TryGetTarget(out StickerSetView value))
+            if (_windowContext.TryGetValue(id, out WeakReference<StickerSetPopup> reference) && reference.TryGetTarget(out StickerSetPopup value))
             {
                 return value;
             }
 
-            var context = new StickerSetView();
-            _windowContext[id] = new WeakReference<StickerSetView>(context);
+            var context = new StickerSetPopup();
+            _windowContext[id] = new WeakReference<StickerSetPopup>(context);
 
             return context;
         }
@@ -272,7 +273,7 @@ namespace Unigram.Controls.Views
             var link = new Uri(MeUrlPrefixConverter.Convert(ViewModel.ProtoService, $"addstickers/{stickerSet.Name}"));
 
             Hide();
-            await ShareView.GetForCurrentView().ShowAsync(link, title);
+            await SharePopup.GetForCurrentView().ShowAsync(link, title);
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

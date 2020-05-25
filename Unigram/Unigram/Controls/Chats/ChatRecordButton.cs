@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Logs;
 using Unigram.Native;
 using Unigram.ViewModels;
@@ -34,7 +34,7 @@ namespace Unigram.Controls.Chats
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private DispatcherTimer _timer;
-        private RoundVideoView _roundView = new RoundVideoView();
+        private RoundVideoPopop _roundView = new RoundVideoPopop();
 
         private DateTime _start;
 

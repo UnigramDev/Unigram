@@ -12,7 +12,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
@@ -1062,7 +1062,7 @@ namespace Unigram.Views
         {
             if (App.DataPackages.TryRemove(0, out DataPackageView package))
             {
-                await ShareView.GetForCurrentView().ShowAsync(package);
+                await SharePopup.GetForCurrentView().ShowAsync(package);
             }
 
             if (MessageHelper.IsTelegramUrl(scheme))

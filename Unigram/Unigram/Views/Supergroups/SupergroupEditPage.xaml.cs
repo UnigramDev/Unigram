@@ -7,7 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
@@ -67,7 +67,7 @@ namespace Unigram.Views.Supergroups
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditMediaView(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary && dialog.Result != null)
@@ -87,7 +87,7 @@ namespace Unigram.Views.Supergroups
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (file != null)
             {
-                var dialog = new EditMediaView(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary && dialog.Result != null)

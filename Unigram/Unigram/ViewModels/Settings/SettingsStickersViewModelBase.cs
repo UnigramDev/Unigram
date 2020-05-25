@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -217,7 +217,7 @@ namespace Unigram.ViewModels.Settings
             }
             else
             {
-                await StickerSetView.GetForCurrentView().ShowAsync(stickerSet.Id);
+                await StickerSetPopup.GetForCurrentView().ShowAsync(stickerSet.Id);
             }
         }
 

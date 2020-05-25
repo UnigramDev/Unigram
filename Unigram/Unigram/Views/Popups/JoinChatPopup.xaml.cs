@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -16,13 +17,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class JoinChatView : TLContentDialog
+    public sealed partial class JoinChatPopup : TLContentDialog
     {
         private IProtoService _protoService;
 
-        public JoinChatView(IProtoService protoService, ChatInviteLinkInfo info)
+        public JoinChatPopup(IProtoService protoService, ChatInviteLinkInfo info)
         {
             InitializeComponent();
 

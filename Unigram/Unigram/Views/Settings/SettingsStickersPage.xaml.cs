@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Views;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;

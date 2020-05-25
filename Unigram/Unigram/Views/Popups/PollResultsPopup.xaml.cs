@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -18,13 +19,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class PollResultsView : TLContentDialog
+    public sealed partial class PollResultsPopup : TLContentDialog
     {
         private readonly IProtoService _protoService;
 
-        public PollResultsView(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, long chatId, long messageId, Poll poll)
+        public PollResultsPopup(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, long chatId, long messageId, Poll poll)
         {
             InitializeComponent();
 
@@ -108,7 +109,7 @@ namespace Unigram.Controls.Views
         private async void LoadMoreExecute()
         {
             var response = await ProtoService.SendAsync(new GetPollVoters(_chatId, _messageId, _poll.Options.IndexOf(_option), _offset, 10));
-            if (response is Users users)
+            if (response is Telegram.Td.Api.Users users)
             {
                 foreach (var id in users.UserIds)
                 {

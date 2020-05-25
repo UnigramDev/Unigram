@@ -5,18 +5,19 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class CreatePollView : TLContentDialog
+    public sealed partial class CreatePollPopup : TLContentDialog
     {
         private const int MAXIMUM_OPTIONS = 10;
 
-        public CreatePollView(bool forceQuiz, bool forceRegular, bool forceAnonymous)
+        public CreatePollPopup(bool forceQuiz, bool forceRegular, bool forceAnonymous)
         {
             InitializeComponent();
 

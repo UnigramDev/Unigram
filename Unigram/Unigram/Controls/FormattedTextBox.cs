@@ -7,7 +7,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Chats;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Converters;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -273,7 +273,7 @@ namespace Unigram.Controls
             var start = Math.Min(range.StartPosition, range.EndPosition);
             var end = Math.Max(range.StartPosition, range.EndPosition);
 
-            var dialog = new CreateLinkView();
+            var dialog = new CreateLinkPopup();
             dialog.Text = text;
             dialog.Link = range.Link.Trim('"');
 

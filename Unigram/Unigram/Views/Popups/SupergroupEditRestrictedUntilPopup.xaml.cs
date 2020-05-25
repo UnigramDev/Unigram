@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Controls;
 using Unigram.Converters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -15,11 +16,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class SupergroupEditRestrictedUntilView : TLContentDialog
+    public sealed partial class SupergroupEditRestrictedUntilPopup : TLContentDialog
     {
-        public SupergroupEditRestrictedUntilView(int until)
+        public SupergroupEditRestrictedUntilPopup(int until)
         {
             InitializeComponent();
 

@@ -31,13 +31,13 @@ using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Unigram.Common;
 using Unigram.Services;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.ViewModels.Dialogs;
 using Telegram.Td.Api;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class SendLocationView : TLContentDialog
+    public sealed partial class SendLocationPopup : TLContentDialog
     {
         public SendLocationViewModel ViewModel => DataContext as SendLocationViewModel;
 
@@ -64,7 +64,7 @@ namespace Unigram.Controls.Views
         //    }
         //}
 
-        public SendLocationView()
+        public SendLocationPopup()
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SendLocationViewModel>();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels.Folders;
@@ -349,7 +349,7 @@ namespace Unigram.ViewModels
         public RelayCommand CreateSecretChatCommand { get; }
         private async void CreateSecretChatExecute()
         {
-            var selected = await ShareView.PickChatAsync(Strings.Resources.NewSecretChat);
+            var selected = await SharePopup.PickChatAsync(Strings.Resources.NewSecretChat);
             var user = CacheService.GetUser(selected);
 
             if (user == null)

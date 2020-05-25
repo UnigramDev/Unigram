@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -17,11 +18,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class ScheduleMessageView : TLContentDialog
+    public sealed partial class ScheduleMessagePopup : TLContentDialog
     {
-        public ScheduleMessageView(User user, int until, bool reminder)
+        public ScheduleMessagePopup(User user, int until, bool reminder)
         {
             InitializeComponent();
 

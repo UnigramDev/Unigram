@@ -6,7 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.Foundation;
@@ -327,7 +327,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> ChatDeleteCommand { get; }
         private async void ChatDeleteExecute(Chat chat)
         {
-            var dialog = new DeleteChatView(ProtoService, chat, false);
+            var dialog = new DeleteChatPopup(ProtoService, chat, false);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -436,7 +436,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> ChatClearCommand { get; }
         private async void ChatClearExecute(Chat chat)
         {
-            var dialog = new DeleteChatView(ProtoService, chat, true);
+            var dialog = new DeleteChatPopup(ProtoService, chat, true);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

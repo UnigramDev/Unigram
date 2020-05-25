@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Entities;
@@ -23,9 +24,9 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class SendFilesView : TLContentDialog, IViewWithAutocomplete, INotifyPropertyChanged
+    public sealed partial class SendFilesPopup : TLContentDialog, IViewWithAutocomplete, INotifyPropertyChanged
     {
         public DialogViewModel ViewModel { get; set; }
         public MvxObservableCollection<StorageMedia> Items { get; private set; }
@@ -101,7 +102,7 @@ namespace Unigram.Controls.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SendFilesView(IEnumerable<StorageMedia> items, bool media, bool ttl)
+        public SendFilesPopup(IEnumerable<StorageMedia> items, bool media, bool ttl)
         {
             InitializeComponent();
 
@@ -484,7 +485,7 @@ namespace Unigram.Controls.Views
             var button = sender as ToggleButton;
             if (button.Tag is StorageMedia media)
             {
-                var dialog = new EditMediaView(media);
+                var dialog = new EditMediaPopup(media);
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary)

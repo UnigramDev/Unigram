@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Controls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System.UserProfile;
@@ -14,11 +15,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class CalendarView : TLContentDialog
+    public sealed partial class CalendarPopup : TLContentDialog
     {
-        public CalendarView()
+        public CalendarPopup()
         {
             InitializeComponent();
 

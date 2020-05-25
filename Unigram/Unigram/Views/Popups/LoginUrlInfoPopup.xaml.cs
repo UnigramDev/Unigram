@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -19,11 +20,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class LoginUrlInfoView : TLContentDialog
+    public sealed partial class LoginUrlInfoPopup : TLContentDialog
     {
-        public LoginUrlInfoView(ICacheService cacheService, LoginUrlInfoRequestConfirmation requestConfirmation)
+        public LoginUrlInfoPopup(ICacheService cacheService, LoginUrlInfoRequestConfirmation requestConfirmation)
         {
             InitializeComponent();
 
@@ -55,40 +56,6 @@ namespace Unigram.Controls.Views
             {
                 CheckBox2.Visibility = Visibility.Collapsed;
             }
-        }
-
-        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-        {
-            MaskTitleAndStatusBar();
-        }
-
-        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-        {
-            UnmaskTitleAndStatusBar();
-        }
-
-        private void MaskTitleAndStatusBar()
-        {
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
-            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
-            var overlayBrush = Application.Current.Resources["SystemControlBackgroundAltMediumBrush"] as SolidColorBrush;
-
-            if (overlayBrush != null)
-            {
-                var maskBackground = ColorsHelper.AlphaBlend(backgroundBrush.Color, overlayBrush.Color);
-                var maskForeground = ColorsHelper.AlphaBlend(foregroundBrush.Color, overlayBrush.Color);
-
-                titlebar.BackgroundColor = maskBackground;
-                titlebar.ForegroundColor = maskForeground;
-                //titlebar.ButtonBackgroundColor = maskBackground;
-                titlebar.ButtonForegroundColor = maskForeground;
-            }
-        }
-
-        private void UnmaskTitleAndStatusBar()
-        {
-            TLWindowContext.GetForCurrentView().UpdateTitleBar();
         }
 
         public string Message

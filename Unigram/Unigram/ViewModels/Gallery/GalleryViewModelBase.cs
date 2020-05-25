@@ -2,7 +2,7 @@ using System;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
@@ -184,11 +184,11 @@ namespace Unigram.ViewModels.Gallery
                 {
                     if (sets.Sets.Count > 1)
                     {
-                        await AttachedStickersView.GetForCurrentView().ShowAsync(sets.Sets);
+                        await AttachedStickersPopup.GetForCurrentView().ShowAsync(sets.Sets);
                     }
                     else if (sets.Sets.Count > 0)
                     {
-                        await StickerSetView.GetForCurrentView().ShowAsync(sets.Sets[0].Id);
+                        await StickerSetPopup.GetForCurrentView().ShowAsync(sets.Sets[0].Id);
                     }
                 }
             }

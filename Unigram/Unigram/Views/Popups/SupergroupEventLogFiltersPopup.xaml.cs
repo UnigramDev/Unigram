@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -18,9 +19,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class SupergroupEventLogFiltersView : TLContentDialog
+    public sealed partial class SupergroupEventLogFiltersPopup : TLContentDialog
     {
         private IProtoService _protoService;
         private ICacheService _cacheService;
@@ -30,7 +31,7 @@ namespace Unigram.Controls.Views
 
         public bool AreAllAdministratorsSelected { get; private set; }
 
-        public SupergroupEventLogFiltersView()
+        public SupergroupEventLogFiltersPopup()
         {
             InitializeComponent();
 

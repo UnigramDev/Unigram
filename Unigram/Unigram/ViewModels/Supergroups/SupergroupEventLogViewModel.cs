@@ -7,7 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Factories;
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var dialog = new SupergroupEventLogFiltersView();
+            var dialog = new SupergroupEventLogFiltersPopup();
 
             var confirm = await dialog.ShowAsync(ProtoService, supergroup.Id, _filters, _userIds);
             if (confirm == ContentDialogResult.Primary)

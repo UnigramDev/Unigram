@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
@@ -90,7 +90,7 @@ namespace Unigram.Services
             //}
             //else
             {
-                var dialog = new SettingsPasscodeInputView();
+                var dialog = new SettingsPasscodeInputPopup();
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm != ContentDialogResult.Primary)
@@ -138,7 +138,7 @@ namespace Unigram.Services
             var data = CryptographicBuffer.DecodeFromHexString(dataString);
             var localPassword = CryptographicBuffer.DecodeFromHexString(localPasswordString);
 
-            var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(false), true);
+            var dialog = new SettingsPasscodeConfirmPopup(passcode => Task.FromResult(false), true);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)

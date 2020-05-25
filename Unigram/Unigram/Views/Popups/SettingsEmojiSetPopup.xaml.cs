@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -24,9 +25,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class SettingsEmojiSetView : TLContentDialog, IHandle<UpdateFile>
+    public sealed partial class SettingsEmojiSetPopup : TLContentDialog, IHandle<UpdateFile>
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
@@ -35,7 +36,7 @@ namespace Unigram.Controls.Views
 
         private EmojiSet _selectedSet;
 
-        public SettingsEmojiSetView(IProtoService protoService, IEmojiSetService emojiSetService, IEventAggregator aggregator)
+        public SettingsEmojiSetPopup(IProtoService protoService, IEmojiSetService emojiSetService, IEventAggregator aggregator)
         {
             this.InitializeComponent();
 

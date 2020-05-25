@@ -10,7 +10,7 @@ using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Factories;
@@ -2899,7 +2899,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new EditUserNameView(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
+            var dialog = new EditUserNamePopup(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -2980,7 +2980,7 @@ namespace Unigram.ViewModels
         public RelayCommand JumpDateCommand { get; }
         private async void JumpDateExecute()
         {
-            var dialog = new Controls.Views.CalendarView();
+            var dialog = new CalendarPopup();
             dialog.MaxDate = DateTimeOffset.Now.Date;
             //dialog.SelectedDates.Add(BindConvert.Current.DateTime(message.Date));
 
@@ -2989,6 +2989,7 @@ namespace Unigram.ViewModels
             {
                 var first = dialog.SelectedDates.FirstOrDefault();
                 var offset = first.Date.ToTimestamp();
+
                 await LoadDateSliceAsync(offset);
             }
         }
@@ -3060,7 +3061,7 @@ namespace Unigram.ViewModels
                 new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
             };
 
-            var dialog = new SelectRadioView(items);
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.ReportChat;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
@@ -3120,7 +3121,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new ChatTtlView();
+            var dialog = new ChatTtlPopup();
             dialog.Value = secretChat.Ttl;
 
             var confirm = await dialog.ShowQueuedAsync();

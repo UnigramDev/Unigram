@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Channels;
@@ -144,7 +144,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var selected = await ShareView.PickChatAsync(Strings.Resources.SelectContact);
+            var selected = await SharePopup.PickChatAsync(Strings.Resources.SelectContact);
             var user = CacheService.GetUser(selected);
 
             if (user == null)

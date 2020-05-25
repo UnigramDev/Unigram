@@ -2,7 +2,7 @@
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Services;
@@ -419,7 +419,7 @@ namespace Unigram.Common
                     service.NavigateToMain(string.Empty);
                 }
 
-                await new ThemePreviewView(file.Files[0].Path).ShowQueuedAsync();
+                await new ThemePreviewPopup(file.Files[0].Path).ShowQueuedAsync();
             }
             else
             {

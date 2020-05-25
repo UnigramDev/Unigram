@@ -7,7 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;

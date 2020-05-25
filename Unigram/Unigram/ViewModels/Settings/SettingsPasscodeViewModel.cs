@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Windows.UI.Xaml.Controls;
@@ -89,7 +89,7 @@ namespace Unigram.ViewModels.Settings
             else
             {
                 var timeout = _passcodeService.AutolockTimeout + 0;
-                var dialog = new SettingsPasscodeInputView();
+                var dialog = new SettingsPasscodeInputPopup();
                 dialog.IsSimple = _passcodeService.IsSimple;
 
                 var confirm = await dialog.ShowQueuedAsync();
@@ -108,7 +108,7 @@ namespace Unigram.ViewModels.Settings
         private async void EditExecute()
         {
             var timeout = _passcodeService.AutolockTimeout + 0;
-            var dialog = new SettingsPasscodeInputView();
+            var dialog = new SettingsPasscodeInputPopup();
             dialog.IsSimple = _passcodeService.IsSimple;
 
             var confirm = await dialog.ShowQueuedAsync();
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(5 * 60 * 60, Locale.FormatAutoLock(5 * 60 * 60), timeout == 5 * 60 * 60)
             };
 
-            var dialog = new SelectRadioView(items);
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.AutoLock;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;

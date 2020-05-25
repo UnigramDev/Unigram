@@ -7,6 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Strings;
@@ -26,16 +27,16 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class ProxyView : TLContentDialog
+    public sealed partial class ProxyPopup : TLContentDialog
     {
-        public ProxyView()
+        public ProxyPopup()
         {
             InitializeComponent();
         }
 
-        public ProxyView(ProxyViewModel proxy)
+        public ProxyPopup(ProxyViewModel proxy)
         {
             InitializeComponent();
 
@@ -151,7 +152,7 @@ namespace Unigram.Controls.Views
             var title = Strings.Resources.ProxySettings;
             var link = new Uri(MeUrlPrefixConverter.Convert(TLContainer.Current.Resolve<IProtoService>(), $"socks?{string.Join("&", builder)}"));
 
-            await ShareView.GetForCurrentView().ShowAsync(link, title);
+            await SharePopup.GetForCurrentView().ShowAsync(link, title);
         }
 
         private void Type_Toggled(object sender, RoutedEventArgs e)

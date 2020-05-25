@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
@@ -247,7 +247,7 @@ namespace Unigram.ViewModels.Chats
             }
 
             var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
-            var dialog = new DeleteMessagesView(CacheService, messages);
+            var dialog = new DeleteMessagesPopup(CacheService, messages);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -285,7 +285,7 @@ namespace Unigram.ViewModels.Chats
         private async void MessageForwardExecute(Message message)
         {
             SelectionMode = ListViewSelectionMode.None;
-            await ShareView.GetForCurrentView().ShowAsync(message);
+            await SharePopup.GetForCurrentView().ShowAsync(message);
         }
 
         #endregion
@@ -328,7 +328,7 @@ namespace Unigram.ViewModels.Chats
             if (messages.Count > 0)
             {
                 SelectionMode = ListViewSelectionMode.None;
-                await ShareView.GetForCurrentView().ShowAsync(messages);
+                await SharePopup.GetForCurrentView().ShowAsync(messages);
             }
         }
 

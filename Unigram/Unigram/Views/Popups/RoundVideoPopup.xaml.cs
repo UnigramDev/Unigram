@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Native;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -30,11 +31,11 @@ using Windows.UI.Xaml.Navigation;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class RoundVideoView : OverlayPage
+    public sealed partial class RoundVideoPopop : OverlayPage
     {
-        public RoundVideoView()
+        public RoundVideoPopop()
         {
             this.InitializeComponent();
 

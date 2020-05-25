@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Controls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -13,11 +14,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class EditYourAboutView : TLContentDialog
+    public sealed partial class EditYourAboutPopup : TLContentDialog
     {
-        public EditYourAboutView(string bio)
+        public EditYourAboutPopup(string bio)
         {
             this.InitializeComponent();
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Services.Navigation;
 using Unigram.Services.Updates;
@@ -216,7 +216,7 @@ namespace Unigram.ViewModels.Settings
                 new SelectRadioItem(DistanceUnits.Miles, Strings.Resources.DistanceUnitsMiles, DistanceUnits == DistanceUnits.Miles),
             };
 
-            var dialog = new SelectRadioView(items);
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.DistanceUnitsTitle;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
@@ -231,7 +231,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand EmojiSetCommand { get; }
         private async void EmojiSetExecute()
         {
-            await new SettingsEmojiSetView(ProtoService, _emojiSetService, Aggregator).ShowQueuedAsync();
+            await new SettingsEmojiSetPopup(ProtoService, _emojiSetService, Aggregator).ShowQueuedAsync();
 
             var emojiSet = Settings.Appearance.EmojiSet;
             EmojiSet = emojiSet.Title;

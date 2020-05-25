@@ -16,12 +16,13 @@ using Unigram.Common;
 using Unigram.Services;
 using Telegram.Td.Api;
 using Telegram.Td;
+using Unigram.Controls;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class CreateLinkView : TLContentDialog
+    public sealed partial class CreateLinkPopup : TLContentDialog
     {
-        public CreateLinkView()
+        public CreateLinkPopup()
         {
             InitializeComponent();
 

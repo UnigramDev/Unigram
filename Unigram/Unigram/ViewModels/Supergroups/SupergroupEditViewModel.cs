@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Supergroups;
@@ -366,7 +366,7 @@ namespace Unigram.ViewModels.Supergroups
                 new SelectRadioItem(false, Strings.Resources.ChatHistoryHidden, !initialValue) { Footer = Strings.Resources.ChatHistoryHiddenInfo }
             };
 
-            var dialog = new SelectRadioView(items);
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.ChatHistory;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
@@ -435,7 +435,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var dialog = new DeleteChatView(ProtoService, chat, false, true);
+            var dialog = new DeleteChatPopup(ProtoService, chat, false, true);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)

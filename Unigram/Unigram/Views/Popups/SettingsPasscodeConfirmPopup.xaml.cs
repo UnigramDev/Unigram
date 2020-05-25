@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Foundation;
@@ -19,13 +20,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class SettingsPasscodeConfirmView : TLContentDialog
+    public sealed partial class SettingsPasscodeConfirmPopup : TLContentDialog
     {
         private readonly Func<string, Task<bool>> _verify;
 
-        public SettingsPasscodeConfirmView(Func<string, Task<bool>> verify, bool simple)
+        public SettingsPasscodeConfirmPopup(Func<string, Task<bool>> verify, bool simple)
         {
             InitializeComponent();
 

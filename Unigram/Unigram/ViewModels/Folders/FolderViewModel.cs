@@ -6,7 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.UI.Xaml.Controls;
@@ -138,7 +138,7 @@ namespace Unigram.ViewModels.Folders
 
         public async Task AddIncludeAsync()
         {
-            var result = await ShareView.AddExecute(true, Include.ToList());
+            var result = await SharePopup.AddExecute(true, Include.ToList());
             if (result != null)
             {
                 foreach (var item in result.OfType<FilterChat>())
@@ -162,7 +162,7 @@ namespace Unigram.ViewModels.Folders
 
         public async Task AddExcludeAsync()
         {
-            var result = await ShareView.AddExecute(false, Exclude.ToList());
+            var result = await SharePopup.AddExecute(false, Exclude.ToList());
             if (result != null)
             {
                 foreach (var item in result.OfType<FilterChat>())

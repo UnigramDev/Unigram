@@ -1,6 +1,6 @@
 ﻿using System;
 using Telegram.Td.Api;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Storage;
@@ -38,7 +38,7 @@ namespace Unigram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
             if (log != null)
             {
-                await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, null));
+                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, null));
             }
         }
 
@@ -47,7 +47,7 @@ namespace Unigram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt.old") as StorageFile;
             if (log != null)
             {
-                await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, null));
+                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, null));
             }
         }
     }

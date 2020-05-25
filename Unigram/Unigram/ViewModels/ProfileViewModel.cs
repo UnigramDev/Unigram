@@ -7,7 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels.Chats;
@@ -497,7 +497,7 @@ namespace Unigram.ViewModels
                 var user = ProtoService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await ShareView.GetForCurrentView().ShowAsync(new InputMessageContact(new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
+                    await SharePopup.GetForCurrentView().ShowAsync(new InputMessageContact(new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
                 }
             }
         }
@@ -776,11 +776,11 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await ShareView.GetForCurrentView().ShowAsync(user);
+                await SharePopup.GetForCurrentView().ShowAsync(user);
             }
             else
             {
-                var selected = await ShareView.PickChatAsync(Strings.Resources.SelectContact);
+                var selected = await SharePopup.PickChatAsync(Strings.Resources.SelectContact);
                 var user = CacheService.GetUser(selected);
 
                 if (user == null)
@@ -901,7 +901,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new EditUserNameView(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
+            var dialog = new EditUserNamePopup(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -932,7 +932,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var dialog = new EditUserNameView(user.FirstName, user.LastName);
+                var dialog = new EditUserNamePopup(user.FirstName, user.LastName);
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
@@ -1045,7 +1045,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new ChatTtlView();
+            var dialog = new ChatTtlPopup();
             dialog.Value = secretChat.Ttl;
 
             var confirm = await dialog.ShowQueuedAsync();

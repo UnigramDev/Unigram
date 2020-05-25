@@ -7,7 +7,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Services;
@@ -250,7 +250,7 @@ namespace Unigram.ViewModels
                 caption = formattedText.Substring(0, CacheService.Options.MessageCaptionLengthMax);
             }
 
-            var dialog = new SendFilesView(items, media, _chat.Type is ChatTypePrivate && !CacheService.IsSavedMessages(_chat));
+            var dialog = new SendFilesPopup(items, media, _chat.Type is ChatTypePrivate && !CacheService.IsSavedMessages(_chat));
             dialog.ViewModel = this;
             dialog.Caption = caption;
 
@@ -562,7 +562,7 @@ namespace Unigram.ViewModels
             {
                 var user = CacheService.GetUser(chat);
 
-                var dialog = new ScheduleMessageView(user, DateTime.Now.ToTimestamp(), CacheService.IsSavedMessages(chat));
+                var dialog = new ScheduleMessagePopup(user, DateTime.Now.ToTimestamp(), CacheService.IsSavedMessages(chat));
                 var confirm = await dialog.ShowQueuedAsync();
 
                 if (confirm != ContentDialogResult.Primary)
@@ -632,7 +632,7 @@ namespace Unigram.ViewModels
         public RelayCommand SendLocationCommand { get; }
         private async void SendLocationExecute()
         {
-            var dialog = new SendLocationView();
+            var dialog = new SendLocationPopup();
             //page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
 
             var confirm = await dialog.OpenAsync();
@@ -681,7 +681,7 @@ namespace Unigram.ViewModels
 
         private async Task SendPollAsync(bool forceQuiz, bool forceRegular, bool forceAnonymous)
         {
-            var dialog = new CreatePollView(forceQuiz, forceRegular, forceAnonymous);
+            var dialog = new CreatePollPopup(forceQuiz, forceRegular, forceAnonymous);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -1032,7 +1032,7 @@ namespace Unigram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            var dialog = new SendFilesView(new[] { storage }, true, false);
+            var dialog = new SendFilesPopup(new[] { storage }, true, false);
             dialog.Caption = formattedText
                 .Substring(0, CacheService.Options.MessageCaptionLengthMax);
 

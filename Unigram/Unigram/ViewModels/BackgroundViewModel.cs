@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Services.Updates;
@@ -282,7 +282,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
             if (response is HttpUrl url)
             {
-                await ShareView.GetForCurrentView().ShowAsync(new Uri(url.Url), null);
+                await SharePopup.GetForCurrentView().ShowAsync(new Uri(url.Url), null);
             }
         }
 

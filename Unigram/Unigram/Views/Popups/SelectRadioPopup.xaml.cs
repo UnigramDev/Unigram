@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.Controls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -14,23 +15,16 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
-namespace Unigram.Controls.Views
+namespace Unigram.Views.Popups
 {
-    public sealed partial class SelectRadioView : TLContentDialog
+    public sealed partial class SelectRadioPopup : TLContentDialog
     {
-        public SelectRadioView(params SelectRadioItem[] options)
+        public SelectRadioPopup(params SelectRadioItem[] options)
         {
             this.InitializeComponent();
 
             for (int i = 0; i < options.Length; i++)
             {
-                /*                    <controls:PrivacyRadioButton
-                        Content="{CustomResource LastSeenEverybody}"
-                        Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                        Type="AllowAll"
-                        Margin="12,6,0,0"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
-*/
                 var radio = new RadioButton();
                 radio.Checked += Radio_Checked;
                 radio.Content = options[i].Text;

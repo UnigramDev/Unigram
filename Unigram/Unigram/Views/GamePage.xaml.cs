@@ -1,7 +1,7 @@
 ﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Native;
 using Unigram.Services;
 using Windows.UI.Xaml;
@@ -60,7 +60,7 @@ namespace Unigram.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(_shareMessage);
+            await SharePopup.GetForCurrentView().ShowAsync(_shareMessage);
         }
 
         private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
@@ -69,7 +69,7 @@ namespace Unigram.Views
             {
                 this.BeginOnUIThread(async () =>
                 {
-                    await ShareView.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
+                    await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
                 });
             }));
         }

@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Storage.Pickers;
 using Unigram.Common;
-using Unigram.Controls.Views;
+using Unigram.Views.Popups;
 using Unigram.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.ViewModels.BasicGroups;
@@ -49,7 +49,7 @@ namespace Unigram.Views.BasicGroups
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditMediaView(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary && dialog.Result != null)
