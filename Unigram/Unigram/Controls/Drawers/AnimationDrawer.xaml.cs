@@ -1,30 +1,18 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Drawers
 {
@@ -34,11 +22,25 @@ namespace Unigram.Controls.Drawers
 
         public Action<Animation> AnimationClick { get; set; }
 
+        private AnimatedRepeaterHandler<Animation> _handler;
+        private DispatcherTimer _throttler;
+
         private FileContext<Animation> _animations = new FileContext<Animation>();
 
         public AnimationDrawer()
         {
             InitializeComponent();
+
+            _handler = new AnimatedRepeaterHandler<Animation>(Repeater, ScrollingHost);
+            _handler.DownloadFile = DownloadFile;
+
+            _throttler = new DispatcherTimer();
+            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _throttler.Tick += (s, args) =>
+            {
+                _throttler.Stop();
+                _handler.LoadVisibleItems(false);
+            };
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
@@ -59,12 +61,12 @@ namespace Unigram.Controls.Drawers
 
         public void Activate()
         {
-
+            _handler.LoadVisibleItems(false);
         }
 
         public void Deactivate()
         {
-
+            _handler.UnloadVisibleItems();
         }
 
         private void Animation_Click(object sender, RoutedEventArgs e)
@@ -87,12 +89,13 @@ namespace Unigram.Controls.Drawers
 
         private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
-            var content = args.Element as Button;
-            var animation = content.DataContext as Animation;
+            var button = args.Element as Button;
+            var animation = button.DataContext as Animation;
 
-            content.Tag = animation;
+            button.Tag = animation;
 
-            var image = content.Content as Image;
+            var content = button.Content as Grid;
+            var image = content.Children[0] as Image;
 
             var file = animation.Thumbnail?.Photo;
             if (file == null)
@@ -108,6 +111,19 @@ namespace Unigram.Controls.Drawers
             {
                 image.Source = null;
                 DownloadFile(file.Id, animation);
+            }
+        }
+
+        private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
+        {
+            if (args.Element is Button button && button.Content is Grid content && content.Children[0] is Image image)
+            {
+                if (content.Children.Count > 1)
+                {
+                    content.Children.RemoveAt(1);
+                }
+
+                image.Source = null;
             }
         }
 
@@ -171,8 +187,8 @@ namespace Unigram.Controls.Drawers
                     }
                     else if (item.AnimationValue.Id == file.Id)
                     {
-                        //_throttler.Stop();
-                        //_throttler.Start();
+                        _throttler.Stop();
+                        _throttler.Start();
                     }
                 }
             }

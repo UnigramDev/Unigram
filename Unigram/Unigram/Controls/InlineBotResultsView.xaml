@@ -45,13 +45,17 @@
 
         <DataTemplate x:Key="MediaTemplate">
             <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
-                <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Grid>
+                    <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
             </Button>
         </DataTemplate>
 
         <DataTemplate x:Key="StickerTemplate">
             <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
-                <Image Stretch="Uniform"/>
+                <Grid>
+                    <Image Stretch="Uniform"/>
+                </Grid>
             </Button>
         </DataTemplate>
 

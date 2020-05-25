@@ -33,7 +33,8 @@
                 <muxc:ItemsRepeater
                     x:Name="Repeater"
                     ItemsSource="{x:Bind ViewModel.Stickers.Animations, Mode=OneWay}"
-                    ElementPrepared="OnElementPrepared">
+                    ElementPrepared="OnElementPrepared"
+                    ElementClearing="OnElementClearing">
                     <muxc:ItemsRepeater.Layout>
                         <controls:MosaicLayout />
                     </muxc:ItemsRepeater.Layout>
@@ -43,10 +44,13 @@
                                 Click="Animation_Click"
                                 ContextRequested="OnContextRequested"
                                 Style="{StaticResource GridViewButtonStyle}">
-                                <Image
-                                    Stretch="UniformToFill"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"/>
+                                <Grid>
+                                    <Image
+                                        Stretch="UniformToFill"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"/>
+                                    
+                                </Grid>
                             </Button>
                         </DataTemplate>
                     </muxc:ItemsRepeater.ItemTemplate>

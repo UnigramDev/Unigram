@@ -18,11 +18,29 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private FileContext<InlineQueryResult> _animations = new FileContext<InlineQueryResult>();
+        private AnimatedRepeaterHandler<InlineQueryResult> _handler;
+        private DispatcherTimer _throttler;
+
+        private FileContext<InlineQueryResult> _files = new FileContext<InlineQueryResult>();
+        private FileContext<InlineQueryResult> _thumbnails = new FileContext<InlineQueryResult>();
 
         public InlineBotResultsView()
         {
             InitializeComponent();
+
+            _handler = new AnimatedRepeaterHandler<InlineQueryResult>(Repeater, ScrollingHost);
+            _handler.DownloadFile = (id, result) =>
+            {
+                DownloadFile(_files, id, result);
+            };
+
+            _throttler = new DispatcherTimer();
+            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _throttler.Tick += (s, args) =>
+            {
+                _throttler.Stop();
+                _handler.LoadVisibleItems(false);
+            };
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -98,7 +116,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (_animations.TryGetValue(file.Id, out List<InlineQueryResult> items) && items.Count > 0)
+            if (_thumbnails.TryGetValue(file.Id, out List<InlineQueryResult> items) && items.Count > 0)
             {
                 foreach (var result in items)
                 {
@@ -116,33 +134,47 @@ namespace Unigram.Controls
                         continue;
                     }
 
-                    if (button.Content is Image image)
+                    var content = button.Content as Grid;
+                    if (content.Children[0] is Image image)
                     {
                         if (result is InlineQueryResultAnimation || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
                         {
-                            if (file.Local.IsDownloadingCompleted)
-                            {
-                                image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
-                            }
+                            image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
                         }
-                        else if (result is InlineQueryResultSticker sticker)
+                        else if (result is InlineQueryResultSticker)
                         {
-                            if (file.Local.IsDownloadingCompleted)
-                            {
-                                image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                            }
+                            image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                         }
                     }
-                    else if (button.Content is Grid content)
+                    else if (content.Children[0] is Grid presenter)
                     {
-                        var presenter = content.Children[0] as Grid;
+                        //var presenter = content.Children[0] as Grid;
                         var thumb = presenter.Children[0] as Image;
-
-                        if (file.Local.IsDownloadingCompleted)
-                        {
-                            thumb.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
-                        }
+                        thumb.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
                     }
+                }
+            }
+
+            if (_files.TryGetValue(file.Id, out List<InlineQueryResult> items2) && items2.Count > 0)
+            {
+                foreach (var result in items2)
+                {
+                    result.UpdateFile(file);
+
+                    var index = Repeater.ItemsSourceView.IndexOf(result);
+                    if (index < 0)
+                    {
+                        continue;
+                    }
+
+                    var button = Repeater.TryGetElement(index) as Button;
+                    if (button == null)
+                    {
+                        continue;
+                    }
+
+                    _throttler.Stop();
+                    _throttler.Start();
                 }
             }
         }
@@ -202,7 +234,8 @@ namespace Unigram.Controls
             var button = args.Element as Button;
             var result = button.DataContext as InlineQueryResult;
 
-            if (button.Content is Image image)
+            var content = button.Content as Grid;
+            if (content.Children[0] is Image image)
             {
                 if (result is InlineQueryResultAnimation || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
                 {
@@ -232,7 +265,7 @@ namespace Unigram.Controls
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
                         image.Source = null;
-                        DownloadFile(file.Id, result);
+                        DownloadFile(_thumbnails, file.Id, result);
                     }
                 }
                 else if (result is InlineQueryResultSticker sticker)
@@ -250,13 +283,13 @@ namespace Unigram.Controls
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
                         image.Source = null;
-                        DownloadFile(file.Id, result);
+                        DownloadFile(_thumbnails, file.Id, result);
                     }
                 }
             }
-            else if (button.Content is Grid content)
+            else if (content.Children[0] is Grid presenter)
             {
-                var presenter = content.Children[0] as Grid;
+                //var presenter = content.Children[0] as Grid;
                 var thumb = presenter.Children[0] as Image;
 
                 var title = content.Children[1] as TextBlock;
@@ -351,7 +384,7 @@ namespace Unigram.Controls
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
                         thumb.Source = null;
-                        DownloadFile(file.Id, result);
+                        DownloadFile(_thumbnails, file.Id, result);
                     }
                 }
                 else if (uri != null)
@@ -367,15 +400,20 @@ namespace Unigram.Controls
 
         private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
         {
-            if (args.Element is Button button && button.Content is Image image)
+            if (args.Element is Button button && button.Content is Grid content && content.Children[0] is Image image)
             {
+                if (content.Children.Count > 1)
+                {
+                    content.Children.RemoveAt(1);
+                }
+
                 image.Source = null;
             }
         }
 
-        private void DownloadFile(int id, InlineQueryResult result)
+        private void DownloadFile<T>(FileContext<T> context, int id, T result)
         {
-            _animations[id].Add(result);
+            context[id].Add(result);
             ViewModel.ProtoService.DownloadFile(id, 1);
         }
 

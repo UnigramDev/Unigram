@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Unigram.Common;
 using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
@@ -20,7 +21,7 @@ namespace Unigram.Controls
                 // Store any state we might need since (in theory) the layout could be in use by multiple 
                 // elements simultaneously
                 // In reality for the Xbox Activity Feed there's probably only a single instance.
-                context.LayoutState = new MosaicLayoutState();
+                context.LayoutState = _state = new MosaicLayoutState();
             }
         }
 
@@ -40,6 +41,10 @@ namespace Unigram.Controls
                 return;
             }
 
+            // TODO: rects should be cleared only on Reset event
+            // In all the other cases a new mosaic should be generated
+            // only for the changed items, so that layout won't change completely
+
             state.LayoutRects.Clear();
             base.OnItemsChangedCore(context, source, args);
         }
@@ -55,6 +60,54 @@ namespace Unigram.Controls
 
             return result;
         }
+
+        // I don't like this, should be implemented by
+        // Microsoft and removed from here
+        #region 
+
+        private MosaicLayoutState _state;
+
+        public int GetFirstVisibleIndex(ScrollViewer scrollViewer)
+        {
+            var state = _state;
+            if (state == null)
+            {
+                return -1;
+            }
+
+            for (int i = 0; i < _state.LayoutRects.Count; i++)
+            {
+                var rect = _state.LayoutRects[i];
+                if (rect.Top <= scrollViewer.VerticalOffset && rect.Bottom > scrollViewer.VerticalOffset)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public int GetLastVisibleIndex(ScrollViewer scrollViewer)
+        {
+            var state = _state;
+            if (state == null)
+            {
+                return -1;
+            }
+
+            for (int i = _state.LayoutRects.Count - 1; i >= 0; i--)
+            {
+                var rect = _state.LayoutRects[i];
+                if (rect.Top < scrollViewer.VerticalOffset + scrollViewer.ViewportHeight && rect.Bottom >= scrollViewer.VerticalOffset + scrollViewer.ViewportHeight)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        #endregion
 
         protected override Size MeasureOverride(VirtualizingLayoutContext context, Size availableSize)
         {
