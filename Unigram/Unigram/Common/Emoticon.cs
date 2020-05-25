@@ -106,35 +106,35 @@ namespace Unigram.Common
         static Emoji()
         {
             _replacements = new Dictionary<string, Dictionary<uint, uint>>();
-            _replacements["\uD83D\uDC4D\uD83C\uDFFB"] = new Dictionary<uint, uint>
+            _replacements["\uD83C\uDFFB"] = new Dictionary<uint, uint>
             {
 			    { 0xf77e41U, 0xca907aU },
 			    { 0xffb139U, 0xedc5a5U },
 			    { 0xffd140U, 0xf7e3c3U },
 			    { 0xffdf79U, 0xfbefd6U },
 	        };
-            _replacements["\uD83D\uDC4D\uD83C\uDFFC"] = new Dictionary<uint, uint>
+            _replacements["\uD83C\uDFFC"] = new Dictionary<uint, uint>
             {
 			    { 0xf77e41U, 0xaa7c60U },
 			    { 0xffb139U, 0xc8a987U },
 			    { 0xffd140U, 0xddc89fU },
 			    { 0xffdf79U, 0xe6d6b2U },
 	        };
-            _replacements["\uD83D\uDC4D\uD83C\uDFFD"] = new Dictionary<uint, uint>
+            _replacements["\uD83C\uDFFD"] = new Dictionary<uint, uint>
             {
 			    { 0xf77e41U, 0x8c6148U },
 			    { 0xffb139U, 0xad8562U },
 			    { 0xffd140U, 0xc49e76U },
 			    { 0xffdf79U, 0xd4b188U },
 	        };
-            _replacements["\uD83D\uDC4D\uD83C\uDFFE"] = new Dictionary<uint, uint>
+            _replacements["\uD83C\uDFFE"] = new Dictionary<uint, uint>
             {
 			    { 0xf77e41U, 0x6e3c2cU },
 			    { 0xffb139U, 0x925a34U },
 			    { 0xffd140U, 0xa16e46U },
 			    { 0xffdf79U, 0xac7a52U },
 	        };
-            _replacements["\uD83D\uDC4D\uD83C\uDFFF"] = new Dictionary<uint, uint>
+            _replacements["\uD83C\uDFFF"] = new Dictionary<uint, uint>
             {
 			    { 0xf77e41U, 0x291c12U },
 			    { 0xffb139U, 0x472a22U },
@@ -145,7 +145,7 @@ namespace Unigram.Common
 
         public static Dictionary<uint, uint> GetColorReplacements(string emoji)
         {
-            if (_replacements.TryGetValue(emoji, out Dictionary<uint, uint> replacements))
+            if (emoji.Length > 2 && _replacements.TryGetValue(emoji.Substring(emoji.Length - 2), out Dictionary<uint, uint> replacements))
             {
                 return replacements;
             }
@@ -154,6 +154,17 @@ namespace Unigram.Common
         }
 
         private static readonly string[] _modifiers = new string[]
+        {
+            "\uFE0E" /* variation selector-15 */,
+            "\uFE0F" /* variation selector-16 */,
+            "\uD83C\uDFFB" /* emoji modifier fitzpatrick type-1-2 */,
+            "\uD83C\uDFFC" /* emoji modifier fitzpatrick type-3 */,
+            "\uD83C\uDFFD" /* emoji modifier fitzpatrick type-4 */,
+            "\uD83C\uDFFE" /* emoji modifier fitzpatrick type-5 */,
+            "\uD83C\uDFFF" /* emoji modifier fitzpatrick type-6 */
+        };
+
+        private static readonly string[] _modifiersWithGenders = new string[]
         {
             "\uFE0E" /* variation selector-15 */,
             "\uFE0F" /* variation selector-16 */,
@@ -166,9 +177,9 @@ namespace Unigram.Common
             "\uD83C\uDFFF" /* emoji modifier fitzpatrick type-6 */
         };
 
-        public static string RemoveModifiers(string emoji)
+        public static string RemoveModifiers(string emoji, bool genders = true)
         {
-            foreach (var modifier in _modifiers)
+            foreach (var modifier in genders ? _modifiersWithGenders : _modifiers)
             {
                 emoji = emoji.Replace(modifier, string.Empty);
             }

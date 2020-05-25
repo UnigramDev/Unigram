@@ -1305,11 +1305,11 @@ namespace Unigram.ViewModels
                             break;
                         }
 
-                        var emoji = Emoji.RemoveModifiers(text.Text.Text);
+                        var emoji = Emoji.RemoveModifiers(text.Text.Text, false);
 
                         foreach (var sticker in set.Stickers)
                         {
-                            var stickerEmoji = Emoji.RemoveModifiers(sticker.Emoji);
+                            var stickerEmoji = Emoji.RemoveModifiers(sticker.Emoji, false);
 
                             if (string.Equals(stickerEmoji, emoji, StringComparison.OrdinalIgnoreCase))
                             {
