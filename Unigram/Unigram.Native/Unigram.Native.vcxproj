@@ -143,7 +143,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,7 +160,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -177,7 +177,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -194,7 +194,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -211,7 +211,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -228,7 +228,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -243,6 +243,26 @@
     <ClInclude Include="ByteStreamHandler.h" />
     <ClInclude Include="DeviceLostHelper.h" />
     <ClInclude Include="FinalizeAsyncOperation.h" />
+    <ClInclude Include="libyuv\include\libyuv.h" />
+    <ClInclude Include="libyuv\include\libyuv\basic_types.h" />
+    <ClInclude Include="libyuv\include\libyuv\compare.h" />
+    <ClInclude Include="libyuv\include\libyuv\compare_row.h" />
+    <ClInclude Include="libyuv\include\libyuv\convert.h" />
+    <ClInclude Include="libyuv\include\libyuv\convert_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\convert_from.h" />
+    <ClInclude Include="libyuv\include\libyuv\convert_from_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\cpu_id.h" />
+    <ClInclude Include="libyuv\include\libyuv\mjpeg_decoder.h" />
+    <ClInclude Include="libyuv\include\libyuv\planar_functions.h" />
+    <ClInclude Include="libyuv\include\libyuv\rotate.h" />
+    <ClInclude Include="libyuv\include\libyuv\rotate_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\rotate_row.h" />
+    <ClInclude Include="libyuv\include\libyuv\row.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale_row.h" />
+    <ClInclude Include="libyuv\include\libyuv\version.h" />
+    <ClInclude Include="libyuv\include\libyuv\video_common.h" />
     <ClInclude Include="MediaFoundationExtensions.h" />
     <ClInclude Include="MediaSink.h" />
     <ClInclude Include="MediaSource.h" />
@@ -293,6 +313,7 @@
     <ClInclude Include="Streaming\VideoFrame.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="SVG\nanosvg.h" />
+    <ClInclude Include="VideoAnimation.h" />
     <ClInclude Include="WebP\DemuxerWrapper.h" />
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="Helpers\MediaFoundationHelper.h" />
@@ -305,6 +326,135 @@
     <ClCompile Include="ByteStreamHandler.cpp" />
     <ClCompile Include="DeviceLostHelper.cpp" />
     <ClCompile Include="FinalizeAsyncOperation.cpp" />
+    <ClCompile Include="libyuv\source\compare.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_gcc.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_neon.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_neon64.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_win.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_from.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_from_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_jpeg.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_to_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_to_i420.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\cpu_id.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\mjpeg_decoder.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\mjpeg_validate.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\planar_functions.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_any.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_gcc.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_mips.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_neon.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_neon64.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_win.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_any.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_gcc.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_mips.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_neon.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_neon64.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_win.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_any.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_gcc.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_mips.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_neon.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_neon64.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_win.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\video_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="MediaFoundationExtensions.cpp" />
     <ClCompile Include="MediaSink.cpp" />
     <ClCompile Include="MediaSource.cpp" />
@@ -322,12 +472,7 @@
     <ClCompile Include="Opus\OpusMediaSource.cpp" />
     <ClCompile Include="Opus\OpusOutputByteStream.cpp" />
     <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="MediaCapturePreview.cpp" />
@@ -355,6 +500,7 @@
     <ClCompile Include="Streaming\UncompressedSampleProvider.cpp" />
     <ClCompile Include="Streaming\UncompressedVideoSampleProvider.cpp" />
     <ClCompile Include="SVG\nanosvg.cpp" />
+    <ClCompile Include="VideoAnimation.cpp" />
     <ClCompile Include="WebP\WebPFrame.cpp" />
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>
@@ -380,12 +526,14 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\FFmpeg.UWP.4.1.2.2\build\native\FFmpeg.UWP.targets" Condition="Exists('..\packages\FFmpeg.UWP.4.1.2.2\build\native\FFmpeg.UWP.targets')" />
+    <Import Project="..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets')" />
+    <Import Project="..\packages\FFmpeg.UWP.4.1.3\build\native\FFmpeg.UWP.targets" Condition="Exists('..\packages\FFmpeg.UWP.4.1.3\build\native\FFmpeg.UWP.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\FFmpeg.UWP.4.1.2.2\build\native\FFmpeg.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FFmpeg.UWP.4.1.2.2\build\native\FFmpeg.UWP.targets'))" />
+    <Error Condition="!Exists('..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets'))" />
+    <Error Condition="!Exists('..\packages\FFmpeg.UWP.4.1.3\build\native\FFmpeg.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FFmpeg.UWP.4.1.3\build\native\FFmpeg.UWP.targets'))" />
   </Target>
 </Project>
