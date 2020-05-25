@@ -2263,11 +2263,14 @@ namespace Unigram.Views
 
         private ChatFilterViewModel ConvertFilter(ChatFilterViewModel filter)
         {
-            ShowHideTabs(ViewModel.Filters.Count > 0);
-            ShowHideArchive(filter.ChatList is ChatListMain);
+            if (filter != null)
+            {
+                ShowHideTabs(ViewModel.Filters.Count > 0);
+                ShowHideArchive(filter.ChatList is ChatListMain);
 
-            UpdateBackButtonVisibility();
-            UpdatePaneToggleButtonVisibility();
+                UpdateBackButtonVisibility();
+                UpdatePaneToggleButtonVisibility();
+            }
 
             return filter;
         }
