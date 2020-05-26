@@ -95,10 +95,16 @@ namespace Unigram.Controls
                 return -1;
             }
 
+            var height = scrollViewer.ViewportHeight;
+            if (state.LayoutRects.Count > 0)
+            {
+                height = Math.Min(scrollViewer.ViewportHeight, state.LayoutRects.Max(x => x.Bottom));
+            }
+
             for (int i = _state.LayoutRects.Count - 1; i >= 0; i--)
             {
                 var rect = _state.LayoutRects[i];
-                if (rect.Top < scrollViewer.VerticalOffset + scrollViewer.ViewportHeight && rect.Bottom >= scrollViewer.VerticalOffset + scrollViewer.ViewportHeight)
+                if (rect.Top < scrollViewer.VerticalOffset + height && rect.Bottom >= scrollViewer.VerticalOffset + height)
                 {
                     return i;
                 }
@@ -135,7 +141,7 @@ namespace Unigram.Controls
 
                     foreach (var item in row)
                     {
-                        state.LayoutRects.Add(new Rect(left * availableSize.Width, top, item.Width * availableSize.Width, 98));
+                        state.LayoutRects.Add(new Rect(left, top, item.Width, 98));
                         left += item.Width;
                     }
 
@@ -143,7 +149,7 @@ namespace Unigram.Controls
                 }
 
                 state.Rows = mosaic;
-                state.ExtentHeight = top;
+                state.ExtentHeight = top - 2;
             }
 
             if (state.LayoutRects.Count < 1)
@@ -160,7 +166,9 @@ namespace Unigram.Controls
             for (int i = firstItemIndex; i <= lastItemIndex; i++)
             {
                 var container = context.GetOrCreateElementAt(i);
-                container.Measure(new Size(state.LayoutRects[i].Width, state.LayoutRects[i].Height));
+                container.Measure(new Size(
+                    state.LayoutRects[i].Width * availableSize.Width,
+                    state.LayoutRects[i].Height));
             }
 
             state.FirstRealizedIndex = firstItemIndex;
@@ -185,7 +193,11 @@ namespace Unigram.Controls
             for (int i = firstItemIndex; i <= lastItemIndex; i++)
             {
                 var container = context.GetOrCreateElementAt(i);
-                container.Arrange(state.LayoutRects[i]);
+                container.Arrange(new Rect(
+                    state.LayoutRects[i].X * finalSize.Width,
+                    state.LayoutRects[i].Y,
+                    state.LayoutRects[i].Width * finalSize.Width,
+                    state.LayoutRects[i].Height));
             }
 
             return finalSize;
