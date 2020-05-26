@@ -246,8 +246,17 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
+            var response = await ProtoService.SendAsync(new GetMessages(chat.Id, messages.Select(x => x.Id).ToArray()));
+            if (response is Messages updated)
+            {
+                for (int i = 0; i < updated.MessagesValue.Count; i++)
+                {
+                    messages[i] = updated.MessagesValue[i];
+                }
+            }
+
             var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
-            var dialog = new DeleteMessagesPopup(CacheService, messages);
+            var dialog = new DeleteMessagesPopup(CacheService, messages.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)

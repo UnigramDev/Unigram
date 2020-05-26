@@ -435,7 +435,8 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var dialog = new DeleteChatPopup(ProtoService, chat, false, true);
+            var updated = await ProtoService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
+            var dialog = new DeleteChatPopup(ProtoService, updated, false, true);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
