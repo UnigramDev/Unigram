@@ -57,12 +57,12 @@ namespace Unigram.Common
             UnloadVisibleItems();
         }
 
-        private async void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
             {
-                await _listView.ItemsPanelRoot.UpdateLayoutAsync();
-                LoadVisibleItems(false);
+                _throttler.Stop();
+                _throttler.Start();
             }
         }
 
@@ -99,6 +99,12 @@ namespace Unigram.Common
             }
             else
             {
+                return;
+            }
+
+            if (lastVisibleIndex < firstVisibleIndex || firstVisibleIndex < 0)
+            {
+                UnloadVisibleItems();
                 return;
             }
 

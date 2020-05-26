@@ -43,17 +43,6 @@ namespace Unigram.Controls
             };
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            //_panel = Items.ItemsPanelRoot as ItemsStackPanel;
-
-            //var scroll = Items.ScrollingHost;
-            //if (scroll != null)
-            //{
-            //    scroll.ViewChanged += OnViewChanged;
-            //}
-        }
-
         public void UpdateCornerRadius(double radius)
         {
             Root.Padding = new Thickness(0, 0, 0, radius);

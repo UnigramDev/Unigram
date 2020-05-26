@@ -22,7 +22,7 @@ namespace Unigram.Common
         public AnimatedRepeaterHandler(ItemsRepeater listView, ScrollViewer scrollingHost)
         {
             _listView = listView;
-            _listView.Loaded += OnLoaded;
+            _listView.SizeChanged += OnSizeChanged;
             _listView.Unloaded += OnUnloaded;
 
             _scrollingHost = scrollingHost;
@@ -42,33 +42,18 @@ namespace Unigram.Common
         public Action<FrameworkElement, LottieView> LoadView { get; set; }
         public Action<FrameworkElement, LottieView> UnloadView { get; set; }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            //var scrollViewer = _listView.GetScrollViewer();
-            //if (scrollViewer != null)
-            //{
-            //    scrollViewer.ViewChanged += OnViewChanged;
-            //}
-
-            //var panel = _listView.ItemsPanelRoot;
-            //if (panel != null)
-            //{
-            //    panel.SizeChanged += OnSizeChanged;
-            //}
-        }
-
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             UnloadVisibleItems();
         }
 
-        private async void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            //if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
-            //{
-            //    await _listView.ItemsPanelRoot.UpdateLayoutAsync();
-            //    LoadVisibleItems(false);
-            //}
+            if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
+            {
+                _throttler.Stop();
+                _throttler.Start();
+            }
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -99,6 +84,12 @@ namespace Unigram.Common
             }
             else
             {
+                return;
+            }
+
+            if (lastVisibleIndex < firstVisibleIndex || firstVisibleIndex < 0)
+            {
+                UnloadVisibleItems();
                 return;
             }
 
