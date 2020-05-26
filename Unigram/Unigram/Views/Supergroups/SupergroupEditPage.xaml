@@ -47,37 +47,56 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <controls:ProfilePicture
-                            x:Name="Photo"
-                            Click="Photo_Click"
-                            AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                            Height="64"
-                            Width="64"
+                        <Grid
                             Margin="12,8"
                             Grid.RowSpan="2">
-                            <FlyoutBase.AttachedFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Click="EditCamera_Click"
-                                                    Text="{CustomResource FromCamera}">
-                                        <MenuFlyoutItem.Icon>
-                                            <FontIcon Glyph="&#xE722;"/>
-                                        </MenuFlyoutItem.Icon>
-                                    </MenuFlyoutItem>
-                                    <MenuFlyoutItem Click="EditPhoto_Click"
-                                                    Text="{CustomResource FromGalley}">
-                                        <MenuFlyoutItem.Icon>
-                                            <FontIcon Glyph="&#xEB9F;"/>
-                                        </MenuFlyoutItem.Icon>
-                                    </MenuFlyoutItem>
-                                    <MenuFlyoutItem Command="{x:Bind ViewModel.DeletePhotoCommand}"
-                                                    Text="{CustomResource Delete}">
-                                        <MenuFlyoutItem.Icon>
-                                            <FontIcon Glyph="&#xE74D;"/>
-                                        </MenuFlyoutItem.Icon>
-                                    </MenuFlyoutItem>
-                                </MenuFlyout>
-                            </FlyoutBase.AttachedFlyout>
-                        </controls:ProfilePicture>
+                            <controls:ProfilePicture
+                                x:Name="Photo"
+                                IsEnabled="False"
+                                Height="64"
+                                Width="64"/>
+                            <Border
+                                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                CornerRadius="32"/>
+
+                            <controls:GlyphButton
+                                Click="Photo_Click"
+                                Glyph="&#xE722;"
+                                AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                Style="{StaticResource RoundGlyphButtonStyle}"
+                                RequestedTheme="Dark"
+                                Radius="32"
+                                Width="64"
+                                Height="64">
+                                <FlyoutBase.AttachedFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem
+                                            Click="EditPhoto_Click"
+                                            Text="{CustomResource FromGalley}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xEB9F;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem
+                                            Click="EditCamera_Click"
+                                            Text="{CustomResource FromCamera}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE722;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutSeparator x:Name="DeletePhotoSeparator"/>
+                                        <MenuFlyoutItem
+                                            x:Name="DeletePhoto"
+                                            Command="{x:Bind ViewModel.DeletePhotoCommand}"
+                                            Text="{CustomResource Delete}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE74D;"/>
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </FlyoutBase.AttachedFlyout>
+                            </controls:GlyphButton>
+                        </Grid>
 
                         <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
                             <TextBox

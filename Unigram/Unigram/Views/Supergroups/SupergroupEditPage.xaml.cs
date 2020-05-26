@@ -47,6 +47,10 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
+            DeletePhoto.Visibility = DeletePhotoSeparator.Visibility = ViewModel.Chat.Photo != null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
             if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
             {
                 flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
@@ -266,10 +270,10 @@ namespace Unigram.Views.Supergroups
 
             ChatType.Content = Strings.Resources.GroupType;
             ChatType.Badge = Strings.Resources.TypePrivateGroup;
-            ChatType.Visibility = Visibility.Collapsed;
+            ChatType.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
             ChatHistory.Badge = Strings.Resources.ChatHistoryHidden;
-            ChatHistory.Visibility = Visibility.Visible;
+            ChatHistory.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Visibility = Visibility.Collapsed;
@@ -277,7 +281,7 @@ namespace Unigram.Views.Supergroups
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
-            Permissions.Visibility = Visibility.Visible;
+            Permissions.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
             Blacklist.Visibility = Visibility.Collapsed;
 
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
@@ -292,12 +296,6 @@ namespace Unigram.Views.Supergroups
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             GroupStickersPanel.Visibility = Visibility.Collapsed;
-
-            //ViewModel.About = fullInfo.Description;
-
-            //ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
-            ChatType.Visibility = Visibility.Visible;
-
 
             Admins.Badge = fullInfo.Members.Count(x => x.Status is ChatMemberStatusCreator || x.Status is ChatMemberStatusAdministrator);
             Members.Badge = fullInfo.Members.Count;
