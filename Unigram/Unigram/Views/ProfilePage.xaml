@@ -144,6 +144,7 @@
                                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                                     AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
                                     ToolTipService.ToolTip="{CustomResource AccDescrOpenChat}"
+                                    Style="{StaticResource RoundGlyphButtonStyle}"
                                     Width="36"
                                     Height="36"
                                     Radius="18"

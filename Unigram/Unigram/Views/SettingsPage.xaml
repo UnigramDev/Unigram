@@ -57,15 +57,17 @@
                         <Border.Background>
                             <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
                         </Border.Background>
-                        <controls:GlyphButton Glyph="&#xE114;"
-                                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                              AutomationProperties.Name="{CustomResource AccDescrChangeProfilePicture}"
-                                              ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
-                                              Width="36"
-                                              Height="36"
-                                              Radius="18"
-                                              Padding="0,0,0,0"
-                                              FontSize="16">
+                        <controls:GlyphButton
+                            Glyph="&#xE114;"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            AutomationProperties.Name="{CustomResource AccDescrChangeProfilePicture}"
+                            ToolTipService.ToolTip="{CustomResource AccDescrChangeProfilePicture}"
+                            Style="{StaticResource RoundGlyphButtonStyle}"
+                            Width="36"
+                            Height="36"
+                            Radius="18"
+                            Padding="0,0,0,0"
+                            FontSize="16">
                             <Button.Flyout>
                                 <MenuFlyout x:Name="PhotoFlyout">
                                     <MenuFlyoutItem Click="EditCamera_Click" Text="{CustomResource FromCamera}">
