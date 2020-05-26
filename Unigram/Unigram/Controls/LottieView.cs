@@ -21,11 +21,10 @@ namespace Unigram.Controls
     public class LottieView : Control
     {
         private CanvasControl _canvas;
-        private string CanvasPartName = "Canvas";
-
         private CanvasBitmap _bitmap;
 
         private Image _thumbnail;
+        private bool _hideThumbnail = true;
 
         private string _source;
         private CachedAnimation _animation;
@@ -48,8 +47,6 @@ namespace Unigram.Controls
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
 
-        private bool _hideThumbnail = true;
-
         private LoopThread _thread = LoopThreadPool.Stickers.Get();
         private bool _subscribed;
 
@@ -67,7 +64,7 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            var canvas = GetTemplateChild(CanvasPartName) as CanvasControl;
+            var canvas = GetTemplateChild("Canvas") as CanvasControl;
             if (canvas == null)
             {
                 return;

@@ -2,13 +2,10 @@
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Unigram.Common;
 using Unigram.Native;
-using Unigram.Services;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -22,27 +19,17 @@ namespace Unigram.Controls
     public class AnimationView : Control
     {
         private CanvasControl _canvas;
-        private string CanvasPartName = "Canvas";
-
         private CanvasBitmap _bitmap;
 
         private Image _thumbnail;
+        private bool _hideThumbnail = true;
 
         private string _source;
         private VideoAnimation _animation;
 
-        private double _animationFrameRate;
-        private int _animationTotalFrame;
-
         private bool _shouldPlay;
 
-        // Detect from hardware?
-        private bool _limitFps = true;
-
         private bool _isLoopingEnabled = true;
-        private bool _isCachingEnabled = true;
-
-        private bool _hideThumbnail = true;
 
         private LoopThread _thread = LoopThreadPool.Animations.Get();
         private bool _subscribed;
@@ -61,7 +48,7 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            var canvas = GetTemplateChild(CanvasPartName) as CanvasControl;
+            var canvas = GetTemplateChild("Canvas") as CanvasControl;
             if (canvas == null)
             {
                 return;
@@ -142,38 +129,44 @@ namespace Unigram.Controls
         {
             _device = args.DrawingSession.Device;
 
-            if (_bitmap != null)
-            {
-                var width = (double)_animation.PixelWidth;
-                var height = (double)_animation.PixelHeight;
-
-                if (width > sender.Size.Width || height > sender.Size.Height)
-                {
-                    double ratioX = (double)sender.Size.Width / width;
-                    double ratioY = (double)sender.Size.Height / height;
-                    double ratio = Math.Max(ratioX, ratioY);
-
-                    width = width * ratio;
-                    height = height * ratio;
-                }
-
-                var x = (sender.Size.Width - width) / 2;
-                var y = (sender.Size.Height - height) / 2;
-
-                args.DrawingSession.DrawImage(_bitmap, new Rect(x, y, width, height));
-
-                if (_hideThumbnail && _thumbnail != null)
-                {
-                    _hideThumbnail = false;
-                    _thumbnail.Opacity = 0;
-                }
-            }
-            else
+            if (_bitmap == null)
             {
                 var colors = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
                 Array.Fill<byte>(colors, 0);
 
                 _bitmap = CanvasBitmap.CreateFromBytes(sender, colors, _animation.PixelWidth, _animation.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.R8G8B8A8UIntNormalized);
+            }
+
+            var width = (double)_animation.PixelWidth;
+            var height = (double)_animation.PixelHeight;
+            var x = 0d;
+            var y = 0d;
+
+            if (width > sender.Size.Width || height > sender.Size.Height)
+            {
+                double ratioX = (double)sender.Size.Width / width;
+                double ratioY = (double)sender.Size.Height / height;
+
+                if (ratioX > ratioY)
+                {
+                    width = sender.Size.Width;
+                    height *= ratioX;
+                    y = (sender.Size.Height - height) / 2;
+                }
+                else
+                {
+                    width *= ratioY;
+                    height = sender.Size.Height;
+                    x = (sender.Size.Width - width) / 2;
+                }
+            }
+
+            args.DrawingSession.DrawImage(_bitmap, new Rect(x, y, width, height));
+
+            if (_hideThumbnail && _thumbnail != null)
+            {
+                _hideThumbnail = false;
+                _thumbnail.Opacity = 0;
             }
         }
 
