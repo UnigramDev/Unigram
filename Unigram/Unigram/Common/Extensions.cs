@@ -14,6 +14,7 @@ using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Navigation;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
@@ -34,6 +35,11 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static Version ToVersion(this PackageVersion version)
+        {
+            return new Version(version.Major, version.Minor, version.Build, version.Revision);
+        }
+
         public static string ToQuery(this Dictionary<string, string> dictionary)
         {
             var result = string.Empty;
