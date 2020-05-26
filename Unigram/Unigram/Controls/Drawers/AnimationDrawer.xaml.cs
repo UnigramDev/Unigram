@@ -180,8 +180,9 @@ namespace Unigram.Controls.Drawers
 
                     if (item.Thumbnail?.Photo.Id == file.Id)
                     {
-                        var content = Repeater.TryGetElement(index) as Button;
-                        var image = content.Content as Image;
+                        var button = Repeater.TryGetElement(index) as Button;
+                        var content = button.Content as Grid;
+                        var image = content.Children[0] as Image;
 
                         image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
                     }
