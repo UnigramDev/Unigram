@@ -69,6 +69,9 @@ namespace Unigram.Controls.Messages
                 MessageId = 0;
                 Visibility = Visibility.Visible;
 
+                if (ThumbRoot != null)
+                    ThumbRoot.Visibility = Visibility.Collapsed;
+
                 TitleLabel.Text = embedded.WebPagePreview.SiteName;
                 ServiceLabel.Text = string.Empty;
 
@@ -158,10 +161,14 @@ namespace Unigram.Controls.Messages
 
                 ThumbImage.ImageSource = new BitmapImage(new Uri("file:///" + photoSize.Photo.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             }
-            else if (photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
+            else
             {
                 ThumbImage.ImageSource = null;
-                message.ProtoService.DownloadFile(photoSize.Photo.Id, 1);
+
+                if (photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
+                {
+                    message.ProtoService.DownloadFile(photoSize.Photo.Id, 1);
+                }
             }
         }
 
