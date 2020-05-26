@@ -372,7 +372,11 @@ namespace Unigram.Views
 
         public void HideStickers()
         {
-            Collapse_Click(StickersPanel, null);
+            if (_stickersMode == StickersPanelMode.Overlay)
+            {
+                Collapse_Click(StickersPanel, null);
+            }
+
             TextField.Focus(FocusState.Programmatic);
         }
 
