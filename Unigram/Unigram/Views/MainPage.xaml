@@ -580,6 +580,30 @@
                                         SelectionMode2="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"/>
                                 </Grid>
 
+                                <Grid
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Center"
+                                    Margin="12"
+                                    Grid.Row="1">
+                                    <Rectangle
+                                        x:Name="UpdateShadow"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Fill="White"
+                                        RadiusX="18"
+                                        RadiusY="18"/>
+                                    <controls:BadgeButton
+                                        x:Name="UpdateCloud"
+                                        Command="{x:Bind ViewModel.UpdateAppCommand}"
+                                        Visibility="{x:Bind ViewModel.IsUpdateAvailable, Mode=OneWay}"
+                                        Content="{CustomResource UpdateTelegram}"
+                                        Style="{StaticResource StartButtonStyle}"
+                                        Padding="16,3,16,5"
+                                        Radius="18"
+                                        Margin="0"
+                                        Height="36"/>
+                                </Grid>
+
                                 <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Grid.Row="1"/>
 
                                 <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">

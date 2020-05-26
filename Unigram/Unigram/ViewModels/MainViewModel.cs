@@ -7,18 +7,25 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Views.Popups;
 using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Unigram.ViewModels.Folders;
 using Unigram.Views;
 using Unigram.Views.Folders;
+using Unigram.Views.Popups;
+using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : TLMultipleViewModelBase, IHandle<UpdateServiceNotification>, IHandle<UpdateUnreadMessageCount>, IHandle<UpdateChatFilters>
+    public class MainViewModel : TLMultipleViewModelBase,
+        IHandle<UpdateServiceNotification>,
+        IHandle<UpdateUnreadMessageCount>,
+        IHandle<UpdateChatFilters>,
+        IHandle<UpdateAppVersion>
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
@@ -28,12 +35,13 @@ namespace Unigram.ViewModels
         private readonly ISessionService _sessionService;
         private readonly IVoIPService _voipService;
         private readonly IEmojiSetService _emojiSetService;
+        private readonly ICloudUpdateService _cloudUpdateService;
         private readonly IPlaybackService _playbackService;
         private readonly IShortcutsService _shortcutService;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, IPlaybackService playbackService, IShortcutsService shortcutService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -44,6 +52,7 @@ namespace Unigram.ViewModels
             _sessionService = session;
             _voipService = voipService;
             _emojiSetService = emojiSetService;
+            _cloudUpdateService = cloudUpdateService;
             _playbackService = playbackService;
             _shortcutService = shortcutService;
 
@@ -74,6 +83,8 @@ namespace Unigram.ViewModels
             CreateSecretChatCommand = new RelayCommand(CreateSecretChatExecute);
 
             SetupFiltersCommand = new RelayCommand(SetupFiltersExecute);
+
+            UpdateAppCommand = new RelayCommand(UpdateAppExecute);
 
             FilterEditCommand = new RelayCommand<ChatFilterViewModel>(FilterEditExecute);
             FilterAddCommand = new RelayCommand<ChatFilterViewModel>(FilterAddExecute);
@@ -135,10 +146,27 @@ namespace Unigram.ViewModels
             set => Set(ref _unreadUnmutedCount, value);
         }
 
+        private bool _isUpdateAvailable;
+        public bool IsUpdateAvailable
+        {
+            get => _isUpdateAvailable;
+            set => Set(ref _isUpdateAvailable, value);
+        }
+
         public RelayCommand ReturnToCallCommand { get; }
         private void ReturnToCallExecute()
         {
             _voipService.Show();
+        }
+
+        public void Handle(UpdateAppVersion update)
+        {
+            BeginOnUIThread(() => UpdateAppVersion(update.Update));
+        }
+
+        private void UpdateAppVersion(CloudUpdate update)
+        {
+            IsUpdateAvailable = update?.File != null;
         }
 
         public void Handle(UpdateServiceNotification update)
@@ -303,6 +331,7 @@ namespace Unigram.ViewModels
             //Dispatch(() => Contacts.getTLContacts());
             //Dispatch(() => Contacts.GetSelfAsync());
 
+            UpdateAppVersion(_cloudUpdateService.NextUpdate);
             UpdateChatFilters(CacheService.ChatFilters);
 
             var unreadCount = CacheService.GetUnreadCount(new ChatListMain());
@@ -314,6 +343,7 @@ namespace Unigram.ViewModels
                 Task.Run(() => _pushService.RegisterAsync());
                 Task.Run(() => _contactsService.JumpListAsync());
                 Task.Run(() => _emojiSetService.UpdateAsync());
+                Task.Run(() => _cloudUpdateService.UpdateAsync());
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
@@ -345,6 +375,19 @@ namespace Unigram.ViewModels
         }
 
 
+
+        public RelayCommand UpdateAppCommand { get; }
+        private async void UpdateAppExecute()
+        {
+            var file = _cloudUpdateService.NextUpdate?.File;
+            if (file == null)
+            {
+                return;
+            }
+
+            await Launcher.LaunchFileAsync(file);
+            Application.Current.Exit();
+        }
 
         public RelayCommand CreateSecretChatCommand { get; }
         private async void CreateSecretChatExecute()

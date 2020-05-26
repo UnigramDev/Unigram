@@ -64,9 +64,10 @@
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
-                                        <controls:BadgeButton Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+                                        <controls:BadgeButton
+                                            Style="{StaticResource SubtitleBadgeButtonStyle}"/>
                                         
-                                        <Button 
+                                        <controls:BadgeButton
                                             Content="{CustomResource Add}"
                                             Style="{StaticResource StartButtonStyle}"
                                             HorizontalAlignment="Right"

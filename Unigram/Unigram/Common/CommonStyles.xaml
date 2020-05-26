@@ -95,7 +95,7 @@
     <StaticResource x:Key="StartButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
     <StaticResource x:Key="StartButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
 
-    <Style x:Key="StartButtonStyle" TargetType="Button">
+    <Style x:Key="StartButtonStyle" TargetType="controls:BadgeButton">
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Bottom"/>
         <Setter Property="Margin" Value="24"/>
@@ -103,10 +103,12 @@
         <Setter Property="Foreground" Value="{ThemeResource StartButtonForeground}"/>
         <Setter Property="Background" Value="{ThemeResource StartButtonBackground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource StartButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Radius" Value="16" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="16">
+                <ControlTemplate TargetType="controls:BadgeButton">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
@@ -182,8 +184,8 @@
         <Setter Property="Margin" Value="4,4,4,4"/>
         <Setter Property="Padding" Value="12,3,12,5" />
         <Setter Property="Foreground" Value="{ThemeResource StartButtonBackground}"/>
-        <Setter Property="Background" Value="{ThemeResource StartButtonForeground}"/>
-        <Setter Property="BorderBrush" Value="{ThemeResource StartButtonForeground}" />
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
@@ -3653,7 +3655,7 @@
         <Setter Property="Background" Value="{ThemeResource RadioButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource RadioButtonForeground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource RadioButtonBorderBrush}" />
-        <Setter Property="Padding" Value="8,8,16,8" />
+        <Setter Property="Padding" Value="12,12,12,8" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -3666,11 +3668,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
-                    <Grid x:Name="RootGrid" 
-                          Background="{TemplateBinding Background}" 
-                          BorderBrush="{ThemeResource PlaceholderBackgroundBrush}" 
-                          BorderThickness="2"
-                          CornerRadius="12,12,12,4">
+                    <Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3685,23 +3683,8 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource PlaceholderForegroundLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseStrokePointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseFillPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Stroke">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedStrokePointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedFillPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphFillPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphStrokePointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -3716,23 +3699,8 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource PlaceholderForegroundHighBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseStrokePressed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseFillPressed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Stroke">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedStrokePressed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedFillPressed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphFillPressed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphStrokePressed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -3747,23 +3715,8 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBorderBrushDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseStrokeDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseFillDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Stroke">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedStrokeDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedFillDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphFillDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphStrokeDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -3771,21 +3724,9 @@
                             <VisualStateGroup x:Name="CheckStates">
                                 <VisualState x:Name="Checked">
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="CheckGlyph"
-                                            Storyboard.TargetProperty="Opacity"
-                                            To="1"
-                                            Duration="0" />
-                                        <DoubleAnimation Storyboard.TargetName="OuterEllipse"
-                                            Storyboard.TargetProperty="Opacity"
-                                            To="0"
-                                            Duration="0" />
                                         <DoubleAnimation Storyboard.TargetName="CheckOuterEllipse"
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
-                                            Duration="0" />
-                                        <DoubleAnimation Storyboard.TargetName="BorderElement"
-                                            Storyboard.TargetProperty="Opacity"
-                                            To="0"
                                             Duration="0" />
                                     </Storyboard>
                                 </VisualState>
@@ -3797,31 +3738,20 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Border x:Name="BorderElement" Background="{ThemeResource PlaceholderBackgroundBrush}" Grid.ColumnSpan="2"/>
-                        <Grid VerticalAlignment="Center" Height="32" Margin="0,0,8,0" Grid.Column="1">
-                            <Ellipse x:Name="OuterEllipse"
-                                Width="20"
-                                Height="20"
-                                UseLayoutRounding="False"
-                                Stroke="{ThemeResource RadioButtonOuterEllipseStroke}"
-                                Fill="{StaticResource RadioButtonOuterEllipseFill}"
-                                StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
-                            <Ellipse x:Name="CheckOuterEllipse"
-                                Width="20"
-                                Height="20"
-                                UseLayoutRounding="False"
-                                Stroke="{ThemeResource RadioButtonOuterEllipseCheckedStroke}"
-                                Fill="{ThemeResource RadioButtonOuterEllipseCheckedFill}"
-                                Opacity="0"
-                                StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
-                            <Ellipse x:Name="CheckGlyph"
-                                Width="10"
-                                Height="10"
-                                UseLayoutRounding="False"
-                                Opacity="0"
-                                Fill="{ThemeResource RadioButtonCheckGlyphFill}" 
-                                Stroke="{ThemeResource RadioButtonCheckGlyphStroke}"/>
-                        </Grid>
+                        <Border
+                            x:Name="RootGrid" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{ThemeResource PlaceholderBackgroundBrush}" 
+                            BorderThickness="2"
+                            CornerRadius="12,12,12,4"
+                            Grid.ColumnSpan="2"/>
+                        <Border
+                            x:Name="CheckOuterEllipse"
+                            Opacity="0"
+                            BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}"
+                            BorderThickness="2"
+                            CornerRadius="12,12,12,4"
+                            Grid.ColumnSpan="2"/>
                         <ContentPresenter x:Name="ContentPresenter"
                             Content="{TemplateBinding Content}"
                             ContentTransitions="{TemplateBinding ContentTransitions}"

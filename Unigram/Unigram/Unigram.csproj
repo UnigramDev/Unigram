@@ -549,7 +549,7 @@
     <Compile Include="Services\EventAggregator.cs" />
     <Compile Include="Services\Factories\MessageFactory.cs" />
     <Compile Include="Services\GenerationService.cs" />
-    <Compile Include="Services\HockeyUpdateService.cs" />
+    <Compile Include="Services\CloudUpdateService.cs" />
     <Compile Include="Services\LifetimeService.cs" />
     <Compile Include="Services\LocaleService.cs" />
     <Compile Include="Services\LocationService.cs" />
@@ -580,6 +580,7 @@
     <Compile Include="Services\Stripe\StripeToken.cs" />
     <Compile Include="Services\ThemeService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />
+    <Compile Include="Services\Updates\UpdateAppVersion.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
     <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdateConfetti.cs" />

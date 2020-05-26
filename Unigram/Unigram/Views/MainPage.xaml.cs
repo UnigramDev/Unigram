@@ -112,13 +112,11 @@ namespace Unigram.Views
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
-            //var separator = ElementCompositionPreview.GetElementVisual(Separator);
-            //var visual = DropShadowEx.Attach(Separator, 20, 0.25f, separator.Compositor.CreateInsetClip(-100, 0, 19, 0));
-
-            //Separator.SizeChanged += (s, args) =>
-            //{
-            //    visual.Size = new Vector2(20, (float)args.NewSize.Height);
-            //};
+            var updateShadow = DropShadowEx.Attach(UpdateShadow, 20, 0.25f);
+            UpdateShadow.SizeChanged += (s, args) =>
+            {
+                updateShadow.Size = args.NewSize.ToVector2();
+            };
 
             var folderShadow = DropShadowEx.Attach(FolderShadow, 20, 0.25f);
             FolderShadow.SizeChanged += (s, args) =>

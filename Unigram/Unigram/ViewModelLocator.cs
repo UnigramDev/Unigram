@@ -119,6 +119,10 @@ namespace Unigram
                     .As<IEmojiSetService>()
                     .SingleInstance()
                     .AutoActivate();
+                builder.RegisterType<CloudUpdateService>()
+                    .As<ICloudUpdateService>()
+                    .SingleInstance()
+                    .AutoActivate();
 
                 builder.RegisterType<ShortcutsService>()
                     .As<IShortcutsService>()
@@ -139,7 +143,6 @@ namespace Unigram
                 builder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
                 //builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
                 builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
-                builder.RegisterType<HockeyUpdateService>().As<IHockeyUpdateService>().SingleInstance();
                 builder.RegisterType<ThemeService>().As<IThemeService>().SingleInstance();
 
                 builder.RegisterType<MessageFactory>().As<IMessageFactory>().SingleInstance();

@@ -2123,7 +2123,7 @@
                                     Margin="0,0,0,24"
                                     Grid.Row="4">
                                     
-                                    <Button
+                                    <local:BadgeButton
                                         Content="{TemplateBinding ButtonText}"
                                         Command="{TemplateBinding ButtonCommand}"
                                         Visibility="{TemplateBinding ButtonVisibility}"
