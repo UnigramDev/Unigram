@@ -129,7 +129,11 @@ namespace Unigram.Controls
         {
             _device = args.DrawingSession.Device;
 
-            if (_bitmap == null)
+            if (_animation == null)
+            {
+                return;
+            }
+            else if (_bitmap == null)
             {
                 var colors = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
                 Array.Fill<byte>(colors, 0);
