@@ -213,11 +213,12 @@ namespace Unigram.Services
                 }
             }
 
+            var current = Package.Current.Id.Version.ToVersion();
             var latest = dict.Count > 0 ? dict.Max(x => x.Version) : null;
 
             foreach (var set in dict)
             {
-                if (set.Version == latest)
+                if (set.Version == latest && set.Version > current)
                 {
                     if (set.Document.Local.IsDownloadingCompleted)
                     {
