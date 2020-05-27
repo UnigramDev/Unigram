@@ -9,6 +9,7 @@ using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Navigation;
+using Unigram.Services.Updates;
 using Unigram.Views;
 using Unigram.Views.Host;
 using Windows.ApplicationModel;
@@ -186,17 +187,6 @@ namespace Unigram
                     TLContainer.Current.Passcode.CloseTime = DateTime.MaxValue;
                 }
             }
-
-#if !DEBUG && !PREVIEW
-            if (e.Visible)
-            {
-                var dispatcher = Window.Current.Dispatcher;
-                Execute.BeginOnThreadPool(async () =>
-                {
-                    await new HockeyAppUpdateService().CheckForUpdatesAsync(Constants.HockeyAppId, dispatcher);
-                });
-            }
-#endif
         }
 
         private void HandleActivated(bool active)
@@ -204,7 +194,7 @@ namespace Unigram
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
             if (aggregator != null)
             {
-                aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
+                aggregator.Publish(new UpdateWindowActivated(active));
             }
 
             var cacheService = TLContainer.Current.Resolve<ICacheService>();

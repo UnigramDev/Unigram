@@ -25,7 +25,8 @@ namespace Unigram.ViewModels
         IHandle<UpdateServiceNotification>,
         IHandle<UpdateUnreadMessageCount>,
         IHandle<UpdateChatFilters>,
-        IHandle<UpdateAppVersion>
+        IHandle<UpdateAppVersion>,
+        IHandle<UpdateWindowActivated>
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
@@ -162,6 +163,14 @@ namespace Unigram.ViewModels
         public void Handle(UpdateAppVersion update)
         {
             BeginOnUIThread(() => UpdateAppVersion(update.Update));
+        }
+
+        public void Handle(UpdateWindowActivated update)
+        {
+            if (update.IsActive)
+            {
+                _ = _cloudUpdateService.UpdateAsync();
+            }
         }
 
         private void UpdateAppVersion(CloudUpdate update)
