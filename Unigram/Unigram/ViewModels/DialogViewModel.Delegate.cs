@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Views.Popups;
-using Unigram.ViewModels.Dialogs;
+using Unigram.ViewModels.Drawers;
 using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml;

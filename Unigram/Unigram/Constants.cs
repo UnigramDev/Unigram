@@ -15,6 +15,7 @@ namespace Unigram
 
 
         public const int TypingTimeout = 300;
+        public const int AnimatedThrottle = 200;
 
         public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };
         public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };

@@ -1,7 +1,5 @@
-﻿using LinqToVisualTree;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -10,12 +8,13 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Drawers;
 using Unigram.Views;
-using Unigram.Views.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
@@ -27,8 +26,12 @@ namespace Unigram.Controls
         public FrameworkElement Presenter => BackgroundElement;
 
         public Action<string> EmojiClick { get; set; }
+
         public Action<Sticker> StickerClick { get; set; }
+        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> StickerContextRequested;
+
         public Action<Animation> AnimationClick { get; set; }
+        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> AnimationContextRequested;
 
         private StickersPanelMode _widget;
 
@@ -43,18 +46,25 @@ namespace Unigram.Controls
                 shadow1.Size = args.NewSize.ToVector2();
             };
 
-            AnimationsRoot.AnimationClick = Animations_ItemClick;
-            StickersRoot.StickerClick = Stickers_ItemClick;
+            var protoService = TLContainer.Current.Resolve<IProtoService>();
+
+            AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(protoService.SessionId);
+            AnimationsRoot.ItemClick = Animations_ItemClick;
+            AnimationsRoot.ItemContextRequested += (s, args) => AnimationContextRequested?.Invoke(s, args);
+
+            StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(protoService.SessionId);
+            StickersRoot.ItemClick = Stickers_ItemClick;
+            StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args); ;
 
             switch (SettingsService.Current.Stickers.SelectedTab)
             {
-                case Services.Settings.StickersTab.Emoji:
+                case StickersTab.Emoji:
                     Pivot.SelectedIndex = 0;
                     break;
-                case Services.Settings.StickersTab.Animations:
+                case StickersTab.Animations:
                     Pivot.SelectedIndex = 1;
                     break;
-                case Services.Settings.StickersTab.Stickers:
+                case StickersTab.Stickers:
                     Pivot.SelectedIndex = 2;
                     break;
             }
@@ -73,7 +83,7 @@ namespace Unigram.Controls
         {
             _widget = mode;
 
-            Emojis?.SetView(mode);
+            EmojisRoot?.SetView(mode);
             VisualStateManager.GoToState(this, mode == StickersPanelMode.Overlay
                 ? "FilledState"
                 : mode == StickersPanelMode.Sidebar
@@ -144,7 +154,7 @@ namespace Unigram.Controls
 
         private IEnumerable<IDrawer> GetDrawers()
         {
-            yield return Emojis;
+            yield return EmojisRoot;
             yield return AnimationsRoot;
             yield return StickersRoot;
         }
@@ -154,7 +164,7 @@ namespace Unigram.Controls
             switch (Pivot.SelectedIndex)
             {
                 case 0:
-                    return Emojis;
+                    return EmojisRoot;
                 case 1:
                     return AnimationsRoot;
                 case 2:
@@ -165,10 +175,10 @@ namespace Unigram.Controls
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Pivot.SelectedIndex == 0 && Emojis == null)
+            if (Pivot.SelectedIndex == 0 && EmojisRoot == null)
             {
                 FindName(nameof(Emojis));
-                Emojis.SetView(_widget);
+                EmojisRoot.SetView(_widget);
             }
 
             var active = GetActiveDrawer();
@@ -199,25 +209,15 @@ namespace Unigram.Controls
             Pivot_SelectionChanged(null, null);
         }
 
-        private void GroupStickers_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.GroupStickersCommand.Execute(null);
-        }
-
-        private void Settings_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.NavigationService.Navigate(typeof(SettingsStickersPage));
-        }
-
-        private void Install_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Stickers.InstallCommand.Execute(((Button)sender).DataContext);
-        }
-
         public void UpdateChatPermissions(Chat chat)
         {
+            var emojisRights = ViewModel.VerifyRights(chat, x => x.CanSendMessages, Strings.Resources.GlobalSendMessageRestricted, Strings.Resources.SendMessageRestrictedForever, Strings.Resources.SendMessageRestricted, out string emojisLabel);
             var stickersRights = ViewModel.VerifyRights(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted, out string stickersLabel);
             var animationsRights = ViewModel.VerifyRights(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted, out string animationsLabel);
+
+            EmojisRoot.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
+            EmojisPermission.Visibility = emojisRights ? Visibility.Visible : Visibility.Collapsed;
+            EmojisPermission.Text = emojisLabel ?? string.Empty;
 
             StickersRoot.Visibility = stickersRights ? Visibility.Collapsed : Visibility.Visible;
             StickersPermission.Visibility = stickersRights ? Visibility.Visible : Visibility.Collapsed;
@@ -228,11 +228,27 @@ namespace Unigram.Controls
             AnimationsPermission.Text = animationsLabel ?? string.Empty;
         }
 
-        public void UnloadVisibleItems()
+        public void Deactivate()
         {
             foreach (var drawer in GetDrawers())
             {
                 drawer?.Deactivate();
+            }
+        }
+
+        public void UnloadVisibleItems()
+        {
+            foreach (var drawer in GetDrawers())
+            {
+                drawer?.UnloadVisibleItems();
+            }
+        }
+
+        public void LoadVisibleItems()
+        {
+            foreach (var drawer in GetDrawers())
+            {
+                drawer?.LoadVisibleItems();
             }
         }
     }
@@ -241,6 +257,9 @@ namespace Unigram.Controls
     {
         void Activate();
         void Deactivate();
+
+        void LoadVisibleItems();
+        void UnloadVisibleItems();
 
         StickersTab Tab { get; }
     }

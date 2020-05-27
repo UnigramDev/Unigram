@@ -10,18 +10,17 @@ using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
-using Unigram.Views.Popups;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.Services.Navigation;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Dialogs;
+using Unigram.ViewModels.Drawers;
+using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Text;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -77,7 +76,9 @@ namespace Unigram.ViewModels
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly DisposableMutex _insertLock = new DisposableMutex();
 
-        private readonly DialogStickersViewModel _stickers;
+        private readonly StickerDrawerViewModel _stickers;
+        private readonly AnimationDrawerViewModel _animations;
+
         private readonly ILocationService _locationService;
         private readonly INotificationsService _pushService;
         private readonly IPlaybackService _playbackService;
@@ -102,7 +103,8 @@ namespace Unigram.ViewModels
             _messageFactory = messageFactory;
 
             //_stickers = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
-            _stickers = DialogStickersViewModel.GetForCurrentView(protoService, cacheService, settingsService, aggregator);
+            _stickers = StickerDrawerViewModel.GetForCurrentView(protoService.SessionId);
+            _animations = AnimationDrawerViewModel.GetForCurrentView(protoService.SessionId);
 
             _informativeTimer = new DispatcherTimer();
             _informativeTimer.Interval = TimeSpan.FromSeconds(5);
@@ -236,11 +238,11 @@ namespace Unigram.ViewModels
             set
             {
                 base.Dispatcher = value;
-                Stickers.Dispatcher = value;
+
+                _stickers.Dispatcher = value;
+                _animations.Dispatcher = value;
             }
         }
-
-        public DialogStickersViewModel Stickers => _stickers;
 
         private Chat _migratedChat;
         public Chat MigratedChat
@@ -2616,7 +2618,7 @@ namespace Unigram.ViewModels
         private void OpenStickersExecute()
         {
             _stickers.SyncStickers(_chat);
-            _stickers.SyncGifs();
+            _animations.Update();
         }
 
         #endregion

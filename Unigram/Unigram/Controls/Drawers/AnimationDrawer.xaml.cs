@@ -1,13 +1,14 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Reactive.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Unigram.ViewModels;
+using Unigram.ViewModels.Drawers;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -18,14 +19,17 @@ namespace Unigram.Controls.Drawers
 {
     public sealed partial class AnimationDrawer : UserControl, IDrawer
     {
-        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+        public AnimationDrawerViewModel ViewModel => DataContext as AnimationDrawerViewModel;
 
-        public Action<Animation> AnimationClick { get; set; }
+        public Action<Animation> ItemClick { get; set; }
+        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
         private AnimatedRepeaterHandler<Animation> _handler;
         private DispatcherTimer _throttler;
 
         private FileContext<Animation> _animations = new FileContext<Animation>();
+
+        private bool _isActive;
 
         public AnimationDrawer()
         {
@@ -35,7 +39,7 @@ namespace Unigram.Controls.Drawers
             _handler.DownloadFile = DownloadFile;
 
             _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
             _throttler.Tick += (s, args) =>
             {
                 _throttler.Stop();
@@ -44,10 +48,16 @@ namespace Unigram.Controls.Drawers
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
+            var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
+            Separator.SizeChanged += (s, args) =>
+            {
+                shadow.Size = args.NewSize.ToVector2();
+            };
+
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(FieldAnimations, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
-                ViewModel.Stickers.FindAnimations(FieldAnimations.Text);
+                ViewModel.FindAnimations(FieldAnimations.Text);
                 //var items = ViewModel.Stickers.SearchStickers;
                 //if (items != null && string.Equals(FieldStickers.Text, items.Query))
                 //{
@@ -61,10 +71,25 @@ namespace Unigram.Controls.Drawers
 
         public void Activate()
         {
-            _handler.LoadVisibleItems(false);
+            _isActive = true;
+            _handler.LoadVisibleItemsThrottled();
         }
 
         public void Deactivate()
+        {
+            _isActive = false;
+            _handler.UnloadVisibleItems();
+        }
+
+        public void LoadVisibleItems()
+        {
+            if (_isActive)
+            {
+                _handler.LoadVisibleItems(false);
+            }
+        }
+
+        public void UnloadVisibleItems()
         {
             _handler.UnloadVisibleItems();
         }
@@ -79,7 +104,7 @@ namespace Unigram.Controls.Drawers
 
         private void Animation_Click(object sender, Animation animation)
         {
-            AnimationClick?.Invoke(animation);
+            ItemClick?.Invoke(animation);
 
             if (Window.Current.Bounds.Width >= 500)
             {
@@ -129,28 +154,7 @@ namespace Unigram.Controls.Drawers
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var animation = element.DataContext as Animation;
-
-            var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
-
-            if (!ViewModel.IsSchedule)
-            {
-                var chat = ViewModel.Chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                var self = ViewModel.CacheService.IsSavedMessages(chat);
-
-                flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, null, true)), animation, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
-                //flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, true, null)), animation, self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
-            }
-
-            args.ShowAt(flyout, element);
+            ItemContextRequested?.Invoke(sender, args);
         }
 
         private void FieldAnimations_TextChanged(object sender, TextChangedEventArgs e)

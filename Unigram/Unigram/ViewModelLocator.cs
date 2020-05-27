@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Unigram.Services.ViewService;
 using Unigram.Services;
 using Unigram.Services.Factories;
+using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Drawers;
 using Unigram.ViewModels.Folders;
 using Unigram.ViewModels.Passport;
 using Unigram.ViewModels.Payments;
@@ -184,6 +185,8 @@ namespace Unigram
                 builder.RegisterType<ChatsViewModel>();//.SingleInstance();
                 builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
                 builder.RegisterType<DialogScheduledViewModel>();
+                builder.RegisterType<AnimationDrawerViewModel>();
+                builder.RegisterType<StickerDrawerViewModel>();
                 builder.RegisterType<ProfileViewModel>();
                 builder.RegisterType<UserCommonChatsViewModel>();
                 builder.RegisterType<UserCreateViewModel>();
@@ -257,7 +260,7 @@ namespace Unigram
                 builder.RegisterType<SettingsVoIPViewModel>();
                 builder.RegisterType<BackgroundViewModel>();
                 builder.RegisterType<AttachedStickersViewModel>();
-                builder.RegisterType<StickerSetViewModel>();
+                builder.RegisterType<ViewModels.StickerSetViewModel>();
                 builder.RegisterType<PaymentFormStep1ViewModel>();
                 builder.RegisterType<PaymentFormStep2ViewModel>();
                 builder.RegisterType<PaymentFormStep3ViewModel>();

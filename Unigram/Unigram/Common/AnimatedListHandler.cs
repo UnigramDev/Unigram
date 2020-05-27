@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
-using Unigram.ViewModels.Dialogs;
+using Unigram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,7 +22,7 @@ namespace Unigram.Common
             _listView.Unloaded += OnUnloaded;
 
             _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
             _throttler.Tick += (s, args) =>
             {
                 _throttler.Stop();
@@ -69,6 +67,8 @@ namespace Unigram.Common
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             _throttler.Stop();
+            _throttler.Start();
+            return;
 
             if (e.IsIntermediate)
             {
@@ -80,6 +80,12 @@ namespace Unigram.Common
             }
 
             //LoadVisibleItems(/*e.IsIntermediate*/ false);
+        }
+
+        public void LoadVisibleItemsThrottled()
+        {
+            _throttler.Stop();
+            _throttler.Start();
         }
 
         public void LoadVisibleItems(bool intermediate)

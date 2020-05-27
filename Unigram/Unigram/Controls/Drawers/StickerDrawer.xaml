@@ -7,7 +7,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:drawers="using:Unigram.Controls.Drawers"
     xmlns:selectors="using:Unigram.Selectors"
-    xmlns:viewModels="using:Unigram.ViewModels.Dialogs"
+    xmlns:viewModels="using:Unigram.ViewModels.Drawers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -17,7 +17,7 @@
     Unloaded="OnUnloaded">
 
     <UserControl.Resources>
-        <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers.Stickers, Mode=OneWay}" ItemsPath="Stickers" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers, Mode=OneWay}" ItemsPath="Stickers" IsSourceGrouped="True"/>
     </UserControl.Resources>
 
     <Grid x:Name="StickersRoot">
@@ -124,7 +124,7 @@
             <!--
                     Background="{ThemeResource PageSubHeaderBackgroundBrush}"-->
             <ListView x:Name="Toolbar"
-                        ItemsSource="{x:Bind ViewModel.Stickers.SavedStickers}"
+                        ItemsSource="{x:Bind ViewModel.SavedStickers}"
                         Height="{ThemeResource AppBarThemeCompactHeight}"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         IsItemClickEnabled="True"
@@ -152,14 +152,15 @@
                                 <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
                                 <Setter Property="MinWidth" Value="0"/>
                                 <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="ToolTipService.ToolTip" Value="{CustomResource RecentStickers}"/>
+                                <Setter Property="AutomationProperties.Name" Value="{CustomResource RecentStickers}"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ListViewItem">
                                             <Grid
                                                 x:Name="RootGrid"
                                                 CornerRadius="{StaticResource GlyphButtonCornerRadius}"
-                                                Margin="{StaticResource GlyphButtonPadding}"
-                                                ToolTipService.ToolTip="{CustomResource RecentStickers}">
+                                                Margin="{StaticResource GlyphButtonPadding}">
                                                 <VisualStateManager.VisualStateGroups>
                                                     <VisualStateGroup>
                                                         <VisualState x:Name="Normal"/>
@@ -225,14 +226,15 @@
                                 <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
                                 <Setter Property="MinWidth" Value="0"/>
                                 <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="ToolTipService.ToolTip" Value="{CustomResource FavoriteStickers}"/>
+                                <Setter Property="AutomationProperties.Name" Value="{CustomResource FavoriteStickers}"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ListViewItem">
                                             <Grid
                                                 x:Name="RootGrid"
                                                 CornerRadius="{StaticResource GlyphButtonCornerRadius}"
-                                                Margin="{StaticResource GlyphButtonPadding}"
-                                                ToolTipService.ToolTip="{CustomResource FavoriteStickers}">
+                                                Margin="{StaticResource GlyphButtonPadding}">
                                                 <VisualStateManager.VisualStateGroups>
                                                     <VisualStateGroup>
                                                         <VisualState x:Name="Normal"/>

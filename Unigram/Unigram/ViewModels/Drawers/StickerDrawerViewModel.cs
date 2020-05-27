@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Views;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Text.Core;
@@ -15,9 +16,9 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace Unigram.ViewModels.Dialogs
+namespace Unigram.ViewModels.Drawers
 {
-    public class DialogStickersViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>, IHandle<UpdateFavoriteStickers>, IHandle<UpdateInstalledStickerSets>, IHandle<UpdateSavedAnimations>
+    public class StickerDrawerViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>, IHandle<UpdateFavoriteStickers>, IHandle<UpdateInstalledStickerSets>
     {
         private StickerSetViewModel _recentSet;
         private StickerSetViewModel _favoriteSet;
@@ -29,7 +30,7 @@ namespace Unigram.ViewModels.Dialogs
         private bool _featured;
         private bool _stickers;
 
-        public DialogStickersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public StickerDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _favoriteSet = new StickerSetViewModel(ProtoService, Aggregator, new StickerSetInfo
@@ -59,9 +60,6 @@ namespace Unigram.ViewModels.Dialogs
             //    },
             //};
 
-            Aggregator.Subscribe(this);
-
-            SavedAnimations = new AnimationsCollection();
             FeaturedStickers = new MvxObservableCollection<TLFeaturedStickerSet>();
             SavedStickers = new StickerSetCollection();
 
@@ -69,26 +67,28 @@ namespace Unigram.ViewModels.Dialogs
             //SyncGifs();
 
             InstallCommand = new RelayCommand<TLFeaturedStickerSet>(InstallExecute);
+
+            Aggregator.Subscribe(this);
         }
 
-        private static Dictionary<int, Dictionary<int, DialogStickersViewModel>> _windowContext = new Dictionary<int, Dictionary<int, DialogStickersViewModel>>();
-        public static DialogStickersViewModel GetForCurrentView(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        private static Dictionary<int, Dictionary<int, StickerDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, StickerDrawerViewModel>>();
+        public static StickerDrawerViewModel GetForCurrentView(int sessionId)
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out Dictionary<int, DialogStickersViewModel> reference))
+            if (_windowContext.TryGetValue(id, out Dictionary<int, StickerDrawerViewModel> reference))
             {
-                if (reference.TryGetValue(protoService.SessionId, out DialogStickersViewModel value))
+                if (reference.TryGetValue(sessionId, out StickerDrawerViewModel value))
                 {
                     return value;
                 }
             }
             else
             {
-                _windowContext[id] = new Dictionary<int, DialogStickersViewModel>();
+                _windowContext[id] = new Dictionary<int, StickerDrawerViewModel>();
             }
 
-            var context = new DialogStickersViewModel(protoService, cacheService, settingsService, aggregator);
-            _windowContext[id][protoService.SessionId] = context;
+            var context = TLContainer.Current.Resolve<StickerDrawerViewModel>();
+            _windowContext[id][sessionId] = context;
 
             return context;
         }
@@ -152,17 +152,6 @@ namespace Unigram.ViewModels.Dialogs
 
             _stickers = false;
             SyncStickers(null);
-        }
-
-        public void Handle(UpdateSavedAnimations update)
-        {
-            ProtoService.Send(new GetSavedAnimations(), result =>
-            {
-                if (result is Animations animation)
-                {
-                    BeginOnUIThread(() => SavedAnimations.ReplaceWith(animation.AnimationsValue));
-                }
-            });
         }
 
         private void ProcessRecentGifs()
@@ -289,8 +278,6 @@ namespace Unigram.ViewModels.Dialogs
             //}
         }
 
-        public AnimationsCollection SavedAnimations { get; private set; }
-
         public MvxObservableCollection<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
         public StickerSetCollection SavedStickers { get; private set; }
@@ -309,22 +296,7 @@ namespace Unigram.ViewModels.Dialogs
             }
         }
 
-        private SearchAnimationsCollection _searchAnimations;
-        public SearchAnimationsCollection SearchAnimations
-        {
-            get
-            {
-                return _searchAnimations;
-            }
-            set
-            {
-                Set(ref _searchAnimations, value);
-                RaisePropertyChanged(() => Animations);
-            }
-        }
-
         public MvxObservableCollection<StickerSetViewModel> Stickers => SearchStickers ?? (MvxObservableCollection<StickerSetViewModel>)SavedStickers;
-        public AnimationsCollection Animations => SearchAnimations ?? SavedAnimations;
 
         public async void FindStickers(string query)
         {
@@ -337,26 +309,6 @@ namespace Unigram.ViewModels.Dialogs
                 var items = SearchStickers = new SearchStickerSetsCollection(ProtoService, Aggregator, false, query, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 await items.LoadMoreItemsAsync(0);
             }
-        }
-
-        public async void FindAnimations(string query)
-        {
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                SearchAnimations = null;
-            }
-            else
-            {
-                var items = SearchAnimations = new SearchAnimationsCollection(ProtoService, Aggregator, query);
-                await items.LoadMoreItemsAsync(0);
-
-                //if (items.Count > 0)
-                //{
-                //    SearchAnimations = items;
-                //}
-            }
-
-            Animations.Reset();
         }
 
         public async void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -489,13 +441,6 @@ namespace Unigram.ViewModels.Dialogs
                 });
             });
 
-            ProtoService.Send(new GetSavedAnimations(), result =>
-            {
-                if (result is Animations animation)
-                {
-                    BeginOnUIThread(() => SavedAnimations.ReplaceWith(animation.AnimationsValue));
-                }
-            });
 
 
 
@@ -940,83 +885,5 @@ namespace Unigram.ViewModels.Dialogs
         }
 
         public bool HasMoreItems => false;
-    }
-
-    public class AnimationsCollection : MvxObservableCollection<Animation>, IKeyIndexMapping
-    {
-        public string KeyFromIndex(int index)
-        {
-            return this[index].AnimationValue.Id.ToString();
-        }
-
-        public int IndexFromKey(string key)
-        {
-            return IndexOf(this.FirstOrDefault(x => key == x.AnimationValue.Id.ToString()));
-        }
-    }
-
-    public class SearchAnimationsCollection : AnimationsCollection, ISupportIncrementalLoading
-    {
-        private readonly IProtoService _protoService;
-        private readonly IEventAggregator _aggregator;
-        private readonly string _query;
-
-        private int? _userId;
-        private string _offset = string.Empty;
-        private bool _hasMoreItems = true;
-
-        public SearchAnimationsCollection(IProtoService protoService, IEventAggregator aggregator, string query)
-        {
-            _protoService = protoService;
-            _aggregator = aggregator;
-            _query = query;
-        }
-
-        public string Query => _query;
-
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint phase)
-        {
-            return AsyncInfo.Run(async token =>
-            {
-                if (_userId == null)
-                {
-                    var bot = await _protoService.SendAsync(new SearchPublicChat(_protoService.Options.AnimationSearchBotUsername));
-                    if (bot is Chat chat && chat.Type is ChatTypePrivate privata)
-                    {
-                        _userId = privata.UserId;
-                    }
-                }
-
-                if (_userId != null)
-                {
-                    var response = await _protoService.SendAsync(new GetInlineQueryResults(_userId.Value, 0, null, _query, _offset));
-                    if (response is InlineQueryResults results)
-                    {
-                        _offset = results.NextOffset;
-                        _hasMoreItems = _offset.Length > 0;
-
-                        foreach (var item in results.Results)
-                        {
-                            if (item is InlineQueryResultAnimation animation)
-                            {
-                                Add(animation.Animation);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        _hasMoreItems = false;
-                    }
-                }
-                else
-                {
-                    _hasMoreItems = false;
-                }
-
-                return new LoadMoreItemsResult();
-            });
-        }
-
-        public bool HasMoreItems => _hasMoreItems;
     }
 }

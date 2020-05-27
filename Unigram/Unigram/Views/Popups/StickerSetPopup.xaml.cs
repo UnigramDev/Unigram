@@ -7,7 +7,6 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
-using Unigram.Views;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -35,7 +34,7 @@ namespace Unigram.Views.Popups
             };
 
             _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
             _throttler.Tick += (s, args) =>
             {
                 _throttler.Stop();
@@ -151,7 +150,7 @@ namespace Unigram.Views.Popups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as Sticker;
 
-            content.Tag = args.ItemContainer.Tag = new ViewModels.Dialogs.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
+            content.Tag = args.ItemContainer.Tag = new ViewModels.Drawers.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
 
             if (args.Phase == 0)
             {

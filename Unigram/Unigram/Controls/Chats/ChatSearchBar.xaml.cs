@@ -1,14 +1,8 @@
-﻿using LinqToVisualTree;
-using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System;
 using System.Numerics;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Dialogs;
 using Windows.Foundation.Metadata;
 using Windows.UI.Core;
 using Windows.UI.Xaml;

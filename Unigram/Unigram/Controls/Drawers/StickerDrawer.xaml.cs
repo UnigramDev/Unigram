@@ -7,27 +7,29 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
 using Unigram.Services;
-using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Drawers;
 using Unigram.Views;
 using Unigram.Views.Settings;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using StickerSetViewModel = Unigram.ViewModels.Dialogs.StickerSetViewModel;
-using StickerViewModel = Unigram.ViewModels.Dialogs.StickerViewModel;
+using StickerDrawerViewModel = Unigram.ViewModels.Drawers.StickerDrawerViewModel;
+using StickerSetViewModel = Unigram.ViewModels.Drawers.StickerSetViewModel;
+using StickerViewModel = Unigram.ViewModels.Drawers.StickerViewModel;
 
 namespace Unigram.Controls.Drawers
 {
     public sealed partial class StickerDrawer : UserControl, IDrawer, IFileDelegate
     {
-        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+        public StickerDrawerViewModel ViewModel => DataContext as StickerDrawerViewModel;
 
-        public Action<Sticker> StickerClick { get; set; }
+        public Action<Sticker> ItemClick { get; set; }
+        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
         private readonly AnimatedListHandler<StickerViewModel> _handler;
         private readonly DispatcherTimer _throttler;
@@ -52,7 +54,7 @@ namespace Unigram.Controls.Drawers
             };
 
             _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.TypingTimeout);
+            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
             _throttler.Tick += (s, args) =>
             {
                 _throttler.Stop();
@@ -70,7 +72,7 @@ namespace Unigram.Controls.Drawers
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(FieldStickers, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>
             {
-                var items = ViewModel.Stickers.SearchStickers;
+                var items = ViewModel.SearchStickers;
                 if (items != null && string.Equals(FieldStickers.Text, items.Query))
                 {
                     await items.LoadMoreItemsAsync(1);
@@ -84,12 +86,25 @@ namespace Unigram.Controls.Drawers
         public void Activate()
         {
             _isActive = true;
-            _handler.LoadVisibleItems(false);
+            _handler.LoadVisibleItemsThrottled();
         }
 
         public void Deactivate()
         {
             _isActive = false;
+            _handler.UnloadVisibleItems();
+        }
+
+        public void LoadVisibleItems()
+        {
+            if (_isActive)
+            {
+                _handler.LoadVisibleItems(false);
+            }
+        }
+
+        public void UnloadVisibleItems()
+        {
             _handler.UnloadVisibleItems();
         }
 
@@ -183,7 +198,7 @@ namespace Unigram.Controls.Drawers
         {
             if (e.ClickedItem is StickerViewModel sticker && sticker.StickerValue != null)
             {
-                StickerClick?.Invoke(sticker.Get());
+                ItemClick?.Invoke(sticker.Get());
             }
         }
 
@@ -245,7 +260,7 @@ namespace Unigram.Controls.Drawers
 
         private void GroupStickers_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.GroupStickersCommand.Execute(null);
+            //ViewModel.GroupStickersCommand.Execute(null);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
@@ -255,7 +270,7 @@ namespace Unigram.Controls.Drawers
 
         private void Install_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Stickers.InstallCommand.Execute(((Button)sender).DataContext);
+            ViewModel.InstallCommand.Execute(((Button)sender).DataContext);
         }
 
         private async void OnChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
@@ -371,7 +386,7 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            if (args.Item is ViewModels.Dialogs.SupergroupStickerSetViewModel supergroup)
+            if (args.Item is SupergroupStickerSetViewModel supergroup)
             {
                 var chat = ViewModel.CacheService.GetChat(supergroup.ChatId);
                 if (chat == null)
@@ -432,42 +447,12 @@ namespace Unigram.Controls.Drawers
 
         private void FieldStickers_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ViewModel.Stickers.FindStickers(FieldStickers.Text);
+            ViewModel.FindStickers(FieldStickers.Text);
         }
 
         private void Sticker_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var sticker = element.Tag as StickerViewModel;
-
-            var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, sticker.Get(), Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Stickers });
-
-            if (ViewModel.ProtoService.IsStickerFavorite(sticker.StickerValue.Id))
-            {
-                flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, sticker.Get(), Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.Unfavorite });
-            }
-            else
-            {
-                flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker.Get(), Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Favorite });
-            }
-
-            if (!ViewModel.IsSchedule)
-            {
-                var chat = ViewModel.Chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                var self = ViewModel.CacheService.IsSavedMessages(chat);
-
-                flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), sticker.Get(), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
-                //flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, true, null)), sticker.Get(), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
-            }
-
-            args.ShowAt(flyout, element);
+            ItemContextRequested?.Invoke(sender, args);
         }
     }
 }

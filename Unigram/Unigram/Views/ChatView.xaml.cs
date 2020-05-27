@@ -314,8 +314,12 @@ namespace Unigram.Views
         private void InitializeStickers()
         {
             StickersPanel.EmojiClick = Emojis_ItemClick;
+
             StickersPanel.StickerClick = Stickers_ItemClick;
+            StickersPanel.StickerContextRequested += Sticker_ContextRequested;
+
             StickersPanel.AnimationClick = Animations_ItemClick;
+            StickersPanel.AnimationContextRequested += Animation_ContextRequested;
 
             _stickersModeWide = SettingsService.Current.IsSidebarOpen
                 ? StickersPanelMode.Sidebar
@@ -845,6 +849,7 @@ namespace Unigram.Views
             if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
             {
                 ViewVisibleMessages(false);
+                StickersPanel.LoadVisibleItems();
 
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -857,6 +862,7 @@ namespace Unigram.Views
             else
             {
                 UnloadVisibleMessages();
+                StickersPanel.UnloadVisibleItems();
             }
         }
 
@@ -2796,7 +2802,7 @@ namespace Unigram.Views
                 batch.Completed += (s, args) =>
                 {
                     StickersPanel.Visibility = Visibility.Collapsed;
-                    StickersPanel.UnloadVisibleItems();
+                    StickersPanel.Deactivate();
                 };
 
                 var opacity = _compositor.CreateScalarKeyFrameAnimation();
@@ -2835,7 +2841,7 @@ namespace Unigram.Views
                 StickersPanel.MaxHeight = 360;
                 StickersPanel.Height = _lastKnownKeyboardHeight;
 
-                StickersPanel.UnloadVisibleItems();
+                StickersPanel.Deactivate();
                 StickersPanel.Visibility = Visibility.Collapsed;
 
                 switch (ViewModel.Settings.Stickers.SelectedTab)
@@ -2988,7 +2994,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                args.ItemContainer.Tag = content.Tag = new ViewModels.Dialogs.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
+                args.ItemContainer.Tag = content.Tag = new ViewModels.Drawers.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
 
                 var file = sticker.Thumbnail.Photo;
                 if (file.Local.IsDownloadingCompleted)
