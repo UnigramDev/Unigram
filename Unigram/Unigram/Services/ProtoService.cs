@@ -137,8 +137,8 @@ namespace Unigram.Services
 
         private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
 
-        private readonly SimpleFileContext<long> _chatsMap = new SimpleFileContext<long>();
-        private readonly SimpleFileContext<int> _usersMap = new SimpleFileContext<int>();
+        private readonly FlatFileContext<long> _chatsMap = new FlatFileContext<long>();
+        private readonly FlatFileContext<int> _usersMap = new FlatFileContext<int>();
 
         private StickerSet[] _animatedSet = new StickerSet[2] { null, null };
         private TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
@@ -1663,7 +1663,7 @@ namespace Unigram.Services
         public UpdateUnreadMessageCount UnreadMessageCount { get; set; }
     }
 
-    public class FileContext<T> : Dictionary<int, List<T>>
+    public class FileContext<T> : ConcurrentDictionary<int, List<T>>
     {
         public new List<T> this[int id]
         {
@@ -1683,7 +1683,7 @@ namespace Unigram.Services
         }
     }
 
-    public class SimpleFileContext<T> : Dictionary<int, T>
+    public class FlatFileContext<T> : Dictionary<int, T>
     {
         //public new T this[int id]
         //{
