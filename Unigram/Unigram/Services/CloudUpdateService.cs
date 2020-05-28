@@ -36,6 +36,9 @@ namespace Unigram.Services
 
         private CloudUpdate _nextUpdate;
 
+        private long _lastCheck;
+        private bool _checking;
+
         public CloudUpdateService(IProtoService protoService, IEventAggregator aggregator)
         {
             _protoService = protoService;
@@ -57,6 +60,15 @@ namespace Unigram.Services
             {
                 return;
             }
+
+            var diff = Environment.TickCount - _lastCheck;
+            if (diff < 5 * 60 * 1000 || _checking)
+            {
+                return;
+            }
+
+            _checking = true;
+            _lastCheck = diff;
 
             var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
             var files = await folder.GetFilesAsync();
@@ -89,7 +101,7 @@ namespace Unigram.Services
             }
 
             var cloud = await GetNextUpdateAsync();
-            if (cloud.Version > current)
+            if (cloud != null && cloud.Version > current)
             {
                 _nextUpdate = cloud;
 
@@ -103,6 +115,8 @@ namespace Unigram.Services
                     _protoService.DownloadFile(cloud.Document.Id, 16);
                 }
             }
+
+            _checking = false;
         }
 
         public async void Handle(UpdateFile update)
