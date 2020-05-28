@@ -209,6 +209,7 @@
     <Compile Include="Common\LoopThread.cs" />
     <Compile Include="Common\LoopThreadPool.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
+    <Compile Include="Common\RemoteFileStream.cs" />
     <Compile Include="Common\SoundEffects.cs" />
     <Compile Include="Common\SunDate.cs" />
     <Compile Include="Common\TextStyleRun.cs" />

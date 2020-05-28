@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
-using Unigram.Native.Streaming;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.ViewService;
@@ -45,7 +44,7 @@ namespace Unigram.Controls.Gallery
         private DisplayRequest _request;
         private MediaPlayerElement _mediaPlayerElement;
         private MediaPlayer _mediaPlayer;
-        private FFmpegInteropMSS _streamingInterop;
+        private RemoteFileStream _streamingInterop;
         private Grid _surface;
 
         private Visual _layer;
@@ -588,13 +587,11 @@ namespace Unigram.Controls.Gallery
                 Transport.DownloadMaximum = file.Size;
                 Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
 
-                var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable && !file.Local.IsDownloadingCompleted;
+                var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable /*&& !file.Local.IsDownloadingCompleted*/;
                 if (streamable)
                 {
-                    _streamingInterop = new FFmpegInteropMSS(new FFmpegInteropConfig());
-                    var interop = await _streamingInterop.CreateFromFileAsync(ViewModel.ProtoService.Client, file);
-
-                    _mediaPlayer.Source = interop.CreateMediaPlaybackItem();
+                    _streamingInterop = new RemoteFileStream(item.ProtoService, file, TimeSpan.FromSeconds(item.Duration));
+                    _mediaPlayer.Source = MediaSource.CreateFromStream(_streamingInterop, item.MimeType);
 
                     Transport.DownloadMaximum = file.Size;
                     Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;

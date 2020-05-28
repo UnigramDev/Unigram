@@ -52,5 +52,9 @@ namespace Unigram.ViewModels.Gallery
         public override bool IsLoop => true;
 
         public override bool CanSave => true;
+
+        public override int Duration => _animation.Duration;
+
+        public override string MimeType => _animation.MimeType;
     }
 }

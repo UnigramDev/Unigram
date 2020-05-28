@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services.Updates;
-using Windows.Devices.Enumeration;
-using Windows.Devices.Sensors;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -72,8 +68,8 @@ namespace Unigram.Services
         private SystemMediaTransportControls _transport;
 
         private Dictionary<string, PlaybackItem> _mapping;
-        private Dictionary<string, Windows.Foundation.Deferral> _inverse;
-        private Dictionary<string, MediaBindingEventArgs> _binders;
+
+        private readonly FileContext<RemoteFileStream> _streams = new FileContext<RemoteFileStream>();
 
         private List<PlaybackItem> _items;
         private Queue<Message> _queue;
@@ -109,8 +105,6 @@ namespace Unigram.Services
                 : (bool?)false;
 
             _mapping = new Dictionary<string, PlaybackItem>();
-            _inverse = new Dictionary<string, Windows.Foundation.Deferral>();
-            _binders = new Dictionary<string, MediaBindingEventArgs>();
 
             aggregator.Subscribe(this);
         }
@@ -241,33 +235,6 @@ namespace Unigram.Services
         {
             PositionChanged?.Invoke(sender, args);
         }
-
-        #region Proximity
-
-        private ProximitySensor _sensor;
-        private ProximitySensorDisplayOnOffController _controller;
-
-        private async Task AttachAsync()
-        {
-            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
-            {
-                var devices = await DeviceInformation.FindAllAsync(ProximitySensor.GetDeviceSelector());
-                if (devices.Count > 0)
-                {
-                    _sensor = ProximitySensor.FromId(devices[0].Id);
-                    //_sensor.ReadingChanged += OnReadingChanged;
-
-                    _controller = _sensor.CreateDisplayOnOffController();
-                }
-            }
-        }
-
-        private void OnReadingChanged(ProximitySensor sender, ProximitySensorReadingChangedEventArgs args)
-        {
-            //AudioRoutingManager.GetDefault().SetAudioEndpoint(args.Reading.IsDetected ? AudioRoutingEndpoint.Earpiece : AudioRoutingEndpoint.Speakerphone);
-        }
-
-        #endregion
 
         private async void UpdateTransport()
         {
@@ -599,13 +566,14 @@ namespace Unigram.Services
         {
             var token = $"{message.ChatId}_{message.Id}";
             var file = GetFile(message);
+            var mime = GetMimeType(message);
+            var duration = GetDuration(message);
 
-            var binder = new MediaBinder();
-            binder.Token = token;
-            binder.Binding += Binder_Binding;
-
-            var source = MediaSource.CreateFromMediaBinder(binder);
+            var stream = new RemoteFileStream(_protoService, file, TimeSpan.FromSeconds(duration));
+            var source = MediaSource.CreateFromStream(stream, mime);
             var item = new PlaybackItem(source);
+
+            _streams[file.Id].Add(stream);
 
             source.CustomProperties["file"] = file.Id;
             source.CustomProperties["message"] = message.Id;
@@ -638,26 +606,6 @@ namespace Unigram.Services
             return item;
         }
 
-        private void Binder_Binding(MediaBinder sender, MediaBindingEventArgs args)
-        {
-            var deferral = args.GetDeferral();
-            if (_mapping.TryGetValue(args.MediaBinder.Token, out PlaybackItem item))
-            {
-                var file = GetFile(item.Message);
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    args.SetUri(new Uri("file:///" + file.Local.Path));
-                    deferral.Complete();
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
-                {
-                    _inverse[args.MediaBinder.Token] = deferral;
-                    _binders[args.MediaBinder.Token] = args;
-                    _protoService.DownloadFile(file.Id, 10);
-                }
-            }
-        }
-
         private File GetFile(Message message)
         {
             if (message.Content is MessageAudio audio)
@@ -683,21 +631,63 @@ namespace Unigram.Services
             return null;
         }
 
+        private string GetMimeType(Message message)
+        {
+            if (message.Content is MessageAudio audio)
+            {
+                return audio.Audio.MimeType;
+            }
+            else if (message.Content is MessageVoiceNote voiceNote)
+            {
+                return voiceNote.VoiceNote.MimeType;
+            }
+            else if (message.Content is MessageText text && text.WebPage != null)
+            {
+                if (text.WebPage.Audio != null)
+                {
+                    return text.WebPage.Audio.MimeType;
+                }
+                else if (text.WebPage.VoiceNote != null)
+                {
+                    return text.WebPage.VoiceNote.MimeType;
+                }
+            }
+
+            return null;
+        }
+
+        private int GetDuration(Message message)
+        {
+            if (message.Content is MessageAudio audio)
+            {
+                return audio.Audio.Duration;
+            }
+            else if (message.Content is MessageVoiceNote voiceNote)
+            {
+                return voiceNote.VoiceNote.Duration;
+            }
+            else if (message.Content is MessageText text && text.WebPage != null)
+            {
+                if (text.WebPage.Audio != null)
+                {
+                    return text.WebPage.Audio.Duration;
+                }
+                else if (text.WebPage.VoiceNote != null)
+                {
+                    return text.WebPage.VoiceNote.Duration;
+                }
+            }
+
+            return 0;
+        }
+
         public void Handle(UpdateFile update)
         {
-            if (update.File.Local.IsDownloadingCompleted)
+            if (_streams.TryGetValue(update.File.Id, out List<RemoteFileStream> streams))
             {
-                foreach (var message in _mapping.Values)
+                foreach (var stream in streams)
                 {
-                    if (message.UpdateFile(update.File))
-                    {
-                        var token = $"{message.Message.ChatId}_{message.Message.Id}";
-                        if (_binders.TryGetValue(token, out MediaBindingEventArgs args) && _inverse.TryGetValue(token, out Windows.Foundation.Deferral deferral))
-                        {
-                            args.SetUri(new Uri("file:///" + update.File.Local.Path));
-                            deferral.Complete();
-                        }
-                    }
+                    stream.UpdateFile(update.File);
                 }
             }
         }
@@ -733,23 +723,6 @@ namespace Unigram.Services
             {
                 _mapping.Clear();
             }
-
-            if (_inverse != null)
-            {
-                _inverse.Clear();
-            }
-
-            //if (_controller != null)
-            //{
-            //    _controller.Dispose();
-            //    _controller = null;
-            //}
-
-            //if (_sensor != null)
-            //{
-            //    _sensor.ReadingChanged -= OnReadingChanged;
-            //    _sensor = null;
-            //}
         }
 
         public bool IsSupportedPlaybackRateRange(double min, double max)

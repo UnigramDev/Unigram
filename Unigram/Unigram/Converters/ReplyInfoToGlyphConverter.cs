@@ -26,7 +26,9 @@ namespace Unigram.Converters
     public class Icons
     {
         public const string Download = "\uE118";
+        public const string DownloadSmall = "\uE92A";
         public const string Cancel = "\uE10A";
+        public const string CancelSmall = "\uE928";
         public const string Play = "\uE102";
         public const string Pause = "\uE103";
         public const string Confirm = "\uE10B";

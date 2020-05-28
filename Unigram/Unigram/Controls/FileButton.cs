@@ -38,6 +38,8 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(FileButton);
         }
 
+        public bool IsSmall { get; set; }
+
         protected override void OnApplyTemplate()
         {
             _label1 = _label = GetTemplateChild("ContentPresenter1") as TextBlock;
@@ -114,13 +116,13 @@ namespace Unigram.Controls
             switch (state)
             {
                 case MessageContentState.Download:
-                    OnGlyphChanged(Icons.Download, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.Download, Glyph, _state != state && _state != MessageContentState.None);
                     break;
                 case MessageContentState.Downloading:
-                    OnGlyphChanged(Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
                     break;
                 case MessageContentState.Uploading:
-                    OnGlyphChanged(Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
                     break;
                 case MessageContentState.Confirm:
                     OnGlyphChanged(Icons.Confirm, Glyph, _state != state && _state != MessageContentState.None);

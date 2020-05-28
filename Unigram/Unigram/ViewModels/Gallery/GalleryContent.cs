@@ -31,6 +31,10 @@ namespace Unigram.ViewModels.Gallery
 
         public virtual int Date { get; private set; }
 
+        public virtual int Duration { get; private set; }
+
+        public virtual string MimeType { get; private set; }
+
         public bool IsPhoto => !IsVideo;
 
         public virtual bool IsVideo { get; private set; }

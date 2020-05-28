@@ -2301,6 +2301,27 @@ namespace Unigram.Common
             file.Remote = update.Remote;
         }
 
+        public static void Update(this LocalFile local, LocalFile update)
+        {
+            local.CanBeDeleted = update.CanBeDeleted;
+            local.CanBeDownloaded = update.CanBeDownloaded;
+            local.DownloadedPrefixSize = update.DownloadedPrefixSize;
+            local.DownloadedSize = update.DownloadedSize;
+            local.DownloadOffset = update.DownloadOffset;
+            local.IsDownloadingActive = update.IsDownloadingActive;
+            local.IsDownloadingCompleted = update.IsDownloadingCompleted;
+            local.Path = update.Path;
+        }
+
+        public static void Update(this RemoteFile remote, RemoteFile update)
+        {
+            remote.Id = update.Id;
+            remote.IsUploadingActive = update.IsUploadingActive;
+            remote.IsUploadingCompleted = update.IsUploadingCompleted;
+            remote.UniqueId = update.UniqueId;
+            remote.UploadedSize = update.UploadedSize;
+        }
+
         public static File GetLocalFile(string path)
         {
             return new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, path), false, false, false, true, 0, 0, 0), new RemoteFile(string.Empty, string.Empty, false, false, 0));
