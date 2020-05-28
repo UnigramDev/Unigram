@@ -5,7 +5,7 @@
 #include "OpusOutputByteStream.h"
 #include "Helpers\COMHelper.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 using namespace Opus;
 
 #define FRAME_SIZE 960

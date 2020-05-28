@@ -6,7 +6,7 @@
 #include "FinalizeAsyncOperation.h"
 #include "MediaSink.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 
 MediaSink::MediaSink() :
 	m_state(MediaSinkState::None)

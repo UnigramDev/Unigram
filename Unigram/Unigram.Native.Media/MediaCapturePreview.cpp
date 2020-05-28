@@ -5,7 +5,7 @@
 #include "AsyncCallbackState.h"
 #include "MediaCapturePreview.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 
 MediaCapturePreviewMediaSink::MediaCapturePreviewMediaSink() :
 	m_state(MediaSinkState::None)

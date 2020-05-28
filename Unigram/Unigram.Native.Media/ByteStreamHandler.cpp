@@ -4,7 +4,7 @@
 #include "ByteStreamHandler.h"
 #include "Helpers\COMHelper.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 
 HRESULT ByteStreamHandler::SetProperties(ABI::Windows::Foundation::Collections::IPropertySet* pConfiguration)
 {

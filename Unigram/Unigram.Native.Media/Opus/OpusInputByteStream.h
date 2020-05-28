@@ -11,36 +11,40 @@ namespace Unigram
 {
 	namespace Native
 	{
-
-		class OpusInputByteStream WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
+		namespace Media
 		{
-		public:
-			OpusInputByteStream();
-			~OpusInputByteStream();
 
-			inline HRESULT GetCapabilities(_Out_ DWORD* capabilities)
+			class OpusInputByteStream WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IUnknown>
 			{
-				return m_byteStream->GetCapabilities(capabilities);
-			}
+			public:
+				OpusInputByteStream();
+				~OpusInputByteStream();
 
-			STDMETHODIMP RuntimeClassInitialize(_In_ IMFByteStream* byteStream);
-			HRESULT ReadMediaType(_Out_ IMFMediaType** mediaType);
-			HRESULT Seek(LONGLONG time);
-			HRESULT GetDuration(_Out_ LONGLONG* duration);
-			HRESULT ReadSamples(_Out_writes_(bufferLength) int16* buffer, DWORD bufferSize, _Out_ DWORD* readSamples);
+				inline HRESULT GetCapabilities(_Out_ DWORD* capabilities)
+				{
+					return m_byteStream->GetCapabilities(capabilities);
+				}
 
-		private:
-			HRESULT Close();
+				STDMETHODIMP RuntimeClassInitialize(_In_ IMFByteStream* byteStream);
+				HRESULT ReadMediaType(_Out_ IMFMediaType** mediaType);
+				HRESULT Seek(LONGLONG time);
+				HRESULT GetDuration(_Out_ LONGLONG* duration);
+				HRESULT ReadSamples(_Out_writes_(bufferLength) int16* buffer, DWORD bufferSize, _Out_ DWORD* readSamples);
 
-			static int DecoderReadCallback(_In_opt_ void* datasource, _Out_writes_(nbytes) unsigned char* ptr, int nbytes);
-			static int DecoderSeekCallback(_In_opt_ void* datasource, int64_t offset, int whence);
-			static int DecoderCloseCallback(_In_opt_ void* datasource);
-			static int64_t DecoderTellCallback(_In_opt_ void* datasource);
+			private:
+				HRESULT Close();
 
-			Opus::OggOpusFile* m_opusFile;
-			const Opus::OpusHead* m_header;
-			ComPtr<IMFByteStream> m_byteStream;
-			static const Opus::OpusFileCallbacks s_reader;
-		};
+				static int DecoderReadCallback(_In_opt_ void* datasource, _Out_writes_(nbytes) unsigned char* ptr, int nbytes);
+				static int DecoderSeekCallback(_In_opt_ void* datasource, int64_t offset, int whence);
+				static int DecoderCloseCallback(_In_opt_ void* datasource);
+				static int64_t DecoderTellCallback(_In_opt_ void* datasource);
+
+				Opus::OggOpusFile* m_opusFile;
+				const Opus::OpusHead* m_header;
+				ComPtr<IMFByteStream> m_byteStream;
+				static const Opus::OpusFileCallbacks s_reader;
+			};
+
+		}
 	}
 }

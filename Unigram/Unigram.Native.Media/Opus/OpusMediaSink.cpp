@@ -5,7 +5,7 @@
 #include "OpusMediaSink.h"
 #include "Helpers\COMHelper.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 
 HRESULT OpusMediaSink::RuntimeClassInitialize(OpusOutputByteStream* opusStream)
 {

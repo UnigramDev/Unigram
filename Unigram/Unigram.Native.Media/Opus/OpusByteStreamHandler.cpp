@@ -5,7 +5,7 @@
 #include "OpusByteStreamHandler.h"
 #include "Helpers\COMHelper.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 
 ActivatableClass(OpusByteStreamHandler)
 

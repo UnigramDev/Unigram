@@ -19,20 +19,23 @@ namespace Unigram
 {
 	namespace Native
 	{
-
-		public ref class OpusCodec sealed
+		namespace Media
 		{
-		public:
-			[DefaultOverload]
-			static IAsyncOperation<IMediaSource^>^ CreateMediaSourceAsync(_In_ StorageFile^ inputFile);
-			static IAsyncOperation<IMediaSource^>^ CreateMediaSourceAsync(_In_ IRandomAccessStream^ inputStream);
-			[DefaultOverload]
-			static IAsyncOperation<IMediaExtension^>^ CreateMediaSinkAsync(_In_ StorageFile^ outputFile);
-			static IAsyncOperation<IMediaExtension^>^ CreateMediaSinkAsync(_In_ IRandomAccessStream^ outputStream);
 
-		private:
-			OpusCodec();
-		};
+			public ref class OpusCodec sealed
+			{
+			public:
+				[DefaultOverload]
+				static IAsyncOperation<IMediaSource^>^ CreateMediaSourceAsync(_In_ StorageFile^ inputFile);
+				static IAsyncOperation<IMediaSource^>^ CreateMediaSourceAsync(_In_ IRandomAccessStream^ inputStream);
+				[DefaultOverload]
+				static IAsyncOperation<IMediaExtension^>^ CreateMediaSinkAsync(_In_ StorageFile^ outputFile);
+				static IAsyncOperation<IMediaExtension^>^ CreateMediaSinkAsync(_In_ IRandomAccessStream^ outputStream);
 
+			private:
+				OpusCodec();
+			};
+
+		}
 	}
 }

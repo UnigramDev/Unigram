@@ -8,7 +8,7 @@
 #include "OpusCodec.h"
 #include "Helpers\COMHelper.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 using Platform::Exception;
 
 IAsyncOperation<IMediaSource^>^ OpusCodec::CreateMediaSourceAsync(StorageFile^ inputFile)

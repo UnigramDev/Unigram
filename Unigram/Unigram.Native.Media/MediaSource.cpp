@@ -4,7 +4,7 @@
 #include "AsyncCallbackState.h"
 #include "MediaSource.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 
 MediaSource::MediaSource() :
 	m_state(MediaSourceState::None),

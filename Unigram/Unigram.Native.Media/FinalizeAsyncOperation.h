@@ -16,24 +16,27 @@ namespace Unigram
 {
 	namespace Native
 	{
-
-		class FinalizeAsyncOperation WrlSealed : public RuntimeClass<RuntimeClassFlags<RuntimeClassType::ClassicCom>, IMFAsyncCallback>
+		namespace Media
 		{
-		public:
-			FinalizeAsyncOperation();
-			~FinalizeAsyncOperation();
 
-			STDMETHODIMP RuntimeClassInitialize(_In_ IMFAsyncCallback* callback, _In_opt_ IUnknown* state, DWORD pendingOperationCount);
-			HRESULT Cancel(HRESULT result);
+			class FinalizeAsyncOperation WrlSealed : public RuntimeClass<RuntimeClassFlags<RuntimeClassType::ClassicCom>, IMFAsyncCallback>
+			{
+			public:
+				FinalizeAsyncOperation();
+				~FinalizeAsyncOperation();
 
-		private:
-			IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
-			IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
+				STDMETHODIMP RuntimeClassInitialize(_In_ IMFAsyncCallback* callback, _In_opt_ IUnknown* state, DWORD pendingOperationCount);
+				HRESULT Cancel(HRESULT result);
 
-			CriticalSection m_criticalSection;
-			DWORD m_pendingOperationCount;
-			ComPtr<IMFAsyncResult> m_asyncResult;
-		};
+			private:
+				IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
+				IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
 
+				CriticalSection m_criticalSection;
+				DWORD m_pendingOperationCount;
+				ComPtr<IMFAsyncResult> m_asyncResult;
+			};
+
+		}
 	}
 }

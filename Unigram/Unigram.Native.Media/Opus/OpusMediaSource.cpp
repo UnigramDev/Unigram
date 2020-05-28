@@ -5,7 +5,7 @@
 #include "Helpers\MediaFoundationHelper.h"
 #include "OpusMediaSource.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 
 OpusMediaSource::OpusMediaSource() :
 	m_characteristics(MFMEDIASOURCE_CAN_PAUSE)

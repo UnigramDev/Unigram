@@ -5,7 +5,7 @@
 #include "OpusInputByteStream.h"
 #include "Helpers\COMHelper.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 using namespace Opus;
 
 const OpusFileCallbacks OpusInputByteStream::s_reader = {

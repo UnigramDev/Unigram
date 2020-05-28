@@ -4,7 +4,7 @@
 #include "FinalizeAsyncOperation.h"
 #include "Helpers\COMHelper.h"
 
-using namespace Unigram::Native;
+using namespace Unigram::Native::Media;
 
 FinalizeAsyncOperation::FinalizeAsyncOperation() :
 	m_pendingOperationCount(0)
