@@ -112,7 +112,7 @@ namespace Unigram.Views.Settings
             var items = List.ItemsSource as IList<StorageChartItem>;
             if (items != null)
             {
-                SelectedItems = items.SelectMany(x => x.Types).ToList();
+                SelectedItems = items.Where(x => x.IsVisible).SelectMany(x => x.Types).ToList();
             }
             else
             {

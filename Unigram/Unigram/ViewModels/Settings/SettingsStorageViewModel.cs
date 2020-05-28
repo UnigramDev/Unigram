@@ -130,7 +130,7 @@ namespace Unigram.ViewModels.Settings
 
         public async void Clear(StorageStatisticsByChat byChat)
         {
-            if (byChat == null)
+            if (byChat == null || byChat.ByFileType.IsEmpty())
             {
                 return;
             }
