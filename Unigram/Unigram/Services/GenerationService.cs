@@ -257,9 +257,12 @@ namespace Unigram.Services
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
-                    var transcoder = new MediaTranscoder();
-
                     var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
+                    if (profile.Audio == null && conversion.Mute)
+                    {
+                        await CopyAsync(update, args);
+                        return;
+                    }
                     //profile.Video.Width = conversion.Width;
                     //profile.Video.Height = conversion.Height;
                     //profile.Video.Bitrate = conversion.Bitrate;
@@ -268,6 +271,8 @@ namespace Unigram.Services
                     {
                         profile.Audio = null;
                     }
+
+                    var transcoder = new MediaTranscoder();
 
                     if (conversion.Transform)
                     {
