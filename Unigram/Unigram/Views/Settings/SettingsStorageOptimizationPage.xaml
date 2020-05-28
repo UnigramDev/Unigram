@@ -472,7 +472,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <CheckBox
+                    <controls:FauxCheckBox
                         Click="CheckBox_Click"
                         Style="{StaticResource DefaultCheckBoxStyle}"
                         Margin="12,6,0,6">
@@ -487,7 +487,7 @@
                                         Grid.Row="1"
                                         MaxLines="1"/>
                         </StackPanel>
-                    </CheckBox>
+                    </controls:FauxCheckBox>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TableListView>

@@ -136,8 +136,24 @@ namespace Unigram.Views.Settings
                 return;
             }
 
-            item.IsVisible = check.IsChecked == true;
-            Chart.Update(index, item.IsVisible);
+            if (item.IsVisible && Chart.Items.Except(new[] { item }).Any(x => x.IsVisible))
+            {
+                item.IsVisible = false;
+                check.IsChecked = false;
+
+                Chart.Update(index, item.IsVisible);
+            }
+            else if (!item.IsVisible)
+            {
+                item.IsVisible = true;
+                check.IsChecked = true;
+
+                Chart.Update(index, item.IsVisible);
+            }
+            else
+            {
+                VisualUtilities.ShakeView(check);
+            }
 
             var size = Chart.Items.Where(x => x.IsVisible).Sum(x => x.Size);
             var readable = FileSizeConverter.Convert(size, true).Split(' ');
