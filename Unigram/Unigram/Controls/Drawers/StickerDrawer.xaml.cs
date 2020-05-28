@@ -156,7 +156,7 @@ namespace Unigram.Controls.Drawers
                 }
             }
 
-            if (_stickerSets.TryGetValue(file.Id, out List<StickerSetViewModel> sets) && items.Count > 0)
+            if (_stickerSets.TryGetValue(file.Id, out List<StickerSetViewModel> sets) && sets.Count > 0)
             {
                 foreach (var item in sets)
                 {
@@ -265,12 +265,12 @@ namespace Unigram.Controls.Drawers
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(SettingsStickersPage));
+            //ViewModel.NavigationService.Navigate(typeof(SettingsStickersPage));
         }
 
         private void Install_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.InstallCommand.Execute(((Button)sender).DataContext);
+            //ViewModel.InstallCommand.Execute(((Button)sender).DataContext);
         }
 
         private async void OnChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
