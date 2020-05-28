@@ -143,13 +143,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -160,13 +160,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -177,13 +177,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -194,13 +194,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -211,13 +211,13 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -228,21 +228,17 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;..\Libraries\libopus\include;..\Libraries\libopusfile\include;..\Libraries\libogg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <AdditionalDependencies>libwebp.lib;shcore.lib;Mfreadwrite.lib;mfuuid.lib;mfplat.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;..\$(MappedPlatform)\libopus\;..\$(MappedPlatform)\libopusfile\;..\$(MappedPlatform)\libogg\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AsyncCallbackState.h" />
-    <ClInclude Include="BufferLock.h" />
-    <ClInclude Include="ByteStreamHandler.h" />
     <ClInclude Include="DeviceLostHelper.h" />
-    <ClInclude Include="FinalizeAsyncOperation.h" />
     <ClInclude Include="libyuv\include\libyuv.h" />
     <ClInclude Include="libyuv\include\libyuv\basic_types.h" />
     <ClInclude Include="libyuv\include\libyuv\compare.h" />
@@ -263,22 +259,11 @@
     <ClInclude Include="libyuv\include\libyuv\scale_row.h" />
     <ClInclude Include="libyuv\include\libyuv\version.h" />
     <ClInclude Include="libyuv\include\libyuv\video_common.h" />
-    <ClInclude Include="MediaFoundationExtensions.h" />
-    <ClInclude Include="MediaSink.h" />
-    <ClInclude Include="MediaSource.h" />
     <ClInclude Include="Mrz\fast-edge.h" />
     <ClInclude Include="Mrz\genann.h" />
     <ClInclude Include="Mrz\MrzRecognizer.h" />
     <ClInclude Include="NativeUtils.h" />
-    <ClInclude Include="Opus\OpusCodec.h" />
-    <ClInclude Include="Opus\OpusByteStreamHandler.h" />
-    <ClInclude Include="Opus\OpusInputByteStream.h" />
-    <ClInclude Include="Opus\OpusMediaSink.h" />
-    <ClInclude Include="Opus\OpusMediaSource.h" />
-    <ClInclude Include="Opus\OpusMediaType.h" />
-    <ClInclude Include="Opus\OpusOutputByteStream.h" />
     <ClInclude Include="PlaceholderImageHelper.h" />
-    <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="Proxies\TelegramGameProxy.h" />
     <ClInclude Include="Proxies\TelegramPaymentProxy.h" />
     <ClInclude Include="QR\BitBuffer.hpp" />
@@ -295,10 +280,7 @@
     <ClInclude Include="WebP\WebPImage.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BufferLock.cpp" />
-    <ClCompile Include="ByteStreamHandler.cpp" />
     <ClCompile Include="DeviceLostHelper.cpp" />
-    <ClCompile Include="FinalizeAsyncOperation.cpp" />
     <ClCompile Include="libyuv\source\compare.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -428,9 +410,6 @@
     <ClCompile Include="libyuv\source\video_common.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="MediaFoundationExtensions.cpp" />
-    <ClCompile Include="MediaSink.cpp" />
-    <ClCompile Include="MediaSource.cpp" />
     <ClCompile Include="Mrz\fast-edge.cpp" />
     <ClCompile Include="Mrz\genann.c">
       <CompileAsWinRT>false</CompileAsWinRT>
@@ -438,17 +417,10 @@
     </ClCompile>
     <ClCompile Include="Mrz\MrzRecognizer.cpp" />
     <ClCompile Include="NativeUtils.cpp" />
-    <ClCompile Include="Opus\OpusCodec.cpp" />
-    <ClCompile Include="Opus\OpusByteStreamHandler.cpp" />
-    <ClCompile Include="Opus\OpusInputByteStream.cpp" />
-    <ClCompile Include="Opus\OpusMediaSink.cpp" />
-    <ClCompile Include="Opus\OpusMediaSource.cpp" />
-    <ClCompile Include="Opus\OpusOutputByteStream.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PlaceholderImageHelper.cpp" />
-    <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="Proxies\TelegramGameProxy.cpp" />
     <ClCompile Include="Proxies\TelegramPaymentProxy.cpp" />
     <ClCompile Include="Qr\BitBuffer.cpp">
@@ -466,15 +438,6 @@
     <ClCompile Include="WebP\WebPImage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\libogg\libogg.vcxproj">
-      <Project>{3520c5e6-f0c2-468f-8970-372414c233dc}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\libopusfile\libopusfile.vcxproj">
-      <Project>{6766a2c0-ab30-43cc-9ef3-7ddc13736a38}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Libraries\libopus\libopus.vcxproj">
-      <Project>{904ac506-51a0-474e-9f55-ec3febbcccd9}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\libwebp\libwebp.vcxproj">
       <Project>{7789c8b7-887c-46b6-bd76-952c590b1853}</Project>
     </ProjectReference>

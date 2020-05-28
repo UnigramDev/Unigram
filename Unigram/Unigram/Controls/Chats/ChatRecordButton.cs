@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Views.Popups;
 using Unigram.Logs;
-using Unigram.Native;
+using Unigram.Native.Media;
 using Unigram.ViewModels;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Opus">
+      <UniqueIdentifier>{bf065cdb-77cb-442e-a516-3e1cd348baa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Helpers">
+      <UniqueIdentifier>{460ed64c-4194-4bd9-81e3-3c8afa9f91de}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="BufferLock.cpp" />
+    <ClCompile Include="ByteStreamHandler.cpp" />
+    <ClCompile Include="FinalizeAsyncOperation.cpp" />
+    <ClCompile Include="MediaCapturePreview.cpp" />
+    <ClCompile Include="MediaFoundationExtensions.cpp" />
+    <ClCompile Include="MediaSink.cpp" />
+    <ClCompile Include="MediaSource.cpp" />
+    <ClCompile Include="Opus\OpusByteStreamHandler.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusCodec.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusInputByteStream.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusMediaSink.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusMediaSource.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusOutputByteStream.cpp">
+      <Filter>Opus</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="AsyncCallbackState.h" />
+    <ClInclude Include="BufferLock.h" />
+    <ClInclude Include="ByteStreamHandler.h" />
+    <ClInclude Include="FinalizeAsyncOperation.h" />
+    <ClInclude Include="MediaCapturePreview.h" />
+    <ClInclude Include="MediaFoundationExtensions.h" />
+    <ClInclude Include="MediaSink.h" />
+    <ClInclude Include="MediaSource.h" />
+    <ClInclude Include="Opus\OpusByteStreamHandler.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusCodec.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusInputByteStream.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusMediaSink.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusMediaSource.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusMediaType.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusOutputByteStream.h">
+      <Filter>Opus</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\MediaFoundationHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
