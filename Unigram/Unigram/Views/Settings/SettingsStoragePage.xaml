@@ -19,22 +19,19 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader
             Text="{CustomResource StorageUsage}" 
             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
             ItemsSource="{x:Bind ViewModel.Statistics.ByChat, Mode=OneWay}"
             ItemClick="ListView_ItemClick"
             IsItemClickEnabled="True"
             SelectionMode="None"
-            ContainerContentChanging="OnContainerContentChanging"
-            Grid.Row="1">
+            ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl

@@ -16,21 +16,18 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource ArchivedMasks}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemTemplate="{StaticResource StickerSetItemTemplate}"
             ItemClick="ListView_ItemClick"
             IsItemClickEnabled="True"
             ContainerContentChanging="OnContainerContentChanging"
-            SelectionMode="None"
-            Grid.Row="1">
+            SelectionMode="None">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

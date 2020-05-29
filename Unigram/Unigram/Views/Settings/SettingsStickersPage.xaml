@@ -9,13 +9,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource StickersName}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="ListView_ItemClick"
@@ -25,8 +23,7 @@
             CanReorderItems="True"
             CanDragItems="True"
             SelectionMode="None"
-            AllowDrop="True"
-            Grid.Row="1">
+            AllowDrop="True">
             <ListView.Header>
                 <StackPanel Margin="0,0,0,16">
                     <controls:HeaderedControl

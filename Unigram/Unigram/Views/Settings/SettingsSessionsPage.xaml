@@ -21,19 +21,16 @@
         <CollectionViewSource x:Name="ItemsSource" Source="{x:Bind ViewModel.Items}" IsSourceGrouped="True"/>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource SessionsTitle}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ListView ItemsSource="{x:Bind ItemsSource.View}"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ContainerContentChanging="OnContainerContentChanging"
-                  ItemClick="ListView_ItemClick"
-                  Grid.Row="1">
+                  ItemClick="ListView_ItemClick">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderContainerStyle>

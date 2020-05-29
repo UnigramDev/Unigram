@@ -224,11 +224,51 @@
         </ResourceDictionary>
     </Page.Resources>
 
+    <local:HostedPage.Header>
+        <controls:ContentPageHeader x:Name="Header">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+
+                <controls:GlyphButton
+                        Click="Done_Click"
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Glyph="&#xE10B;"
+                        AutomationProperties.Name="{CustomResource Done}"
+                        ToolTipService.ToolTip="{CustomResource Done}"
+                        Grid.Column="1"/>
+
+                <Button Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="2">
+                    <Button.Flyout>
+                        <MenuFlyout x:Name="MenuFlyout">
+                            <MenuFlyoutItem Text="{CustomResource EditName}" Click="Rename_Click">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE104;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <FontIcon x:Name="EllipsisIcon"
+                                VerticalAlignment="Center"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Glyph="&#xE10C;"
+                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </controls:ContentPageHeader>
+    </local:HostedPage.Header>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
         <!-- This control is used to force refresh all the resources that might haven't been used yet in the app -->
         <themes:ResourcesMapper
             PageHeaderDisabledBrush="{ThemeResource PageHeaderDisabledBrush}" 
@@ -913,54 +953,11 @@
             AppBarButtonSubItemChevronForegroundSubMenuOpened="{ThemeResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" 
             AppBarButtonSubItemChevronForegroundDisabled="{ThemeResource AppBarButtonSubItemChevronForegroundDisabled}" />
         
-        <controls:ContentPageHeader x:Name="Header">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock x:Name="TitleLabel" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-
-                <controls:GlyphButton
-                        Click="Done_Click"
-                        Style="{StaticResource HeaderGlyphButtonStyle}"
-                        Glyph="&#xE10B;"
-                        AutomationProperties.Name="{CustomResource Done}"
-                        ToolTipService.ToolTip="{CustomResource Done}"
-                        Grid.Column="1"/>
-
-                <Button Padding="{StaticResource EllipsisButtonPadding}"
-                        Style="{StaticResource EllipsisButton}"
-                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                        Grid.Column="2">
-                    <Button.Flyout>
-                        <MenuFlyout x:Name="MenuFlyout">
-                            <MenuFlyoutItem Text="{CustomResource EditName}" Click="Rename_Click">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE104;"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </Button.Flyout>
-                    <FontIcon x:Name="EllipsisIcon"
-                                VerticalAlignment="Center"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="16"
-                                Glyph="&#xE10C;"
-                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                </Button>
-            </Grid>
-        </controls:ContentPageHeader>
-
         <ListView x:Name="List"
                   ContainerContentChanging="List_ContainerContentChanging"
                   SelectionMode="None"
                   IsItemClickEnabled="True"
-                  ItemClick="List_ItemClick"
-                  Grid.Row="1">
+                  ItemClick="List_ItemClick">
             <ListView.ItemTemplateSelector>
                 <themes:ThemePartTemplateSelector>
                     <themes:ThemePartTemplateSelector.BrushTemplate>

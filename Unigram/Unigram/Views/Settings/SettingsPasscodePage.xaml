@@ -17,18 +17,14 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <controls:PageHeader
-            Text="{CustomResource Passcode}"/>
+    <local:HostedPage.Header>
+        <controls:PageHeader Text="{CustomResource Passcode}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,48">
                 <controls:HeaderedControl
                     Footer="{CustomResource ChangePasscodeInfo}">

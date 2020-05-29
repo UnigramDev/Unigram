@@ -19,20 +19,17 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource ProxySettings}" />
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="List_ItemClick"
             IsItemClickEnabled="True"
             SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-            VerticalContentAlignment="Top"
-            Grid.Row="1">
+            VerticalContentAlignment="Top">
             <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl>

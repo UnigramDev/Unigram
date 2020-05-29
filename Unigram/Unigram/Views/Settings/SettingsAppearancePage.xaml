@@ -12,14 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <contract7Present:Grid.BackgroundTransition>
-            <contract7Present:BrushTransition/>
-        </contract7Present:Grid.BackgroundTransition>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -53,11 +46,15 @@
                 </Button>
             </Grid>
         </controls:ContentPageHeader>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <contract7Present:Grid.BackgroundTransition>
+            <contract7Present:BrushTransition/>
+        </contract7Present:Grid.BackgroundTransition>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,48">
                 <controls:HeaderedControl
                     Header="{CustomResource TextSizeHeader}">

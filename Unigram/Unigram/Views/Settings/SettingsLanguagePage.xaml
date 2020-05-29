@@ -13,19 +13,16 @@
         <CollectionViewSource x:Name="ItemsSource" Source="{x:Bind ViewModel.Items}" IsSourceGrouped="True"/>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource Language}" IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ListView ItemsSource="{x:Bind ItemsSource.View}"
                   ContainerContentChanging="OnContainerContentChanging"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
-                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}"
-                  Grid.Row="1">
+                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderContainerStyle>

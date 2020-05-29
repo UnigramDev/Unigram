@@ -15,22 +15,19 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
+
+    <local:HostedPage.Header>
+        <controls:PageHeader Text="{CustomResource NotificationsExceptions}"/>
+    </local:HostedPage.Header>
     
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <controls:PageHeader Text="{CustomResource NotificationsExceptions}"/>
-
         <controls:TableListView
             x:Name="List"
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="ListView_ItemClick"
             IsItemClickEnabled="True"
             ContainerContentChanging="OnContainerContentChanging"
-            SelectionMode="None"
-            Grid.Row="1">
+            SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="12,6">

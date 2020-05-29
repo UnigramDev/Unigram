@@ -17,20 +17,17 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource WebSessionsTitle}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
             ItemsSource="{x:Bind ViewModel.Items}"
             IsItemClickEnabled="True"
             SelectionMode="None"
             ItemClick="ListView_ItemClick"
-            ContainerContentChanging="OnContainerContentChanging"
-            Grid.Row="1">
+            ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl
