@@ -17,22 +17,18 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.Receipt.Invoice.IsTest), FallbackValue=Receipt}"/>
-
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:ScrollViewerBackground 
             Background="{ThemeResource PageSubHeaderBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
+            VerticalAlignment="Top"/>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel Padding="0,0,0,48">
                 <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}" Padding="12" Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>

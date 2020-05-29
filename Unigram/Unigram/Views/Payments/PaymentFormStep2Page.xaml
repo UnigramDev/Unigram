@@ -9,20 +9,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Text="{CustomResource PaymentShippingMethod}" 
             Command="{x:Bind ViewModel.SendCommand}"
             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
             Glyph="&#xE10B;"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <payments:ShippingOptionsPanel
                 Options="{x:Bind ViewModel.RequestedInfo.ShippingOptions}"
                 Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"

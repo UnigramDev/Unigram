@@ -32,22 +32,19 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Text="{CustomResource PaymentCardInfo}" 
             Command="{x:Bind ViewModel.SendCommand}"
             CommandVisibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
             Glyph="&#xE10B;"/>
-
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer Visibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel>
                 <StackPanel>
                     <TextBlock Text="{CustomResource PaymentCardTitle}" Margin="12,12,0,0" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>

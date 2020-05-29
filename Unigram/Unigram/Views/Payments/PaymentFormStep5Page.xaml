@@ -64,24 +64,23 @@
             </Setter>
         </Style>
     </Page.Resources>
+
+    <local:HostedPage.Header>
+        <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.PaymentForm.Invoice.IsTest), FallbackValue=Checkout}"/>
+    </local:HostedPage.Header>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.PaymentForm.Invoice.IsTest), FallbackValue=Checkout}"/>
-
         <controls:ScrollViewerBackground 
             Background="{ThemeResource PageSubHeaderBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
+            VerticalAlignment="Top"/>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel Padding="0,0,0,48">
                 <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}" Padding="12" Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
@@ -157,7 +156,7 @@
 
         <Grid Background="{ThemeResource PageHeaderBackgroundBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}"
-              Grid.Row="3">
+              Grid.Row="1">
             <Button Content="{x:Bind ConvertPay(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), FallbackValue=Empty}" Command="{x:Bind ViewModel.SendCommand}" Style="{StaticResource SendButtonStyle}"/>
         </Grid>
     </Grid>
