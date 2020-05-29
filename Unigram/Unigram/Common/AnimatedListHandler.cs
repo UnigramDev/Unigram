@@ -66,6 +66,8 @@ namespace Unigram.Common
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            LoadVisibleItems(true);
+
             _throttler.Stop();
             _throttler.Start();
             return;
@@ -90,6 +92,11 @@ namespace Unigram.Common
 
         public void LoadVisibleItems(bool intermediate)
         {
+            if (intermediate && _old.Count < 1)
+            {
+                return;
+            }
+
             int lastVisibleIndex;
             int firstVisibleIndex;
 
@@ -143,9 +150,9 @@ namespace Unigram.Common
                 }
             }
 
-            if (animations.Count > 0 && !intermediate)
+            if (animations.Count > 0)
             {
-                Play(animations, true);
+                Play(animations, !intermediate);
             }
         }
 

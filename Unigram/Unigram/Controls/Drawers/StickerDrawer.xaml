@@ -140,221 +140,69 @@
                         <ItemsStackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
-                <ListView.ItemContainerStyleSelector>
-                    <selectors:StickerSetStyleSelector>
-                        <selectors:StickerSetStyleSelector.RecentStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Margin" Value="0"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                                <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                                <Setter Property="MinWidth" Value="0"/>
-                                <Setter Property="MinHeight" Value="0"/>
-                                <Setter Property="ToolTipService.ToolTip" Value="{CustomResource RecentStickers}"/>
-                                <Setter Property="AutomationProperties.Name" Value="{CustomResource RecentStickers}"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <Grid
-                                                x:Name="RootGrid"
-                                                CornerRadius="{StaticResource GlyphButtonCornerRadius}"
-                                                Margin="{StaticResource GlyphButtonPadding}">
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup>
-                                                        <VisualState x:Name="Normal"/>
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Pressed">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Selected">
-                                                            <VisualState.Setters>
-                                                                <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
-                                                                <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
-                                                            </VisualState.Setters>
-                                                        </VisualState>
-                                                        <VisualState x:Name="PointerOverSelected">
-                                                            <VisualState.Setters>
-                                                                <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
-                                                                <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
-                                                            </VisualState.Setters>
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="PressedSelected">
-                                                            <VisualState.Setters>
-                                                                <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
-                                                                <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
-                                                            </VisualState.Setters>
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-                                                <FontIcon x:Name="UncheckedGlyph" Glyph="&#xE911;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-                                                <FontIcon x:Name="CheckedGlyph" Visibility="Collapsed" Glyph="&#xE912;" FontFamily="{StaticResource TelegramThemeFontFamily}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </selectors:StickerSetStyleSelector.RecentStyle>
-                        <selectors:StickerSetStyleSelector.FavoriteStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Margin" Value="0"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                                <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                                <Setter Property="MinWidth" Value="0"/>
-                                <Setter Property="MinHeight" Value="0"/>
-                                <Setter Property="ToolTipService.ToolTip" Value="{CustomResource FavoriteStickers}"/>
-                                <Setter Property="AutomationProperties.Name" Value="{CustomResource FavoriteStickers}"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <Grid
-                                                x:Name="RootGrid"
-                                                CornerRadius="{StaticResource GlyphButtonCornerRadius}"
-                                                Margin="{StaticResource GlyphButtonPadding}">
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup>
-                                                        <VisualState x:Name="Normal"/>
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Pressed">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Selected">
-                                                            <VisualState.Setters>
-                                                                <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
-                                                                <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
-                                                            </VisualState.Setters>
-                                                        </VisualState>
-                                                        <VisualState x:Name="PointerOverSelected">
-                                                            <VisualState.Setters>
-                                                                <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
-                                                                <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
-                                                            </VisualState.Setters>
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="PressedSelected">
-                                                            <VisualState.Setters>
-                                                                <Setter Target="UncheckedGlyph.Visibility" Value="Collapsed"/>
-                                                                <Setter Target="CheckedGlyph.Visibility" Value="Visible"/>
-                                                            </VisualState.Setters>
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-                                                <FontIcon x:Name="UncheckedGlyph" Glyph="&#xE208;" Margin="0,0,0,2"/>
-                                                <FontIcon x:Name="CheckedGlyph" Visibility="Collapsed" Glyph="&#xE0B4;" Margin="0,0,0,2" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </selectors:StickerSetStyleSelector.FavoriteStyle>
-                        <selectors:StickerSetStyleSelector.ItemStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                                <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}" />
-                                <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}" />
-                                <Setter Property="TabNavigation" Value="Local" />
-                                <Setter Property="IsHoldingEnabled" Value="True" />
-                                <Setter Property="Margin" Value="0"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                                <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
-                                <Setter Property="MinWidth" Value="0"/>
-                                <Setter Property="MinHeight" Value="0"/>
-                                <Setter Property="AllowDrop" Value="False" />
-                                <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                <Setter Property="FocusVisualMargin" Value="0" />
-                                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
-                                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
-                                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
-                                <Setter Property="FocusVisualSecondaryThickness" Value="1" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <ListViewItemPresenter
-                                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                Control.IsTemplateFocusTarget="True"
-                                                FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                                FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                                                FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                                                FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                                                FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                                                SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
-                                                CheckBrush="{ThemeResource ListViewItemCheckBrush}"
-                                                CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                                DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                                DragForeground="{ThemeResource ListViewItemDragForeground}"
-                                                FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                                FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                                PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
-                                                PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                                SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                                                SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                                                SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                                                PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
-                                                SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                ContentMargin="{TemplateBinding Padding}"
-                                                CheckMode="{ThemeResource ListViewItemCheckMode}"
-                                                CornerRadius="{StaticResource GlyphButtonCornerRadius}"
-                                                Margin="{StaticResource GlyphButtonPadding}"/>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </selectors:StickerSetStyleSelector.ItemStyle>
-                    </selectors:StickerSetStyleSelector>
-                </ListView.ItemContainerStyleSelector>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                        <Setter Property="Background" Value="{ThemeResource ListViewItemBackground}" />
+                        <Setter Property="Foreground" Value="{ThemeResource ListViewItemForeground}" />
+                        <Setter Property="TabNavigation" Value="Local" />
+                        <Setter Property="IsHoldingEnabled" Value="True" />
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Width" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+                        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+                        <Setter Property="MinWidth" Value="0"/>
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="AllowDrop" Value="False" />
+                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                        <Setter Property="FocusVisualMargin" Value="0" />
+                        <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource ListViewItemFocusVisualPrimaryBrush}" />
+                        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                        <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource ListViewItemFocusVisualSecondaryBrush}" />
+                        <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter
+                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                        Control.IsTemplateFocusTarget="True"
+                                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                        FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                        FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                        FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                        FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                        SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
+                                        CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                                        CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                                        DragBackground="{ThemeResource ListViewItemDragBackground}"
+                                        DragForeground="{ThemeResource ListViewItemDragForeground}"
+                                        FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                                        FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                                        PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                                        PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                                        SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                                        SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                                        SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                                        PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                                        SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        ContentMargin="{TemplateBinding Padding}"
+                                        CheckMode="{ThemeResource ListViewItemCheckMode}"
+                                        CornerRadius="{StaticResource GlyphButtonCornerRadius}"
+                                        Margin="{StaticResource GlyphButtonPadding}"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplateSelector>
                     <selectors:StickerSetTemplateSelector>
                         <selectors:StickerSetTemplateSelector.ItemTemplate>
@@ -375,14 +223,17 @@
                                 <Border AutomationProperties.Name="{x:Bind Title}"
                                         ToolTipService.ToolTip="{x:Bind Title}"
                                         Background="Transparent">
-                                    <FontIcon Glyph="&#xE121;" Margin="0,0,0,2"/>
+                                    <FontIcon
+                                        Glyph="&#xE911;"
+                                        FontFamily="{StaticResource TelegramThemeFontFamily}"/>
                                 </Border>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.RecentsTemplate>
                         <selectors:StickerSetTemplateSelector.FavedTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
                                 <Border AutomationProperties.Name="{x:Bind Title}"
-                                        ToolTipService.ToolTip="{x:Bind Title}" Background="Transparent">
+                                        ToolTipService.ToolTip="{x:Bind Title}"
+                                        Background="Transparent">
                                     <FontIcon Glyph="&#xE208;" Margin="0,0,0,2"/>
                                 </Border>
                             </DataTemplate>
