@@ -323,11 +323,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid x:Name="Header">
                 <Grid.ColumnDefinitions>
@@ -350,8 +346,10 @@
                 </StackPanel>
             </Grid>
         </controls:ContentPageHeader>
-
-        <ListView ItemsSource="{x:Bind ViewModel.Items}" ContainerContentChanging="OnContainerContentChanging" SelectionMode="None" Grid.Row="1">
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <ListView ItemsSource="{x:Bind ViewModel.Items}" ContainerContentChanging="OnContainerContentChanging" SelectionMode="None">
             <ListView.Header>
                 <controls:HeaderedControl Header="{CustomResource StatisticOverview}">
                     <Grid>

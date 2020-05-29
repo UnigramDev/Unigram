@@ -399,6 +399,15 @@
         </Style>
     </Page.Resources>
 
+    <local:HostedPage.Header>
+        <controls:ButtonPageHeader
+            x:Name="Header"
+            Text="{CustomResource BackgroundPreview}"
+            CommandToolTip="{CustomResource ShareFile}"
+            Command="{x:Bind ViewModel.ShareCommand}"
+            Glyph="&#xE72D;"/>
+    </local:HostedPage.Header>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -458,12 +467,6 @@
 
             <!--<chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>-->
         </Border>
-        <controls:ButtonPageHeader
-            x:Name="Header"
-            Text="{CustomResource BackgroundPreview}"
-            CommandToolTip="{CustomResource ShareFile}"
-            Command="{x:Bind ViewModel.ShareCommand}"
-            Glyph="&#xE72D;"/>
 
         <Grid x:Name="Preview" Grid.Row="1">
             <Border x:Name="BlurPanel" Background="Transparent" SizeChanged="BlurPanel_SizeChanged"/>

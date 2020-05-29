@@ -16,17 +16,15 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource NewChannel}"
             Glyph="&#xE10B;"/>
-
-        <Grid Grid.Row="1">
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>

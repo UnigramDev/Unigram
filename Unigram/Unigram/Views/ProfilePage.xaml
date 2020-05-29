@@ -18,11 +18,7 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -85,8 +81,10 @@
                 </Button>
             </Grid>
         </controls:ContentPageHeader>
-
-        <Grid x:Name="ContentPanel" SizeChanged="OnSizeChanged" Grid.Row="1">
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <Grid x:Name="ContentPanel" SizeChanged="OnSizeChanged">
             <ScrollViewer
                 x:Name="ScrollingHost"
                 VerticalScrollBarVisibility="Auto"

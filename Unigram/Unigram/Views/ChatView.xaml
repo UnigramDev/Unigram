@@ -1,4 +1,4 @@
-<UserControl
+<local:HostedPage
     x:Class="Unigram.Views.ChatView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -329,86 +329,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <Grid x:Name="LayoutRoot"
-          Background="Transparent"
-          AllowDrop="True"
-          DragOver="OnDragOver"
-          Drop="OnDrop">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="NarrowState">
-                    <VisualState.Setters>
-                        <Setter Target="StickersPanel.Height" Value="300"/>
-                        <Setter Target="StickersPanel.MinHeight" Value="260"/>
-                        <Setter Target="StickersPanel.MaxHeight" Value="360"/>
-                        <Setter Target="StickersPanel.Margin" Value="0"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="SidebarState">
-                    <VisualState.Setters>
-                        <Setter Target="KeyboardItems.(Grid.Column)" Value="1"/>
-                        <Setter Target="KeyboardItems.(Grid.Row)" Value="0"/>
-                        <Setter Target="KeyboardItems.(Grid.RowSpan)" Value="5"/>
-                        <Setter Target="StickersPanel.Width" Value="320"/>
-                        <Setter Target="StickersPanel.Height" Value="Auto"/>
-                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
-                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
-                        <Setter Target="StickersPanel.Margin" Value="0"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="FilledState">
-                    <VisualState.Setters>
-                        <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
-                        <!--<Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>-->
-                        <Setter Target="StickersPanel.Height" Value="Auto"/>
-                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
-                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
-                        <Setter Target="StickersPanel.Margin" Value="0,48,0,0"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0"/>
-                    </VisualState.StateTriggers>
-                </VisualState>
-                <VisualState>
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="500"/>
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="Show.Width" Value="376*"/>
-                        <Setter Target="Show.MaxWidth" Value="376"/>
-                        <Setter Target="Hide.Width" Value="*"/>
-                        <!--<Setter Target="BackgroundElement.BorderThickness" Value="1"/>
-                             <Setter Target="BackgroundElement.Margin" Value="8"/>-->
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition Height="Auto"/>
-            <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        
-        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" Grid.RowSpan="5"/>
-
-        <Grid Padding="0,0,0,8" VerticalAlignment="Bottom" Grid.RowSpan="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="Show"/>
-                <ColumnDefinition x:Name="Hide" Width="0"/>
-            </Grid.ColumnDefinitions>
-            <Border x:Name="FlyoutArea" MinHeight="{ThemeResource TelegramToolBarHeight}"/>
-        </Grid>
-
+    <local:HostedPage.Header>
         <controls:ContentPageHeader x:Name="Header" Canvas.ZIndex="1">
             <Grid Margin="12,0,0,0">
                 <Grid x:Name="InfoPanel">
@@ -567,6 +488,87 @@
                 </Grid>
             </Grid>
         </controls:ContentPageHeader>
+    </local:HostedPage.Header>
+
+    <Grid x:Name="LayoutRoot"
+          Background="Transparent"
+          AllowDrop="True"
+          DragOver="OnDragOver"
+          Drop="OnDrop">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NarrowState">
+                    <VisualState.Setters>
+                        <Setter Target="StickersPanel.Height" Value="300"/>
+                        <Setter Target="StickersPanel.MinHeight" Value="260"/>
+                        <Setter Target="StickersPanel.MaxHeight" Value="360"/>
+                        <Setter Target="StickersPanel.Margin" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SidebarState">
+                    <VisualState.Setters>
+                        <Setter Target="KeyboardItems.(Grid.Column)" Value="1"/>
+                        <Setter Target="KeyboardItems.(Grid.Row)" Value="0"/>
+                        <Setter Target="KeyboardItems.(Grid.RowSpan)" Value="5"/>
+                        <Setter Target="StickersPanel.Width" Value="320"/>
+                        <Setter Target="StickersPanel.Height" Value="Auto"/>
+                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
+                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
+                        <Setter Target="StickersPanel.Margin" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FilledState">
+                    <VisualState.Setters>
+                        <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
+                        <!--<Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>-->
+                        <Setter Target="StickersPanel.Height" Value="Auto"/>
+                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
+                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
+                        <Setter Target="StickersPanel.Margin" Value="0,48,0,0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Show.Width" Value="376*"/>
+                        <Setter Target="Show.MaxWidth" Value="376"/>
+                        <Setter Target="Hide.Width" Value="*"/>
+                        <!--<Setter Target="BackgroundElement.BorderThickness" Value="1"/>
+                             <Setter Target="BackgroundElement.Margin" Value="8"/>-->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        
+        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" Grid.RowSpan="5"/>
+
+        <Grid Padding="0,0,0,8" VerticalAlignment="Bottom" Grid.RowSpan="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="Show"/>
+                <ColumnDefinition x:Name="Hide" Width="0"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="FlyoutArea" MinHeight="{ThemeResource TelegramToolBarHeight}"/>
+        </Grid>
 
         <Grid x:Name="Clipper" Canvas.ZIndex="2" Grid.Row="2">
             <Grid.RowDefinitions>
@@ -1281,4 +1283,4 @@
 
         <!--<controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48" Grid.RowSpan="4"/>-->
     </Grid>
-</UserControl>
+</local:HostedPage>

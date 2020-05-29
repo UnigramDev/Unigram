@@ -165,11 +165,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ContentPageHeader IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
             <Grid Margin="-28,0,0,0">
                 <Grid.ColumnDefinitions>
@@ -219,12 +215,12 @@
                 </Button>
             </Grid>
         </controls:ContentPageHeader>
+    </local:HostedPage.Header>
 
-
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView x:Name="ScrollingHost"
                   Background="{ThemeResource PageHeaderBackgroundBrush}"
-                  SelectionMode="None"
-                  Grid.Row="1">
+                  SelectionMode="None">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

@@ -18,6 +18,7 @@ namespace Unigram.Views
             InitializeComponent();
 
             Content = new ChatView(deleg => (DataContext = TLContainer.Current.Resolve<DialogViewModel, IDialogDelegate>(deleg)) as DialogViewModel);
+            Header = View.Header;
             NavigationCacheMode = NavigationCacheMode.Required;
         }
 

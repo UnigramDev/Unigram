@@ -17,18 +17,16 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
             CommandToolTip="{CustomResource Next}"
             Text="{CustomResource NewGroup}"
             Glyph="&#xE10B;"/>
+    </local:HostedPage.Header>
 
-        <muxc:ItemsRepeaterScrollHost Grid.Row="1">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <muxc:ItemsRepeaterScrollHost>
             <ScrollViewer
                 VerticalScrollBarVisibility="Auto"
                 VerticalScrollMode="Auto">

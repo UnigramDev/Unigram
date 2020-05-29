@@ -8,11 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -26,7 +22,9 @@
                 <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
             </Grid>
         </controls:ContentPageHeader>
-
-        <WebView x:Name="View" NavigationStarting="View_NavigationStarting" Grid.Row="1"/>
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <WebView x:Name="View" NavigationStarting="View_NavigationStarting"/>
     </Grid>
 </local:HostedPage>

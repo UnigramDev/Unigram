@@ -41,15 +41,13 @@
             </Button>
         </DataTemplate>
     </Page.Resources>
+
+    <local:HostedPage.Header>
+        <controls:PageHeader Text="{CustomResource PeopleNearby}"/>
+    </local:HostedPage.Header>
     
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <controls:PageHeader Text="{CustomResource PeopleNearby}"/>
-
-        <microsoft:ItemsRepeaterScrollHost Grid.Row="1">
+        <microsoft:ItemsRepeaterScrollHost>
             <ScrollViewer
                 VerticalScrollBarVisibility="Auto"
                 VerticalScrollMode="Auto">

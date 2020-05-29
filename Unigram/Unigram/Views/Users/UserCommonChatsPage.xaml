@@ -18,13 +18,11 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader x:Name="Header" Text="{CustomResource GroupsInCommonTitle}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
             x:Name="List"
             ItemsSource="{x:Bind ViewModel.Items}"
@@ -32,8 +30,7 @@
             IsItemClickEnabled="True"
             ChoosingItemContainer="OnChoosingItemContainer"
             ContainerContentChanging="OnContainerContentChanging"
-            SelectionMode="None"
-            Grid.Row="1">
+            SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="12,6">

@@ -47,7 +47,7 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatView : UserControl, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
+    public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -4083,10 +4083,10 @@ namespace Unigram.Views
                     }
                 }
 
-                if (file.Local.IsDownloadingCompleted && file.Remote.IsUploadingCompleted)
-                {
-                    messages.Clear();
-                }
+                //if (file.Local.IsDownloadingCompleted && file.Remote.IsUploadingCompleted)
+                //{
+                //    messages.Clear();
+                //}
             }
 
             if (file.Local.IsDownloadingCompleted && _viewModel.TryGetMessagesForPhotoId(file.Id, out IList<MessageViewModel> photos))
