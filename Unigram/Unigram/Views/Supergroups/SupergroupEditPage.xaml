@@ -17,25 +17,17 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource ChannelEdit}"
             Glyph="&#xE10B;"/>
+    </local:HostedPage.Header>
 
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel Padding="0,0,0,48">
                 <controls:HeaderedControl>
                     <Grid>

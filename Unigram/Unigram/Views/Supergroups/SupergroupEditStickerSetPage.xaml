@@ -179,23 +179,20 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource GroupStickers}"
             Glyph="&#xE10B;"/>
-
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemTemplate="{StaticResource StickerSetItemTemplate}"
             SelectedItem="{x:Bind ViewModel.ListSelectedItem, Mode=TwoWay}"
             ContainerContentChanging="OnContainerContentChanging"
-            SelectionMode="Single"
-            Grid.Row="1">
+            SelectionMode="Single">
             <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl

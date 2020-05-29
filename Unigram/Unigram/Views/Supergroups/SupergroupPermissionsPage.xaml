@@ -42,11 +42,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid>
                 <Grid x:Name="MainHeader">
@@ -83,14 +79,15 @@
                          Canvas.ZIndex="1"/>
             </Grid>
         </controls:ContentPageHeader>
-
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ListView ItemsSource="{x:Bind ViewModel.Search, Mode=OneWay}"
                   ItemTemplate="{StaticResource MemberTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  Grid.Row="1">
+                  SelectionMode="None">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
@@ -106,7 +103,7 @@
             </ListView.Footer>
         </ListView>
 
-        <Grid x:Name="ContentPanel" Background="{ThemeResource PageBackgroundDarkBrush}" Grid.Row="1">
+        <Grid x:Name="ContentPanel" Background="{ThemeResource PageBackgroundDarkBrush}">
             <controls:TableListView
                 x:Name="ScrollingHost"
                 ItemsSource="{x:Bind ViewModel.Members}"

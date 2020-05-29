@@ -42,14 +42,12 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource Discussion}"/>
-
-        <microsoft:ItemsRepeaterScrollHost Grid.Row="1">
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <microsoft:ItemsRepeaterScrollHost>
             <ScrollViewer
                 VerticalScrollBarVisibility="Auto"
                 VerticalScrollMode="Auto">

@@ -16,18 +16,16 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             x:Name="Header"
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource ChannelSettings}"
             Glyph="&#xE10B;"/>
-
-        <StackPanel Grid.Row="1">
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <StackPanel>
             <controls:HeaderedControl
                 x:Name="Subheader"
                 Header="{CustomResource ChannelTypeHeader}"
