@@ -82,7 +82,105 @@
     </Page.Resources>
 
     <Grid>
-        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Border x:Load="False" x:Name="Yolo" RequestedTheme="Dark" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+            <controls:TopNavView
+                x:Name="ChatFiltersSide"
+                ItemsSource="{x:Bind ViewModel.Filters}"
+                SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
+                ItemContextRequested="ChatFilter_ContextRequested"
+                Orientation="Vertical"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.HorizontalScrollMode="Disabled"
+                Margin="0,72,0,0"
+                Height="Auto"
+                Width="72">
+                <controls:TopNavView.ItemTemplate>
+                    <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
+                        <StackPanel Orientation="Vertical">
+                            <Grid>
+                                <TextBlock
+                                    Text="{x:Bind Glyph, Mode=OneWay}"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    FontSize="24"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"/>
+                                <Border
+                                    Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,-12,-4,0"
+                                    MinWidth="20"
+                                    Height="20"
+                                    CornerRadius="10">
+                                    <TextBlock
+                                        Text="{x:Bind UnreadCount, Mode=OneWay}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                        TextAlignment="Center"
+                                        Margin="8,2,8,0"/>
+                                </Border>
+                            </Grid>
+                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" TextAlignment="Center" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </controls:TopNavView.ItemTemplate>
+                <controls:TopNavView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"/>
+                    </ItemsPanelTemplate>
+                </controls:TopNavView.ItemsPanel>
+                <controls:TopNavView.ItemContainerStyle>
+                    <Style TargetType="controls:TopNavViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="controls:TopNavViewItem">
+                                    <Grid Background="Transparent">
+                                        <ContentPresenter
+                                            x:Name="ContentPresenter"
+                                            Grid.Column="1"
+                                            Margin="8,12"
+                                            TextWrapping="NoWrap"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            Content="{TemplateBinding Content}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                            VerticalAlignment="Center"
+                                            AutomationProperties.AccessibilityView="Raw"/>
+                                        <Grid
+                                            x:Name="SelectionIndicatorGrid"
+                                            Margin="4,12,0,12"
+                                            HorizontalAlignment="Left">
+                                            <Rectangle
+                                                x:Name="SelectionIndicator"
+                                                Width="2"
+                                                Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
+                                                Opacity="0"
+                                                RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                RadiusY="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                        </Grid>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </controls:TopNavView.ItemContainerStyle>
+            </controls:TopNavView>
+        </Border>
+        
+        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1">
             <controls:MasterDetailView.Header>
                 <Grid x:Name="TitleBarrr" Background="{ThemeResource PageTitleBackgroundBrush}">
                     <contract7Present:Grid.BackgroundTransition>
@@ -837,6 +935,7 @@
             x:Name="Confetti"
             x:Load="False"
             Completed="Confetti_Completed"
-            IsHitTestVisible="False"/>
+            IsHitTestVisible="False"
+            Grid.ColumnSpan="2"/>
     </Grid>
 </Page>

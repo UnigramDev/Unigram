@@ -843,12 +843,6 @@ namespace Unigram.Views
 
         private async void ProcessChatCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
         {
-            var folders = ViewModel.Filters;
-            if (folders.Count > 0)
-            {
-                return;
-            }
-
             if (command == ShortcutCommand.ChatPrevious)
             {
                 args.Handled = true;
@@ -882,6 +876,12 @@ namespace Unigram.Views
             }
             else if (command >= ShortcutCommand.ChatPinned1 && command <= ShortcutCommand.ChatPinned5)
             {
+                var folders = ViewModel.Filters;
+                if (folders.Count > 0)
+                {
+                    return;
+                }
+
                 var index = command - ShortcutCommand.ChatPinned1;
 
                 var response = await ViewModel.ProtoService.SendAsync(new GetChats(new ChatListMain(), long.MaxValue, 0, ViewModel.CacheService.Options.PinnedChatCountMax * 2 + 1));
@@ -2362,6 +2362,11 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var filter = ChatFilters.ItemFromContainer(sender) as ChatFilterViewModel;
 
+            if (filter == null)
+            {
+                filter = ChatFiltersSide.ItemFromContainer(sender) as ChatFilterViewModel;
+            }
+
             if (filter.ChatFilterId == Constants.ChatListMain)
             {
                 flyout.CreateFlyoutItem(ViewModel.FilterEditCommand, filter, Strings.Resources.FilterEditAll, new FontIcon { Glyph = Icons.Edit });
@@ -2814,6 +2819,10 @@ namespace Unigram.Views
             else if (filter == ChatListFilterFlags.ExcludeRead)
             {
                 return Icons.MarkAsUnread; //FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            }
+            else if (filter == ChatListFilterFlags.ExcludeArchived)
+            {
+                return Icons.Archive;
             }
             else if (filter == ChatListFilterFlags.IncludeContacts)
             {

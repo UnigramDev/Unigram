@@ -78,6 +78,161 @@
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
                     </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                    Header="Tabs view"
+                        Footer="If you have many folders, try moving tabs on the left.">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  HorizontalScrollMode="Auto"
+                                  VerticalScrollBarVisibility="Disabled"
+                                  VerticalScrollMode="Disabled">
+                            <StackPanel Margin="12,0" Orientation="Horizontal">
+                                <StackPanel Margin="0,12,12,12">
+                                    <RadioButton GroupName="Layout" Height="121" Style="{StaticResource ChatListRadioButtonStyle}">
+                                        <StackPanel>
+                                            <StackPanel
+                                                BorderBrush="{ThemeResource PlaceholderForegroundHighBrush}"
+                                                BorderThickness="0,0,0,1"
+                                                Margin="-10,0,-10,8"
+                                                Padding="10,0,10,8">
+                                                <Rectangle
+                                                    Fill="{ThemeResource PlaceholderForegroundHighBrush}"
+                                                    RadiusX="2"
+                                                    RadiusY="2"
+                                                    Height="16"/>
+
+                                                <Grid Margin="-4,8,-4,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Rectangle Height="4" Fill="{ThemeResource SystemControlForegroundAccentBrush}" RadiusX="2" RadiusY="2" Margin="4,0" Grid.Column="0"/>
+                                                    <Rectangle Height="2" Fill="{ThemeResource SystemControlForegroundAccentBrush}" RadiusX="2" RadiusY="2" Margin="4,6,4,-6" Grid.Column="0"/>
+                                                    <Rectangle Height="4" Fill="{ThemeResource SystemControlForegroundAccentBrush}" RadiusX="2" RadiusY="2" Margin="4,0" Grid.Column="1" Opacity="0.3"/>
+                                                    <Rectangle Height="4" Fill="{ThemeResource SystemControlForegroundAccentBrush}" RadiusX="2" RadiusY="2" Margin="4,0" Grid.Column="2" Opacity="0.3"/>
+                                                </Grid>
+                                            </StackPanel>
+                                            
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundLowBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
+                                                <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
+                                                <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
+                                            </Grid>
+                                            <Grid Margin="0,8,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundHighBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
+                                                <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
+                                                <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </RadioButton>
+                                    <TextBlock Text="Tabs at the top" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                </StackPanel>
+
+                                <StackPanel Margin="0,12,0,12">
+                                    <RadioButton GroupName="Layout" Height="121" Style="{StaticResource ChatListRadioButtonStyle}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Grid
+                                                Margin="-10,-10,0,-6"
+                                                BorderBrush="{ThemeResource PlaceholderForegroundHighBrush}"
+                                                BorderThickness="0,0,1,0"
+                                                Padding="10,6,8,4">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Ellipse Width="24" Height="24" Fill="{ThemeResource SystemControlForegroundAccentBrush}" Margin="0,4" Grid.Row="0" Opacity="0.3"/>
+                                                <Ellipse Width="24" Height="24" Fill="{ThemeResource SystemControlForegroundAccentBrush}" Margin="0,4" Grid.Row="1"/>
+                                                <Rectangle Width="2" Fill="{ThemeResource SystemControlForegroundAccentBrush}" RadiusX="2" RadiusY="2" Margin="-6,4,0,4" HorizontalAlignment="Left" Grid.Row="1"/>
+                                                <Ellipse Width="24" Height="24" Fill="{ThemeResource SystemControlForegroundAccentBrush}" Margin="0,4" Grid.Row="2" Opacity="0.3"/>
+                                                <Ellipse Width="24" Height="24" Fill="{ThemeResource SystemControlForegroundAccentBrush}" Margin="0,4" Grid.Row="3" Opacity="0.3"/>
+                                            </Grid>
+
+                                            <StackPanel Margin="0,0,0,-6" Grid.Column="1">
+                                                <StackPanel
+                                                    BorderBrush="{ThemeResource PlaceholderForegroundHighBrush}"
+                                                    BorderThickness="0,0,0,1"
+                                                    Margin="0,0,-10,8"
+                                                    Padding="8,0,10,8">
+                                                    <Rectangle
+                                                        Fill="{ThemeResource PlaceholderForegroundHighBrush}"
+                                                        RadiusX="2"
+                                                        RadiusY="2"
+                                                        Height="16"/>
+                                                </StackPanel>
+
+                                                <Grid Margin="8,0,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundLowBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
+                                                    <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
+                                                    <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
+                                                </Grid>
+                                                <Grid Margin="8,8,0,8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundHighBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
+                                                    <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
+                                                    <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
+                                                </Grid>
+                                                <Grid Margin="8,0,0,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundLowBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
+                                                    <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
+                                                    <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
+                                                </Grid>
+                                            </StackPanel>
+                                        </Grid>
+                                    </RadioButton>
+                                    <TextBlock Text="Tabs on the left" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
+                    </controls:HeaderedControl>
                 </StackPanel>
             </ScrollViewer>
         </muxc:ItemsRepeaterScrollHost>
