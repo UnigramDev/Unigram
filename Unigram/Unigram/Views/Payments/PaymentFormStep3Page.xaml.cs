@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Payments
 {
-    public sealed partial class PaymentFormStep3Page : Page
+    public sealed partial class PaymentFormStep3Page : HostedPage
     {
         public PaymentFormStep3ViewModel ViewModel => DataContext as PaymentFormStep3ViewModel;
 

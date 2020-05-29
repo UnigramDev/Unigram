@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
-    public sealed partial class InstantPage : Page, IMessageDelegate, IHandle<UpdateFile>
+    public sealed partial class InstantPage : HostedPage, IMessageDelegate, IHandle<UpdateFile>
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 

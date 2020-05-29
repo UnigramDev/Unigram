@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Folders
 {
-    public sealed partial class FoldersPage : Page
+    public sealed partial class FoldersPage : HostedPage
     {
         public FoldersViewModel ViewModel => DataContext as FoldersViewModel;
 

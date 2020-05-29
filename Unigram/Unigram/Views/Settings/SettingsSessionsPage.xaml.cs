@@ -19,7 +19,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsSessionsPage : Page
+    public sealed partial class SettingsSessionsPage : HostedPage
     {
         public SettingsSessionsViewModel ViewModel => DataContext as SettingsSessionsViewModel;
 

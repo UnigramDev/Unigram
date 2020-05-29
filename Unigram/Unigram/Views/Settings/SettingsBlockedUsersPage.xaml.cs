@@ -23,7 +23,7 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsBlockedUsersPage : Page, IFileDelegate
+    public sealed partial class SettingsBlockedUsersPage : HostedPage, IFileDelegate
     {
         public SettingsBlockedUsersViewModel ViewModel => DataContext as SettingsBlockedUsersViewModel;
 

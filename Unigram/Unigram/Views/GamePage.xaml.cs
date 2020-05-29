@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class GamePage : Page
+    public sealed partial class GamePage : HostedPage
     {
         private Message _shareMessage;
 

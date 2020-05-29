@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Supergroups
 {
-    public partial class SupergroupEventLogPage : Page, IGifPlayback
+    public partial class SupergroupEventLogPage : HostedPage, IGifPlayback
     {
         private ItemsStackPanel _panel;
         private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();

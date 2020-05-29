@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsThemePage : Page
+    public sealed partial class SettingsThemePage : HostedPage
     {
         private ThemeGroup _group;
         private ThemeCustomInfo _theme;

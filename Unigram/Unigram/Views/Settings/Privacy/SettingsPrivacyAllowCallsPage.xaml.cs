@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings.Privacy
 {
-    public sealed partial class SettingsPrivacyAllowCallsPage : Page
+    public sealed partial class SettingsPrivacyAllowCallsPage : HostedPage
     {
         public SettingsPrivacyAllowCallsViewModel ViewModel => DataContext as SettingsPrivacyAllowCallsViewModel;
 

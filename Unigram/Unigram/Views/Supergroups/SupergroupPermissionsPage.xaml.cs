@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupPermissionsPage : Page, ISupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupPermissionsPage : HostedPage, ISupergroupDelegate, INavigablePage
     {
         public SupergroupPermissionsViewModel ViewModel => DataContext as SupergroupPermissionsViewModel;
 

@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Folders
 {
-    public sealed partial class FolderPage : Page
+    public sealed partial class FolderPage : HostedPage
     {
         public FolderViewModel ViewModel => DataContext as FolderViewModel;
 

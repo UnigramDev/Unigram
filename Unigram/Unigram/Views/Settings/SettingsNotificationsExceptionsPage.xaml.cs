@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsNotificationsExceptionsPage : Page
+    public sealed partial class SettingsNotificationsExceptionsPage : HostedPage
     {
         public SettingsNotificationsExceptionsViewModel ViewModel => DataContext as SettingsNotificationsExceptionsViewModel;
 

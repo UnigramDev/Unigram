@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsVoIPPage : Page
+    public sealed partial class SettingsVoIPPage : HostedPage
     {
         public SettingsVoIPViewModel ViewModel => DataContext as SettingsVoIPViewModel;
 

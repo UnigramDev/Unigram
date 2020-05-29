@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Payments
 {
-    public sealed partial class PaymentFormStep2Page : Page
+    public sealed partial class PaymentFormStep2Page : HostedPage
     {
         public PaymentFormStep2ViewModel ViewModel => DataContext as PaymentFormStep2ViewModel;
 

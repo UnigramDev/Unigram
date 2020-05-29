@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Chats
 {
-    public sealed partial class ChatStatisticsPage : Page, IChatDelegate
+    public sealed partial class ChatStatisticsPage : HostedPage, IChatDelegate
     {
         public ChatStatisticsViewModel ViewModel => DataContext as ChatStatisticsViewModel;
 

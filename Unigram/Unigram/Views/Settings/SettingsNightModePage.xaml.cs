@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsNightModePage : Page
+    public sealed partial class SettingsNightModePage : HostedPage
     {
         public SettingsNightModeViewModel ViewModel => DataContext as SettingsNightModeViewModel;
 

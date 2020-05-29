@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Channels
 {
-    public sealed partial class ChannelCreateStep1Page : Page
+    public sealed partial class ChannelCreateStep1Page : HostedPage
     {
         public ChannelCreateStep1ViewModel ViewModel => DataContext as ChannelCreateStep1ViewModel;
 

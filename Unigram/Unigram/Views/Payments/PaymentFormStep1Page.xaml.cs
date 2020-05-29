@@ -20,7 +20,7 @@ using Unigram.Common;
 
 namespace Unigram.Views.Payments
 {
-    public sealed partial class PaymentFormStep1Page : Page
+    public sealed partial class PaymentFormStep1Page : HostedPage
     {
         public PaymentFormStep1ViewModel ViewModel => DataContext as PaymentFormStep1ViewModel;
 

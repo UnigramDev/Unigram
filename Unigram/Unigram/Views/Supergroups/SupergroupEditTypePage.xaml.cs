@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditTypePage : Page, ISupergroupEditDelegate
+    public sealed partial class SupergroupEditTypePage : HostedPage, ISupergroupEditDelegate
     {
         public SupergroupEditTypeViewModel ViewModel => DataContext as SupergroupEditTypeViewModel;
 

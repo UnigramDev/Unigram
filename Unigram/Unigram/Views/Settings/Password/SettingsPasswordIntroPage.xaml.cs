@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings.Password
 {
-    public sealed partial class SettingsPasswordIntroPage : Page
+    public sealed partial class SettingsPasswordIntroPage : HostedPage
     {
         public SettingsPasswordIntroViewModel ViewModel => DataContext as SettingsPasswordIntroViewModel;
 

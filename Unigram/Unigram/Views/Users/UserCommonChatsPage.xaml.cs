@@ -23,7 +23,7 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Users
 {
-    public sealed partial class UserCommonChatsPage : Page, IProfileTab, IFileDelegate
+    public sealed partial class UserCommonChatsPage : HostedPage, IProfileTab, IFileDelegate
     {
         public UserCommonChatsViewModel ViewModel => DataContext as UserCommonChatsViewModel;
 

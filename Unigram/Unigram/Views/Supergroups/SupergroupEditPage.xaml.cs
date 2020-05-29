@@ -29,7 +29,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditPage : Page, ISupergroupEditDelegate
+    public sealed partial class SupergroupEditPage : HostedPage, ISupergroupEditDelegate
     {
         public SupergroupEditViewModel ViewModel => DataContext as SupergroupEditViewModel;
 

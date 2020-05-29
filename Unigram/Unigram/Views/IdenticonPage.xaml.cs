@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Users
 {
-    public sealed partial class IdenticonPage : Page
+    public sealed partial class IdenticonPage : HostedPage
     {
         public IdenticonPage()
         {

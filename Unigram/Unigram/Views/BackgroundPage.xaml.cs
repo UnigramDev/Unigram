@@ -1,10 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -14,18 +10,13 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.Storage;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
@@ -33,7 +24,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
-    public sealed partial class BackgroundPage : Page, IHandle<UpdateFile>, IBackgroundDelegate
+    public sealed partial class BackgroundPage : HostedPage, IHandle<UpdateFile>, IBackgroundDelegate
     {
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
 

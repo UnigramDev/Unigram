@@ -29,7 +29,7 @@ using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEventLogPage : Page, IChatDelegate
+    public sealed partial class SupergroupEventLogPage : HostedPage, IChatDelegate
     {
         public SupergroupEventLogViewModel ViewModel => DataContext as SupergroupEventLogViewModel;
 

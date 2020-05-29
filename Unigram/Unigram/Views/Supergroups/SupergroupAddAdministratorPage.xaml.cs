@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupAddAdministratorPage : Page
+    public sealed partial class SupergroupAddAdministratorPage : HostedPage
     {
         public SupergroupAddAdministratorViewModel ViewModel => DataContext as SupergroupAddAdministratorViewModel;
 

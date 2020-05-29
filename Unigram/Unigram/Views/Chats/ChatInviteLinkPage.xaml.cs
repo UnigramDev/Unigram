@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Chats
 {
-    public sealed partial class ChatInviteLinkPage : Page
+    public sealed partial class ChatInviteLinkPage : HostedPage
     {
         public ChatInviteLinkViewModel ViewModel => DataContext as ChatInviteLinkViewModel;
 

@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings.Privacy
 {
-    public sealed partial class SettingsPrivacyShowForwardedPage : Page
+    public sealed partial class SettingsPrivacyShowForwardedPage : HostedPage
     {
         public SettingsPrivacyShowForwardedViewModel ViewModel => DataContext as SettingsPrivacyShowForwardedViewModel;
 

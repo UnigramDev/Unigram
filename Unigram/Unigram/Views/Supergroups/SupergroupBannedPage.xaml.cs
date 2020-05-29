@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupBannedPage : Page, ISupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupBannedPage : HostedPage, ISupergroupDelegate, INavigablePage
     {
         public SupergroupBannedViewModel ViewModel => DataContext as SupergroupBannedViewModel;
 

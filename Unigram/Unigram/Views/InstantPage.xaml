@@ -1,4 +1,4 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.InstantPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -283,4 +283,4 @@
             VerticalAlignment="Top"
             Grid.Row="1"/>
     </Grid>
-</Page>
+</local:HostedPage>

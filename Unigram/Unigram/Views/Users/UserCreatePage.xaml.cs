@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Users
 {
-    public sealed partial class UserCreatePage : Page
+    public sealed partial class UserCreatePage : HostedPage
     {
         public UserCreateViewModel ViewModel => DataContext as UserCreateViewModel;
 

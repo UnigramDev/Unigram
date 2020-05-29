@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsPasscodePage : Page
+    public sealed partial class SettingsPasscodePage : HostedPage
     {
         public SettingsPasscodeViewModel ViewModel => DataContext as SettingsPasscodeViewModel;
 

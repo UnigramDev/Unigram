@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Chats
 {
-    public sealed partial class ChatSharedMediaPage : Page, INavigablePage, IFileDelegate
+    public sealed partial class ChatSharedMediaPage : HostedPage, INavigablePage, IFileDelegate
     {
         public ChatSharedMediaViewModel ViewModel => DataContext as ChatSharedMediaViewModel;
 

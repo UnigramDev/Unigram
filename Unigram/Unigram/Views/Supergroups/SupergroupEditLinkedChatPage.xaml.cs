@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditLinkedChatPage : Page, ISupergroupDelegate
+    public sealed partial class SupergroupEditLinkedChatPage : HostedPage, ISupergroupDelegate
     {
         public SupergroupEditLinkedChatViewModel ViewModel => DataContext as SupergroupEditLinkedChatViewModel;
 

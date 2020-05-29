@@ -22,7 +22,7 @@ using System.Reactive.Linq;
 
 namespace Unigram.Views.Channels
 {
-    public sealed partial class ChannelCreateStep2Page : Page
+    public sealed partial class ChannelCreateStep2Page : HostedPage
     {
         public ChannelCreateStep2ViewModel ViewModel => DataContext as ChannelCreateStep2ViewModel;
 

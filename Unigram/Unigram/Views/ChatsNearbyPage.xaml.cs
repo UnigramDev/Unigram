@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatsNearbyPage : Page
+    public sealed partial class ChatsNearbyPage : HostedPage
     {
         public ChatsNearbyViewModel ViewModel => DataContext as ChatsNearbyViewModel;
 

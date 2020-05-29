@@ -21,7 +21,7 @@ using Unigram.Common;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStoragePage : Page
+    public sealed partial class SettingsStoragePage : HostedPage
     {
         public SettingsStorageViewModel ViewModel => DataContext as SettingsStorageViewModel;
 

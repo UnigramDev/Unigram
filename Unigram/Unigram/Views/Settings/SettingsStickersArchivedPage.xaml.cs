@@ -22,7 +22,7 @@ using Unigram.Native;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStickersArchivedPage : Page
+    public sealed partial class SettingsStickersArchivedPage : HostedPage
     {
         public SettingsStickersArchivedViewModel ViewModel => DataContext as SettingsStickersArchivedViewModel;
 

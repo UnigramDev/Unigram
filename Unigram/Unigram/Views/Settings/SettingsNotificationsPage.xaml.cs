@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsNotificationsPage : Page
+    public sealed partial class SettingsNotificationsPage : HostedPage
     {
         public SettingsNotificationsViewModel ViewModel => DataContext as SettingsNotificationsViewModel;
 

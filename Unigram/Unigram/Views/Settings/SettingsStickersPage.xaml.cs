@@ -28,7 +28,7 @@ using Unigram.Converters;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStickersPage : Page
+    public sealed partial class SettingsStickersPage : HostedPage
     {
         public SettingsStickersViewModel ViewModel => DataContext as SettingsStickersViewModel;
 

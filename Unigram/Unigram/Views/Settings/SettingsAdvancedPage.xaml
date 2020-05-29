@@ -1,4 +1,4 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Settings.SettingsAdvancedPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -49,4 +49,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</Page>
+</local:HostedPage>

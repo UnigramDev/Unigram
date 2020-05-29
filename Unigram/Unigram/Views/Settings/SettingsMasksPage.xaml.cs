@@ -24,7 +24,7 @@ using Unigram.Converters;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsMasksPage : Page
+    public sealed partial class SettingsMasksPage : HostedPage
     {
         public SettingsMasksViewModel ViewModel => DataContext as SettingsMasksViewModel;
 

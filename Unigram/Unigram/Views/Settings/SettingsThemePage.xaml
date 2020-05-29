@@ -1,8 +1,9 @@
-﻿<Page
+﻿<local:HostedPage
     x:Class="Unigram.Views.Settings.SettingsThemePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:local="using:Unigram.Views"
+    xmlns:themes="using:Unigram.Views.Settings"
     xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:mux="using:Microsoft.UI.Xaml.Controls"
@@ -15,8 +16,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///Themes/ThemeTemplates.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
-            <DataTemplate x:Key="ThemeBrushPartTemplate" x:DataType="local:ThemeColorPart">
+
+            <DataTemplate x:Key="ThemeBrushPartTemplate" x:DataType="themes:ThemeColorPart">
                 <Ellipse Width="24"
                             Height="24"
                             Stroke="White"
@@ -28,7 +29,7 @@
                 </Ellipse>
             </DataTemplate>
 
-            <DataTemplate x:Key="ChatOnlineBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
+            <DataTemplate x:Key="ChatOnlineBadgeBrushTemplate" x:DataType="themes:ThemeBrushPart">
                 <Grid Width="48"
                         Height="48">
                     <Ellipse Fill="{ThemeResource Placeholder0Brush}"/>
@@ -40,7 +41,7 @@
                             VerticalAlignment="Bottom"
                             Margin="0,0,1,1">
                         <Border.Background>
-                            <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ApplicationPageBackgroundThemeBrush']).Value, Mode=OneWay}"/>
+                            <SolidColorBrush Color="{x:Bind ((themes:ThemeBrushPart)Group['ApplicationPageBackgroundThemeBrush']).Value, Mode=OneWay}"/>
                         </Border.Background>
                         <Border Width="9"
                                 Height="9"
@@ -53,7 +54,7 @@
                 </Grid>
             </DataTemplate>
 
-            <DataTemplate x:Key="ChatVerifiedBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
+            <DataTemplate x:Key="ChatVerifiedBadgeBrushTemplate" x:DataType="themes:ThemeBrushPart">
                 <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" StrokeThickness="0">
                     <Path.Fill>
                         <SolidColorBrush Color="{x:Bind Value, Mode=OneWay}"/>
@@ -61,7 +62,7 @@
                 </Path>
             </DataTemplate>
 
-            <DataTemplate x:Key="ChatLastMessageStateBrushTemplate" x:DataType="local:ThemeBrushPart">
+            <DataTemplate x:Key="ChatLastMessageStateBrushTemplate" x:DataType="themes:ThemeBrushPart">
                 <StackPanel Orientation="Horizontal">
                     <FontIcon Glyph="&#xE600;"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -94,7 +95,7 @@
                 </StackPanel>
             </DataTemplate>
 
-            <DataTemplate x:Key="ChatUnreadBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
+            <DataTemplate x:Key="ChatUnreadBadgeBrushTemplate" x:DataType="themes:ThemeBrushPart">
                 <Border Width="20"
                         Height="20"
                         CornerRadius="10">
@@ -106,13 +107,13 @@
                                 TextAlignment="Center"
                                 Margin="6,2,6,0">
                         <TextBlock.Foreground>
-                            <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatUnreadLabelBrush']).Value, Mode=OneWay}"/>
+                            <SolidColorBrush Color="{x:Bind ((themes:ThemeBrushPart)Group['ChatUnreadLabelBrush']).Value, Mode=OneWay}"/>
                         </TextBlock.Foreground>
                     </TextBlock>
                 </Border>
             </DataTemplate>
 
-            <DataTemplate x:Key="ChatUnreadBadgeMutedBrushTemplate" x:DataType="local:ThemeBrushPart">
+            <DataTemplate x:Key="ChatUnreadBadgeMutedBrushTemplate" x:DataType="themes:ThemeBrushPart">
                 <Border Width="20"
                         Height="20"
                         CornerRadius="10">
@@ -124,13 +125,13 @@
                                 TextAlignment="Center"
                                 Margin="6,2,6,0">
                         <TextBlock.Foreground>
-                            <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatUnreadLabelMutedBrush']).Value, Mode=OneWay}"/>
+                            <SolidColorBrush Color="{x:Bind ((themes:ThemeBrushPart)Group['ChatUnreadLabelMutedBrush']).Value, Mode=OneWay}"/>
                         </TextBlock.Foreground>
                     </TextBlock>
                 </Border>
             </DataTemplate>
 
-            <DataTemplate x:Key="ChatFailedBadgeBrushTemplate" x:DataType="local:ThemeBrushPart">
+            <DataTemplate x:Key="ChatFailedBadgeBrushTemplate" x:DataType="themes:ThemeBrushPart">
                 <Border Width="20"
                         Height="20"
                         CornerRadius="10">
@@ -143,16 +144,16 @@
                                 VerticalAlignment="Center"
                                 TextAlignment="Center">
                         <TextBlock.Foreground>
-                            <SolidColorBrush Color="{x:Bind ((local:ThemeBrushPart)Group['ChatFailedLabelBrush']).Value, Mode=OneWay}"/>
+                            <SolidColorBrush Color="{x:Bind ((themes:ThemeBrushPart)Group['ChatFailedLabelBrush']).Value, Mode=OneWay}"/>
                         </TextBlock.Foreground>
                     </TextBlock>
                 </Border>
             </DataTemplate>
 
-            <DataTemplate x:Key="MessageSubtleGlyphColorTemplate" x:DataType="local:ThemeColorPart">
+            <DataTemplate x:Key="MessageSubtleGlyphColorTemplate" x:DataType="themes:ThemeColorPart">
                 <StackPanel Padding="6,6,12,6" Margin="0,0,-12,0" Orientation="Horizontal">
                     <StackPanel.Background>
-                        <SolidColorBrush Color="{x:Bind ((local:ThemeColorPart)Group['MessageBackgroundColor']).Value, Mode=OneWay}"/>
+                        <SolidColorBrush Color="{x:Bind ((themes:ThemeColorPart)Group['MessageBackgroundColor']).Value, Mode=OneWay}"/>
                     </StackPanel.Background>
                     <FontIcon Glyph="&#xE600;"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -185,10 +186,10 @@
                 </StackPanel>
             </DataTemplate>
 
-            <DataTemplate x:Key="MessageSubtleGlyphOutColorTemplate" x:DataType="local:ThemeColorPart">
+            <DataTemplate x:Key="MessageSubtleGlyphOutColorTemplate" x:DataType="themes:ThemeColorPart">
                 <StackPanel Padding="6,6,12,6" Margin="0,0,-12,0" Orientation="Horizontal">
                     <StackPanel.Background>
-                        <SolidColorBrush Color="{x:Bind ((local:ThemeColorPart)Group['MessageBackgroundOutColor']).Value, Mode=OneWay}"/>
+                        <SolidColorBrush Color="{x:Bind ((themes:ThemeColorPart)Group['MessageBackgroundOutColor']).Value, Mode=OneWay}"/>
                     </StackPanel.Background>
                     <FontIcon Glyph="&#xE600;"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -229,7 +230,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <!-- This control is used to force refresh all the resources that might haven't been used yet in the app -->
-        <local:ResourcesMapper
+        <themes:ResourcesMapper
             PageHeaderDisabledBrush="{ThemeResource PageHeaderDisabledBrush}" 
             PageHeaderBackgroundBrush="{ThemeResource PageHeaderBackgroundBrush}" 
             PageSubHeaderBackgroundBrush="{ThemeResource PageSubHeaderBackgroundBrush}" 
@@ -961,9 +962,9 @@
                   ItemClick="List_ItemClick"
                   Grid.Row="1">
             <ListView.ItemTemplateSelector>
-                <local:ThemePartTemplateSelector>
-                    <local:ThemePartTemplateSelector.BrushTemplate>
-                        <DataTemplate x:DataType="local:ThemeColorPart">
+                <themes:ThemePartTemplateSelector>
+                    <themes:ThemePartTemplateSelector.BrushTemplate>
+                        <DataTemplate x:DataType="themes:ThemeColorPart">
                             <Grid Padding="0,8,12,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
@@ -1013,13 +1014,13 @@
                                 <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,9,-12,-1" Grid.Row="3" Grid.ColumnSpan="2"/>
                             </Grid>
                         </DataTemplate>
-                    </local:ThemePartTemplateSelector.BrushTemplate>
-                    <local:ThemePartTemplateSelector.BooleanTemplate>
-                        <DataTemplate x:DataType="local:ThemeBooleanPart">
+                    </themes:ThemePartTemplateSelector.BrushTemplate>
+                    <themes:ThemePartTemplateSelector.BooleanTemplate>
+                        <DataTemplate x:DataType="themes:ThemeBooleanPart">
                             <CheckBox Click="Boolean_Click" Content="{x:Bind Key}" IsChecked="{x:Bind Value, Mode=TwoWay}" Tag="{x:Bind}"/>
                         </DataTemplate>
-                    </local:ThemePartTemplateSelector.BooleanTemplate>
-                </local:ThemePartTemplateSelector>
+                    </themes:ThemePartTemplateSelector.BooleanTemplate>
+                </themes:ThemePartTemplateSelector>
             </ListView.ItemTemplateSelector>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
@@ -1030,7 +1031,7 @@
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
-                        <DataTemplate x:DataType="local:ThemeGroup">
+                        <DataTemplate x:DataType="themes:ThemeGroup">
                             <TextBlock Text="{x:Bind Key}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -1071,4 +1072,4 @@
             </ListView.GroupStyle>
         </ListView>
     </Grid>
-</Page>
+</local:HostedPage>

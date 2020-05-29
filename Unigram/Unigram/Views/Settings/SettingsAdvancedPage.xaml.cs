@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsAdvancedPage : Page
+    public sealed partial class SettingsAdvancedPage : HostedPage
     {
         public SettingsAdvancedViewModel ViewModel => DataContext as SettingsAdvancedViewModel;
 

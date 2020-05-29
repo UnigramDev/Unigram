@@ -24,7 +24,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.Views.BasicGroups
 {
-    public sealed partial class BasicGroupCreateStep1Page : Page
+    public sealed partial class BasicGroupCreateStep1Page : HostedPage
     {
         public BasicGroupCreateStep1ViewModel ViewModel => DataContext as BasicGroupCreateStep1ViewModel;
 

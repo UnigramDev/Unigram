@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsAppearancePage : Page
+    public sealed partial class SettingsAppearancePage : HostedPage
     {
         public SettingsAppearanceViewModel ViewModel => DataContext as SettingsAppearanceViewModel;
 

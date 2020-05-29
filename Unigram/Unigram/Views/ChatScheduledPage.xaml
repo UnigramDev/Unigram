@@ -1,4 +1,4 @@
-﻿<Page
+﻿<local:HostedPage
     x:Class="Unigram.Views.ChatScheduledPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -13,4 +13,4 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
-</Page>
+</local:HostedPage>

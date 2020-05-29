@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsPrivacyAndSecurityPage : Page
+    public sealed partial class SettingsPrivacyAndSecurityPage : HostedPage
     {
         public SettingsPrivacyAndSecurityViewModel ViewModel => DataContext as SettingsPrivacyAndSecurityViewModel;
 

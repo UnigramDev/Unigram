@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatScheduledPage : Page, INavigablePage, ISearchablePage, IDisposable
+    public sealed partial class ChatScheduledPage : HostedPage, INavigablePage, ISearchablePage, IDisposable
     {
         public DialogScheduledViewModel ViewModel => DataContext as DialogScheduledViewModel;
         public ChatView View => Content as ChatView;

@@ -2848,4 +2848,16 @@ namespace Unigram.Views
             return null;
         }
     }
+
+    public class HostedPage : Page
+    {
+        public UIElement Header
+        {
+            get { return (UIElement)GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
+    }
 }

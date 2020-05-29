@@ -19,7 +19,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.Views.Payments
 {
-    public sealed partial class PaymentReceiptPage : Page
+    public sealed partial class PaymentReceiptPage : HostedPage
     {
         public PaymentReceiptViewModel ViewModel => DataContext as PaymentReceiptViewModel;
 

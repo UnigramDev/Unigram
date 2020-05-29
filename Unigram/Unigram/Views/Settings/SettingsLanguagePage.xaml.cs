@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsLanguagePage : Page
+    public sealed partial class SettingsLanguagePage : HostedPage
     {
         public SettingsLanguageViewModel ViewModel => DataContext as SettingsLanguageViewModel;
 

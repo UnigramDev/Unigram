@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsBackgroundsPage : Page, IHandle<UpdateFile>
+    public sealed partial class SettingsBackgroundsPage : HostedPage, IHandle<UpdateFile>
     {
         public SettingsBackgroundsViewModel ViewModel => DataContext as SettingsBackgroundsViewModel;
 

@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupAddRestrictedPage : Page
+    public sealed partial class SupergroupAddRestrictedPage : HostedPage
     {
         public SupergroupAddRestrictedViewModel ViewModel => DataContext as SupergroupAddRestrictedViewModel;
 

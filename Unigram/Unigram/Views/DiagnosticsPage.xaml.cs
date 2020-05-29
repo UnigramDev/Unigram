@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views
 {
-    public sealed partial class DiagnosticsPage : Page
+    public sealed partial class DiagnosticsPage : HostedPage
     {
         public DiagnosticsViewModel ViewModel => DataContext as DiagnosticsViewModel;
 

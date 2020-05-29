@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings.Privacy
 {
-    public sealed partial class SettingsPrivacyAllowChatInvitesPage : Page
+    public sealed partial class SettingsPrivacyAllowChatInvitesPage : HostedPage
     {
         public SettingsPrivacyAllowChatInvitesViewModel ViewModel => DataContext as SettingsPrivacyAllowChatInvitesViewModel;
 

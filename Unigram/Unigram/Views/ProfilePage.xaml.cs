@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views
 {
-    public sealed partial class ProfilePage : Page, IProfileDelegate
+    public sealed partial class ProfilePage : HostedPage, IProfileDelegate
     {
         public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
 

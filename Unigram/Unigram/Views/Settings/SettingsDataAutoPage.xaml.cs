@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsDataAutoPage : Page
+    public sealed partial class SettingsDataAutoPage : HostedPage
     {
         public SettingsDataAutoViewModel ViewModel => DataContext as SettingsDataAutoViewModel;
 

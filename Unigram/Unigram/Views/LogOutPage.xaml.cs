@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class LogOutPage : Page
+    public sealed partial class LogOutPage : HostedPage
     {
         public LogOutViewModel ViewModel => DataContext as LogOutViewModel;
 

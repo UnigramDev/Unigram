@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsDataAndStoragePage : Page
+    public sealed partial class SettingsDataAndStoragePage : HostedPage
     {
         public SettingsDataAndStorageViewModel ViewModel => DataContext as SettingsDataAndStorageViewModel;
 
