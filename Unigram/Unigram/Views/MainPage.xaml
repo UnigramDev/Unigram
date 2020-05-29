@@ -46,7 +46,9 @@
                             <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
 
                             <ContentControl Content="{TemplateBinding Header}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
-                            <ContentControl Content="{TemplateBinding PageHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding MasterHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding DetailHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ContentControl Content="{TemplateBinding Banner}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
 
                             <Grid x:Name="DetailPresenter">
                                 <Border VerticalAlignment="Top" Background="{TemplateBinding BorderBrush}" Height="{ThemeResource AppBarThemeCompactHeight}"/>
@@ -201,29 +203,10 @@
                                Grid.Column="1"/>
                 </Grid>
             </controls:MasterDetailView.Header>
-            <controls:MasterDetailView.PageHeader>
+            <controls:MasterDetailView.Banner>
                 <controls:PlaybackHeader x:Name="Playback"/>
-            </controls:MasterDetailView.PageHeader>
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup>
-                    <VisualState x:Name="Normal"/>
-                    <VisualState x:Name="TitleBar">
-                        <VisualState.Setters>
-                            <Setter Target="MasterDetail.BorderBrush" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <contract7Present:Grid.BackgroundTransition>
-                    <BrushTransition/>
-                </contract7Present:Grid.BackgroundTransition>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+            </controls:MasterDetailView.Banner>
+            <controls:MasterDetailView.MasterHeader>
                 <controls:ContentPageHeader x:Name="PageHeader" BackVisibility="Collapsed" Grid.Row="1">
                     <Grid x:Name="Header">
                         <Grid.ColumnDefinitions>
@@ -408,6 +391,27 @@
                             Grid.Column="1"/>
                     </Grid>
                 </controls:ContentPageHeader>
+            </controls:MasterDetailView.MasterHeader>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="TitleBar">
+                        <VisualState.Setters>
+                            <Setter Target="MasterDetail.BorderBrush" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <contract7Present:Grid.BackgroundTransition>
+                    <BrushTransition/>
+                </contract7Present:Grid.BackgroundTransition>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
                 <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
                     <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">

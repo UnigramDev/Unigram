@@ -272,6 +272,15 @@ namespace Unigram.Controls
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
+            if (e.Content is HostedPage hosted)
+            {
+                DetailHeader = hosted.Header;
+            }
+            else
+            {
+                DetailHeader = null;
+            }
+
             if (AdaptivePanel == null)
             {
                 return;
@@ -502,18 +511,40 @@ namespace Unigram.Controls
 
         #region PageHeader
 
-
-
-        public UIElement PageHeader
+        public UIElement Banner
         {
             get { return (UIElement)GetValue(PageHeaderProperty); }
             set { SetValue(PageHeaderProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for PageHeader.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PageHeaderProperty =
-            DependencyProperty.Register("PageHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+            DependencyProperty.Register("Banner", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
 
+        #endregion
+
+        #region MasterHeader
+
+        public UIElement MasterHeader
+        {
+            get { return (UIElement)GetValue(MasterHeaderProperty); }
+            set { SetValue(MasterHeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty MasterHeaderProperty =
+            DependencyProperty.Register("MasterHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region DetailHeader
+
+        public UIElement DetailHeader
+        {
+            get { return (UIElement)GetValue(DetailHeaderProperty); }
+            set { SetValue(DetailHeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty DetailHeaderProperty =
+            DependencyProperty.Register("DetailHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
 
         #endregion
 
