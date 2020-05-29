@@ -79,7 +79,7 @@ namespace Unigram.Services
             foreach (var file in files)
             {
                 var split = System.IO.Path.GetFileNameWithoutExtension(file.Name);
-                if (split.Length == 2 && Version.TryParse(split, out Version version))
+                if (Version.TryParse(split, out Version version))
                 {
                     sets.Add(version);
                 }
