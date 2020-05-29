@@ -295,7 +295,7 @@ namespace Unigram.Common
                     cropRectangle.Width * decoder.PixelWidth,
                     cropRectangle.Height * decoder.PixelHeight);
 
-                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(cropWidth, cropHeight), new Size(decoder.PixelWidth, decoder.PixelHeight), min, max);
+                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), min, max);
 
                 var bounds = new BitmapBounds();
                 bounds.X = (uint)scaledCrop.X;
@@ -386,32 +386,50 @@ namespace Unigram.Common
         public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, BitmapEditState editState)
         {
             var decoder = await BitmapDecoder.CreateAsync(imageStream);
-            var bounds = new BitmapBounds();
-            bounds.X = (uint)(editState.Rectangle.X * decoder.PixelWidth);
-            bounds.Y = (uint)(editState.Rectangle.Y * decoder.PixelHeight);
-            bounds.Width = (uint)(editState.Rectangle.Width * decoder.PixelWidth);
-            bounds.Height = (uint)(editState.Rectangle.Height * decoder.PixelHeight);
+            var cropWidth = (double)decoder.PixelWidth;
+            var cropHeight = (double)decoder.PixelHeight;
 
-            var transform = ComputeScalingTransformForSourceImage(decoder);
+            if (decoder.PixelWidth > 1280 || decoder.PixelHeight > 1280)
+            {
+                double ratioX = (double)1280 / cropWidth;
+                double ratioY = (double)1280 / cropHeight;
+                double ratio = Math.Min(ratioX, ratioY);
+
+                cropWidth = cropWidth * ratio;
+                cropHeight = cropHeight * ratio;
+            }
+
+            var cropRectangle = new Rect(
+                editState.Rectangle.X * decoder.PixelWidth,
+                editState.Rectangle.Y * decoder.PixelHeight,
+                editState.Rectangle.Width * decoder.PixelWidth,
+                editState.Rectangle.Height * decoder.PixelHeight);
+
+            var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), 1280, 0);
+
+            var bounds = new BitmapBounds();
+            bounds.X = (uint)scaledCrop.X;
+            bounds.Y = (uint)scaledCrop.Y;
+            bounds.Width = (uint)scaledCrop.Width;
+            bounds.Height = (uint)scaledCrop.Height;
+
+            var transform = new BitmapTransform();
+            transform.ScaledWidth = (uint)scaledSize.Width;
+            transform.ScaledHeight = (uint)scaledSize.Height;
             transform.Bounds = bounds;
+            transform.InterpolationMode = BitmapInterpolationMode.Linear;
             transform.Rotation = editState.Rotation;
             transform.Flip = editState.Flip;
 
-            //var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+            var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
-            var propertySet = new BitmapPropertySet();
-            var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
-            propertySet.Add("ImageQuality", qualityValue);
-
-            var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-            
             if (editState.Strokes != null)
             {
-                var stream = await DrawStrokesAsync(bitmap, editState.Strokes, editState.Rectangle, editState.Rotation, editState.Flip);
+                var stream = await DrawStrokesAsync(pixelData, editState.Strokes, editState.Rectangle, editState.Rotation, editState.Flip);
             }
-            
+
             var bitmapImage = new SoftwareBitmapSource();
-            await bitmapImage.SetBitmapAsync(bitmap);
+            await bitmapImage.SetBitmapAsync(pixelData);
 
             return bitmapImage;
         }
