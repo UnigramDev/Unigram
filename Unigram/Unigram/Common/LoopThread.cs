@@ -25,8 +25,11 @@ namespace Unigram.Common
             _timerInvalidate.Tick += OnInvalidate;
         }
 
-        private static LoopThread _current;
-        public static LoopThread Current => _current = _current ?? new LoopThread(TimeSpan.FromMilliseconds(1000 / 30));
+        private static LoopThread _animations;
+        public static LoopThread Animations => _animations = _animations ?? new LoopThread(TimeSpan.FromMilliseconds(1000 / 25));
+
+        private static LoopThread _stickers;
+        public static LoopThread Stickers => _stickers = _stickers ?? new LoopThread(TimeSpan.FromMilliseconds(1000 / 30));
 
         private void OnTick(object state)
         {

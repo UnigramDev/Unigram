@@ -4,6 +4,7 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Native;
 using Windows.Foundation;
@@ -116,13 +117,17 @@ namespace Unigram.Controls
 
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            _device = sender;
-
-            if (args.Reason == CanvasCreateResourcesReason.FirstTime)
+            args.TrackAsyncAction(Task.Run(() =>
             {
-                OnSourceChanged(UriToPath(Source), _source);
-                Invalidate();
-            }
+                _animation = VideoAnimation.LoadFromFile(_source, false, true);
+
+                var colors = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
+                Array.Fill<byte>(colors, 0);
+
+                _bitmap = CanvasBitmap.CreateFromBytes(sender, colors, _animation.PixelWidth, _animation.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                _device = sender;
+            
+            }).AsAsyncAction());
         }
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -132,13 +137,6 @@ namespace Unigram.Controls
             if (_animation == null)
             {
                 return;
-            }
-            else if (_bitmap == null)
-            {
-                var colors = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
-                Array.Fill<byte>(colors, 0);
-
-                _bitmap = CanvasBitmap.CreateFromBytes(sender, colors, _animation.PixelWidth, _animation.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.R8G8B8A8UIntNormalized);
             }
 
             var width = (double)_animation.PixelWidth;
@@ -215,15 +213,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var animation = VideoAnimation.LoadFromFile(newValue, false, true);
-            if (animation == null)
-            {
-                // The app can't access the file specified
-                return;
-            }
-
             _source = newValue;
-            _animation = animation;
 
             if (AutoPlay || _shouldPlay)
             {
@@ -282,12 +272,12 @@ namespace Unigram.Controls
             _subscribed = subscribe;
 
             _thread.Tick -= OnTick;
-            _thread.Invalidate -= OnInvalidate;
+            LoopThread.Animations.Invalidate -= OnInvalidate;
 
             if (subscribe)
             {
                 _thread.Tick += OnTick;
-                _thread.Invalidate += OnInvalidate;
+                LoopThread.Animations.Invalidate += OnInvalidate;
             }
         }
 

@@ -367,12 +367,12 @@ namespace Unigram.Controls
             _subscribed = subscribe;
 
             _thread.Tick -= OnTick;
-            _thread.Invalidate -= OnInvalidate;
+            LoopThread.Stickers.Invalidate -= OnInvalidate;
 
             if (subscribe)
             {
                 _thread.Tick += OnTick;
-                _thread.Invalidate += OnInvalidate;
+                LoopThread.Stickers.Invalidate += OnInvalidate;
             }
         }
 
