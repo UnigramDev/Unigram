@@ -200,7 +200,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{ThemeResource AppBarThemeCompactHeight}"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
