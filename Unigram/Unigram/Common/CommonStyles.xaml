@@ -5438,7 +5438,19 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                        <ContentPresenter
+                            AutomationProperties.AccessibilityView="Raw"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            Content="{TemplateBinding Content}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            Padding="{TemplateBinding Padding}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Grid.Column="1"/>
+                        <Border
+                            x:Name="ContentPresenter"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

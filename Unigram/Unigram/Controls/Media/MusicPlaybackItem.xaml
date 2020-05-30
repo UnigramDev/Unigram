@@ -23,7 +23,7 @@
         </Grid>
 
         <Grid x:Name="PlaybackPanel" Visibility="Collapsed" Background="{ThemeResource MessageMediaBackgroundBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top">
-            <controls:GlyphHyperlinkButton x:Name="PlaybackButton" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+            <controls:GlyphHyperlinkButton x:Name="PlaybackButton" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" Radius="24"/>
         </Grid>
 
         <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">

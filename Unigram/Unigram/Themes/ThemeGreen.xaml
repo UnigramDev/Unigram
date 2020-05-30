@@ -28,7 +28,7 @@
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#89DF9E"/>
             <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
 
-            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColor}"/>
 
             <SolidColorBrush x:Key="ChatFromLabelBrush" Color="{ThemeResource SystemAccentColor}"/>
             <SolidColorBrush x:Key="ChatDraftLabelBrush" Color="#DD4B39"/>
@@ -1255,7 +1255,7 @@
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#00B12C"/>
             <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
 
-            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColor}"/>
 
             <SolidColorBrush x:Key="ChatFromLabelBrush" Color="#3C7EB0"/>
             <SolidColorBrush x:Key="ChatDraftLabelBrush" Color="#DD4B39"/>
