@@ -42,6 +42,9 @@ namespace Unigram.Services
 
         IList<ChatFilterInfo> ChatFilters { get; }
 
+        IList<string> AnimationSearchEmojis { get; }
+        string AnimationSearchProvider { get; }
+
         Background GetSelectedBackground(bool darkTheme);
         Background SelectedBackground { get; }
 
@@ -148,6 +151,8 @@ namespace Unigram.Services
         private IList<long> _installedMaskSets;
 
         private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
+
+        private UpdateAnimationSearchParameters _animationSearchParameters;
 
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
@@ -374,16 +379,7 @@ namespace Unigram.Services
 
                     formattedText = Client.Execute(new ParseMarkdown(formattedText)) as FormattedText;
 
-                    if (SettingsService.CurrentMedia)
-                    {
-                        Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageAnimation(
-                            new InputFileLocal(Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\Changelog.mp4")), new InputThumbnail(
-                                new InputFileLocal(Path.Combine(Package.Current.InstalledLocation.Path, "Assets\\Mockup\\Changelog.jpg")), 450, 392), 5, 450, 392, formattedText)));
-                    }
-                    else
-                    {
-                        Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, true, false)));
-                    }
+                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, true, false)));
                 }
             }
 
@@ -604,6 +600,16 @@ namespace Unigram.Services
         public IList<ChatFilterInfo> ChatFilters
         {
             get { return _chatFilters; }
+        }
+
+        public IList<string> AnimationSearchEmojis
+        {
+            get { return _animationSearchParameters.Emojis; }
+        }
+
+        public string AnimationSearchProvider
+        {
+            get { return _animationSearchParameters.Provider; }
         }
 
         public Background SelectedBackground
@@ -1140,6 +1146,10 @@ namespace Unigram.Services
                 }
 
                 _authorizationState = updateAuthorizationState.AuthorizationState;
+            }
+            else if (update is UpdateAnimationSearchParameters updateAnimationSearchParameters)
+            {
+                _animationSearchParameters = updateAnimationSearchParameters;
             }
             else if (update is UpdateBasicGroup updateBasicGroup)
             {

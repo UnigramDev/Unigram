@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -23,12 +21,10 @@ namespace Unigram.ViewModels.Drawers
             SavedItems = new AnimationsCollection();
             TrendingItems = new TrendingAnimationsCollection(protoService, aggregator);
 
-            var reactions = new[] { "\U0001F44D", "\U0001F44E", "\U0001F60D", "\U0001F602", "\U0001F62F", "\U0001F615", "\U0001F622", "\U0001F621", "\U0001F4AA", "\U0001F44F", "\U0001F648", "\U0001F612" };
-
             Sets = new List<AnimationsCollection>();
             Sets.Add(SavedItems);
             Sets.Add(TrendingItems);
-            Sets.AddRange(reactions.Select(x => new SearchAnimationsCollection(protoService, aggregator, x)));
+            Sets.AddRange(cacheService.AnimationSearchEmojis.Select(x => new SearchAnimationsCollection(protoService, aggregator, x)));
 
             SelectedSet = Sets[0];
 
