@@ -72,7 +72,7 @@ namespace Unigram.ViewModels.Folders
         public RelayCommand<ChatFilterInfo> EditCommand { get; }
         private void EditExecute(ChatFilterInfo filter)
         {
-            NavigationService.Navigate(typeof(FolderPage), filter.ChatFilterId);
+            NavigationService.Navigate(typeof(FolderPage), filter.Id);
         }
 
         public RelayCommand<ChatFilterInfo> DeleteCommand { get; }
@@ -84,7 +84,7 @@ namespace Unigram.ViewModels.Folders
                 return;
             }
 
-            ProtoService.Send(new DeleteChatFilter(filter.ChatFilterId));
+            ProtoService.Send(new DeleteChatFilter(filter.Id));
         }
 
         public RelayCommand CreateCommand { get; }

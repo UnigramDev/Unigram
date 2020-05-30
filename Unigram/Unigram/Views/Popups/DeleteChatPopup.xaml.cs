@@ -24,13 +24,14 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class DeleteChatPopup : TLContentDialog
     {
-        public DeleteChatPopup(IProtoService protoService, Chat chat, bool clear, bool asOwner = false)
+        public DeleteChatPopup(IProtoService protoService, Chat chat, ChatList chatList, bool clear, bool asOwner = false)
         {
             InitializeComponent();
 
             Photo.Source = PlaceholderHelper.GetChat(protoService, chat, 36);
 
-            if (chat.Source is ChatSourcePublicServiceAnnouncement)
+            var position = chat.GetPosition(chatList);
+            if (position?.Source is ChatSourcePublicServiceAnnouncement)
             {
                 Title.Text = Strings.Resources.PsaHideChatAlertTitle;
                 Subtitle.Text = Strings.Resources.PsaHideChatAlertText;

@@ -1,4 +1,6 @@
-﻿using Telegram.Td.Api;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services;
@@ -34,8 +36,7 @@ namespace Unigram.ViewModels
         public int UnreadCount { get => _chat.UnreadCount; set => _chat.UnreadCount = value; }
         public bool DefaultDisableNotification { get => _chat.DefaultDisableNotification; set => _chat.DefaultDisableNotification = value; }
         public bool CanBeReported { get => _chat.CanBeReported; set => _chat.CanBeReported = value; }
-        public bool IsPinned { get => _chat.IsPinned; set => _chat.IsPinned = value; }
-        public long Order { get => _chat.Order; set => _chat.Order = value; }
+        public IList<ChatPosition> Positions { get => _chat.Positions; set => _chat.Positions = value; }
         public Message LastMessage { get => _chat.LastMessage; set => _chat.LastMessage = value; }
         public ChatPhoto Photo { get => _chat.Photo; set => _chat.Photo = value; }
         public string Title { get => _chat.Title; set => _chat.Title = value; }

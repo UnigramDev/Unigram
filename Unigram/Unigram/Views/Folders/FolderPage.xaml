@@ -88,7 +88,8 @@
                         Footer="{CustomResource FilterIncludeInfo}">
                         <controls:BadgeButton
                             Command="{x:Bind ViewModel.AddIncludeCommand}"
-                            Content="{CustomResource FilterAddChats}"/>
+                            Content="{CustomResource FilterAddChats}"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                         <muxc:ItemsRepeater
                             ItemsSource="{x:Bind ViewModel.Include}"
                             ElementPrepared="OnElementPrepared">
@@ -120,7 +121,8 @@
                         Footer="{CustomResource FilterExcludeInfo}">
                         <controls:BadgeButton
                             Command="{x:Bind ViewModel.AddExcludeCommand}"
-                            Content="{CustomResource FilterAddChats}"/>
+                            Content="{CustomResource FilterAddChats}"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                         <muxc:ItemsRepeater
                             ItemsSource="{x:Bind ViewModel.Exclude}"
                             ElementPrepared="OnElementPrepared">

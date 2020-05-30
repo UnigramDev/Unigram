@@ -159,7 +159,7 @@ namespace Unigram.Controls
             {
                 content.UpdateService(ViewModel.ProtoService, ViewModel);
                 content.UpdateViewState(args.Item as Chat, SelectedItem2 == args.Item && SelectionMode2 == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
-                content.UpdateChat(ViewModel.ProtoService, ViewModel, args.Item as Chat);
+                content.UpdateChat(ViewModel.ProtoService, ViewModel, args.Item as Chat, ViewModel.Items.ChatList);
                 content.SetSelectionMode(SelectionMode2, false);
                 args.Handled = true;
             }

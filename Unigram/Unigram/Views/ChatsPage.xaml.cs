@@ -52,7 +52,7 @@ namespace Unigram.Views
             var chat = element.Tag as Chat;
 
             var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
-            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.ChatList is ChatListArchive ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
+            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
             
             var folders = ViewModel.CacheService.ChatFilters;
             var item = new MenuFlyoutSubItem();
@@ -70,7 +70,7 @@ namespace Unigram.Views
 
             foreach (var folder in folders)
             {
-                if (chat.ChatList.ListEquals(new ChatListFilter(folder.ChatFilterId)))
+                if (chat.Positions.Any(x => x.List.ListEquals(new ChatListFilter(folder.Id))))
                 {
                     continue;
                 }
@@ -80,7 +80,13 @@ namespace Unigram.Views
 
             flyout.Items.Add(item);
 
-            flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, chat.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = chat.IsPinned ? Icons.Unpin : Icons.Pin });
+            var position = chat.GetPosition(ViewModel.Items.ChatList);
+            if (position == null)
+            {
+                return;
+            }
+
+            flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.Unpin : Icons.Pin });
             flyout.CreateFlyoutItem(DialogNotify_Loaded, viewModel.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
             flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
             flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
@@ -115,7 +121,8 @@ namespace Unigram.Views
             //    return count < max ? Visibility.Visible : Visibility.Collapsed;
             //}
 
-            if (chat.Source != null)
+            var position = chat.GetPosition(ViewModel.Items.ChatList);
+            if (position?.Source != null)
             {
                 return false;
             }
@@ -125,7 +132,8 @@ namespace Unigram.Views
 
         private bool DialogArchive_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsSavedMessages(chat) || chat.Source != null || chat.Id == 777000)
+            var position = chat.GetPosition(ViewModel.Items.ChatList);
+            if (ViewModel.CacheService.IsSavedMessages(chat) || position?.Source != null || chat.Id == 777000)
             {
                 return false;
             }
@@ -135,7 +143,8 @@ namespace Unigram.Views
 
         private bool DialogNotify_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsSavedMessages(chat) || chat.Source is ChatSourcePublicServiceAnnouncement)
+            var position = chat.GetPosition(ViewModel.Items.ChatList);
+            if (ViewModel.CacheService.IsSavedMessages(chat) || position?.Source is ChatSourcePublicServiceAnnouncement)
             {
                 return false;
             }
@@ -145,7 +154,8 @@ namespace Unigram.Views
 
         public bool DialogClear_Loaded(Chat chat)
         {
-            if (chat.Source != null)
+            var position = chat.GetPosition(ViewModel.Items.ChatList);
+            if (position?.Source != null)
             {
                 return false;
             }
@@ -164,7 +174,8 @@ namespace Unigram.Views
 
         private bool DialogDelete_Loaded(Chat chat)
         {
-            if (chat.Source is ChatSourceMtprotoProxy)
+            var position = chat.GetPosition(ViewModel.Items.ChatList);
+            if (position?.Source is ChatSourceMtprotoProxy)
             {
                 return false;
             }
@@ -189,7 +200,8 @@ namespace Unigram.Views
 
         private string DialogDelete_Text(Chat chat)
         {
-            if (chat.Source is ChatSourcePublicServiceAnnouncement)
+            var position = chat.GetPosition(ViewModel.Items.ChatList);
+            if (position?.Source is ChatSourcePublicServiceAnnouncement)
             {
                 return Strings.Resources.PsaHide;
             }
@@ -214,15 +226,15 @@ namespace Unigram.Views
             var header = Header as FrameworkElement;
             var headerVisibility = header != null ? header.Visibility : Visibility.Visible;
 
-            if (e.Items.Count > 1 || e.Items[0] is Chat chat && !chat.IsPinned || headerVisibility == Visibility.Visible || ChatsList.SelectionMode2 == ListViewSelectionMode.Multiple)
-            {
-                ChatsList.CanReorderItems = false;
-                e.Cancel = true;
-            }
-            else
-            {
-                ChatsList.CanReorderItems = true;
-            }
+            //if (e.Items.Count > 1 || e.Items[0] is Chat chat && !chat.IsPinned || headerVisibility == Visibility.Visible || ChatsList.SelectionMode2 == ListViewSelectionMode.Multiple)
+            //{
+            //    ChatsList.CanReorderItems = false;
+            //    e.Cancel = true;
+            //}
+            //else
+            //{
+            //    ChatsList.CanReorderItems = true;
+            //}
         }
 
         private void Chats_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
@@ -242,19 +254,19 @@ namespace Unigram.Views
 
                 var compare = items[index > 0 ? index - 1 : index + 1];
 
-                if (compare.Source != null && index > 0)
-                {
-                    compare = items[index + 1];
-                }
+                //if (compare.Source != null && index > 0)
+                //{
+                //    compare = items[index + 1];
+                //}
 
-                if (compare.IsPinned)
-                {
-                    ViewModel.ProtoService.Send(new SetPinnedChats(chatList, items.Where(x => x.IsPinned).Select(x => x.Id).ToList()));
-                }
-                else
-                {
-                    ViewModel.Items.Handle(chat.Id, chat.Order);
-                }
+                //if (compare.IsPinned)
+                //{
+                //    ViewModel.ProtoService.Send(new SetPinnedChats(chatList, items.Where(x => x.IsPinned).Select(x => x.Id).ToList()));
+                //}
+                //else
+                //{
+                //    ViewModel.Items.Handle(chat.Id, chat.Order);
+                //}
             }
         }
 

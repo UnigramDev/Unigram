@@ -37,7 +37,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:MasterDetailView">
-                        <controls:MasterDetailPanel x:Name="AdaptivePanel" IsBlank="{TemplateBinding IsBlank}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <controls:MasterDetailPanel x:Name="AdaptivePanel" IsBlank="{TemplateBinding IsBlank}" Background="{ThemeResource PageBackgroundDarkBrush}">
                             <chats:ChatBackgroundPresenter
                                 Background="{ThemeResource ChatPageBackgroundBrush}"
                                 Opacity="{TemplateBinding BackgroundOpacity}"
@@ -605,13 +605,18 @@
                                                 ItemsSource="{x:Bind ViewModel.Filters}"
                                                 SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
                                                 ItemContextRequested="ChatFilter_ContextRequested"
+                                                AllowDrop="True"
+                                                CanDragItems="True"
+                                                CanReorderItems="False"
+                                                DragItemsStarting="ChatFilters_DragItemsStarting"
+                                                DragItemsCompleted="ChatFilters_DragItemsCompleted"
                                                 Height="40">
                                                 <controls:TopNavView.ItemTemplate>
                                                     <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBlock Text="{x:Bind Title, Mode=OneWay}" VerticalAlignment="Top"/>
                                                             <Border
-                                                                Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                                Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
                                                                 Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                                 MinWidth="20"
                                                                 Height="20"
@@ -621,6 +626,20 @@
                                                                     Text="{x:Bind UnreadCount, Mode=OneWay}"
                                                                     Style="{StaticResource CaptionTextBlockStyle}"
                                                                     Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                                    TextAlignment="Center"
+                                                                    Margin="6,2,6,0"/>
+                                                            </Border>
+                                                            <Border
+                                                                Visibility="{x:Bind ShowMuted, Mode=OneWay}"
+                                                                Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
+                                                                MinWidth="20"
+                                                                Height="20"
+                                                                CornerRadius="10"
+                                                                Margin="8,0,0,0">
+                                                                <TextBlock
+                                                                    Text="{x:Bind UnreadMutedCount, Mode=OneWay}"
+                                                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                                                    Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
                                                                     TextAlignment="Center"
                                                                     Margin="6,2,6,0"/>
                                                             </Border>
@@ -931,7 +950,7 @@
                     </PivotItem>
                 </Pivot>
 
-                <Border x:Name="Separator" BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="1,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="4" Grid.Row="1"/>
+                <Border x:Name="Separator" BorderBrush="{ThemeResource PageHeaderBorderBrush}" BorderThickness="1,0,0,0" IsHitTestVisible="False" HorizontalAlignment="Right" Margin="0,-48,0,0" Grid.RowSpan="4" Grid.Row="1"/>
             </Grid>
         </controls:MasterDetailView>
 

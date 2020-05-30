@@ -385,6 +385,8 @@ namespace Unigram.Views.Popups
             dialog.ViewModel.Title = include ? Strings.Resources.FilterAlwaysShow : Strings.Resources.FilterNeverShow;
             dialog.ViewModel.AllowEmptySelection = true;
             dialog.Header = panel;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.IsPrimaryButtonEnabled = true;
 
             var confirm = await dialog.PickAsync(target.OfType<FilterChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
             if (confirm != ContentDialogResult.Primary)

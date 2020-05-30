@@ -24,6 +24,7 @@ namespace Unigram.ViewModels
     public class MainViewModel : TLMultipleViewModelBase,
         IHandle<UpdateServiceNotification>,
         IHandle<UpdateUnreadMessageCount>,
+        IHandle<UpdateUnreadChatCount>,
         IHandle<UpdateChatFilters>,
         IHandle<UpdateAppVersion>,
         IHandle<UpdateWindowActivated>
@@ -192,9 +193,26 @@ namespace Unigram.ViewModels
 
             BeginOnUIThread(() =>
             {
-                UnreadCount = update.UnreadCount;
-                UnreadUnmutedCount = update.UnreadUnmutedCount;
-                UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
+                if (update.ChatList is ChatListMain)
+                {
+                    UnreadCount = update.UnreadCount;
+                    UnreadUnmutedCount = update.UnreadUnmutedCount;
+                    UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
+                }
+            });
+        }
+
+        public void Handle(UpdateUnreadChatCount update)
+        {
+            BeginOnUIThread(() =>
+            {
+                foreach (var filter in _filters)
+                {
+                    if (filter.ChatList is ChatListFilter && filter.ChatList.ListEquals(update.ChatList))
+                    {
+                        filter.UpdateCount(update);
+                    }
+                }
             });
         }
 
@@ -210,7 +228,7 @@ namespace Unigram.ViewModels
                 var selected = SelectedFilter?.ChatFilterId ?? Constants.ChatListMain;
                 //var origin = chatFilters.Select(x => Filters.FirstOrDefault(y => y.ChatFilterId == x.ChatFilterId));
 
-                Merge(Filters, new[] { new ChatFilterInfo { ChatFilterId = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, Emoji = "\U0001F4BC" } }.Union(chatFilters).ToArray());
+                Merge(Filters, new[] { new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, Emoji = "\U0001F4BC" } }.Union(chatFilters).ToArray());
 
                 if (Chats.Items.ChatList is ChatListFilter already && already.ChatFilterId != selected)
                 {
@@ -223,13 +241,18 @@ namespace Unigram.ViewModels
 
                 foreach (var filter in _filters)
                 {
+                    if (filter.ChatList is ChatListMain)
+                    {
+                        continue;
+                    }
+
                     var unreadCount = CacheService.GetUnreadCount(filter.ChatList);
                     if (unreadCount == null)
                     {
                         continue;
                     }
 
-                    filter.UnreadCount = unreadCount.UnreadChatCount.UnreadUnmutedCount;
+                    filter.UpdateCount(unreadCount.UnreadChatCount);
                 }
             }
             else
@@ -250,7 +273,7 @@ namespace Unigram.ViewModels
 
                     for (int j = 0; j < origin.Count; j++)
                     {
-                        if (origin[j].ChatFilterId == user.ChatFilterId)
+                        if (origin[j].Id == user.ChatFilterId)
                         {
                             index = j;
                             break;
@@ -271,7 +294,7 @@ namespace Unigram.ViewModels
 
                     for (int j = 0; j < destination.Count; j++)
                     {
-                        if (destination[j].ChatFilterId == filter.ChatFilterId)
+                        if (destination[j].ChatFilterId == filter.Id)
                         {
                             destination[j].Update(filter);
 
@@ -467,17 +490,16 @@ namespace Unigram.ViewModels
 
         public ChatFilterViewModel(ChatFilterInfo info)
         {
-            if (info.ChatFilterId == Constants.ChatListMain)
+            if (info.Id == Constants.ChatListMain)
             {
                 ChatList = new ChatListMain();
             }
             else
             {
-                ChatList = new ChatListFilter(info.ChatFilterId);
-                ChatList = new ChatListArchive();
+                ChatList = new ChatListFilter(info.Id);
             }
 
-            ChatFilterId = info.ChatFilterId;
+            ChatFilterId = info.Id;
 
             _title = info.Title;
             _emoji = info.Emoji;
@@ -526,6 +548,33 @@ namespace Unigram.ViewModels
         {
             get => _unreadCount;
             set => Set(ref _unreadCount, value);
+        }
+
+        private int _unreadUnmutedCount;
+        public int UnreadUnmutedCount
+        {
+            get => _unreadUnmutedCount;
+            set => Set(ref _unreadUnmutedCount, value);
+        }
+
+        private int _unreadMutedCount;
+        public int UnreadMutedCount
+        {
+            get => _unreadMutedCount;
+            set => Set(ref _unreadMutedCount, value);
+        }
+
+        public bool ShowUnmuted => _unreadUnmutedCount > 0;
+        public bool ShowMuted => _unreadMutedCount > 0 && _unreadUnmutedCount == 0;
+
+        public void UpdateCount(UpdateUnreadChatCount update)
+        {
+            UnreadCount = update.UnreadCount;
+            UnreadUnmutedCount = update.UnreadUnmutedCount;
+            UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
+
+            RaisePropertyChanged(() => ShowUnmuted);
+            RaisePropertyChanged(() => ShowMuted);
         }
     }
 

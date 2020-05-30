@@ -82,7 +82,7 @@ namespace Unigram.ViewModels.Folders
             if (filter.ExcludeRead)        Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeRead });
             if (filter.ExcludeArchived)    Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeArchived });
 
-            foreach (var chatId in filter.IncludeChatIds)
+            foreach (var chatId in filter.IncludedChatIds)
             {
                 var chat = CacheService.GetChat(chatId);
                 if (chat == null)
@@ -93,7 +93,7 @@ namespace Unigram.ViewModels.Folders
                 Include.Add(new FilterChat { Chat = chat });
             }
 
-            foreach (var chatId in filter.ExcludeChatIds)
+            foreach (var chatId in filter.ExcludedChatIds)
             {
                 var chat = CacheService.GetChat(chatId);
                 if (chat == null)
@@ -307,8 +307,8 @@ namespace Unigram.ViewModels.Folders
                 }
             }
 
-            filter.IncludeChatIds = include;
-            filter.ExcludeChatIds = exclude;
+            filter.IncludedChatIds = include;
+            filter.ExcludedChatIds = exclude;
 
             Function function;
             if (Id is int id)

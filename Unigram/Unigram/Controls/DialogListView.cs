@@ -201,40 +201,40 @@ namespace Unigram.Controls
 
         private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            var item = e.Items.FirstOrDefault() as Chat;
-            if (item != null)
-            {
-                if (item.IsPinned == false)
-                {
-                    e.Cancel = true;
-                }
-                else
-                {
-                    var container = ContainerFromItem(item) as ListViewItem;
-                    //ElementCompositionPreview.GetElementVisual(container as ListViewItem).Opacity = 0;
-                    //container.RenderTransform = new TranslateTransform { X = container.ActualWidth };
+            //var item = e.Items.FirstOrDefault() as Chat;
+            //if (item != null)
+            //{
+            //    if (item.IsPinned == false)
+            //    {
+            //        e.Cancel = true;
+            //    }
+            //    else
+            //    {
+            //        var container = ContainerFromItem(item) as ListViewItem;
+            //        //ElementCompositionPreview.GetElementVisual(container as ListViewItem).Opacity = 0;
+            //        //container.RenderTransform = new TranslateTransform { X = container.ActualWidth };
 
-                    _currentContainer = container;
-                    _currentItem = item;
-                    _currentIndex = IndexFromContainer(container);
-                    _originalIndex = _currentIndex;
-                    _drag = 0;
+            //        _currentContainer = container;
+            //        _currentItem = item;
+            //        _currentIndex = IndexFromContainer(container);
+            //        _originalIndex = _currentIndex;
+            //        _drag = 0;
 
-                    _currentContainer.RenderTransform = new TranslateTransform();
-                    Canvas.SetZIndex(_currentContainer, 100000);
+            //        _currentContainer.RenderTransform = new TranslateTransform();
+            //        Canvas.SetZIndex(_currentContainer, 100000);
 
-                    //var transform = _currentContainer.TransformToVisual(Window.Current.Content);
-                    //var point = transform.TransformPoint(new Point());
+            //        //var transform = _currentContainer.TransformToVisual(Window.Current.Content);
+            //        //var point = transform.TransformPoint(new Point());
 
-                    //var center = _currentContainer.ActualHeight / 2d;
-                    //var difference = (Window.Current.CoreWindow.PointerPosition.Y - Window.Current.CoreWindow.Bounds.Y) - (point.Y + center);
+            //        //var center = _currentContainer.ActualHeight / 2d;
+            //        //var difference = (Window.Current.CoreWindow.PointerPosition.Y - Window.Current.CoreWindow.Bounds.Y) - (point.Y + center);
 
-                    //var translate = _currentContainer.RenderTransform as TranslateTransform;
-                    //translate.Y += difference;
+            //        //var translate = _currentContainer.RenderTransform as TranslateTransform;
+            //        //translate.Y += difference;
 
-                    _rows = new ObservableCollection<Chat>(ViewModel.Chats.Items.Where(x => x.IsPinned));
-                }
-            }
+            //        _rows = new ObservableCollection<Chat>(ViewModel.Chats.Items.Where(x => x.IsPinned));
+            //    }
+            //}
         }
 
         #endregion

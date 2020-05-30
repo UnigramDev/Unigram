@@ -553,6 +553,10 @@ namespace Unigram.Common
             {
                 return true;
             }
+            else if (x is ChatListFilter filterX && y is ChatListFilter filterY)
+            {
+                return filterX.ChatFilterId == filterY.ChatFilterId;
+            }
 
             return false;
         }
@@ -1289,14 +1293,19 @@ namespace Unigram.Common
             var performer = string.IsNullOrEmpty(audio.Performer) ? null : audio.Performer;
             var title = string.IsNullOrEmpty(audio.Title) ? null : audio.Title;
 
-            if (performer == null && title == null)
+            if (performer == null || title == null)
             {
                 return audio.FileName;
             }
             else
             {
-                return $"{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}";
+                return $"{performer} - {title}";
             }
+        }
+
+        public static ChatPosition GetPosition(this Chat chat, ChatList chatList)
+        {
+            return chat.Positions.FirstOrDefault(x => x.List.ListEquals(chatList));
         }
 
         public static TdNetworkType GetNetworkType(this NetworkStatisticsEntry entry)

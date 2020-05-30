@@ -52,8 +52,6 @@ namespace Unigram.Services
         string GetTitle(Chat chat, bool tiny = false);
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
-        IList<Chat> GetChats(int count);
-        IList<Chat> GetPinnedChats();
 
         IDictionary<int, ChatAction> GetChatActions(long id);
 
@@ -301,7 +299,6 @@ namespace Unigram.Services
             Task.Run(() =>
             {
                 InitializeDiagnostics();
-                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
 
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
@@ -455,108 +452,13 @@ namespace Unigram.Services
         //    _client.Send(function, handler);
         //}
 
-        private Dictionary<int, ChatFilter> _filters = new Dictionary<int, ChatFilter>
-        {
-            {
-                2, new ChatFilter
-                {
-                    Title = "WWWWWWWWWWWW",
-                    Emoji = "\U0001F3AE"
-                }
-            }
-        };
-
-        private IList<RecommendedChatFilter> _suggestions = new List<RecommendedChatFilter>
-        {
-            new RecommendedChatFilter
-            {
-                Filter = new ChatFilter
-                {
-                    Title = "Unread",
-                    ExcludeRead = true
-                },
-                Description = "All unread chats"
-            },
-            new RecommendedChatFilter
-            {
-                Filter = new ChatFilter
-                {
-                    Title = "Personal",
-                    IncludeChannels = false
-                },
-                Description = "Exclude large groups and channels"
-            }
-        };
-
         public void Send(Function function, Action<BaseObject> handler = null)
         {
-            if (function is GetChatFilter getChatFilter)
-            {
-                handler?.Invoke(_filters[getChatFilter.ChatFilterId]);
-                return;
-            }
-            else if (function is EditChatFilter editChatFilter)
-            {
-                _filters[editChatFilter.ChatFilterId] = editChatFilter.Filter;
-                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
-                handler?.Invoke(new Ok());
-                return;
-            }
-            else if (function is CreateChatFilter createChatFilter)
-            {
-                if (_suggestions.Count > 0)
-                {
-                    _suggestions.RemoveAt(0);
-                }
-
-                _filters[_filters.Max(x => x.Key) + 1] = createChatFilter.Filter;
-                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
-                handler?.Invoke(new Ok());
-                return;
-            }
-            else if (function is DeleteChatFilter deleteChatFilter)
-            {
-                _filters.Remove(deleteChatFilter.ChatFilterId);
-                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
-                handler?.Invoke(new Ok());
-                return;
-            }
-            else if (function is GetRecommendedChatFilters)
-            {
-                handler?.Invoke(new RecommendedChatFilters { ChatFilters = _suggestions });
-                return;
-            }
-
             _client.Send(function, handler);
         }
 
         public Task<BaseObject> SendAsync(Function function)
         {
-            if (function is GetChatFilter getChatFilter)
-            {
-                return Task.FromResult((BaseObject)_filters[getChatFilter.ChatFilterId]);
-            }
-            else if (function is EditChatFilter editChatFilter)
-            {
-                _filters[editChatFilter.ChatFilterId] = editChatFilter.Filter;
-                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
-                return Task.FromResult((BaseObject)new Ok());
-            }
-            else if (function is CreateChatFilter createChatFilter)
-            {
-                _filters[_filters.Max(x => x.Key) + 1] = createChatFilter.Filter;
-                OnResult(new UpdateChatFilters(_filters.Select(x => new ChatFilterInfo { ChatFilterId = x.Key, Title = x.Value.Title, Emoji = x.Value.Emoji }).ToList()));
-                return Task.FromResult((BaseObject)new Ok());
-            }
-            else if (function is GetRecommendedChatFilters)
-            {
-                return Task.FromResult((BaseObject)new RecommendedChatFilters { ChatFilters = _suggestions });
-            }
-            //else if (function is SetChatFolder set)
-            //{
-            //    _filters[set.Filter.Id] = set.Filter;
-            //}
-
             return _client.SendAsync(function);
         }
 
@@ -860,16 +762,6 @@ namespace Unigram.Services
             }
 
             return result;
-        }
-
-        public IList<Chat> GetChats(int count)
-        {
-            return _chats.Values.Where(x => x.Order != 0).OrderByDescending(x => x.Order).Take(count).ToList();
-        }
-
-        public IList<Chat> GetPinnedChats()
-        {
-            return _chats.Values.Where(x => x.Order != 0).OrderByDescending(x => x.Order).Where(x => x.IsPinned).ToList();
         }
 
         public SecretChat GetSecretChat(int id)
@@ -1268,13 +1160,6 @@ namespace Unigram.Services
                     value.ActionBar = updateChatActionBar.ActionBar;
                 }
             }
-            else if (update is UpdateChatChatList updateChatChatList)
-            {
-                if (_chats.TryGetValue(updateChatChatList.ChatId, out Chat value))
-                {
-                    value.ChatList = updateChatChatList.ChatList;
-                }
-            }
             else if (update is UpdateChatDefaultDisableNotification updateChatDefaultDisableNotification)
             {
                 if (_chats.TryGetValue(updateChatDefaultDisableNotification.ChatId, out Chat value))
@@ -1286,7 +1171,7 @@ namespace Unigram.Services
             {
                 if (_chats.TryGetValue(updateChatDraftMessage.ChatId, out Chat value))
                 {
-                    value.Order = updateChatDraftMessage.Order;
+                    value.Positions = updateChatDraftMessage.Positions;
                     value.DraftMessage = updateChatDraftMessage.DraftMessage;
                 }
             }
@@ -1308,19 +1193,11 @@ namespace Unigram.Services
                     value.IsMarkedAsUnread = updateChatIsMarkedAsUnread.IsMarkedAsUnread;
                 }
             }
-            else if (update is UpdateChatIsPinned updateChatIsPinned)
-            {
-                if (_chats.TryGetValue(updateChatIsPinned.ChatId, out Chat value))
-                {
-                    value.Order = updateChatIsPinned.Order;
-                    value.IsPinned = updateChatIsPinned.IsPinned;
-                }
-            }
             else if (update is UpdateChatLastMessage updateChatLastMessage)
             {
                 if (_chats.TryGetValue(updateChatLastMessage.ChatId, out Chat value))
                 {
-                    value.Order = updateChatLastMessage.Order;
+                    value.Positions = updateChatLastMessage.Positions;
                     value.LastMessage = updateChatLastMessage.LastMessage;
                 }
             }
@@ -1329,13 +1206,6 @@ namespace Unigram.Services
                 if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))
                 {
                     value.NotificationSettings = updateNotificationSettings.NotificationSettings;
-                }
-            }
-            else if (update is UpdateChatOrder updateChatOrder)
-            {
-                if (_chats.TryGetValue(updateChatOrder.ChatId, out Chat value))
-                {
-                    value.Order = updateChatOrder.Order;
                 }
             }
             else if (update is UpdateChatPermissions updateChatPermissions)
@@ -1365,6 +1235,24 @@ namespace Unigram.Services
                     value.PinnedMessageId = updateChatPinnedMessage.PinnedMessageId;
                 }
             }
+            else if (update is UpdateChatPosition updateChatPosition)
+            {
+                if (_chats.TryGetValue(updateChatPosition.ChatId, out Chat value))
+                {
+                    var existing = value.GetPosition(updateChatPosition.Position.List);
+                    if (existing != null)
+                    {
+                        existing.IsPinned = updateChatPosition.Position.IsPinned;
+                        existing.List = updateChatPosition.Position.List;
+                        existing.Order = updateChatPosition.Position.Order;
+                        existing.Source = updateChatPosition.Position.Source;
+                    }
+                    else
+                    {
+                        value.Positions.Add(updateChatPosition.Position);
+                    }
+                }
+            }
             else if (update is UpdateChatReadInbox updateChatReadInbox)
             {
                 if (_chats.TryGetValue(updateChatReadInbox.ChatId, out Chat value))
@@ -1385,14 +1273,6 @@ namespace Unigram.Services
                 if (_chats.TryGetValue(updateChatReplyMarkup.ChatId, out Chat value))
                 {
                     value.ReplyMarkupMessageId = updateChatReplyMarkup.ReplyMarkupMessageId;
-                }
-            }
-            else if (update is UpdateChatSource updateChatSource)
-            {
-                if (_chats.TryGetValue(updateChatSource.ChatId, out Chat value))
-                {
-                    value.Order = updateChatSource.Order;
-                    value.Source = updateChatSource.Source;
                 }
             }
             else if (update is UpdateChatTitle updateChatTitle)
