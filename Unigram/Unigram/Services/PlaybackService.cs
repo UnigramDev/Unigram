@@ -137,7 +137,14 @@ namespace Unigram.Services
                     _mediaPlayer.StepForwardOneFrame();
                     break;
                 case SystemMediaTransportControlsButton.Previous:
-                    MovePrevious();
+                    if (Position.TotalSeconds > 5)
+                    {
+                        SetPosition(TimeSpan.Zero);
+                    }
+                    else
+                    {
+                        MovePrevious();
+                    }
                     break;
                 case SystemMediaTransportControlsButton.Next:
                     MoveNext();
