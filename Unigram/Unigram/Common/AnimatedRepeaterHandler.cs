@@ -274,10 +274,10 @@ namespace Unigram.Common
                     presenter.IsLoopingEnabled = true;
                     presenter.Source = new Uri("file:///" + data.File.Local.Path);
 
-                    if (data.Container.Children[0] is Image img)
-                    {
-                        presenter.Thumbnail = img.Source;
-                    }
+                    //if (data.Container.Children[0] is Image img)
+                    //{
+                    //    //presenter.Thumbnail = img.Source;
+                    //}
 
                     data.Presenter = presenter;
 
