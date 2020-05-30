@@ -1,36 +1,23 @@
 ﻿using System;
-using System.Diagnostics;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Views.Popups;
-using Unigram.Views;
+using Unigram.Controls.Gallery;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Users;
+using Unigram.Views.Folders;
+using Unigram.Views.Passport;
+using Unigram.Views.Popups;
 using Unigram.Views.Settings;
-using Windows.UI.Core;
+using Windows.ApplicationModel;
+using Windows.Foundation.Metadata;
+using Windows.Media.Capture;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using Windows.Storage;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Collections;
-using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Media.Animation;
-using Unigram.ViewModels.Users;
-using Windows.UI.Xaml.Markup;
-using System.Linq;
-using Windows.UI.Xaml.Media;
-using Telegram.Td.Api;
-using Windows.Media.Capture;
-using Unigram.ViewModels.Delegates;
-using Windows.ApplicationModel;
-using Unigram.Views.Passport;
-using Unigram.Controls.Gallery;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
-using Unigram.Converters;
-using Unigram.Views.Folders;
-using Unigram.Views.Popups;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -65,7 +52,13 @@ namespace Unigram.Views
             Package package = Package.Current;
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;
-            return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build, version.Revision);
+
+            if (version.Revision > 0)
+            {
+                return string.Format("{0}.{1}.{3} ({2})", version.Major, version.Minor, version.Build, version.Revision);
+            }
+
+            return string.Format("{0}.{1} ({2})", version.Major, version.Minor, version.Build, version.Revision);
         }
 
         private MasterDetailView _masterDetail;
@@ -167,6 +160,12 @@ namespace Unigram.Views
         private void Data_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
+        private void Folders_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(FoldersPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
