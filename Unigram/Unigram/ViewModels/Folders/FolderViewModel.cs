@@ -49,6 +49,7 @@ namespace Unigram.ViewModels.Folders
                 if (response is ChatFilter result)
                 {
                     Id = id;
+                    Filter = result;
                     filter = result;
                 }
                 else
@@ -58,7 +59,11 @@ namespace Unigram.ViewModels.Folders
             }
             else
             {
+                Id = null;
+                Filter = null;
                 filter = new ChatFilter();
+                filter.IncludedChatIds = new List<long>();
+                filter.ExcludedChatIds = new List<long>();
             }
 
             if (filter == null)
@@ -106,6 +111,13 @@ namespace Unigram.ViewModels.Folders
         }
 
         public int? Id { get; set; }
+
+        private ChatFilter _filter;
+        public ChatFilter Filter
+        {
+            get => _filter;
+            set => Set(ref _filter, value);
+        }
 
         private string _title;
         public string Title

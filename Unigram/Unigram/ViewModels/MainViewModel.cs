@@ -590,12 +590,17 @@ namespace Unigram.ViewModels
 
         public static string FromEmoji(string emoji)
         {
+            if (string.IsNullOrEmpty(emoji))
+            {
+                return _map[Default].Glyph;
+            }
+
             if (_map.TryGetValue(emoji, out ChatFilterIcon icon))
             {
                 return icon.Glyph;
             }
 
-            return Items[0].Glyph;
+            return _map[Default].Glyph;
         }
 
         static ChatFilterIcon()

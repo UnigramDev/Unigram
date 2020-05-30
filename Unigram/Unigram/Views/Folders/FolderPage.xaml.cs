@@ -141,11 +141,17 @@ namespace Unigram.Views.Folders
 
         #region Binding
 
+        private string ConvertTitle(ChatFilter filter)
+        {
+            return filter == null ? Strings.Resources.FilterNew : filter.Title;
+        }
+
         private string ConvertEmoji(string emoji)
         {
             return ChatFilterIcon.FromEmoji(emoji);
         }
 
         #endregion
+
     }
 }

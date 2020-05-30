@@ -11,7 +11,7 @@
 
     <local:HostedPage.Header>
         <controls:ButtonPageHeader
-            Text="{CustomResource FilterNew}"
+            Text="{x:Bind ConvertTitle(ViewModel.Filter), Mode=OneWay}"
             Command="{x:Bind ViewModel.SendCommand}"
             Glyph="&#xE10B;"/>
     </local:HostedPage.Header>

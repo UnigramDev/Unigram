@@ -701,7 +701,11 @@ namespace Unigram.ViewModels
 
             public void Handle(long chatId, long order)
             {
-
+                var chat = GetChat(chatId);
+                if (chat != null)
+                {
+                    Handle(chat, order);
+                }
             }
 
             private void Handle(Chat chat, long order)
