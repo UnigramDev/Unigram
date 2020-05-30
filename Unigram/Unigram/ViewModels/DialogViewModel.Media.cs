@@ -121,7 +121,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInputThumbnail(), animation.Duration, animation.Width, animation.Height, null);
+            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInputThumbnail(), new int[0], animation.Duration, animation.Width, animation.Height, null);
 
             await SendMessageAsync(reply, input, options);
         }
@@ -809,7 +809,7 @@ namespace Unigram.ViewModels
 
                     if (video.IsMuted)
                     {
-                        var input = new InputMessageAnimation(generated, thumbnail, (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, firstCaption);
+                        var input = new InputMessageAnimation(generated, thumbnail, new int[0], (int)videoProps.Duration.TotalSeconds, videoWidth, videoHeight, firstCaption);
 
                         operations.Add(input);
                         firstCaption = null;

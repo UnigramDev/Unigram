@@ -28,8 +28,6 @@ namespace Unigram.Services.Factories
         Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
         Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
         Task<InputMessageFactory> CreateDocumentAsync(StorageFile file);
-
-        InputMessageContent ToInput(Message message, bool caption);
     }
 
     public class MessageFactory : IMessageFactory
@@ -141,7 +139,7 @@ namespace Unigram.Services.Factories
                 {
                     InputFile = generated,
                     Type = new FileTypeAnimation(),
-                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, duration, videoWidth, videoHeight, caption)
+                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, new int[0], duration, videoWidth, videoHeight, caption)
                 };
             }
 
@@ -245,49 +243,6 @@ namespace Unigram.Services.Factories
                 Type = new FileTypeDocument(),
                 Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, caption)
             };
-        }
-
-
-
-        public InputMessageContent ToInput(Message message, bool caption)
-        {
-            var content = message.Content;
-            switch (content)
-            {
-                case MessageAnimation animation:
-                    return new InputMessageAnimation(new InputFileId(animation.Animation.AnimationValue.Id), animation.Animation.Thumbnail.ToInputThumbnail(), animation.Animation.Duration, animation.Animation.Width, animation.Animation.Height, caption ? animation.Caption : null);
-                case MessageAudio audio:
-                    return new InputMessageAudio(new InputFileId(audio.Audio.AudioValue.Id), audio.Audio.AlbumCoverThumbnail.ToInputThumbnail(), audio.Audio.Duration, audio.Audio.Title, audio.Audio.Performer, caption ? audio.Caption : null);
-                case MessageContact contact:
-                    return new InputMessageContact(contact.Contact);
-                case MessageDocument document:
-                    return new InputMessageDocument(new InputFileId(document.Document.DocumentValue.Id), document.Document.Thumbnail.ToInputThumbnail(), caption ? document.Caption : null);
-                case MessageGame game:
-                    return new InputMessageGame(message.ViaBotUserId != 0 ? message.ViaBotUserId : message.SenderUserId, game.Game.ShortName);
-                case MessageLocation location:
-                    return new InputMessageLocation(location.Location, 0);
-                case MessagePhoto photo:
-                    var big = photo.Photo.GetBig();
-                    var small = photo.Photo.GetSmall();
-                    return new InputMessagePhoto(new InputFileId(big.Photo.Id), small.ToInputThumbnail(), new int[0], big.Width, big.Height, caption ? photo.Caption : null, 0);
-                //case MessagePoll poll:
-                //    return new InputMessagePoll()
-                case MessageSticker sticker:
-                    return new InputMessageSticker(new InputFileId(sticker.Sticker.StickerValue.Id), sticker.Sticker.Thumbnail.ToInputThumbnail(), sticker.Sticker.Width, sticker.Sticker.Height);
-                case MessageText text:
-                    return new InputMessageText(text.Text, false, false);
-                case MessageVenue venue:
-                    return new InputMessageVenue(venue.Venue);
-                case MessageVideo video:
-                    return new InputMessageVideo(new InputFileId(video.Video.VideoValue.Id), video.Video.Thumbnail.ToInputThumbnail(), new int[0], video.Video.Duration, video.Video.Width, video.Video.Height, video.Video.SupportsStreaming, caption ? video.Caption : null, 0);
-                case MessageVideoNote videoNote:
-                    return new InputMessageVideoNote(new InputFileId(videoNote.VideoNote.Video.Id), videoNote.VideoNote.Thumbnail.ToInputThumbnail(), videoNote.VideoNote.Duration, videoNote.VideoNote.Length);
-                case MessageVoiceNote voiceNote:
-                    return new InputMessageVoiceNote(new InputFileId(voiceNote.VoiceNote.Voice.Id), voiceNote.VoiceNote.Duration, voiceNote.VoiceNote.Waveform, caption ? voiceNote.Caption : null);
-
-                default:
-                    return null;
-            }
         }
     }
 
