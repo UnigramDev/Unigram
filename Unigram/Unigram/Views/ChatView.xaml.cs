@@ -432,6 +432,7 @@ namespace Unigram.Views
             }
 
             _stickersMode = StickersPanelMode.Overlay;
+            ButtonStickers.IsChecked = false;
             SettingsService.Current.IsSidebarOpen = false;
 
             VisualStateManager.GoToState(this, "FilledState", false);
@@ -1553,6 +1554,7 @@ namespace Unigram.Views
                 }
 
                 _stickersMode = StickersPanelMode.Sidebar;
+                ButtonStickers.IsChecked = true;
                 SettingsService.Current.IsSidebarOpen = true;
 
                 Focus(FocusState.Programmatic);
@@ -1571,30 +1573,6 @@ namespace Unigram.Views
 
                 _stickersPanel.Opacity = 1;
                 _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip();
-
-                //await StickersPanel.UpdateLayoutAsync();
-
-                //var width = (float)ActualWidth;
-                //var y = width - (float)Messages.ActualWidth;
-                //var s = width / (float)Messages.ActualWidth;
-
-                //var messages = ElementCompositionPreview.GetElementVisual(Messages);
-                //var panel = ElementCompositionPreview.GetElementVisual(StickersPanel);
-
-                //var anim1 = messages.Compositor.CreateVector3KeyFrameAnimation();
-                //anim1.InsertKeyFrame(0, new Vector3(y, 0, 0));
-                //anim1.InsertKeyFrame(1, new Vector3());
-                //anim1.Duration = TimeSpan.FromMilliseconds(150);
-
-                //var anim2 = messages.Compositor.CreateVector3KeyFrameAnimation();
-                //anim2.InsertKeyFrame(0, new Vector3(s, 1, 1));
-                //anim2.InsertKeyFrame(1, new Vector3(1));
-                //anim2.Duration = TimeSpan.FromMilliseconds(150);
-
-                //panel.StartAnimation("Offset", anim1);
-                ////messages.StartAnimation("Offset", anim1);
-                //messages.CenterPoint = new Vector3();
-                //messages.StartAnimation("Scale", anim2);
             }
             else
             {
@@ -2818,19 +2796,6 @@ namespace Unigram.Views
                 _stickersPanel.Clip.StartAnimation("TopInset", clip);
 
                 batch.End();
-
-                switch (ViewModel.Settings.Stickers.SelectedTab)
-                {
-                    case Services.Settings.StickersTab.Emoji:
-                        ButtonStickers.Glyph = "\uE76E";
-                        break;
-                    case Services.Settings.StickersTab.Animations:
-                        ButtonStickers.Glyph = "\uF4A9";
-                        break;
-                    case Services.Settings.StickersTab.Stickers:
-                        ButtonStickers.Glyph = "\uF4AA";
-                        break;
-                }
             }
             else
             {
@@ -2843,19 +2808,21 @@ namespace Unigram.Views
 
                 StickersPanel.Deactivate();
                 StickersPanel.Visibility = Visibility.Collapsed;
+            }
 
-                switch (ViewModel.Settings.Stickers.SelectedTab)
-                {
-                    case Services.Settings.StickersTab.Emoji:
-                        ButtonStickers.Glyph = "\uE76E";
-                        break;
-                    case Services.Settings.StickersTab.Animations:
-                        ButtonStickers.Glyph = "\uF4A9";
-                        break;
-                    case Services.Settings.StickersTab.Stickers:
-                        ButtonStickers.Glyph = "\uF4AA";
-                        break;
-                }
+            ButtonStickers.IsChecked = false;
+
+            switch (ViewModel.Settings.Stickers.SelectedTab)
+            {
+                case Services.Settings.StickersTab.Emoji:
+                    ButtonStickers.Glyph = "\uE76E";
+                    break;
+                case Services.Settings.StickersTab.Animations:
+                    ButtonStickers.Glyph = "\uF4A9";
+                    break;
+                case Services.Settings.StickersTab.Stickers:
+                    ButtonStickers.Glyph = "\uF4AA";
+                    break;
             }
         }
 
@@ -3708,6 +3675,9 @@ namespace Unigram.Views
                 TextArea.Margin = ChatFooter.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();
             }
+
+            Messages.Margin = new Thickness(0, 0, 0, -radius);
+            Messages.Padding = new Thickness(0, 0, 0, radius + 6);
         }
 
         public void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection)

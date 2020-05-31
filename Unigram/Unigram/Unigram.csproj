@@ -285,6 +285,7 @@
     </Compile>
     <Compile Include="Controls\Chats\ChatSearchTextBox.cs" />
     <Compile Include="Controls\Chats\ChatSendButton.cs" />
+    <Compile Include="Controls\Chats\ChatStickerButton.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
     <Compile Include="Controls\Chats\ChatTextFormatting.xaml.cs">
       <DependentUpon>ChatTextFormatting.xaml</DependentUpon>
