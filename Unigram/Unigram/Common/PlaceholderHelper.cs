@@ -1,16 +1,12 @@
-﻿using System;
+﻿using RLottie;
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Services;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -486,7 +482,7 @@ namespace Unigram.Common
 
         public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
         {
-            var animation = RLottie.Animation.LoadFromFile(path);
+            var animation = LottieAnimation.LoadFromFile(path, false, false, null);
             if (animation == null)
             {
                 if (webp)
@@ -497,9 +493,8 @@ namespace Unigram.Common
                 return null;
             }
 
-            var bytes = animation.RenderSync(frame, width, height);
-            var bitmap = new WriteableBitmap(width, height);
-            bitmap.PixelBuffer.AsStream().Write(bytes, 0, bytes.Length);
+            var bitmap = animation.RenderSync(frame, width, height);
+            animation.Dispose();
 
             return bitmap;
         }

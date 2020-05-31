@@ -27,7 +27,7 @@ namespace Unigram.Controls
         private bool _hideThumbnail = true;
 
         private string _source;
-        private CachedAnimation _animation;
+        private LottieAnimation _animation;
 
         private bool _animationShouldCache;
         private bool _animationIsCaching;
@@ -177,7 +177,7 @@ namespace Unigram.Controls
 
                 ThreadPool.QueueUserWorkItem(state =>
                 {
-                    if (animation is CachedAnimation cached)
+                    if (animation is LottieAnimation cached)
                     {
                         _cachingSemaphone.Wait();
 
@@ -282,7 +282,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var animation = CachedAnimation.LoadFromFile(newValue, _isCachingEnabled, _limitFps, ColorReplacements);
+            var animation = LottieAnimation.LoadFromFile(newValue, _isCachingEnabled, _limitFps, ColorReplacements);
             if (animation == null)
             {
                 // The app can't access the file specified
@@ -292,7 +292,7 @@ namespace Unigram.Controls
             _source = newValue;
             _animation = animation;
 
-            _animationShouldCache = !animation.IsCached;
+            _animationShouldCache = !animation.ShouldCache;
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
 
