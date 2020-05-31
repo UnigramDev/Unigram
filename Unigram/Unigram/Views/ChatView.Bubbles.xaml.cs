@@ -94,7 +94,7 @@ namespace Unigram.Views
                 {
                     messages.AddRange(album.Layout.Messages.Keys);
                 }
-                else
+                else if (message.SendingState is MessageSendingStatePending == false)
                 {
                     messages.Add(message.Id);
                     animations.Add(message);
