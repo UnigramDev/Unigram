@@ -24,11 +24,7 @@ namespace Unigram.ViewModels.Drawers
         private StickerSetViewModel _favoriteSet;
         private SupergroupStickerSetViewModel _groupSet;
 
-        private bool _recentGifs;
-        private bool _recentStickers;
-        private bool _favedStickers;
-        private bool _featured;
-        private bool _stickers;
+        private bool _updated;
 
         public StickerDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
@@ -150,7 +146,7 @@ namespace Unigram.ViewModels.Drawers
                 return;
             }
 
-            _stickers = false;
+            _updated = false;
             SyncStickers(null);
         }
 
@@ -365,12 +361,12 @@ namespace Unigram.ViewModels.Drawers
 
         public void SyncStickers(Chat chat)
         {
-            if (_stickers)
+            if (_updated)
             {
                 return;
             }
 
-            _stickers = true;
+            _updated = true;
 
             ProtoService.Send(new GetFavoriteStickers(), result1 =>
             {

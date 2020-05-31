@@ -16,6 +16,8 @@ namespace Unigram.ViewModels.Drawers
 {
     public class AnimationDrawerViewModel : TLViewModelBase, IHandle<UpdateSavedAnimations>
     {
+        private bool _updated;
+
         public AnimationDrawerViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) : base(protoService, cacheService, settingsService, aggregator)
         {
             SavedItems = new AnimationsCollection();
@@ -55,6 +57,13 @@ namespace Unigram.ViewModels.Drawers
 
         public void Update()
         {
+            if (_updated)
+            {
+                return;
+            }
+
+            _updated = true;
+
             ProtoService.Send(new GetSavedAnimations(), result =>
             {
                 if (result is Animations animation)
