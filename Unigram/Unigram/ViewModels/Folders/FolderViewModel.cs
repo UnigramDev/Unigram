@@ -62,6 +62,7 @@ namespace Unigram.ViewModels.Folders
                 Id = null;
                 Filter = null;
                 filter = new ChatFilter();
+                filter.PinnedChatIds = new List<long>();
                 filter.IncludedChatIds = new List<long>();
                 filter.ExcludedChatIds = new List<long>();
             }
@@ -70,6 +71,8 @@ namespace Unigram.ViewModels.Folders
             {
                 return;
             }
+
+            _pinnedChatIds = filter.PinnedChatIds;
 
             Title = filter.Title;
             Emoji = filter.Emoji ?? ChatFilterIcon.Default;
@@ -87,7 +90,7 @@ namespace Unigram.ViewModels.Folders
             if (filter.ExcludeRead)        Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeRead });
             if (filter.ExcludeArchived)    Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeArchived });
 
-            foreach (var chatId in filter.IncludedChatIds)
+            foreach (var chatId in filter.PinnedChatIds.Union(filter.IncludedChatIds))
             {
                 var chat = CacheService.GetChat(chatId);
                 if (chat == null)
@@ -137,6 +140,8 @@ namespace Unigram.ViewModels.Folders
             set => Set(ref _emoji, value);
         }
 
+        private IList<long> _pinnedChatIds;
+
         public MvxObservableCollection<ChatFilterElement> Include { get; private set; }
         public MvxObservableCollection<ChatFilterElement> Exclude { get; private set; }
 
@@ -162,7 +167,19 @@ namespace Unigram.ViewModels.Folders
                     }
                 }
 
-                Include.ReplaceWith(result);
+                var flags = result.OfType<FilterFlag>().Cast<ChatFilterElement>();
+                var chats = result.OfType<FilterChat>().OrderBy(x =>
+                {
+                    var index = _pinnedChatIds.IndexOf(x.Chat.Id);
+                    if (index != -1)
+                    {
+                        return index;
+                    }
+
+                    return int.MaxValue;
+                });
+
+                Include.ReplaceWith(flags.Union(chats));
             }
         }
 
@@ -190,52 +207,6 @@ namespace Unigram.ViewModels.Folders
             }
         }
 
-        private void Header_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var filter = args.Item as FilterFlag;
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-            var title = content.Children[1] as TextBlock;
-            //title.Text = Enum.GetName(typeof(ChatListFilterFlags), filter.Flag);
-
-            switch (filter.Flag)
-            {
-                case ChatListFilterFlags.IncludeContacts:
-                    title.Text = Strings.Resources.FilterContacts;
-                    break;
-                case ChatListFilterFlags.IncludeNonContacts:
-                    title.Text = Strings.Resources.FilterNonContacts;
-                    break;
-                case ChatListFilterFlags.IncludeGroups:
-                    title.Text = Strings.Resources.FilterGroups;
-                    break;
-                case ChatListFilterFlags.IncludeChannels:
-                    title.Text = Strings.Resources.FilterChannels;
-                    break;
-                case ChatListFilterFlags.IncludeBots:
-                    title.Text = Strings.Resources.FilterBots;
-                    break;
-
-                case ChatListFilterFlags.ExcludeMuted:
-                    title.Text = Strings.Resources.FilterMuted;
-                    break;
-                case ChatListFilterFlags.ExcludeRead:
-                    title.Text = Strings.Resources.FilterRead;
-                    break;
-                case ChatListFilterFlags.ExcludeArchived:
-                    title.Text = Strings.Resources.FilterArchived;
-                    break;
-            }
-
-            var photo = content.Children[0] as ProfilePicture;
-            photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFilterIcon(filter.Flag), (int)filter.Flag, 36);
-        }
-
         public RelayCommand<ChatFilterElement> RemoveIncludeCommand { get; }
         private void RemoveIncludeExecute(ChatFilterElement chat)
         {
@@ -260,12 +231,13 @@ namespace Unigram.ViewModels.Folders
 
         public Task<BaseObject> SendAsync()
         {
-            var include = new List<long>();
-            var exclude = new List<long>();
 
             var filter = new ChatFilter();
             filter.Title = Title;
             filter.Emoji = Emoji;
+            filter.PinnedChatIds = new List<long>();
+            filter.IncludedChatIds = new List<long>();
+            filter.ExcludedChatIds = new List<long>();
 
             foreach (var item in Include)
             {
@@ -292,7 +264,14 @@ namespace Unigram.ViewModels.Folders
                 }
                 else if (item is FilterChat chat)
                 {
-                    include.Add(chat.Chat.Id);
+                    if (_pinnedChatIds.Contains(chat.Chat.Id))
+                    {
+                        filter.PinnedChatIds.Add(chat.Chat.Id);
+                    }
+                    else
+                    {
+                        filter.IncludedChatIds.Add(chat.Chat.Id);
+                    }
                 }
             }
 
@@ -315,12 +294,9 @@ namespace Unigram.ViewModels.Folders
                 }
                 else if (item is FilterChat chat)
                 {
-                    exclude.Add(chat.Chat.Id);
+                    filter.ExcludedChatIds.Add(chat.Chat.Id);
                 }
             }
-
-            filter.IncludedChatIds = include;
-            filter.ExcludedChatIds = exclude;
 
             Function function;
             if (Id is int id)
