@@ -14,17 +14,8 @@ namespace Unigram.Common
 {
     public static class SoundEffects
     {
-        private static AudioGraph _graph;
-        private static AudioDeviceOutputNode _deviceOutputNode;
-        private static AudioFileInputNode _fileInputNode;
-
         public static async void Play(SoundEffect effect)
         {
-            if (_graph != null)
-            {
-                _graph.Dispose();
-            }
-
             var settings = new AudioGraphSettings(AudioRenderCategory.SoundEffects);
             settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
 
@@ -34,29 +25,24 @@ namespace Unigram.Common
                 return;
             }
 
-            _graph = result.Graph;
-
-            //CurrentFileName = fileName;
-
             var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3"));
 
-            var fileInputNodeResult = await _graph.CreateFileInputNodeAsync(file);
+            var fileInputNodeResult = await result.Graph.CreateFileInputNodeAsync(file);
             if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
             {
                 return;
             }
 
-            var deviceOutputNodeResult = await _graph.CreateDeviceOutputNodeAsync();
+            var deviceOutputNodeResult = await result.Graph.CreateDeviceOutputNodeAsync();
             if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
             {
                 return;
             }
 
-            _deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
-            _fileInputNode = fileInputNodeResult.FileInputNode;
-            _fileInputNode.AddOutgoingConnection(_deviceOutputNode);
+            fileInputNodeResult.FileInputNode
+                .AddOutgoingConnection(deviceOutputNodeResult.DeviceOutputNode);
 
-            _graph.Start();
+            result.Graph.Start();
         }
     }
 
