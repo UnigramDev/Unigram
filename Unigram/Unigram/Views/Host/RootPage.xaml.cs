@@ -409,7 +409,7 @@ namespace Unigram.Views.Host
                         break;
 
                     case RootDestination.Chats:
-                        content.Text = "Chats";
+                        content.Text = Strings.Resources.FilterChats;
                         content.Glyph = "\uE8BD";
                         break;
                     case RootDestination.Contacts:
