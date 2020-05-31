@@ -82,8 +82,6 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                LayoutRoot.Background = null;
-
                 Player.IsLoopingEnabled = (message.Content is MessageDice dice && dice.Value == 0) || (message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled);
                 Player.IsCachingEnabled = !(message.Content is MessageDice dies && !message.GeneratedContentUnread);
                 Player.Source = new Uri("file:///" + file.Local.Path);
@@ -120,7 +118,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                LayoutRoot.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetWebPFrame(file.Local.Path) };
+                Player.Thumbnail  = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
