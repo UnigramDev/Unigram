@@ -176,7 +176,7 @@ namespace Unigram.Controls.Drawers
                 {
                     item.UpdateFile(file);
 
-                    var index = Repeater.ItemsSourceView.IndexOf(item);
+                    var index = ViewModel.Items.IndexOf(item);
                     if (index < 0)
                     {
                         continue;

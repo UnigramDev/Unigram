@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -34,7 +21,8 @@ namespace Unigram.Views
         {
             var button = args.Element as Button;
             var content = button.Content as Grid;
-            var nearby = sender.ItemsSourceView.GetAt(args.Index) as ChatNearby;
+
+            var nearby = button.DataContext as ChatNearby;
 
             var chat = ViewModel.CacheService.GetChat(nearby.ChatId);
             if (chat == null)

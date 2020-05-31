@@ -53,7 +53,9 @@ namespace Unigram.Views.Popups
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
-            var item = sender.ItemsSourceView.GetAt(args.Index);
+            var element = args.Element as FrameworkElement;
+
+            var item = element.DataContext;
             if (item is User user)
             {
                 var button = args.Element as Button;

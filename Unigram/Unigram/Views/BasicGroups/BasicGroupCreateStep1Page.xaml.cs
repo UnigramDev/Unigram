@@ -83,7 +83,7 @@ namespace Unigram.Views.BasicGroups
             var button = args.Element as Button;
             var content = button.Content as Grid;
 
-            var chat = sender.ItemsSourceView.GetAt(args.Index) as Chat;
+            var chat = button.DataContext as Chat;
 
             var title = content.Children[1] as TextBlock;
             title.Text = ViewModel.ProtoService.GetTitle(chat);

@@ -36,8 +36,7 @@ namespace Unigram.Views.Folders
             var button = args.Element as Button;
             var content = button.Content as Grid;
 
-            var element = sender.ItemsSourceView.GetAt(args.Index) as ChatFilterElement;
-            button.Tag = element;
+            var element = button.DataContext as ChatFilterElement;
 
             var title = content.Children[1] as TextBlock;
             var photo = content.Children[0] as ProfilePicture;
@@ -96,7 +95,7 @@ namespace Unigram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.Tag as ChatFilterElement;
+            var chat = element.DataContext as ChatFilterElement;
 
             flyout.CreateFlyoutItem(viewModel.RemoveIncludeCommand, chat, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
@@ -114,7 +113,7 @@ namespace Unigram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.Tag as ChatFilterElement;
+            var chat = element.DataContext as ChatFilterElement;
 
             flyout.CreateFlyoutItem(viewModel.RemoveExcludeCommand, chat, Strings.Resources.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 

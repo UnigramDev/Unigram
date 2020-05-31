@@ -111,7 +111,7 @@ namespace Unigram.Controls
                 {
                     result.UpdateFile(file);
 
-                    var index = Repeater.ItemsSourceView.IndexOf(result);
+                    var index = ViewModel.InlineBotResults?.IndexOf(result) ?? -1;
                     if (index < 0)
                     {
                         continue;
@@ -150,7 +150,7 @@ namespace Unigram.Controls
                 {
                     result.UpdateFile(file);
 
-                    var index = Repeater.ItemsSourceView.IndexOf(result);
+                    var index = ViewModel.InlineBotResults?.IndexOf(result) ?? -1;
                     if (index < 0)
                     {
                         continue;
