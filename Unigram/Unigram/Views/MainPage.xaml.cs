@@ -2897,7 +2897,16 @@ namespace Unigram.Views
             }
             else
             {
-                ChatFilters.CanReorderItems = true;
+                var items = ViewModel?.Filters;
+                if (items == null || items.Count < 3)
+                {
+                    ChatFilters.CanReorderItems = false;
+                    e.Cancel = true;
+                }
+                else
+                {
+                    ChatFilters.CanReorderItems = true;
+                }
             }
         }
 
