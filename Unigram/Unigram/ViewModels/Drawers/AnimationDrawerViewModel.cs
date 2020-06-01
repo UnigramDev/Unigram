@@ -168,7 +168,7 @@ namespace Unigram.ViewModels.Drawers
         }
 
         public override string Name => "tg/trending";
-        public override string Title => Strings.Resources.FeaturedStickers;
+        public override string Title => Strings.Resources.FeaturedGifs;
     }
 
     public class SearchAnimationsCollection : AnimationsCollection, ISupportIncrementalLoading

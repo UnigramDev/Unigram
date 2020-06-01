@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 05/01/2020 13:19:30
+// 	Generated: 06/01/2020 13:37:23
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -14352,6 +14352,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Trending GIFs"
+        /// </summary>
+        public static string FeaturedGifs
+        {
+            get
+            {
+                return resourceLoader.GetString("FeaturedGifs");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Trending Stickers"
         /// </summary>
         public static string FeaturedStickers
@@ -14513,6 +14524,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FilterAddingChatsInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to folder"
+        /// </summary>
+        public static string FilterAddTo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddTo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add more than 100 chats in a folder."
+        /// </summary>
+        public static string FilterAddToAlertFullText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddToAlertFullText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Folder is full"
+        /// </summary>
+        public static string FilterAddToAlertFullTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddToAlertFullTitle");
             }
         }
         
@@ -15052,6 +15096,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FilterRemoveExclusionUserText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from folder"
+        /// </summary>
+        public static string FilterRemoveFrom
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveFrom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't exlude more then 100 chats in a folder."
+        /// </summary>
+        public static string FilterRemoveFromAlertFullText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveFromAlertFullText");
             }
         }
         

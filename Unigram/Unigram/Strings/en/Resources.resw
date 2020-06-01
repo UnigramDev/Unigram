@@ -4014,6 +4014,9 @@ Duration: {1}</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Favorites</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>Trending GIFs</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Trending Stickers</value>
   </data>
@@ -4058,6 +4061,15 @@ Duration: {1}</value>
   </data>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Please wait a few moments while we fill this folder for you...</value>
+  </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Add to folder</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>Sorry, you can't add more than 100 chats in a folder.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Folder is full</value>
   </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>All Chats</value>
@@ -4205,6 +4217,12 @@ Duration: {1}</value>
   </data>
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>Are you sure you want to remove "{0}" from the always excluded list?</value>
+  </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Remove from folder</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>Sorry, you can't exlude more then 100 chats in a folder.</value>
   </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Are you sure you want to remove "{0}" from the always included list?</value>
