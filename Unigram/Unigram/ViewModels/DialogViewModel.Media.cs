@@ -204,6 +204,12 @@ namespace Unigram.ViewModels
 
             if (!permission(chat.Permissions))
             {
+                if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+                {
+                    label = Strings.Resources.ChannelCantSendMessage;
+                    return true;
+                }
+
                 label = global;
                 return true;
             }
