@@ -21,7 +21,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatUnreadMentionCount>,
         IHandle<UpdateChatReadOutbox>,
         IHandle<UpdateChatReadInbox>,
-        IHandle<UpdateChatDraftMessage>,
+        //IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatDefaultDisableNotification>,
         IHandle<UpdateChatPinnedMessage>,
         IHandle<UpdateChatActionBar>,
@@ -386,7 +386,7 @@ namespace Unigram.ViewModels
             {
                 return message.SchedulingState != null;
             }
-            
+
             return message.SchedulingState == null;
         }
 
@@ -395,7 +395,7 @@ namespace Unigram.ViewModels
             if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
                 var endReached = IsEndReached();
-                BeginOnUIThread(() => InsertMessage(update.Message, endReached));
+                BeginOnUIThread(() => InsertMessage(update.Message));
 
                 if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                 {
@@ -597,8 +597,10 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateMessageSendSucceeded update)
         {
-            if (update.Message.ChatId == _chat?.Id)
+            if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
+                //if (Items.Count > 0 && Items[Items.Count - 1].Id == update.OldMessageId)
+                //{
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
@@ -609,6 +611,12 @@ namespace Unigram.ViewModels
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages(false);
                 });
+                //}
+                //else
+                //{
+                //    var endReached = IsEndReached();
+                //    BeginOnUIThread(() => InsertMessage(update.Message, update.OldMessageId));
+                //}
 
                 if (Settings.Notifications.InAppSounds)
                 {
@@ -856,7 +864,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async void InsertMessage(Message message, bool endReached)
+        private async void InsertMessage(Message message, long? oldMessageId = null)
         {
             using (await _insertLock.WaitAsync())
             {
@@ -877,12 +885,21 @@ namespace Unigram.ViewModels
 
                     if (result.Count > 0)
                     {
+                        if (oldMessageId != null)
+                        {
+                            var oldMessage = Items.FirstOrDefault(x => x.Id == oldMessageId);
+                            if (oldMessage != null)
+                            {
+                                Items.Remove(oldMessage);
+                            }
+                        }
+
                         InsertMessageInOrder(Items, result[0]);
                     }
                 }
                 else if (message.IsOutgoing)
                 {
-                    await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom, 4);
+                    await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
                 }
             }
         }
