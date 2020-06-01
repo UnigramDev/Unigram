@@ -119,7 +119,13 @@ namespace Unigram.Controls
         {
             args.TrackAsyncAction(Task.Run(() =>
             {
-                _animation = VideoAnimation.LoadFromFile(_source, false, true);
+                var animation = VideoAnimation.LoadFromFile(_source, false, true);
+                if (animation == null)
+                {
+                    return;
+                }
+
+                _animation = animation;
 
                 var colors = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
                 Array.Fill<byte>(colors, 0);
