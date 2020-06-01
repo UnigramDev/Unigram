@@ -102,14 +102,8 @@
   <Extensions>
     <Extension Category="windows.activatableClass.inProcessServer">
       <InProcessServer>
-        <Path>Unigram.Native.dll</Path>
-        <ActivatableClass ActivatableClassId="Unigram.Native.GIFByteStreamHandler" ThreadingModel="both" />
-      </InProcessServer>
-    </Extension>
-    <Extension Category="windows.activatableClass.inProcessServer">
-      <InProcessServer>
-        <Path>Unigram.Native.dll</Path>
-        <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both" />
+        <Path>Unigram.Native.Media.dll</Path>
+        <ActivatableClass ActivatableClassId="Unigram.Native.Media.OpusByteStreamHandler" ThreadingModel="both" />
       </InProcessServer>
     </Extension>
   </Extensions>

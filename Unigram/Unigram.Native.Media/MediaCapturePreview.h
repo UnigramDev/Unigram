@@ -32,7 +32,7 @@ namespace Unigram
 			{
 				friend class MediaCapturePreviewStreamSink;
 
-				InspectableClass(L"Unigram.Native.MediaCapturePreviewSourceMediaSink", BaseTrust);
+				InspectableClass(L"Unigram.Native.Media.MediaCapturePreviewSourceMediaSink", BaseTrust);
 
 			public:
 				MediaCapturePreviewMediaSink();
@@ -88,7 +88,7 @@ namespace Unigram
 			{
 				friend class MediaCapturePreviewMediaStream;
 
-				InspectableClass(L"Unigram.Native.MediaCapturePreviewSourceMediaSource", BaseTrust);
+				InspectableClass(L"Unigram.Native.Media.MediaCapturePreviewSourceMediaSource", BaseTrust);
 
 			public:
 				MediaCapturePreviewMediaSource();

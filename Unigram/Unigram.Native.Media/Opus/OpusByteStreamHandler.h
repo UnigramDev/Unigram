@@ -12,7 +12,7 @@ namespace Unigram
 
 			class OpusByteStreamHandler WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ByteStreamHandler>
 			{
-				InspectableClass(L"Unigram.Native.OpusByteStreamHandler", TrustLevel::BaseTrust);
+				InspectableClass(L"Unigram.Native.Media.OpusByteStreamHandler", TrustLevel::BaseTrust);
 
 			protected:
 				virtual QWORD GetMaxNumberOfBytesRequiredForResolution() noexcept override;

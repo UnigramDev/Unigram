@@ -18,7 +18,7 @@ namespace Unigram
 			{
 				friend class OpusMediaStream;
 
-				InspectableClass(L"Unigram.Native.OpusMediaSource", TrustLevel::BaseTrust);
+				InspectableClass(L"Unigram.Native.Media.OpusMediaSource", TrustLevel::BaseTrust);
 
 			public:
 				OpusMediaSource();
