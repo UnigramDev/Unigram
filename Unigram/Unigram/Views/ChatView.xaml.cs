@@ -887,21 +887,8 @@ namespace Unigram.Views
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
             var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            if (character.Length == 0 || (char.IsControl(character[0]) && character != "\u0016") || char.IsWhiteSpace(character[0]))
             {
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-                if (popups.Count > 0)
-                {
-                    return;
-                }
-
-                // For some reason, this is paste
-                if (character == "\u0016" && TextField.Document.Selection.CanPaste(0))
-                {
-                    TextField.Focus(FocusState.Keyboard);
-                    TextField.Document.Selection.Paste(0);
-                }
-
                 return;
             }
 
@@ -915,7 +902,16 @@ namespace Unigram.Views
                 }
 
                 TextField.Focus(FocusState.Keyboard);
-                TextField.InsertText(character);
+
+                // For some reason, this is paste
+                if (character == "\u0016")
+                {
+                    TextField.Document.Selection.Paste(0);
+                }
+                else
+                {
+                    TextField.InsertText(character);
+                }
 
                 args.Handled = true;
             }

@@ -521,9 +521,14 @@ namespace Unigram.Views.Popups
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
             var character = char.ConvertFromUtf32((int)args.KeyCode);
-            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            if (character.Length == 0 || (char.IsControl(character[0]) && character != "\u0016" && character != "\r") || char.IsWhiteSpace(character[0]))
             {
-                // For some reason, this is paste
+                return;
+            }
+
+            var focused = FocusManager.GetFocusedElement();
+            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            {
                 if (character == "\u0016" && CaptionInput.Document.Selection.CanPaste(0))
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
@@ -533,15 +538,11 @@ namespace Unigram.Views.Popups
                 {
                     Accept();
                 }
-
-                return;
-            }
-
-            var focused = FocusManager.GetFocusedElement();
-            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
-            {
-                CaptionInput.Focus(FocusState.Keyboard);
-                CaptionInput.InsertText(character);
+                else
+                {
+                    CaptionInput.Focus(FocusState.Keyboard);
+                    CaptionInput.InsertText(character);
+                }
 
                 args.Handled = true;
             }
