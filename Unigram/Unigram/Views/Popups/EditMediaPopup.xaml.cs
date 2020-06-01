@@ -53,6 +53,8 @@ namespace Unigram.Views.Popups
         {
             InitializeComponent();
 
+            Canvas.Strokes = media.EditState.Strokes;
+
             Cropper.SetMask(ImageCropperMask.Rectangle);
             Cropper.SetProportions(media.EditState.Proportions);
 

@@ -1,12 +1,8 @@
 ﻿using LinqToVisualTree;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
-using Unigram.Services.Settings;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -35,22 +31,19 @@ namespace Unigram.Controls
                     RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
                 }
             }
-
-            Opened += TLContentDialog_Opened;
         }
 
-        private void TLContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-        {
-            var button = GetTemplateChild("PrimaryButton") as Button;
-            if (button != null)
-            {
-                button.Focus(FocusState.Keyboard);
-            }
-        }
+        public bool FocusPrimaryButton { get; set; } = true;
 
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            var button = GetTemplateChild("PrimaryButton") as Button;
+            if (button != null && FocusPrimaryButton)
+            {
+                button.Loaded += PrimaryButton_Loaded;
+            }
 
             var canvas = this.Ancestors().FirstOrDefault() as Canvas;
             if (canvas == null)
@@ -68,6 +61,14 @@ namespace Unigram.Controls
             rectangle.PointerReleased += Rectangle_PointerReleased;
         }
 
+        private void PrimaryButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && FocusPrimaryButton)
+            {
+                button.Focus(FocusState.Keyboard);
+            }
+        }
+
         private void Rectangle_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             var pointer = e.GetCurrentPoint(this);
@@ -81,6 +82,11 @@ namespace Unigram.Controls
         {
             await this.ShowQueuedAsync();
             return _result;
+        }
+
+        protected void SetResult(ContentDialogResult result)
+        {
+            _result = result;
         }
 
         public void Hide(ContentDialogResult result)

@@ -426,12 +426,20 @@ namespace Unigram.Common
             if (editState.Strokes != null)
             {
                 var stream = await DrawStrokesAsync(pixelData, editState.Strokes, editState.Rectangle, editState.Rotation, editState.Flip);
+                
+                var bitmapImage = new BitmapImage();
+                await bitmapImage.SetSourceAsync(stream);
+
+                return bitmapImage;
             }
+            else
+            {
 
-            var bitmapImage = new SoftwareBitmapSource();
-            await bitmapImage.SetBitmapAsync(pixelData);
+                var bitmapImage = new SoftwareBitmapSource();
+                await bitmapImage.SetBitmapAsync(pixelData);
 
-            return bitmapImage;
+                return bitmapImage;
+            }
         }
 
         public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile)
@@ -555,7 +563,7 @@ namespace Unigram.Common
             bitmap.Dispose();
 
             var stream = new InMemoryRandomAccessStream();
-            await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg, 0.77f);
+            await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
 
             canvas.Dispose();
 
@@ -651,7 +659,7 @@ namespace Unigram.Common
 
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
-                await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg, 0.77f);
+                await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
             }
 
             canvas.Dispose();

@@ -130,11 +130,12 @@ namespace Unigram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            Caption = CaptionInput.GetFormattedText();
+            SetResult(ContentDialogResult.Primary);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            SetResult(ContentDialogResult.Secondary);
         }
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)

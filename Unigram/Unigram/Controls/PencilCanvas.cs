@@ -80,6 +80,11 @@ namespace Unigram.Controls
             get => _drawing?.ToList();
             set
             {
+                if (value == null)
+                {
+                    return;
+                }
+
                 _drawing = value.ToList();
 
                 _strokes = value?.ToList() ?? new List<SmoothPathBuilder>();
