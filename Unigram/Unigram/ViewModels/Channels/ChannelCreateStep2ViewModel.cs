@@ -60,6 +60,7 @@ namespace Unigram.ViewModels.Channels
                 }
 
                 NavigationService.NavigateToChat(chat);
+                NavigationService.ClearHistory();
                 //NavigationService.Navigate(typeof(ChannelCreateStep3Page), chat.Id);
             }
         }
