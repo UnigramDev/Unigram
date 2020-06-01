@@ -6,9 +6,10 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Folders;
+using Unigram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -43,6 +44,10 @@ namespace Unigram.ViewModels
             ChatsArchiveCommand = new RelayCommand(ChatsArchiveExecute);
             ChatsDeleteCommand = new RelayCommand(ChatsDeleteExecute);
             ChatsClearCommand = new RelayCommand(ChatsClearExecute);
+
+            FolderAddCommand = new RelayCommand<(int, Chat)>(FolderAddExecute);
+            FolderRemoveCommand = new RelayCommand<(int, Chat)>(FolderRemoveExecute);
+            FolderCreateCommand = new RelayCommand<Chat>(FolderCreateExecute);
 
             ClearRecentChatsCommand = new RelayCommand(ClearRecentChatsExecute);
 
@@ -555,6 +560,80 @@ namespace Unigram.ViewModels
 
             ProtoService.Send(new RemoveTopChat(new TopChatCategoryUsers(), chat.Id));
             TopChats.Remove(chat);
+        }
+
+        #endregion
+
+        #region Folder add
+
+        public RelayCommand<(int, Chat)> FolderAddCommand { get; }
+        private async void FolderAddExecute((int ChatFilterId, Chat Chat) data)
+        {
+            var filter = await ProtoService.SendAsync(new GetChatFilter(data.ChatFilterId)) as ChatFilter;
+            if (filter == null)
+            {
+                return;
+            }
+
+            var total = filter.IncludedChatIds.Count + filter.PinnedChatIds.Count + 1;
+            if (total > 99)
+            {
+                await TLMessageDialog.ShowAsync(Strings.Resources.FilterAddToAlertFullText, Strings.Resources.FilterAddToAlertFullTitle, Strings.Resources.OK);
+                return;
+            }
+
+            if (filter.IncludedChatIds.Contains(data.Chat.Id))
+            {
+                // Warn user about chat being already in the folder?
+                return;
+            }
+
+            filter.ExcludedChatIds.Remove(data.Chat.Id);
+            filter.IncludedChatIds.Add(data.Chat.Id);
+
+            ProtoService.Send(new EditChatFilter(data.ChatFilterId, filter));
+        }
+
+        #endregion
+
+        #region Folder remove
+
+        public RelayCommand<(int, Chat)> FolderRemoveCommand { get; }
+        private async void FolderRemoveExecute((int ChatFilterId, Chat Chat) data)
+        {
+            var filter = await ProtoService.SendAsync(new GetChatFilter(data.ChatFilterId)) as ChatFilter;
+            if (filter == null)
+            {
+                return;
+            }
+
+            var total = filter.ExcludedChatIds.Count + 1;
+            if (total > 99)
+            {
+                await TLMessageDialog.ShowAsync(Strings.Resources.FilterRemoveFromAlertFullText, Strings.Resources.AppName, Strings.Resources.OK);
+                return;
+            }
+
+            if (filter.ExcludedChatIds.Contains(data.Chat.Id))
+            {
+                // Warn user about chat being already in the folder?
+                return;
+            }
+
+            filter.IncludedChatIds.Remove(data.Chat.Id);
+            filter.ExcludedChatIds.Add(data.Chat.Id);
+
+            ProtoService.Send(new EditChatFilter(data.ChatFilterId, filter));
+        }
+
+        #endregion
+
+        #region Folder create
+
+        public RelayCommand<Chat> FolderCreateCommand { get; }
+        private void FolderCreateExecute(Chat chat)
+        {
+            NavigationService.Navigate(typeof(FolderPage), state: new Dictionary<string, object> { { "included_chat_id", chat.Id } });
         }
 
         #endregion

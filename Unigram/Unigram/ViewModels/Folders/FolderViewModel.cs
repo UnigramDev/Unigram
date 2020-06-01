@@ -72,6 +72,11 @@ namespace Unigram.ViewModels.Folders
                 return;
             }
 
+            if (state.TryGet("included_chat_id", out long includedChatId))
+            {
+                filter.IncludedChatIds.Add(includedChatId);
+            }
+
             _pinnedChatIds = filter.PinnedChatIds;
 
             Title = filter.Title;

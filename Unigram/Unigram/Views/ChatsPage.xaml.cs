@@ -51,42 +51,41 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var chat = element.Tag as Chat;
 
-            var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
-            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
-            
-            var folders = ViewModel.CacheService.ChatFilters;
-            var item = new MenuFlyoutSubItem();
-            item.Text = "Add to folder...";
-            item.Icon = new FontIcon { Glyph = "\uE8DE" };
-
-            if (folders.Count < 10)
-            {
-                item.Items.Add(new MenuFlyoutItem { Text = "New folder" });
-            }
-            if (folders.Count > 0 && item.Items.Count > 0)
-            {
-                item.Items.Add(new MenuFlyoutSeparator());
-            }
-
-            foreach (var folder in folders)
-            {
-                if (chat.Positions.Any(x => x.List.ListEquals(new ChatListFilter(folder.Id))))
-                {
-                    continue;
-                }
-
-                item.Items.Add(new MenuFlyoutItem { Text = folder.Title });
-            }
-
-            flyout.Items.Add(item);
-
             var position = chat.GetPosition(ViewModel.Items.ChatList);
             if (position == null)
             {
                 return;
             }
 
+            var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
+            flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.Unpin : Icons.Pin });
+
+            var filters = ViewModel.CacheService.ChatFilters;
+            if (viewModel.Items.ChatList is ChatListFilter chatListFilter)
+            {
+                flyout.CreateFlyoutItem(viewModel.FolderRemoveCommand, (chatListFilter.ChatFilterId, chat), Strings.Resources.FilterRemoveFrom, new FontIcon { Glyph = "\uE92B", FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+            }
+            else if (filters.Count > 0)
+            {
+                var item = new MenuFlyoutSubItem();
+                item.Text = Strings.Resources.FilterAddTo;
+                item.Icon = new FontIcon { Glyph = "\uE929", FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+                foreach (var filter in filters)
+                {
+                    item.Items.Add(new MenuFlyoutItem { Command = ViewModel.FolderAddCommand, CommandParameter = (filter.Id, chat), Text = filter.Title });
+                }
+
+                if (filters.Count < 10)
+                {
+                    item.Items.Add(new MenuFlyoutSeparator());
+                    item.Items.Add(new MenuFlyoutItem { Command = ViewModel.FolderCreateCommand, CommandParameter = chat, Text = Strings.Resources.CreateNewFilter, Icon = new FontIcon { Glyph = Icons.Add } });
+                }
+
+                flyout.Items.Add(item);
+            }
+
             flyout.CreateFlyoutItem(DialogNotify_Loaded, viewModel.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
             flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
             flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
