@@ -15,7 +15,7 @@ namespace Unigram
 			{
 				friend class OpusStreamSink;
 
-				InspectableClass(L"Unigram.Native.OpusMediaSink", TrustLevel::BaseTrust);
+				InspectableClass(L"Unigram.Native.Media.OpusMediaSink", TrustLevel::BaseTrust);
 
 			public:
 				STDMETHODIMP RuntimeClassInitialize(_In_ OpusOutputByteStream* opusStream);

@@ -81,8 +81,8 @@ namespace Unigram
                 if (!string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop"))
                 {
                     _mediaExtensionManager = new MediaExtensionManager();
-                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
-                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".oga", "audio/ogg");
+                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".ogg", "audio/ogg");
+                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".oga", "audio/ogg");
                 }
             }
             catch
