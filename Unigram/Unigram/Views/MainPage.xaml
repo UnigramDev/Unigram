@@ -404,7 +404,7 @@
             </VisualStateManager.VisualStateGroups>
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <contract7Present:Grid.BackgroundTransition>
-                    <BrushTransition/>
+                    <contract7Present:BrushTransition/>
                 </contract7Present:Grid.BackgroundTransition>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

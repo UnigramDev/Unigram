@@ -133,18 +133,6 @@ namespace Unigram.Views
             var header = ElementCompositionPreview.GetElementVisual(PageHeader);
             header.Clip = header.Compositor.CreateInsetClip();
 
-            //FocusManager.GettingFocus += (s, args) =>
-            // {
-            //     if (args.NewFocusedElement != null)
-            //     {
-            //         StatusLabel.Text = args.NewFocusedElement.GetType().FullName;
-            //     }
-            //     else
-            //     {
-            //         StatusLabel.Text = "None";
-            //     }
-            // };
-
             var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
 
             ArchivedChatsPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
@@ -156,11 +144,6 @@ namespace Unigram.Views
                 FindName(nameof(ChatTabs));
                 ChatTabs.Visibility = Visibility.Visible;
             }
-        }
-
-        private Microsoft.UI.Xaml.Controls.ItemsSourceView Test(object source)
-        {
-            return new Microsoft.UI.Xaml.Controls.ItemsSourceView(source);
         }
 
         ~MainPage()
@@ -793,10 +776,26 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            ViewModel.Aggregator.Unsubscribe(this);
+            //var viewModel = ViewModel;
+            //if (viewModel != null)
+            //{
+            //    viewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+            //    viewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+
+            //    viewModel.Aggregator.Unsubscribe(this);
+            //}
+
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
 
+            var titleBar = CoreApplication.GetCurrentView().TitleBar;
+            titleBar.IsVisibleChanged -= CoreTitleBar_LayoutMetricsChanged;
+            titleBar.LayoutMetricsChanged -= CoreTitleBar_LayoutMetricsChanged;
+
+            //MasterDetail.Dispose();
+            //SettingsView.Dispose();
+
+            //DataContext = null;
             Bindings.StopTracking();
 
             _unloaded = true;
@@ -858,7 +857,7 @@ namespace Unigram.Views
 
                 args.Handled = true;
             }
-            else if (command == ShortcutCommand.Quit)
+            else if (command == ShortcutCommand.Quit || command == ShortcutCommand.Close)
             {
                 if (args.VirtualKey == Windows.System.VirtualKey.Q && App.Connection != null)
                 {
@@ -1028,6 +1027,11 @@ namespace Unigram.Views
 
         public void ScrollFolder(int offset, bool navigate)
         {
+            if (FolderPanel.Visibility == Visibility.Visible)
+            {
+                SetFolder(new ChatListMain());
+            }
+
             var already = ViewModel.SelectedFilter;
             if (already == null)
             {
@@ -2082,30 +2086,6 @@ namespace Unigram.Views
             }
 
             args.Handled = true;
-        }
-
-        private void DropShadow_Loaded(object sender, RoutedEventArgs e)
-        {
-            var dropShadow = sender as Border;
-
-            var separator = ElementCompositionPreview.GetElementVisual(dropShadow);
-            var shadow = separator.Compositor.CreateDropShadow();
-            shadow.BlurRadius = 20;
-            shadow.Opacity = 0.25f;
-            shadow.Color = Colors.Black;
-
-            var visual = separator.Compositor.CreateSpriteVisual();
-            visual.Shadow = shadow;
-            visual.Size = new Vector2((float)dropShadow.ActualWidth, (float)dropShadow.ActualHeight);
-            visual.Offset = new Vector3(0, 0, 0);
-            //visual.Clip = visual.Compositor.CreateInsetClip(-100, 0, 19, 0);
-
-            ElementCompositionPreview.SetElementChildVisual(dropShadow, visual);
-
-            dropShadow.SizeChanged += (s, args) =>
-            {
-                visual.Size = args.NewSize.ToVector2();
-            };
         }
 
         private void ContactsSearchListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
