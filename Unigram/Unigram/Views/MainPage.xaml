@@ -128,7 +128,12 @@
                                         Margin="8,2,8,0"/>
                                 </Border>
                             </Grid>
-                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" TextAlignment="Center" TextWrapping="Wrap" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock
+                                Text="{x:Bind Title, Mode=OneWay}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap"
+                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                Style="{StaticResource CaptionTextBlockStyle}"/>
                         </StackPanel>
                     </DataTemplate>
                 </controls:TopNavView.ItemTemplate>
@@ -614,7 +619,10 @@
                                                 <controls:TopNavView.ItemTemplate>
                                                     <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
                                                         <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{x:Bind Title, Mode=OneWay}" VerticalAlignment="Top"/>
+                                                            <TextBlock
+                                                                Text="{x:Bind Title, Mode=OneWay}"
+                                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                                VerticalAlignment="Top"/>
                                                             <Border
                                                                 Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
                                                                 Background="{ThemeResource ChatUnreadBadgeBrush}"

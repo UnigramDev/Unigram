@@ -42,6 +42,7 @@
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
                                     <controls:BadgeButton
+                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                         ContextRequested="Item_ContextRequested"/>
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
