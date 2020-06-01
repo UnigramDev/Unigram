@@ -12,7 +12,8 @@
     PrimaryButtonText="Button1"
     SecondaryButtonText="Button2"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    FocusPrimaryButton="False">
 
     <ContentControl.Resources>
         <Style x:Key="ModernPivotRadioButtonStyle" TargetType="controls:PivotRadioButton">
@@ -356,16 +357,18 @@
 
         <Grid x:Name="CaptionPanel" Grid.Row="2">
             <controls:CaptionTextBox
-                    x:Name="CaptionInput"
-                    View="{x:Bind}"
-                    Autocomplete="{x:Bind ListAutocomplete}"
-                    DataContext="{x:Bind ViewModel}"
-                    Paste="OnPaste"
-                    InputScope="Chat"
-                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                    PlaceholderText="{CustomResource AddCaption}"
-                    Margin="12,8,12,0"
-                    Grid.Row="1"/>
+                x:Name="CaptionInput"
+                Loaded="OnLoaded"
+                Unloaded="OnUnloaded"
+                View="{x:Bind}"
+                Autocomplete="{x:Bind ListAutocomplete}"
+                DataContext="{x:Bind ViewModel}"
+                Paste="OnPaste"
+                InputScope="Chat"
+                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                PlaceholderText="{CustomResource AddCaption}"
+                Margin="12,8,12,0"
+                Grid.Row="1"/>
         </Grid>
     </Grid>
 

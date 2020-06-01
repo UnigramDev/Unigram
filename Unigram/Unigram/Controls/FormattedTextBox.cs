@@ -749,5 +749,22 @@ namespace Unigram.Controls
 
             Document.ApplyDisplayUpdates();
         }
+
+        public void InsertText(string text, bool allowPreceding = false, bool allowTrailing = false)
+        {
+            var start = Document.Selection.StartPosition;
+            var end = Document.Selection.EndPosition;
+
+            var preceding = start > 0 && !char.IsWhiteSpace(Document.GetRange(start - 1, start).Character);
+            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character) || Document.GetRange(end, end + 1).Character == '\r';
+
+            var block = string.Format("{0}{1}{2}",
+                preceding && allowPreceding ? " " : "",
+                text,
+                trailing && allowTrailing ? " " : "");
+
+            Document.Selection.SetText(TextSetOptions.None, block);
+            Document.Selection.StartPosition = Document.Selection.EndPosition;
+        }
     }
 }

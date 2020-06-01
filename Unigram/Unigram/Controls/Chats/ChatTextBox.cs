@@ -62,24 +62,6 @@ namespace Unigram.Controls.Chats
         }
 
         public event EventHandler Sending;
-
-        public void InsertText(string text, bool allowPreceding = true, bool allowTrailing = true)
-        {
-            var start = Document.Selection.StartPosition;
-            var end = Document.Selection.EndPosition;
-
-            var preceding = start > 0 && !char.IsWhiteSpace(Document.GetRange(start - 1, start).Character);
-            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character) || Document.GetRange(end, end + 1).Character == '\r';
-
-            var block = string.Format("{0}{1}{2}",
-                preceding && allowPreceding ? " " : "",
-                text,
-                trailing && allowTrailing ? " " : "");
-
-            Document.Selection.SetText(TextSetOptions.None, block);
-            Document.Selection.StartPosition = Document.Selection.EndPosition;
-        }
-
         public event EventHandler<TappedRoutedEventArgs> Capture;
 
         protected override void OnTapped(TappedRoutedEventArgs e)

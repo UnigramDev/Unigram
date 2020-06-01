@@ -17,12 +17,13 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
@@ -290,7 +291,8 @@ namespace Unigram.Views.Popups
 
         public void Accept()
         {
-            throw new NotImplementedException();
+            Caption = CaptionInput.GetFormattedText();
+            Hide(ContentDialogResult.Primary);
         }
 
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
@@ -501,6 +503,46 @@ namespace Unigram.Views.Popups
             if (button.Tag is StorageMedia media)
             {
                 Items.Remove(media);
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            CaptionInput.Focus(FocusState.Keyboard);
+            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+        }
+
+        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        {
+            var character = char.ConvertFromUtf32((int)args.KeyCode);
+            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            {
+                // For some reason, this is paste
+                if (character == "\u0016" && CaptionInput.Document.Selection.CanPaste(0))
+                {
+                    CaptionInput.Focus(FocusState.Keyboard);
+                    CaptionInput.Document.Selection.Paste(0);
+                }
+                else if (character == "\r")
+                {
+                    Accept();
+                }
+
+                return;
+            }
+
+            var focused = FocusManager.GetFocusedElement();
+            if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
+            {
+                CaptionInput.Focus(FocusState.Keyboard);
+                CaptionInput.InsertText(character);
+
+                args.Handled = true;
             }
         }
     }
