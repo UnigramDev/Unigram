@@ -45,8 +45,10 @@ namespace Unigram.Controls
 
         public void UpdateCornerRadius(double radius)
         {
+            var min = Math.Max(4, radius - 2);
+
             Root.Padding = new Thickness(0, 0, 0, radius);
-            SwitchPm.Radius = new CornerRadius(radius - 2, radius - 2, 4, 4);
+            SwitchPm.Radius = new CornerRadius(min, min, 4, 4);
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -231,7 +233,7 @@ namespace Unigram.Controls
                     File file = null;
                     if (result is InlineQueryResultAnimation animation)
                     {
-                        file = animation.Animation.Thumbnail.Photo;
+                        file = animation.Animation.Thumbnail?.Photo;
                     }
                     else if (result is InlineQueryResultPhoto photo)
                     {
@@ -239,7 +241,7 @@ namespace Unigram.Controls
                     }
                     else if (result is InlineQueryResultVideo video)
                     {
-                        file = video.Video.Thumbnail.Photo;
+                        file = video.Video.Thumbnail?.Photo;
                     }
 
                     if (file == null)
