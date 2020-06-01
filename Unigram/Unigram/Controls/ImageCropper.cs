@@ -887,11 +887,7 @@ namespace Unigram.Controls
 
         public async Task<StorageFile> CropAsync(int min = 1280, int max = 0)
         {
-            var rectangle = new Rect(
-                m_rectangle.X * m_imageSize.Width, m_rectangle.Y * m_imageSize.Height,
-                m_rectangle.Width * m_imageSize.Width, m_rectangle.Height * m_imageSize.Height);
-
-            return await ImageHelper.CropAsync(m_imageSource, null, rectangle, min, max, rotation: _rotation, flip: _flip);
+            return await ImageHelper.CropAsync(m_imageSource, null, m_rectangle, min, max, rotation: _rotation, flip: _flip);
         }
 
         #endregion
