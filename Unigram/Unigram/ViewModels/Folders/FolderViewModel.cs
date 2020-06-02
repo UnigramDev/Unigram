@@ -80,7 +80,7 @@ namespace Unigram.ViewModels.Folders
             _pinnedChatIds = filter.PinnedChatIds;
 
             Title = filter.Title;
-            Emoji = filter.Emoji ?? ChatFilterIcon.Default;
+            Emoji = filter.IconName ?? ChatFilterIcon.Default;
 
             Include.Clear();
             Exclude.Clear();
@@ -239,7 +239,7 @@ namespace Unigram.ViewModels.Folders
 
             var filter = new ChatFilter();
             filter.Title = Title;
-            filter.Emoji = Emoji;
+            filter.IconName = Emoji;
             filter.PinnedChatIds = new List<long>();
             filter.IncludedChatIds = new List<long>();
             filter.ExcludedChatIds = new List<long>();
@@ -318,9 +318,7 @@ namespace Unigram.ViewModels.Folders
 
         private bool SendCanExecute()
         {
-            return !string.IsNullOrEmpty(Title) &&
-                Include.Count > 0 ||
-                Exclude.Count > 0;
+            return !string.IsNullOrEmpty(Title) && Include.Count > 0;
         }
     }
 
