@@ -15,6 +15,7 @@ using Unigram.Entities;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Core;
@@ -103,7 +104,13 @@ namespace Unigram.Views.Popups
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public SendFilesPopup(IEnumerable<StorageMedia> items, bool media, bool ttl)
+        public bool CanSchedule { get; set; }
+        public bool IsSavedMessages { get; set; }
+
+        public bool? Schedule { get; private set; }
+        public bool? Silent { get; private set; }
+
+        public SendFilesPopup(IEnumerable<StorageMedia> items, bool media, bool ttl, bool schedule, bool savedMessages)
         {
             InitializeComponent();
 
@@ -111,6 +118,8 @@ namespace Unigram.Views.Popups
             SecondaryButtonText = Strings.Resources.Cancel;
 
             IsTtlAvailable = ttl;
+            IsSavedMessages = savedMessages;
+            CanSchedule = schedule;
 
             Items = new MvxObservableCollection<StorageMedia>(items);
             Items.CollectionChanged += OnCollectionChanged;
@@ -505,6 +514,36 @@ namespace Unigram.Views.Popups
             {
                 Items.Remove(media);
             }
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            var button = (Button)GetTemplateChild("PrimaryButton");
+            if (button != null && CanSchedule)
+            {
+                button.ContextRequested += PrimaryButton_ContextRequested;
+            }
+
+            base.OnApplyTemplate();
+        }
+
+        private void PrimaryButton_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var self = IsSavedMessages;
+
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
+            {
+                flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            }
+            else
+            {
+                flyout.ShowAt(sender as FrameworkElement);
+            }
+
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
