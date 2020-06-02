@@ -204,6 +204,8 @@ namespace Unigram.Controls
         public async void Refresh()
         {
             // TODO: memes
+            //StickersRoot.ViewModel.SyncStickers(null);
+            //AnimationsRoot.ViewModel.Update();
 
             await Task.Delay(100);
             Pivot_SelectionChanged(null, null);

@@ -124,7 +124,7 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
+                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
                 }
 
                 page.ViewModel.TextField?.Focus(FocusState.Programmatic);

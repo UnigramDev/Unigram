@@ -52,10 +52,13 @@ namespace Unigram.Services
         {
             _viewService = viewService;
 
-            _mediaPlayer = new MediaPlayer();
-            _mediaPlayer.CommandManager.IsEnabled = false;
-            _mediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Communications;
-            _mediaPlayer.AudioCategory = MediaPlayerAudioCategory.Communications;
+            if (ApiInfo.IsMediaSupported)
+            {
+                _mediaPlayer = new MediaPlayer();
+                _mediaPlayer.CommandManager.IsEnabled = false;
+                _mediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Communications;
+                _mediaPlayer.AudioCategory = MediaPlayerAudioCategory.Communications;
+            }
 
             aggregator.Subscribe(this);
         }

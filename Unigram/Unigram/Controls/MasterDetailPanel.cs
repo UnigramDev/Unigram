@@ -260,9 +260,9 @@ namespace Unigram.Controls
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }
 
-            foreach (var pointer in Children[6].PointerCaptures)
+            foreach (var pointer in PointerCaptures)
             {
-                Children[6].ReleasePointerCapture(pointer);
+                ReleasePointerCapture(pointer);
             }
         }
 
@@ -288,7 +288,7 @@ namespace Unigram.Controls
         {
             VisualStateManager.GoToState(Children[7] as UserControl, "Pressed", false);
 
-            Children[6].CapturePointer(e.Pointer);
+            CapturePointer(e.Pointer);
             e.Handled = true;
         }
 
@@ -302,7 +302,7 @@ namespace Unigram.Controls
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }
 
-            Children[6].ReleasePointerCapture(e.Pointer);
+            ReleasePointerCapture(e.Pointer);
             e.Handled = true;
         }
 

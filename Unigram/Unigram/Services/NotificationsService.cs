@@ -1011,13 +1011,13 @@ namespace Unigram.Services
                 var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio?.Performer;
                 var title = string.IsNullOrEmpty(audio.Audio?.Title) ? null : audio.Audio?.Title;
 
-                if (performer == null && title == null)
+                if (performer == null || title == null)
                 {
                     return result + Strings.Resources.AttachMusic;
                 }
                 else
                 {
-                    return $"{result}{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}";
+                    return $"{result}{performer} - {title}";
                 }
             }
             else if (message.Content is PushMessageContentDocument document)

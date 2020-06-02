@@ -29,6 +29,8 @@ namespace Unigram.Common
         private static bool? _isFullExperience;
         public static bool IsFullExperience => (_isFullExperience = _isFullExperience ?? AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile") ?? true;
 
+        public static bool IsMediaSupported => true;
+
         public static TransitionCollection CreateSlideTransition()
         {
             //if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo", "Effect"))

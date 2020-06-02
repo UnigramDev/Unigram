@@ -198,7 +198,6 @@ namespace Unigram.Services
 
         public const ulong CurrentVersion = (3UL << 48) | (15UL << 32) | (3073UL << 16);
         public const string CurrentChangelog = "Quizzes 2.0\r\n• Add explanations that appear after users respond to a quiz question. \r\n• See how much time you have left to answer a question from @QuizBot with the new countdown animation.\r\n\r\nAnimated Darts\r\n• Send a single dart 🎯 emoji to see if you hit bullseye.";
-        public const bool CurrentMedia = false;
 
         public int Session => _session;
 

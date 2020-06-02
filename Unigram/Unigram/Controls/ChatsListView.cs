@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
-    public class ChatsListView : GroupedListView
+    public class ChatsListView : SelectListView
     {
         public ChatsViewModel ViewModel => DataContext as ChatsViewModel;
 

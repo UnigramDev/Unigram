@@ -436,7 +436,7 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             var updated = await ProtoService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
-            var dialog = new DeleteChatPopup(ProtoService, updated, false, true);
+            var dialog = new DeleteChatPopup(ProtoService, updated, null, false, true);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
