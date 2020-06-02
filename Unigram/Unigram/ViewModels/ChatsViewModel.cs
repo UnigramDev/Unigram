@@ -192,12 +192,12 @@ namespace Unigram.ViewModels
             var archived = chat.Positions.Any(x => x.List is ChatListArchive);
             if (archived)
             {
-                ProtoService.Send(new SetChatChatList(chat.Id, new ChatListMain()));
+                ProtoService.Send(new AddChatToList(chat.Id, new ChatListMain()));
                 return;
             }
             else
             {
-                ProtoService.Send(new SetChatChatList(chat.Id, new ChatListArchive()));
+                ProtoService.Send(new AddChatToList(chat.Id, new ChatListArchive()));
             }
 
             Delegate?.ShowChatsUndo(new[] { chat }, UndoType.Archive, items =>
@@ -208,7 +208,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                ProtoService.Send(new SetChatChatList(chat.Id, new ChatListMain()));
+                ProtoService.Send(new AddChatToList(chat.Id, new ChatListMain()));
             });
         }
 
@@ -223,14 +223,14 @@ namespace Unigram.ViewModels
 
             foreach (var chat in chats)
             {
-                ProtoService.Send(new SetChatChatList(chat.Id, new ChatListArchive()));
+                ProtoService.Send(new AddChatToList(chat.Id, new ChatListArchive()));
             }
 
             Delegate?.ShowChatsUndo(chats, UndoType.Archive, items =>
             {
                 foreach (var undo in items)
                 {
-                    ProtoService.Send(new SetChatChatList(undo.Id, new ChatListMain()));
+                    ProtoService.Send(new AddChatToList(undo.Id, new ChatListMain()));
                 }
             });
 
