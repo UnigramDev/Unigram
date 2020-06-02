@@ -17,9 +17,11 @@ namespace Unigram.Common
             }
         }
 
+        [ThreadStatic]
         private static LoopThreadPool _animations;
         public static LoopThreadPool Animations => _animations = _animations ?? new LoopThreadPool(3, TimeSpan.FromMilliseconds(1000 / 25));
 
+        [ThreadStatic]
         private static LoopThreadPool _stickers;
         public static LoopThreadPool Stickers => _stickers = _stickers ?? new LoopThreadPool(2, TimeSpan.FromMilliseconds(1000 / 30));
 

@@ -482,7 +482,7 @@ namespace Unigram.Common
 
         public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
         {
-            var animation = LottieAnimation.LoadFromFile(path, false, false, null);
+            var animation = LottieAnimation.LoadFromFile(path, false, null);
             if (animation == null)
             {
                 if (webp)

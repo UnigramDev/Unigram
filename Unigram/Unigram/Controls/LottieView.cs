@@ -10,6 +10,7 @@ using System.Threading;
 using Unigram.Common;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -41,19 +42,31 @@ namespace Unigram.Controls
         // Detect from hardware?
         private bool _limitFps = true;
 
+        private bool _skipFrame;
+
         private int _index;
         private bool _backward;
 
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
 
-        private LoopThread _thread = LoopThreadPool.Stickers.Get();
+        private LoopThread _thread;
+        private LoopThread _threadUI;
         private bool _subscribed;
 
         private ICanvasResourceCreator _device;
 
         public LottieView()
+            : this(!CompositionCapabilities.GetForCurrentView().AreEffectsFast())
         {
+        }
+
+        public LottieView(bool fullFps)
+        {
+            _limitFps = !fullFps;
+            _thread = fullFps ? LoopThread.Chats : LoopThreadPool.Stickers.Get();
+            _threadUI = fullFps ? LoopThread.Chats :LoopThread.Stickers;
+
             DefaultStyleKey = typeof(LottieView);
         }
 
@@ -167,6 +180,17 @@ namespace Unigram.Controls
 
             var index = _index;
             var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
+
+            if (_animationFrameRate < 60 && !_limitFps)
+            {
+                if (_skipFrame)
+                {
+                    _skipFrame = false;
+                    return;
+                }
+
+                _skipFrame = true;
+            }
 
             _bitmap = animation.RenderSync(_device, index, 256, 256);
 
@@ -282,7 +306,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var animation = LottieAnimation.LoadFromFile(newValue, _isCachingEnabled, _limitFps, ColorReplacements);
+            var animation = LottieAnimation.LoadFromFile(newValue, _isCachingEnabled, ColorReplacements);
             if (animation == null)
             {
                 // The app can't access the file specified
@@ -367,12 +391,12 @@ namespace Unigram.Controls
             _subscribed = subscribe;
 
             _thread.Tick -= OnTick;
-            LoopThread.Stickers.Invalidate -= OnInvalidate;
+            _threadUI.Invalidate -= OnInvalidate;
 
             if (subscribe)
             {
                 _thread.Tick += OnTick;
-                LoopThread.Stickers.Invalidate += OnInvalidate;
+                _threadUI.Invalidate += OnInvalidate;
             }
         }
 

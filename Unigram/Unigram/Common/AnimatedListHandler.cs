@@ -269,7 +269,7 @@ namespace Unigram.Common
 
                 if (news.TryGetValue(item, out MediaPlayerItem data) && data.Container != null && data.Container.Children.Count < 5)
                 {
-                    var presenter = new LottieView();
+                    var presenter = new LottieView(true);
                     presenter.AutoPlay = true;
                     presenter.IsLoopingEnabled = true;
                     presenter.Source = new Uri("file:///" + data.File.Local.Path);
