@@ -54,7 +54,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
-                UpdateThumbnail(message, sticker.Thumbnail.Photo);
+                UpdateThumbnail(message, sticker.Thumbnail.File);
             }
 
             UpdateFile(message, sticker.StickerValue);
@@ -70,7 +70,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (sticker.Thumbnail != null && sticker.Thumbnail.Photo.Id == file.Id)
+            if (sticker.Thumbnail != null && sticker.Thumbnail.File.Id == file.Id)
             {
                 UpdateThumbnail(message, file);
                 return;

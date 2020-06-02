@@ -79,7 +79,7 @@ namespace Unigram.Controls.Cells
 
             if (audio.AlbumCoverThumbnail != null)
             {
-                UpdateThumbnail(message, audio.AlbumCoverThumbnail, audio.AlbumCoverThumbnail.Photo);
+                UpdateThumbnail(message, audio.AlbumCoverThumbnail, audio.AlbumCoverThumbnail.File);
             }
             else
             {
@@ -163,7 +163,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (audio.AlbumCoverThumbnail != null && audio.AlbumCoverThumbnail.Photo.Id == file.Id)
+            if (audio.AlbumCoverThumbnail != null && audio.AlbumCoverThumbnail.File.Id == file.Id)
             {
                 UpdateThumbnail(message, audio.AlbumCoverThumbnail, file);
                 return;
@@ -234,16 +234,16 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private void UpdateThumbnail(Message message, PhotoSize photoSize, File file)
+        private void UpdateThumbnail(Message message, Thumbnail thumbnail, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                double ratioX = (double)48 / photoSize.Width;
-                double ratioY = (double)48 / photoSize.Height;
+                double ratioX = (double)48 / thumbnail.Width;
+                double ratioY = (double)48 / thumbnail.Height;
                 double ratio = Math.Max(ratioX, ratioY);
 
-                var width = (int)(photoSize.Width * ratio);
-                var height = (int)(photoSize.Height * ratio);
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
 
                 Texture.Background = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
                 Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;

@@ -55,7 +55,7 @@ namespace Unigram.Controls.Messages.Content
                 //UpdateThumbnail(message, small.Photo);
             }
 
-            UpdateFile(message, small.Photo);
+            UpdateFile(message, small.File);
 
             if (message.Content is MessageText text && Uri.TryCreate(text.WebPage?.Url, UriKind.Absolute, out Uri result))
             {

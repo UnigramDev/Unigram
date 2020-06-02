@@ -82,7 +82,7 @@ namespace Unigram.Controls
 
             if (sticker.Thumbnail != null)
             {
-                UpdateThumbnail(protoService, sticker.Thumbnail.Photo);
+                UpdateThumbnail(protoService, sticker.Thumbnail.File);
             }
 
             UpdateFile(protoService, sticker.StickerValue);

@@ -203,7 +203,7 @@ namespace Unigram.Common
                 }
                 else if (item.Sticker is StickerSetViewModel setViewModel)
                 {
-                    animation = setViewModel.Thumbnail?.Photo ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.Photo;
+                    animation = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else if (item.Sticker is Sticker sticker)
                 {
@@ -211,7 +211,7 @@ namespace Unigram.Common
                 }
                 else if (item.Sticker is StickerSetInfo set)
                 {
-                    animation = set.Thumbnail?.Photo ?? set.Covers.FirstOrDefault()?.Thumbnail?.Photo;
+                    animation = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else
                 {

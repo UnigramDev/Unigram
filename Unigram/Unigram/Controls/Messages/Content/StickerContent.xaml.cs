@@ -49,7 +49,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
-                UpdateThumbnail(message, sticker.Thumbnail.Photo);
+                UpdateThumbnail(message, sticker.Thumbnail, sticker.Thumbnail.File);
             }
 
             UpdateFile(message, sticker.StickerValue);
@@ -65,9 +65,9 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (sticker.Thumbnail != null && sticker.Thumbnail.Photo.Id == file.Id)
+            if (sticker.Thumbnail != null && sticker.Thumbnail.File.Id == file.Id)
             {
-                UpdateThumbnail(message, file);
+                UpdateThumbnail(message, sticker.Thumbnail, file);
                 return;
             }
             else if (sticker.StickerValue.Id != file.Id)
@@ -85,9 +85,9 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatWebp)
             {
                 Background = new ImageBrush { ImageSource = PlaceholderHelper.GetWebPFrame(file.Local.Path) };
             }

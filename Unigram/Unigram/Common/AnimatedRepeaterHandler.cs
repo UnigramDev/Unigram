@@ -163,7 +163,6 @@ namespace Unigram.Common
 
                     try
                     {
-                        //item.Container.Children[0].Opacity = 1;
                         item.Container.Children.Remove(presenter);
                     }
                     catch { }
@@ -195,7 +194,7 @@ namespace Unigram.Common
                 }
                 else if (item.Sticker is StickerSetViewModel setViewModel)
                 {
-                    file = setViewModel.Thumbnail?.Photo ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.Photo;
+                    file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else if (item.Sticker is Sticker sticker)
                 {
@@ -203,7 +202,7 @@ namespace Unigram.Common
                 }
                 else if (item.Sticker is StickerSetInfo set)
                 {
-                    file = set.Thumbnail?.Photo ?? set.Covers.FirstOrDefault()?.Thumbnail?.Photo;
+                    file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else if (item.Sticker is Animation animation)
                 {
@@ -248,7 +247,6 @@ namespace Unigram.Common
                 var container = _old[item].Container;
                 if (container != null && presenter != null)
                 {
-                    //container.Children[0].Opacity = 1;
                     container.Children.Remove(presenter);
                 }
 
@@ -267,21 +265,14 @@ namespace Unigram.Common
                     continue;
                 }
 
-                if (news.TryGetValue(item, out MediaPlayerItem data) && data.Container != null && data.Container.Children.Count < 5)
+                if (news.TryGetValue(item, out MediaPlayerItem data) && data.Container != null && data.Container.Children.Count < 2)
                 {
                     var presenter = new AnimationView();
                     presenter.AutoPlay = true;
                     presenter.IsLoopingEnabled = true;
                     presenter.Source = new Uri("file:///" + data.File.Local.Path);
 
-                    //if (data.Container.Children[0] is Image img)
-                    //{
-                    //    //presenter.Thumbnail = img.Source;
-                    //}
-
                     data.Presenter = presenter;
-
-                    //data.Container.Children[0].Opacity = 0;
                     data.Container.Children.Insert(1, presenter);
                 }
 

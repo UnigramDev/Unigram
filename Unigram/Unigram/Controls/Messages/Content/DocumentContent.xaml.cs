@@ -60,7 +60,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (document.Thumbnail != null)
             {
-                UpdateThumbnail(message, document.Thumbnail, document.Thumbnail.Photo);
+                UpdateThumbnail(message, document.Thumbnail, document.Thumbnail.File);
             }
             else
             {
@@ -88,7 +88,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (document.Thumbnail != null && document.Thumbnail.Photo.Id == file.Id)
+            if (document.Thumbnail != null && document.Thumbnail.File.Id == file.Id)
             {
                 UpdateThumbnail(message, document.Thumbnail, file);
                 return;
@@ -140,16 +140,16 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, PhotoSize photoSize, File file)
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                double ratioX = (double)48 / photoSize.Width;
-                double ratioY = (double)48 / photoSize.Height;
+                double ratioX = (double)48 / thumbnail.Width;
+                double ratioY = (double)48 / thumbnail.Height;
                 double ratio = Math.Max(ratioX, ratioY);
 
-                var width = (int)(photoSize.Width * ratio);
-                var height = (int)(photoSize.Height * ratio);
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
 
                 Texture.Background = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
                 Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;

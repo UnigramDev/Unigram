@@ -63,7 +63,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageSticker(new InputFileId(sticker.StickerValue.Id), sticker.Thumbnail?.ToInputThumbnail(), sticker.Width, sticker.Height);
+            var input = new InputMessageSticker(new InputFileId(sticker.StickerValue.Id), sticker.Thumbnail?.ToInput(), sticker.Width, sticker.Height);
 
             await SendMessageAsync(reply, input, options);
         }
@@ -121,7 +121,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInputThumbnail(), new int[0], animation.Duration, animation.Width, animation.Height, null);
+            var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), new int[0], animation.Duration, animation.Width, animation.Height, null);
 
             await SendMessageAsync(reply, input, options);
         }

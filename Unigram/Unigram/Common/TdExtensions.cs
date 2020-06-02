@@ -4,11 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Selectors;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
@@ -591,6 +588,16 @@ namespace Unigram.Common
             return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
         }
 
+        public static InputThumbnail ToInput(this Thumbnail thumbnail)
+        {
+            if (thumbnail == null)
+            {
+                return null;
+            }
+
+            return new InputThumbnail(new InputFileId(thumbnail.File.Id), thumbnail.Width, thumbnail.Height);
+        }
+
         public static bool AreEqual(this Message x, Message y)
         {
             if (y == null)
@@ -982,45 +989,45 @@ namespace Unigram.Common
             switch (message.Content)
             {
                 case MessageAnimation animation:
-                    return animation.Animation.Thumbnail?.Photo;
+                    return animation.Animation.Thumbnail?.File;
                 case MessageAudio audio:
                     return audio.Audio.AudioValue;
                 case MessageDocument document:
-                    return document.Document.Thumbnail?.Photo;
+                    return document.Document.Thumbnail?.File;
                 case MessageGame game:
-                    return game.Game.Animation?.Thumbnail?.Photo;
+                    return game.Game.Animation?.Thumbnail?.File;
                 case MessageSticker sticker:
-                    return sticker.Sticker.Thumbnail?.Photo;
+                    return sticker.Sticker.Thumbnail?.File;
                 case MessageText text:
                     if (text.WebPage != null && text.WebPage.Animation != null)
                     {
-                        return text.WebPage.Animation.Thumbnail?.Photo;
+                        return text.WebPage.Animation.Thumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.Audio != null)
                     {
-                        return text.WebPage.Audio.AlbumCoverThumbnail?.Photo;
+                        return text.WebPage.Audio.AlbumCoverThumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.Document != null)
                     {
-                        return text.WebPage.Document.Thumbnail?.Photo;
+                        return text.WebPage.Document.Thumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.Sticker != null)
                     {
-                        return text.WebPage.Sticker.Thumbnail?.Photo;
+                        return text.WebPage.Sticker.Thumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.Video != null)
                     {
-                        return text.WebPage.Video.Thumbnail?.Photo;
+                        return text.WebPage.Video.Thumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.VideoNote != null)
                     {
-                        return text.WebPage.VideoNote.Thumbnail?.Photo;
+                        return text.WebPage.VideoNote.Thumbnail?.File;
                     }
                     break;
                 case MessageVideo video:
-                    return video.Video.Thumbnail?.Photo;
+                    return video.Video.Thumbnail?.File;
                 case MessageVideoNote videoNote:
-                    return videoNote.VideoNote.Thumbnail?.Photo;
+                    return videoNote.VideoNote.Thumbnail?.File;
             }
 
             return null;
@@ -1410,9 +1417,9 @@ namespace Unigram.Common
                 return false;
             }
 
-            if (background.Document.Thumbnail != null && background.Document.Thumbnail.Photo.Id == file.Id)
+            if (background.Document.Thumbnail != null && background.Document.Thumbnail.File.Id == file.Id)
             {
-                background.Document.Thumbnail.Photo = file;
+                background.Document.Thumbnail.File = file;
                 any = true;
             }
 
@@ -1856,6 +1863,17 @@ namespace Unigram.Common
 
 
 
+        public static bool UpdateFile(this Thumbnail thumbnail, File file)
+        {
+            if (thumbnail.File.Id == file.Id)
+            {
+                thumbnail.File = file;
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool UpdateFile(this PhotoSize size, File file)
         {
             if (size.Photo.Id == file.Id)
@@ -1987,9 +2005,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this Animation animation, File file)
         {
             var any = false;
-            if (animation.Thumbnail != null && animation.Thumbnail.Photo.Id == file.Id)
+            if (animation.Thumbnail != null && animation.Thumbnail.File.Id == file.Id)
             {
-                animation.Thumbnail.Photo = file;
+                animation.Thumbnail.File = file;
                 any = true;
             }
 
@@ -2012,9 +2030,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this Audio audio, File file)
         {
             var any = false;
-            if (audio.AlbumCoverThumbnail != null && audio.AlbumCoverThumbnail.Photo.Id == file.Id)
+            if (audio.AlbumCoverThumbnail != null && audio.AlbumCoverThumbnail.File.Id == file.Id)
             {
-                audio.AlbumCoverThumbnail.Photo = file;
+                audio.AlbumCoverThumbnail.File = file;
                 any = true;
             }
 
@@ -2037,9 +2055,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this Document document, File file)
         {
             var any = false;
-            if (document.Thumbnail != null && document.Thumbnail.Photo.Id == file.Id)
+            if (document.Thumbnail != null && document.Thumbnail.File.Id == file.Id)
             {
-                document.Thumbnail.Photo = file;
+                document.Thumbnail.File = file;
                 any = true;
             }
 
@@ -2153,9 +2171,9 @@ namespace Unigram.Common
 
         public static bool UpdateFile(this Sticker sticker, File file)
         {
-            if (sticker.Thumbnail != null && sticker.Thumbnail.Photo.Id == file.Id)
+            if (sticker.Thumbnail != null && sticker.Thumbnail.File.Id == file.Id)
             {
-                sticker.Thumbnail.Photo = file;
+                sticker.Thumbnail.File = file;
                 return true;
             }
             if (sticker.StickerValue.Id == file.Id)
@@ -2235,9 +2253,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this Video video, File file)
         {
             var any = false;
-            if (video.Thumbnail != null && video.Thumbnail.Photo.Id == file.Id)
+            if (video.Thumbnail != null && video.Thumbnail.File.Id == file.Id)
             {
-                video.Thumbnail.Photo = file;
+                video.Thumbnail.File = file;
                 any = true;
             }
 
@@ -2260,9 +2278,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this VideoNote videoNote, File file)
         {
             var any = false;
-            if (videoNote.Thumbnail != null && videoNote.Thumbnail.Photo.Id == file.Id)
+            if (videoNote.Thumbnail != null && videoNote.Thumbnail.File.Id == file.Id)
             {
-                videoNote.Thumbnail.Photo = file;
+                videoNote.Thumbnail.File = file;
                 any = true;
             }
 

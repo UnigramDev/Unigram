@@ -58,7 +58,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (videoNote.Thumbnail != null)
             {
-                UpdateThumbnail(message, videoNote.Thumbnail.Photo);
+                UpdateThumbnail(message, videoNote.Thumbnail, videoNote.Thumbnail.File);
             }
 
             UpdateFile(message, videoNote.Video);
@@ -80,9 +80,9 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (videoNote.Thumbnail != null && videoNote.Thumbnail.Photo.Id == file.Id)
+            if (videoNote.Thumbnail != null && videoNote.Thumbnail.File.Id == file.Id)
             {
-                UpdateThumbnail(message, file);
+                UpdateThumbnail(message, videoNote.Thumbnail, file);
                 return;
             }
             else if (videoNote.Video.Id != file.Id)
@@ -131,7 +131,7 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {

@@ -984,7 +984,7 @@ namespace Unigram.Views
 
             if (block.Video.Thumbnail != null)
             {
-                _filesMap[block.Video.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
+                _filesMap[block.Video.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
             _filesMap[block.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
@@ -1017,7 +1017,7 @@ namespace Unigram.Views
 
             if (block.Animation.Thumbnail != null)
             {
-                _filesMap[block.Animation.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
+                _filesMap[block.Animation.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
             _filesMap[block.Animation.AnimationValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
@@ -1142,7 +1142,7 @@ namespace Unigram.Views
 
                     if (videoBlock.Video.Thumbnail != null)
                     {
-                        _filesMap[videoBlock.Video.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
+                        _filesMap[videoBlock.Video.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
                     }
 
                     _filesMap[videoBlock.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));

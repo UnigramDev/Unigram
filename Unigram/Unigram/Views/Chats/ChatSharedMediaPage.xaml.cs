@@ -429,7 +429,7 @@ namespace Unigram.Views.Chats
                 {
                     var grid = hyperlink.Content as Grid;
                     var photo = grid.Children[0] as Image;
-                    photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.Photo, 0, 0);
+                    photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.File, 0, 0);
 
                     var panel = grid.Children[1] as Grid;
                     var duration = panel.Children[1] as TextBlock;
@@ -501,11 +501,11 @@ namespace Unigram.Views.Chats
                     else if (message.Content is MessageVideo video)
                     {
                         var thumb = video.Video.Thumbnail;
-                        if (thumb != null && thumb.Photo.Id == file.Id && file.Local.IsDownloadingCompleted)
+                        if (thumb != null && thumb.File.Id == file.Id && file.Local.IsDownloadingCompleted)
                         {
                             var grid = content.Content as Grid;
                             var thumbnail = grid.Children[0] as Image;
-                            thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, thumb.Photo, 0, 0);
+                            thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, thumb.File, 0, 0);
                         }
                     }
                 }

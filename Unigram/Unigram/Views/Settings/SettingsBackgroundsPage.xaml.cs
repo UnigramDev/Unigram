@@ -84,7 +84,7 @@ namespace Unigram.Views.Settings
                 }
 
                 var content = root.Children[0] as Image;
-                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);     
+                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);     
                 
                 if (wallpaper.Type is BackgroundTypePattern pattern)
                 {
@@ -136,7 +136,7 @@ namespace Unigram.Views.Settings
                             return;
                         }
 
-                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, item.Document.Thumbnail.Width, item.Document.Thumbnail.Height);
+                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.File, item.Document.Thumbnail.Width, item.Document.Thumbnail.Height);
                     }
                 }
             });

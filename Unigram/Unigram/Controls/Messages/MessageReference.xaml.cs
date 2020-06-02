@@ -172,6 +172,30 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail)
+        {
+            if (thumbnail.File.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
+            {
+                double ratioX = (double)36 / thumbnail.Width;
+                double ratioY = (double)36 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                ThumbImage.ImageSource = new BitmapImage(new Uri("file:///" + thumbnail.File.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            }
+            else
+            {
+                ThumbImage.ImageSource = null;
+
+                if (thumbnail.File.Local.CanBeDownloaded && !thumbnail.File.Local.IsDownloadingActive)
+                {
+                    message.ProtoService.DownloadFile(thumbnail.File.Id, 1);
+                }
+            }
+        }
+
         #region Reply
 
         private bool GetMessageTemplate(MessageViewModel message, string title)

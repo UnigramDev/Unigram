@@ -1004,7 +1004,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8, disableAnimation: false);
+                await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, disableAnimation: false);
             }
 
             TextField?.Focus(FocusState.Programmatic);
@@ -1023,6 +1023,11 @@ namespace Unigram.ViewModels
                         direction = Items[panel.FirstVisibleIndex].Id < maxId ? ScrollIntoViewAlignment.Default : ScrollIntoViewAlignment.Leading;
                     }
                 }
+            }
+
+            if (alignment == VerticalAlignment.Bottom)
+            {
+                pixel = int.MaxValue;
             }
 
             var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Layout.Messages.ContainsKey(maxId));
@@ -1440,7 +1445,7 @@ namespace Unigram.ViewModels
                 {
                     if (animation.Thumbnail != null)
                     {
-                        _filesMap[animation.Thumbnail.Photo.Id].Add(target);
+                        _filesMap[animation.Thumbnail.File.Id].Add(target);
                     }
 
                     _filesMap[animation.AnimationValue.Id].Add(target);
@@ -1449,7 +1454,7 @@ namespace Unigram.ViewModels
                 {
                     if (audio.AlbumCoverThumbnail != null)
                     {
-                        _filesMap[audio.AlbumCoverThumbnail.Photo.Id].Add(target);
+                        _filesMap[audio.AlbumCoverThumbnail.File.Id].Add(target);
                     }
 
                     _filesMap[audio.AudioValue.Id].Add(target);
@@ -1458,7 +1463,7 @@ namespace Unigram.ViewModels
                 {
                     if (document.Thumbnail != null)
                     {
-                        _filesMap[document.Thumbnail.Photo.Id].Add(target);
+                        _filesMap[document.Thumbnail.File.Id].Add(target);
                     }
 
                     _filesMap[document.DocumentValue.Id].Add(target);
@@ -1474,7 +1479,7 @@ namespace Unigram.ViewModels
                 {
                     if (sticker.Thumbnail != null)
                     {
-                        _filesMap[sticker.Thumbnail.Photo.Id].Add(target);
+                        _filesMap[sticker.Thumbnail.File.Id].Add(target);
                     }
 
                     _filesMap[sticker.StickerValue.Id].Add(target);
@@ -1483,7 +1488,7 @@ namespace Unigram.ViewModels
                 {
                     if (video.Thumbnail != null)
                     {
-                        _filesMap[video.Thumbnail.Photo.Id].Add(target);
+                        _filesMap[video.Thumbnail.File.Id].Add(target);
                     }
 
                     _filesMap[video.VideoValue.Id].Add(target);
@@ -1492,7 +1497,7 @@ namespace Unigram.ViewModels
                 {
                     if (videoNote.Thumbnail != null)
                     {
-                        _filesMap[videoNote.Thumbnail.Photo.Id].Add(target);
+                        _filesMap[videoNote.Thumbnail.File.Id].Add(target);
                     }
 
                     _filesMap[videoNote.Video.Id].Add(target);
@@ -1770,7 +1775,7 @@ namespace Unigram.ViewModels
                 {
                     Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from LastMessageId: {1}", chat.Id, chat.LastMessage?.Id));
 
-                    LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
+                    LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
                 }
             }
 #pragma warning restore CS4014
@@ -2455,7 +2460,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
+                        await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
                     }
                 }
             }

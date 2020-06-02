@@ -135,7 +135,7 @@ namespace Unigram.Controls.Drawers
                 {
                     item.UpdateFile(file);
 
-                    if (item.Thumbnail?.Photo.Id == file.Id)
+                    if (item.Thumbnail?.File.Id == file.Id)
                     {
                         var container = Stickers.ContainerFromItem(item) as SelectorItem;
                         if (container == null)
@@ -355,7 +355,7 @@ namespace Unigram.Controls.Drawers
                 photo.Source = null;
                 args.RegisterUpdateCallback(OnContainerContentChanging);
 
-                var file = sticker.Thumbnail.Photo;
+                var file = sticker.Thumbnail.File;
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
                     DownloadFile(_stickers, file.Id, sticker);
@@ -365,7 +365,7 @@ namespace Unigram.Controls.Drawers
             {
                 //Debug.WriteLine("Loading sticker " + sticker.StickerValue.Id + " for sticker set id " + sticker.SetId);
 
-                var file = sticker.Thumbnail.Photo;
+                var file = sticker.Thumbnail.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
                     photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
@@ -419,7 +419,7 @@ namespace Unigram.Controls.Drawers
                     return;
                 }
 
-                var file = cover.Photo;
+                var file = cover.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
                     if (sticker.IsAnimated)

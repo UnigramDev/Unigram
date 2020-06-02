@@ -681,7 +681,7 @@ namespace Unigram.ViewModels.Drawers
         public string Title => _set?.Title ?? _info.Title;
         public long Id => _set?.Id ?? _info.Id;
 
-        public PhotoSize Thumbnail => _set?.Thumbnail ?? _info.Thumbnail;
+        public Thumbnail Thumbnail => _set?.Thumbnail ?? _info.Thumbnail;
 
         public IList<Sticker> Covers { get; private set; }
     }
@@ -734,7 +734,7 @@ namespace Unigram.ViewModels.Drawers
         }
 
         public File StickerValue => _sticker?.StickerValue;
-        public PhotoSize Thumbnail => _sticker?.Thumbnail;
+        public Thumbnail Thumbnail => _sticker?.Thumbnail;
         public MaskPosition MaskPosition => _sticker?.MaskPosition;
         public bool IsAnimated => _sticker?.IsAnimated ?? false;
         public bool IsMask => _sticker?.IsMask ?? false;

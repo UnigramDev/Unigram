@@ -2970,7 +2970,7 @@ namespace Unigram.Views
 
                 args.ItemContainer.Tag = content.Tag = new ViewModels.Drawers.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
 
-                var file = sticker.Thumbnail.Photo;
+                var file = sticker.Thumbnail.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
                     photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
@@ -4179,7 +4179,7 @@ namespace Unigram.Views
                 {
                     if (sticker.UpdateFile(file) && file.Local.IsDownloadingCompleted)
                     {
-                        if (file.Id == sticker.Thumbnail?.Photo.Id)
+                        if (file.Id == sticker.Thumbnail?.File.Id)
                         {
                             var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
                             if (container == null)

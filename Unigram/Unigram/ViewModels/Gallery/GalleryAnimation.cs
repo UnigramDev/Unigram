@@ -31,7 +31,12 @@ namespace Unigram.ViewModels.Gallery
 
         public override File GetThumbnail()
         {
-            return _animation.Thumbnail?.Photo;
+            if (_animation.Thumbnail?.Format is ThumbnailFormatJpeg)
+            {
+                return _animation.Thumbnail?.File;
+            }
+
+            return null;
         }
 
         public override (File File, string FileName) GetFileAndName()

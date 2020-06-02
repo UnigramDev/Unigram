@@ -118,7 +118,7 @@ namespace Unigram.Views.Popups
             }
             else
             {
-                var file = sticker.Thumbnail.Photo;
+                var file = sticker.Thumbnail.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
                     content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);

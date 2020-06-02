@@ -122,7 +122,7 @@ namespace Unigram.Controls.Drawers
             var content = button.Content as Grid;
             var image = content.Children[0] as Image;
 
-            var file = animation.Thumbnail?.Photo;
+            var file = animation.Thumbnail?.File;
             if (file == null)
             {
                 return;
@@ -182,9 +182,14 @@ namespace Unigram.Controls.Drawers
                         continue;
                     }
 
-                    if (item.Thumbnail?.Photo.Id == file.Id)
+                    if (item.Thumbnail?.File.Id == file.Id)
                     {
                         var button = Repeater.TryGetElement(index) as Button;
+                        if (button == null)
+                        {
+                            continue;
+                        }
+
                         var content = button.Content as Grid;
                         var image = content.Children[0] as Image;
 

@@ -303,7 +303,7 @@ namespace Unigram.Views
                             continue;
                         }
 
-                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
+                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
                     }
                     else
                     {
@@ -445,7 +445,7 @@ namespace Unigram.Views
                 }
 
                 var content = root.Children[0] as Image;
-                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
+                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
 
                 content.Opacity = ViewModel.Intensity / 100d;
                 root.Background = ViewModel.GetFill().ToBrush();

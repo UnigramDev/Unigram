@@ -233,7 +233,7 @@ namespace Unigram.Controls
                     File file = null;
                     if (result is InlineQueryResultAnimation animation)
                     {
-                        file = animation.Animation.Thumbnail?.Photo;
+                        file = animation.Animation.Thumbnail?.File;
                     }
                     else if (result is InlineQueryResultPhoto photo)
                     {
@@ -241,7 +241,7 @@ namespace Unigram.Controls
                     }
                     else if (result is InlineQueryResultVideo video)
                     {
-                        file = video.Video.Thumbnail?.Photo;
+                        file = video.Video.Thumbnail?.File;
                     }
 
                     if (file == null)
@@ -261,7 +261,7 @@ namespace Unigram.Controls
                 }
                 else if (result is InlineQueryResultSticker sticker)
                 {
-                    var file = sticker.Sticker.Thumbnail.Photo;
+                    var file = sticker.Sticker.Thumbnail.File;
                     if (file == null)
                     {
                         return;
@@ -291,25 +291,25 @@ namespace Unigram.Controls
 
                 if (result is InlineQueryResultArticle article)
                 {
-                    file = article.Thumbnail?.Photo;
+                    file = article.Thumbnail?.File;
                     title.Text = article.Title;
                     description.Text = article.Description;
                 }
                 else if (result is InlineQueryResultAudio audio)
                 {
-                    file = audio.Audio.AlbumCoverThumbnail?.Photo;
+                    file = audio.Audio.AlbumCoverThumbnail?.File;
                     title.Text = audio.Audio.GetTitle();
                     description.Text = audio.Audio.GetDuration();
                 }
                 else if (result is InlineQueryResultContact contact)
                 {
-                    file = contact.Thumbnail?.Photo;
+                    file = contact.Thumbnail?.File;
                     title.Text = contact.Contact.GetFullName();
                     description.Text = PhoneNumber.Format(contact.Contact.PhoneNumber);
                 }
                 else if (result is InlineQueryResultDocument document)
                 {
-                    file = document.Document.Thumbnail?.Photo;
+                    file = document.Document.Thumbnail?.File;
                     title.Text = document.Title;
 
                     if (string.IsNullOrEmpty(document.Description))
@@ -323,7 +323,7 @@ namespace Unigram.Controls
                 }
                 else if (result is InlineQueryResultGame game)
                 {
-                    file = game.Game.Animation?.Thumbnail?.Photo ?? game.Game.Photo.GetSmall().Photo;
+                    file = game.Game.Animation?.Thumbnail?.File ?? game.Game.Photo.GetSmall().Photo;
                     title.Text = game.Game.Title;
                     description.Text = game.Game.Description;
                 }
@@ -333,7 +333,7 @@ namespace Unigram.Controls
                     var longitude = location.Location.Longitude.ToString(CultureInfo.InvariantCulture);
 
                     uri = new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "96,96"));
-                    file = location.Thumbnail?.Photo;
+                    file = location.Thumbnail?.File;
                     title.Text = location.Title;
                     description.Text = $"{location.Location.Latitude};{location.Location.Longitude}";
                 }
@@ -349,14 +349,14 @@ namespace Unigram.Controls
                     var longitude = venue.Venue.Location.Longitude.ToString(CultureInfo.InvariantCulture);
 
                     uri = new Uri(string.Format("https://dev.virtualearth.net/REST/v1/Imagery/Map/Road/{0},{1}/{2}?mapSize={3}&key=FgqXCsfOQmAn9NRf4YJ2~61a_LaBcS6soQpuLCjgo3g~Ah_T2wZTc8WqNe9a_yzjeoa5X00x4VJeeKH48wAO1zWJMtWg6qN-u4Zn9cmrOPcL", latitude, longitude, 15, "96,96"));
-                    file = venue.Thumbnail?.Photo;
+                    file = venue.Thumbnail?.File;
 
                     title.Text = venue.Venue.Title;
                     description.Text = venue.Venue.Address;
                 }
                 else if (result is InlineQueryResultVideo video)
                 {
-                    file = video.Video.Thumbnail?.Photo;
+                    file = video.Video.Thumbnail?.File;
                     title.Text = video.Title;
                     description.Text = video.Description;
                 }

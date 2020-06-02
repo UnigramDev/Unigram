@@ -70,10 +70,10 @@ namespace Unigram.Views.Supergroups
                     return;
                 }
 
-                var file = cover.Photo;
+                var file = cover.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    if (stickerSet.IsAnimated)
+                    if (cover.Format is ThumbnailFormatTgs)
                     {
                         photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
                     }
@@ -123,7 +123,7 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
-            var file = cover.Photo;
+            var file = cover.File;
             if (file.Local.IsDownloadingCompleted)
             {
                 if (stickerSet.IsAnimated)
