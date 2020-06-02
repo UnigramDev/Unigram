@@ -197,19 +197,26 @@ namespace Unigram.Views.Host
             Navigation.Content = service.Frame;
         }
 
-        private void Destroy(NavigationService service)
+        private void Destroy(NavigationService master)
         {
-            if (service.Frame.Content is IRootContentPage content)
+            if (master.Frame.Content is IRootContentPage content)
             {
                 content.Root = null;
                 content.Dispose();
             }
 
-            service.Frame.Navigating -= OnNavigating;
-            service.Frame.Navigated -= OnNavigated;
+            master.Frame.Navigating -= OnNavigating;
+            master.Frame.Navigated -= OnNavigated;
+            master.Frame.Navigate(typeof(BlankPage));
 
-            WindowContext.GetForCurrentView().NavigationServices.Remove(service);
-            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"Main{service.FrameFacade.FrameId}");
+            var detail = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
+            if (detail != null)
+            {
+                detail.Navigate(typeof(BlankPage));
+            }
+
+            WindowContext.GetForCurrentView().NavigationServices.Remove(master);
+            WindowContext.GetForCurrentView().NavigationServices.Remove(detail);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
