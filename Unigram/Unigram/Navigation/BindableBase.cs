@@ -1,10 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using Unigram.Common;
-using Unigram.Navigation;
 
 namespace Unigram.Navigation
 {
@@ -13,7 +11,7 @@ namespace Unigram.Navigation
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public virtual bool Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
+        public virtual bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (object.Equals(storage, value))
                 return false;
@@ -23,7 +21,7 @@ namespace Unigram.Navigation
             return true;
         }
 
-        public virtual void RaisePropertyChanged([CallerMemberName]string propertyName = null)
+        public virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
                 return;

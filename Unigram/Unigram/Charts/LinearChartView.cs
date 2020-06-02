@@ -1,10 +1,9 @@
-﻿using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
-using Unigram.Common;
+using Unigram.Charts.Data;
+using Unigram.Charts.DataView;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -246,7 +245,7 @@ namespace Unigram.Charts
                     //if (USE_LINES)
                     //    canvas.DrawLines(line.linesPathBottom, 0, line.linesPathBottomSize, line.bottomLinePaint);
                     //else
-                        canvas.DrawGeometry(CanvasGeometry.CreatePath(line.bottomLinePath), line.bottomLinePaint);
+                    canvas.DrawGeometry(CanvasGeometry.CreatePath(line.bottomLinePath), line.bottomLinePaint);
                 }
             }
         }

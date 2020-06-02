@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LinqToVisualTree;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using LinqToVisualTree;
 
 namespace Unigram.Controls
 {

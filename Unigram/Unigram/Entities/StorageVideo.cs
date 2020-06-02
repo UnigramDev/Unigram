@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Converters;
@@ -12,7 +7,6 @@ using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Entities
 {

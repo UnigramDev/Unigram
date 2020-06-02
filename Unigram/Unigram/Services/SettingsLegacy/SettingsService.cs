@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 
 namespace Unigram.Services.SettingsLegacy

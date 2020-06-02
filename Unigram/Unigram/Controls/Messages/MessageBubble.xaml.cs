@@ -8,21 +8,17 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
-using Unigram.Selectors;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
@@ -1772,7 +1768,7 @@ namespace Unigram.Controls.Messages
 
             return base.MeasureOverride(availableSize);
 
-        Calculate:
+            Calculate:
 
             if (Footer.DesiredSize.IsEmpty)
                 Footer.Measure(availableSize);

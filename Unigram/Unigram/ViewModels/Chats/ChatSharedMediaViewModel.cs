@@ -1,21 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
+using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
+using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Services;
-using Telegram.Td.Api;
-using Windows.Storage.Pickers;
-using Windows.Storage;
-using Windows.UI.Xaml;
-using System.Linq;
-using Unigram.ViewModels.Delegates;
 
 namespace Unigram.ViewModels.Chats
 {

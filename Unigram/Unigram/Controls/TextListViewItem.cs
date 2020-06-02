@@ -1,9 +1,5 @@
 ﻿using LinqToVisualTree;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Unigram.Controls.Cells;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;

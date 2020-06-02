@@ -7,7 +7,6 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Unigram.Views;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;

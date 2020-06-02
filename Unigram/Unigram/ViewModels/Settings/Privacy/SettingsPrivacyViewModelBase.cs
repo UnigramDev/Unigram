@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
-using Telegram.Td.Api;
-using Unigram.Views.Settings.Privacy;
-using Unigram.Controls;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Views.Popups;
-using Unigram.ViewModels.Settings.Privacy;
-using Unigram.Collections;
 
 namespace Unigram.ViewModels.Settings
 {

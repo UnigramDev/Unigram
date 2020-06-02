@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -10,14 +9,13 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
-using Unigram.Strings;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
     public class CallsViewModel : TLViewModelBase
     {
-        public CallsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public CallsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new ItemsCollection(protoService, cacheService);

@@ -26,7 +26,7 @@ namespace Unigram.ViewModels.Settings
 
         //private TLAccountPassword _passwordBase;
 
-        public SettingsPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SettingsPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Input = new InputViewModel(this, protoService, cacheService, settingsService, aggregator);

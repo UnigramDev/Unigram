@@ -11,7 +11,6 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
-using Unigram.Views;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Metadata;
 using Windows.UI;

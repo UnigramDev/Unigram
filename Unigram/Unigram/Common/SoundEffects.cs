@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unigram.Controls.Media;
 using Windows.Media.Audio;
 using Windows.Media.Render;
 using Windows.Storage;
-using Windows.System.Display;
 
 namespace Unigram.Common
 {

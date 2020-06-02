@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,26 +6,22 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.Entities;
 using Unigram.Services;
 using Unigram.Services.Factories;
+using Unigram.Views.Popups;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
-using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels
 {

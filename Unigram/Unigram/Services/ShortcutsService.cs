@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Unigram.ViewModels;
 using Windows.System;
 using Windows.UI.Core;

@@ -1,11 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Windows.ApplicationModel.ExtendedExecution;
@@ -97,7 +91,8 @@ namespace Unigram.Services
 
                     return new Location(location.Coordinate.Point.Position.Latitude, location.Coordinate.Point.Position.Longitude);
                 }
-            } catch { }
+            }
+            catch { }
 
             return null;
         }

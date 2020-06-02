@@ -8,7 +8,6 @@ using System.Numerics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Native;
 using Unigram.Navigation;

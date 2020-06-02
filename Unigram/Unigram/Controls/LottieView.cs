@@ -65,7 +65,7 @@ namespace Unigram.Controls
         {
             _limitFps = !fullFps;
             _thread = fullFps ? LoopThread.Chats : LoopThreadPool.Stickers.Get();
-            _threadUI = fullFps ? LoopThread.Chats :LoopThread.Stickers;
+            _threadUI = fullFps ? LoopThread.Chats : LoopThread.Stickers;
 
             DefaultStyleKey = typeof(LottieView);
         }

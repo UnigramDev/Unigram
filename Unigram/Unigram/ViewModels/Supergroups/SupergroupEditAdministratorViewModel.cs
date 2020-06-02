@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -13,7 +10,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
-using Unigram.Views.Users;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -163,7 +159,7 @@ namespace Unigram.ViewModels.Supergroups
                     (supergroup.IsChannel ? _canEditMessages : true) &&
                     (supergroup.IsChannel ? true : _canPinMessages) &&
                     (supergroup.IsChannel ? _canPostMessages : true) &&
-                    (supergroup.IsChannel ? true :_canRestrictMembers);
+                    (supergroup.IsChannel ? true : _canRestrictMembers);
             }
         }
 

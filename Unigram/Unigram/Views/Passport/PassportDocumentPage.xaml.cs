@@ -1,24 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Controls.Passport;
-using Unigram.Converters;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Passport;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Passport
 {

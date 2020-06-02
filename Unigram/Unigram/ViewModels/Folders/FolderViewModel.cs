@@ -83,15 +83,15 @@ namespace Unigram.ViewModels.Folders
             Include.Clear();
             Exclude.Clear();
 
-            if (filter.IncludeContacts)    Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeContacts });
+            if (filter.IncludeContacts) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeContacts });
             if (filter.IncludeNonContacts) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeNonContacts });
-            if (filter.IncludeGroups)      Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeGroups });
-            if (filter.IncludeChannels)    Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeChannels });
-            if (filter.IncludeBots)        Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeBots });
+            if (filter.IncludeGroups) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeGroups });
+            if (filter.IncludeChannels) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeChannels });
+            if (filter.IncludeBots) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeBots });
 
-            if (filter.ExcludeMuted)       Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeMuted});
-            if (filter.ExcludeRead)        Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeRead });
-            if (filter.ExcludeArchived)    Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeArchived });
+            if (filter.ExcludeMuted) Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeMuted });
+            if (filter.ExcludeRead) Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeRead });
+            if (filter.ExcludeArchived) Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeArchived });
 
             foreach (var chatId in filter.PinnedChatIds.Union(filter.IncludedChatIds))
             {

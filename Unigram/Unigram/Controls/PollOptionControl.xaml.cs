@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
@@ -36,7 +27,7 @@ namespace Unigram.Controls
             this.IsChecked = results ? null : new bool?(false);
             this.Tag = option;
 
-            _allowToggle = poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers && !results; 
+            _allowToggle = poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers && !results;
 
             Ellipse.Opacity = results || option.IsBeingChosen ? 0 : 1;
 
@@ -51,7 +42,7 @@ namespace Unigram.Controls
 
             Votes.Maximum = results ? Math.Max(poll.Options.Max(x => x.VoterCount), 1) : 1;
             Votes.Value = results ? option.VoterCount : 0;
-            
+
             Loading.IsActive = option.IsBeingChosen;
 
             Tick.Visibility = (results && correct) || option.IsChosen ? Visibility.Visible : Visibility.Collapsed;

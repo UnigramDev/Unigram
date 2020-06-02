@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
-using Unigram.Services.Updates;
 using Unigram.Views;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.UI;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings

@@ -12,7 +12,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
-using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
@@ -22,6 +21,7 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.BasicGroups;
 using Unigram.Views.Channels;
 using Unigram.Views.Host;
+using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
@@ -525,7 +525,7 @@ namespace Unigram.Views
             });
         }
 
-#endregion
+        #endregion
 
         public void ShowChatsUndo(IList<Chat> chats, UndoType type, Action<IList<Chat>> undo, Action<IList<Chat>> action = null)
         {
@@ -1498,7 +1498,7 @@ namespace Unigram.Views
             });
         }
 
-#region Context menu
+        #region Context menu
 
         private void TopChat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
@@ -1532,9 +1532,9 @@ namespace Unigram.Views
             return Visibility.Visible;
         }
 
-#endregion
+        #endregion
 
-#region Binding
+        #region Binding
 
         private string ConvertGeoLive(int count, IList<Message> items)
         {
@@ -1555,7 +1555,7 @@ namespace Unigram.Views
             return epoch ? Strings.Resources.SortedByLastSeen : Strings.Resources.SortedByName;
         }
 
-#endregion
+        #endregion
 
         private void NewContact_Click(object sender, RoutedEventArgs e)
         {
@@ -1632,7 +1632,7 @@ namespace Unigram.Views
             ChatTabsSearch.Content = rpMasterTitlebar.SelectedIndex == 3 ? Strings.Resources.SearchInSettings : Strings.Resources.Search;
         }
 
-#region Search
+        #region Search
 
         private bool _searchCollapsed = true;
 
@@ -1816,7 +1816,7 @@ namespace Unigram.Views
             }
         }
 
-#endregion
+        #endregion
 
         private void Lock_Click(object sender, RoutedEventArgs e)
         {
@@ -2606,7 +2606,7 @@ namespace Unigram.Views
             }
         }
 
-#region Selection
+        #region Selection
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
         {
@@ -2780,7 +2780,7 @@ namespace Unigram.Views
             }
         }
 
-#endregion
+        #endregion
 
         private void Confetti_Completed(object sender, EventArgs e)
         {

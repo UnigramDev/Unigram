@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI.Core;
 
@@ -11,7 +7,7 @@ namespace Unigram.Services.Keyboard
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-KeyboardService
     public class KeyboardEventArgs : EventArgs
     {
-        public bool Handled { get; set; } = false;  
+        public bool Handled { get; set; } = false;
         public bool AltKey { get; set; }
         public bool ControlKey { get; set; }
         public bool ShiftKey { get; set; }

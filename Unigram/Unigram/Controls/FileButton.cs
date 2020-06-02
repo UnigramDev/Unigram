@@ -1,15 +1,8 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
-using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

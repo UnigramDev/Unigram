@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -16,7 +14,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsWebSessionsViewModel : TLViewModelBase
     {
-        public SettingsWebSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SettingsWebSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new SortedObservableCollection<ConnectedWebsite>(new TLAuthorizationComparer());

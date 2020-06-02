@@ -1,22 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Common;
-using Unigram.Views.Popups;
-using Unigram.Services;
+﻿using Unigram.Common;
 using Unigram.ViewModels.Settings;
 using Unigram.Views.Settings.Privacy;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {

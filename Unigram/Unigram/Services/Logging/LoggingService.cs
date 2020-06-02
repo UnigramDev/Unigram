@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Unigram.Services.Logging
 {
-    public delegate void DebugWriteDelegate(string text = null, Severities severity = Severities.Info, Targets target = Targets.Debug, [CallerMemberName]string caller = null);
+    public delegate void DebugWriteDelegate(string text = null, Severities severity = Severities.Info, Targets target = Targets.Debug, [CallerMemberName] string caller = null);
 
     public enum Severities { Template10, Info, Warning, Error, Critical }
 
@@ -19,7 +15,7 @@ namespace Unigram.Services.Logging
 
         public static DebugWriteDelegate WriteLine { get; set; } = new DebugWriteDelegate(WriteLineInternal);
 
-        private static void WriteLineInternal(string text = null, Severities severity = Severities.Info, Targets target = Targets.Debug, [CallerMemberName]string caller = null)
+        private static void WriteLineInternal(string text = null, Severities severity = Severities.Info, Targets target = Targets.Debug, [CallerMemberName] string caller = null)
         {
             switch (target)
             {

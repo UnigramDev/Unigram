@@ -38,7 +38,7 @@ namespace Unigram.Views
 
         #region Context menu
 
-        private void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private async void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -61,29 +61,38 @@ namespace Unigram.Views
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.Unpin : Icons.Pin });
 
-            var filters = ViewModel.CacheService.ChatFilters;
             if (viewModel.Items.ChatList is ChatListFilter chatListFilter)
             {
                 flyout.CreateFlyoutItem(viewModel.FolderRemoveCommand, (chatListFilter.ChatFilterId, chat), Strings.Resources.FilterRemoveFrom, new FontIcon { Glyph = "\uE92B", FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
             }
-            else if (filters.Count > 0)
+            else
             {
-                var item = new MenuFlyoutSubItem();
-                item.Text = Strings.Resources.FilterAddTo;
-                item.Icon = new FontIcon { Glyph = "\uE929", FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-
-                foreach (var filter in filters)
+                var response = await ViewModel.ProtoService.SendAsync(new GetChatListsToAddChat(chat.Id)) as ChatLists;
+                if (response != null && response.ChatListsValue.Count > 0)
                 {
-                    item.Items.Add(new MenuFlyoutItem { Command = ViewModel.FolderAddCommand, CommandParameter = (filter.Id, chat), Text = filter.Title });
-                }
+                    var filters = ViewModel.CacheService.ChatFilters;
 
-                if (filters.Count < 10)
-                {
-                    item.Items.Add(new MenuFlyoutSeparator());
-                    item.Items.Add(new MenuFlyoutItem { Command = ViewModel.FolderCreateCommand, CommandParameter = chat, Text = Strings.Resources.CreateNewFilter, Icon = new FontIcon { Glyph = Icons.Add } });
-                }
+                    var item = new MenuFlyoutSubItem();
+                    item.Text = Strings.Resources.FilterAddTo;
+                    item.Icon = new FontIcon { Glyph = "\uE929", FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
-                flyout.Items.Add(item);
+                    foreach (var chatList in response.ChatListsValue.OfType<ChatListFilter>())
+                    {
+                        var filter = filters.FirstOrDefault(x => x.Id == chatList.ChatFilterId);
+                        if (filter != null)
+                        {
+                            item.Items.Add(new MenuFlyoutItem { Command = ViewModel.FolderAddCommand, CommandParameter = (filter.Id, chat), Text = filter.Title, Icon = new FontIcon { Glyph = Icons.FromFilter(Icons.ParseFilter(filter.IconName)), FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } });
+                        }
+                    }
+
+                    if (filters.Count < 10 && item.Items.Count > 0)
+                    {
+                        item.Items.Add(new MenuFlyoutSeparator());
+                        item.Items.Add(new MenuFlyoutItem { Command = ViewModel.FolderCreateCommand, CommandParameter = chat, Text = Strings.Resources.CreateNewFilter, Icon = new FontIcon { Glyph = Icons.Add } });
+
+                        flyout.Items.Add(item);
+                    }
+                }
             }
 
             flyout.CreateFlyoutItem(DialogNotify_Loaded, viewModel.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });

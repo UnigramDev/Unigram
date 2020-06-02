@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Unigram.Common;
-using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters

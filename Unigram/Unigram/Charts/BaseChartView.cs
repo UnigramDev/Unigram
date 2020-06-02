@@ -1,21 +1,19 @@
-﻿using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
-using Unigram.Common;
+using System.Threading;
+using Unigram.Charts.Data;
+using Unigram.Charts.DataView;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using System.Threading;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -259,7 +257,7 @@ namespace Unigram.Charts
 
         public void invalidate()
         {
-                canvas.Invalidate();
+            canvas.Invalidate();
         }
 
         protected override void change(bool pause)

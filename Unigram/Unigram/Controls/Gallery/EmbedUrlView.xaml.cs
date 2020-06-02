@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Navigation;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;

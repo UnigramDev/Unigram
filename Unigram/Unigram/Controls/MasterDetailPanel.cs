@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unigram.Common;
 using Unigram.Services;
-using Unigram.Views.Host;
 using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;

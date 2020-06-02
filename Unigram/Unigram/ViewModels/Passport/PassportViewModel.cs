@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Unigram.Services;
 using Telegram.Td.Api;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Controls;
-using Unigram.Common;
-using Unigram.Views.Passport;
-using System.Diagnostics;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml.Controls;
-using Unigram.Services;
 using Unigram.Collections;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Services;
+using Unigram.Views.Passport;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Passport
 {
@@ -682,7 +678,7 @@ namespace Unigram.ViewModels.Passport
                 case PassportElementRentalAgreement rentalAgreement:
                 case PassportElementTemporaryRegistration temporaryRegistration:
                 case PassportElementUtilityBill utilityBill:
-                    NavigationService.Navigate(typeof(PassportDocumentPage), state: new Dictionary<string, object>{ { "json", element } });
+                    NavigationService.Navigate(typeof(PassportDocumentPage), state: new Dictionary<string, object> { { "json", element } });
                     break;
                 case PassportElementDriverLicense driverLicense:
                 case PassportElementIdentityCard identityCard:
@@ -715,7 +711,7 @@ namespace Unigram.ViewModels.Passport
                 var type = element.ToElementType();
                 var already = types.FirstOrDefault(x => x.TypeEquals(type));
 
-                if (already !=null)
+                if (already != null)
                 {
                     types.Remove(already);
                 }

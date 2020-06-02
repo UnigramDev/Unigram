@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.ViewModels;
 
@@ -132,7 +130,7 @@ namespace Unigram.Common
                 {
                     w = videoMedia.Video.Width;
                     h = videoMedia.Video.Height;
-                    photoSize = new PhotoSize("x", videoMedia.Video.Thumbnail.File , videoMedia.Video.Thumbnail.Width, videoMedia.Video.Thumbnail.Height);
+                    photoSize = new PhotoSize("x", videoMedia.Video.Thumbnail.File, videoMedia.Video.Thumbnail.Width, videoMedia.Video.Thumbnail.Height);
                 }
                 w = photoSize?.Width > 0 ? photoSize.Width : w;
                 h = photoSize?.Height > 0 ? photoSize.Height : h;

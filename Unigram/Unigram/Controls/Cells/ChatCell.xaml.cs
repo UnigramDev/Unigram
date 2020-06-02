@@ -699,13 +699,13 @@ namespace Unigram.Controls.Cells
                 var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
                 var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
 
-                if (performer == null && title == null)
+                if (performer == null || title == null)
                 {
                     return result + Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text);
                 }
                 else
                 {
-                    return $"{result}\uD83C\uDFB5 {performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
+                    return $"{result}\uD83C\uDFB5 {performer} - {title}" + GetCaption(audio.Caption.Text);
                 }
             }
             else if (message.Content is MessageDocument document)
@@ -1221,7 +1221,7 @@ namespace Unigram.Controls.Cells
                 }
 
                 _selectionPhoto.Scale = new Vector3(selected ? 40f / 48f : 1);
-                _selectionOutline.Scale = new Vector3(selected ? 1: 40f / 48f);
+                _selectionOutline.Scale = new Vector3(selected ? 1 : 40f / 48f);
                 _selectionOutline.Opacity = selected ? 1 : 0;
             }
         }

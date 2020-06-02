@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.ViewModels.Settings;
 using Unigram.Views;
 using Unigram.Views.Settings;
 using Unigram.Views.Settings.Privacy;

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
 using Unigram.Entities;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -274,7 +270,7 @@ namespace Unigram.Controls
 
 
 
-        Calculate:
+            Calculate:
             if (width > availableWidth || height > availableHeight)
             {
                 var ratioX = availableWidth / width;

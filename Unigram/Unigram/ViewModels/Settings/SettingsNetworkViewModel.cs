@@ -84,7 +84,7 @@ namespace Unigram.ViewModels.Settings
                                     total.SentBytes += file.SentBytes;
                                     total.ReceivedBytes += file.ReceivedBytes;
                                 }
-                                else if (entry is NetworkStatisticsEntryCall call) 
+                                else if (entry is NetworkStatisticsEntryCall call)
                                 {
                                     results.Add(entry);
 

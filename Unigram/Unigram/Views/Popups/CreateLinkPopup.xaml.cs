@@ -1,22 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using Telegram.Td;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Common;
-using Unigram.Services;
-using Telegram.Td.Api;
-using Telegram.Td;
-using Unigram.Controls;
 
 namespace Unigram.Views.Popups
 {

@@ -1,17 +1,10 @@
-﻿using Unigram.Charts.Data;
-using Unigram.Charts.DataView;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Text;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Unigram.Common;
+using Unigram.Charts.Data;
+using Unigram.Charts.DataView;
 using Windows.Foundation;
-using Windows.UI;
 
 namespace Unigram.Charts
 {

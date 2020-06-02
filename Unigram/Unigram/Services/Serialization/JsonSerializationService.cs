@@ -1,11 +1,10 @@
-using System;
 using Newtonsoft.Json;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Unigram.Services.Serialization
 {
     using System.Diagnostics;
-    using System.Runtime.Serialization.Formatters;
 
     public sealed class JsonSerializationService : ISerializationService
     {
@@ -14,7 +13,7 @@ namespace Unigram.Services.Serialization
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Logging.Severities.Template10, [CallerMemberName]string caller = null) =>
+        static void DebugWrite(string text = null, Services.Logging.Severities severity = Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
             Logging.LoggingService.WriteLine(text, severity, caller: $"{nameof(JsonSerializationService)}.{caller}");
 
         #endregion

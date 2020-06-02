@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
-using Unigram.Views.Settings.Password;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings.Password

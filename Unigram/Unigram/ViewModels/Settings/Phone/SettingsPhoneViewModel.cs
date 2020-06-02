@@ -1,22 +1,14 @@
-using System.Collections.Generic;
-using Unigram.Views.SignIn;
-using Unigram.Common;
-using Unigram.Entities;
 using System;
-using Windows.UI.Popups;
-using Windows.UI.Xaml;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Controls;
-using Windows.System;
-using Windows.UI.Core;
-using System.Diagnostics;
-using Unigram.Views;
-using Unigram.Views.Settings;
+using System.Collections.Generic;
 using System.Linq;
-using Unigram.Services;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Entities;
+using Unigram.Services;
+using Unigram.Views.Settings;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {

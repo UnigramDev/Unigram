@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
-using Unigram.Services.Stripe;
-using Unigram.Views.Payments;
-using Windows.Data.Json;
-using Windows.UI.Xaml.Navigation;
 using Unigram.Services;
-using Telegram.Td.Api;
+using Unigram.Services.Stripe;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
 {

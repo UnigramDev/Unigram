@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;

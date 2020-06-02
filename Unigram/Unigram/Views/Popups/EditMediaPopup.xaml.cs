@@ -163,7 +163,7 @@ namespace Unigram.Views.Popups
                 Proportions.IsChecked = false;
             }
             else
-            { 
+            {
                 var flyout = new MenuFlyout();
                 var items = Cropper.GetProportions();
 

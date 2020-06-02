@@ -22,11 +22,11 @@
 
 using System;
 using System.Collections.Concurrent;
+using Unigram.Navigation;
+using Unigram.Services.Navigation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Unigram.Navigation;
-using Unigram.Services.Navigation;
 
 namespace Unigram.Services.ViewService
 {
@@ -163,10 +163,10 @@ namespace Unigram.Services.ViewService
         /// before.</returns>
         public static ViewLifetimeControl TryGetForCurrentView()
         {
-            ViewLifetimeControl res;            
+            ViewLifetimeControl res;
             WindowControlsMap.TryGetValue(ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), out res);
             return res;
-        }             
+        }
 
         // Signals that the view is being interacted with by another view,
         // so it shouldn't be closed even if it becomes "consolidated"
@@ -180,7 +180,7 @@ namespace Unigram.Services.ViewService
                 releasedCopy = this.released;
                 if (!released)
                 {
-                    refCountCopy = ++refCount;                    
+                    refCountCopy = ++refCount;
                 }
             }
             Logging.LoggingService.WriteLine("Start:" + refCountCopy);
@@ -188,7 +188,7 @@ namespace Unigram.Services.ViewService
             {
                 throw new ViewLifeTimeException("This view is being disposed");
             }
-            
+
             return refCountCopy;
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +5,6 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
-using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -232,7 +230,7 @@ namespace Unigram.ViewModels.Supergroups
         {
             await CheckAvailabilityAsync(shortName);
         }
-        
+
         private async Task CheckAvailabilityAsync(string shortName)
         {
             IsLoading = true;

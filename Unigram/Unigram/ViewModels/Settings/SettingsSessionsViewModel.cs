@@ -1,22 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Settings
 {
     public class SettingsSessionsViewModel : TLViewModelBase
     {
-        public SettingsSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SettingsSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<KeyedList<SessionsGroup, Session>>();

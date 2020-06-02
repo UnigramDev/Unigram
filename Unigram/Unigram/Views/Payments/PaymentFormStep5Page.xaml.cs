@@ -1,21 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels.Payments;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Payments
 {
@@ -35,7 +21,7 @@ namespace Unigram.Views.Payments
 
         private string ConvertTitle(bool test)
         {
-            return (test ? "Test " : string.Empty) +  Strings.Resources.PaymentCheckout;
+            return (test ? "Test " : string.Empty) + Strings.Resources.PaymentCheckout;
         }
 
         private string ConvertAddress(Address address)

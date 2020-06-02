@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Views.Popups;
 using Unigram.Services;
 using Unigram.Services.Updates;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 

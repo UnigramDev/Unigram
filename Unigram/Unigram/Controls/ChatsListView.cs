@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Controls.Cells;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {

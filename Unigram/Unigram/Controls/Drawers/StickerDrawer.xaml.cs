@@ -11,7 +11,6 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views;
-using Unigram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

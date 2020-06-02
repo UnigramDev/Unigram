@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
@@ -135,7 +132,7 @@ namespace Unigram.ViewModels.Settings
 
             if (_type == AutoDownloadType.Photos)
             {
-                preferences = preferences.UpdatePhotosMode(mode); 
+                preferences = preferences.UpdatePhotosMode(mode);
             }
             else if (_type == AutoDownloadType.Videos)
             {

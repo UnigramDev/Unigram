@@ -12,7 +12,7 @@ namespace Unigram.Services.Keyboard
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Logging.Severities.Template10, [CallerMemberName]string caller = null) =>
+        static void DebugWrite(string text = null, Services.Logging.Severities severity = Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
             Logging.LoggingService.WriteLine(text, severity, caller: $"{nameof(KeyboardService)}.{caller}");
 
         #endregion

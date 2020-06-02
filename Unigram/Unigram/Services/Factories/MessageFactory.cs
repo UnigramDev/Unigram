@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -10,7 +7,6 @@ using Unigram.Entities;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
-using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;

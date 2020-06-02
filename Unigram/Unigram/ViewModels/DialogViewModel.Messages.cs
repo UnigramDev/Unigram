@@ -8,11 +8,11 @@ using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Payments;
+using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -907,7 +907,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, options.SchedulingState)); 
+            ProtoService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, options.SchedulingState));
         }
 
         #endregion

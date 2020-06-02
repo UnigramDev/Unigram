@@ -1,9 +1,6 @@
-using System;
-
 namespace Unigram.Services.SettingsLegacy
 {
     using System.Collections.Generic;
-    using Windows.Foundation.Collections;
 
     public interface ISettingsService
     {

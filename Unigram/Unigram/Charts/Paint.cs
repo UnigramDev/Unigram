@@ -1,10 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI;
 
 namespace Unigram.Charts
@@ -52,6 +47,6 @@ namespace Unigram.Charts
         public float? TextSize { get; set; }
         public CanvasHorizontalAlignment? TextAlignment { get; set; }
 
-        
+
     }
 }

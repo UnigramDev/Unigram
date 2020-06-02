@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.ViewModels.Channels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Unigram.Views.Popups;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.Storage.Pickers;
-using Unigram.Views.Popups;
-using Unigram.Controls;
-using Unigram.Common;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Channels

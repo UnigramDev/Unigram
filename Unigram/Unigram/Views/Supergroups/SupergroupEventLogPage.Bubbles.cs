@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unigram.Common;
+﻿using System.Collections.Generic;
 using Unigram.Controls;
 using Unigram.ViewModels;
-using Windows.Media.Core;
-using Windows.Media.Playback;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 

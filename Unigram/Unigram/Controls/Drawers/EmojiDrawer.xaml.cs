@@ -91,7 +91,7 @@ namespace Unigram.Controls.Drawers
             {
                 _needUpdate = true;
             }
-            
+
             if (_needUpdate)
             {
                 var items = Emoji.Get(tone, !microsoft);
@@ -197,7 +197,7 @@ namespace Unigram.Controls.Drawers
 
         private void UpdateSkinTone(EmojiSkinTone selected, bool expand, bool animated)
         {
-            Canvas.SetZIndex(SkinDefault, (int)selected  == 0 ? 6 : 5);
+            Canvas.SetZIndex(SkinDefault, (int)selected == 0 ? 6 : 5);
             Canvas.SetZIndex(SkinFitz12, (int)selected == 1 ? 6 : 4);
             Canvas.SetZIndex(SkinFitz3, (int)selected == 2 ? 6 : 3);
             Canvas.SetZIndex(SkinFitz4, (int)selected == 3 ? 6 : 2);

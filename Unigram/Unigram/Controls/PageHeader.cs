@@ -1,5 +1,4 @@
 ﻿using System.Windows.Input;
-using Unigram.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

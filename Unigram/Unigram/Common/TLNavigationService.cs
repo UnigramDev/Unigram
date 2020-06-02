@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Controls;
+using Unigram.Services;
 using Unigram.Services.Navigation;
 using Unigram.Services.ViewService;
-using Unigram.Controls;
-using Unigram.Views.Popups;
-using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;

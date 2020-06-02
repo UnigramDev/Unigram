@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Unigram.Navigation;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Unigram.Navigation;
 using static Unigram.Services.Logging.LoggingService;
-using System.Collections.Concurrent;
-using Windows.Foundation;
 
 namespace Unigram.Services.ViewService
 {

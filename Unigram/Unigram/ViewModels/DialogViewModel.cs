@@ -841,7 +841,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-        AddDate:
+            AddDate:
             if (previous != null)
             {
                 Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.ChatId, null, null, previous.IsOutgoing, false, false, true, false, previous.IsChannelPost, false, previous.Date, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageHeaderDate(), null)));

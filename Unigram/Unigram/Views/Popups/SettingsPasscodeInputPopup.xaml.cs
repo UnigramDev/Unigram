@@ -1,22 +1,11 @@
 ﻿using LinqToVisualTree;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using Unigram.Common;
 using Unigram.Controls;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Popups
 {
@@ -70,7 +59,7 @@ namespace Unigram.Views.Popups
 
         private void First_Changed(object sender, RoutedEventArgs e)
         {
-            if (IsSimple && First.Password.Length == 4 && First.Password.All(x => x >= '0' &&  x <= '9'))
+            if (IsSimple && First.Password.Length == 4 && First.Password.All(x => x >= '0' && x <= '9'))
             {
                 Confirm.Focus(FocusState.Keyboard);
             }
@@ -112,7 +101,7 @@ namespace Unigram.Views.Popups
             }
             else
             {
-                e.Handled =  IsSimple;
+                e.Handled = IsSimple;
             }
         }
 

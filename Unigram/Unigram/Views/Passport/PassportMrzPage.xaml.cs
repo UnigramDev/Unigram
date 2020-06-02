@@ -1,28 +1,16 @@
 ﻿using Microsoft.Graphics.Canvas;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using Unigram.Common;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
-using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -479,7 +467,7 @@ namespace Unigram.Views.Passport
         private static String cyrillicToLatin(String s)
         {
             const String alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
-            String[] replacements = new string[] { "A","B","V","G","D","E","E","ZH","Z","I","I","K","L","M","N","O","P","R","S","T","U","F","KH","TS","CH","SH","SHCH","IE","Y","","E","IU","IA"};
+            String[] replacements = new string[] { "A", "B", "V", "G", "D", "E", "E", "ZH", "Z", "I", "I", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "F", "KH", "TS", "CH", "SH", "SHCH", "IE", "Y", "", "E", "IU", "IA" };
             for (int i = 0; i < replacements.Length; i++)
             {
                 s = s.Replace(alphabet.Substr(i, i + 1), replacements[i]);

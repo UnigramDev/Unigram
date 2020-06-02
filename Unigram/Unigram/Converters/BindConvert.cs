@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Unigram.Strings;
-using Windows.Globalization.DateTimeFormatting;
-using Windows.Globalization.NumberFormatting;
-using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.System.UserProfile;
-using Windows.Globalization;
-using Unigram.Common;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Native;
 using Unigram.Services;
+using Windows.Globalization.DateTimeFormatting;
+using Windows.System.UserProfile;
 
 namespace Unigram.Converters
 {

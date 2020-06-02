@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Unigram.Services.Navigation;
+using Unigram.Services.ViewService;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation.Metadata;
+using Windows.ApplicationModel.ExtendedExecution;
+using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Unigram.Services.ViewService;
-using System.Diagnostics;
 using Windows.UI.Xaml.Media;
-using Windows.ApplicationModel.Core;
-using Windows.System.Profile;
-using Windows.ApplicationModel.ExtendedExecution;
-using Unigram.Common;
 
 namespace Unigram.Navigation
 {
@@ -58,7 +55,7 @@ namespace Unigram.Navigation
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName]string caller = null) =>
+        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
             Services.Logging.LoggingService.WriteLine(text, severity, caller: $"BootStrapper.{caller}");
 
         #endregion

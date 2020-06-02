@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Unigram.Navigation;
+using Unigram.Services.Serialization;
+using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Services.Serialization;
-using Unigram.Services.ViewService;
-using Unigram.Common;
-using System.Diagnostics;
-using Windows.Foundation;
 
 namespace Unigram.Services.Navigation
 {
@@ -43,7 +42,7 @@ namespace Unigram.Services.Navigation
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName]string caller = null) =>
+        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
             Services.Logging.LoggingService.WriteLine(text, severity, caller: $"NavigationService.{caller}");
 
         #endregion
@@ -84,16 +83,16 @@ namespace Unigram.Services.Navigation
                 var currentContent = FrameFacadeInternal.Frame.Content;
                 //await this.GetDispatcherWrapper().DispatchAsync(async () =>
                 //{
-                    try
-                    {
-                        if (currentContent == FrameFacadeInternal.Frame.Content)
-                            await NavigateToAsync(e.NavigationMode, parameter, FrameFacadeInternal.Frame.Content).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        DebugWrite($"DispatchAsync/NavigateToAsync {ex.Message}");
-                        throw;
-                    }
+                try
+                {
+                    if (currentContent == FrameFacadeInternal.Frame.Content)
+                        await NavigateToAsync(e.NavigationMode, parameter, FrameFacadeInternal.Frame.Content).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    DebugWrite($"DispatchAsync/NavigateToAsync {ex.Message}");
+                    throw;
+                }
                 //}, 1).ConfigureAwait(false);
             };
         }

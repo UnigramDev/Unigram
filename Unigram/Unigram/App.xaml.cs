@@ -20,7 +20,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Media;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;

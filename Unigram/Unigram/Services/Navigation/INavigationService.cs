@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
 using Unigram.Navigation;
+using Unigram.Services.ViewService;
+using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
-using Unigram.Services.ViewService;
-using System.Collections.Generic;
-using Windows.Foundation;
 
 namespace Unigram.Services.Navigation
 {
@@ -33,7 +33,7 @@ namespace Unigram.Services.Navigation
 
         void Refresh(object param);
 
-       
+
 
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf);
 

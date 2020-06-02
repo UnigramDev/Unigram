@@ -1,11 +1,10 @@
 ﻿using System;
 using Telegram.Td.Api;
-using Unigram.Views.Popups;
 using Unigram.Converters;
 using Unigram.ViewModels;
+using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views
 {

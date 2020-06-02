@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 
@@ -15,7 +12,7 @@ namespace Unigram.Navigation
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName]string caller = null) =>
+        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
             Services.Logging.LoggingService.WriteLine(text, severity, caller: $"DispatcherWrapper.{caller}");
 
         #endregion

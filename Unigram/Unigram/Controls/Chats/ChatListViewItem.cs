@@ -1,6 +1,4 @@
-﻿using LinqToVisualTree;
-using System;
-using System.Linq;
+﻿using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -8,7 +6,6 @@ using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -18,7 +15,6 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Chats
 {

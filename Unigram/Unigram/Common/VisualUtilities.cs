@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using Unigram.Services;
 using Unigram.Views;
-using Windows.Foundation.Metadata;
-using Windows.Phone.Devices.Notification;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;

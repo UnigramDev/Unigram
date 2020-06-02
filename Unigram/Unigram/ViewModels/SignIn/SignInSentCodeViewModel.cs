@@ -1,16 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Entities;
 using Unigram.Services;
-using Unigram.Views;
-using Unigram.Views.SignIn;
-using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
@@ -172,7 +165,7 @@ namespace Unigram.ViewModels.SignIn
             var response = await ProtoService.SendAsync(function);
             if (response is Error error)
             {
-                
+
             }
         }
     }

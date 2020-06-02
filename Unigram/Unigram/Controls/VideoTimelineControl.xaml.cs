@@ -1,9 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using Unigram.Common;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
 using Windows.Storage;
@@ -220,9 +216,9 @@ namespace Unigram.Controls
                         });
                     }
 
-//#if DEBUG
-//                    VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
-//#endif
+                    //#if DEBUG
+                    //                    VibrateController.Default.Start(TimeSpan.FromMilliseconds(50));
+                    //#endif
                 }
             });
         }

@@ -1,22 +1,15 @@
 ﻿using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Unigram.Charts;
-using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
-using Windows.Media.Effects;
-using Windows.Media.MediaProperties;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -426,7 +419,7 @@ namespace Unigram.Common
             if (editState.Strokes != null)
             {
                 var stream = await DrawStrokesAsync(pixelData, editState.Strokes, editState.Rectangle, editState.Rotation, editState.Flip);
-                
+
                 var bitmapImage = new BitmapImage();
                 await bitmapImage.SetSourceAsync(stream);
 

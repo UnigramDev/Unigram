@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Data;
 using Unigram.ViewModels;
-using Telegram.Td.Api;
 
 namespace Unigram.Converters
 {
@@ -192,7 +186,7 @@ namespace Unigram.Converters
                 case ChatFilterIcon.Crown:
                     return "\uE932"; // <-- todo
                 case ChatFilterIcon.Favorite:
-                    return "\uE933"; 
+                    return "\uE933";
                 case ChatFilterIcon.Flower:
                     return "\uE932"; // <-- todo
                 case ChatFilterIcon.Game:

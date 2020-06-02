@@ -1,18 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
 using Unigram.Services;
-using Unigram.Views;
-using Unigram.Views.SignIn;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -22,7 +14,7 @@ namespace Unigram.ViewModels.SignIn
     {
         private AuthorizationStateWaitPassword _parameters;
 
-        public SignInPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SignInPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);

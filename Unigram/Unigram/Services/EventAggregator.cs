@@ -242,7 +242,8 @@ namespace Unigram.Services
                 }
             }
 
-            marshal(() => {
+            marshal(() =>
+            {
                 var messageType = message.GetType();
 
                 var dead = toNotify
@@ -288,7 +289,8 @@ namespace Unigram.Services
                 var interfaces = handler.GetType().GetInterfaces()
                     .Where(x => typeof(IHandle).IsAssignableFrom(x) && x.IsConstructedGenericType);
 
-                foreach(var @interface in interfaces) {
+                foreach (var @interface in interfaces)
+                {
                     var type = @interface.GetGenericArguments()[0];
                     var method = @interface.GetMethod("Handle");
                     supportedHandlers[type] = method;

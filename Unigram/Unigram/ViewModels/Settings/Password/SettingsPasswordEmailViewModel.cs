@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -38,7 +35,7 @@ namespace Unigram.ViewModels.Settings.Password
             {
                 _password = password;
             }
-            
+
             if (state.TryGet("hint", out string hint))
             {
                 _hint = hint;

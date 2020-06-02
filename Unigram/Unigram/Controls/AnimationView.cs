@@ -132,7 +132,7 @@ namespace Unigram.Controls
 
                 _bitmap = CanvasBitmap.CreateFromBytes(sender, colors, _animation.PixelWidth, _animation.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.R8G8B8A8UIntNormalized);
                 _device = sender;
-            
+
             }).AsAsyncAction());
         }
 

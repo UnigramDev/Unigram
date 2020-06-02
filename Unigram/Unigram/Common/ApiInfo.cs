@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources.Core;
+﻿using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation.Metadata;
-using Windows.Graphics.Imaging;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;

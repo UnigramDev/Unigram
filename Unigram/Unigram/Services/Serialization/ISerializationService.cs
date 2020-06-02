@@ -1,5 +1,3 @@
-using System;
-
 namespace Unigram.Services.Serialization
 {
     public interface ISerializationService

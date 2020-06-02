@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Views.Popups;
 using Unigram.Services;
-using Unigram.Views.BasicGroups;
-using Unigram.Views.Chats;
+using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
-using ChatCreateStep2Tuple = System.Tuple<string, object>;
 
 namespace Unigram.ViewModels.BasicGroups
 {

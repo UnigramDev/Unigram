@@ -1,31 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Views.Popups;
 using Unigram.Converters;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Windows.ApplicationModel.Resources;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Unigram.Views.Popups;
 using Windows.Foundation.Metadata;
 using Windows.Media.Capture;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {

@@ -1,10 +1,5 @@
-﻿using Unigram.Charts.Data;
-using Microsoft.Graphics.Canvas.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Graphics.Canvas.Geometry;
+using Unigram.Charts.Data;
 using Windows.UI;
 
 namespace Unigram.Charts.DataView

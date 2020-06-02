@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Unigram.Collections;
 using Unigram.Common;
@@ -37,7 +36,7 @@ namespace Unigram.ViewModels.Settings
             if (input != null)
             {
                 Input.ReplaceWith(input);
-                
+
                 _selectedInput = input.FirstOrDefault(x => x.Id == _voipService.CurrentAudioInput) ?? input.FirstOrDefault(x => x.Id == MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Communications));
                 RaisePropertyChanged(() => SelectedInput);
             }

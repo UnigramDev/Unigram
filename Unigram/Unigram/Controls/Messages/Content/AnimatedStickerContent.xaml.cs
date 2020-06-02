@@ -8,7 +8,6 @@ using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -118,7 +117,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Player.Thumbnail  = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                Player.Thumbnail = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

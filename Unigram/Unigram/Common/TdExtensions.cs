@@ -124,7 +124,7 @@ namespace Unigram.Common
                 {
                     if (builder.Length > 0)
                     {
-                        builder += "+blur"; 
+                        builder += "+blur";
                     }
                     else
                     {
@@ -572,8 +572,8 @@ namespace Unigram.Common
 
         public static bool IsInstantGallery(this WebPage webPage)
         {
-            return webPage.InstantViewVersion != 0 && 
-                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || 
+            return webPage.InstantViewVersion != 0 &&
+                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
         }
@@ -1328,7 +1328,7 @@ namespace Unigram.Common
                     case NetworkTypeNone none:
                         return TdNetworkType.None;
                     case NetworkTypeOther other:
-                        //return TdNetworkType.Other;
+                    //return TdNetworkType.Other;
                     case NetworkTypeWiFi wifi:
                         return TdNetworkType.WiFi;
                 }
@@ -1344,7 +1344,7 @@ namespace Unigram.Common
                     case NetworkTypeNone none:
                         return TdNetworkType.None;
                     case NetworkTypeOther other:
-                        //return TdNetworkType.Other;
+                    //return TdNetworkType.Other;
                     case NetworkTypeWiFi wifi:
                         return TdNetworkType.WiFi;
                 }

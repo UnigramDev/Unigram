@@ -1,24 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Entities;
 using Unigram.Services;
 using Unigram.ViewModels.Supergroups;
-using Unigram.Views.Channels;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
     public class ChannelCreateStep2ViewModel : SupergroupEditViewModelBase
     {
-        public ChannelCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public ChannelCreateStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
         }
