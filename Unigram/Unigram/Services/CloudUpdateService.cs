@@ -1,21 +1,12 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services.Updates;
 using Windows.ApplicationModel;
 using Windows.Storage;
-using Windows.System;
-using Windows.UI.Core;
-using Windows.UI.Popups;
-using Windows.UI.Xaml;
 
 namespace Unigram.Services
 {
@@ -25,6 +16,7 @@ namespace Unigram.Services
 
         Task UpdateAsync();
         Task<CloudUpdate> GetNextUpdateAsync();
+        Task<IList<CloudUpdate>> GetHistoryAsync();
     }
 
     public class CloudUpdateService : ICloudUpdateService, IHandle<UpdateFile>
@@ -116,6 +108,9 @@ namespace Unigram.Services
                 }
             }
 
+            // This call is needed to delete old updates from disk
+            await GetHistoryAsync();
+
             _checking = false;
         }
 
@@ -153,6 +148,95 @@ namespace Unigram.Services
         }
 
         public async Task<CloudUpdate> GetNextUpdateAsync()
+        {
+            if (Package.Current.SignatureKind == PackageSignatureKind.Store)
+            {
+                return null;
+            }
+
+            var chat = await _protoService.SendAsync(new SearchPublicChat("cGFnbGlhY2Npb19kaV9naGlhY2Npbw")) as Chat;
+            if (chat == null)
+            {
+                return null;
+            }
+
+            await _protoService.SendAsync(new OpenChat(chat.Id));
+
+            var message = await _protoService.SendAsync(new GetChatPinnedMessage(chat.Id)) as Message;
+            if (message == null)
+            {
+                _protoService.Send(new CloseChat(chat.Id));
+                return null;
+            }
+
+            _protoService.Send(new CloseChat(chat.Id));
+
+            var document = message.Content as MessageDocument;
+            if (document == null)
+            {
+                return null;
+            }
+
+            var hashtags = new List<string>();
+            var changelog = string.Empty;
+
+            foreach (var entity in document.Caption.Entities)
+            {
+                if (entity.Type is TextEntityTypeHashtag)
+                {
+                    hashtags.Add(document.Caption.Text.Substring(entity.Offset, entity.Length));
+                }
+                else if (entity.Type is TextEntityTypeCode)
+                {
+                    changelog = document.Caption.Text.Substring(entity.Offset, entity.Length);
+                }
+            }
+
+            if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".appxbundle"))
+            {
+                return null;
+            }
+
+            var split = document.Document.FileName.Split('_');
+            if (split.Length >= 3 && Version.TryParse(split[1], out Version version))
+            {
+                var set = new CloudUpdate
+                {
+                    MessageId = message.Id,
+                    Changelog = changelog,
+                    Version = version,
+                    Document = document.Document.DocumentValue
+                };
+
+                _mapping[document.Document.DocumentValue.Id].Add(set);
+
+                var current = Package.Current.Id.Version.ToVersion();
+                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+
+                if (set.Version > current)
+                {
+                    if (set.Document.Local.IsDownloadingCompleted)
+                    {
+                        set.File = await TryCopyPartLocally(folder, set.Document.Local.Path, set.Version, set.MessageId);
+                    }
+                    else
+                    {
+                        set.File = await folder.TryGetItemAsync($"{set.Version}.appxbundle") as StorageFile;
+                    }
+
+                    return set;
+                }
+                else
+                {
+                    // Delete the file from chat cache as it isn't needed anymore
+                    _protoService.Send(new DeleteFileW(set.Document.Id));
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<IList<CloudUpdate>> GetHistoryAsync()
         {
             if (Package.Current.SignatureKind == PackageSignatureKind.Store)
             {
@@ -232,30 +316,19 @@ namespace Unigram.Services
 
             foreach (var set in dict)
             {
-                if (set.Version == latest && set.Version > current)
-                {
-                    if (set.Document.Local.IsDownloadingCompleted)
-                    {
-                        set.File = await TryCopyPartLocally(folder, set.Document.Local.Path, set.Version, set.MessageId);
-                    }
-                    else
-                    {
-                        set.File = await folder.TryGetItemAsync($"{set.Version}.appxbundle") as StorageFile;
-                    }
-
-                    results.Add(set);
-                }
-                else
+                if (set.Version < current)
                 {
                     // Delete the file from chat cache as it isn't needed anymore
                     _protoService.Send(new DeleteFileW(set.Document.Id));
                 }
+
+                results.Add(set);
             }
 
-            return results.FirstOrDefault();
+            return results.OrderByDescending(x => x.Version).ToList();
         }
 
-        public static async Task<StorageFile> TryCopyPartLocally(StorageFolder folder, string path, Version version, long messageId)
+        private static async Task<StorageFile> TryCopyPartLocally(StorageFolder folder, string path, Version version, long messageId)
         {
             var fileName = $"{version}.appxbundle";
 

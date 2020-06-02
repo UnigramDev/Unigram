@@ -43,6 +43,13 @@
                 </controls:HeaderedControl>
                 
                 <controls:StartupSwitch/>
+
+                <controls:HeaderedControl x:Name="UpdatePanel" x:Load="False" Footer="{x:Bind ViewModel.UpdateFooter, Mode=OneWay}">
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.UpdateCommand}"
+                        Content="{x:Bind ViewModel.UpdateText, Mode=OneWay}"
+                        IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}"/>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>

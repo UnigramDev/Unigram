@@ -1,8 +1,5 @@
-﻿using Telegram.Td.Api;
-using Unigram.Common;
-using Unigram.Controls;
-using Unigram.ViewModels.Settings;
-using Windows.Foundation.Metadata;
+﻿using Unigram.ViewModels.Settings;
+using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
@@ -15,6 +12,11 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsAdvancedViewModel>();
+
+            if (Package.Current.SignatureKind != PackageSignatureKind.Store)
+            {
+                FindName(nameof(UpdatePanel));
+            }
 
 #if DESKTOP_BRIDGE
             FindName(nameof(TraySwitch));
