@@ -106,7 +106,7 @@
                         <StackPanel Orientation="Vertical">
                             <Grid>
                                 <TextBlock
-                                    Text="{x:Bind Glyph, Mode=OneWay}"
+                                    Text="{x:Bind Icon, Mode=OneWay}"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     FontSize="24"
                                     HorizontalAlignment="Center"
@@ -233,8 +233,9 @@
                                 BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
                                 HorizontalContentAlignment="Left"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Bottom"
-                                Margin="0,0,0,8"/>
+                                VerticalAlignment="Center"
+                                Height="32"
+                                Padding="10,0,6,1"/>
 
                             <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
                                 <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
@@ -385,6 +386,8 @@
                         <TextBox
                             x:Name="SearchField"
                             PlaceholderText="{CustomResource Search}"
+                            Background="{ThemeResource PageBackgroundDarkBrush}"
+                            BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
                             PreventKeyboardDisplayOnProgrammaticFocus="True"
                             VerticalAlignment="Center"
                             TextChanged="Search_TextChanged"

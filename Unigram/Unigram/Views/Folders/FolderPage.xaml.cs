@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Folders
 {
@@ -122,7 +112,8 @@ namespace Unigram.Views.Folders
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
-            EmojiList.ItemsSource = ChatFilterIcon.Items;
+            EmojiList.ItemsSource = Icons.Filters;
+            EmojiList.SelectedItem = ViewModel.Icon;
 
             var flyout = FlyoutBase.GetAttachedFlyout(EmojiButton);
             flyout.ShowAt(EmojiButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
@@ -134,7 +125,20 @@ namespace Unigram.Views.Folders
 
             if (e.ClickedItem is ChatFilterIcon icon)
             {
-                ViewModel.Emoji = icon.Emoji;
+                ViewModel.Icon = icon;
+            }
+        }
+
+        private void EmojiList_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            if (args.ItemContainer.ContentTemplateRoot is TextBlock block && args.Item is ChatFilterIcon icon)
+            {
+                block.Text = Icons.FromFilter(icon);
             }
         }
 
@@ -145,12 +149,11 @@ namespace Unigram.Views.Folders
             return filter == null ? Strings.Resources.FilterNew : filter.Title;
         }
 
-        private string ConvertEmoji(string emoji)
+        private string ConvertEmoji(ChatFilterIcon icon)
         {
-            return ChatFilterIcon.FromEmoji(emoji);
+            return Icons.FromFilter(icon);
         }
 
         #endregion
-
     }
 }

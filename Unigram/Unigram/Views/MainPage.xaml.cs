@@ -2460,12 +2460,14 @@ namespace Unigram.Views
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
 
+            var presenter = ElementCompositionPreview.GetElementVisual(ArchivedChatsPresenter);
             var parent = ElementCompositionPreview.GetElementVisual(ChatsList);
 
             var chats = ElementCompositionPreview.GetElementVisual(element);
             var panel = ElementCompositionPreview.GetElementVisual(ArchivedChatsPanel);
             var compact = ElementCompositionPreview.GetElementVisual(ArchivedChatsCompactPanel);
 
+            presenter.Clip = chats.Compositor.CreateInsetClip();
             parent.Clip = chats.Compositor.CreateInsetClip();
 
             var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -2786,68 +2788,6 @@ namespace Unigram.Views
             {
                 UnloadObject(Confetti);
             });
-        }
-
-        //        private void ChatsFilters_Click(object sender, RoutedEventArgs e)
-        //        {
-        //            var flyout = new MenuFlyout();
-
-        //            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedLeft"))
-        //            {
-        //                flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft;
-        //            }
-
-        //            var items = ViewModel.Filters?.ToList() ?? new List<ChatFilter>();
-        //            var selected = ViewModel.SelectedFilter;
-
-        //            items.Remove(items.FirstOrDefault(x => x.Id == selected?.Id));
-
-        //            for (int i = 0; i < items.Count; i++)
-        //            {
-        //                flyout.CreateFlyoutItem(new RelayCommand<ChatFilter>(SetFilter), items[i], items[i].Title, GetFilterIcon(items[i]), Windows.System.VirtualKey.F1 + i, 0);
-        //            }
-
-        //#if DEBUG 
-        //            flyout.CreateFlyoutSeparator();
-        //            flyout.CreateFlyoutItem(ViewModel.SetupFiltersCommand, "[Setup]", new FontIcon { Glyph = Icons.Add });
-        //#endif
-
-        //            flyout.ShowAt(ChatsFilters);
-        //        }
-
-        public static string GetFilterIcon(ChatFilter filter)
-        {
-            //if (filter.ExcludeMuted && filter.IncludeAll())
-            //{
-            //    return Icons.Unmute;
-            //}
-            //else if (filter.ExcludeRead && filter.IncludeAll())
-            //{
-            //    return Icons.MarkAsUnread; //FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-            //}
-            //else
-            if (filter.IncludeContacts && !filter.IncludeNonContacts && !filter.IncludeGroups && !filter.IncludeChannels && !filter.IncludeBots && !filter.ExcludeRead && !filter.ExcludeMuted)
-            {
-                return Icons.Contact;
-            }
-            else if (!filter.IncludeContacts && filter.IncludeNonContacts && !filter.IncludeGroups && !filter.IncludeChannels && !filter.IncludeBots && !filter.ExcludeRead && !filter.ExcludeMuted)
-            {
-                return Icons.Help;
-            }
-            else if (!filter.IncludeContacts && !filter.IncludeNonContacts && filter.IncludeGroups && !filter.IncludeChannels && !filter.IncludeBots && !filter.ExcludeRead && !filter.ExcludeMuted)
-            {
-                return Icons.Group;
-            }
-            else if (!filter.IncludeContacts && !filter.IncludeNonContacts && !filter.IncludeGroups && filter.IncludeChannels && !filter.IncludeBots && !filter.ExcludeRead && !filter.ExcludeMuted)
-            {
-                return Icons.Channel;
-            }
-            else if (!filter.IncludeContacts && !filter.IncludeNonContacts && !filter.IncludeGroups && !filter.IncludeChannels && filter.IncludeBots && !filter.ExcludeRead && !filter.ExcludeMuted)
-            {
-                return Icons.Bot;
-            }
-
-            return null;
         }
 
         public static string GetFilterIcon(ChatListFilterFlags filter)

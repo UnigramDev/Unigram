@@ -45,7 +45,8 @@
 
                             <controls:AnimatedGlyphButton
                                 x:Name="EmojiButton"
-                                Glyph="{x:Bind ConvertEmoji(ViewModel.Emoji), Mode=OneWay}"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                Glyph="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
                                 Click="Emoji_Click"
                                 Grid.Column="1">
                                 <FlyoutBase.AttachedFlyout>
@@ -53,16 +54,21 @@
                                         <GridView
                                             x:Name="EmojiList"
                                             ItemClick="EmojiList_ItemClick"
-                                            DisplayMemberPath="Glyph"
+                                            ContainerContentChanging="EmojiList_ContainerContentChanging"
                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                             ScrollViewer.HorizontalScrollMode="Disabled"
                                             SelectionMode="Single"
                                             IsItemClickEnabled="True"
                                             Margin="0,0,-4,-14"
                                             Width="258">
+                                            <GridView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock/>
+                                                </DataTemplate>
+                                            </GridView.ItemTemplate>
                                             <GridView.ItemContainerStyle>
                                                 <Style TargetType="GridViewItem">
-                                                    <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+                                                    <Setter Property="FontFamily" Value="{StaticResource TelegramThemeFontFamily}" />
                                                     <Setter Property="FontSize" Value="16"/>
                                                     <Setter Property="MinWidth" Value="0"/>
                                                     <Setter Property="MinHeight" Value="0"/>

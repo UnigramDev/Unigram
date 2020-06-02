@@ -126,5 +126,96 @@ namespace Unigram.Converters
         public const string Emoji6 = "\uE925";
         public const string Emoji7 = "\uE926";
         public const string Emoji8 = "\uE927";
+
+        public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]
+        {
+            ChatFilterIcon.Cat,
+            ChatFilterIcon.Crown,
+            ChatFilterIcon.Favorite,
+            ChatFilterIcon.Flower,
+            ChatFilterIcon.Game,
+            ChatFilterIcon.Home,
+            ChatFilterIcon.Love,
+            ChatFilterIcon.Mask,
+            ChatFilterIcon.Party,
+            ChatFilterIcon.Sport,
+            ChatFilterIcon.Study,
+            ChatFilterIcon.Trade,
+            ChatFilterIcon.Travel,
+            ChatFilterIcon.Work,
+            ChatFilterIcon.All,
+            ChatFilterIcon.Unread,
+            ChatFilterIcon.Unmuted,
+            ChatFilterIcon.Bots,
+            ChatFilterIcon.Channels,
+            ChatFilterIcon.Groups,
+            ChatFilterIcon.Private,
+            ChatFilterIcon.Custom,
+            ChatFilterIcon.Setup
+        };
+
+        public static ChatFilterIcon ParseFilter(string iconName)
+        {
+            if (Enum.TryParse(iconName, out ChatFilterIcon result))
+            {
+                return result;
+            }
+
+            return ChatFilterIcon.Custom;
+        }
+
+        public static string FromFilter(ChatFilterIcon icon)
+        {
+            switch (icon)
+            {
+                case ChatFilterIcon.All:
+                    return "\uE92D";
+                case ChatFilterIcon.Unread:
+                    return "\uE91C";
+                case ChatFilterIcon.Unmuted:
+                    return "\uE93B";
+                case ChatFilterIcon.Bots:
+                    return "\uE92E";
+                case ChatFilterIcon.Channels:
+                    return "\uE930";
+                case ChatFilterIcon.Groups:
+                    return "\uE935";
+                case ChatFilterIcon.Private:
+                    return "\uE931";
+                case ChatFilterIcon.Custom:
+                default:
+                    return "\uE932";
+                case ChatFilterIcon.Setup:
+                    return "\uE938";
+                case ChatFilterIcon.Cat:
+                    return "\uE92F";
+                case ChatFilterIcon.Crown:
+                    return "\uE932"; // <-- todo
+                case ChatFilterIcon.Favorite:
+                    return "\uE933"; 
+                case ChatFilterIcon.Flower:
+                    return "\uE932"; // <-- todo
+                case ChatFilterIcon.Game:
+                    return "\uE934";
+                case ChatFilterIcon.Home:
+                    return "\uE936";
+                case ChatFilterIcon.Love:
+                    return "\uE937";
+                case ChatFilterIcon.Mask:
+                    return "\uE932"; // <-- todo
+                case ChatFilterIcon.Party:
+                    return "\uE932"; // <-- todo
+                case ChatFilterIcon.Sport:
+                    return "\uE923";
+                case ChatFilterIcon.Study:
+                    return "\uE939";
+                case ChatFilterIcon.Trade:
+                    return "\uE932"; // <-- todo
+                case ChatFilterIcon.Travel:
+                    return "\uE93A";
+                case ChatFilterIcon.Work:
+                    return "\uE93C";
+            }
+        }
     }
 }

@@ -2261,6 +2261,7 @@
                             <TextBlock
                                 Text="{TemplateBinding Text}"
                                 Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                 Style="{StaticResource BaseTextBlockStyle}"
                                 VerticalAlignment="Center"
                                 Margin="12,0"
@@ -2372,6 +2373,7 @@
                             <TextBlock
                                 Text="{TemplateBinding Text}"
                                 Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                 Style="{StaticResource BaseTextBlockStyle}"
                                 VerticalAlignment="Center"
                                 Margin="12,0"

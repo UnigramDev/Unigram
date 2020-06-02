@@ -5,11 +5,9 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Views.Popups;
+using Unigram.Converters;
 using Unigram.Services;
-using Unigram.Views;
-using Windows.UI.Xaml.Controls;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Folders
@@ -80,7 +78,7 @@ namespace Unigram.ViewModels.Folders
             _pinnedChatIds = filter.PinnedChatIds;
 
             Title = filter.Title;
-            Emoji = filter.IconName ?? ChatFilterIcon.Default;
+            Icon = Icons.ParseFilter(filter.IconName);
 
             Include.Clear();
             Exclude.Clear();
@@ -138,11 +136,11 @@ namespace Unigram.ViewModels.Folders
             }
         }
 
-        private string _emoji;
-        public string Emoji
+        private ChatFilterIcon _icon;
+        public ChatFilterIcon Icon
         {
-            get => _emoji;
-            set => Set(ref _emoji, value);
+            get => _icon;
+            set => Set(ref _icon, value);
         }
 
         private IList<long> _pinnedChatIds;
@@ -236,10 +234,9 @@ namespace Unigram.ViewModels.Folders
 
         public Task<BaseObject> SendAsync()
         {
-
             var filter = new ChatFilter();
             filter.Title = Title;
-            filter.IconName = Emoji;
+            filter.IconName = Enum.GetName(typeof(ChatFilterIcon), Icon);
             filter.PinnedChatIds = new List<long>();
             filter.IncludedChatIds = new List<long>();
             filter.ExcludedChatIds = new List<long>();

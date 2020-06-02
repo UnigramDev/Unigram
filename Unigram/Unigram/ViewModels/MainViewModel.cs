@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Updates;
@@ -228,7 +229,7 @@ namespace Unigram.ViewModels
                 var selected = SelectedFilter?.ChatFilterId ?? Constants.ChatListMain;
                 //var origin = chatFilters.Select(x => Filters.FirstOrDefault(y => y.ChatFilterId == x.ChatFilterId));
 
-                Merge(Filters, new[] { new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, Emoji = "\U0001F4BC" } }.Union(chatFilters).ToArray());
+                Merge(Filters, new[] { new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.Resources.FilterAllChats, IconName = "All" } }.Union(chatFilters).ToArray());
 
                 if (Chats.Items.ChatList is ChatListFilter already && already.ChatFilterId != selected)
                 {
@@ -502,8 +503,7 @@ namespace Unigram.ViewModels
             ChatFilterId = info.Id;
 
             _title = info.Title;
-            _emoji = info.Emoji;
-            _glyph = ChatFilterIcon.FromEmoji(info.Emoji);
+            _icon = Icons.ParseFilter(info.IconName);
         }
 
         private ChatFilterViewModel()
@@ -514,8 +514,7 @@ namespace Unigram.ViewModels
         public void Update(ChatFilterInfo info)
         {
             Title = info.Title;
-            Emoji = info.Emoji;
-            Glyph = ChatFilterIcon.FromEmoji(info.Emoji);
+            Icon = Icons.ParseFilter(info.IconName);
         }
 
         public ChatList ChatList { get; }
@@ -529,18 +528,11 @@ namespace Unigram.ViewModels
             set => Set(ref _title, value);
         }
 
-        private string _emoji;
-        public string Emoji
+        private ChatFilterIcon _icon;
+        public ChatFilterIcon Icon
         {
-            get => _emoji;
-            set => Set(ref _emoji, value);
-        }
-
-        private string _glyph;
-        public string Glyph
-        {
-            get => _glyph;
-            set => Set(ref _glyph, value);
+            get => _icon;
+            set => Set(ref _icon, value);
         }
 
         private int _unreadCount;
@@ -578,69 +570,31 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class ChatFilterIcon
+    public enum ChatFilterIcon
     {
-        public string Emoji { get; set; }
-        public string Glyph { get; set; }
-
-        private static readonly Dictionary<string, ChatFilterIcon> _map;
-        public static IList<ChatFilterIcon> Items { get; }
-
-        public static string Default { get; } = "\U0001F4C1";
-
-        public static string FromEmoji(string emoji)
-        {
-            if (string.IsNullOrEmpty(emoji))
-            {
-                return _map[Default].Glyph;
-            }
-
-            if (_map.TryGetValue(emoji, out ChatFilterIcon icon))
-            {
-                return icon.Glyph;
-            }
-
-            return _map[Default].Glyph;
-        }
-
-        static ChatFilterIcon()
-        {
-            Items = new ChatFilterIcon[]
-            {
-                new ChatFilterIcon("\U0001F431", "\uF1AD"),
-                new ChatFilterIcon("\U0001F451", ""),
-                new ChatFilterIcon("\u2B50",     "\uE734"),
-                new ChatFilterIcon("\U0001F339", ""),
-                new ChatFilterIcon("\U0001F3AE", "\uE7FC"),
-                new ChatFilterIcon("\U0001F3E0", "\uE80F"),
-                new ChatFilterIcon("\u2764",     "\uEB51"),
-                new ChatFilterIcon("\U0001F3AD", ""),
-                new ChatFilterIcon("\U0001F378", ""),
-                new ChatFilterIcon("\u26BD", ""),
-                new ChatFilterIcon("\U0001F393", "\uE7BE"),
-                new ChatFilterIcon("\U0001F4C8", ""),
-                new ChatFilterIcon("\u2708",     "\uE709"),
-                new ChatFilterIcon("\U0001F4BC", "\uE821"),
-                new ChatFilterIcon("\U0001F4AC", "\uE8F2"),
-                new ChatFilterIcon("\u2705", ""),
-                new ChatFilterIcon("\U0001F514", ""),
-
-                new ChatFilterIcon("\U0001F916", "\uE99A"),
-                new ChatFilterIcon("\U0001F4E2", "\uE789"),
-                new ChatFilterIcon("\U0001F465", "\uE902"),
-                new ChatFilterIcon("\U0001F464", "\uE77B"),
-                new ChatFilterIcon("\U0001F4C1", "\uF12B"),
-                new ChatFilterIcon("\U0001F4CB", "\uEA37"),
-            };
-             
-            _map = Items.ToDictionary(x => x.Emoji, y => y);
-        }
-
-        private ChatFilterIcon(string emoji, string glyph)
-        {
-            Emoji = emoji;
-            Glyph = string.IsNullOrEmpty(glyph) ? emoji : glyph;
-        }
+        Custom,
+        All,
+        Unread,
+        Unmuted,
+        Bots,
+        Channels,
+        Groups,
+        Private,
+        Setup,
+        Cat,
+        Crown,
+        Favorite,
+        Flower,
+        Game,
+        Home,
+        Love,
+        Mask,
+        Party,
+        Sport,
+        Study,
+        Trade,
+        Travel,
+        Work
     }
 
     public class ChatFilterCollection : ObservableCollection<ChatFilterViewModel>, IKeyIndexMapping
