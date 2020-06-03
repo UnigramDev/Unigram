@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading;
-using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
 {
     public class LoopThread
     {
         private TimeSpan _interval;
+        private TimeSpan _elapsed;
 
         private readonly Timer _timerTick;
-        private readonly DispatcherTimer _timerInvalidate;
 
         private bool _dropTick;
         private bool _dropInvalidate;
@@ -17,12 +17,7 @@ namespace Unigram.Common
         public LoopThread(TimeSpan interval)
         {
             _interval = interval;
-
             _timerTick = new Timer(OnTick, null, Timeout.Infinite, Timeout.Infinite);
-
-            _timerInvalidate = new DispatcherTimer();
-            _timerInvalidate.Interval = _interval;
-            _timerInvalidate.Tick += OnInvalidate;
         }
 
         [ThreadStatic]
@@ -51,10 +46,15 @@ namespace Unigram.Common
 
         private void OnInvalidate(object sender, object e)
         {
-            if (_dropInvalidate)
+            var args = e as RenderingEventArgs;
+            var diff = args.RenderingTime - _elapsed;
+
+            if (_dropInvalidate || diff < _interval)
             {
                 return;
             }
+
+            _elapsed = args.RenderingTime;
 
             _dropInvalidate = true;
             _invalidate?.Invoke(sender, EventArgs.Empty);
@@ -81,13 +81,13 @@ namespace Unigram.Common
         {
             add
             {
-                if (_invalidate == null) _timerInvalidate.Start();
+                if (_invalidate == null) CompositionTarget.Rendering += OnInvalidate;
                 _invalidate += value;
             }
             remove
             {
                 _invalidate -= value;
-                if (_invalidate == null) _timerInvalidate.Stop();
+                if (_invalidate == null) CompositionTarget.Rendering -= OnInvalidate;
             }
         }
     }
