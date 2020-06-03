@@ -189,7 +189,7 @@
         
         <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1">
             <controls:MasterDetailView.Header>
-                <Grid x:Name="TitleBarrr" Background="{ThemeResource PageTitleBackgroundBrush}">
+                <Grid x:Name="TitleBarrr" Height="32" Background="{ThemeResource PageTitleBackgroundBrush}">
                     <contract7Present:Grid.BackgroundTransition>
                         <contract7Present:BrushTransition/>
                     </contract7Present:Grid.BackgroundTransition>
