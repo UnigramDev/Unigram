@@ -7,6 +7,7 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -101,6 +102,10 @@ namespace Unigram.ViewModels.Settings
                 UpdateText = string.Format("Downloading... {0} / {1}", FileSizeConverter.Convert(update.Document.Local.DownloadedSize, update.Document.Size), FileSizeConverter.Convert(update.Document.Size));
                 UpdateFooter = "Please update the app to get the latest features and improvements.";
             }
+            else if (update.Document.Local.CanBeDownloaded)
+            {
+                ProtoService.DownloadFile(update.Document.Id, 32);
+            }
         }
 
         public RelayCommand UpdateCommand { get; }
@@ -115,7 +120,8 @@ namespace Unigram.ViewModels.Settings
 
                 var ticks = Environment.TickCount;
 
-                update = _update = await _cloudUpdateService.GetNextUpdateAsync();
+                await _cloudUpdateService.UpdateAsync();
+                update = _update = _cloudUpdateService.NextUpdate;
 
                 var diff = Environment.TickCount - ticks;
                 if (diff < 2000)
@@ -126,7 +132,7 @@ namespace Unigram.ViewModels.Settings
             else if (update.File != null)
             {
                 await Launcher.LaunchFileAsync(update.File);
-                return;
+                Application.Current.Exit();
             }
 
             Update(update);
