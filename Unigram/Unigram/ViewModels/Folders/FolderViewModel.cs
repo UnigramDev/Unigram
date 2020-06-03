@@ -70,7 +70,7 @@ namespace Unigram.ViewModels.Folders
                 return;
             }
 
-            if (state.TryGet("included_chat_id", out long includedChatId))
+            if (state != null && state.TryGet("included_chat_id", out long includedChatId))
             {
                 filter.IncludedChatIds.Add(includedChatId);
             }
