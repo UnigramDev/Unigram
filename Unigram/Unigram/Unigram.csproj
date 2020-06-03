@@ -1740,12 +1740,6 @@
     <Content Include="Assets\Logos\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Mockup\sticker0.webp" />
     <Content Include="Assets\Mockup\sticker1.webp" />
-    <PRIResource Include="Strings\zh-CN\Resources.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
-    <PRIResource Include="Strings\zh-CN\Additional.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
     <Content Include="Assets\Mockup\theme_preview_image.jpg" />
     <Content Include="Assets\secureid_ocr_nn.bin" />
     <PRIResource Include="Strings\tr\Resources.resw" />
