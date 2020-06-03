@@ -156,7 +156,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -180,7 +180,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -218,7 +218,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -243,7 +243,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -310,7 +310,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -370,7 +370,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -403,13 +403,13 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "No thumbnail found")));
+                        _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No thumbnail found")));
                     }
                 }
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
