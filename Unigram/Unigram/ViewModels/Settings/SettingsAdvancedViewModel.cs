@@ -6,6 +6,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Updates;
+using Windows.System;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -82,7 +83,7 @@ namespace Unigram.ViewModels.Settings
                 IsUpdateEnabled = true;
 
                 UpdateText = "Check for Updates";
-                UpdateFooter = "You have the latest version of Telegram.";
+                UpdateFooter = "You have the latest version of Unigram.";
             }
             else if (update.File != null)
             {
@@ -121,6 +122,11 @@ namespace Unigram.ViewModels.Settings
                 {
                     await Task.Delay(2000 - diff);
                 }
+            }
+            else if (update.File != null)
+            {
+                await Launcher.LaunchFileAsync(update.File);
+                return;
             }
 
             Update(update);
