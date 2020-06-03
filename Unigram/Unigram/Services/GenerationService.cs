@@ -167,14 +167,16 @@ namespace Unigram.Services
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
-                await file.CopyAndReplaceAsync(temp);
-
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
-
                 if (IsTemporary(file))
                 {
-                    await file.DeleteAsync();
+                    await file.MoveAndReplaceAsync(temp);
                 }
+                else
+                {
+                    await file.CopyAndReplaceAsync(temp);
+                }
+
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
             }
             catch (Exception ex)
             {
@@ -380,7 +382,7 @@ namespace Unigram.Services
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                 var mode = ThumbnailMode.DocumentsView;
-                if (file.ContentType.StartsWith("audio"))
+                if (file.ContentType.StartsWith("audio/"))
                 {
                     mode = ThumbnailMode.MusicView;
                 }
