@@ -87,7 +87,7 @@
                                   VerticalScrollMode="Disabled">
                             <StackPanel Margin="12,0" Orientation="Horizontal">
                                 <StackPanel Margin="0,12,12,12">
-                                    <RadioButton GroupName="Layout" Height="121" Style="{StaticResource ChatListRadioButtonStyle}">
+                                    <RadioButton IsChecked="{x:Bind ViewModel.UseTopLayout, Mode=TwoWay}" GroupName="Layout" Height="121" Style="{StaticResource ChatListRadioButtonStyle}">
                                         <StackPanel>
                                             <StackPanel
                                                 BorderBrush="{ThemeResource PlaceholderForegroundHighBrush}"
@@ -145,7 +145,7 @@
                                 </StackPanel>
 
                                 <StackPanel Margin="0,12,0,12">
-                                    <RadioButton GroupName="Layout" Height="121" Style="{StaticResource ChatListRadioButtonStyle}">
+                                    <RadioButton IsChecked="{x:Bind ViewModel.UseLeftLayout, Mode=TwoWay}" GroupName="Layout" Height="121" Style="{StaticResource ChatListRadioButtonStyle}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>

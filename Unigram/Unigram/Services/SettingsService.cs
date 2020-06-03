@@ -52,6 +52,8 @@ namespace Unigram.Services
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
 
+        bool IsLeftTabsEnabled { get; set; }
+
         Vector2 Pencil { get; set; }
 
         DistanceUnits DistanceUnits { get; set; }
@@ -567,6 +569,23 @@ namespace Unigram.Services
             {
                 _isAllAccountsNotifications = value;
                 AddOrUpdateValue(_local, "IsAllAccountsNotifications", value);
+            }
+        }
+
+        private static bool? _isLeftTabsEnabled;
+        public bool IsLeftTabsEnabled
+        {
+            get
+            {
+                if (_isLeftTabsEnabled == null)
+                    _isLeftTabsEnabled = GetValueOrDefault(_local, "IsLeftTabsEnabled", false);
+
+                return _isLeftTabsEnabled ?? false;
+            }
+            set
+            {
+                _isLeftTabsEnabled = value;
+                AddOrUpdateValue(_local, "IsLeftTabsEnabled", value);
             }
         }
 

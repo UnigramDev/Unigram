@@ -89,7 +89,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Border x:Load="False" x:Name="Yolo" RequestedTheme="Dark" Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+        <Border x:Load="False" x:Name="ChatTabsLeft" Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}" BorderThickness="0,0,1,0" BorderBrush="LightGray">
             <controls:TopNavView
                 x:Name="ChatFiltersSide"
                 ItemsSource="{x:Bind ViewModel.Filters}"
@@ -98,21 +98,26 @@
                 Orientation="Vertical"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.HorizontalScrollMode="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                ScrollViewer.VerticalScrollMode="Auto"
                 Margin="0,72,0,0"
                 Height="Auto"
                 Width="72">
                 <controls:TopNavView.ItemTemplate>
                     <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
                         <StackPanel Orientation="Vertical">
-                            <Grid>
-                                <TextBlock
-                                    Text="{x:Bind Icon, Mode=OneWay}"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    FontSize="24"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Top"/>
+                            <Grid Margin="0,4,0,4">
+                                <Border Width="32" Height="32" CornerRadius="0" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                    
+                                    <TextBlock
+                                        Text="{x:Bind Glyph, Mode=OneWay}"
+                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                        FontSize="32"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"/>
+                                </Border>
                                 <Border
-                                    Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
                                     Background="{ThemeResource ChatUnreadBadgeBrush}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
@@ -124,6 +129,22 @@
                                         Text="{x:Bind UnreadCount, Mode=OneWay}"
                                         Style="{StaticResource CaptionTextBlockStyle}"
                                         Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                        TextAlignment="Center"
+                                        Margin="8,2,8,0"/>
+                                </Border>
+                                <Border
+                                    Visibility="{x:Bind ShowMuted, Mode=OneWay}"
+                                    Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Margin="0,-12,-4,0"
+                                    MinWidth="20"
+                                    Height="20"
+                                    CornerRadius="10">
+                                    <TextBlock
+                                        Text="{x:Bind UnreadMutedCount, Mode=OneWay}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
                                         TextAlignment="Center"
                                         Margin="8,2,8,0"/>
                                 </Border>
@@ -146,8 +167,8 @@
                     <Style TargetType="controls:TopNavViewItem">
                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
                         <Setter Property="VerticalAlignment" Value="Stretch"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                         <Setter Property="UseSystemFocusVisuals" Value="True" />
                         <Setter Property="Template">
                             <Setter.Value>

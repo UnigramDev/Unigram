@@ -504,6 +504,7 @@ namespace Unigram.ViewModels
 
             _title = info.Title;
             _icon = Icons.ParseFilter(info.IconName);
+            _glyph = Icons.FromFilter(_icon);
         }
 
         private ChatFilterViewModel()
@@ -515,6 +516,7 @@ namespace Unigram.ViewModels
         {
             Title = info.Title;
             Icon = Icons.ParseFilter(info.IconName);
+            Glyph = Icons.FromFilter(_icon);
         }
 
         public ChatList ChatList { get; }
@@ -533,6 +535,13 @@ namespace Unigram.ViewModels
         {
             get => _icon;
             set => Set(ref _icon, value);
+        }
+
+        private string _glyph;
+        public string Glyph
+        {
+            get => _glyph;
+            set => Set(ref _glyph, value);
         }
 
         private int _unreadCount;

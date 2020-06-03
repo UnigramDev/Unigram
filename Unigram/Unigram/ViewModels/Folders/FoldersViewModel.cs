@@ -5,6 +5,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Unigram.Views.Folders;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -16,6 +17,9 @@ namespace Unigram.ViewModels.Folders
         public FoldersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            UseLeftLayout = settingsService.IsLeftTabsEnabled;
+            UseTopLayout = !settingsService.IsLeftTabsEnabled;
+
             Items = new MvxObservableCollection<ChatFilterInfo>();
             Recommended = new MvxObservableCollection<RecommendedChatFilter>();
 
@@ -46,6 +50,31 @@ namespace Unigram.ViewModels.Folders
         {
             Aggregator.Unsubscribe(this);
             return base.OnNavigatedFromAsync(pageState, suspending);
+        }
+
+        private bool _useLeftLayout;
+        public bool UseLeftLayout
+        {
+            get => _useLeftLayout;
+            set
+            {
+                if (_useLeftLayout != value)
+                {
+                    _useLeftLayout = value;
+                    Settings.IsLeftTabsEnabled = value;
+
+                    RaisePropertyChanged(() => UseLeftLayout);
+
+                    Aggregator.Publish(new UpdateChatFiltersLayout());
+                }
+            }
+        }
+
+        private bool _useTopLayout;
+        public bool UseTopLayout
+        {
+            get => _useTopLayout;
+            set => Set(ref _useTopLayout, value);
         }
 
         public void Handle(UpdateChatFilters update)
