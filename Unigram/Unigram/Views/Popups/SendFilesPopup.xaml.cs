@@ -307,8 +307,16 @@ namespace Unigram.Views.Popups
 
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
-            e.Handled = true;
-            await HandlePackageAsync(Clipboard.GetContent());
+            var content = Clipboard.GetContent();
+            if (content.AvailableFormats.Contains(StandardDataFormats.Text))
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+                await HandlePackageAsync(content);
+            }
         }
 
         private void ListView_DragEnter(object sender, DragEventArgs e)
