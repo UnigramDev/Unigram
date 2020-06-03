@@ -2639,29 +2639,37 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var message = Strings.Resources.AreYouSureDeleteAndExit;
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
-            {
-                message = Strings.Resources.AreYouSureDeleteThisChat;
-            }
-            else if (chat.Type is ChatTypeSupergroup super)
-            {
-                message = super.IsChannel ? Strings.Resources.ChannelLeaveAlert : Strings.Resources.MegaLeaveAlert;
-            }
+            var updated = await ProtoService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
+            var dialog = new DeleteChatPopup(ProtoService, updated, null, false);
 
-            var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                if (chat.Type is ChatTypeSecret secret)
+                var check = dialog.IsChecked == true;
+
+                if (updated.Type is ChatTypeSecret secret)
                 {
                     await ProtoService.SendAsync(new CloseSecretChat(secret.SecretChatId));
                 }
-                else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
+                else if (updated.Type is ChatTypeBasicGroup || updated.Type is ChatTypeSupergroup)
                 {
-                    await ProtoService.SendAsync(new LeaveChat(chat.Id));
+                    await ProtoService.SendAsync(new LeaveChat(updated.Id));
                 }
 
-                ProtoService.Send(new DeleteChatHistory(chat.Id, true, false));
+                var user = CacheService.GetUser(updated);
+                if (user != null && user.Type is UserTypeRegular)
+                {
+                    ProtoService.Send(new DeleteChatHistory(updated.Id, true, check));
+                }
+                else
+                {
+                    if (updated.Type is ChatTypePrivate privata && check)
+                    {
+                        await ProtoService.SendAsync(new BlockUser(privata.UserId));
+                    }
+
+                    ProtoService.Send(new DeleteChatHistory(updated.Id, true, false));
+                }
             }
         }
 
@@ -2678,10 +2686,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistory, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var updated = await ProtoService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
+            var dialog = new DeleteChatPopup(ProtoService, updated, null, true);
+
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new DeleteChatHistory(chat.Id, false, false));
+                ProtoService.Send(new DeleteChatHistory(updated.Id, false, dialog.IsChecked));
             }
         }
 
