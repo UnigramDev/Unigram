@@ -22,13 +22,8 @@
                     Header="Experimental">
                     <ToggleSwitch
                         x:Name="PlayStickers"
-                        IsOn="{x:Bind ViewModel.PlayStickers, Mode=TwoWay}"
-                        Header="Play animated stickers"
-                        Style="{StaticResource CheckButtonStyle}"/>
-                    <ToggleSwitch
-                        x:Name="CacheStickers"
-                        IsOn="{x:Bind ViewModel.CacheStickers, Mode=TwoWay}"
-                        Header="Cache animated stickers"
+                        IsOn="{x:Bind ViewModel.BubbleMeasureAlpha, Mode=TwoWay}"
+                        Header="Bubble measure"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
 

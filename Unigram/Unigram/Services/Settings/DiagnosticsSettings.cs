@@ -7,37 +7,20 @@
         {
         }
 
-        private bool? _playStickers;
-        public bool PlayStickers
+        private bool? _bubbleMeasureAlpha;
+        public bool BubbleMeasureAlpha
         {
             get
             {
-                if (_playStickers == null)
-                    _playStickers = GetValueOrDefault("PlayStickers", true);
+                if (_bubbleMeasureAlpha == null)
+                    _bubbleMeasureAlpha = GetValueOrDefault("BubbleMeasureAlpha", true);
 
-                return _playStickers ?? true;
+                return _bubbleMeasureAlpha ?? true;
             }
             set
             {
-                _playStickers = value;
-                AddOrUpdateValue("PlayStickers", value);
-            }
-        }
-
-        private bool? _cacheStickers;
-        public bool CacheStickers
-        {
-            get
-            {
-                if (_cacheStickers == null)
-                    _cacheStickers = GetValueOrDefault("CacheStickers", true);
-
-                return _cacheStickers ?? true;
-            }
-            set
-            {
-                _cacheStickers = value;
-                AddOrUpdateValue("CacheStickers", value);
+                _bubbleMeasureAlpha = value;
+                AddOrUpdateValue("BubbleMeasureAlpha", value);
             }
         }
     }

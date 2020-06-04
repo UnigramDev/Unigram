@@ -241,16 +241,6 @@ namespace Unigram.Controls.Messages
 
 
             //UpdateMessageContent(message, true);
-
-
-
-            if (_knockout && Knockout != null)
-            {
-                Knockout.Margin = new Thickness(-10 - 60, -4 - (message.IsFirst ? 3 : 2), -10 - 24, -6 - (message.IsLast ? 3 : 2));
-                ContentPanel.Background = null;
-
-                UpdateKnockout(topLeft, topRight, bottomRight, bottomLeft, 60, 24, message.IsFirst ? 3 : 2, message.IsLast ? 3 : 2, ContentPanel.ActualWidth, ContentPanel.ActualHeight);
-            }
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -1248,9 +1238,42 @@ namespace Unigram.Controls.Messages
 
         private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (SettingsService.Current.Diagnostics.BubbleMeasureAlpha)
+            {
+                return;
+            }
+
             if (e.NewSize.Width != e.PreviousSize.Width)
             {
                 Placeholder.Width = e.NewSize.Width;
+            }
+        }
+
+        private void Message_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!SettingsService.Current.Diagnostics.BubbleMeasureAlpha)
+            {
+                return;
+            }
+
+            var width = e.NewSize.Width;
+            var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
+
+            var diff = width - rect.Right;
+            if (diff < Footer.ActualWidth)
+            {
+                if (e.NewSize.Height < rect.Height * 2 && width + Footer.ActualWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right)
+                {
+                    Message.Margin = new Thickness(0, 0, Footer.ActualWidth, 0);
+                }
+                else
+                {
+                    Message.Margin = new Thickness(0, 0, 0, Footer.ActualHeight);
+                }
+            }
+            else
+            {
+                Message.Margin = new Thickness();
             }
         }
 
@@ -1766,6 +1789,7 @@ namespace Unigram.Controls.Messages
             //    return base.MeasureOverride(new Size(Message.DesiredSize.Width + 20, availableSize.Height));
             //}
 
+            _maxWidth = MaxWidth;
             return base.MeasureOverride(availableSize);
 
             Calculate:
@@ -1781,13 +1805,17 @@ namespace Unigram.Controls.Messages
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
+                _maxWidth = Math.Max(96, width * ratio);
                 return base.MeasureOverride(new Size(Math.Max(96, width * ratio), availableSize.Height));
             }
             else
             {
+                _maxWidth = Math.Max(96, width);
                 return base.MeasureOverride(new Size(Math.Max(96, width), availableSize.Height));
             }
         }
+
+        private double _maxWidth;
 
         private void Message_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
@@ -1810,65 +1838,6 @@ namespace Unigram.Controls.Messages
                 default:
                     return false;
             }
-        }
-
-        private void Knockout_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (_knockout && Knockout != null)
-            {
-                UpdateAttach(_message);
-            }
-        }
-
-        private void UpdateKnockout(double topLeft, double topRight, double bottomRight, double bottomLeft, double left, double right, double top, double bottom, double width, double height)
-        {
-            width += left + right;
-            height += top + bottom;
-
-            KnockoutFill.Segments.Clear();
-            KnockoutFill.Segments.Add(new LineSegment { Point = new Point(width, 0) });
-            KnockoutFill.Segments.Add(new LineSegment { Point = new Point(width, height) });
-            KnockoutFill.Segments.Add(new LineSegment { Point = new Point(0, height) });
-
-            KnockoutMask.StartPoint = new Point(left, topLeft + top);
-            KnockoutMask.Segments.Clear();
-            KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(topLeft + left, top), Size = new Size(topLeft, topLeft), SweepDirection = SweepDirection.Clockwise });
-            KnockoutMask.Segments.Add(new LineSegment { Point = new Point(width - topRight - right, top) });
-            KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(width - right, topRight + top), Size = new Size(topRight, topRight), SweepDirection = SweepDirection.Clockwise });
-            KnockoutMask.Segments.Add(new LineSegment { Point = new Point(width - right, height - bottomRight - bottom) });
-            KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(width - bottomRight - right, height - bottom), Size = new Size(bottomRight, bottomRight), SweepDirection = SweepDirection.Clockwise });
-            KnockoutMask.Segments.Add(new LineSegment { Point = new Point(bottomLeft + left, height - bottom) });
-            KnockoutMask.Segments.Add(new ArcSegment { Point = new Point(left, height - bottomLeft - bottom), Size = new Size(bottomLeft, bottomLeft), SweepDirection = SweepDirection.Clockwise });
-            //KnockoutMask.Segments.Add(new LineSegment { Point = new Point(1, topLeft + 1) });
-        }
-
-        private ScrollViewer _scrollingHost;
-        private FrameworkElement _background;
-
-        public void UpdateKnockout(ScrollViewer scrollingHost, FrameworkElement background)
-        {
-            _scrollingHost = scrollingHost;
-            _background = background;
-        }
-
-        private void OnLayoutUpdated(object sender, object e)
-        {
-            if (_background == null)
-            {
-                return;
-            }
-
-            var transform = this.TransformToVisual(_background);
-            var point = transform.TransformPoint(new Point());
-
-            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(_scrollingHost);
-            var visual = ElementCompositionPreview.GetElementVisual(ContentPanel);
-
-            var offset = Window.Current.Compositor.CreateExpressionAnimation(point.Y + " + scrollViewer.Translation.Y");
-            offset.SetReferenceParameter("scrollViewer", properties);
-
-            visual.StopAnimation("Offset.Y");
-            visual.StartAnimation("Offset.Y", offset);
         }
     }
 }
