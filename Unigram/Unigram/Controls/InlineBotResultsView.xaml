@@ -33,7 +33,7 @@
                           Height="48"
                           VerticalAlignment="Top"
                           Margin="0,0,12,0"
-                          CornerRadius="2"
+                          CornerRadius="4"
                           Grid.RowSpan="2">
                         <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>

@@ -15,8 +15,9 @@
             <ColumnDefinition Width="48"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Border x:Name="Thumbnail" Background="Gray" VerticalAlignment="Top">
+        <Border x:Name="Thumbnail" VerticalAlignment="Top" CornerRadius="4">
             <controls:ImageView
+                x:Name="Photo"
                 Click="Thumbnail_Click"
                 Stretch="UniformToFill"
                 Width="48"

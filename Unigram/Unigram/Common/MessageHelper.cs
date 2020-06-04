@@ -1033,15 +1033,15 @@ namespace Unigram.Common
                     }
 
                     var type = GetEntityType(hyperlink);
-                    if (type == null)
-                    {
-                        args.Handled = false;
-                        return;
-                    }
+                    //if (type == null)
+                    //{
+                    //    args.Handled = false;
+                    //    return;
+                    //}
 
                     var flyout = new MenuFlyout();
 
-                    if (type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
+                    if (type == null || type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
                     {
                         var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
                         open.Click += LinkOpen_Click;

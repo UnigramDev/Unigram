@@ -384,7 +384,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    thumb.Source = PlaceholderHelper.GetNameForChat(title.Text, 64, title.Text.GetHashCode());
+                    thumb.Source = PlaceholderHelper.GetNameForChat(title.Text, 96, title.Text.GetHashCode());
                 }
             }
         }
