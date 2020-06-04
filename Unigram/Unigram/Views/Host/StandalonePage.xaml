@@ -11,6 +11,7 @@
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid x:Name="Navigation" Background="{ThemeResource PageTitleBackgroundBrush}">
@@ -23,5 +24,10 @@
                        Style="{StaticResource CaptionTextBlockStyle}"
                        Grid.Column="1"/>
         </Grid>
+        <ContentControl
+            x:Name="PageHeader"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            Grid.Row="1"/>
     </Grid>
 </Page>

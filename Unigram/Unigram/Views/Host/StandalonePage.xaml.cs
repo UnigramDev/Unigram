@@ -25,7 +25,7 @@ namespace Unigram.Views.Host
 
             InitializeTitleBar();
 
-            Grid.SetRow(navigationService.Frame, 1);
+            Grid.SetRow(navigationService.Frame, 2);
             LayoutRoot.Children.Add(navigationService.Frame);
 
             if (navigationService is TLNavigationService service && service.ProtoService != null)
@@ -36,6 +36,29 @@ namespace Unigram.Views.Host
                     StatusLabel.Text = string.Format("{0} - {1}", user.GetFullName(), "Unigram");
                     ApplicationView.GetForCurrentView().Title = user.GetFullName();
                 }
+            }
+
+            navigationService.Frame.Navigated += OnNavigated;
+
+            if (navigationService.Frame.Content is HostedPage hosted)
+            {
+                PageHeader.Content = hosted.Header;
+            }
+            else
+            {
+                PageHeader.Content = null;
+            }
+        }
+
+        private void OnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        {
+            if (e.Content is HostedPage hosted)
+            {
+                PageHeader.Content = hosted.Header;
+            }
+            else
+            {
+                PageHeader.Content = null;
             }
         }
 
