@@ -204,7 +204,6 @@
                             x:Name="UserPhone"
                             Visibility="Collapsed"
                             Content="{CustomResource Phone}"
-                            Command="{x:Bind ViewModel.CallCommand}"
                             Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
                             Glyph="&#xE717;">
                             <Button.ContextFlyout>
