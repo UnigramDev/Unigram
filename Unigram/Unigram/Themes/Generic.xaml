@@ -2232,64 +2232,58 @@
     </Style>
     
     <Style TargetType="local:ButtonPageHeader">
-        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
         <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ButtonPageHeader">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                        <contract7Present:Border.BackgroundTransition>
+                    <Grid Background="{TemplateBinding Background}">
+                        <contract7Present:Grid.BackgroundTransition>
                             <BrushTransition/>
-                        </contract7Present:Border.BackgroundTransition>
-                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <local:BackButton
-                                Width="40"
-                                Margin="0,0,-12,0"
-                                Visibility="{TemplateBinding BackVisibility}"/>
-                            <TextBlock
-                                Text="{TemplateBinding Text}"
-                                Foreground="{TemplateBinding Foreground}"
-                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                Style="{StaticResource BaseTextBlockStyle}"
-                                VerticalAlignment="Center"
-                                Margin="12,0"
-                                Grid.Column="1"/>
-                            <local:GlyphButton
-                                Glyph="{TemplateBinding Glyph}"
-                                Command="{TemplateBinding Command}"
-                                CommandParameter="{TemplateBinding CommandParameter}"
-                                Visibility="{TemplateBinding CommandVisibility}"
-                                Style="{StaticResource HeaderGlyphButtonStyle}"
-                                AutomationProperties.Name="{TemplateBinding CommandToolTip}"
-                                ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
-                                Grid.Column="2"/>
-                            <microsoft:ProgressBar
-                                IsIndeterminate="{TemplateBinding IsLoading}"
-                                Background="Transparent"
-                                VerticalAlignment="Bottom"
-                                IsHitTestVisible="False"
-                                Grid.ColumnSpan="3"/>
-                        </Grid>
+                        </contract7Present:Grid.BackgroundTransition>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="3"/>
 
-                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
-                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
-                             </Button>
-                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                             </Grid>-->
-                    </Border>
+                        <local:BackButton
+                            Width="40"
+                            Margin="0,0,-12,0"
+                            Visibility="{TemplateBinding BackVisibility}"/>
+                        <TextBlock
+                            Text="{TemplateBinding Text}"
+                            Foreground="{TemplateBinding Foreground}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            VerticalAlignment="Center"
+                            Margin="12,0"
+                            Grid.Column="1"/>
+                        <local:GlyphButton
+                            Glyph="{TemplateBinding Glyph}"
+                            Command="{TemplateBinding Command}"
+                            CommandParameter="{TemplateBinding CommandParameter}"
+                            Visibility="{TemplateBinding CommandVisibility}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            AutomationProperties.Name="{TemplateBinding CommandToolTip}"
+                            ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
+                            Grid.Column="2"/>
+                        <microsoft:ProgressBar
+                            IsIndeterminate="{TemplateBinding IsLoading}"
+                            Background="Transparent"
+                            VerticalAlignment="Bottom"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="3"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -2300,15 +2294,12 @@
         <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
-        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
-                    <Grid
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                    <Grid Background="{TemplateBinding Background}">
                         <contract7Present:Grid.BackgroundTransition>
                             <contract7Present:BrushTransition/>
                         </contract7Present:Grid.BackgroundTransition>
@@ -2316,6 +2307,12 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
+                        <Border
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="2"/>
+
                         <ContentPresenter
                             Foreground="{TemplateBinding Foreground}"
                             HorizontalContentAlignment="Stretch"
@@ -2331,13 +2328,6 @@
                             VerticalAlignment="Bottom"
                             IsHitTestVisible="False"
                             Grid.ColumnSpan="2"/>
-
-                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
-                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
-                             </Button>
-                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                             </Grid>-->
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -2345,54 +2335,48 @@
     </Style>
 
     <Style TargetType="local:PageHeader">
-        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
         <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageHeader">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                        <contract7Present:Border.BackgroundTransition>
+                    <Grid Background="{TemplateBinding Background}">
+                        <contract7Present:Grid.BackgroundTransition>
                             <contract7Present:BrushTransition/>
-                        </contract7Present:Border.BackgroundTransition>
-                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <local:BackButton
-                                Width="40"
-                                Margin="0,0,-12,0"
-                                Visibility="{TemplateBinding BackVisibility}"/>
-                            <TextBlock
-                                Text="{TemplateBinding Text}"
-                                Foreground="{TemplateBinding Foreground}"
-                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                Style="{StaticResource BaseTextBlockStyle}"
-                                VerticalAlignment="Center"
-                                Margin="12,0"
-                                Grid.Column="1"/>
-                            <microsoft:ProgressBar
-                                IsIndeterminate="{TemplateBinding IsLoading}"
-                                Background="Transparent"
-                                VerticalAlignment="Bottom"
-                                IsHitTestVisible="False"
-                                Grid.ColumnSpan="2"/>
-                        </Grid>
+                        </contract7Present:Grid.BackgroundTransition>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="2"/>
 
-                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
-                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
-                             </Button>
-                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                             </Grid>-->
-                    </Border>
+                        <local:BackButton
+                            Width="40"
+                            Margin="0,0,-12,0"
+                            Visibility="{TemplateBinding BackVisibility}"/>
+                        <TextBlock
+                            Text="{TemplateBinding Text}"
+                            Foreground="{TemplateBinding Foreground}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            VerticalAlignment="Center"
+                            Margin="12,0"
+                            Grid.Column="1"/>
+                        <microsoft:ProgressBar
+                            IsIndeterminate="{TemplateBinding IsLoading}"
+                            Background="Transparent"
+                            VerticalAlignment="Bottom"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="2"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
