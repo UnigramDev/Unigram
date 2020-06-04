@@ -42,6 +42,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views
 {
@@ -4024,7 +4025,7 @@ namespace Unigram.Views
                     }
 
                     var element = container.ContentTemplateRoot as FrameworkElement;
-                    if (element is MessageBubble == false)
+                    if (element is Grid)
                     {
                         element = element.FindName("Bubble") as FrameworkElement;
                     }
@@ -4032,6 +4033,14 @@ namespace Unigram.Views
                     if (element is MessageBubble bubble)
                     {
                         bubble.UpdateFile(message, file);
+                    }
+                    else if (message.Content is MessageChatChangePhoto && file.Local.IsDownloadingCompleted)
+                    {
+                        var photo = element.FindName("Photo") as ProfilePicture;
+                        if (photo != null)
+                        {
+                            photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = 96, DecodePixelHeight = 96, DecodePixelType = DecodePixelType.Logical };
+                        }
                     }
 
                     var content = message.GeneratedContent ?? message.Content;

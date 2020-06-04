@@ -1440,6 +1440,10 @@ namespace Unigram.ViewModels
                 {
                     content = voiceNoteMessage.VoiceNote;
                 }
+                else if (content is MessageChatChangePhoto chatChangePhoto)
+                {
+                    content = chatChangePhoto.Photo;
+                }
 
                 if (content is Animation animation)
                 {
