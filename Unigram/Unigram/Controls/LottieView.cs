@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using Unigram.Common;
 using Windows.Foundation;
+using Windows.Graphics.DirectX;
 using Windows.Storage;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -146,6 +147,7 @@ namespace Unigram.Controls
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
             _device = sender;
+            _bitmap = CanvasBitmap.CreateFromBytes(sender, new byte[256 * 256 * 4], 256, 256, DirectXPixelFormat.B8G8R8A8UIntNormalized);
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
@@ -173,7 +175,7 @@ namespace Unigram.Controls
         public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _animationIsCaching || _canvas == null || _device == null)
+            if (animation == null || _animationIsCaching || _canvas == null || _bitmap == null)
             {
                 return;
             }
@@ -192,7 +194,7 @@ namespace Unigram.Controls
                 _skipFrame = true;
             }
 
-            _bitmap = animation.RenderSync(_device, index, 256, 256);
+            animation.RenderSync(_bitmap, index);
 
             if (_animationShouldCache)
             {

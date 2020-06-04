@@ -493,7 +493,8 @@ namespace Unigram.Common
                 return null;
             }
 
-            var bitmap = animation.RenderSync(frame, width, height);
+            var bitmap = new WriteableBitmap(width, height);
+            animation.RenderSync(bitmap, frame);
             animation.Dispose();
 
             return bitmap;
