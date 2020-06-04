@@ -171,7 +171,7 @@ namespace Unigram.ViewModels
         {
             if (update.IsActive)
             {
-                _ = _cloudUpdateService.UpdateAsync();
+                _ = _cloudUpdateService.UpdateAsync(false);
             }
         }
 
@@ -376,7 +376,7 @@ namespace Unigram.ViewModels
                 Task.Run(() => _pushService.RegisterAsync());
                 Task.Run(() => _contactsService.JumpListAsync());
                 Task.Run(() => _emojiSetService.UpdateAsync());
-                Task.Run(() => _cloudUpdateService.UpdateAsync());
+                Task.Run(() => _cloudUpdateService.UpdateAsync(false));
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);

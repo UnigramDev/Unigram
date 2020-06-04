@@ -14,7 +14,7 @@ namespace Unigram.Services
     {
         CloudUpdate NextUpdate { get; }
 
-        Task UpdateAsync();
+        Task UpdateAsync(bool force);
         Task<CloudUpdate> GetNextUpdateAsync();
         Task<IList<CloudUpdate>> GetHistoryAsync();
     }
@@ -43,10 +43,10 @@ namespace Unigram.Services
 
         public async void Update()
         {
-            await UpdateAsync();
+            await UpdateAsync(false);
         }
 
-        public async Task UpdateAsync()
+        public async Task UpdateAsync(bool force)
         {
             if (Package.Current.SignatureKind == PackageSignatureKind.Store)
             {
@@ -54,7 +54,9 @@ namespace Unigram.Services
             }
 
             var diff = Environment.TickCount - _lastCheck;
-            if (diff < 5 * 60 * 1000 || _checking)
+            var skip = diff < 5 * 60 * 1000 || _checking;
+
+            if (skip && !force)
             {
                 return;
             }

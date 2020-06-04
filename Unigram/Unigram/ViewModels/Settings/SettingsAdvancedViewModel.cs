@@ -120,7 +120,7 @@ namespace Unigram.ViewModels.Settings
 
                 var ticks = Environment.TickCount;
 
-                await _cloudUpdateService.UpdateAsync();
+                await _cloudUpdateService.UpdateAsync(true);
                 update = _update = _cloudUpdateService.NextUpdate;
 
                 var diff = Environment.TickCount - ticks;
