@@ -62,9 +62,7 @@ namespace Unigram.Services
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
 
-        private bool _suppress;
-
-        private int _tickCount;
+        private bool? _suppress;
 
         public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
@@ -85,13 +83,13 @@ namespace Unigram.Services
 
         private void UpdateBadge(int count)
         {
-            var tick = Environment.TickCount;
-            if (tick < _tickCount + 500)
-            {
-                return;
-            }
+            //var tick = Environment.TickCount;
+            //if (tick < _tickCount + 500)
+            //{
+            //    return;
+            //}
 
-            _tickCount = tick;
+            //_tickCount = tick;
             NotificationTask.UpdatePrimaryBadge(count);
         }
 
@@ -285,14 +283,14 @@ namespace Unigram.Services
 
         public void Handle(UpdateHavePendingNotifications update)
         {
-            //Logs.Logger.Info(Logs.LoggerTag.Notifications, "UpdateHavePendingNotifications: " + update.HavePendingNotifications);
-            //_suppress = update.HavePendingNotifications;
-            //_suppress = update.HaveUnreceivedNotifications || update.HaveDelayedNotifications;
+            // We want to ignore both delayed and unreceived notifications,
+            // as they're the result of update difference on sync.
+            _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
         }
 
         public async void Handle(UpdateNotificationGroup update)
         {
-            if (_suppress)
+            if (_suppress == true)
             {
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
@@ -384,11 +382,6 @@ namespace Unigram.Services
             Update(chat, async () =>
             {
                 await NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, $"{_sessionService.Id}", sound, launch, tag, group, picture, string.Empty, date, loc_key);
-
-                if (_sessionService.IsActive)
-                {
-                    NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
-                }
             });
 
             if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
@@ -399,7 +392,7 @@ namespace Unigram.Services
 
         private void Update(Chat chat, Action action)
         {
-            var open = TLWindowContext.ActiveWrappers.Cast<TLWindowContext>().Any(x => x.IsChatOpen(_protoService.SessionId, chat.Id));
+            var open = WindowContext.ActiveWrappers.Cast<TLWindowContext>().Any(x => x.IsChatOpen(_protoService.SessionId, chat.Id));
             if (open)
             {
                 return;
@@ -525,7 +518,7 @@ namespace Unigram.Services
 
                     channel.PushNotificationReceived += OnPushNotificationReceived;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     _alreadyRegistered = false;
                     _settings.NotificationsToken = null;
