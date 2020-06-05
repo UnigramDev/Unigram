@@ -2,13 +2,13 @@
 name: Dark Blue
 parent: 12
 #
-PageTitleBackgroundBrush: #FF1C2733
+PageTitleBackgroundBrush: #FF151D26
 PageHeaderHighlightBrush: #FF59A8E2
-PageHeaderBackgroundBrush: #FF151D26
-PageSubHeaderBackgroundBrush: #FF151D26
-PageBackgroundDarkBrush: #FF1C2733
+PageHeaderBackgroundBrush: #FF1C2733
+PageSubHeaderBackgroundBrush: #FF1C2733
+PageBackgroundDarkBrush: #FF151D26
 SystemAccentColor: #FF59A8E2
-ApplicationPageBackgroundThemeBrush: #FF151D26
+ApplicationPageBackgroundThemeBrush: #FF1C2733
 TelegramSeparatorMediumBrush: #FF10171E
 SystemControlDisabledChromeDisabledLowBrush: #FF7D8E98
 ChatVerifiedBadgeBrush: #FF59A8E2
