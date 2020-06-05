@@ -232,7 +232,26 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ProtoService, member);
+                var label = content.Children[3] as TextBlock;
+
+                if (_isEmbedded)
+                {
+                    subtitle.Text = LastSeenConverter.GetLabel(user, false);
+
+                    if (member.Status is ChatMemberStatusAdministrator administrator)
+                    {
+                        label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
+                    }
+                    else if (member.Status is ChatMemberStatusCreator creator)
+                    {
+                        label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
+                    }
+                }
+                else
+                {
+                    subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ProtoService, member);
+                    label.Text = string.Empty;
+                }
             }
             else if (args.Phase == 2)
             {
