@@ -33,13 +33,31 @@ namespace Unigram.Controls.Messages
         public MessageBubble()
         {
             InitializeComponent();
+
+            if (SettingsService.Current.Diagnostics.BubbleKnockout && ApiInfo.CanUseViewports)
+            {
+                ContentPanel.EffectiveViewportChanged += MessageBubble_EffectiveViewportChanged;
+            }
         }
 
-        public void UpdateAdaptive(HorizontalAlignment alignment)
+        private void MessageBubble_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
-            UpdateAttach(_message, alignment == HorizontalAlignment.Left);
+            var message = _message;
+            if (message == null || !message.IsOutgoing)
+            {
+                return;
+            }
 
-            HorizontalAlignment = alignment;
+            var gradient = ContentPanel.Background as LinearGradientBrush;
+            if (gradient == null)
+            {
+                ContentPanel.Background = gradient = new LinearGradientBrush();
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), Offset = 0 });
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF8, 0xEA, 0x8F), Offset = 1 });
+            }
+
+            gradient.StartPoint = new Point(0, args.EffectiveViewport.Y / sender.ActualHeight);
+            gradient.EndPoint = new Point(0, args.EffectiveViewport.Bottom / sender.ActualHeight);
         }
 
         public void UpdateMessage(MessageViewModel message)

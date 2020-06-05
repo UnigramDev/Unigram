@@ -300,7 +300,7 @@ namespace Unigram.Controls
         }
 
         private Color[] _colors = new[]
-            {
+        {
             Color.FromArgb(0xff, 0xea, 0x27, 0x39),
             Color.FromArgb(0xff, 0xdb, 0x3a, 0xd2),
             Color.FromArgb(0xff, 0x30, 0x51, 0xe3),
