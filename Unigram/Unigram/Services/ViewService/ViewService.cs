@@ -96,7 +96,7 @@ namespace Unigram.Services.ViewService
         }
 
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
-            ViewSizePreference size = ViewSizePreference.UseHalf)
+            ViewSizePreference size = ViewSizePreference.UseHalf, int session = 0, string id = "0")
         {
             WriteLine($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
 
@@ -157,7 +157,7 @@ namespace Unigram.Services.ViewService
                         newWindow.Close();
                     };
 
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, 0, "0", false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, id, false);
                     control.NavigationService = nav;
                     nav.Navigate(page, parameter);
                     newWindow.Content = BootStrapper.Current.CreateRootElement(nav);

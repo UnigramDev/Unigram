@@ -58,7 +58,7 @@ namespace Unigram.Services.Navigation
             FrameFacadeInternal = new FrameFacade(this, frame, id);
             FrameFacadeInternal.Navigating += async (s, e) =>
             {
-                if (e.Suspending)
+               if (e.Suspending)
                     return;
 
                 var page = FrameFacadeInternal.Content as Page;
@@ -196,7 +196,7 @@ namespace Unigram.Services.Navigation
         public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf)
         {
             DebugWrite($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
-            return viewService.OpenAsync(page, parameter, title, size);
+            return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
         public Task<ViewLifetimeControl> OpenAsync(Func<UIElement> content, object parameter)

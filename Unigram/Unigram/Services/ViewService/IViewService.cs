@@ -17,7 +17,7 @@ namespace Unigram.Services.ViewService
         /// <param name="size">Anchor size for newly created view</param>        
         /// <returns><see cref="ViewLifetimeControl"/> object that is associated to newly created view. Use it to subscribe to <code>Released</code> event to close window manually.
         /// It won't not be called before all previously started async operations on <see cref="CoreDispatcher"/> complete. <remarks>DO NOT call operations on Dispatcher after this</remarks></returns>
-        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf);
+        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf, int session = 0, string id = "0");
 
         Task<ViewLifetimeControl> OpenAsync(Func<UIElement> content, object parameter, double width = 340, double height = 200);
     }
