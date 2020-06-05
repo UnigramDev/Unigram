@@ -665,9 +665,6 @@
     <Compile Include="ViewModels\LiveLocationViewModel.cs" />
     <Compile Include="ViewModels\LogOutViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
-    <Compile Include="ViewModels\Passport\PassportAddressViewModel.cs" />
-    <Compile Include="ViewModels\Passport\PassportDocumentViewModelBase.cs" />
-    <Compile Include="ViewModels\Passport\PassportViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep3ViewModel.cs" />
@@ -814,21 +811,6 @@
     </Compile>
     <Compile Include="Views\PasscodePage.xaml.cs">
       <DependentUpon>PasscodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Passport\PassportAddressPage.xaml.cs">
-      <DependentUpon>PassportAddressPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Passport\PassportDocumentPage.xaml.cs">
-      <DependentUpon>PassportDocumentPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Passport\PassportMrzPage.xaml.cs">
-      <DependentUpon>PassportMrzPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Passport\PassportPage.xaml.cs">
-      <DependentUpon>PassportPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Passport\PassportPhoneNumberPage.xaml.cs">
-      <DependentUpon>PassportPhoneNumberPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Payments\PaymentFormStep1Page.xaml.cs">
       <DependentUpon>PaymentFormStep1Page.xaml</DependentUpon>
@@ -2170,26 +2152,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PasscodePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Passport\PassportAddressPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Passport\PassportDocumentPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Passport\PassportMrzPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Passport\PassportPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Passport\PassportPhoneNumberPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

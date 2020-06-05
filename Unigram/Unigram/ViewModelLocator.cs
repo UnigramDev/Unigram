@@ -11,7 +11,6 @@ using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Drawers;
 using Unigram.ViewModels.Folders;
-using Unigram.ViewModels.Passport;
 using Unigram.ViewModels.Payments;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Password;
@@ -267,9 +266,6 @@ namespace Unigram
                 builder.RegisterType<PaymentFormStep4ViewModel>();
                 builder.RegisterType<PaymentFormStep5ViewModel>();
                 builder.RegisterType<PaymentReceiptViewModel>();
-                builder.RegisterType<PassportViewModel>();
-                builder.RegisterType<PassportDocumentViewModelBase>();
-                builder.RegisterType<PassportAddressViewModel>();
                 builder.RegisterType<InviteViewModel>();
                 builder.RegisterType<ChatsNearbyViewModel>();
                 builder.RegisterType<FoldersViewModel>();

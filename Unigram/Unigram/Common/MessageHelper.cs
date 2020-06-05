@@ -10,7 +10,6 @@ using Unigram.Services.Navigation;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Host;
-using Unigram.Views.Passport;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
@@ -381,10 +380,6 @@ namespace Unigram.Common
             else if (phoneCode != null)
             {
                 NavigateToSendCode(protoService, phoneCode);
-            }
-            else if (auth != null)
-            {
-                navigation.Navigate(typeof(PassportPage), state: auth);
             }
             else if (lang != null)
             {

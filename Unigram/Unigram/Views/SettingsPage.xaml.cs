@@ -7,7 +7,6 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
 using Unigram.Views.Folders;
-using Unigram.Views.Passport;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
@@ -184,12 +183,6 @@ namespace Unigram.Views
         private void Language_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
-        }
-
-        private void Passport_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(PassportPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
