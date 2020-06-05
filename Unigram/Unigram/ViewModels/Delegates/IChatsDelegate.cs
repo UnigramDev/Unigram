@@ -18,6 +18,8 @@ namespace Unigram.ViewModels.Delegates
 
 
         void Navigate(object item);
+
+        void UpdateChatLastMessage(Chat chat);
     }
 
     public interface IChatListDelegate

@@ -49,8 +49,6 @@ namespace Unigram.Views
         IRootContentPage,
         INavigatingPage,
         IChatsDelegate,
-        IHandle<UpdateChatDraftMessage>,
-        IHandle<UpdateChatLastMessage>,
         IHandle<UpdateChatPosition>,
         IHandle<UpdateChatIsMarkedAsUnread>,
         IHandle<UpdateChatReadInbox>,
@@ -199,20 +197,21 @@ namespace Unigram.Views
 
         #region Handle
 
+        public void UpdateChatLastMessage(Chat chat)
+        {
+            Handle(chat.Id, (chatView, chat) =>
+            {
+                chatView.UpdateChatReadInbox(chat);
+                chatView.UpdateChatLastMessage(chat);
+            });
+        }
+
         public void Handle(UpdateChatPosition update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatReadInbox(chat));
-            this.BeginOnUIThread(() => ArchivedChats.UpdateChatList(ViewModel.ProtoService, ViewModel.Chats, new ChatListArchive()));
-        }
-
-        public void Handle(UpdateChatDraftMessage update)
-        {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
-        }
-
-        public void Handle(UpdateChatLastMessage update)
-        {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
+            if (update.Position.List is ChatListArchive)
+            {
+                this.BeginOnUIThread(() => ArchivedChats.UpdateChatList(ViewModel.ProtoService, ViewModel.Chats, new ChatListArchive()));
+            }
         }
 
         public void Handle(UpdateChatIsMarkedAsUnread update)
@@ -295,22 +294,22 @@ namespace Unigram.Views
 
         private void Handle(long chatId, long messageId, Action<Chat> update, Action<ChatCell, Chat> action)
         {
+            var chat = _cacheService.GetChat(chatId);
+            if (chat.LastMessage == null || chat.LastMessage.Id != messageId)
+            {
+                return;
+            }
+
+            update(chat);
+
+            var chatList = GetChatListForChat(chat);
+            if (chatList == null)
+            {
+                return;
+            }
+
             this.BeginOnUIThread(() =>
             {
-                var chat = ViewModel.ProtoService.GetChat(chatId);
-                if (chat.LastMessage == null || chat.LastMessage.Id != messageId)
-                {
-                    return;
-                }
-
-                update(chat);
-
-                var chatList = GetChatListForChat(chat);
-                if (chatList == null)
-                {
-                    return;
-                }
-
                 var container = chatList.ContainerFromItem(chat) as ListViewItem;
                 if (container == null)
                 {
@@ -327,20 +326,20 @@ namespace Unigram.Views
 
         private void Handle(long chatId, Action<ChatCell, Chat> action)
         {
+            var chat = _cacheService.GetChat(chatId);
+            //if (chat.Positions.Any(x => x.List is ChatListArchive))
+            //{
+            //    ArchivedChats.UpdateChatList(ViewModel.ProtoService, ViewModel.Chats, new ChatListArchive());
+            //}
+
+            var chatList = GetChatListForChat(chat);
+            if (chatList == null)
+            {
+                return;
+            }
+
             this.BeginOnUIThread(() =>
             {
-                var chat = ViewModel.ProtoService.GetChat(chatId);
-                if (chat.Positions.Any(x => x.List is ChatListArchive))
-                {
-                    ArchivedChats.UpdateChatList(ViewModel.ProtoService, ViewModel.Chats, new ChatListArchive());
-                }
-
-                var chatList = GetChatListForChat(chat);
-                if (chatList == null)
-                {
-                    return;
-                }
-
                 var container = chatList.ContainerFromItem(chat) as ListViewItem;
                 if (container == null)
                 {

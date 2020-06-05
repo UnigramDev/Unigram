@@ -645,7 +645,10 @@ namespace Unigram.ViewModels
             RaisePropertyChanged(() => Items);
         }
 
-        public class ItemsCollection : SortedObservableCollection<Chat>, IGroupSupportIncrementalLoading, IHandle<UpdateChatDraftMessage>, IHandle<UpdateChatLastMessage>, IHandle<UpdateChatPosition>
+        public class ItemsCollection : SortedObservableCollection<Chat>, ISupportIncrementalLoading,
+            IHandle<UpdateChatDraftMessage>,
+            IHandle<UpdateChatLastMessage>,
+            IHandle<UpdateChatPosition>
         {
             class ChatComparer : IComparer<Chat>
             {
@@ -759,22 +762,22 @@ namespace Unigram.ViewModels
 
             public void Handle(UpdateChatLastMessage update)
             {
-                Handle(update.ChatId, update.Positions);
+                Handle(update.ChatId, update.Positions, true);
             }
 
             public void Handle(UpdateChatDraftMessage update)
             {
-                Handle(update.ChatId, update.Positions);
+                Handle(update.ChatId, update.Positions, true);
             }
 
-            public void Handle(long chatId, IList<ChatPosition> positions)
+            public void Handle(long chatId, IList<ChatPosition> positions, bool lastMessage = false)
             {
                 var chat = GetChat(chatId);
                 var position = chat?.GetPosition(_chatList);
 
                 if (position != null)
                 {
-                    Handle(chat, position.Order);
+                    Handle(chat, position.Order, lastMessage);
                 }
             }
 
@@ -783,11 +786,11 @@ namespace Unigram.ViewModels
                 var chat = GetChat(chatId);
                 if (chat != null)
                 {
-                    Handle(chat, order);
+                    Handle(chat, order, false);
                 }
             }
 
-            private void Handle(Chat chat, long order)
+            private void Handle(Chat chat, long order, bool lastMessage)
             {
                 if (_viewModel._deletedChats.ContainsKey(chat.Id))
                 {
@@ -808,27 +811,37 @@ namespace Unigram.ViewModels
                     {
                         if (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId))
                         {
-                            var index = IndexOf(chat);
-                            var next = NextIndexOf(chat);
-
-                            if (next >= 0 && index != next)
+                            using (await _loadMoreLock.WaitAsync())
                             {
-                                Remove(chat);
-                                Insert(next, chat);
+                                var index = IndexOf(chat);
+                                var next = NextIndexOf(chat);
 
-                                if (chat.Id == _viewModel._selectedItem)
+                                if (next >= 0 && index != next)
                                 {
-                                    _viewModel.Delegate?.SetSelectedItem(chat);
+                                    Remove(chat);
+                                    Insert(next, chat);
+
+                                    if (chat.Id == _viewModel._selectedItem)
+                                    {
+                                        _viewModel.Delegate?.SetSelectedItem(chat);
+                                    }
+                                    if (_viewModel.SelectedItems.Contains(chat))
+                                    {
+                                        _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                                    }
                                 }
-                                if (_viewModel.SelectedItems.Contains(chat))
+                                else if (next >= 0 && lastMessage)
                                 {
-                                    _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                                    _viewModel.Delegate?.UpdateChatLastMessage(chat);
                                 }
                             }
                         }
                         else
                         {
-                            Remove(chat);
+                            using (await _loadMoreLock.WaitAsync())
+                            {
+                                Remove(chat);
+                            }
 
                             if (chat.Id == _viewModel._selectedItem)
                             {
