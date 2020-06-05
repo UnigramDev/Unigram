@@ -302,14 +302,14 @@ namespace Unigram.Views
 
             update(chat);
 
-            var chatList = GetChatListForChat(chat);
-            if (chatList == null)
-            {
-                return;
-            }
-
             this.BeginOnUIThread(() =>
             {
+                var chatList = GetChatListForChat(chat);
+                if (chatList == null)
+                {
+                    return;
+                }
+
                 var container = chatList.ContainerFromItem(chat) as ListViewItem;
                 if (container == null)
                 {
@@ -332,14 +332,14 @@ namespace Unigram.Views
             //    ArchivedChats.UpdateChatList(ViewModel.ProtoService, ViewModel.Chats, new ChatListArchive());
             //}
 
-            var chatList = GetChatListForChat(chat);
-            if (chatList == null)
-            {
-                return;
-            }
-
             this.BeginOnUIThread(() =>
             {
+                var chatList = GetChatListForChat(chat);
+                if (chatList == null)
+                {
+                    return;
+                }
+
                 var container = chatList.ContainerFromItem(chat) as ListViewItem;
                 if (container == null)
                 {
