@@ -1240,12 +1240,14 @@ namespace Unigram.Controls.Messages
         {
             if (SettingsService.Current.Diagnostics.BubbleMeasureAlpha)
             {
-                return;
+                Message_SizeChanged(sender, e);
             }
-
-            if (e.NewSize.Width != e.PreviousSize.Width)
+            else
             {
-                Placeholder.Width = e.NewSize.Width;
+                if (e.NewSize.Width != e.PreviousSize.Width)
+                {
+                    Placeholder.Width = e.NewSize.Width;
+                }
             }
         }
 
@@ -1256,13 +1258,13 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            var width = e.NewSize.Width;
+            var width = Message.ActualWidth;
             var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
 
             var diff = width - rect.Right;
             if (diff < Footer.ActualWidth)
             {
-                if (e.NewSize.Height < rect.Height * 2 && width + Footer.ActualWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right)
+                if (Message.ActualHeight < rect.Height * 2 && width + Footer.ActualWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right)
                 {
                     Message.Margin = new Thickness(0, 0, Footer.ActualWidth, 0);
                 }
@@ -1789,7 +1791,7 @@ namespace Unigram.Controls.Messages
             //    return base.MeasureOverride(new Size(Message.DesiredSize.Width + 20, availableSize.Height));
             //}
 
-            _maxWidth = MaxWidth;
+            _maxWidth = availableWidth;
             return base.MeasureOverride(availableSize);
 
             Calculate:
