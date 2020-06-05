@@ -32,11 +32,6 @@ namespace Unigram.Views.Settings
 #endif
         }
 
-        private void OnSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
-        {
-            AdaptiveWide.Visibility = e.NewSize.Width >= 880 ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed;
-        }
-
         private void VoIP_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsVoIPPage));

@@ -24,7 +24,6 @@
 
                 <controls:HeaderedControl>
                     <ToggleSwitch
-                        x:Name="AdaptiveWide"
                         IsOn="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
                         Header="Adaptive Layout for Wide Screens"
                         Style="{StaticResource CheckButtonStyle}"/>

@@ -345,30 +345,6 @@ namespace Unigram.Controls.Chats
         {
 
         }
-
-
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            if (SettingsService.Current.IsAdaptiveWideEnabled && availableSize.Width >= 880)
-            {
-                return base.MeasureOverride(new Size(Math.Min(availableSize.Width, 542 /* 432 + 50 + 12 */), availableSize.Height));
-            }
-
-            return base.MeasureOverride(availableSize);
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (SettingsService.Current.IsAdaptiveWideEnabled && finalSize.Width >= 880)
-            {
-                var size = new Size(Math.Min(finalSize.Width, 542 /* 432 + 50 + 12 */), finalSize.Height);
-                _presenter.Arrange(new Rect(0, 0, size.Width, size.Height));
-
-                return finalSize;
-            }
-
-            return base.ArrangeOverride(finalSize);
-        }
     }
 
     public class AccessibleChatListViewItem : ListViewItem
