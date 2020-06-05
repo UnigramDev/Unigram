@@ -1025,7 +1025,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            if (alignment == VerticalAlignment.Bottom)
+            if (alignment == VerticalAlignment.Bottom && pixel == null)
             {
                 pixel = int.MaxValue;
             }
@@ -1146,7 +1146,7 @@ namespace Unigram.ViewModels
                     if (maxId == chat.LastReadInboxMessageId && maxId == chat.LastMessage?.Id && alignment != VerticalAlignment.Center)
                     {
                         alignment = VerticalAlignment.Bottom;
-                        pixel = 12;
+                        pixel = null;
                     }
 
                     if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
