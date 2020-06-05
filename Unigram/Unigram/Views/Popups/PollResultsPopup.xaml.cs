@@ -23,7 +23,9 @@ namespace Unigram.Views.Popups
             _protoService = protoService;
             _delegate = delegato;
 
-            Title = Strings.Resources.PollResults;
+            Title.Text = Strings.Resources.PollResults;
+            Subtitle.Text = Locale.Declension(poll.Type is PollTypeQuiz ? "Answer" : "Vote", poll.TotalVoterCount);
+
             PrimaryButtonText = Strings.Resources.OK;
 
             var options = new List<PollResultViewModel>();
