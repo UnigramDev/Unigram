@@ -145,13 +145,13 @@
                 Style="{StaticResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                SizeChanged="OnSizeChanged"
                 ContextMenuOpening="Message_ContextMenuOpening"
-                SizeChanged="Message_SizeChanged"
                 TextAlignment="DetectFromContent"
                 Grid.Column="1"
                 Grid.Row="2">
                 <Paragraph>
-                    <Span x:Name="Span"/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
+                    <Span x:Name="Span"/>
                 </Paragraph>
             </RichTextBlock>
 
@@ -165,7 +165,7 @@
                 Stroke="{ThemeResource MessageSubtleLabelBrush}"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                SizeChanged="Footer_SizeChanged"
+                SizeChanged="OnSizeChanged"
                 Margin="-8,0,-6,-2"
                 Grid.Column="1"
                 Grid.Row="4"/>
