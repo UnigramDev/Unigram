@@ -400,7 +400,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateDeleteMessages update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id && !update.FromCache)
             {
                 BeginOnUIThread(() =>
                 {
@@ -457,6 +457,12 @@ namespace Unigram.ViewModels
 
                                 Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
                             }
+                        }
+
+                        if (Items[i].Content is MessageHeaderUnread && Items.Count - 1 == i)
+                        {
+                            Items.RemoveAt(i);
+                            i--;
                         }
                     }
 
