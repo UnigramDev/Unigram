@@ -29,10 +29,11 @@ namespace Unigram.Views.Popups
             Date.MinDate = DateTime.Today;
             Date.MaxDate = DateTime.Today.AddYears(1);
 
+            Time.Time = DateTime.Today.TimeOfDay.Add(TimeSpan.FromMinutes(10));
+
             Title = reminder ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage;
             PrimaryButtonText = Strings.Resources.OK;
-            //SecondaryButtonText = Strings.Resources.UserRestrictionsUntilForever;
-            CloseButtonText = Strings.Resources.Cancel;
+            SecondaryButtonText = Strings.Resources.Cancel;
 
             if (user != null && !(user.Status is UserStatusRecently) && !reminder)
             {

@@ -16,6 +16,6 @@
         <CalendarDatePicker x:Name="Date" Margin="12,12,12,12" HorizontalAlignment="Stretch"/>
         <TimePicker x:Name="Time" Margin="12,0,12,12" HorizontalAlignment="Stretch"/>
 
-        <HyperlinkButton x:Name="Online" Click="Online_Click" Margin="12,12,12,12"/>
+        <HyperlinkButton x:Name="Online" Click="Online_Click" HorizontalAlignment="Center" Margin="12,8,12,8"/>
     </StackPanel>
 </controls:ContentPopup>
