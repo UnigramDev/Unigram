@@ -330,6 +330,9 @@
     <Compile Include="Controls\LazoListView.cs" />
     <Compile Include="Controls\LazoListViewItem.cs" />
     <Compile Include="Controls\MasterDetailPanel.cs" />
+    <Compile Include="Controls\MessagePopup.xaml.cs">
+      <DependentUpon>MessagePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\AlbumContent.xaml.cs">
       <DependentUpon>AlbumContent.xaml</DependentUpon>
     </Compile>
@@ -1456,9 +1459,6 @@
     <Compile Include="Controls\ProgressBarRingSlice.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
     <Compile Include="Controls\SimpleButton.cs" />
-    <Compile Include="Controls\TLMessageDialog.xaml.cs">
-      <DependentUpon>TLMessageDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Converters\EditToVisibilityConverter.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
     <Compile Include="Triggers\BooleanTrigger.cs" />
@@ -1889,6 +1889,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\MessagePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Messages\Content\AlbumContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2022,10 +2026,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\InputDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\TLMessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
