@@ -501,7 +501,7 @@ namespace Unigram.ViewModels
         {
             if (message.Content is MessagePoll poll)
             {
-                await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
+                await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
                 return;
             }
 

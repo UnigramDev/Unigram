@@ -5,6 +5,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -13,12 +14,14 @@ namespace Unigram.Views.Popups
     public sealed partial class PollResultsPopup : TLContentDialog
     {
         private readonly IProtoService _protoService;
+        private readonly IMessageDelegate _delegate;
 
-        public PollResultsPopup(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, long chatId, long messageId, Poll poll)
+        public PollResultsPopup(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IMessageDelegate delegato, long chatId, long messageId, Poll poll)
         {
             InitializeComponent();
 
             _protoService = protoService;
+            _delegate = delegato;
 
             Title = Strings.Resources.PollResults;
             PrimaryButtonText = Strings.Resources.OK;
@@ -42,9 +45,7 @@ namespace Unigram.Views.Popups
 
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
-            var element = args.Element as FrameworkElement;
-
-            var item = element.DataContext;
+            var item = sender.ItemsSourceView.GetAt(args.Index);
             if (item is User user)
             {
                 var button = args.Element as Button;
@@ -56,13 +57,22 @@ namespace Unigram.Views.Popups
                 var photo = content.Children[0] as ProfilePicture;
                 photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
 
-                //button.Command = ViewModel.OpenChatCommand;
-                //button.CommandParameter = user;
+                button.Click += User_Click;
             }
             else if (item is PollResultViewModel option)
             {
                 var headered = args.Element as HeaderedControl;
                 headered.Header = $"{option.Text} — {option.VotePercentage}%";
+                headered.Footer = Locale.Declension(option.Type is PollTypeQuiz ? "Answer" : "Vote", option.VoterCount);
+            }
+        }
+
+        private void User_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is User user)
+            {
+                _delegate.OpenUser(user.Id);
+                Hide();
             }
         }
     }
@@ -93,13 +103,19 @@ namespace Unigram.Views.Popups
 
         public string Text => _option.Text;
         public int VotePercentage => _option.VotePercentage;
+        public int VoterCount => _option.VoterCount;
+
+        public PollType Type => _poll.Type;
 
         public MvxObservableCollection<User> Items { get; private set; }
 
         public RelayCommand LoadMoreCommand { get; }
         private async void LoadMoreExecute()
         {
-            var response = await ProtoService.SendAsync(new GetPollVoters(_chatId, _messageId, _poll.Options.IndexOf(_option), _offset, 10));
+            var limit = _option.VoterCount <= 15 ? 15 : 10;
+            limit = _offset > 0 ? 50 : limit;
+
+            var response = await ProtoService.SendAsync(new GetPollVoters(_chatId, _messageId, _poll.Options.IndexOf(_option), _offset, limit));
             if (response is Telegram.Td.Api.Users users)
             {
                 foreach (var id in users.UserIds)

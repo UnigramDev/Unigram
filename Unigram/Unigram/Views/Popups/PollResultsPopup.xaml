@@ -13,10 +13,52 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
+    <controls:TLContentDialog.Resources>
+        <Style TargetType="controls:HeaderedControl">
+            <Setter Property="Radius" Value="8"/>
+            <Setter Property="Padding" Value="0,16,0,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:HeaderedControl">
+                        <Grid x:Name="ContentRoot" Margin="12,0" Padding="{TemplateBinding Padding}" MaxWidth="640">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    x:Name="HeaderLabel"
+                                    Text="{TemplateBinding Header}"
+                                    Margin="12,0,12,6"
+                                    Style="{StaticResource SettingsGroupTextBlockStyle}"
+                                    Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                <TextBlock
+                                    x:Name="FooterLabel"
+                                    Text="{TemplateBinding Footer}"
+                                    Margin="12,0,12,6"
+                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                    Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                    Grid.Column="1"/>
+                            </Grid>
+
+                            <Border x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="{TemplateBinding Radius}" Grid.Column="1" Grid.Row="1">
+                                <ItemsPresenter x:Name="Presenter" Margin="0,0,0,-1"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </controls:TLContentDialog.Resources>
+    
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <microsoft:ItemsRepeaterScrollHost>
             <ScrollViewer>
-                <microsoft:ItemsRepeater x:Name="Repeater" ElementPrepared="OnElementPrepared">
+                <microsoft:ItemsRepeater x:Name="Repeater" ElementPrepared="OnElementPrepared" Margin="0,0,0,16">
                     <microsoft:ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="local:PollResultViewModel">
                             <controls:HeaderedControl>
@@ -34,6 +76,7 @@
                                                     <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
                                                     <TextBlock
+                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                         TextWrapping="NoWrap"
                                                         TextTrimming="CharacterEllipsis"
                                                         VerticalAlignment="Center"
