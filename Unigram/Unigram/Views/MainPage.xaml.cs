@@ -1084,13 +1084,7 @@ namespace Unigram.Views
 
         public void Scroll(int offset, bool navigate)
         {
-            var already = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == ViewModel.Chats.SelectedItem);
-            if (already == null)
-            {
-                return;
-            }
-
-            var index = ViewModel.Chats.Items.IndexOf(already);
+            int index;
             if (offset == int.MaxValue)
             {
                 index = ViewModel.Chats.Items.Count - 1;
@@ -1101,7 +1095,13 @@ namespace Unigram.Views
             }
             else
             {
-                index += offset;
+                var already = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == ViewModel.Chats.SelectedItem);
+                if (already == null)
+                {
+                    return;
+                }
+
+                index = ViewModel.Chats.Items.IndexOf(already) + offset;
             }
 
             if (index >= 0 && index < ViewModel.Chats.Items.Count)
@@ -2987,7 +2987,7 @@ namespace Unigram.Views
             {
                 return;
             }
-            
+
             if (args.Item is ChatFilterViewModel item && args.ItemContainer.ContentTemplateRoot is StackPanel panel)
             {
                 var grid = panel.Children[0] as Grid;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Unigram.ViewModels;
+using Windows.Data.Json;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -147,6 +149,7 @@ namespace Unigram.Services
             : base(protoService, cacheService, settingsService, aggregator)
         {
             InitializeDefault();
+            InitializeCustom();
         }
 
         public IList<ShortcutCommand> Process(AcceleratorKeyEventArgs args)
@@ -185,61 +188,85 @@ namespace Unigram.Services
 
         private void InitializeDefault()
         {
-            set("ctrl+w", ShortcutCommand.Close);
-            set("ctrl+f4", ShortcutCommand.Close);
-            set("ctrl+l", ShortcutCommand.Lock);
-            set("ctrl+m", ShortcutCommand.Minimize);
-            set("ctrl+q", ShortcutCommand.Quit);
+            Set("ctrl+w", ShortcutCommand.Close);
+            Set("ctrl+f4", ShortcutCommand.Close);
+            Set("ctrl+l", ShortcutCommand.Lock);
+            Set("ctrl+m", ShortcutCommand.Minimize);
+            Set("ctrl+q", ShortcutCommand.Quit);
 
-            //set("media play", ShortcutCommand.MediaPlay);
-            //set("media pause", ShortcutCommand.MediaPause);
-            //set("toggle media play/pause", ShortcutCommand.MediaPlayPause);
-            //set("media stop", ShortcutCommand.MediaStop);
-            //set("media previous", ShortcutCommand.MediaPrevious);
-            //set("media next", ShortcutCommand.MediaNext);
+            Set("ctrl+f", ShortcutCommand.Search);
+            Set("search", ShortcutCommand.Search);
 
-            set("ctrl+f", ShortcutCommand.Search);
-            set("search", ShortcutCommand.Search);
-            //set("find", ShortcutCommand.Search);
+            Set("ctrl+pgdown", ShortcutCommand.ChatNext);
+            Set("alt+down", ShortcutCommand.ChatNext);
+            Set("ctrl+pgup", ShortcutCommand.ChatPrevious);
+            Set("alt+up", ShortcutCommand.ChatPrevious);
 
-            set("ctrl+pgdown", ShortcutCommand.ChatNext);
-            set("alt+down", ShortcutCommand.ChatNext);
-            set("ctrl+pgup", ShortcutCommand.ChatPrevious);
-            set("alt+up", ShortcutCommand.ChatPrevious);
+            Set("ctrl+tab", ShortcutCommand.ChatNext);
+            Set("ctrl+shift+tab", ShortcutCommand.ChatPrevious);
 
-            set("ctrl+tab", ShortcutCommand.ChatNext);
-            set("ctrl+shift+tab", ShortcutCommand.ChatPrevious);
-            //set("ctrl+backtab", ShortcutCommand.ChatPrevious);
+            Set("ctrl+alt+home", ShortcutCommand.ChatFirst);
+            Set("ctrl+alt+end", ShortcutCommand.ChatLast);
 
-            set("ctrl+alt+home", ShortcutCommand.ChatFirst);
-            set("ctrl+alt+end", ShortcutCommand.ChatLast);
-
-            //set("f5", ShortcutCommand.SupportReloadTemplates);
-            //set("ctrl+delete", ShortcutCommand.SupportToggleMuted);
-            //set("ctrl+insert", ShortcutCommand.SupportScrollToCurrent);
-            //set("ctrl+shift+x", ShortcutCommand.SupportHistoryBack);
-            //set("ctrl+shift+c", ShortcutCommand.SupportHistoryForward);
-
-            set("ctrl+1", ShortcutCommand.ChatPinned1);
-            set("ctrl+2", ShortcutCommand.ChatPinned2);
-            set("ctrl+3", ShortcutCommand.ChatPinned3);
-            set("ctrl+4", ShortcutCommand.ChatPinned4);
-            set("ctrl+5", ShortcutCommand.ChatPinned5);
+            Set("ctrl+1", ShortcutCommand.ChatPinned1);
+            Set("ctrl+2", ShortcutCommand.ChatPinned2);
+            Set("ctrl+3", ShortcutCommand.ChatPinned3);
+            Set("ctrl+4", ShortcutCommand.ChatPinned4);
+            Set("ctrl+5", ShortcutCommand.ChatPinned5);
 
             for (int i = 0; i < _foldersCommands.Length; i++)
             {
-                set($"ctrl+{i + 1}", _foldersCommands[i]);
+                Set($"ctrl+{i + 1}", _foldersCommands[i]);
             }
 
-            set("ctrl+shift+down", ShortcutCommand.FolderNext);
-            set("ctrl+shift+up", ShortcutCommand.FolderPrevious);
+            Set("ctrl+shift+down", ShortcutCommand.FolderNext);
+            Set("ctrl+shift+up", ShortcutCommand.FolderPrevious);
 
-            set("ctrl+0", ShortcutCommand.ChatSelf);
+            Set("ctrl+0", ShortcutCommand.ChatSelf);
 
-            set("ctrl+9", ShortcutCommand.ShowArchive);
+            Set("ctrl+9", ShortcutCommand.ShowArchive);
         }
 
-        private void set(string keys, ShortcutCommand command)
+        private async void InitializeCustom()
+        {
+            var file = await ApplicationData.Current.LocalFolder.TryGetItemAsync("shortcuts.json") as StorageFile;
+            if (file == null)
+            {
+                return;
+            }
+
+            var text = await FileIO.ReadTextAsync(file);
+
+            if (JsonArray.TryParse(text, out JsonArray commands))
+            {
+                foreach (var data in commands)
+                {
+                    if (data.ValueType != JsonValueType.Object)
+                    {
+                        continue;
+                    }
+
+                    var item = data.GetObject();
+                    if (item.ContainsKey("keys") && item.ContainsKey("command"))
+                    {
+                        var keys = item.GetNamedString("keys", string.Empty);
+                        var command = item.GetNamedString("command", string.Empty);
+
+                        if (string.IsNullOrEmpty(keys) || string.IsNullOrEmpty(command))
+                        {
+                            continue;
+                        }
+
+                        if (_commandByName.TryGetValue(command, out ShortcutCommand value))
+                        {
+                            Set(keys, value, true);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void Set(string keys, ShortcutCommand command, bool replace = false)
         {
             var shortcut = ParseKeys(keys);
             if (shortcut == null)
@@ -250,7 +277,14 @@ namespace Unigram.Services
             List<ShortcutCommand> commands;
             if (_commands.ContainsKey(shortcut))
             {
-                commands = _commands[shortcut];
+                if (replace)
+                {
+                    commands = _commands[shortcut] = new List<ShortcutCommand>();
+                }
+                else
+                {
+                    commands = _commands[shortcut];
+                }
             }
             else
             {
