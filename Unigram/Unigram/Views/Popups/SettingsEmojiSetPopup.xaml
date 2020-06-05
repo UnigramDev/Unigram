@@ -14,10 +14,11 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
     Closed="OnClosed">
 
-    <Grid>
-        <ListView x:Name="List"
-                  SelectionMode="None"
-                  ContainerContentChanging="OnContainerContentChanging">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <controls:TableListView
+            x:Name="List"
+            SelectionMode="None"
+            ContainerContentChanging="OnContainerContentChanging">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -25,8 +26,11 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Header>
-                <Border Height="6"/>
+                <Border Height="16"/>
             </ListView.Header>
+            <ListView.Footer>
+                <Border Height="16"/>
+            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <RadioButton Click="EmojiSet_Click"
@@ -45,7 +49,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Image Width="40" Height="40" Margin="0,0,12,0" VerticalAlignment="Top" Grid.Column="1" Grid.RowSpan="2"/>
+                            <Image Width="40" Height="40" VerticalAlignment="Top" Grid.Column="1" Grid.RowSpan="2"/>
 
                             <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                             <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Row="1"/>
@@ -56,6 +60,6 @@
             <ListView.ItemContainerTransitions>
                 <TransitionCollection/>
             </ListView.ItemContainerTransitions>
-        </ListView>
+        </controls:TableListView>
     </Grid>
 </controls:ContentPopup>
