@@ -157,11 +157,11 @@ namespace Unigram.ViewModels.Settings
 
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                    await MessagePopup.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
                 }
                 else
                 {
-                    await new TLMessageDialog(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
+                    await new MessagePopup(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
                 }
             }
         }

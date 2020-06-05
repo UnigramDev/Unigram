@@ -57,7 +57,7 @@ namespace Unigram.ViewModels.Settings.Password
                 address = string.Empty;
                 addressValid = false;
 
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.YourEmailSkipWarningText, Strings.Resources.YourEmailSkipWarning, Strings.Resources.YourEmailSkip, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -87,7 +87,7 @@ namespace Unigram.ViewModels.Settings.Password
             {
                 if (error.TypeEquals(ErrorType.EMAIL_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.PasswordEmailInvalid, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                    await MessagePopup.ShowAsync(Strings.Resources.PasswordEmailInvalid, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 }
             }
         }

@@ -160,7 +160,7 @@ namespace Unigram.ViewModels
         {
             var text = Regex.Replace(Strings.Resources.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
 
-            var confirm = await TLMessageDialog.ShowAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new GetSupportUser());

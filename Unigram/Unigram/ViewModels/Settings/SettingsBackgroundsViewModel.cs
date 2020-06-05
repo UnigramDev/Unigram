@@ -111,7 +111,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetChatBackgroundsAlert, Strings.Resources.ResetChatBackgroundsAlertTitle, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 return;

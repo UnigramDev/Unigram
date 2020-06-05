@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Passport
         public RelayCommand DeleteCommand { get; }
         private async void DeleteExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.PassportDeleteDocumentAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.PassportDeleteDocumentAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 return;

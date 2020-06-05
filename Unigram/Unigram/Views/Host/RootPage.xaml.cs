@@ -473,7 +473,7 @@ namespace Unigram.Views.Host
                 if (destination == RootDestination.AddAccount)
                 {
 #if DEBUG
-                    var dialog = new TLMessageDialog();
+                    var dialog = new MessagePopup();
                     dialog.Title = "Environment";
                     dialog.Message = "Choose your environment";
                     dialog.PrimaryButtonText = "Live";

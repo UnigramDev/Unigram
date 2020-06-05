@@ -694,7 +694,7 @@ namespace Unigram.ViewModels
                     dataPackage.SetText(link.Url);
                     ClipboardEx.TrySetContent(dataPackage);
 
-                    await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else
@@ -789,7 +789,7 @@ namespace Unigram.ViewModels
 
             if (chat.PinnedMessageId == message.Id)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ProtoService.Send(new UnpinChatMessage(chat.Id));
@@ -797,7 +797,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var dialog = new TLMessageDialog();
+                var dialog = new MessagePopup();
                 dialog.Title = Strings.Resources.AppName;
                 dialog.Message = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
                     ? Strings.Resources.PinMessageAlertChannel
@@ -920,7 +920,7 @@ namespace Unigram.ViewModels
             {
                 if (message.SchedulingState != null)
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
 
@@ -945,7 +945,7 @@ namespace Unigram.ViewModels
                     else
                     {
                         // TODO:
-                        await TLMessageDialog.ShowAsync("Payments are coming soon!", Strings.Resources.AppName, "OK");
+                        await MessagePopup.ShowAsync("Payments are coming soon!", Strings.Resources.AppName, "OK");
                         return;
 
                         var response = await ProtoService.SendAsync(new GetPaymentForm(chat.Id, message.Id));
@@ -1042,7 +1042,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
-                            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                             if (confirm != ContentDialogResult.Primary)
                             {
                                 return;
@@ -1067,14 +1067,14 @@ namespace Unigram.ViewModels
                         {
                             if (answer.ShowAlert)
                             {
-                                await new TLMessageDialog(answer.Text).ShowQueuedAsync();
+                                await new MessagePopup(answer.Text).ShowQueuedAsync();
                             }
                             else
                             {
                                 if (bot == null)
                                 {
                                     // TODO:
-                                    await new TLMessageDialog(answer.Text).ShowQueuedAsync();
+                                    await new MessagePopup(answer.Text).ShowQueuedAsync();
                                     return;
                                 }
 
@@ -1091,7 +1091,7 @@ namespace Unigram.ViewModels
                                 }
                                 else
                                 {
-                                    //var dialog = new TLMessageDialog(response.Result.Url, "Open this link?");
+                                    //var dialog = new MessagePopup(response.Result.Url, "Open this link?");
                                     //dialog.PrimaryButtonText = "OK";
                                     //dialog.SecondaryButtonText = "Cancel";
 
@@ -1158,7 +1158,7 @@ namespace Unigram.ViewModels
                             }
                         }
 
-                        var confirm = await TLMessageDialog.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
@@ -1167,7 +1167,7 @@ namespace Unigram.ViewModels
                 }
                 else if (keyboardButton.Type is KeyboardButtonTypeRequestLocation requestLocation)
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         var location = await _locationService.GetPositionAsync();
@@ -1493,7 +1493,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.StopPollAlertText, Strings.Resources.StopPollAlertTitle, Strings.Resources.Stop, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.StopPollAlertText, Strings.Resources.StopPollAlertTitle, Strings.Resources.Stop, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

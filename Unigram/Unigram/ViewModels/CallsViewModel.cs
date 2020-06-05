@@ -125,7 +125,7 @@ namespace Unigram.ViewModels
         public RelayCommand<TLCallGroup> CallDeleteCommand { get; }
         private async void CallDeleteExecute(TLCallGroup group)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ConfirmDeleteCallLog, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ConfirmDeleteCallLog, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

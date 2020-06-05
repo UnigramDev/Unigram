@@ -730,7 +730,7 @@ namespace Unigram.ViewModels.Passport
         public RelayCommand HelpCommand { get; }
         private async void HelpExecute()
         {
-            await TLMessageDialog.ShowAsync(Strings.Resources.PassportInfo, Strings.Resources.PassportInfoTitle, Strings.Resources.Close);
+            await MessagePopup.ShowAsync(Strings.Resources.PassportInfo, Strings.Resources.PassportInfoTitle, Strings.Resources.Close);
         }
     }
 

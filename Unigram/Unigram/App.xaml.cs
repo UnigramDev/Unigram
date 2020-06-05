@@ -97,7 +97,7 @@ namespace Unigram
 
                 try
                 {
-                    await new TLMessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
+                    await new MessagePopup(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
                 }
                 catch { }
             };

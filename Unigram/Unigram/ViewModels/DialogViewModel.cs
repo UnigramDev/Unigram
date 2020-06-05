@@ -2472,7 +2472,7 @@ namespace Unigram.ViewModels
 
             /*                        if (response.Error.TypeEquals(TLErrorType.PEER_FLOOD))
                         {
-                            var dialog = new TLMessageDialog();
+                            var dialog = new MessagePopup();
                             dialog.Title = "Telegram";
                             dialog.Message = "Sorry, you can only send messages to mutual contacts at the moment.";
                             dialog.PrimaryButtonText = "More info";
@@ -2595,7 +2595,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(message, title, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(message, title, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -2724,7 +2724,7 @@ namespace Unigram.ViewModels
             //}
             //catch
             //{
-            //    await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
+            //    await MessagePopup.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
             //}
 
             var chat = _chat;
@@ -2745,7 +2745,7 @@ namespace Unigram.ViewModels
                 var callUser = CacheService.GetUser(call.UserId);
                 if (callUser != null && callUser.Id != user.Id)
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
 
@@ -2762,7 +2762,7 @@ namespace Unigram.ViewModels
             var fullInfo = CacheService.GetUserFull(user.Id);
             if (fullInfo != null && fullInfo.HasPrivateCalls)
             {
-                await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
                 return;
             }
 
@@ -2771,11 +2771,11 @@ namespace Unigram.ViewModels
             {
                 if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
                 {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
                 {
-                    await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }
@@ -2803,7 +2803,7 @@ namespace Unigram.ViewModels
                 basicGroup != null && basicGroup.CanPinMessages() ||
                 chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Delegate?.UpdatePinnedMessage(chat, null, false);
@@ -2844,7 +2844,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

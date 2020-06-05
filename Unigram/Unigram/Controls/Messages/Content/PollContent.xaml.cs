@@ -153,7 +153,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (_message?.SchedulingState != null)
             {
-                await TLMessageDialog.ShowAsync(Strings.Resources.MessageScheduledVote, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledVote, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 

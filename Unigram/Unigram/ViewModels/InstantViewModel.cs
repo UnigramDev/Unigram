@@ -99,7 +99,7 @@ namespace Unigram.ViewModels
             dataPackage.SetText(ShareLink.AbsoluteUri);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
     }
 }

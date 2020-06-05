@@ -156,7 +156,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            await TLMessageDialog.ShowAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.Resources.EventLogInfoDetailChannel : Strings.Resources.EventLogInfoDetail, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
+            await MessagePopup.ShowAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.Resources.EventLogInfoDetailChannel : Strings.Resources.EventLogInfoDetail, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
         }
 
         public ItemsCollection Items { get; protected set; }

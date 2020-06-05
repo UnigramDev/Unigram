@@ -221,7 +221,7 @@ namespace Unigram.ViewModels.SignIn
 
                 if (user.PhoneNumber.Contains(phoneNumber) || phoneNumber.Contains(user.PhoneNumber))
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
+                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _lifetimeService.PreviousItem = session;
@@ -256,36 +256,36 @@ namespace Unigram.ViewModels.SignIn
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
-                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_PASSWORD_FLOOD))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_BANNED))
                 {
                     //needShowInvalidAlert(req.phone_number, true);
-                    await TLMessageDialog.ShowAsync(Strings.Resources.BannedPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.BannedPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Message.StartsWith("FLOOD_WAIT"))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Code != -1000)
                 {
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }

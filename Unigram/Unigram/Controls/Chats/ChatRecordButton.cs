@@ -379,7 +379,7 @@ namespace Unigram.Controls.Chats
 
                 this.BeginOnUIThread(async () =>
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                    var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));

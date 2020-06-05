@@ -229,7 +229,7 @@ namespace Unigram.ViewModels.Supergroups
                     history = true;
                 }
 
-                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.DiscussionLinkGroup, Strings.Resources.DiscussionLinkGroup, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.DiscussionLinkGroup, Strings.Resources.DiscussionLinkGroup, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -286,7 +286,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.DiscussionUnlinkChannelAlert, linkedChat.Title), Strings.Resources.DiscussionUnlinkGroup, Strings.Resources.DiscussionUnlink, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.DiscussionUnlinkChannelAlert, linkedChat.Title), Strings.Resources.DiscussionUnlinkGroup, Strings.Resources.DiscussionUnlink, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

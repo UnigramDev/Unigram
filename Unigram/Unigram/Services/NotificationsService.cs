@@ -103,14 +103,14 @@ namespace Unigram.Services
 
             async void DeleteAccount()
             {
-                var decline = await TLMessageDialog.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
                 if (decline != ContentDialogResult.Primary)
                 {
                     Handle(update);
                     return;
                 }
 
-                var delete = await TLMessageDialog.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
                 if (delete != ContentDialogResult.Primary)
                 {
                     Handle(update);
@@ -125,7 +125,7 @@ namespace Unigram.Services
                 await Task.Delay(2000);
                 BeginOnUIThread(async () =>
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         DeleteAccount();
@@ -134,7 +134,7 @@ namespace Unigram.Services
 
                     if (terms.MinUserAge > 0)
                     {
-                        var age = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.TosAgeText, terms.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                        var age = await MessagePopup.ShowAsync(string.Format(Strings.Resources.TosAgeText, terms.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
                         if (age != ContentDialogResult.Primary)
                         {
                             DeleteAccount();
@@ -165,7 +165,7 @@ namespace Unigram.Services
             {
                 if (update.Type.StartsWith("AUTH_KEY_DROP_"))
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _protoService.Send(new Destroy());
@@ -173,7 +173,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             });
         }

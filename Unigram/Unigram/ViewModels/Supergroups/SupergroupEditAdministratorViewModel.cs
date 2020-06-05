@@ -405,7 +405,7 @@ namespace Unigram.ViewModels.Supergroups
                     builder.AppendLine(Strings.Resources.EditAdminTransferAlertText3);
                 }
 
-                var confirm = await TLMessageDialog.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
                 if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordPage));
@@ -413,7 +413,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.EditAdminTransferReadyAlertText, supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.EditAdminTransferReadyAlertText, supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
                 if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     return;

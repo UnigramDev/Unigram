@@ -62,7 +62,7 @@ namespace Unigram.Controls
 
             this.BeginOnUIThread(async () =>
             {
-                var confirm = await TLMessageDialog.ShowAsync("In order to play voice messages you must install Web Media Extensions from the Microsoft Store.", Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync("In order to play voice messages you must install Web Media Extensions from the Microsoft Store.", Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

@@ -143,11 +143,11 @@ namespace Unigram.ViewModels
                 {
                     if (restricted.IsForever())
                     {
-                        await TLMessageDialog.ShowAsync(forever, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(forever, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                     else
                     {
-                        await TLMessageDialog.ShowAsync(string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
                     return true;
@@ -156,7 +156,7 @@ namespace Unigram.ViewModels
                 {
                     if (!permission(chat.Permissions))
                     {
-                        await TLMessageDialog.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
                         return true;
                     }
                 }
@@ -165,7 +165,7 @@ namespace Unigram.ViewModels
             {
                 if (!permission(chat.Permissions))
                 {
-                    await TLMessageDialog.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(global, Strings.Resources.AppName, Strings.Resources.OK);
                     return true;
                 }
             }
@@ -602,7 +602,7 @@ namespace Unigram.ViewModels
                 }
                 else if (error.TypeEquals(ErrorType.SCHEDULE_TOO_MUCH))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledLimitReached, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
 

@@ -151,7 +151,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 await ProtoService.SendAsync(new ResetNetworkStatistics());
@@ -333,7 +333,7 @@ namespace Unigram.ViewModels.Settings
     //    public RelayCommand ResetCommand { get; }
     //    private async void ResetExecute()
     //    {
-    //        var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
+    //        var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
     //        if (confirm == ContentDialogResult.Primary)
     //        {
     //            _statsService.ResetStats(Type);

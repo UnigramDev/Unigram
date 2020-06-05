@@ -535,7 +535,7 @@ namespace Unigram.Controls.Messages
             else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
             {
                 Window.Current.ShowTeachingTip(HeaderLabel, Strings.Resources.HidAccount);
-                //await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
+                //await MessagePopup.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 

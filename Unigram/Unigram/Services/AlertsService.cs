@@ -297,7 +297,7 @@ namespace Unigram.Services
 
         private static async void ShowPeerFloodAlert(IDispatcherWrapper fragment, int reason)
         {
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
             dialog.PrimaryButtonText = Strings.Resources.OK;
 
@@ -348,7 +348,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
             dialog.Message = text;
             dialog.PrimaryButtonText = Strings.Resources.OK;
@@ -379,7 +379,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
             dialog.PrimaryButtonText = Strings.Resources.OK;
 

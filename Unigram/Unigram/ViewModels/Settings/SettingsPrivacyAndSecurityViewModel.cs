@@ -193,7 +193,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (!value)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     RaisePropertyChanged(() => IsContactsSuggestEnabled);
@@ -240,7 +240,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearDraftsCommand { get; }
         private async void ClearDraftsExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearDrafts, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureClearDrafts, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -256,7 +256,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearContactsCommand { get; }
         private async void ClearContactsExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.SyncContactsDeleteInfo, Strings.Resources.Contacts, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.SyncContactsDeleteInfo, Strings.Resources.Contacts, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

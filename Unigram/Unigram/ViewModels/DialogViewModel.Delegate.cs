@@ -378,7 +378,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                await TLMessageDialog.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -472,7 +472,7 @@ namespace Unigram.ViewModels
 
                     if (untrust)
                     {
-                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;

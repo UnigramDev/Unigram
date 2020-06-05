@@ -104,40 +104,40 @@ namespace Unigram.ViewModels.SignIn
 
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidPhoneNumber, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidCode, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.CodeExpired, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidFirstName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.InvalidLastName, Strings.Resources.OK);
                 }
                 else if (error.Message.StartsWith("FLOOD_WAIT"))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Code != -1000)
                 {
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
 
                 Logs.Logger.Error(Logs.Target.API, "account.signIn error " + error);

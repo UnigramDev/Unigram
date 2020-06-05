@@ -50,7 +50,7 @@ namespace Unigram.ViewModels
             var location = await _locationService.GetPositionAsync();
             if (location == null)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));

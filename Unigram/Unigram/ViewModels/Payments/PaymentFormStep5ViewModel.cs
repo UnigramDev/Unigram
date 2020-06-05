@@ -152,9 +152,9 @@ namespace Unigram.ViewModels.Payments
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var disclaimer = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, _bot.FirstName, _provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
+            var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, _bot.FirstName, _provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
 
-            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(_totalAmount, _paymentForm.Invoice.Currency), _bot.FirstName, _invoice.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(_totalAmount, _paymentForm.Invoice.Currency), _bot.FirstName, _invoice.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 return;

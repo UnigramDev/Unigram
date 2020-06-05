@@ -294,6 +294,7 @@
     <Compile Include="Controls\ColorSlider.cs" />
     <Compile Include="Controls\ColorTextBox.cs" />
     <Compile Include="Controls\ConfettiView.cs" />
+    <Compile Include="Controls\ContentPopup.cs" />
     <Compile Include="Controls\DialogListView.cs" />
     <Compile Include="Controls\Drawers\AnimationDrawer.xaml.cs">
       <DependentUpon>AnimationDrawer.xaml</DependentUpon>
@@ -454,7 +455,6 @@
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
-    <Compile Include="Controls\TLContentDialog.cs" />
     <Compile Include="Controls\TopNavView.cs" />
     <Compile Include="Controls\UndoView.xaml.cs">
       <DependentUpon>UndoView.xaml</DependentUpon>

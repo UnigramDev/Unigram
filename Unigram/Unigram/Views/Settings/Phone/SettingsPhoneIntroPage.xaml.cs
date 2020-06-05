@@ -20,7 +20,7 @@ namespace Unigram.Views.Settings
 
         private async void Change_Click(object sender, RoutedEventArgs e)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.PhoneNumberAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Frame.Navigate(typeof(SettingsPhonePage));

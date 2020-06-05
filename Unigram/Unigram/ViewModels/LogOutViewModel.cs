@@ -31,7 +31,7 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AskAQuestionInfo, Strings.Resources.AskAQuestion, Strings.Resources.AskButton, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new GetSupportUser());
@@ -49,7 +49,7 @@ namespace Unigram.ViewModels
         public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureLogout, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureLogout, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

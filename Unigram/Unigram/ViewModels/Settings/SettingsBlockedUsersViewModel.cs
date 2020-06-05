@@ -116,7 +116,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<User> UnblockCommand { get; }
         private async void UnblockExecute(User user)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 ProtoService.Send(new UnblockUser(user.Id));

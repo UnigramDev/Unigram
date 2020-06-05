@@ -43,7 +43,7 @@ namespace Unigram.ViewModels.Settings.Password
             if (!string.Equals(field1, field2))
             {
                 // Error
-                await TLMessageDialog.ShowAsync(Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 

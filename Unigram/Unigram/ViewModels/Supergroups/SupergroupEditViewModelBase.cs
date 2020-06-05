@@ -294,7 +294,7 @@ namespace Unigram.ViewModels.Supergroups
                     return;
                 }
 
-                var dialog = new TLMessageDialog();
+                var dialog = new MessagePopup();
                 dialog.Title = Strings.Resources.AppName;
                 dialog.Message = string.Format(Strings.Resources.RevokeLinkAlert, MeUrlPrefixConverter.Convert(CacheService, supergroup.Username, true), chat.Title);
                 dialog.PrimaryButtonText = Strings.Resources.RevokeButton;

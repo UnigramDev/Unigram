@@ -1677,7 +1677,7 @@ namespace Unigram.Views
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
                 {
                     Window.Current.ShowTeachingTip(sender as FrameworkElement, Strings.Resources.HidAccount);
-                    //await TLMessageDialog.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
+                    //await MessagePopup.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else if (message.IsChannelPost)

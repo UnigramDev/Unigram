@@ -126,7 +126,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeInfoBase> ThemeCreateCommand { get; }
         private async void ThemeCreateExecute(ThemeInfoBase theme)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -187,7 +187,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeCustomInfo> ThemeDeleteCommand { get; }
         private async void ThemeDeleteExecute(ThemeCustomInfo theme)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

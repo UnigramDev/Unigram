@@ -270,7 +270,7 @@ namespace Unigram.ViewModels.Settings
             dataPackage.SetText(MeUrlPrefixConverter.Convert(ProtoService, _username));
             ClipboardEx.TrySetContent(dataPackage);
 
-            await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
     }
 }

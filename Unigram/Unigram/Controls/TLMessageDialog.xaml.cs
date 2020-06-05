@@ -8,9 +8,9 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    public sealed partial class TLMessageDialog : ContentPopup
+    public sealed partial class MessagePopup : ContentPopup
     {
-        public TLMessageDialog()
+        public MessagePopup()
         {
             InitializeComponent();
 
@@ -18,13 +18,13 @@ namespace Unigram.Controls
             Closed += OnClosed;
         }
 
-        public TLMessageDialog(string message)
+        public MessagePopup(string message)
             : this(message, null)
         {
 
         }
 
-        public TLMessageDialog(string message, string title)
+        public MessagePopup(string message, string title)
         {
             InitializeComponent();
 
@@ -118,7 +118,7 @@ namespace Unigram.Controls
 
         public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null)
         {
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = title;
             dialog.Message = message;
             dialog.PrimaryButtonText = primary ?? string.Empty;
@@ -129,7 +129,7 @@ namespace Unigram.Controls
 
         public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null)
         {
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = title;
             dialog.FormattedMessage = message;
             dialog.PrimaryButtonText = primary ?? string.Empty;

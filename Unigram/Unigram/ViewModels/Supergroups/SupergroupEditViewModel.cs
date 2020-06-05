@@ -416,7 +416,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

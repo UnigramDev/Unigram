@@ -203,7 +203,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (stickerSet.Name.Equals("tg/recentlyUsed"))
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

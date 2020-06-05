@@ -107,7 +107,7 @@ namespace Unigram.ViewModels.Folders
         public RelayCommand<ChatFilterInfo> DeleteCommand { get; }
         private async void DeleteExecute(ChatFilterInfo filter)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.FilterDeleteAlert, Strings.Resources.FilterDelete, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

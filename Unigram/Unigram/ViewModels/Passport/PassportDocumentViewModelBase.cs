@@ -83,7 +83,7 @@ namespace Unigram.ViewModels.Passport
                 args.Cancel = true;
                 deferral.Complete();
 
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DiscardChanges, Strings.Resources.PassportDiscardChanges, Strings.Resources.PassportDiscard, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.DiscardChanges, Strings.Resources.PassportDiscardChanges, Strings.Resources.PassportDiscard, Strings.Resources.Cancel);
                 if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     _isDirty = false;

@@ -201,7 +201,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ProxyViewModel> RemoveCommand { get; }
         private async void RemoveExecute(ProxyViewModel proxy)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DeleteProxy, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteProxy, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

@@ -89,7 +89,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
             dialog.Message = string.Format(Strings.Resources.TerminateWebSessionQuestion, session.DomainName);
             dialog.PrimaryButtonText = Strings.Resources.OK;
@@ -116,7 +116,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand TerminateOthersCommand { get; }
         private async void TerminateOtherExecute()
         {
-            var terminate = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new DisconnectAllWebsites());

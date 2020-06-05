@@ -403,7 +403,7 @@ namespace Unigram.ViewModels
         {
             var chats = SelectedItems.ToList();
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeleteFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 foreach (var chat in chats)
@@ -483,7 +483,7 @@ namespace Unigram.ViewModels
         {
             var chats = SelectedItems.ToList();
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureClearHistoryFewChats, Locale.Declension("ChatsSelected", chats.Count), Strings.Resources.ClearHistory, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 Delegate?.ShowChatsUndo(chats, UndoType.Clear, items =>
@@ -529,7 +529,7 @@ namespace Unigram.ViewModels
         public RelayCommand ClearRecentChatsCommand { get; }
         private async void ClearRecentChatsExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ClearSearch, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ClearSearch, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -552,7 +552,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.ChatHintsDelete, CacheService.GetTitle(chat)), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.ChatHintsDelete, CacheService.GetTitle(chat)), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -578,7 +578,7 @@ namespace Unigram.ViewModels
             var total = filter.IncludedChatIds.Count + filter.PinnedChatIds.Count + 1;
             if (total > 99)
             {
-                await TLMessageDialog.ShowAsync(Strings.Resources.FilterAddToAlertFullText, Strings.Resources.FilterAddToAlertFullTitle, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.FilterAddToAlertFullText, Strings.Resources.FilterAddToAlertFullTitle, Strings.Resources.OK);
                 return;
             }
 
@@ -610,7 +610,7 @@ namespace Unigram.ViewModels
             var total = filter.ExcludedChatIds.Count + 1;
             if (total > 99)
             {
-                await TLMessageDialog.ShowAsync(Strings.Resources.FilterRemoveFromAlertFullText, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.FilterRemoveFromAlertFullText, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 

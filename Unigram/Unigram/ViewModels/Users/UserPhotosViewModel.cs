@@ -74,7 +74,7 @@ namespace Unigram.ViewModels.Users
 
         protected override async void DeleteExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryProfilePhoto item)
             {
                 var response = await ProtoService.SendAsync(new DeleteProfilePhoto(item.Id));

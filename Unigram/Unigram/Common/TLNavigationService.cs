@@ -90,7 +90,7 @@ namespace Unigram.Common
                 var reason = user.GetRestrictionReason();
                 if (reason != null && reason.Length > 0)
                 {
-                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -104,14 +104,14 @@ namespace Unigram.Common
 
                 if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username) && !supergroup.HasLocation && !supergroup.HasLinkedChat)
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
 
                 var reason = supergroup.GetRestrictionReason();
                 if (reason != null && reason.Length > 0)
                 {
-                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }

@@ -33,7 +33,7 @@ namespace Unigram.ViewModels
             {
                 Settings.IsContactsSyncRequested = true;
 
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ContactsPermissionAlert, Strings.Resources.AppName, Strings.Resources.ContactsPermissionAlertContinue, Strings.Resources.ContactsPermissionAlertNotNow);
                 if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     Settings.IsContactsSyncEnabled = false;
