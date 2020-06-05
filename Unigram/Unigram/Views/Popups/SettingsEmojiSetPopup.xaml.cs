@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SettingsEmojiSetPopup : TLContentDialog, IHandle<UpdateFile>
+    public sealed partial class SettingsEmojiSetPopup : ContentPopup, IHandle<UpdateFile>
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;

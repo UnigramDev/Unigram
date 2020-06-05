@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class CallRatingPopup : TLContentDialog
+    public sealed partial class CallRatingPopup : ContentPopup
     {
         public CallRatingPopup()
         {

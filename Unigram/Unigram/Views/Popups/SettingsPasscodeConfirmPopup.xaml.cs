@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SettingsPasscodeConfirmPopup : TLContentDialog
+    public sealed partial class SettingsPasscodeConfirmPopup : ContentPopup
     {
         private readonly Func<string, Task<bool>> _verify;
 

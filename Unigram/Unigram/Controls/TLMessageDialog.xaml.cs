@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    public sealed partial class TLMessageDialog : TLContentDialog
+    public sealed partial class TLMessageDialog : ContentPopup
     {
         public TLMessageDialog()
         {

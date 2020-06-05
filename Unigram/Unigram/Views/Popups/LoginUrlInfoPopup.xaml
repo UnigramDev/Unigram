@@ -1,4 +1,4 @@
-﻿<controls:TLContentDialog
+﻿<controls:ContentPopup
     x:Class="Unigram.Views.Popups.LoginUrlInfoPopup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -17,4 +17,4 @@
             <TextBlock x:Name="CheckLabel2"/>
         </CheckBox>
     </StackPanel>
-</controls:TLContentDialog>
+</controls:ContentPopup>

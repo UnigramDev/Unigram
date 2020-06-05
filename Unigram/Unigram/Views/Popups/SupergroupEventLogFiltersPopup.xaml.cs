@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SupergroupEventLogFiltersPopup : TLContentDialog
+    public sealed partial class SupergroupEventLogFiltersPopup : ContentPopup
     {
         private IProtoService _protoService;
         private ICacheService _cacheService;

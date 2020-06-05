@@ -13,13 +13,13 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls
 {
-    public class TLContentDialog : ContentDialog
+    public class ContentPopup : ContentDialog
     {
         private ContentDialogResult _result;
 
-        public TLContentDialog()
+        public ContentPopup()
         {
-            DefaultStyleKey = typeof(TLContentDialog);
+            DefaultStyleKey = typeof(ContentPopup);
 
             if (Window.Current.Content is FrameworkElement element)
             {

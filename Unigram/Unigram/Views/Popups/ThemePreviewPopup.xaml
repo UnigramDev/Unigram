@@ -1,4 +1,4 @@
-﻿<controls:TLContentDialog
+﻿<controls:ContentPopup
     x:Class="Unigram.Views.Popups.ThemePreviewPopup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -192,4 +192,4 @@
             </StackPanel>
         </Grid>
     </Grid>
-</controls:TLContentDialog>
+</controls:ContentPopup>

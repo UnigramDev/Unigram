@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStorageOptimizationPage : TLContentDialog
+    public sealed partial class SettingsStorageOptimizationPage : ContentPopup
     {
         public SettingsStorageOptimizationPage(IProtoService protoService, StorageStatisticsByChat statistics)
         {

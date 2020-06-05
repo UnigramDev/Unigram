@@ -1,4 +1,4 @@
-﻿<controls:TLContentDialog
+﻿<controls:ContentPopup
     x:Class="Unigram.Views.Popups.ScheduleMessagePopup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,4 +18,4 @@
 
         <HyperlinkButton x:Name="Online" Click="Online_Click" Margin="12,12,12,12"/>
     </StackPanel>
-</controls:TLContentDialog>
+</controls:ContentPopup>

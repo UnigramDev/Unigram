@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class ScheduleMessagePopup : TLContentDialog
+    public sealed partial class ScheduleMessagePopup : ContentPopup
     {
         public ScheduleMessagePopup(User user, int until, bool reminder)
         {

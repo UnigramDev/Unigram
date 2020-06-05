@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class CreateLinkPopup : TLContentDialog
+    public sealed partial class CreateLinkPopup : ContentPopup
     {
         public CreateLinkPopup()
         {

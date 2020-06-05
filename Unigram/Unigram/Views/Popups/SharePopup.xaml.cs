@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SharePopup : TLContentDialog
+    public sealed partial class SharePopup : ContentPopup
     {
         public ShareViewModel ViewModel => DataContext as ShareViewModel;
 

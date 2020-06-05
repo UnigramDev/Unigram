@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class PollResultsPopup : TLContentDialog
+    public sealed partial class PollResultsPopup : ContentPopup
     {
         private readonly IProtoService _protoService;
         private readonly IMessageDelegate _delegate;

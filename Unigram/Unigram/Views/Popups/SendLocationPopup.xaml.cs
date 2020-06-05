@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SendLocationPopup : TLContentDialog
+    public sealed partial class SendLocationPopup : ContentPopup
     {
         public SendLocationViewModel ViewModel => DataContext as SendLocationViewModel;
 

@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SendFilesPopup : TLContentDialog, IViewWithAutocomplete, INotifyPropertyChanged
+    public sealed partial class SendFilesPopup : ContentPopup, IViewWithAutocomplete, INotifyPropertyChanged
     {
         public DialogViewModel ViewModel { get; set; }
         public MvxObservableCollection<StorageMedia> Items { get; private set; }

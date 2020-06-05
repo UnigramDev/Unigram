@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class AttachedStickersPopup : TLContentDialog
+    public sealed partial class AttachedStickersPopup : ContentPopup
     {
         public AttachedStickersViewModel ViewModel => DataContext as AttachedStickersViewModel;
 

@@ -284,7 +284,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearPaymentsCommand { get; }
         private async void ClearPaymentsExecute()
         {
-            var dialog = new TLContentDialog();
+            var dialog = new ContentPopup();
             var stack = new StackPanel();
             var checkShipping = new CheckBox { Content = Strings.Resources.PrivacyClearShipping, IsChecked = true };
             var checkPayment = new CheckBox { Content = Strings.Resources.PrivacyClearPayment, IsChecked = true };

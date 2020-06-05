@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class JoinChatPopup : TLContentDialog
+    public sealed partial class JoinChatPopup : ContentPopup
     {
         private IProtoService _protoService;
 

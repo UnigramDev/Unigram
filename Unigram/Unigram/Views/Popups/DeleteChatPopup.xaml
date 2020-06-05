@@ -1,4 +1,4 @@
-﻿<controls:TLContentDialog
+﻿<controls:ContentPopup
     x:Class="Unigram.Views.Popups.DeleteChatPopup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -50,4 +50,4 @@
 
         <CheckBox x:Name="CheckBox" Margin="12,12,12,0" Visibility="Collapsed" Grid.Row="2"/>
     </Grid>
-</controls:TLContentDialog>
+</controls:ContentPopup>

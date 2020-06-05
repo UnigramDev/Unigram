@@ -551,7 +551,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:TLContentDialog">
+    <Style TargetType="local:ContentPopup">
         <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{ThemeResource ContentDialogBackground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ContentDialogBorderBrush}" />
@@ -574,7 +574,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:TLContentDialog">
+                <ControlTemplate TargetType="local:ContentPopup">
                     <Border x:Name="Container">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ButtonsVisibilityStates">

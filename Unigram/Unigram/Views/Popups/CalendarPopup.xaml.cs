@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class CalendarPopup : TLContentDialog
+    public sealed partial class CalendarPopup : ContentPopup
     {
         public CalendarPopup()
         {

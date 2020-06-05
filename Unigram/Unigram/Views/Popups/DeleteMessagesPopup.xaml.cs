@@ -8,7 +8,7 @@ using Windows.UI.Xaml;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class DeleteMessagesPopup : TLContentDialog
+    public sealed partial class DeleteMessagesPopup : ContentPopup
     {
         public DeleteMessagesPopup(ICacheService cacheService, IList<Message> messages)
         {

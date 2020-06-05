@@ -1,4 +1,4 @@
-﻿<controls:TLContentDialog
+﻿<controls:ContentPopup
     x:Class="Unigram.Views.Popups.CreatePollPopup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -160,4 +160,4 @@
                 Margin="12,8,12,8"/>
         </controls:HeaderedControl>
     </StackPanel>
-</controls:TLContentDialog>
+</controls:ContentPopup>

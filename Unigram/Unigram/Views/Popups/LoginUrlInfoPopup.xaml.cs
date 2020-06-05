@@ -6,7 +6,7 @@ using Windows.UI.Xaml;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class LoginUrlInfoPopup : TLContentDialog
+    public sealed partial class LoginUrlInfoPopup : ContentPopup
     {
         public LoginUrlInfoPopup(ICacheService cacheService, LoginUrlInfoRequestConfirmation requestConfirmation)
         {

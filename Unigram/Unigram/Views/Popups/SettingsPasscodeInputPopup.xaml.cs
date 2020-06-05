@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SettingsPasscodeInputPopup : TLContentDialog
+    public sealed partial class SettingsPasscodeInputPopup : ContentPopup
     {
         public SettingsPasscodeInputPopup()
         {

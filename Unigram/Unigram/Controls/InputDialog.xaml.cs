@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
-    public sealed partial class InputDialog : TLContentDialog
+    public sealed partial class InputDialog : ContentPopup
     {
         public string Header { get; set; }
 

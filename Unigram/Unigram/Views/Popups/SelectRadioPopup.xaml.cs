@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SelectRadioPopup : TLContentDialog
+    public sealed partial class SelectRadioPopup : ContentPopup
     {
         public SelectRadioPopup(params SelectRadioItem[] options)
         {

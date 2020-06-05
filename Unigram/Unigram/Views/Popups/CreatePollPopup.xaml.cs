@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class CreatePollPopup : TLContentDialog
+    public sealed partial class CreatePollPopup : ContentPopup
     {
         private const int MAXIMUM_OPTIONS = 10;
 

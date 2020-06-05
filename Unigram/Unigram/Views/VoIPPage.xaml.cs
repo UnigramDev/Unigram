@@ -586,7 +586,7 @@ namespace Unigram.Views
             scroll.VerticalScrollMode = ScrollMode.Auto;
             scroll.Content = text;
 
-            var dialog = new TLContentDialog();
+            var dialog = new ContentPopup();
             dialog.Title = $"libtgvoip v{version}";
             dialog.Content = scroll;
             dialog.PrimaryButtonText = "OK";

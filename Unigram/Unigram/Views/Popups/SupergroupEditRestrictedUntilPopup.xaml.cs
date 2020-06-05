@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class SupergroupEditRestrictedUntilPopup : TLContentDialog
+    public sealed partial class SupergroupEditRestrictedUntilPopup : ContentPopup
     {
         public SupergroupEditRestrictedUntilPopup(int until)
         {

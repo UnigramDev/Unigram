@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views
 {
-    public sealed partial class PasscodePage : TLContentDialog
+    public sealed partial class PasscodePage : ContentPopup
     {
         private readonly IPasscodeService _passcodeService;
 

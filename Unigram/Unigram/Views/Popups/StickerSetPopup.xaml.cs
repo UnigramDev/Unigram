@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class StickerSetPopup : TLContentDialog, IHandle<UpdateFile>
+    public sealed partial class StickerSetPopup : ContentPopup, IHandle<UpdateFile>
     {
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 

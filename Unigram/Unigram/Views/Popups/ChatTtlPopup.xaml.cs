@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class ChatTtlPopup : TLContentDialog
+    public sealed partial class ChatTtlPopup : ContentPopup
     {
         public ChatTtlPopup()
         {

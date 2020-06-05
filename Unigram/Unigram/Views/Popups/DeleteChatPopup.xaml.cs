@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class DeleteChatPopup : TLContentDialog
+    public sealed partial class DeleteChatPopup : ContentPopup
     {
         public DeleteChatPopup(IProtoService protoService, Chat chat, ChatList chatList, bool clear, bool asOwner = false)
         {

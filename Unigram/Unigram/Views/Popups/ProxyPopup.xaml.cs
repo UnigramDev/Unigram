@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class ProxyPopup : TLContentDialog
+    public sealed partial class ProxyPopup : ContentPopup
     {
         public ProxyPopup()
         {

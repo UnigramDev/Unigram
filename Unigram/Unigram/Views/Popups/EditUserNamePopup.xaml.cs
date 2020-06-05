@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class EditUserNamePopup : TLContentDialog
+    public sealed partial class EditUserNamePopup : ContentPopup
     {
         public EditUserNamePopup()
         {

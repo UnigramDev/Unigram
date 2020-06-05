@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Popups
 {
-    public sealed partial class ThemePreviewPopup : TLContentDialog
+    public sealed partial class ThemePreviewPopup : ContentPopup
     {
         private string _path;
 
