@@ -45,7 +45,7 @@ namespace Unigram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (string.IsNullOrEmpty(Text))
+            if (string.IsNullOrWhiteSpace(Text))
             {
                 VisualUtilities.ShakeView(TextField);
                 args.Cancel = true;
@@ -85,7 +85,19 @@ namespace Unigram.Views.Popups
 
         private void LinkField_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            // No idea about how to dismiss the dialog from code :D
+            Hide(ContentDialogResult.Primary);
+        }
+
+        private void TextField_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(TextField.Text))
+            {
+                TextField.Focus(FocusState.Keyboard);
+            }
+            else
+            {
+                LinkField.Focus(FocusState.Keyboard);
+            }
         }
     }
 }
