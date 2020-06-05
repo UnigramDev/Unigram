@@ -89,13 +89,23 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Border x:Load="False" x:Name="ChatTabsLeft" Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}" BorderThickness="0,0,1,0" BorderBrush="LightGray">
+        <Border
+            x:Load="False"
+            x:Name="ChatTabsLeft"
+            Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}"
+            BorderBrush="{ThemeResource PageHeaderBackgroundBrush}"
+            BorderThickness="0,0,0,0">
             <controls:TopNavView
                 x:Name="ChatFiltersSide"
                 ItemsSource="{x:Bind ViewModel.Filters}"
                 SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
                 ItemContextRequested="ChatFilter_ContextRequested"
                 Orientation="Vertical"
+                AllowDrop="True"
+                CanDragItems="True"
+                CanReorderItems="False"
+                DragItemsStarting="ChatFilters_DragItemsStarting"
+                DragItemsCompleted="ChatFilters_DragItemsCompleted"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 ScrollViewer.HorizontalScrollMode="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -160,7 +170,7 @@
                 </controls:TopNavView.ItemTemplate>
                 <controls:TopNavView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical"/>
+                        <ItemsStackPanel Orientation="Vertical"/>
                     </ItemsPanelTemplate>
                 </controls:TopNavView.ItemsPanel>
                 <controls:TopNavView.ItemContainerStyle>
@@ -256,7 +266,7 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Height="32"
-                                Padding="10,0,6,1"/>
+                                Padding="9,0,6,0"/>
 
                             <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
                                 <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
