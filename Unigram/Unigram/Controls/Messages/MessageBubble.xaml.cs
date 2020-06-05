@@ -1264,13 +1264,15 @@ namespace Unigram.Controls.Messages
 
             if (_placeholder)
             {
+                var footerWidth = Footer.ActualWidth - 6;
+
                 var width = Message.ActualWidth;
                 var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
 
                 var diff = width - rect.Right;
-                if (diff < Footer.ActualWidth)
+                if (diff < footerWidth)
                 {
-                    if (Message.ActualHeight < rect.Height * 2 && width + Footer.ActualWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right)
+                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right)
                     {
                         Message.Margin = new Thickness(0, 0, Footer.ActualWidth, 0);
                     }
@@ -1642,6 +1644,8 @@ namespace Unigram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            var maxWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, MaxWidth));
+            
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
@@ -1798,7 +1802,7 @@ namespace Unigram.Controls.Messages
             //    return base.MeasureOverride(new Size(Message.DesiredSize.Width + 20, availableSize.Height));
             //}
 
-            _maxWidth = availableWidth;
+            _maxWidth = maxWidth;
             return base.MeasureOverride(availableSize);
 
             Calculate:
