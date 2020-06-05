@@ -76,14 +76,6 @@
                         Margin="12,0,12,0"/>
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
 
-                    <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsVibrationAvailable}">
-                        <CheckBox
-                            IsChecked="{x:Bind ViewModel.InAppVibrate, Mode=TwoWay}"
-                            Content="{CustomResource InAppVibrate}"
-                            Margin="12,0,12,0"/>
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
-                    </StackPanel>
-
                     <CheckBox 
                         IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}"
                         Content="{CustomResource InAppPreview}"

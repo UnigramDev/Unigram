@@ -147,24 +147,6 @@ namespace Unigram
 
                 builder.RegisterType<MessageFactory>().As<IMessageFactory>().SingleInstance();
 
-                // Disabled due to crashes on Mobile: 
-                // The RPC server is unavailable.
-                //if (ApiInformation.IsTypePresent("Windows.Devices.Haptics.VibrationDevice") || ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
-                //{
-                //    // Introduced in Creators Update
-                //    container.ContainerBuilder.RegisterType<VibrationService>().As<IVibrationService>().SingleInstance();
-                //}
-                //else
-                //if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
-                //{
-                //    // To keep vibration compatibility with Anniversary Update
-                //    builder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
-                //}
-                //else
-                {
-                    builder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
-                }
-
                 builder.RegisterType<SessionService>().As<ISessionService>()
                     .WithParameter("session", session)
                     .WithParameter("selected", session == SettingsService.Current.ActiveSession)

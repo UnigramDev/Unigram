@@ -14,15 +14,9 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsNotificationsViewModel : TLMultipleViewModelBase, IHandle<UpdateScopeNotificationSettings>
     {
-        private readonly IVibrationService _vibrationService;
-
-        private bool _suppressUpdating;
-
-        public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVibrationService vibrationService)
+        public SettingsNotificationsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _vibrationService = vibrationService;
-
             Scopes = new MvxObservableCollection<SettingsNotificationsScope>
             {
                 new SettingsNotificationsScope(protoService, typeof(NotificationSettingsScopePrivateChats), Strings.Resources.NotificationsForPrivateChats),
@@ -38,48 +32,21 @@ namespace Unigram.ViewModels.Settings
             ResetCommand = new RelayCommand(ResetExecute);
 
             Aggregator.Subscribe(this);
-            PropertyChanged += OnPropertyChanged;
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             foreach (var scope in Scopes)
             {
                 scope.Update();
             }
 
-            IsVibrationAvailable = await _vibrationService.GetAvailabilityAsync();
-        }
-
-        private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (_suppressUpdating)
-            {
-                return;
-            }
-
-            if (e.PropertyName.Equals(nameof(InAppVibrate)) && InAppVibrate && IsVibrationAvailable)
-            {
-                await _vibrationService.VibrateAsync();
-            }
+            return Task.CompletedTask;
         }
 
         public MvxObservableCollection<SettingsNotificationsScope> Scopes { get; private set; }
 
         #region InApp
-
-        private bool _isVibrationAvailable;
-        public bool IsVibrationAvailable
-        {
-            get
-            {
-                return _isVibrationAvailable;
-            }
-            set
-            {
-                Set(ref _isVibrationAvailable, value);
-            }
-        }
 
         public bool InAppFlash
         {
@@ -103,19 +70,6 @@ namespace Unigram.ViewModels.Settings
             set
             {
                 Settings.Notifications.InAppSounds = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool InAppVibrate
-        {
-            get
-            {
-                return Settings.Notifications.InAppVibrate;
-            }
-            set
-            {
-                Settings.Notifications.InAppVibrate = value;
                 RaisePropertyChanged();
             }
         }
@@ -227,11 +181,9 @@ namespace Unigram.ViewModels.Settings
                     scope.Reset();
                 }
 
-                _suppressUpdating = true;
+                InAppFlash = true;
                 InAppSounds = true;
                 InAppPreview = true;
-                InAppVibrate = true;
-                _suppressUpdating = false;
 
                 ProtoService.Send(new ResetAllNotificationSettings());
             }

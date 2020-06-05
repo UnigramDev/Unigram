@@ -32,7 +32,6 @@ namespace Unigram.ViewModels
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
-        private readonly IVibrationService _vibrationService;
         private readonly IPasscodeService _passcodeService;
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
@@ -44,12 +43,11 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IVibrationService vibrationService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
             _contactsService = contactsService;
-            _vibrationService = vibrationService;
             _passcodeService = passcodeService;
             _lifetimeService = lifecycle;
             _sessionService = session;
