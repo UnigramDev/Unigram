@@ -264,7 +264,7 @@
                                             Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                             TextAlignment="Center"
                                             VerticalAlignment="Center"
-                                            TextLineBounds="TrimToBaseline,TrimToCapHeight"
+                                            TextLineBounds="Tight"
                                             Margin="5,0,5,0"/>
                             </Grid>
                         </controls:PivotRadioButton>

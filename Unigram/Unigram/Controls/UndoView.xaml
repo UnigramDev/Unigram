@@ -39,7 +39,7 @@
                 </ContentControl.ContentTransitions>
                 <ContentControl.ContentTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}" TextLineBounds="TrimToBaseline,TrimToCapHeight" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{Binding}" TextLineBounds="Tight" Style="{StaticResource BaseTextBlockStyle}"/>
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
                 <ContentControl.Clip>

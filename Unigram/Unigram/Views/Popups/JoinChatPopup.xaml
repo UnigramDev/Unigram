@@ -50,7 +50,7 @@
             <ListView.Footer>
                 <StackPanel x:Name="FooterPanel" Margin="12,0">
                     <Border Background="{ThemeResource Placeholder0Brush}" Width="48" Height="48" CornerRadius="24">
-                        <TextBlock x:Name="Footer" TextAlignment="Center" VerticalAlignment="Center" TextLineBounds="TrimToCapHeight,TrimToBaseline" Foreground="White" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        <TextBlock x:Name="Footer" TextAlignment="Center" VerticalAlignment="Center" TextLineBounds="Tight" Foreground="White" Style="{StaticResource SubtitleTextBlockStyle}"/>
                     </Border>
                     <TextBlock Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
