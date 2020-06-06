@@ -194,8 +194,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (3UL << 48) | (15UL << 32) | (3073UL << 16);
-        public const string CurrentChangelog = "Quizzes 2.0\r\n• Add explanations that appear after users respond to a quiz question. \r\n• See how much time you have left to answer a question from @QuizBot with the new countdown animation.\r\n\r\nAnimated Darts\r\n• Send a single dart 🎯 emoji to see if you hit bullseye.";
+        public const ulong CurrentVersion = (4UL << 48) | (0UL << 32) | (5072UL << 16);
+        public const string CurrentChangelog = "• Chat folders.\r\n• Stream Videos and Audio files.\r\n• Improved stickers, GIFs and emojis.\r\n\r\nRead more: https://telegra.ph/Unigram-40-05-28";
 
         public int Session => _session;
 

@@ -375,7 +375,16 @@ namespace Unigram.Services
 
                     formattedText = Client.Execute(new ParseMarkdown(formattedText)) as FormattedText;
 
-                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, true, false)));
+                    foreach (var entity in formattedText.Entities)
+                    {
+                        if (entity.Type is TextEntityTypeTextUrl textUrl || entity.Type is TextEntityTypeUrl)
+                        {
+                            await SendAsync(new GetWebPagePreview(formattedText));
+                            break;
+                        }
+                    }
+
+                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, false, false)));
                 }
             }
 
