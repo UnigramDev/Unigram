@@ -589,7 +589,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
             }
 
-            flyout.CreateFlyoutItem(null, Strings.Resources.AddShortcut, new FontIcon { Glyph = Icons.Pin });
+            //flyout.CreateFlyoutItem(null, Strings.Resources.AddShortcut, new FontIcon { Glyph = Icons.Pin });
 
             if (flyout.Items.Count > 0)
             {
