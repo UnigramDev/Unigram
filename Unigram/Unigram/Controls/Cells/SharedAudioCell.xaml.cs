@@ -166,15 +166,27 @@ namespace Unigram.Controls.Cells
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                //Button.Glyph = Icons.Cancel;
-                Button.SetGlyph(file.Id, MessageContentState.Downloading);
-                Button.Progress = (double)file.Local.DownloadedSize / size;
+                FileButton target;
+                if (SettingsService.Current.IsStreamingEnabled)
+                {
+                    target = Download;
+                    DownloadPanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    target = Button;
+                    DownloadPanel.Visibility = Visibility.Collapsed;
+                }
+
+                target.SetGlyph(file.Id, MessageContentState.Downloading);
+                target.Progress = (double)file.Local.DownloadedSize / size;
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-                //Button.Glyph = Icons.Cancel;
+                DownloadPanel.Visibility = Visibility.Collapsed;
+
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
@@ -182,11 +194,22 @@ namespace Unigram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                //Button.Glyph = Icons.Download;
-                Button.SetGlyph(file.Id, MessageContentState.Download);
-                Button.Progress = 0;
+                FileButton target;
+                if (SettingsService.Current.IsStreamingEnabled)
+                {
+                    target = Download;
+                    DownloadPanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    target = Button;
+                    DownloadPanel.Visibility = Visibility.Collapsed;
+                }
 
-                Subtitle.Text = audio.GetDuration() + ", " + FileSizeConverter.Convert(size);
+                target.SetGlyph(file.Id, MessageContentState.Download);
+                target.Progress = 0;
+
+                Subtitle.Text = audio.GetDuration() + " - " + FileSizeConverter.Convert(size);
 
                 //if (message.Delegate.CanBeDownloaded(message))
                 //{
@@ -195,33 +218,54 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                if (message.AreEqual(_playbackService.CurrentItem))
-                {
-                    if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
-                    {
-                        //Button.Glyph = Icons.Pause;
-                        Button.SetGlyph(file.Id, MessageContentState.Pause);
-                    }
-                    else
-                    {
-                        //Button.Glyph = Icons.Play;
-                        Button.SetGlyph(file.Id, MessageContentState.Play);
-                    }
+                DownloadPanel.Visibility = Visibility.Collapsed;
 
-                    UpdatePosition();
-                    _playbackService.PositionChanged += OnPositionChanged;
+                if (!SettingsService.Current.IsStreamingEnabled)
+                {
+                    UpdatePlayback(message, audio, file);
+                }
+            }
+
+            if (SettingsService.Current.IsStreamingEnabled)
+            {
+                UpdatePlayback(message, audio, file);
+            }
+        }
+
+        private void UpdatePlayback(Message message, Audio audio, File file)
+        {
+            if (Equals(message, _playbackService.CurrentItem))
+            {
+                if (_playbackService.PlaybackState != MediaPlaybackState.Paused && _playbackService.PlaybackState != MediaPlaybackState.None)
+                {
+                    Button.SetGlyph(file.Id, MessageContentState.Pause);
                 }
                 else
                 {
-                    //Button.Glyph = Icons.Play;
                     Button.SetGlyph(file.Id, MessageContentState.Play);
-                    Button.Progress = 1;
-
-                    Subtitle.Text = audio.GetDuration();
                 }
 
-                Button.Progress = 1;
+                UpdatePosition();
+
+                _playbackService.PositionChanged -= OnPositionChanged;
+                _playbackService.PositionChanged += OnPositionChanged;
             }
+            else
+            {
+                Button.SetGlyph(file.Id, MessageContentState.Play);
+                Button.Progress = 1;
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted && !file.Local.IsDownloadingActive && !file.Remote.IsUploadingActive)
+                {
+                    Subtitle.Text = audio.GetDuration() + " - " + FileSizeConverter.Convert(Math.Max(file.Size, file.ExpectedSize));
+                }
+                else
+                {
+                    Subtitle.Text = audio.GetDuration();
+                }
+            }
+
+            Button.Progress = 1;
         }
 
         private void UpdateThumbnail(Message message, Thumbnail thumbnail, File file)
@@ -263,6 +307,41 @@ namespace Unigram.Controls.Cells
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (SettingsService.Current.IsStreamingEnabled)
+            {
+
+            }
+            else
+            {
+                Download_Click(null, null);
+                return;
+            }
+
+            var audio = GetContent(_message?.Content);
+            if (audio == null)
+            {
+                return;
+            }
+
+            if (_message.Equals(_playbackService.CurrentItem))
+            {
+                if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
+                {
+                    _playbackService.Pause();
+                }
+                else
+                {
+                    _playbackService.Play();
+                }
+            }
+            else
+            {
+                _playbackService.Enqueue(_message);
+            }
+        }
+
+        private void Download_Click(object sender, RoutedEventArgs e)
+        {
             var audio = GetContent(_message?.Content);
             if (audio == null)
             {
@@ -272,7 +351,7 @@ namespace Unigram.Controls.Cells
             var file = audio.AudioValue;
             if (file.Local.IsDownloadingActive)
             {
-                _protoService.Send(new CancelDownloadFile(file.Id, false));
+                _protoService.CancelDownloadFile(file.Id);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
@@ -280,12 +359,11 @@ namespace Unigram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                //_protoService.DownloadFile(file.Id, 32);
-                _playbackService.Enqueue(_message);
+                _protoService.DownloadFile(file.Id, 32);
             }
             else
             {
-                if (_message.AreEqual(_playbackService.CurrentItem))
+                if (_message.Equals(_playbackService.CurrentItem))
                 {
                     if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                     {
