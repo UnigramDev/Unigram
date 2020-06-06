@@ -82,6 +82,8 @@ namespace Unigram.Views.Popups
             }
         }
 
+        private bool _wasAlbum;
+
         private bool _isAlbum;
         public bool IsAlbum
         {
@@ -125,7 +127,9 @@ namespace Unigram.Views.Popups
             Items.CollectionChanged += OnCollectionChanged;
             IsMediaSelected = media && IsMediaOnly;
             IsFilesSelected = !IsMediaSelected;
-            IsAlbum = IsAlbumAvailable;
+            IsAlbum = media;
+
+            _wasAlbum = media;
 
             UpdateView();
             UpdatePanel();
@@ -398,6 +402,10 @@ namespace Unigram.Views.Popups
             {
                 IsAlbum = false;
             }
+            else if (_wasAlbum && IsAlbumAvailable)
+            {
+                IsAlbum = true;
+            }
 
             var state = IsAlbum && IsAlbumAvailable && IsMediaSelected ? 1 : 0;
             if (state != _panelState)
@@ -440,6 +448,15 @@ namespace Unigram.Views.Popups
 
         private void PivotRadioButton_Click(object sender, RoutedEventArgs e)
         {
+            UpdateView();
+            UpdatePanel();
+        }
+
+        private void Album_Click(object sender, RoutedEventArgs e)
+        {
+            _wasAlbum = AlbumButton.IsChecked == true;
+            IsAlbum = _wasAlbum;
+
             UpdateView();
             UpdatePanel();
         }
