@@ -195,6 +195,7 @@ namespace Unigram.ViewModels
 
             AnimationSendCommand = new RelayCommand<Animation>(AnimationSendExecute);
             AnimationDeleteCommand = new RelayCommand<Animation>(AnimationDeleteExecute);
+            AnimationSaveCommand = new RelayCommand<Animation>(AnimationSaveExecute);
 
             EditDocumentCommand = new RelayCommand(EditDocumentExecute);
             EditMediaCommand = new RelayCommand(EditMediaExecute);

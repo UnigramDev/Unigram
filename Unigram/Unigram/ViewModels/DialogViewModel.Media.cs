@@ -127,6 +127,12 @@ namespace Unigram.ViewModels
             ProtoService.Send(new RemoveSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
         }
 
+        public RelayCommand<Animation> AnimationSaveCommand { get; }
+        private void AnimationSaveExecute(Animation animation)
+        {
+            ProtoService.Send(new AddSavedAnimation(new InputFileId(animation.AnimationValue.Id)));
+        }
+
         #endregion
 
         public async Task<bool> VerifyRightsAsync(Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary)

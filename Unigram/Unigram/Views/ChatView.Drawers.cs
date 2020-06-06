@@ -51,7 +51,15 @@ namespace Unigram.Views
             var animation = element.DataContext as Animation;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+
+            if (ViewModel.ProtoService.IsAnimationSaved(animation.AnimationValue.Id))
+            {
+                flyout.CreateFlyoutItem(ViewModel.AnimationDeleteCommand, animation, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(ViewModel.AnimationSaveCommand, animation, Strings.Resources.SaveToGIFs, new FontIcon { Glyph = Icons.Animations });
+            }
 
             if (!ViewModel.IsSchedule)
             {
