@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.Services.ViewService;
@@ -117,17 +118,14 @@ namespace Unigram
                     .AutoActivate();
                 builder.RegisterType<EmojiSetService>()
                     .As<IEmojiSetService>()
-                    .SingleInstance()
-                    .AutoActivate();
+                    .SingleInstance();
                 builder.RegisterType<CloudUpdateService>()
                     .As<ICloudUpdateService>()
-                    .SingleInstance()
-                    .AutoActivate();
+                    .SingleInstance();
 
                 builder.RegisterType<ShortcutsService>()
                     .As<IShortcutsService>()
-                    .SingleInstance()
-                    .AutoActivate();
+                    .SingleInstance();
                 //builder.RegisterType<OptionsService>()
                 //    .As<IOptionsService>()
                 //    .SingleInstance()
@@ -142,10 +140,18 @@ namespace Unigram
                 builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
                 builder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
                 //builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
-                builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
                 builder.RegisterType<ThemeService>().As<IThemeService>().SingleInstance();
 
                 builder.RegisterType<MessageFactory>().As<IMessageFactory>().SingleInstance();
+
+                //if (ApiInfo.IsMediaSupported)
+                {
+                    builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
+                }
+                //else
+                //{
+                //    builder.RegisterType<DummyPlaybackService>().As<IPlaybackService>().SingleInstance();
+                //}
 
                 builder.RegisterType<SessionService>().As<ISessionService>()
                     .WithParameter("session", session)
@@ -239,6 +245,7 @@ namespace Unigram
                 builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
                 builder.RegisterType<SettingsBackgroundsViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsVoIPViewModel>();
+                builder.RegisterType<SettingsShortcutsViewModel>();
                 builder.RegisterType<BackgroundViewModel>();
                 builder.RegisterType<AttachedStickersViewModel>();
                 builder.RegisterType<ViewModels.StickerSetViewModel>();

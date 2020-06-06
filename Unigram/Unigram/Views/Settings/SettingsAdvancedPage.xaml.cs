@@ -32,6 +32,11 @@ namespace Unigram.Views.Settings
 #endif
         }
 
+        private void Shortcuts_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SettingsShortcutsPage));
+        }
+
         private void VoIP_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsVoIPPage));

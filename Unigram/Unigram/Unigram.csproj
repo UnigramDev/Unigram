@@ -705,6 +705,7 @@
     <Compile Include="ViewModels\Settings\SettingsPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsShortcutsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsVoIPViewModel.cs" />
@@ -859,6 +860,9 @@
     <Compile Include="Views\Popups\EditMediaPopup.xaml.cs">
       <DependentUpon>EditMediaPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\EditShortcutPopup.xaml.cs">
+      <DependentUpon>EditShortcutPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\EditUserNamePopup.xaml.cs">
       <DependentUpon>EditUserNamePopup.xaml</DependentUpon>
     </Compile>
@@ -999,6 +1003,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsProxiesPage.xaml.cs">
       <DependentUpon>SettingsProxiesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsShortcutsPage.xaml.cs">
+      <DependentUpon>SettingsShortcutsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsStorageOptimizationPage.xaml.cs">
       <DependentUpon>SettingsStorageOptimizationPage.xaml</DependentUpon>
@@ -2224,6 +2231,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\EditShortcutPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\EditUserNamePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2409,6 +2420,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsProxiesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsShortcutsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

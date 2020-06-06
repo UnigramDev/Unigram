@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Unigram.Collections;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Data.Json;
 using Windows.Storage;
@@ -14,6 +16,11 @@ namespace Unigram.Services
     public interface IShortcutsService
     {
         IList<ShortcutCommand> Process(AcceleratorKeyEventArgs args);
+
+        bool TryGetShortcut(AcceleratorKeyEventArgs args, out Shortcut shortcut);
+
+        IList<ShortcutList> GetShortcuts();
+        IList<ShortcutList> Update(Shortcut shortcut, ShortcutCommand command);
     }
 
     public class ShortcutsService : TLViewModelBase, IShortcutsService
@@ -186,6 +193,179 @@ namespace Unigram.Services
             return new ShortcutCommand[0];
         }
 
+        //[DllImport("user32.dll")]
+        //static extern int MapVirtualKey(uint uCode, uint uMapType);
+
+        //int nonVirtualKey = MapVirtualKey((uint)args.VirtualKey, 2);
+        //char mappedChar = Convert.ToChar(nonVirtualKey);
+
+        public bool TryGetShortcut(AcceleratorKeyEventArgs args, out Shortcut shortcut)
+        {
+            if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
+            {
+                shortcut = null;
+                return false;
+            }
+
+            var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+            var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+            var modifiers = VirtualKeyModifiers.None;
+            if (alt)
+            {
+                modifiers |= VirtualKeyModifiers.Menu;
+            }
+            if (ctrl)
+            {
+                modifiers |= VirtualKeyModifiers.Control;
+            }
+            if (shift)
+            {
+                modifiers |= VirtualKeyModifiers.Shift;
+            }
+
+            return TryGetShortcut(modifiers, args.VirtualKey, out shortcut);
+        }
+
+        private bool TryGetShortcut(VirtualKeyModifiers modifiers, VirtualKey key, out Shortcut shortcut)
+        {
+            if (key == VirtualKey.Control || key == VirtualKey.LeftControl || key == VirtualKey.RightControl)
+            {
+                shortcut = null;
+                return false;
+            }
+            else if (key == VirtualKey.Menu || key == VirtualKey.LeftMenu || key == VirtualKey.RightMenu)
+            {
+                shortcut = null;
+                return false;
+            }
+            else if (key == VirtualKey.Shift || key == VirtualKey.LeftShift || key == VirtualKey.RightShift)
+            {
+                shortcut = null;
+                return false;
+            }
+
+            if (modifiers == VirtualKeyModifiers.None && (key < VirtualKey.F1 || key > VirtualKey.F24))
+            {
+                shortcut = null;
+                return false;
+            }
+
+            shortcut = new Shortcut(modifiers, key);
+            return Enum.IsDefined(typeof(VirtualKey), key);
+        }
+
+        public IList<ShortcutList> GetShortcuts()
+        {
+            var temp = new List<ShortcutInfo>();
+            var result = new List<ShortcutList>();
+
+            foreach (var commands in _commands)
+            {
+                foreach (var value in commands.Value)
+                {
+                    if (IsSpecialShortcut(commands.Key, value))
+                    {
+                        continue;
+                    }
+
+                    temp.Add(new ShortcutInfo(commands.Key, value));
+                }
+            }
+
+            var categories = new Dictionary<string, IList<ShortcutCommand>>
+            {
+                {
+                    "App", new[]
+                    {
+                        ShortcutCommand.Close          ,
+                        ShortcutCommand.Lock           ,
+                        ShortcutCommand.Minimize       ,
+                        ShortcutCommand.Quit           ,
+                        ShortcutCommand.Search
+                    }
+                },
+
+                //{ ShortcutCommand.MediaPlay      , "media_play" },
+                //{ ShortcutCommand.MediaPause     , "media_pause" },
+                //{ ShortcutCommand.MediaPlayPause , "media_playpause" },
+                //{ ShortcutCommand.MediaStop      , "media_stop" },
+                //{ ShortcutCommand.MediaPrevious  , "media_previous" },
+                //{ ShortcutCommand.MediaNext      , "media_next" },
+                //{
+                //    "App", new[] { ShortcutCommand.Search }
+                //},
+                {
+                    "Chats", new[]
+                    {
+                        ShortcutCommand.ChatPrevious   ,
+                        ShortcutCommand.ChatNext       ,
+                        ShortcutCommand.ChatFirst      ,
+                        ShortcutCommand.ChatLast       ,
+                        ShortcutCommand.ChatSelf       ,
+                    }
+                },
+                {
+                    "Folders", new[]
+                    {
+                        ShortcutCommand.FolderPrevious ,
+                        ShortcutCommand.FolderNext     ,
+                        ShortcutCommand.ShowAllChats   ,
+                        ShortcutCommand.ShowFolder1    ,
+                        ShortcutCommand.ShowFolder2    ,
+                        ShortcutCommand.ShowFolder3    ,
+                        ShortcutCommand.ShowFolder4    ,
+                        ShortcutCommand.ShowFolder5    ,
+                        ShortcutCommand.ShowFolder6    ,
+                        ShortcutCommand.ShowFolderLast ,
+                        ShortcutCommand.ShowArchive    ,
+                    }
+                }
+            };
+
+            foreach (var category in categories)
+            {
+                var items = new ShortcutList(category.Key);
+
+                foreach (var command in category.Value)
+                {
+                    var item = temp.FirstOrDefault(x => x.Command == command);
+                    if (item != null)
+                    {
+                        items.Add(item);
+                    }
+                }
+
+                if (items.Count > 0)
+                {
+                    result.Add(items);
+                }
+            }
+
+            return result;
+        }
+
+        public IList<ShortcutList> Update(Shortcut shortcut, ShortcutCommand command)
+        {
+            Set(shortcut, command, true);
+            return GetShortcuts();
+        }
+
+        private bool IsSpecialShortcut(Shortcut shortcut, ShortcutCommand command)
+        {
+            if (shortcut.Modifiers == VirtualKeyModifiers.Control && shortcut.Key == VirtualKey.F4)
+            {
+                return command == ShortcutCommand.Close;
+            }
+            else if (shortcut.Modifiers == VirtualKeyModifiers.None && shortcut.Key == VirtualKey.Search)
+            {
+                return command == ShortcutCommand.Search;
+            }
+
+            return false;
+        }
+
         private void InitializeDefault()
         {
             Set("ctrl+w", ShortcutCommand.Close);
@@ -274,6 +454,11 @@ namespace Unigram.Services
                 return;
             }
 
+            Set(shortcut, command, replace);
+        }
+
+        private void Set(Shortcut shortcut, ShortcutCommand command, bool replace = false)
+        {
             List<ShortcutCommand> commands;
             if (_commands.ContainsKey(shortcut))
             {
@@ -363,15 +548,50 @@ namespace Unigram.Services
         }
     }
 
-    public class Shortcut
+    public sealed class ShortcutList : KeyedList<string, ShortcutInfo>
     {
-        public VirtualKeyModifiers Modifiers { get; private set; }
-        public VirtualKey Key { get; private set; }
+        public ShortcutList(string key)
+            : base(key)
+        {
+        }
+    }
+
+    public sealed class ShortcutInfo : BindableBase
+    {
+        public ShortcutInfo(Shortcut shortcut, ShortcutCommand command)
+        {
+            Shortcut = shortcut;
+            Command = command;
+        }
+
+        public ShortcutCommand Command { get; private set; }
+
+        private Shortcut _shortcut;
+        public Shortcut Shortcut
+        {
+            get => _shortcut;
+            set => Set(ref _shortcut, value);
+        }
+
+        public override string ToString()
+        {
+            return $"{{ {Command}, {_shortcut} }}";
+        }
+    }
+
+    public sealed class Shortcut
+    {
+        public VirtualKeyModifiers Modifiers { get; }
+        public VirtualKey Key { get; }
+
+        public string[] Components { get; }
 
         public Shortcut(VirtualKeyModifiers modifiers, VirtualKey key)
         {
             Modifiers = modifiers;
             Key = key;
+
+            Components = GetComponents();
         }
 
         public override bool Equals(object obj)
@@ -394,18 +614,53 @@ namespace Unigram.Services
         public override string ToString()
         {
             var builder = new StringBuilder();
+
+            foreach (var key in Components)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append("+");
+                }
+
+                builder.Append(key);
+            }
+
+            return builder.ToString();
+        }
+
+        private string[] GetComponents()
+        {
+            var parts = new List<string>();
             var modifiers = Enum.GetValues(typeof(VirtualKeyModifiers))
                 .Cast<VirtualKeyModifiers>()
                 .Where(v => v != VirtualKeyModifiers.None && Modifiers.HasFlag(v));
 
             foreach (var key in modifiers)
             {
-                builder.Append($"{key}+");
+                switch (key)
+                {
+                    case VirtualKeyModifiers.Control:
+                        parts.Add("Ctrl");
+                        break;
+                    case VirtualKeyModifiers.Menu:
+                        parts.Add("Alt");
+                        break;
+                    case VirtualKeyModifiers.Shift:
+                        parts.Add("Shift");
+                        break;
+                }
             }
 
-            builder.Append(Key);
+            if (Key >= VirtualKey.Number0 && Key <= VirtualKey.Number9)
+            {
+                parts.Add($"{Key - VirtualKey.Number0}");
+            }
+            else
+            {
+                parts.Add(Key.ToString());
+            }
 
-            return builder.ToString();
+            return parts.ToArray();
         }
     }
 
