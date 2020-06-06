@@ -36,28 +36,17 @@ namespace Unigram.Controls.Messages
 
             if (SettingsService.Current.Diagnostics.BubbleKnockout && ApiInfo.CanUseViewports)
             {
-                ContentPanel.EffectiveViewportChanged += MessageBubble_EffectiveViewportChanged;
+                ContentPanel.EffectiveViewportChanged += OnEffectiveViewportChanged;
             }
         }
 
-        private void MessageBubble_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
+        private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
-            var message = _message;
-            if (message == null || !message.IsOutgoing)
+            if (ContentPanel.Background is LinearGradientBrush gradient)
             {
-                return;
+                gradient.StartPoint = new Point(0, args.EffectiveViewport.Y / sender.ActualHeight);
+                gradient.EndPoint = new Point(0, args.EffectiveViewport.Bottom / sender.ActualHeight);
             }
-
-            var gradient = ContentPanel.Background as LinearGradientBrush;
-            if (gradient == null)
-            {
-                ContentPanel.Background = gradient = new LinearGradientBrush();
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), Offset = 0 });
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF8, 0xEA, 0x8F), Offset = 1 });
-            }
-
-            gradient.StartPoint = new Point(0, args.EffectiveViewport.Y / sender.ActualHeight);
-            gradient.EndPoint = new Point(0, args.EffectiveViewport.Bottom / sender.ActualHeight);
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -1264,7 +1253,7 @@ namespace Unigram.Controls.Messages
 
             if (_placeholder)
             {
-                var footerWidth = Footer.ActualWidth - 6;
+                var footerWidth = Footer.ActualWidth - 5;
 
                 var width = Message.ActualWidth;
                 var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
@@ -1274,7 +1263,7 @@ namespace Unigram.Controls.Messages
                 {
                     if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right)
                     {
-                        Message.Margin = new Thickness(0, 0, Footer.ActualWidth, 0);
+                        Message.Margin = new Thickness(0, 0, footerWidth, 0);
                     }
                     else
                     {
