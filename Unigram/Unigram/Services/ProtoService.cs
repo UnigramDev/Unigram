@@ -94,6 +94,7 @@ namespace Unigram.Services
         SupergroupFullInfo GetSupergroupFull(int id);
         SupergroupFullInfo GetSupergroupFull(Chat chat);
 
+        bool IsAnimationSaved(int id);
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
 
@@ -145,6 +146,7 @@ namespace Unigram.Services
 
         private IList<string> _diceEmojis;
 
+        private IList<int> _savedAnimations;
         private IList<int> _favoriteStickers;
         private IList<long> _installedStickerSets;
         private IList<long> _installedMaskSets;
@@ -413,6 +415,7 @@ namespace Unigram.Services
 
             _scopeNotificationSettings.Clear();
 
+            _savedAnimations?.Clear();
             _favoriteStickers?.Clear();
             _installedStickerSets?.Clear();
             _installedMaskSets?.Clear();
@@ -1054,6 +1057,16 @@ namespace Unigram.Services
             return false;
         }
 
+        public bool IsAnimationSaved(int id)
+        {
+            if (_savedAnimations != null)
+            {
+                return _savedAnimations.Contains(id);
+            }
+
+            return false;
+        }
+
         public async Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type)
         {
             var set = _animatedSet[(int)type];
@@ -1427,7 +1440,7 @@ namespace Unigram.Services
             }
             else if (update is UpdateSavedAnimations updateSavedAnimations)
             {
-
+                _savedAnimations = updateSavedAnimations.AnimationIds;
             }
             else if (update is UpdateScopeNotificationSettings updateScopeNotificationSettings)
             {
