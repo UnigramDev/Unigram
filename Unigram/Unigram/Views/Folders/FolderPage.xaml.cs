@@ -1,4 +1,5 @@
-﻿using Telegram.Td.Api;
+﻿using System;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -125,7 +126,7 @@ namespace Unigram.Views.Folders
 
             if (e.ClickedItem is ChatFilterIcon icon)
             {
-                ViewModel.Icon = icon;
+                ViewModel.SetIcon(icon);
             }
         }
 
@@ -136,9 +137,9 @@ namespace Unigram.Views.Folders
                 return;
             }
 
-            if (args.ItemContainer.ContentTemplateRoot is TextBlock block && args.Item is ChatFilterIcon icon)
+            if (args.ItemContainer.ContentTemplateRoot is BitmapIcon image && args.Item is ChatFilterIcon icon)
             {
-                block.Text = Icons.FromFilter(icon);
+                image.UriSource = new Uri($"ms-appx:///Assets/Filters/{icon}.png");
             }
         }
 
@@ -149,9 +150,9 @@ namespace Unigram.Views.Folders
             return filter == null ? Strings.Resources.FilterNew : filter.Title;
         }
 
-        private string ConvertEmoji(ChatFilterIcon icon)
+        private Uri ConvertEmoji(ChatFilterIcon icon)
         {
-            return Icons.FromFilter(icon);
+            return new Uri($"ms-appx:///Assets/Filters/{icon}.png");
         }
 
         #endregion

@@ -639,6 +639,11 @@ namespace Unigram.Views
                 _tabsLeftCollapsed = false;
             }
 
+            if (Window.Current.Content is RootPage root)
+            {
+                root.TopPadding = new Thickness(show ? 72 : 0, 0, 0, 0);
+            }
+
             if (ChatTabsLeft == null)
                 FindName(nameof(ChatTabsLeft));
 
@@ -2396,8 +2401,6 @@ namespace Unigram.Views
 
         private ChatFilterViewModel ConvertFilter(ChatFilterViewModel filter)
         {
-            rpMasterTitlebar.SelectedIndex = 0;
-
             ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
             ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
             ShowHideArchive(filter == null || filter.ChatList is ChatListMain);
@@ -2989,10 +2992,21 @@ namespace Unigram.Views
 
             if (args.Item is ChatFilterViewModel item && args.ItemContainer.ContentTemplateRoot is StackPanel panel)
             {
-                var grid = panel.Children[0] as Grid;
-                var block = grid.Children[0] as TextBlock;
+                if (panel.Children[0] is Grid grid && grid.Children[0] is BitmapIcon image)
+                {
+                    image.UriSource = new Uri($"ms-appx:///Assets/Filters/{item.Icon}.png");
+                }
+            }
+        }
 
-                block.Text = Icons.FromFilter(item.Icon);
+        private void ChatFilter_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            rpMasterTitlebar.SelectedIndex = 0;
+
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal &&
+                MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage))
+            {
+                MasterDetail.NavigationService.GoBackAt(0);
             }
         }
     }

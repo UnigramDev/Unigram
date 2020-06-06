@@ -77,8 +77,10 @@ namespace Unigram.ViewModels.Folders
 
             _pinnedChatIds = filter.PinnedChatIds;
 
+            _iconPicked = !string.IsNullOrEmpty(filter.IconName);
+
             Title = filter.Title;
-            Icon = Icons.ParseFilter(filter.IconName);
+            Icon = Icons.ParseFilter(filter);
 
             Include.Clear();
             Exclude.Clear();
@@ -114,6 +116,8 @@ namespace Unigram.ViewModels.Folders
 
                 Exclude.Add(new FilterChat { Chat = chat });
             }
+
+            UpdateIcon();
         }
 
         public int? Id { get; set; }
@@ -136,11 +140,29 @@ namespace Unigram.ViewModels.Folders
             }
         }
 
+        private bool _iconPicked;
+
         private ChatFilterIcon _icon;
         public ChatFilterIcon Icon
         {
             get => _icon;
-            set => Set(ref _icon, value);
+            private set => Set(ref _icon, value);
+        }
+
+        public void SetIcon(ChatFilterIcon icon)
+        {
+            _iconPicked = true;
+            Icon = icon;
+        }
+
+        private void UpdateIcon()
+        {
+            if (_iconPicked)
+            {
+                return;
+            }
+
+            Icon = Icons.ParseFilter(GetFilter());
         }
 
         private IList<long> _pinnedChatIds;
@@ -154,6 +176,7 @@ namespace Unigram.ViewModels.Folders
         private async void AddIncludeExecute()
         {
             await AddIncludeAsync();
+            UpdateIcon();
         }
 
         public async Task AddIncludeAsync()
@@ -190,6 +213,7 @@ namespace Unigram.ViewModels.Folders
         private async void AddExcludeExecute()
         {
             await AddExcludeAsync();
+            UpdateIcon();
         }
 
         public async Task AddExcludeAsync()
@@ -214,12 +238,14 @@ namespace Unigram.ViewModels.Folders
         private void RemoveIncludeExecute(ChatFilterElement chat)
         {
             Include.Remove(chat);
+            UpdateIcon();
         }
 
         public RelayCommand<ChatFilterElement> RemoveExcludeCommand { get; }
         private void RemoveExcludeExecute(ChatFilterElement chat)
         {
             Exclude.Remove(chat);
+            UpdateIcon();
         }
 
         public RelayCommand SendCommand { get; }
@@ -234,9 +260,29 @@ namespace Unigram.ViewModels.Folders
 
         public Task<BaseObject> SendAsync()
         {
+            Function function;
+            if (Id is int id)
+            {
+                function = new EditChatFilter(id, GetFilter());
+            }
+            else
+            {
+                function = new CreateChatFilter(GetFilter());
+            }
+
+            return ProtoService.SendAsync(function);
+        }
+
+        private bool SendCanExecute()
+        {
+            return !string.IsNullOrEmpty(Title) && Include.Count > 0;
+        }
+
+        private ChatFilter GetFilter()
+        {
             var filter = new ChatFilter();
             filter.Title = Title;
-            filter.IconName = Enum.GetName(typeof(ChatFilterIcon), Icon);
+            filter.IconName = _iconPicked ? Enum.GetName(typeof(ChatFilterIcon), Icon) : string.Empty;
             filter.PinnedChatIds = new List<long>();
             filter.IncludedChatIds = new List<long>();
             filter.ExcludedChatIds = new List<long>();
@@ -300,22 +346,7 @@ namespace Unigram.ViewModels.Folders
                 }
             }
 
-            Function function;
-            if (Id is int id)
-            {
-                function = new EditChatFilter(id, filter);
-            }
-            else
-            {
-                function = new CreateChatFilter(filter);
-            }
-
-            return ProtoService.SendAsync(function);
-        }
-
-        private bool SendCanExecute()
-        {
-            return !string.IsNullOrEmpty(Title) && Include.Count > 0;
+            return filter;
         }
     }
 

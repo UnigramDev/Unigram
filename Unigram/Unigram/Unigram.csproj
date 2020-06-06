@@ -237,6 +237,7 @@
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Common\XamlUtils.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Controls\AnimatedBitmapButton.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
     <Compile Include="Controls\AnimationView.cs" />
@@ -1550,6 +1551,30 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Assets\Filters\all.png" />
+    <Content Include="Assets\Filters\bots.png" />
+    <Content Include="Assets\Filters\cat.png" />
+    <Content Include="Assets\Filters\channels.png" />
+    <Content Include="Assets\Filters\crown.png" />
+    <Content Include="Assets\Filters\custom.png" />
+    <Content Include="Assets\Filters\edit.png" />
+    <Content Include="Assets\Filters\favorite.png" />
+    <Content Include="Assets\Filters\flower.png" />
+    <Content Include="Assets\Filters\game.png" />
+    <Content Include="Assets\Filters\groups.png" />
+    <Content Include="Assets\Filters\home.png" />
+    <Content Include="Assets\Filters\love.png" />
+    <Content Include="Assets\Filters\mask.png" />
+    <Content Include="Assets\Filters\party.png" />
+    <Content Include="Assets\Filters\private.png" />
+    <Content Include="Assets\Filters\setup.png" />
+    <Content Include="Assets\Filters\sport.png" />
+    <Content Include="Assets\Filters\study.png" />
+    <Content Include="Assets\Filters\trade.png" />
+    <Content Include="Assets\Filters\travel.png" />
+    <Content Include="Assets\Filters\unmuted.png" />
+    <Content Include="Assets\Filters\unread.png" />
+    <Content Include="Assets\Filters\work.png" />
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
     <Content Include="Assets\Fonts\SegMVR2.ttf" />

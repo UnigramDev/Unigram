@@ -1,4 +1,6 @@
 ﻿using System;
+using Telegram.Td;
+using Telegram.Td.Api;
 using Unigram.ViewModels;
 
 namespace Unigram.Converters
@@ -53,6 +55,7 @@ namespace Unigram.Converters
         public const string Bot = "\uE99A";
 
         public const string Help = "\uE897";
+        public const string Help2 = "\uE9CE";
 
         public const string Reply = "\uE248";
         public const string Edit = "\uE104";
@@ -147,6 +150,21 @@ namespace Unigram.Converters
             ChatFilterIcon.Custom,
             ChatFilterIcon.Setup
         };
+
+        public static ChatFilterIcon ParseFilter(ChatFilter filter)
+        {
+            var iconName = filter.IconName;
+            if (string.IsNullOrEmpty(iconName))
+            {
+                var text = Client.Execute(new GetChatFilterDefaultIconName(filter)) as Text;
+                if (text != null)
+                {
+                    iconName = text.TextValue;
+                }
+            }
+
+            return ParseFilter(iconName);
+        }
 
         public static ChatFilterIcon ParseFilter(string iconName)
         {
