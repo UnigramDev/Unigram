@@ -19,7 +19,7 @@ namespace Unigram.Common
 
         [ThreadStatic]
         private static LoopThreadPool _animations;
-        public static LoopThreadPool Animations => _animations ??= new LoopThreadPool(3, TimeSpan.FromMilliseconds(1000 / 25));
+        public static LoopThreadPool Animations => _animations ??= new LoopThreadPool(3, TimeSpan.FromMilliseconds(1000 / 30));
 
         [ThreadStatic]
         private static LoopThreadPool _stickers;
