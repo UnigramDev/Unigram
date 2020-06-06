@@ -110,7 +110,8 @@
                                 <controls:BadgeButton
                                     Command="{x:Bind LoadMoreCommand}"
                                     Content="{x:Bind LoadMoreLabel, Mode=OneWay}"
-                                    Visibility="{x:Bind LoadMoreVisibility, Mode=OneWay}"/>
+                                    Visibility="{x:Bind LoadMoreVisibility, Mode=OneWay}"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                             </controls:HeaderedControl>
                         </DataTemplate>
                     </microsoft:ItemsRepeater.ItemTemplate>

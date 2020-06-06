@@ -55,6 +55,7 @@
                     <StackPanel MaxWidth="640">
                         <controls:LottieView
                             Source="ms-appx:///Assets/Animations/Compass.tgs"
+                            IsLoopingEnabled="False"
                             Width="140"
                             Height="140"
                             Margin="0,24,0,0"/>
@@ -81,6 +82,12 @@
                             ItemsSource="{x:Bind ViewModel.Users}"
                             ItemTemplate="{StaticResource ChatTemplate}"
                             ElementPrepared="OnElementPrepared"/>
+
+                        <controls:BadgeButton
+                            Command="{x:Bind ViewModel.LoadMoreCommand}"
+                            Content="{x:Bind ViewModel.LoadMoreLabel, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.LoadMoreVisibility, Mode=OneWay}"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                     </controls:HeaderedControl>
                     <controls:HeaderedControl
                         Header="{CustomResource ChatsNearbyHeader}">
