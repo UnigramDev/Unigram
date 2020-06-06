@@ -36,7 +36,8 @@
                     x:Name="Repeater"
                     ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
                     ElementPrepared="OnElementPrepared"
-                    ElementClearing="OnElementClearing">
+                    ElementClearing="OnElementClearing"
+                    VerticalAlignment="Top">
                     <muxc:ItemsRepeater.Layout>
                         <controls:MosaicLayout />
                     </muxc:ItemsRepeater.Layout>

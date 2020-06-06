@@ -128,9 +128,9 @@
                         <Setter Target="ShowRow.MaxHeight" Value="736"/>
                         <Setter Target="HideRow.Height" Value="*"/>
                         
-                        <Setter Target="PaddingTopRow.Height" Value="12"/>
+                        <Setter Target="PaddingTopRow.Height" Value="8"/>
                         <Setter Target="PaddingLeftColumn.Width" Value="12"/>
-                        <Setter Target="PaddingBottomRow.Height" Value="8"/>
+                        <Setter Target="PaddingBottomRow.Height" Value="4"/>
                         <Setter Target="PaddingRightColumn.Width" Value="12"/>
                     </VisualState.Setters>
                 </VisualState>
