@@ -42,6 +42,8 @@ namespace Unigram.Views
         private FileContext<Tuple<IContentWithFile, MessageViewModel>> _filesMap = new FileContext<Tuple<IContentWithFile, MessageViewModel>>();
         private FileContext<Image> _iconsMap = new FileContext<Image>();
 
+        private List<(AnimationContent, AnimationView)> _animations = new List<(AnimationContent, AnimationView)>();
+
         public InstantPage()
         {
             InitializeComponent();
@@ -70,6 +72,15 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Unsubscribe(this);
+
+            foreach (var animation in _animations)
+            {
+                try
+                {
+                    animation.Item1.Children.Remove(animation.Item2);
+                }
+                catch { }
+            }
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -94,6 +105,22 @@ namespace Unigram.Views
                     {
                         panel.Item2.UpdateFile(update.File);
                         panel.Item1.UpdateFile(panel.Item2, update.File);
+
+                        if (panel.Item1 is AnimationContent content && panel.Item2.Content is MessageAnimation animation)
+                        {
+                            if (update.File.Local.IsDownloadingCompleted && update.File.Id == animation.Animation.AnimationValue.Id)
+                            {
+                                var presenter = new AnimationView();
+                                presenter.AutoPlay = true;
+                                presenter.IsLoopingEnabled = true;
+                                presenter.IsHitTestVisible = false;
+                                presenter.Source = new Uri("file:///" + update.File.Local.Path);
+
+                                content.Children.Add(presenter);
+
+                                _animations.Add((content, presenter));
+                            }
+                        }
                     }
 
                     if (update.File.Local.IsDownloadingCompleted && !update.File.Remote.IsUploadingActive)
@@ -1014,6 +1041,19 @@ namespace Unigram.Views
             content.HorizontalAlignment = HorizontalAlignment.Center;
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
+
+            if (block.Animation.AnimationValue.Local.IsDownloadingCompleted)
+            {
+                var presenter = new AnimationView();
+                presenter.AutoPlay = true;
+                presenter.IsLoopingEnabled = true;
+                presenter.IsHitTestVisible = false;
+                presenter.Source = new Uri("file:///" + block.Animation.AnimationValue.Local.Path);
+
+                content.Children.Add(presenter);
+
+                _animations.Add((content, presenter));
+            }
 
             if (block.Animation.Thumbnail != null)
             {

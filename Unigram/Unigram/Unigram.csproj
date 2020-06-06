@@ -360,9 +360,6 @@
     </Compile>
     <Compile Include="Controls\Messages\MessageService.cs" />
     <Compile Include="Controls\MediaPlayerView.cs" />
-    <Compile Include="Controls\Media\MusicPlaybackItem.xaml.cs">
-      <DependentUpon>MusicPlaybackItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Messages\Content\AnimationContent.xaml.cs">
       <DependentUpon>AnimationContent.xaml</DependentUpon>
     </Compile>
@@ -1916,10 +1913,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageFooter.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Media\MusicPlaybackItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
