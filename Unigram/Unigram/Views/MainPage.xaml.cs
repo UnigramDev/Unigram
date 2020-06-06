@@ -502,7 +502,7 @@ namespace Unigram.Views
         private void HideStatus()
         {
             Status.IsIndeterminate = false;
-#if DEBUG
+#if DEBUG && !MOCKUP
             StatusLabel.Text = Strings.Resources.AppName;
 #else
             StatusLabel.Text = "Unigram";
