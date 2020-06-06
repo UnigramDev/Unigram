@@ -42,7 +42,7 @@
                 VerticalScrollMode="Auto">
                 <muxc:ItemsRepeater
                     x:Name="Repeater"
-                    ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                    ItemsSource="{x:Bind ConvertItems(ViewModel.Items), Mode=OneWay}"
                     ElementPrepared="OnElementPrepared"
                     ElementClearing="OnElementClearing"
                     VerticalAlignment="Top">

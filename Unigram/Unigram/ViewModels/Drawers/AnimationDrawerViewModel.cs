@@ -158,6 +158,13 @@ namespace Unigram.ViewModels.Drawers
         {
             return IndexOf(this.FirstOrDefault(x => key == x.AnimationValue.Id.ToString()));
         }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => Set(ref _isLoading, value);
+        }
     }
 
     public class TrendingAnimationsCollection : SearchAnimationsCollection
@@ -197,6 +204,8 @@ namespace Unigram.ViewModels.Drawers
         {
             return AsyncInfo.Run(async token =>
             {
+                IsLoading = true;
+
                 if (_userId == null)
                 {
                     var bot = await _protoService.SendAsync(new SearchPublicChat(_protoService.Options.AnimationSearchBotUsername));
@@ -232,6 +241,7 @@ namespace Unigram.ViewModels.Drawers
                     _hasMoreItems = false;
                 }
 
+                IsLoading = false;
                 return new LoadMoreItemsResult();
             });
         }

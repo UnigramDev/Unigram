@@ -163,11 +163,13 @@ namespace Unigram.Controls
             var firstItemIndex = state.Rows[firstRowIndex][0].Index;
             var lastItemIndex = state.Rows[lastRowIndex].Last().Index;
 
+            var availableWidth = availableSize.Width + 2;
+
             for (int i = firstItemIndex; i <= lastItemIndex; i++)
             {
                 var container = context.GetOrCreateElementAt(i);
                 container.Measure(new Size(
-                    state.LayoutRects[i].Width * availableSize.Width,
+                    state.LayoutRects[i].Width * availableWidth,
                     state.LayoutRects[i].Height));
             }
 
@@ -190,13 +192,15 @@ namespace Unigram.Controls
             var firstItemIndex = state.FirstRealizedIndex;
             var lastItemIndex = state.LastRealizedIndex;
 
+            var finalWidth = finalSize.Width + 2;
+
             for (int i = firstItemIndex; i <= lastItemIndex; i++)
             {
                 var container = context.GetOrCreateElementAt(i);
                 container.Arrange(new Rect(
-                    state.LayoutRects[i].X * finalSize.Width,
+                    state.LayoutRects[i].X * finalWidth,
                     state.LayoutRects[i].Y,
-                    state.LayoutRects[i].Width * finalSize.Width,
+                    state.LayoutRects[i].Width * finalWidth,
                     state.LayoutRects[i].Height));
             }
 

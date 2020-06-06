@@ -162,6 +162,12 @@ namespace Unigram.Controls.Drawers
             //ViewModel.Stickers.FindAnimations(FieldAnimations.Text);
         }
 
+        private object ConvertItems(object items)
+        {
+            _handler.LoadVisibleItemsThrottled();
+            return items;
+        }
+
         private void DownloadFile(int id, Animation animation)
         {
             _animations[id].Add(animation);

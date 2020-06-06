@@ -44,7 +44,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="MediaTemplate">
-            <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
+            <Button Click="Result_Click" Margin="0,0,2,2" Style="{StaticResource GridViewButtonStyle}">
                 <Grid>
                     <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
