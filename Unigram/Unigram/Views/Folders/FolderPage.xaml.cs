@@ -22,6 +22,11 @@ namespace Unigram.Views.Folders
             DataContext = TLContainer.Current.Resolve<FolderViewModel>();
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            TitleField.Focus(FocusState.Keyboard);
+        }
+
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
             var button = args.Element as Button;
