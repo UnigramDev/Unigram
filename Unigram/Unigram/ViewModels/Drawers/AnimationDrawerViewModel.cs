@@ -115,7 +115,7 @@ namespace Unigram.ViewModels.Drawers
 
         private async void SetAnimationSet(AnimationsCollection collection, bool searching)
         {
-            if ((collection == _selectedSet && !searching) || (collection == _searchSet && searching))
+            if ((collection == _selectedSet && !searching && _searchSet == null) || (collection == _searchSet && searching))
             {
                 return;
             }
