@@ -650,6 +650,11 @@ namespace Unigram.Services
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
                     var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, new SendMessageOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
+                
+                    if (chat.Type is ChatTypePrivate)
+                    {
+                        await _protoService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, true));
+                    }
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
                 {
