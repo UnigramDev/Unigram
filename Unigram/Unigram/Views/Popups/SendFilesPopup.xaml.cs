@@ -137,8 +137,15 @@ namespace Unigram.Views.Popups
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            UpdateView();
-            UpdatePanel();
+            if (Items.Count > 0)
+            {
+                UpdateView();
+                UpdatePanel();
+            }
+            else
+            {
+                Hide();
+            }
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
