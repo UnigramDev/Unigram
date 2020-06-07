@@ -7,6 +7,7 @@ using Unigram.Services.Navigation;
 using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -224,6 +225,9 @@ namespace Unigram.Controls
             AdaptivePanel.ViewStateChanged += OnViewStateChanged;
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
+
+            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
 
             if (DetailFrame != null)
             {
