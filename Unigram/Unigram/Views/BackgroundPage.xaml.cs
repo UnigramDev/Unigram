@@ -203,10 +203,13 @@ namespace Unigram.Views
                 {
                     //content.Background = pattern.Fill.ToBrush();
                     //rectangle.Opacity = pattern.Intensity / 100d
-                    var surface = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue);
-                    if (surface != null)
+                    if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        rectangle.Fill = new TiledBrush { SvgSource = surface }; //new ImageBrush { ImageSource = PlaceholderHelper.GetVector(ViewModel.ProtoService, big.DocumentValue), Stretch = Stretch.Uniform, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                        rectangle.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, big.DocumentValue) };
+                    }
+                    else
+                    {
+                        rectangle.Fill = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                 }
             }
@@ -373,10 +376,13 @@ namespace Unigram.Views
                     {
                         //content.Background = pattern.Fill.ToBrush();
                         //rectangle.Opacity = pattern.Intensity / 100d;
-                        var surface = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue);
-                        if (surface != null)
+                        if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                         {
-                            rectangle.Fill = new TiledBrush { SvgSource = surface }; //new ImageBrush { ImageSource = PlaceholderHelper.GetVector(ViewModel.ProtoService, big.DocumentValue), Stretch = Stretch.Uniform, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                            rectangle.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, big.DocumentValue) };
+                        }
+                        else
+                        {
+                            rectangle.Fill = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                         }
                     }
                 }
