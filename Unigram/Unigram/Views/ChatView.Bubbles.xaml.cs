@@ -9,6 +9,7 @@ using Unigram.Controls.Chats;
 using Unigram.Controls.Gallery;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Gallery;
 using Windows.Foundation;
@@ -159,10 +160,18 @@ namespace Unigram.Views
                 return;
             }
 
+            var top = 0d;
+            var bottom = 0d;
+
+            var knockout = SettingsService.Current.Diagnostics.BubbleKnockout;
+            var start = knockout ? panel.FirstCacheIndex : panel.FirstVisibleIndex;
+            var end = knockout ? panel.LastCacheIndex : panel.LastVisibleIndex;
+
+            var minKnock = knockout;
             var minItem = true;
             var minDate = true;
 
-            for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
+            for (int i = start; i <= end; i++)
             {
                 var container = Messages.ContainerFromIndex(i) as SelectorItem;
                 if (container == null)
@@ -176,8 +185,19 @@ namespace Unigram.Views
                     continue;
                 }
 
-                if (minItem)
+                if (minKnock)
                 {
+                    var negative = Messages.TransformToVisual(container);
+                    var relative = negative.TransformPoint(new Point());
+
+                    top = relative.Y;
+                    bottom = relative.Y + Messages.ActualHeight;
+
+                    minKnock = false;
+                }
+
+                if (minItem && i >= panel.FirstVisibleIndex)
+                { 
                     var transform = container.TransformToVisual(DateHeaderRelative);
                     var point = transform.TransformPoint(new Point());
 
@@ -200,7 +220,7 @@ namespace Unigram.Views
                     }
                 }
 
-                if (message.Content is MessageHeaderDate && minDate)
+                if (message.Content is MessageHeaderDate && minDate && i >= panel.FirstVisibleIndex)
                 {
                     var transform = container.TransformToVisual(DateHeaderRelative);
                     var point = transform.TransformPoint(new Point());
@@ -231,6 +251,14 @@ namespace Unigram.Views
                 {
                     container.Opacity = 1;
                 }
+
+                if (knockout && container.ContentTemplateRoot is MessageBubble bubble)
+                {
+                    bubble.UpdateKnockout(top / container.ActualHeight, bottom / container.ActualHeight);
+                }
+
+                top -= container.ActualHeight;
+                bottom -= container.ActualHeight;
             }
 
             _dateHeaderTimer.Stop();

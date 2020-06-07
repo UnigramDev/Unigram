@@ -33,20 +33,22 @@ namespace Unigram.Controls.Messages
         public MessageBubble()
         {
             InitializeComponent();
-
-            if (SettingsService.Current.Diagnostics.BubbleKnockout && ApiInfo.CanUseViewports)
-            {
-                ContentPanel.EffectiveViewportChanged += OnEffectiveViewportChanged;
-            }
         }
 
-        private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
+        public void UpdateKnockout(double top, double bottom)
         {
-            if (ContentPanel.Background is LinearGradientBrush gradient)
+            var gradient = ContentPanel.Background as LinearGradientBrush;
+            if (gradient == null)
             {
-                gradient.StartPoint = new Point(0, args.EffectiveViewport.Y / sender.ActualHeight);
-                gradient.EndPoint = new Point(0, args.EffectiveViewport.Bottom / sender.ActualHeight);
+                ContentPanel.Background = gradient = new LinearGradientBrush();
+                //gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), Offset = 0 });
+                //gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF8, 0xEA, 0x8F), Offset = 1 });
+                gradient.GradientStops.Add(new GradientStop { Color = Colors.Red, Offset = 0 });
+                gradient.GradientStops.Add(new GradientStop { Color = Colors.Blue, Offset = 1 });
             }
+
+            gradient.StartPoint = new Point(0, top);
+            gradient.EndPoint = new Point(0, bottom);
         }
 
         public void UpdateMessage(MessageViewModel message)
