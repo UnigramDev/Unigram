@@ -85,45 +85,41 @@ namespace Unigram.Services
 
         public void Handle(UpdateUnreadMessageCount update)
         {
-            if (update.ChatList is ChatListArchive)
-            {
-                return;
-            }
-
             if (!Settings.Notifications.CountUnreadMessages)
             {
                 return;
             }
 
-            if (Settings.Notifications.IncludeMutedChats)
+            if (update.ChatList is ChatListMain)
             {
-                BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
-            }
-            else
-            {
-                BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+                if (Settings.Notifications.IncludeMutedChats)
+                {
+                    BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+                }
+                else
+                {
+                    BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+                }
             }
         }
 
         public void Handle(UpdateUnreadChatCount update)
         {
-            if (update.ChatList is ChatListArchive)
-            {
-                return;
-            }
-
             if (Settings.Notifications.CountUnreadMessages)
             {
                 return;
             }
 
-            if (Settings.Notifications.IncludeMutedChats)
+            if (update.ChatList is ChatListMain)
             {
-                BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
-            }
-            else
-            {
-                BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+                if (Settings.Notifications.IncludeMutedChats)
+                {
+                    BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+                }
+                else
+                {
+                    BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+                }
             }
         }
 

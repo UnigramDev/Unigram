@@ -185,20 +185,15 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateUnreadMessageCount update)
         {
-            if (update.ChatList is ChatListArchive)
+            if (update.ChatList is ChatListMain)
             {
-                return;
-            }
-
-            BeginOnUIThread(() =>
-            {
-                if (update.ChatList is ChatListMain)
+                BeginOnUIThread(() =>
                 {
                     UnreadCount = update.UnreadCount;
                     UnreadUnmutedCount = update.UnreadUnmutedCount;
                     UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
-                }
-            });
+                });
+            }
         }
 
         public void Handle(UpdateUnreadChatCount update)

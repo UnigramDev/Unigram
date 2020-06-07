@@ -200,55 +200,51 @@ namespace Unigram.Services
 
         public async void Handle(UpdateUnreadMessageCount update)
         {
-            if (update.ChatList is ChatListArchive)
-            {
-                return;
-            }
-
             if (!_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
 
-            if (_settings.Notifications.IncludeMutedChats)
+            if (update.ChatList is ChatListMain)
             {
-                UpdateBadge(update.UnreadCount);
-            }
-            else
-            {
-                UpdateBadge(update.UnreadUnmutedCount);
-            }
+                if (_settings.Notifications.IncludeMutedChats)
+                {
+                    UpdateBadge(update.UnreadCount);
+                }
+                else
+                {
+                    UpdateBadge(update.UnreadUnmutedCount);
+                }
 
-            if (App.Connection is AppServiceConnection connection)
-            {
-                await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                if (App.Connection is AppServiceConnection connection)
+                {
+                    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                }
             }
         }
 
         public async void Handle(UpdateUnreadChatCount update)
         {
-            if (update.ChatList is ChatListArchive)
-            {
-                return;
-            }
-
             if (_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
 
-            if (_settings.Notifications.IncludeMutedChats)
+            if (update.ChatList is ChatListMain)
             {
-                UpdateBadge(update.UnreadCount);
-            }
-            else
-            {
-                UpdateBadge(update.UnreadUnmutedCount);
-            }
+                if (_settings.Notifications.IncludeMutedChats)
+                {
+                    UpdateBadge(update.UnreadCount);
+                }
+                else
+                {
+                    UpdateBadge(update.UnreadUnmutedCount);
+                }
 
-            if (App.Connection is AppServiceConnection connection)
-            {
-                await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                if (App.Connection is AppServiceConnection connection)
+                {
+                    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                }
             }
         }
 
