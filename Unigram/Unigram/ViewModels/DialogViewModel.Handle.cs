@@ -459,7 +459,7 @@ namespace Unigram.ViewModels
                             }
                         }
 
-                        if (Items[i].Content is MessageHeaderUnread && Items.Count - 1 == i)
+                        if (Items.Count - 1 == i && Items[i].Content is MessageHeaderUnread)
                         {
                             Items.RemoveAt(i);
                             i--;
