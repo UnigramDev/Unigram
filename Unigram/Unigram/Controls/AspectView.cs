@@ -268,7 +268,11 @@ namespace Unigram.Controls
                 height = 1600;
             }
 
-
+            if (width == 0 && height == 0)
+            {
+                width = int.MaxValue;
+                height = int.MaxValue;
+            }
 
             Calculate:
             if (width > availableWidth || height > availableHeight)
