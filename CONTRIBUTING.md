@@ -42,7 +42,7 @@ Feature requests are welcome, anyway you should firstly read:
 Consider that Unigram follows the official clients guidelines, so **do not** ask for features that aren't in [official clients](https://telegram.org/apps) (for who is wondering, Telegram X is an official client, but doesn't follow the official guidelines, so its stuff won't be considered).
 
 ## Pull requests
-**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that developers might not want to merge into the project. To avoid that, you can join the official [Unigram group](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ) or open an issue.
+**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that developers might not want to merge into the project. To avoid that, you can join the official [Unigram group](https://t.me/unigraminsiders) or open an issue.
 
 ## License
 By contributing your code, you agree to license your contribution under the [GNU General Public License](https://github.com/UnigramDev/Unigram/blob/develop/LICENSE). 
