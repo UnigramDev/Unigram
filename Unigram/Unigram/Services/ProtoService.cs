@@ -369,10 +369,11 @@ namespace Unigram.Services
                     ulong major = (SettingsService.CurrentVersion & 0xFFFF000000000000L) >> 48;
                     ulong minor = (SettingsService.CurrentVersion & 0x0000FFFF00000000L) >> 32;
 
-                    var title = $"What's new in Unigram {major}.{minor}:";
+                    var title = $"**What's new in Unigram {major}.{minor}:**";
                     var message = title + Environment.NewLine + SettingsService.CurrentChangelog;
-                    var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
 
+                    var entities = Client.Execute(new GetTextEntities(message)) as TextEntities;
+                    var formattedText = new FormattedText(message, entities.Entities);
                     formattedText = Client.Execute(new ParseMarkdown(formattedText)) as FormattedText;
 
                     foreach (var entity in formattedText.Entities)
