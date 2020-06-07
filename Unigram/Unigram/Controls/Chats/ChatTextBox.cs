@@ -89,10 +89,10 @@ namespace Unigram.Controls.Chats
 
                 await ViewModel.HandlePackageAsync(package);
             }
-            else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
-            {
+            //else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
+            //{
 
-            }
+            //}
             else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
                 if (e != null)
