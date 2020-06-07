@@ -197,7 +197,7 @@ namespace Unigram.Views
                 }
 
                 if (minItem && i >= panel.FirstVisibleIndex)
-                { 
+                {
                     var transform = container.TransformToVisual(DateHeaderRelative);
                     var point = transform.TransformPoint(new Point());
 

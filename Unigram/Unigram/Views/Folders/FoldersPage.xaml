@@ -79,7 +79,7 @@
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl
-                    Header="Tabs view"
+                        Header="Tabs view"
                         Footer="If you have many folders, try moving tabs on the left.">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                   HorizontalScrollMode="Auto"
