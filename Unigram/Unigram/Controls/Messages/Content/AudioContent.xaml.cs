@@ -250,7 +250,7 @@ namespace Unigram.Controls.Messages.Content
                 }
             }
 
-            if (SettingsService.Current.IsStreamingEnabled)
+            if (SettingsService.Current.IsStreamingEnabled && !file.Remote.IsUploadingActive)
             {
                 UpdatePlayback(message, audio, file);
             }
