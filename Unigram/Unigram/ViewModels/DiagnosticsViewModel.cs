@@ -102,16 +102,6 @@ namespace Unigram.ViewModels
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
         public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
 
-        public bool BubbleMeasureAlpha
-        {
-            get => Settings.Diagnostics.BubbleMeasureAlpha;
-            set
-            {
-                Settings.Diagnostics.BubbleMeasureAlpha = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool BubbleKnockout
         {
             get => Settings.Diagnostics.BubbleKnockout;

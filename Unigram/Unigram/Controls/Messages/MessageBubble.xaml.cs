@@ -1248,11 +1248,6 @@ namespace Unigram.Controls.Messages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (!SettingsService.Current.Diagnostics.BubbleMeasureAlpha)
-            {
-                return;
-            }
-
             if (_placeholder)
             {
                 var footerWidth = Footer.ActualWidth - 5;
