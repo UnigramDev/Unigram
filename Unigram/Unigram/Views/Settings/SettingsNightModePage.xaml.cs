@@ -95,7 +95,7 @@ namespace Unigram.Views.Settings
 
         private string ConvertTimeSpan(TimeSpan time)
         {
-            return BindConvert.Current.ShortTime.Format(new DateTime(1, 1, 1, time.Hours, time.Minutes, 0));
+            return BindConvert.Current.ShortTime.Format(new DateTime(2020, 1, 1) + time);
         }
 
         private string ConvertSunDate(bool enabled, Location location)
