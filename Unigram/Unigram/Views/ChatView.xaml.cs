@@ -55,7 +55,6 @@ namespace Unigram.Views
 
         private Func<IDialogDelegate, DialogViewModel> _getViewModel;
         private DialogViewModel _viewModel;
-        private double _lastKnownKeyboardHeight = 260;
 
         private readonly TLWindowContext _windowContext;
 
@@ -832,8 +831,6 @@ namespace Unigram.Views
             StickersPanel.Height = args.OccludedRect.Height;
             ReplyMarkupPanel.MaxHeight = args.OccludedRect.Height;
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
-
-            _lastKnownKeyboardHeight = Math.Max(260, args.OccludedRect.Height);
 
             Collapse_Click(null, null);
             CollapseMarkup(false);
@@ -2810,10 +2807,6 @@ namespace Unigram.Views
             {
                 _stickersMode = StickersPanelMode.Collapsed;
                 SettingsService.Current.IsSidebarOpen = false;
-
-                StickersPanel.MinHeight = 260;
-                StickersPanel.MaxHeight = 360;
-                StickersPanel.Height = _lastKnownKeyboardHeight;
 
                 StickersPanel.Deactivate();
                 StickersPanel.Visibility = Visibility.Collapsed;
