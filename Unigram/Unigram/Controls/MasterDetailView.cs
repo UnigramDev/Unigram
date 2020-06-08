@@ -496,24 +496,7 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region Header
-
-        public static UIElement GetHeader(DependencyObject obj)
-        {
-            return (UIElement)obj.GetValue(HeaderProperty);
-        }
-
-        public static void SetHeader(DependencyObject obj, UIElement value)
-        {
-            obj.SetValue(HeaderProperty, value);
-        }
-
-        public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.RegisterAttached("Header", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
-
-        #endregion
-
-        #region PageHeader
+        #region Banner
 
         public UIElement Banner
         {

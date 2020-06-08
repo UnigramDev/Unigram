@@ -45,7 +45,6 @@
 
                             <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
 
-                            <ContentControl Content="{TemplateBinding Header}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             <ContentControl Content="{TemplateBinding MasterHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             <ContentControl Content="{TemplateBinding DetailHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             <ContentControl Content="{TemplateBinding Banner}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
@@ -84,17 +83,41 @@
     </Page.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+
+        <Grid x:Name="TitleBarrr" Height="32" Background="{ThemeResource PageTitleBackgroundBrush}" Grid.ColumnSpan="2">
+            <contract7Present:Grid.BackgroundTransition>
+                <contract7Present:BrushTransition/>
+            </contract7Present:Grid.BackgroundTransition>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <microsoft:ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
+            <TextBlock x:Name="StatusLabel"
+                               VerticalAlignment="Center"
+                               TextLineBounds="TrimToCapHeight"
+                               Margin="6,0,0,0"
+                               AutomationProperties.LiveSetting="Assertive"
+                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Grid.Column="1"/>
+        </Grid>
 
         <Border
             x:Load="False"
             x:Name="ChatTabsLeft"
             Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}"
             BorderBrush="{ThemeResource PageHeaderBackgroundBrush}"
-            BorderThickness="0,0,0,0">
+            BorderThickness="0,0,0,0"
+            Grid.Row="1">
             <controls:TopNavView
                 x:Name="ChatFiltersSide"
                 ItemsSource="{x:Bind ViewModel.Filters}"
@@ -216,27 +239,7 @@
             </controls:TopNavView>
         </Border>
         
-        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1">
-            <controls:MasterDetailView.Header>
-                <Grid x:Name="TitleBarrr" Height="32" Background="{ThemeResource PageTitleBackgroundBrush}">
-                    <contract7Present:Grid.BackgroundTransition>
-                        <contract7Present:BrushTransition/>
-                    </contract7Present:Grid.BackgroundTransition>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <microsoft:ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-                    <TextBlock x:Name="StatusLabel"
-                               VerticalAlignment="Center"
-                               TextLineBounds="TrimToCapHeight"
-                               Margin="6,0,0,0"
-                               AutomationProperties.LiveSetting="Assertive"
-                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Grid.Column="1"/>
-                </Grid>
-            </controls:MasterDetailView.Header>
+        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1" Grid.Row="1">
             <controls:MasterDetailView.Banner>
                 <controls:PlaybackHeader x:Name="Playback"/>
             </controls:MasterDetailView.Banner>
@@ -999,6 +1002,7 @@
             x:Load="False"
             Completed="Confetti_Completed"
             IsHitTestVisible="False"
-            Grid.ColumnSpan="2"/>
+            Grid.ColumnSpan="2"
+            Grid.Row="1"/>
     </Grid>
 </Page>
