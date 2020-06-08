@@ -2493,12 +2493,10 @@ namespace Unigram.Views
 
             var element = sender as FrameworkElement;
             var filter = ChatFilters?.ItemFromContainer(sender) as ChatFilterViewModel;
-            var left = false;
 
             if (filter == null)
             {
                 filter = ChatFiltersSide.ItemFromContainer(sender) as ChatFilterViewModel;
-                left = true;
             }
 
             if (filter.ChatFilterId == Constants.ChatListMain)
@@ -2513,8 +2511,14 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.FilterDeleteCommand, filter, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
             }
 
-            //args.ShowAt(flyout, element);
-            flyout.ShowAt(element, new FlyoutShowOptions { Placement = left ? FlyoutPlacementMode.RightEdgeAlignedTop : FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
+            {
+                flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            }
+            else
+            {
+                flyout.ShowAt(element);
+            }
         }
 
         private void ArchivedChats_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
