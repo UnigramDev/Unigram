@@ -19,9 +19,9 @@
     <PackageCertificateKeyFile>
     </PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>602F1A7B283C48CF3345BD23DAEA58A1E444B2AD</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -1697,12 +1697,12 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <Content Include="Assets\Fonts\Telegram.ttf" />
+    <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
     <Content Include="Assets\Images\Reply.scale-150.png" />
     <Content Include="Assets\Images\Reply.scale-200.png" />
     <Content Include="Assets\Images\Reply.scale-400.png" />
-    <Content Include="Assets\Images\WalletGem.png" />
     <Content Include="Assets\Logos\SplashScreen.scale-100.png" />
     <Content Include="Assets\Logos\SplashScreen.scale-125.png" />
     <Content Include="Assets\Logos\SplashScreen.scale-150.png" />

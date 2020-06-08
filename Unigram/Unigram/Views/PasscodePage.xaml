@@ -355,7 +355,7 @@
         <StackPanel
             VerticalAlignment="Center"
             HorizontalAlignment="Center">
-            <controls:ProfilePicture x:Name="Photo" Source="ms-appx:///Assets/Mockup/a0.png" Width="120" Height="120" Margin="0,0,0,12" HorizontalAlignment="Center"/>
+            <controls:ProfilePicture x:Name="Photo" Source="ms-appx:///Assets/Images/BoxArt.png" Width="120" Height="120" Margin="0,0,0,12" HorizontalAlignment="Center"/>
             <TextBlock x:Name="FullName" Text="{CustomResource AppName}" TextAlignment="Center" Margin="0,0,0,24" Style="{StaticResource TitleTextBlockStyle}"/>
 
             <Grid HorizontalAlignment="Center"
