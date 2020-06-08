@@ -12,26 +12,30 @@ namespace Unigram.Common
     {
         public static async Task RegisterBackgroundTasks()
         {
-            //BackgroundExecutionManager.RemoveAccess();
-
-            foreach (var t in BackgroundTaskRegistration.AllTasks)
+            try
             {
-                if (t.Value.Name == "NotificationTask" /*|| t.Value.Name == "NewNotificationTask"*/)
+                //BackgroundExecutionManager.RemoveAccess();
+
+                foreach (var t in BackgroundTaskRegistration.AllTasks)
                 {
-                    t.Value.Unregister(false);
+                    if (t.Value.Name == "NotificationTask" /*|| t.Value.Name == "NewNotificationTask"*/)
+                    {
+                        t.Value.Unregister(false);
+                    }
                 }
-            }
 
-            var access = await BackgroundExecutionManager.RequestAccessAsync();
-            if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
-            {
-                return;
-            }
+                var access = await BackgroundExecutionManager.RequestAccessAsync();
+                if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
+                {
+                    return;
+                }
 
-            Register("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", () => new PushNotificationTrigger());
-            //Register("NewNotificationTask2", null, () => new PushNotificationTrigger());
-            Register("NewInteractiveTask", null, () => new ToastNotificationActionTrigger());
-            //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
+                Register("NewNotificationTask", "Unigram.Native.Tasks.NotificationTask", () => new PushNotificationTrigger());
+                //Register("NewNotificationTask2", null, () => new PushNotificationTrigger());
+                Register("NewInteractiveTask", null, () => new ToastNotificationActionTrigger());
+                //BackgroundTaskManager.Register("InteractiveTask", "Unigram.Tasks.InteractiveTask", new ToastNotificationActionTrigger());
+            }
+            catch { }
         }
 
         private static bool Register(string name, string entryPoint, Func<IBackgroundTrigger> trigger, Action onCompleted = null)
