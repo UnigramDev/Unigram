@@ -2983,22 +2983,6 @@ namespace Unigram.Views
             }
         }
 
-        private void ChatFiltersSide_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            if (args.Item is ChatFilterViewModel item && args.ItemContainer.ContentTemplateRoot is StackPanel panel)
-            {
-                if (panel.Children[0] is Grid grid && grid.Children[0] is BitmapIcon image)
-                {
-                    image.UriSource = new Uri($"ms-appx:///Assets/Filters/{item.Icon}.png");
-                }
-            }
-        }
-
         private void ChatFilter_ItemClick(object sender, ItemClickEventArgs e)
         {
             rpMasterTitlebar.SelectedIndex = 0;
