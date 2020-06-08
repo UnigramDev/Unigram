@@ -205,7 +205,7 @@ namespace Unigram.Views
                     //rectangle.Opacity = pattern.Intensity / 100d
                     if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        rectangle.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, big.DocumentValue) };
+                        rectangle.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue) };
                     }
                     else
                     {
@@ -378,7 +378,7 @@ namespace Unigram.Views
                         //rectangle.Opacity = pattern.Intensity / 100d;
                         if (string.Equals(wallpaper.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                         {
-                            rectangle.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, big.DocumentValue) };
+                            rectangle.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(ViewModel.ProtoService, big.DocumentValue) };
                         }
                         else
                         {

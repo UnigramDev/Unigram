@@ -30,7 +30,7 @@ namespace Unigram.Controls.Brushes
 
         protected override void OnConnected()
         {
-            if (CompositionBrush == null)
+            if (CompositionBrush == null && (Source != null || SvgSource != null))
             {
                 var surface = SvgSource ?? LoadedImageSurface.StartLoadFromUri(Source, new Size(_width, _height));
                 var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
