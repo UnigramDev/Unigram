@@ -246,6 +246,10 @@ namespace Unigram.Views.Supergroups
                     {
                         label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
                     }
+                    else
+                    {
+                        label.Text = string.Empty;
+                    }
                 }
                 else
                 {
