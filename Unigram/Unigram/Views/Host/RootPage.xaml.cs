@@ -73,7 +73,6 @@ namespace Unigram.Views.Host
             service.Frame.Navigated += OnNavigated;
             _navigationService = service;
 
-            InitializeTitleBar();
             InitializeNavigation(service.Frame);
             InitializeLocalization();
 
@@ -95,51 +94,16 @@ namespace Unigram.Views.Host
             _navigationViewSelected = RootDestination.Chats;
             NavigationViewList.ItemsSource = _navigationViewItems;
 
-            InitializeTitleBar();
             InitializeNavigation(_navigationService.Frame);
             InitializeLocalization();
 
             Switch(_lifetime.ActiveItem);
         }
 
-        private void InitializeTitleBar()
-        {
-            var sender = CoreApplication.GetCurrentView().TitleBar;
-
-            if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop") && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-            {
-                // If running on PC and tablet mode is disabled, then titlebar is most likely visible
-                // So we're going to force it
-                Navigation.Padding = new Thickness(0, 32, 0, 0);
-            }
-            else
-            {
-                Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
-            }
-
-            sender.ExtendViewIntoTitleBar = true;
-            sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
-            sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
-        }
-
         public Thickness TopPadding
         {
             get { return Navigation.TopPadding; }
             set { Navigation.TopPadding = value; }
-        }
-
-        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
-        {
-            Navigation.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
-
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-            foreach (var popup in popups)
-            {
-                if (popup.Child is OverlayPage contentDialog)
-                {
-                    contentDialog.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
-                }
-            }
         }
 
         public void Create()
