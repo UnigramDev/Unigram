@@ -33,7 +33,7 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 ## Features
 - Based on [TDLib](https://github.com/tdlib/td)
 - Secret chats
-- Folder synced with other Telegram clients
+- Folders synced with other Telegram clients
 - Instant view (now updated with the most recent 2.0)
 - Multi-account
 - Calls
