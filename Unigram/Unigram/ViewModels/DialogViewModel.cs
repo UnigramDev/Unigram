@@ -1755,7 +1755,16 @@ namespace Unigram.ViewModels
             }
             else
             {
-                if (Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out long start) && start < chat.LastReadInboxMessageId)
+                bool TryRemove(long chatId, out long v1, out long v2)
+                {
+                    var a = Settings.Chats.TryRemove(chat.Id, ChatSetting.ReadInboxMaxId, out v1);
+                    var b = Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out v2);
+                    return a && b;
+                }
+
+                if (TryRemove(chat.Id, out long readIndboxMaxId, out long start) &&
+                    readIndboxMaxId == chat.LastReadInboxMessageId &&
+                    start < chat.LastReadInboxMessageId)
                 {
                     if (Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel))
                     {
@@ -1983,6 +1992,7 @@ namespace Unigram.ViewModels
                             var transform = container.TransformToVisual(field);
                             var position = transform.TransformPoint(new Point());
 
+                            Settings.Chats[chat.Id, ChatSetting.ReadInboxMaxId] = chat.LastReadInboxMessageId;
                             Settings.Chats[chat.Id, ChatSetting.Index] = start;
                             Settings.Chats[chat.Id, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
 
@@ -1990,6 +2000,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
+                            Settings.Chats[chat.Id, ChatSetting.ReadInboxMaxId] = chat.LastReadInboxMessageId;
                             Settings.Chats[chat.Id, ChatSetting.Index] = start;
                             Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel);
 
