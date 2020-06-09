@@ -33,21 +33,22 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 ## Features
 - Based on [TDLib](https://github.com/tdlib/td)
 - Secret chats
+- Folders synced with other Telegram clients
 - Instant view (now updated with the most recent 2.0)
 - Multi-account
-- Filter chats (users, bots, groups, channels, unread chats and unmuted chats)
 - Calls
-- Videos and photos editor (easily crop photos, set video resolution or remove some parts of the videos before sending them)
-- Drag&drop files to chats to send them quickly
+- Videos and photos editor (easily crop photos, rotate, flip, draw on images before sending them)
+- Drag&drop files to chats to send them quickly or use Windows 10 Share
 - Open chats in separated windows (Shift+click)
 - Replace sent media content
-- Polls 2.0
+- Polls 2.0 and Quizzes
 - Backgrounds 2.0 (blurred and motion options available)
 - Built-in app lock with support for Windows Hello authentication (fingerprint, face and iris recognition)
 - Advanced markdown editor for messages
 - In-app music player
 - Animated stickers and emojis
 - Scheduled and silent messages
+- Channel statistics for big channels
 - Full support of Windows 10 notifications and Action Centre (reply to a message or mark it as read without opening the app)
 - Accessibility for visually impaired people
 
