@@ -18,7 +18,7 @@
     </ContentDialog.Resources>
 
     <Grid>
-        <controls:ZoomableGridView
+        <GridView
             x:Name="List"
             ItemsSource="{x:Bind ViewSource.View}"
             ItemClick="List_ItemClick"
@@ -100,6 +100,6 @@
                     <ItemsWrapGrid Orientation="Horizontal" GroupPadding="0,0,0,12" AreStickyGroupHeadersEnabled="False"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
-        </controls:ZoomableGridView>
+        </GridView>
     </Grid>
 </controls:ContentPopup>

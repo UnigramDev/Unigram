@@ -16,15 +16,15 @@ namespace Unigram.Views
             var sticker = element.Tag as StickerViewModel;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, sticker.Get(), Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Stickers });
+            flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, (Sticker)sticker, Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Stickers });
 
             if (ViewModel.ProtoService.IsStickerFavorite(sticker.StickerValue.Id))
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, sticker.Get(), Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.Unfavorite });
+                flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, (Sticker)sticker, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.Unfavorite });
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker.Get(), Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Favorite });
+                flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, (Sticker)sticker, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Favorite });
             }
 
             if (!ViewModel.IsSchedule)
@@ -38,7 +38,7 @@ namespace Unigram.Views
                 var self = ViewModel.CacheService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), sticker.Get(), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
+                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), (Sticker)sticker, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
                 //flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, true, null)), sticker.Get(), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
             }
 

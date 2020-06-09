@@ -12,8 +12,8 @@ namespace Unigram.Common
 {
     public class AnimatedListHandler<T>
     {
-        private ListViewBase _listView;
-        private DispatcherTimer _throttler;
+        private readonly ListViewBase _listView;
+        private readonly DispatcherTimer _throttler;
 
         public AnimatedListHandler(ListViewBase listView)
         {

@@ -86,6 +86,7 @@ namespace Unigram.Views
 
         private Compositor _compositor;
 
+        private ZoomableListHandler _autocompleteZoomer;
         private AnimatedListHandler<Sticker> _autocompleteHandler;
 
         public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
@@ -103,6 +104,12 @@ namespace Unigram.Views
             {
                 _viewModel?.ProtoService.DownloadFile(id, 1);
             };
+
+            _autocompleteZoomer = new ZoomableListHandler(ListAutocomplete);
+            _autocompleteZoomer.Opening = _autocompleteHandler.UnloadVisibleItems;
+            _autocompleteZoomer.Closing = _autocompleteHandler.LoadVisibleItemsThrottled;
+            _autocompleteZoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _autocompleteZoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
             TextField.IsFormattingVisible = ViewModel.Settings.IsTextFormattingVisible;
 
@@ -2895,6 +2902,20 @@ namespace Unigram.Views
             ViewModel.MessageServiceCommand.Execute(message);
         }
 
+        private void Autocomplete_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+
+                _autocompleteZoomer.ElementPrepared(args.ItemContainer);
+            }
+
+            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            args.IsContainerPrepared = true;
+        }
+
         private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -2963,8 +2984,6 @@ namespace Unigram.Views
                     photo.Source = null;
                     return;
                 }
-
-                args.ItemContainer.Tag = content.Tag = new ViewModels.Drawers.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
 
                 var file = sticker.Thumbnail.File;
                 if (file.Local.IsDownloadingCompleted)

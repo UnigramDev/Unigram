@@ -236,6 +236,8 @@
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Common\XamlUtils.cs" />
+    <Compile Include="Common\ZoomableListHandler.cs" />
+    <Compile Include="Common\ZoomableRepeaterHandler.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedBitmapButton.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
@@ -470,10 +472,8 @@
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
-    <Compile Include="Controls\ZoomableGridView.cs" />
-    <Compile Include="Controls\ZoomableGridViewItem.cs" />
-    <Compile Include="Controls\ZoomableGridViewPopup.xaml.cs">
-      <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
+    <Compile Include="Views\Popups\ZoomableMediaPopup.xaml.cs">
+      <DependentUpon>ZoomableMediaPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
@@ -2020,7 +2020,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ZoomableGridViewPopup.xaml">
+    <Page Include="Views\Popups\ZoomableMediaPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

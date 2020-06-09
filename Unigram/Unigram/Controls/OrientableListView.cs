@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class OrientableListView : ZoomableGridView
+    public class OrientableListView : GridView
     {
         private bool _needUpdate;
 

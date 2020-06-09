@@ -2477,7 +2477,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ZoomableListViewStyle" TargetType="controls:ZoomableGridView">
+    <Style x:Key="ZoomableListViewStyle" TargetType="GridView">
         <Setter Property="Padding" Value="0" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="TabNavigation" Value="Once" />

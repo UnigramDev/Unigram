@@ -19,6 +19,8 @@ namespace Unigram.Views.Popups
     {
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 
+        private ZoomableListHandler _zoomer;
+
         private AnimatedListHandler<Sticker> _handler;
         private DispatcherTimer _throttler;
 
@@ -40,6 +42,12 @@ namespace Unigram.Views.Popups
                 _throttler.Stop();
                 _handler.LoadVisibleItems(false);
             };
+
+            _zoomer = new ZoomableListHandler(List);
+            _zoomer.Opening = _handler.UnloadVisibleItems;
+            _zoomer.Closing = _handler.LoadVisibleItemsThrottled;
+            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
             SecondaryButtonText = Strings.Resources.Close;
         }
@@ -140,6 +148,20 @@ namespace Unigram.Views.Popups
 
         #region Recycle
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+
+                _zoomer.ElementPrepared(args.ItemContainer);
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -149,8 +171,6 @@ namespace Unigram.Views.Popups
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as Sticker;
-
-            content.Tag = args.ItemContainer.Tag = new ViewModels.Drawers.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
 
             if (args.Phase == 0)
             {
@@ -256,6 +276,8 @@ namespace Unigram.Views.Popups
                     }
                 }
             }
+
+            _zoomer.UpdateFile(file);
         }
 
         #endregion

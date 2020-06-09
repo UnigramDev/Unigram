@@ -30,7 +30,7 @@
             <TextBox x:Name="FieldStickers" PlaceholderText="{CustomResource SearchStickersHint}" TextChanged="FieldStickers_TextChanged" Margin="12,8"/>
         </Border>
 
-        <controls:ZoomableGridView
+        <GridView
             x:Name="Stickers"
             ItemsSource="{x:Bind StickersSource.View, Mode=OneWay}"
             common:FluidGridView.OrientationOnly="False"
@@ -117,7 +117,7 @@
                     <ItemsWrapGrid Orientation="Horizontal" AreStickyGroupHeadersEnabled="False" Loaded="OnLoaded"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
-        </controls:ZoomableGridView>
+        </GridView>
                                 
         <Grid x:Name="ToolbarContainer">
             <Border x:Name="Separator"/>

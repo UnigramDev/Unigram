@@ -30,6 +30,8 @@ namespace Unigram.Controls.Drawers
         public Action<Sticker> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
+        private readonly ZoomableListHandler _zoomer;
+
         private readonly AnimatedListHandler<StickerViewModel> _handler;
         private readonly DispatcherTimer _throttler;
 
@@ -59,6 +61,12 @@ namespace Unigram.Controls.Drawers
                 _throttler.Stop();
                 _handler.LoadVisibleItems(false);
             };
+
+            _zoomer = new ZoomableListHandler(Stickers);
+            _zoomer.Opening = _handler.UnloadVisibleItems;
+            _zoomer.Closing = _handler.LoadVisibleItemsThrottled;
+            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
             //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
 
@@ -191,13 +199,15 @@ namespace Unigram.Controls.Drawers
                     }
                 }
             }
+
+            _zoomer.UpdateFile(file);
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is StickerViewModel sticker && sticker.StickerValue != null)
             {
-                ItemClick?.Invoke(sticker.Get());
+                ItemClick?.Invoke(sticker);
             }
         }
 
@@ -300,9 +310,11 @@ namespace Unigram.Controls.Drawers
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new GridViewItem();
-                args.ItemContainer.Style = Stickers.ItemContainerStyle;
-                args.ItemContainer.ContentTemplate = Stickers.ItemTemplate;
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Sticker_ContextRequested;
+
+                _zoomer.ElementPrepared(args.ItemContainer);
             }
 
             args.IsContainerPrepared = true;

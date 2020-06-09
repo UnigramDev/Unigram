@@ -9,6 +9,7 @@
 
 
         public const int TypingTimeout = 300;
+        public const int HoldingThrottle = 300;
         public const int AnimatedThrottle = 200;
 
         public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };

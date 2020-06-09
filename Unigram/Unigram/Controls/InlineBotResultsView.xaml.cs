@@ -18,6 +18,8 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        private ZoomableRepeaterHandler _zoomer;
+
         private AnimatedRepeaterHandler<InlineQueryResult> _handler;
         private DispatcherTimer _throttler;
 
@@ -41,6 +43,12 @@ namespace Unigram.Controls
                 _throttler.Stop();
                 _handler.LoadVisibleItems(false);
             };
+
+            _zoomer = new ZoomableRepeaterHandler(Repeater);
+            _zoomer.Opening = _handler.UnloadVisibleItems;
+            _zoomer.Closing = _handler.LoadVisibleItemsThrottled;
+            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
         }
 
         public void UpdateCornerRadius(double radius)
@@ -82,11 +90,6 @@ namespace Unigram.Controls
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Bindings.StopTracking();
-        }
-
-        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            ItemClick?.Invoke(sender, e);
         }
 
         public event ItemClickEventHandler ItemClick;
@@ -168,6 +171,8 @@ namespace Unigram.Controls
                     _throttler.Start();
                 }
             }
+
+            _zoomer.UpdateFile(file);
         }
 
         private void Item_Click(object item)
@@ -228,6 +233,8 @@ namespace Unigram.Controls
             var content = button.Content as Grid;
             if (content.Children[0] is Image image)
             {
+                _zoomer.ElementPrepared(args.Element);
+
                 if (result is InlineQueryResultAnimation || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
                 {
                     File file = null;
@@ -280,6 +287,8 @@ namespace Unigram.Controls
             }
             else if (content.Children[0] is Grid presenter)
             {
+                _zoomer.ElementClearing(args.Element);
+
                 //var presenter = content.Children[0] as Grid;
                 var thumb = presenter.Children[0] as Image;
 
@@ -391,6 +400,8 @@ namespace Unigram.Controls
 
         private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
         {
+            _zoomer.ElementClearing(args.Element);
+
             if (args.Element is Button button && button.Content is Grid content && content.Children[0] is Image image)
             {
                 if (content.Children.Count > 1)

@@ -24,6 +24,8 @@ namespace Unigram.Controls.Drawers
         public Action<Animation> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
+        private ZoomableRepeaterHandler _zoomer;
+
         private AnimatedRepeaterHandler<Animation> _handler;
         private DispatcherTimer _throttler;
 
@@ -45,6 +47,12 @@ namespace Unigram.Controls.Drawers
                 _throttler.Stop();
                 _handler.LoadVisibleItems(false);
             };
+
+            _zoomer = new ZoomableRepeaterHandler(Repeater);
+            _zoomer.Opening = _handler.UnloadVisibleItems;
+            _zoomer.Closing = _handler.LoadVisibleItemsThrottled;
+            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
@@ -117,6 +125,8 @@ namespace Unigram.Controls.Drawers
             var button = args.Element as Button;
             var animation = button.DataContext as Animation;
 
+            _zoomer.ElementPrepared(button);
+
             button.Tag = animation;
 
             var content = button.Content as Grid;
@@ -141,6 +151,8 @@ namespace Unigram.Controls.Drawers
 
         private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
         {
+            _zoomer.ElementClearing(args.Element);
+
             if (args.Element is Button button && button.Content is Grid content && content.Children[0] is Image image)
             {
                 if (content.Children.Count > 1)
@@ -168,9 +180,13 @@ namespace Unigram.Controls.Drawers
             return items;
         }
 
-        private void DownloadFile(int id, Animation animation)
+        private void DownloadFile(int id, Animation animation = null)
         {
-            _animations[id].Add(animation);
+            if (animation != null)
+            {
+                _animations[id].Add(animation);
+            }
+
             ViewModel.ProtoService.DownloadFile(id, 1);
         }
 
@@ -208,6 +224,8 @@ namespace Unigram.Controls.Drawers
                     }
                 }
             }
+
+            _zoomer.UpdateFile(file);
         }
     }
 }
