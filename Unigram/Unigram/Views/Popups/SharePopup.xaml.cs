@@ -790,17 +790,18 @@ namespace Unigram.Views.Popups
             var selectedItems = ViewModel.SelectedItems;
 
             var index = items.IndexOf(chat);
-            if (index > -1)
+            if (index > 0)
             {
-                if (index > 0)
-                {
-                    items.Remove(chat);
-                    items.Insert(1, chat);
-                }
+                items.Remove(chat);
+                items.Insert(1, chat);
+            }
+            else if (items.Count > 0)
+            {
+                items.Insert(1, chat);
             }
             else
             {
-                items.Insert(1, chat);
+                items.Add(chat);
             }
 
             if (ChatsPanel.SelectionMode == ListViewSelectionMode.Multiple)
