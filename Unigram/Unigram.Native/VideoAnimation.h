@@ -149,7 +149,7 @@ namespace Unigram
             int64_t last_seek_p = 0;
 
             bool limitFps;
-            const int64_t limitedDuration = 1000 / 25;
+            const int64_t limitedDuration = 1000 / 30;
 
             int64_t prevFrame;
             int64_t prevDuration;
