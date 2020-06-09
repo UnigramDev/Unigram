@@ -1312,7 +1312,20 @@ namespace Unigram.Common
 
         public static ChatPosition GetPosition(this Chat chat, ChatList chatList)
         {
-            return chat.Positions.FirstOrDefault(x => x.List.ListEquals(chatList));
+            if (chat == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < chat.Positions.Count; i++)
+            {
+                if (chat.Positions[i].List.ListEquals(chatList))
+                {
+                    return chat.Positions[i];
+                }
+            }
+
+            return null;
         }
 
         public static TdNetworkType GetNetworkType(this NetworkStatisticsEntry entry)
