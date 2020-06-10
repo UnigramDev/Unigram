@@ -1,0 +1,195 @@
+﻿<controls:ContentPopup
+    x:Class="Unigram.Views.Popups.ThemePreviewPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Popups"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:chats="using:Unigram.Controls.Chats"
+    xmlns:cells="using:Unigram.Controls.Cells"
+    xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    TitleTemplate="{x:Null}"
+    PrimaryButtonText="Button1"
+    SecondaryButtonText="Button2"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    MaxWidth="1000">
+
+    <Grid x:Name="LayoutRoot"
+          Width="800"
+          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+          BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
+          BorderThickness="0,0,0,1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Border Height="32" Background="{ThemeResource PageHeaderBackgroundBrush}" Grid.ColumnSpan="2">
+            <TextBlock Text="{CustomResource ThemePreview}"
+                       VerticalAlignment="Center"
+                       TextLineBounds="TrimToCapHeight"
+                       Margin="12,0,0,0"
+                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Grid.Column="1"/>
+        </Border>
+
+        <controls:ContentPageHeader Grid.Row="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:GlyphButton 
+                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    AutomationProperties.LandmarkType="Navigation"
+                    AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
+                    ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"/>
+
+                <TextBlock x:Name="TitleLabel" Text="{CustomResource AppName}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="6,0" Grid.Column="1"/>
+
+                <controls:GlyphButton
+                    Glyph="&#xE11A;"
+                    Style="{StaticResource HeaderGlyphButtonStyle}"
+                    AutomationProperties.LandmarkType="Search"
+                    AutomationProperties.Name="{CustomResource Search}"
+                    ToolTipService.ToolTip="{CustomResource Search}"
+                    Grid.Column="2"/>
+            </Grid>
+        </controls:ContentPageHeader>
+        <ListView x:Name="ChatList" Grid.Row="2">
+            <ListViewItem Background="{ThemeResource PageSubHeaderBackgroundBrush}" HorizontalContentAlignment="Stretch" Padding="0">
+                <cells:ChatCell x:Name="Chat1" IsEnabled="False"/>
+            </ListViewItem>
+            <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
+                <cells:ChatCell x:Name="Chat2" IsEnabled="False"/>
+            </ListViewItem>
+            <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
+                <cells:ChatCell x:Name="Chat3" IsEnabled="False"/>
+            </ListViewItem>
+            <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
+                <cells:ChatCell x:Name="Chat4" IsEnabled="False"/>
+            </ListViewItem>
+            <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
+                <cells:ChatCell x:Name="Chat5" IsEnabled="False"/>
+            </ListViewItem>
+            <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
+                <cells:ChatCell x:Name="Chat6" IsEnabled="False"/>
+            </ListViewItem>
+            <ListViewItem HorizontalContentAlignment="Stretch" Padding="0">
+                <cells:ChatCell x:Name="Chat7" IsEnabled="False"/>
+            </ListViewItem>
+        </ListView>
+        
+        <Border x:Name="Shadow" Grid.Column="1" Grid.RowSpan="3"/>
+
+        <Border Height="32" Background="{ThemeResource PageHeaderBackgroundBrush}" Grid.Column="1"/>
+
+        <controls:ContentPageHeader Grid.Column="1" Grid.Row="1">
+            <Grid x:Name="InfoPanel">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Style="{StaticResource EmptyButtonStyle}"
+                        Padding="0,0,48,0"
+                        Grid.ColumnSpan="3">
+                    <Button.Content>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:ProfilePicture x:Name="Photo" Width="{ThemeResource ChatPhotoSize}" Height="{ThemeResource ChatPhotoSize}" Margin="12,0" IsEnabled="False"/>
+
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
+                                <TextBlock x:Name="Title"
+                                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                               Style="{StaticResource BaseTextBlockStyle}"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               MaxLines="1"/>
+                                <TextBlock x:Name="Subtitle"
+                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                Style="{StaticResource CaptionTextBlockStyle}"
+                                                TextWrapping="NoWrap"
+                                                TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+
+                            <Border x:Name="CallPlaceholder" Visibility="Collapsed" Width="48" Grid.Column="2"/>
+                        </Grid>
+                    </Button.Content>
+                </Button>
+
+                <controls:GlyphButton
+                        Style="{StaticResource HeaderGlyphButtonStyle}"
+                        Glyph="&#xE13A;"
+                        AutomationProperties.Name="{CustomResource Call}"
+                        ToolTipService.ToolTip="{CustomResource Call}"
+                        Grid.Column="1"/>
+
+                <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                        Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="2">
+                    <FontIcon x:Name="EllipsisIcon"
+                                VerticalAlignment="Center"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Glyph="&#xE10C;"
+                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
+            </Grid>
+        </controls:ContentPageHeader>
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="1" Grid.Row="2">
+            <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"/>
+            <StackPanel Padding="0,2,0,2" VerticalAlignment="Bottom">
+                <messages:MessageBubble x:Name="Message1" HorizontalAlignment="Left"/>
+                <messages:MessageBubble x:Name="Message2" HorizontalAlignment="Right">
+                    <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="ms-appx:///Themes/OutgoingOverride.xaml"/>
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </FrameworkElement.Resources>
+                </messages:MessageBubble>
+                <messages:MessageBubble x:Name="Message3" HorizontalAlignment="Right">
+                    <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="ms-appx:///Themes/OutgoingOverride.xaml"/>
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </FrameworkElement.Resources>
+                </messages:MessageBubble>
+                <messages:MessageBubble x:Name="Message4" HorizontalAlignment="Left"/>
+                <messages:MessageBubble x:Name="Message5" HorizontalAlignment="Left"/>
+                <messages:MessageBubble x:Name="Message6" HorizontalAlignment="Right">
+                    <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="ms-appx:///Themes/OutgoingOverride.xaml"/>
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                    </FrameworkElement.Resources>
+                </messages:MessageBubble>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</controls:ContentPopup>

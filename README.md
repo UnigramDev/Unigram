@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">
-    <img src="https://raw.githubusercontent.com/UnigramDev/Unigram/develop/Unigram/Assets/StoreLogo/Release/StoreLogo.scale-200.png" width=80 height=80>
+    <img src="/Unigram/Unigram/Assets/Logos/StoreLogo.scale-200.png" width=80 height=80>
   </a>
 
   <h3 align="center">Unigram</h3>
@@ -17,7 +17,7 @@
 
 <br>
 
-Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, smartphones, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience. 
+Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience. 
 
 ## Table of contents
 - [Features](#features)
@@ -25,6 +25,7 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 - [Changelog](#changelog)
 - [Screenshots](#screenshots)
 - [Download without Microsoft Store](#alternativedownload)
+- [Windows 10 N](#windows10n)
 - [Wiki](#wiki)
 
 
@@ -36,14 +37,17 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 - Multi-account
 - Filter chats (users, bots, groups, channels, unread chats and unmuted chats)
 - Calls
-- Videos and photos editor (easily crop photos, set video resultion or remove some parts of the videos before sending them)
+- Videos and photos editor (easily crop photos, set video resolution or remove some parts of the videos before sending them)
 - Drag&drop files to chats to send them quickly
 - Open chats in separated windows (Shift+click)
 - Replace sent media content
-- Polls
+- Polls 2.0
 - Backgrounds 2.0 (blurred and motion options available)
-- Built-in app lock (fingerprint and Windows Hello authentication available)
-- Windows My People integration
+- Built-in app lock with support for Windows Hello authentication (fingerprint, face and iris recognition)
+- Advanced markdown editor for messages
+- In-app music player
+- Animated stickers and emojis
+- Scheduled and silent messages
 - Full support of Windows 10 notifications and Action Centre (reply to a message or mark it as read without opening the app)
 - Accessibility for visually impaired people
 
@@ -65,6 +69,11 @@ Changelogs are provided both in [Releases section of our GitHub project](https:/
 ## Download without the store
 If you don't want Microsoft Store you can install Unigram from [here](https://unigramdev.github.io/).
 Only major updates will be posted here. If you care about minor updates you should use Microsoft Store.
+
+<a name="windows10n"></a>
+## Windows 10 N
+To work with Windows 10 N you will need Media Feature pack. To install it properly go to ```Settings > Apps and Features > Add a feature.``` At this point, select Media Feature pack, install it and reboot. 
+
 
 <a name="wiki"></a>
 ## Wiki

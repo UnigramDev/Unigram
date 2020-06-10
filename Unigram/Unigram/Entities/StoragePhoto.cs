@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Template10.Mvvm;
 using Unigram.Common;
 using Windows.Foundation;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Entities
 {
@@ -70,16 +61,14 @@ namespace Unigram.Entities
                 var basic = await file.GetBasicPropertiesAsync();
                 var image = await file.Properties.GetImagePropertiesAsync();
 
-#if !DEBUG
                 if (image.Width >= 20 * image.Height || image.Height >= 20 * image.Width)
                 {
                     return null;
                 }
-#endif
 
                 if (image.Width > 0 && image.Height > 0)
                 {
-                    return new StoragePhoto(file, basic, image) { IsSelected = selected };
+                    return new StoragePhoto(file, basic, image);
                 }
 
                 return null;
@@ -88,16 +77,6 @@ namespace Unigram.Entities
             {
                 return null;
             }
-        }
-
-        public override StorageMedia Clone()
-        {
-            var item = new StoragePhoto(File, _basic, Properties);
-            item._thumbnail = _thumbnail;
-            item._preview = _preview;
-            item._cropRectangle = _cropRectangle;
-
-            return item;
         }
     }
 }

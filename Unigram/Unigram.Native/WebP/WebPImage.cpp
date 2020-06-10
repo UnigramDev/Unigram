@@ -99,8 +99,7 @@ WriteableBitmap^ Unigram::Native::WebPImage::DecodeFromBuffer(IBuffer ^ buffer)
 
 WriteableBitmap^ Unigram::Native::WebPImage::DecodeFromPath(String^ path)
 {
-	std::string fileName = string_to_unmanaged(path);
-	FILE* file = fopen(fileName.c_str(), "rb");
+	FILE* file = _wfopen(path->Data(), L"rb");
 	if (file == NULL) {
 		return nullptr;
 	}

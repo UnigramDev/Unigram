@@ -1,34 +1,22 @@
 ﻿using System;
-using System.Diagnostics;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
-using Unigram.Views;
+using Unigram.Controls.Gallery;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Users;
+using Unigram.Views.Folders;
+using Unigram.Views.Popups;
 using Unigram.Views.Settings;
-using Windows.UI.Core;
+using Windows.ApplicationModel;
+using Windows.Foundation.Metadata;
+using Windows.Media.Capture;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using Windows.Storage;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Collections;
-using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Media.Animation;
-using Unigram.ViewModels.Users;
-using Windows.UI.Xaml.Markup;
-using System.Linq;
-using Windows.UI.Xaml.Media;
-using Telegram.Td.Api;
-using Windows.Media.Capture;
-using Unigram.ViewModels.Delegates;
-using Windows.ApplicationModel;
-using Unigram.Views.Passport;
-using Unigram.Controls.Gallery;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls.Primitives;
-using Unigram.Converters;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -63,7 +51,13 @@ namespace Unigram.Views
             Package package = Package.Current;
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;
-            return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build, version.Revision);
+
+            if (version.Revision > 0)
+            {
+                return string.Format("{0}.{1}.{3} ({2})", version.Major, version.Minor, version.Build, version.Revision);
+            }
+
+            return string.Format("{0}.{1} ({2})", version.Major, version.Minor, version.Build, version.Revision);
         }
 
         private MasterDetailView _masterDetail;
@@ -114,7 +108,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var dialog = new EditUserNameView(user.FirstName, user.LastName);
+                var dialog = new EditUserNamePopup(user.FirstName, user.LastName);
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
@@ -140,7 +134,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                var dialog = new EditYourAboutView(user.Bio);
+                var dialog = new EditYourAboutPopup(user.Bio);
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
@@ -168,6 +162,12 @@ namespace Unigram.Views
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
+        private void Folders_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(FoldersPage));
+            MasterDetail.NavigationService.GoBackAt(0, false);
+        }
+
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
@@ -183,18 +183,6 @@ namespace Unigram.Views
         private void Language_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
-            MasterDetail.NavigationService.GoBackAt(0, false);
-        }
-
-        private void Wallet_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.NavigateToWallet();
-            MasterDetail.NavigationService.GoBackAt(0, false);
-        }
-
-        private void Passport_Click(object sender, RoutedEventArgs e)
-        {
-            MasterDetail.NavigationService.Navigate(typeof(PassportPage));
             MasterDetail.NavigationService.GoBackAt(0, false);
         }
 
@@ -235,13 +223,10 @@ namespace Unigram.Views
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file)
-                {
-                    CroppingProportions = ImageCroppingProportions.Square,
-                    IsCropEnabled = false
-                };
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogResult.Primary)
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
@@ -258,13 +243,10 @@ namespace Unigram.Views
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file)
-                {
-                    CroppingProportions = ImageCroppingProportions.Square,
-                    IsCropEnabled = false
-                };
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogResult.Primary)
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
@@ -332,7 +314,7 @@ namespace Unigram.Views
             }
         }
 
-#endregion
+        #endregion
 
         private int _advanced;
 

@@ -1,58 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Gallery;
+using Unigram.Controls.Messages;
+using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
-using Unigram.Views;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Gallery;
 using Windows.ApplicationModel;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
-using Windows.Globalization.DateTimeFormatting;
 using Windows.System;
 using Windows.UI;
-using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-using Windows.UI.Xaml.Media.Animation;
-using Unigram.Controls.Views;
-using LinqToVisualTree;
-using Unigram.ViewModels.Users;
-using Telegram.Td.Api;
-using Unigram.Controls.Messages.Content;
-using Unigram.Controls.Messages;
-using Unigram.ViewModels.Dialogs;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Gallery;
-using Unigram.Controls.Gallery;
-using Windows.UI.Xaml.Media.Imaging;
-using System.Globalization;
 
 namespace Unigram.Views
 {
-    public sealed partial class InstantPage : Page, IMessageDelegate, IHandle<UpdateFile>
+    public sealed partial class InstantPage : HostedPage, IMessageDelegate, IHandle<UpdateFile>
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
+
+        public IEventAggregator Aggregator => throw new NotImplementedException();
 
         private readonly string _injectedJs;
         private ScrollViewer _scrollingHost;
 
         private FileContext<Tuple<IContentWithFile, MessageViewModel>> _filesMap = new FileContext<Tuple<IContentWithFile, MessageViewModel>>();
         private FileContext<Image> _iconsMap = new FileContext<Image>();
+
+        private List<(AnimationContent, AnimationView)> _animations = new List<(AnimationContent, AnimationView)>();
 
         public InstantPage()
         {
@@ -82,6 +72,15 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Unsubscribe(this);
+
+            foreach (var animation in _animations)
+            {
+                try
+                {
+                    animation.Item1.Children.Remove(animation.Item2);
+                }
+                catch { }
+            }
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -106,6 +105,22 @@ namespace Unigram.Views
                     {
                         panel.Item2.UpdateFile(update.File);
                         panel.Item1.UpdateFile(panel.Item2, update.File);
+
+                        if (panel.Item1 is AnimationContent content && panel.Item2.Content is MessageAnimation animation)
+                        {
+                            if (update.File.Local.IsDownloadingCompleted && update.File.Id == animation.Animation.AnimationValue.Id)
+                            {
+                                var presenter = new AnimationView();
+                                presenter.AutoPlay = true;
+                                presenter.IsLoopingEnabled = true;
+                                presenter.IsHitTestVisible = false;
+                                presenter.Source = new Uri("file:///" + update.File.Local.Path);
+
+                                content.Children.Add(presenter);
+
+                                _animations.Add((content, presenter));
+                            }
+                        }
                     }
 
                     if (update.File.Local.IsDownloadingCompleted && !update.File.Remote.IsUploadingActive)
@@ -996,7 +1011,7 @@ namespace Unigram.Views
 
             if (block.Video.Thumbnail != null)
             {
-                _filesMap[block.Video.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
+                _filesMap[block.Video.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
             _filesMap[block.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
@@ -1027,9 +1042,22 @@ namespace Unigram.Views
             content.ClearValue(MaxWidthProperty);
             content.ClearValue(MaxHeightProperty);
 
+            if (block.Animation.AnimationValue.Local.IsDownloadingCompleted)
+            {
+                var presenter = new AnimationView();
+                presenter.AutoPlay = true;
+                presenter.IsLoopingEnabled = true;
+                presenter.IsHitTestVisible = false;
+                presenter.Source = new Uri("file:///" + block.Animation.AnimationValue.Local.Path);
+
+                content.Children.Add(presenter);
+
+                _animations.Add((content, presenter));
+            }
+
             if (block.Animation.Thumbnail != null)
             {
-                _filesMap[block.Animation.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
+                _filesMap[block.Animation.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
             }
 
             _filesMap[block.Animation.AnimationValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
@@ -1154,7 +1182,7 @@ namespace Unigram.Views
 
                     if (videoBlock.Video.Thumbnail != null)
                     {
-                        _filesMap[videoBlock.Video.Thumbnail.Photo.Id].Add(Tuple.Create(content as IContentWithFile, message));
+                        _filesMap[videoBlock.Video.Thumbnail.File.Id].Add(Tuple.Create(content as IContentWithFile, message));
                     }
 
                     _filesMap[videoBlock.Video.VideoValue.Id].Add(Tuple.Create(content as IContentWithFile, message));
@@ -1379,6 +1407,20 @@ namespace Unigram.Views
                     span.TextDecorations |= TextDecorations.Underline;
                     ProcessRichText(underlineText.Text, span, textBlock, effects, ref offset);
                     break;
+                case RichTextAnchorLink anchorLinkText:
+                    try
+                    {
+                        var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
+                        span.Inlines.Add(hyperlink);
+                        hyperlink.Click += (s, args) => Hyperlink_Click(anchorLinkText);
+                        ProcessRichText(anchorLinkText.Text, hyperlink, textBlock, effects, ref offset);
+                    }
+                    catch
+                    {
+                        ProcessRichText(anchorLinkText.Text, span, textBlock, effects, ref offset);
+                        Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
+                    }
+                    break;
                 case RichTextUrl urlText:
                     try
                     {
@@ -1392,10 +1434,6 @@ namespace Unigram.Views
                         ProcessRichText(urlText.Text, span, textBlock, effects, ref offset);
                         Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
                     }
-                    break;
-                case RichTextAnchor anchor:
-                    // ???
-                    ProcessRichText(anchor.Text, span, textBlock, effects, ref offset);
                     break;
                 case RichTextIcon icon:
                     var photo = new Image { Width = icon.Width, Height = icon.Height };
@@ -1601,37 +1639,39 @@ namespace Unigram.Views
             }
         }
 
+        private async void Hyperlink_Click(RichTextAnchorLink anchorLinkText)
+        {
+            if (string.IsNullOrEmpty(anchorLinkText.Name))
+            {
+                ScrollingHost.GetScrollViewer().ChangeView(null, 0, null);
+            }
+            else if (_anchors.TryGetValue(anchorLinkText.Name, out Border anchor))
+            {
+                await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
+            }
+        }
+
         private async void Hyperlink_Click(RichTextUrl urlText)
         {
-            if (_instantView != null && IsCurrentPage(_instantView.Url, urlText.Url, out string fragment))
+            ViewModel.IsLoading = true;
+
+            var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(urlText.Url, false));
+            if (response is WebPageInstantView instantView)
             {
-                if (_anchors.TryGetValue(fragment, out Border anchor))
-                {
-                    await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
-                }
+                ViewModel.IsLoading = false;
+                ViewModel.NavigationService.NavigateToInstant(urlText.Url);
             }
-            else
+            else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
             {
-                ViewModel.IsLoading = true;
+                ViewModel.IsLoading = false;
 
-                var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(urlText.Url, false));
-                if (response is WebPageInstantView instantView)
+                if (MessageHelper.IsTelegramUrl(uri))
                 {
-                    ViewModel.IsLoading = false;
-                    ViewModel.NavigationService.NavigateToInstant(urlText.Url);
+                    MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.NavigationService, uri);
                 }
-                else if (MessageHelper.TryCreateUri(urlText.Url, out Uri uri))
+                else
                 {
-                    ViewModel.IsLoading = false;
-
-                    if (MessageHelper.IsTelegramUrl(uri))
-                    {
-                        MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, ViewModel.NavigationService, uri);
-                    }
-                    else
-                    {
-                        await Launcher.LaunchUriAsync(uri);
-                    }
+                    await Launcher.LaunchUriAsync(uri);
                 }
             }
         }
@@ -1733,6 +1773,10 @@ namespace Unigram.Views
         {
         }
 
+        public void OpenBankCardNumber(string number)
+        {
+        }
+
         public void OpenUser(int userId)
         {
         }
@@ -1767,7 +1811,7 @@ namespace Unigram.Views
             throw new NotImplementedException();
         }
 
-        public void VotePoll(MessageViewModel message, PollOption option)
+        public void VotePoll(MessageViewModel message, IList<PollOption> options)
         {
             throw new NotImplementedException();
         }

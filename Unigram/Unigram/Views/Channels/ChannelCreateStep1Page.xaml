@@ -1,8 +1,8 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Channels.ChannelCreateStep1Page"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Channels"
+    xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,59 +16,55 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource NewChannel}"
             Glyph="&#xE10B;"/>
-
-        <Grid Grid.Row="1">
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
-                <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" Radius="32" Width="64" Height="64" RequestedTheme="Dark" Margin="12,6"/>
+            <controls:HeaderedControl
+                Footer="{CustomResource DescriptionInfo}">
+                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Height="64" Width="64" Margin="12,8" Grid.RowSpan="2"/>
+                    <controls:GlyphButton Visibility="{x:Bind ConvertPhotoVisibility(ViewModel.Title, ViewModel.Preview), Mode=OneWay}" Click="EditPhoto_Click" Glyph="&#xE114;" FontSize="16" Radius="32" Width="64" Height="64" RequestedTheme="Dark" Margin="12,6"/>
                 
-                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
-                    <TextBox x:Name="Title"
-                             Loaded="Title_Loaded"
-                             Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="{StaticResource ChannelTitleMaxLength}"
-                             PlaceholderText="{CustomResource EnterChannelName}"/>
-                </Border>
-            </Grid>
+                    <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" VerticalAlignment="Center" Margin="0,8,12,8" Grid.Column="1" Grid.RowSpan="2">
+                        <TextBox x:Name="Title"
+                                 Loaded="Title_Loaded"
+                                 Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 MaxLength="{StaticResource ChannelTitleMaxLength}"
+                                 PlaceholderText="{CustomResource EnterChannelName}"/>
+                    </Border>
+                </Grid>
 
-            <TextBox
-                Text="{x:Bind ViewModel.About, Mode=TwoWay}"
-                MaxLength="{StaticResource ChannelAboutMaxLength}"
-                PlaceholderText="{CustomResource DescriptionPlaceholder}"
-                AcceptsReturn="True"
-                TextWrapping="Wrap"
-                Margin="12,8,12,8"
-                Grid.Row="1"/>
+                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
 
-            <TextBlock
-                Text="{CustomResource DescriptionInfo}"
-                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Margin="12,8"
-                Grid.Row="3"/>
+                <TextBox
+                    Text="{x:Bind ViewModel.About, Mode=TwoWay}"
+                    MaxLength="{StaticResource ChannelAboutMaxLength}"
+                    PlaceholderText="{CustomResource DescriptionPlaceholder}"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    Margin="12,8,12,8"
+                    Grid.Row="1"/>
+            </controls:HeaderedControl>
         </Grid>
     </Grid>
-</Page>
+</local:HostedPage>

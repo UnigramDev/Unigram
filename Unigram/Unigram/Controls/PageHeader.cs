@@ -1,60 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Template10.Common;
+﻿using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Markup;
 
 namespace Unigram.Controls
 {
-    [TemplatePart(Name = "BackButton", Type = typeof(Button))]
     public class PageHeader : Control
     {
         public PageHeader()
         {
             DefaultStyleKey = typeof(PageHeader);
         }
-
-        protected override void OnApplyTemplate()
-        {
-            var button = GetTemplateChild("BackButton") as Button;
-            if (button != null)
-            {
-                button.Click += Back_Click;
-            }
-
-            base.OnApplyTemplate();
-        }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            var command = BackCommand;
-            if (command != null)
-            {
-                command.Execute(null);
-            }
-            else
-            {
-                BootStrapper.Current.RaiseBackRequested();
-            }
-        }
-
-        #region BackCommand
-
-        public ICommand BackCommand
-        {
-            get { return (ICommand)GetValue(BackCommandProperty); }
-            set { SetValue(BackCommandProperty, value); }
-        }
-
-        public static readonly DependencyProperty BackCommandProperty =
-            DependencyProperty.Register("BackCommand", typeof(ICommand), typeof(PageHeader), new PropertyMetadata(null));
-
-        #endregion
 
         #region BackVisibility
 
@@ -169,50 +124,12 @@ namespace Unigram.Controls
         #endregion
     }
 
-    [TemplatePart(Name = "BackButton", Type = typeof(Button))]
     public class ContentPageHeader : ContentControl
     {
         public ContentPageHeader()
         {
             DefaultStyleKey = typeof(ContentPageHeader);
         }
-
-        protected override void OnApplyTemplate()
-        {
-            var button = GetTemplateChild("BackButton") as Button;
-            if (button != null)
-            {
-                button.Click += Back_Click;
-            }
-
-            base.OnApplyTemplate();
-        }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            var command = BackCommand;
-            if (command != null)
-            {
-                command.Execute(null);
-            }
-            else
-            {
-                BootStrapper.Current.RaiseBackRequested();
-            }
-        }
-
-        #region BackCommand
-
-        public ICommand BackCommand
-        {
-            get { return (ICommand)GetValue(BackCommandProperty); }
-            set { SetValue(BackCommandProperty, value); }
-        }
-
-        public static readonly DependencyProperty BackCommandProperty =
-            DependencyProperty.Register("BackCommand", typeof(ICommand), typeof(ContentPageHeader), new PropertyMetadata(null));
-
-        #endregion
 
         #region BackVisibility
 

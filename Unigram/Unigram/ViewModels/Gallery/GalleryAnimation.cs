@@ -31,7 +31,12 @@ namespace Unigram.ViewModels.Gallery
 
         public override File GetThumbnail()
         {
-            return _animation.Thumbnail?.Photo;
+            if (_animation.Thumbnail?.Format is ThumbnailFormatJpeg)
+            {
+                return _animation.Thumbnail?.File;
+            }
+
+            return null;
         }
 
         public override (File File, string FileName) GetFileAndName()
@@ -52,5 +57,9 @@ namespace Unigram.ViewModels.Gallery
         public override bool IsLoop => true;
 
         public override bool CanSave => true;
+
+        public override int Duration => _animation.Duration;
+
+        public override string MimeType => _animation.MimeType;
     }
 }

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Devices.Geolocation;
@@ -35,7 +31,7 @@ namespace Unigram.ViewModels.Settings
             var location = await _locationService.GetPositionAsync();
             if (location == null)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));

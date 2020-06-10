@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -68,7 +64,7 @@ namespace Unigram.Controls.Messages.Content
                     subtitle.Text = string.Empty;
                 }
 
-                if (!string.IsNullOrWhiteSpace(webPage.Description))
+                if (!string.IsNullOrWhiteSpace(webPage.Description?.Text))
                 {
                     if (title.Text.Length > 0 || subtitle.Text.Length > 0)
                     {
@@ -76,7 +72,7 @@ namespace Unigram.Controls.Messages.Content
                     }
 
                     empty = false;
-                    content.Text += webPage.Description;
+                    content.Text += webPage.Description.Text;
                 }
                 else
                 {

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Services.Settings;
+using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -127,7 +126,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeInfoBase> ThemeCreateCommand { get; }
         private async void ThemeCreateExecute(ThemeInfoBase theme)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.CreateNewThemeAlert, Strings.Resources.NewTheme, Strings.Resources.CreateTheme, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -170,7 +169,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeCustomInfo> ThemeShareCommand { get; }
         private async void ThemeShareExecute(ThemeCustomInfo theme)
         {
-            await ShareView.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, null));
+            await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, null));
         }
 
         public RelayCommand<ThemeCustomInfo> ThemeEditCommand { get; }
@@ -188,7 +187,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ThemeCustomInfo> ThemeDeleteCommand { get; }
         private async void ThemeDeleteExecute(ThemeCustomInfo theme)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteThemeAlert, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

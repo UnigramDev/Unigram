@@ -7,12 +7,14 @@
 // Project Lead - Stuart Lodge, @slodge, me@slodge.com
 
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
-using System.Collections;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+using Unigram.Common;
 
 namespace Unigram.Collections
 {
@@ -297,6 +299,54 @@ namespace Unigram.Collections
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             InvokeOnMainThread(() => base.OnPropertyChanged(e));
+        }
+
+        public virtual bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (object.Equals(storage, value))
+                return false;
+
+            storage = value;
+            this.RaisePropertyChanged(propertyName);
+            return true;
+        }
+
+        public virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+                return;
+
+            try
+            {
+                OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+            }
+            catch { }
+        }
+
+        public virtual bool Set<T>(Expression<Func<T>> propertyExpression, ref T field, T newValue)
+        {
+            if (object.Equals(field, newValue))
+                return false;
+
+            field = newValue;
+            RaisePropertyChanged(propertyExpression);
+            return true;
+        }
+
+        public virtual void RaisePropertyChanged<T>(Expression<Func<T>> propertyExpression)
+        {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+                return;
+
+            var propertyName = ExpressionUtils.GetPropertyName(propertyExpression);
+            if (!object.Equals(propertyName, null))
+            {
+                try
+                {
+                    OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+                }
+                catch { }
+            }
         }
     }
 }

@@ -1,0 +1,38 @@
+<controls:ContentPopup
+    x:Class="Unigram.Views.Popups.SettingsPasscodeInputPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Popups"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Passcode"
+    PrimaryButtonText="OK"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <StackPanel>
+        <ComboBox x:Name="Type"
+                  Margin="12,12,12,12"
+                  HorizontalAlignment="Stretch"
+                  SelectionChanged="Type_SelectionChanged">
+            <ComboBoxItem Content="{CustomResource PasscodePIN}"/>
+            <ComboBoxItem Content="{CustomResource PasscodePassword}"/>
+        </ComboBox>
+        
+        <PasswordBox
+            x:Name="First"
+            PlaceholderText="{CustomResource EnterNewFirstPasscode}"
+            PasswordChanged="First_Changed"
+            KeyDown="Password_KeyDown"
+            Margin="12,0,12,12"/>
+        <PasswordBox
+            x:Name="Confirm"
+            PlaceholderText="{CustomResource ReEnterYourPasscode}"
+            PasswordChanged="Confirm_Changed"
+            KeyDown="Password_KeyDown"
+            Margin="12,0,12,12"/>
+    </StackPanel>
+</controls:ContentPopup>

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unigram.Views;
-using Unigram.Services;
-using Windows.UI.Xaml.Navigation;
 using Telegram.Td.Api;
 using Unigram.Collections;
+using Unigram.Services;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -25,7 +18,7 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            ProtoService.Send(new GetTrendingStickerSets(), result =>
+            ProtoService.Send(new GetTrendingStickerSets(0, 24), result =>
             {
                 if (result is StickerSets stickerSets)
                 {

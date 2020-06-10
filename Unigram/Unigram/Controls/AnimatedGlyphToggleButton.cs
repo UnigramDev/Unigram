@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Numerics;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -132,6 +127,19 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty IsOneWayProperty =
             DependencyProperty.Register("IsOneWay", typeof(bool), typeof(AnimatedGlyphToggleButton), new PropertyMetadata(true));
+
+        #endregion
+
+        #region Radius
+
+        public CornerRadius Radius
+        {
+            get { return (CornerRadius)GetValue(RadiusProperty); }
+            set { SetValue(RadiusProperty, value); }
+        }
+
+        public static readonly DependencyProperty RadiusProperty =
+            DependencyProperty.Register("Radius", typeof(CornerRadius), typeof(AnimatedGlyphToggleButton), new PropertyMetadata(default(CornerRadius)));
 
         #endregion
 

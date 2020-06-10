@@ -1,0 +1,24 @@
+<controls:ContentPopup
+    x:Class="Unigram.Views.Popups.EditYourAboutPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Popups"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Edit your bio"
+    mc:Ignorable="d"
+    PrimaryButtonText="OK"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="FieldAbout" PlaceholderText="{CustomResource UserBio}" MaxLength="70" TextWrapping="Wrap" FontFamily="{ThemeResource EmojiThemeFontFamily}" Margin="12,12,12,8"/>
+        <TextBlock Text="{CustomResource UserBioInfo}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
+    </Grid>
+</controls:ContentPopup>

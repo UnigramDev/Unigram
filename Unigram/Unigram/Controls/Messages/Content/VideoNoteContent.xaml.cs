@@ -1,24 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Native;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage.Streams;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
@@ -58,7 +43,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (videoNote.Thumbnail != null)
             {
-                UpdateThumbnail(message, videoNote.Thumbnail.Photo);
+                UpdateThumbnail(message, videoNote.Thumbnail, videoNote.Thumbnail.File);
             }
 
             UpdateFile(message, videoNote.Video);
@@ -80,9 +65,9 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (videoNote.Thumbnail != null && videoNote.Thumbnail.Photo.Id == file.Id)
+            if (videoNote.Thumbnail != null && videoNote.Thumbnail.File.Id == file.Id)
             {
-                UpdateThumbnail(message, file);
+                UpdateThumbnail(message, videoNote.Thumbnail, file);
                 return;
             }
             else if (videoNote.Video.Id != file.Id)
@@ -131,7 +116,7 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {

@@ -16,8 +16,7 @@
         <Grid x:Name="ContentPanel"
               MinHeight="30"
               Padding="{StaticResource MessageContentPadding}"
-              Background="{ThemeResource MessageBackgroundBrush}"
-              SizeChanged="Knockout_SizeChanged">
+              Background="{ThemeResource MessageBackgroundBrush}">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>
@@ -103,6 +102,10 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
                 <TextBlock x:Name="HeaderLabel"
                            Margin="0,0,0,2"
                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
@@ -121,7 +124,20 @@
                            Visibility="Collapsed"
                            Margin="0,0,0,2"/>
 
-                <local:MessageReference x:Name="Reply" x:DeferLoadStrategy="Lazy" Click="Reply_Click" Grid.Row="1"/>
+                <controls:GlyphButton
+                    x:Name="PsaInfo"
+                    x:DeferLoadStrategy="Lazy"
+                    Glyph="&#xE9CE;"
+                    Click="PsaInfo_Click"
+                    Margin="0,-6,-10,-8"
+                    Grid.Column="1"/>
+
+                <local:MessageReference
+                    x:Name="Reply"
+                    x:DeferLoadStrategy="Lazy"
+                    Click="Reply_Click"
+                    Grid.ColumnSpan="2"
+                    Grid.Row="1"/>
             </Grid>
 
             <RichTextBlock
@@ -129,12 +145,13 @@
                 Style="{StaticResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                SizeChanged="OnSizeChanged"
                 ContextMenuOpening="Message_ContextMenuOpening"
                 TextAlignment="DetectFromContent"
                 Grid.Column="1"
                 Grid.Row="2">
                 <Paragraph>
-                    <Span x:Name="Span"/><InlineUIContainer><TextBlock x:Name="Placeholder" IsHitTestVisible="False" TextLineBounds="TrimToBaseline" FontSize="{ThemeResource MessageFontSize}" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
+                    <Span x:Name="Span"/>
                 </Paragraph>
             </RichTextBlock>
 
@@ -148,27 +165,10 @@
                 Stroke="{ThemeResource MessageSubtleLabelBrush}"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                SizeChanged="Footer_SizeChanged"
+                SizeChanged="OnSizeChanged"
                 Margin="-8,0,-6,-2"
                 Grid.Column="1"
                 Grid.Row="4"/>
-            
-            <Path Fill="Red"
-                  x:Name="Knockout"
-                  x:DeferLoadStrategy="Lazy"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Top"
-                  Grid.ColumnSpan="3"
-                  Grid.RowSpan="5">
-                <Path.Data>
-                    <PathGeometry>
-                        <PathGeometry.Figures>
-                            <PathFigure x:Name="KnockoutFill" IsClosed="True" IsFilled="True"/>
-                            <PathFigure x:Name="KnockoutMask"/>
-                        </PathGeometry.Figures>
-                    </PathGeometry>
-                </Path.Data>
-            </Path>
         </Grid>
     </UserControl>
 

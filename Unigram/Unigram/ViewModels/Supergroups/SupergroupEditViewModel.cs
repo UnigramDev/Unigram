@@ -1,21 +1,13 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Converters;
-using Unigram.Entities;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
-using Unigram.Views.Channels;
+using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
 using Windows.Storage;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -367,33 +359,21 @@ namespace Unigram.ViewModels.Supergroups
                 initialValue = full.IsAllHistoryAvailable;
             }
 
-            var dialog = new TLContentDialog();
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = true, Content = Strings.Resources.ChatHistoryVisible, IsChecked = initialValue });
-            stack.Children.Add(new TextBlock { Text = Strings.Resources.ChatHistoryVisibleInfo, Margin = new Thickness(28, -6, 0, 8), Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style });
-            stack.Children.Add(new RadioButton { Tag = false, Content = Strings.Resources.ChatHistoryHidden, IsChecked = !initialValue });
-            stack.Children.Add(new TextBlock { Text = Strings.Resources.ChatHistoryHiddenInfo, Margin = new Thickness(28, -6, 0, 8), Style = BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style });
+            var items = new[]
+            {
+                new SelectRadioItem(true, Strings.Resources.ChatHistoryVisible, initialValue) { Footer = Strings.Resources.ChatHistoryVisibleInfo },
+                new SelectRadioItem(false, Strings.Resources.ChatHistoryHidden, !initialValue) { Footer = Strings.Resources.ChatHistoryHiddenInfo }
+            };
 
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.ChatHistory;
-            dialog.Content = stack;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is bool index)
             {
-                var isAllHistoryAvailable = true;
-                foreach (RadioButton current in stack.Children.OfType<RadioButton>())
-                {
-                    if (current.IsChecked == true)
-                    {
-                        isAllHistoryAvailable = (bool)current.Tag;
-                        break;
-                    }
-                }
-
-                IsAllHistoryAvailable = isAllHistoryAvailable;
+                IsAllHistoryAvailable = index;
             }
         }
 
@@ -436,7 +416,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -454,22 +434,34 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
+            var updated = await ProtoService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
+            var dialog = new DeleteChatPopup(ProtoService, updated, null, false, true);
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            Function function;
             if (chat.Type is ChatTypeSupergroup super)
             {
-                var message = super.IsChannel ? Strings.Resources.ChannelDeleteAlert : Strings.Resources.MegaDeleteAlert;
-                var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    var response = await ProtoService.SendAsync(new DeleteSupergroup(super.SupergroupId));
-                    if (response is Ok)
-                    {
-                        NavigationService.RemovePeerFromStack(chat.Id);
-                    }
-                    else if (response is Error error)
-                    {
-                        // TODO: ...
-                    }
-                }
+                function = new DeleteSupergroup(super.SupergroupId);
+            }
+            else
+            {
+                await ProtoService.SendAsync(new LeaveChat(chat.Id));
+                function = new DeleteChatHistory(chat.Id, true, false);
+            }
+
+            var response = await ProtoService.SendAsync(function);
+            if (response is Ok)
+            {
+                NavigationService.RemovePeerFromStack(chat.Id);
+            }
+            else if (response is Error error)
+            {
+                // TODO: ...
             }
         }
 

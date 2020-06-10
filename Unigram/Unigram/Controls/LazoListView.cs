@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI.Input;
@@ -227,7 +224,7 @@ namespace Unigram.Controls
             {
                 return;
             }
-            
+
             if (SelectedItems.Count < 1)
             {
                 SelectionMode = ListViewSelectionMode.None;

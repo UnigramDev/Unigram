@@ -2,26 +2,19 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
-using Template10.Services.NavigationService;
-using Template10.Services.ViewService;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Services;
+using Unigram.Services.Navigation;
+using Unigram.Services.ViewService;
 using Unigram.Views;
+using Unigram.Views.Popups;
 using Unigram.Views.Settings;
-using Unigram.Views.Wallet;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Metadata;
-using Windows.Security.Credentials;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Common
 {
@@ -79,96 +72,6 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToWallet(string address = null)
-        {
-            Type page;
-            if (_protoService.Options.WalletPublicKey != null)
-            {
-                try
-                {
-                    var vault = new PasswordVault();
-                    var credential = vault.Retrieve($"{_protoService.SessionId}", _protoService.Options.WalletPublicKey);
-                }
-                catch
-                {
-                    // Credentials for this account wallet don't exist anymore.
-                    _protoService.Options.WalletPublicKey = null;
-                }
-            }
-
-            if (_protoService.Options.WalletPublicKey != null)
-            {
-                if (address == null)
-                {
-                    page = typeof(WalletPage);
-                }
-                else
-                {
-                    page = typeof(WalletSendPage);
-                }
-            }
-            else
-            {
-                page = typeof(WalletCreatePage);
-            }
-
-            //page = typeof(WalletCreatePage);
-
-            //if (ApiInformation.IsTypePresent("Windows.UI.WindowManagement.AppWindow"))
-            //{
-            //    var window = _walletWindow;
-            //    if (window == null)
-            //    {
-            //        var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, 0, "0", false);
-            //        var frame = BootStrapper.Current.CreateRootElement(nav);
-            //        nav.Navigate(page, address);
-
-            //        window = await AppWindow.TryCreateAsync();
-            //        window.PersistedStateId = "Wallet";
-            //        window.TitleBar.ExtendsContentIntoTitleBar = true;
-            //        window.Closed += (s, args) =>
-            //        {
-            //            _walletWindow = null;
-            //            frame = null;
-            //            window = null;
-            //        };
-
-            //        _walletWindow = window;
-            //        ElementCompositionPreview.SetAppWindowContent(window, frame);
-            //    }
-
-            //    window.RequestSize(new Windows.Foundation.Size(360, 640));
-            //    await window.TryShowAsync();
-            //    window.RequestSize(new Windows.Foundation.Size(360, 640));
-            //    window.RequestMoveAdjacentToCurrentView();
-            //}
-
-            //return;
-
-            if (_walletLifetime == null)
-            {
-                _walletLifetime = await OpenAsync(page, address);
-                _walletLifetime.Released += (s, args) =>
-                {
-                    _walletLifetime = null;
-                };
-
-                if (_walletLifetime.NavigationService is NavigationService service)
-                {
-                    service.SerializationService = TLSerializationService.Current;
-                }
-            }
-            else
-            {
-                await _walletLifetime.CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    _walletLifetime.NavigationService.Navigate(page, address);
-                });
-
-                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(_walletLifetime.Id, ViewSizePreference.Default, ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), ViewSizePreference.UseHalf);
-            }
-        }
-
         public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
         {
             if (chat == null)
@@ -187,7 +90,7 @@ namespace Unigram.Common
                 var reason = user.GetRestrictionReason();
                 if (reason != null && reason.Length > 0)
                 {
-                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -199,16 +102,16 @@ namespace Unigram.Common
                     return;
                 }
 
-                if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username) && !supergroup.HasLocation)
+                if (supergroup.Status is ChatMemberStatusLeft && string.IsNullOrEmpty(supergroup.Username) && !supergroup.HasLocation && !supergroup.HasLinkedChat)
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.ChannelCantOpenPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
 
                 var reason = supergroup.GetRestrictionReason();
                 if (reason != null && reason.Length > 0)
                 {
-                    await TLMessageDialog.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(reason, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
             }
@@ -221,7 +124,7 @@ namespace Unigram.Common
                 }
                 else
                 {
-                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, 8);
+                    await page.ViewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
                 }
 
                 page.ViewModel.TextField?.Focus(FocusState.Programmatic);
@@ -268,11 +171,11 @@ namespace Unigram.Common
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift && !ctrl)
                 {
-                    await OpenAsync(scheduled ? typeof(ScheduledChatPage) : typeof(ChatPage), chat.Id);
+                    await OpenAsync(scheduled ? typeof(ChatScheduledPage) : typeof(ChatPage), chat.Id);
                 }
                 else
                 {
-                    await NavigateAsync(scheduled ? typeof(ScheduledChatPage) : typeof(ChatPage), chat.Id, state);
+                    await NavigateAsync(scheduled ? typeof(ChatScheduledPage) : typeof(ChatPage), chat.Id, state);
                 }
             }
         }
@@ -301,7 +204,7 @@ namespace Unigram.Common
         {
             if (_passcodeService.IsEnabled)
             {
-                var dialog = new SettingsPasscodeConfirmView(passcode => Task.FromResult(!_passcodeService.Check(passcode)), _passcodeService.IsSimple);
+                var dialog = new SettingsPasscodeConfirmPopup(passcode => Task.FromResult(!_passcodeService.Check(passcode)), _passcodeService.IsSimple);
                 dialog.IsSimple = _passcodeService.IsSimple;
 
                 var confirm = await dialog.ShowAsync();

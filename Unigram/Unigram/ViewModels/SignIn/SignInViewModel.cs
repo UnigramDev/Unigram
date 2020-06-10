@@ -3,33 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
-using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
-using Unigram.Services;
 using Unigram.Entities;
-using Unigram.Views;
+using Unigram.Services;
+using Unigram.ViewModels.Delegates;
 using Unigram.Views.Settings;
-using Unigram.Views.SignIn;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.SignIn
 {
-    public class SignInViewModel : TLViewModelBase
+    public class SignInViewModel : TLViewModelBase, IDelegable<ISignInDelegate>
     {
+        private readonly ISessionService _sessionService;
         private readonly ILifetimeService _lifetimeService;
         private readonly INotificationsService _notificationsService;
 
-        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILifetimeService lifecycleService, INotificationsService notificationsService)
+        public ISignInDelegate Delegate { get; set; }
+
+        public SignInViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService, ILifetimeService lifecycleService, INotificationsService notificationsService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _sessionService = sessionService;
             _lifetimeService = lifecycleService;
             _notificationsService = notificationsService;
 
+            SwitchCommand = new RelayCommand(SwitchExecute);
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ProxyCommand = new RelayCommand(ProxyExecute);
         }
@@ -44,7 +44,49 @@ namespace Unigram.ViewModels.SignIn
                 }
             });
 
-            IsLoading = false;
+            var authState = ProtoService.GetAuthorizationState();
+            var waitState = authState is AuthorizationStateWaitPhoneNumber || authState is AuthorizationStateWaitCode || authState is AuthorizationStateWaitPassword;
+
+            if (waitState && mode != NavigationMode.Refresh)
+            {
+                IsLoading = false;
+
+                Delegate.UpdateQrCodeMode(QrCodeMode.Loading);
+
+                ProtoService.Send(new GetApplicationConfig(), result =>
+                {
+                    if (result is JsonValueObject json)
+                    {
+                        var camera = json.GetNamedBoolean("qr_login_camera", false);
+                        var code = json.GetNamedString("qr_login_code", "disabled");
+
+                        if (camera && Enum.TryParse(code, true, out QrCodeMode mode))
+                        {
+                            BeginOnUIThread(() => Delegate?.UpdateQrCodeMode(mode));
+
+                            if (mode == QrCodeMode.Primary)
+                            {
+                                ProtoService.Send(new RequestQrCodeAuthentication());
+                            }
+
+                            return;
+                        }
+                    }
+
+                    BeginOnUIThread(() => Delegate?.UpdateQrCodeMode(QrCodeMode.Disabled));
+                });
+            }
+            else if (authState is AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation)
+            {
+                Token = waitOtherDeviceConfirmation.Link;
+                Delegate?.UpdateQrCode(waitOtherDeviceConfirmation.Link);
+
+                if (mode != NavigationMode.Refresh)
+                {
+                    Delegate?.UpdateQrCodeMode(QrCodeMode.Primary);
+                }
+            }
+
             return Task.CompletedTask;
         }
 
@@ -67,6 +109,13 @@ namespace Unigram.ViewModels.SignIn
                     SelectedCountry = country;
                 });
             }
+        }
+
+        private string _token;
+        public string Token
+        {
+            get => _token;
+            set => Set(ref _token, value);
         }
 
         private Country _selectedCountry;
@@ -138,6 +187,15 @@ namespace Unigram.ViewModels.SignIn
 
         public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
+        public RelayCommand SwitchCommand { get; }
+        private void SwitchExecute()
+        {
+            if (ProtoService.AuthorizationState is AuthorizationStateWaitPhoneNumber)
+            {
+                ProtoService.Send(new RequestQrCodeAuthentication());
+            }
+        }
+
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
@@ -165,7 +223,7 @@ namespace Unigram.ViewModels.SignIn
 
                 if (user.PhoneNumber.Contains(phoneNumber) || phoneNumber.Contains(user.PhoneNumber))
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
+                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.AccountAlreadyLoggedIn, Strings.Resources.AppName, Strings.Resources.AccountSwitch, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _lifetimeService.PreviousItem = session;
@@ -180,7 +238,19 @@ namespace Unigram.ViewModels.SignIn
 
             await _notificationsService.CloseAsync();
 
-            var response = await ProtoService.SendAsync(new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false)));
+            var function = new SetAuthenticationPhoneNumber(phoneNumber, new PhoneNumberAuthenticationSettings(false, false, false));
+            var request = default(Task<BaseObject>);
+
+            if (ProtoService.AuthorizationState is AuthorizationStateWaitOtherDeviceConfirmation)
+            {
+                request = _sessionService.SetAuthenticationPhoneNumberAsync(function);
+            }
+            else
+            {
+                request = ProtoService.SendAsync(function);
+            }
+
+            var response = await request;
             if (response is Error error)
             {
                 IsLoading = false;
@@ -188,36 +258,36 @@ namespace Unigram.ViewModels.SignIn
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
-                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.InvalidPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_PASSWORD_FLOOD))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.PhoneNumberFlood, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_NUMBER_BANNED))
                 {
                     //needShowInvalidAlert(req.phone_number, true);
-                    await TLMessageDialog.ShowAsync(Strings.Resources.BannedPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.BannedPhoneNumber, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.InvalidCode, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.CodeExpired, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Message.StartsWith("FLOOD_WAIT"))
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.FloodWait, Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Code != -1000)
                 {
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }

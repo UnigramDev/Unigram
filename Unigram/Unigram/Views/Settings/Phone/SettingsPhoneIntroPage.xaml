@@ -46,7 +46,7 @@
             Margin="12,0"
             Grid.Row="2"/>
 
-        <Button
+        <controls:BadgeButton
             Click="Change_Click"
             Content="{CustomResource PhoneNumberChange}"
             Style="{StaticResource StartButtonStyle}"

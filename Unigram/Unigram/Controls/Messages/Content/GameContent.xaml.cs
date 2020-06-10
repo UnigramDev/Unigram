@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -149,7 +140,7 @@ namespace Unigram.Controls.Messages.Content
 
                     if (entity.Type is TextEntityTypeUrl)
                     {
-                        MessageHelper.SetEntity(hyperlink, data);
+                        MessageHelper.SetEntityData(hyperlink, data);
                     }
                 }
                 else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
@@ -159,7 +150,7 @@ namespace Unigram.Controls.Messages.Content
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
                         data = textUrl.Url;
-                        MessageHelper.SetEntity(hyperlink, textUrl.Url);
+                        MessageHelper.SetEntityData(hyperlink, textUrl.Url);
                         ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                     }
                     else if (entity.Type is TextEntityTypeMentionName mentionName)

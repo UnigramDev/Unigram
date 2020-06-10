@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Template10.Common;
-using Template10.Mvvm;
-using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
@@ -20,13 +12,12 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsThemePage : Page
+    public sealed partial class SettingsThemePage : HostedPage
     {
         private ThemeGroup _group;
         private ThemeCustomInfo _theme;
@@ -350,7 +341,7 @@ namespace Unigram.Views.Settings
                 picker.PreviousColor = part.Value;
                 picker.Margin = new Thickness(12, 12, 12, 0);
 
-                var dialog = new TLContentDialog();
+                var dialog = new ContentPopup();
                 dialog.PrimaryButtonText = Strings.Resources.Save;
                 dialog.SecondaryButtonText = part.IsDefault ? string.Empty : Strings.Resources.Default;
                 dialog.CloseButtonText = Strings.Resources.Cancel;

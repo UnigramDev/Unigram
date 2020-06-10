@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Controls.Views;
-using Unigram.Views;
-using Unigram.ViewModels.Settings;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+﻿using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Windows.Storage;
-using Unigram.Native;
+using Unigram.ViewModels.Settings;
+using Unigram.Views.Popups;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStickersArchivedPage : Page
+    public sealed partial class SettingsStickersArchivedPage : HostedPage
     {
         public SettingsStickersArchivedViewModel ViewModel => DataContext as SettingsStickersArchivedViewModel;
 
@@ -36,13 +21,13 @@ namespace Unigram.Views.Settings
         {
             if (e.ClickedItem is StickerSetInfo stickerSet)
             {
-                await StickerSetView.GetForCurrentView().ShowAsync(stickerSet.Id);
+                await StickerSetPopup.GetForCurrentView().ShowAsync(stickerSet.Id);
             }
         }
 
         #region Recycle
 
-        private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -72,22 +57,16 @@ namespace Unigram.Views.Settings
                     return;
                 }
 
-                var file = cover.Photo;
+                var file = cover.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    if (stickerSet.IsAnimated)
+                    if (cover.Format is ThumbnailFormatTgs)
                     {
-                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
-                        if (bitmap == null)
-                        {
-                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
-                        }
-
-                        photo.Source = bitmap;
+                        photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
                     }
                     else
                     {
-                        photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

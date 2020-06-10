@@ -1,35 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Windows.ApplicationModel.Resources;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Unigram.Views.Popups;
 using Windows.Foundation.Metadata;
 using Windows.Media.Capture;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditPage : Page, ISupergroupEditDelegate
+    public sealed partial class SupergroupEditPage : HostedPage, ISupergroupEditDelegate
     {
         public SupergroupEditViewModel ViewModel => DataContext as SupergroupEditViewModel;
 
@@ -46,6 +34,10 @@ namespace Unigram.Views.Supergroups
             {
                 return;
             }
+
+            DeletePhoto.Visibility = DeletePhotoSeparator.Visibility = ViewModel.Chat.Photo != null
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
             {
@@ -67,14 +59,10 @@ namespace Unigram.Views.Supergroups
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file)
-                {
-                    CroppingProportions = ImageCroppingProportions.Square,
-                    IsCropEnabled = false
-                };
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary)
+                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
@@ -91,13 +79,10 @@ namespace Unigram.Views.Supergroups
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file)
-                {
-                    CroppingProportions = ImageCroppingProportions.Square,
-                    IsCropEnabled = false
-                };
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogResult.Primary)
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
@@ -273,10 +258,10 @@ namespace Unigram.Views.Supergroups
 
             ChatType.Content = Strings.Resources.GroupType;
             ChatType.Badge = Strings.Resources.TypePrivateGroup;
-            ChatType.Visibility = Visibility.Collapsed;
+            ChatType.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
             ChatHistory.Badge = Strings.Resources.ChatHistoryHidden;
-            ChatHistory.Visibility = Visibility.Visible;
+            ChatHistory.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Visibility = Visibility.Collapsed;
@@ -284,7 +269,7 @@ namespace Unigram.Views.Supergroups
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
-            Permissions.Visibility = Visibility.Visible;
+            Permissions.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
             Blacklist.Visibility = Visibility.Collapsed;
 
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
@@ -299,12 +284,6 @@ namespace Unigram.Views.Supergroups
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             GroupStickersPanel.Visibility = Visibility.Collapsed;
-
-            //ViewModel.About = fullInfo.Description;
-
-            //ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
-            ChatType.Visibility = Visibility.Visible;
-
 
             Admins.Badge = fullInfo.Members.Count(x => x.Status is ChatMemberStatusCreator || x.Status is ChatMemberStatusAdministrator);
             Members.Badge = fullInfo.Members.Count;

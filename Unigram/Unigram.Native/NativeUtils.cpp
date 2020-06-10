@@ -204,3 +204,16 @@ String^ NativeUtils::GetCurrentCulture()
 
 	return ref new String(buff);
 }
+
+bool NativeUtils::IsMediaSupported()
+{
+	HRESULT result;
+	result = MFStartup(MF_VERSION);
+
+	if (result == S_OK)
+	{
+		MFShutdown();
+	}
+
+	return result != E_NOTIMPL;
+}

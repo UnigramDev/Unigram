@@ -1,0 +1,122 @@
+﻿<controls:ContentPopup
+    x:Class="Unigram.Views.Popups.PollResultsPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Popups"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    TitleTemplate="{x:Null}"
+    PrimaryButtonText="Button1"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <controls:ContentPopup.Resources>
+        <Style TargetType="controls:HeaderedControl">
+            <Setter Property="Radius" Value="8"/>
+            <Setter Property="Padding" Value="0,16,0,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:HeaderedControl">
+                        <Grid x:Name="ContentRoot" Margin="12,0" Padding="{TemplateBinding Padding}" MaxWidth="640">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    x:Name="HeaderLabel"
+                                    Text="{TemplateBinding Header}"
+                                    Margin="12,0,12,6"
+                                    Style="{StaticResource SettingsGroupTextBlockStyle}"
+                                    Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                <TextBlock
+                                    x:Name="FooterLabel"
+                                    Text="{TemplateBinding Footer}"
+                                    Margin="12,0,12,6"
+                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                    Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                    Grid.Column="1"/>
+                            </Grid>
+
+                            <Border x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="{TemplateBinding Radius}" Grid.Column="1" Grid.Row="1">
+                                <ItemsPresenter x:Name="Presenter" Margin="0,0,0,-1"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </controls:ContentPopup.Resources>
+
+    <ContentDialog.Title>
+        <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
+            <StackPanel Margin="12,0,0,0" Orientation="Vertical" VerticalAlignment="Center">
+                <TextBlock
+                    x:Name="Title"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    TextWrapping="NoWrap"
+                    TextTrimming="CharacterEllipsis"
+                    MaxLines="1"/>
+                <TextBlock
+                    x:Name="Subtitle"
+                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}" />
+            </StackPanel>
+
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
+        </Grid>
+    </ContentDialog.Title>
+
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <microsoft:ItemsRepeaterScrollHost>
+            <ScrollViewer>
+                <microsoft:ItemsRepeater x:Name="Repeater" ElementPrepared="OnElementPrepared" Margin="0,0,0,16">
+                    <microsoft:ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="local:PollResultViewModel">
+                            <controls:HeaderedControl>
+                                <microsoft:ItemsRepeater
+                                    ItemsSource="{x:Bind Items}"
+                                    ElementPrepared="OnElementPrepared">
+                                    <microsoft:ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource EmptyButtonStyle}">
+                                                <Grid Margin="12,6">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                                    <TextBlock
+                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                        TextWrapping="NoWrap"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        VerticalAlignment="Center"
+                                                        Grid.Column="1"/>
+                                                </Grid>
+                                            </Button>
+                                        </DataTemplate>
+
+                                    </microsoft:ItemsRepeater.ItemTemplate>
+                                </microsoft:ItemsRepeater>
+
+                                <controls:BadgeButton
+                                    Command="{x:Bind LoadMoreCommand}"
+                                    Content="{x:Bind LoadMoreLabel, Mode=OneWay}"
+                                    Visibility="{x:Bind LoadMoreVisibility, Mode=OneWay}"
+                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                            </controls:HeaderedControl>
+                        </DataTemplate>
+                    </microsoft:ItemsRepeater.ItemTemplate>
+                </microsoft:ItemsRepeater>
+            </ScrollViewer>
+        </microsoft:ItemsRepeaterScrollHost>
+    </Grid>
+</controls:ContentPopup>

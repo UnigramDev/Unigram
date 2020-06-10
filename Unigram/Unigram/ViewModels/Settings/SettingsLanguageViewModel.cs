@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Views.Host;
 using Windows.ApplicationModel.Resources.Core;
@@ -112,7 +112,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<LanguagePackInfo> DeleteCommand { get; }
         private async void DeleteExecute(LanguagePackInfo info)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DeleteLocalization, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteLocalization, Strings.Resources.AppName, Strings.Resources.Delete, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

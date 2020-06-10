@@ -1,4 +1,4 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Settings.SettingsAdvancedPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,28 +6,27 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    SizeChanged="OnSizeChanged"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource PrivacyAdvanced}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel>
                 <controls:HeaderedControl>
-                    <controls:BadgeButton Content="Call Settings"
-                                          Click="VoIP_Click"/>
+                    <!--<controls:BadgeButton
+                        Content="Shortcuts"
+                        Click="Shortcuts_Click"/>-->
+                    <controls:BadgeButton
+                        Content="Call Settings"
+                        Click="VoIP_Click"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
                     <ToggleSwitch
-                        x:Name="AdaptiveWide"
                         IsOn="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
                         Header="Adaptive Layout for Wide Screens"
                         Style="{StaticResource CheckButtonStyle}"/>
@@ -39,15 +38,21 @@
 
                     <ToggleSwitch
                         x:Name="TraySwitch"
+                        x:Load="False"
                         IsOn="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"
                         Header="Show Tray Icon"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
                 
-                <controls:HeaderedControl>
-                    <controls:StartupSwitch/>
+                <controls:StartupSwitch/>
+
+                <controls:HeaderedControl x:Name="UpdatePanel" x:Load="False" Footer="{x:Bind ViewModel.UpdateFooter, Mode=OneWay}">
+                    <controls:BadgeButton
+                        Command="{x:Bind ViewModel.UpdateCommand}"
+                        Content="{x:Bind ViewModel.UpdateText, Mode=OneWay}"
+                        IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}"/>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</Page>
+</local:HostedPage>

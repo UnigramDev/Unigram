@@ -1,29 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
-using Unigram.ViewModels.Settings;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Settings;
+using Windows.Foundation;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsBlockedUsersPage : Page, IFileDelegate
+    public sealed partial class SettingsBlockedUsersPage : HostedPage, IFileDelegate
     {
         public SettingsBlockedUsersViewModel ViewModel => DataContext as SettingsBlockedUsersViewModel;
 

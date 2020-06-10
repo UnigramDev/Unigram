@@ -1,22 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Gallery;
-using Unigram.Converters;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -52,10 +40,30 @@ namespace Unigram.Controls.Messages.Content
 
             if (small != null /*&& small.Photo.Id != big.Photo.Id*/)
             {
-                UpdateThumbnail(message, small.Photo);
+                //UpdateThumbnail(message, small.Photo);
             }
 
-            UpdateFile(message, big);
+            UpdateFile(message, small.File);
+
+            if (message.Content is MessageText text && Uri.TryCreate(text.WebPage?.Url, UriKind.Absolute, out Uri result))
+            {
+                var background = TdBackground.FromUri(result);
+                if (background is BackgroundTypeFill fill)
+                {
+                    Background = fill.ToBrush();
+                    Texture.Opacity = 1;
+                }
+                else if (background is BackgroundTypePattern pattern)
+                {
+                    Background = pattern.ToBrush();
+                    Texture.Opacity = pattern.Intensity / 100d;
+                }
+                else if (background is BackgroundTypeWallpaper wallpaper)
+                {
+                    Background = null;
+                    Texture.Opacity = 1;
+                }
+            }
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)
@@ -78,15 +86,15 @@ namespace Unigram.Controls.Messages.Content
             var small = photo.Thumbnail;
             var big = photo.DocumentValue;
 
-            if (small != null && small.Photo.Id != big.Id && small.Photo.Id == file.Id)
-            {
-                UpdateThumbnail(message, file);
-                return;
-            }
-            else if (big == null || big.Id != file.Id)
-            {
-                return;
-            }
+            //if (small != null && small.Photo.Id != big.Id && small.Photo.Id == file.Id)
+            //{
+            //    UpdateThumbnail(message, file);
+            //    return;
+            //}
+            //else if (big == null || big.Id != file.Id)
+            //{
+            //    return;
+            //}
 
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)

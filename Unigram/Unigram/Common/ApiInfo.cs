@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Unigram.Native;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation.Metadata;
-using Windows.Graphics.Imaging;
-using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -14,9 +8,6 @@ namespace Unigram.Common
 {
     public static class ApiInfo
     {
-        private static bool? _canRenderWebP;
-        public static bool CanDecodeWebp => (_canRenderWebP = _canRenderWebP ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.Graphics.Imaging.BitmapDecoder", "WebpDecoderId")) ?? false;
-
         private static bool? _canAddContextRequestedEvent;
         public static bool CanAddContextRequestedEvent => (_canAddContextRequestedEvent = _canAddContextRequestedEvent ?? ApiInformation.IsReadOnlyPropertyPresent("Windows.UI.Xaml.UIElement", "ContextRequestedEvent")) ?? false;
 
@@ -29,8 +20,11 @@ namespace Unigram.Common
         private static bool? _canUseAccelerators;
         public static bool CanUseAccelerators => (_canUseAccelerators = _canUseAccelerators ?? ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators")) ?? false;
 
-        private static bool? _isFullExperience;
-        public static bool IsFullExperience => (_isFullExperience = _isFullExperience ?? AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile") ?? true;
+        private static bool? _canUseViewports;
+        public static bool CanUseViewports => (_canUseViewports = _canUseViewports ?? ApiInformation.IsEventPresent("Windows.UI.Xaml.FrameworkElement", "EffectiveViewportChanged")) ?? false;
+
+        private static bool? _isMediaSupported;
+        public static bool IsMediaSupported => (_isMediaSupported = _isMediaSupported ?? NativeUtils.IsMediaSupported()) ?? true;
 
         public static TransitionCollection CreateSlideTransition()
         {

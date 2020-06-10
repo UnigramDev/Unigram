@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Windows.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unigram.Common;
+﻿using System.Collections.Generic;
 using Unigram.Collections;
+using Windows.Globalization;
 
 namespace Unigram.Entities
 {

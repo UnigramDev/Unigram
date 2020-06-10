@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unigram.Views;
-using Unigram.Services;
+﻿using System.Linq;
+using Unigram.ViewModels.Drawers;
+using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Unigram.ViewModels.Dialogs;
-using Windows.UI.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls

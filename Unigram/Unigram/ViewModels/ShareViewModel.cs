@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
@@ -72,7 +69,7 @@ namespace Unigram.ViewModels
                 var list = ProtoService.GetChats(chats.ChatIds);
                 Items.Clear();
 
-                if (_searchType != SearchChatsType.BasicAndSupergroups)
+                if (_searchType == SearchChatsType.Post || _searchType == SearchChatsType.All)
                 {
                     var myId = CacheService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
@@ -119,13 +116,75 @@ namespace Unigram.ViewModels
                             }
                         }
                     }
-                    else
+                    else if (_searchType == SearchChatsType.PrivateAndGroups)
+                    {
+                        if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+                        {
+                            Items.Add(chat);
+                        }
+                    }
+                    else if (_searchType == SearchChatsType.Private)
+                    {
+                        if (chat.Type is ChatTypePrivate)
+                        {
+                            Items.Add(chat);
+                        }
+                    }
+                    else if (_searchType == SearchChatsType.Post)
                     {
                         if (CacheService.CanPostMessages(chat))
                         {
                             Items.Add(chat);
                         }
                     }
+                    else
+                    {
+                        Items.Add(chat);
+                    }
+                }
+
+                var pre = PreSelectedItems;
+                if (pre == null)
+                {
+                    return;
+                }
+
+                var items = Items;
+                var selectedItems = SelectedItems;
+
+                foreach (var id in pre)
+                {
+                    var chat = CacheService.GetChat(id);
+                    if (chat == null)
+                    {
+                        chat = await ProtoService.SendAsync(new GetChat(id)) as Chat;
+                    }
+
+                    if (chat == null)
+                    {
+                        continue;
+                    }
+
+                    selectedItems.Add(chat);
+
+                    var index = items.IndexOf(chat);
+                    if (index > -1)
+                    {
+                        if (index > 0)
+                        {
+                            items.Remove(chat);
+                            items.Insert(1, chat);
+                        }
+                    }
+                    else
+                    {
+                        items.Insert(1, chat);
+                    }
+                }
+
+                if (PreSelectedItems.Count > 0 && SelectionMode == ListViewSelectionMode.Multiple)
+                {
+                    RaisePropertyChanged(nameof(PreSelectedItems));
                 }
             }
         }
@@ -142,6 +201,20 @@ namespace Unigram.ViewModels
                 Set(ref _selectedItems, value);
                 SendCommand?.RaiseCanExecuteChanged();
             }
+        }
+
+        private bool _allowEmptySelection = false;
+        public bool AllowEmptySelection
+        {
+            get => _allowEmptySelection;
+            set => Set(ref _allowEmptySelection, value);
+        }
+
+        private string _title = Strings.Resources.ShareSendTo;
+        public string Title
+        {
+            get => _title;
+            set => Set(ref _title, value);
         }
 
         private string _comment;
@@ -317,6 +390,9 @@ namespace Unigram.ViewModels
         public string SendMessage { get; set; }
         public bool SendMessageUrl { get; set; }
 
+        public bool IsChatSelection { get; set; }
+        public IList<long> PreSelectedItems { get; set; }
+
         public void Clear()
         {
             Package = null;
@@ -331,6 +407,7 @@ namespace Unigram.ViewModels
             InviteBot = null;
             InputMedia = null;
             IsWithMyScore = false;
+            PreSelectedItems = null;
         }
 
 
@@ -343,7 +420,7 @@ namespace Unigram.ViewModels
         private async void SendExecute()
         {
             var chats = SelectedItems.ToList();
-            if (chats.Count == 0)
+            if (chats.Count == 0 || IsChatSelection)
             {
                 return;
             }
@@ -360,21 +437,6 @@ namespace Unigram.ViewModels
 
             if (_messages != null)
             {
-                if (_sendAsCopy)
-                {
-                    foreach (var message in _messages)
-                    {
-                        if (!_messageFactory.CanBeCopied(message))
-                        {
-                            var confirm = await TLMessageDialog.ShowAsync("Polls, voice and video notes can't be forwarded as copy. Do you want to proceed anyway?", Strings.Resources.AppName, Strings.Resources.Forward, Strings.Resources.Cancel);
-                            if (confirm != ContentDialogResult.Primary)
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-
                 foreach (var chat in chats)
                 {
                     if (IsWithMyScore)
@@ -383,7 +445,15 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new SendMessageOptions(false, false, null), true, _sendAsCopy, _removeCaptions));
+                        var album = false;
+
+                        var first = _messages.FirstOrDefault();
+                        if (first != null)
+                        {
+                            album = first.MediaAlbumId != 0 && _messages.All(x => x.MediaAlbumId == first.MediaAlbumId);
+                        }
+
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new SendMessageOptions(false, false, null), album, _sendAsCopy, _removeCaptions));
                     }
                 }
 
@@ -482,16 +552,7 @@ namespace Unigram.ViewModels
             }
 
             text = text.Format();
-
-            var entities = Markdown.Parse(ref text);
-            if (entities == null)
-            {
-                entities = new List<TextEntity>();
-            }
-
-            return new FormattedText(text, entities);
-
-            //return ProtoService.Execute(new ParseTextEntities(text.Format(), new TextParseModeMarkdown())) as FormattedText;
+            return Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
         }
 
         #region Search
@@ -507,96 +568,6 @@ namespace Unigram.ViewModels
             {
                 Set(ref _selectionMode, value);
             }
-        }
-
-        public async void Find(string text)
-        {
-            var results = await SearchLocalAsync(text);
-            if (results != null)
-            {
-                SelectionMode = ListViewSelectionMode.None;
-                //Items.ReplaceWith(results.Cast<TLDialog>().Select(x => x.With));
-            }
-            else
-            {
-                //var dialogs = GetDialogs();
-                //if (dialogs != null)
-                //{
-                //    foreach (var item in _selectedItems)
-                //    {
-                //        //dialogs.Remove(item);
-                //        //dialogs.Insert(0, item);
-
-                //        //if (dialogs.Contains(item)) { }
-                //        //else
-                //        //{
-                //        //    dialogs.Insert(0, item);
-                //        //}
-                //    }
-
-                //    SelectionMode = ListViewSelectionMode.None;
-                //    //Items.ReplaceWith(dialogs);
-                //}
-            }
-        }
-
-        private async Task<KeyedList<string, System.Object>> SearchLocalAsync(string query1)
-        {
-            //if (string.IsNullOrWhiteSpace(query1))
-            //{
-            //    return null;
-            //}
-
-            //var dialogs = await Task.Run(() => CacheService.GetDialogs());
-            //var contacts = await Task.Run(() => CacheService.GetContacts());
-
-            //if (dialogs != null && contacts != null)
-            //{
-            //    var query = LocaleHelper.GetQuery(query1);
-
-            //    var simple = new List<TLDialog>();
-            //    var parent = dialogs.Where(dialog =>
-            //    {
-            //        if (dialog.With is TLUser user)
-            //        {
-            //            return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
-            //        }
-            //        else if (dialog.With is TLChannel channel)
-            //        {
-            //            return channel.IsLike(query, StringComparison.OrdinalIgnoreCase);
-            //        }
-            //        else if (dialog.With is TLChat chat)
-            //        {
-            //            return !chat.HasMigratedTo && chat.IsLike(query, StringComparison.OrdinalIgnoreCase);
-            //        }
-            //        else
-            //        {
-            //            return false;
-            //        }
-            //    }).ToList();
-
-            //    var contactsResults = contacts.OfType<TLUser>().Where(x => x.IsLike(query, StringComparison.OrdinalIgnoreCase));
-
-            //    foreach (var result in contactsResults)
-            //    {
-            //        var dialog = parent.FirstOrDefault(x => x.Peer.TypeId == TLType.PeerUser && x.Id == result.Id);
-            //        if (dialog == null)
-            //        {
-            //            simple.Add(new TLDialog
-            //            {
-            //                With = result,
-            //                Peer = new TLPeerUser { UserId = result.Id }
-            //            });
-            //        }
-            //    }
-
-            //    if (parent.Count > 0 || simple.Count > 0)
-            //    {
-            //        return new KeyedList<string, TLObject>(null, parent.Union(simple.OrderBy(x => x.With.DisplayName)));
-            //    }
-            //}
-
-            return null;
         }
 
         #endregion

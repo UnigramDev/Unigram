@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
-using Unigram.Common;
+using Unigram.Collections;
 using Unigram.Controls.Chats;
-using Unigram.Controls.Views;
-using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Text;
+using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
@@ -31,80 +25,6 @@ namespace Unigram.Controls
         public CaptionTextBox()
         {
             SelectionChanged += OnSelectionChanged;
-
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
-        }
-
-        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
-        {
-            if ((args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.Tab) && args.EventType == CoreAcceleratorKeyEventType.KeyDown && FocusState != FocusState.Unfocused)
-            {
-                // Check if CTRL or Shift is also pressed in addition to Enter key.
-                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-                var key = Window.Current.CoreWindow.GetKeyState(VirtualKey.Enter);
-
-                if (Autocomplete != null && View.Autocomplete != null)
-                {
-                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send || args.VirtualKey == VirtualKey.Tab)
-                    {
-                        AcceptsReturn = false;
-                        var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as ListViewItem;
-                        if (container != null)
-                        {
-                            var peer = new ListViewItemAutomationPeer(container);
-                            var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                            invokeProv.Invoke();
-                        }
-                    }
-                    else
-                    {
-                        AcceptsReturn = true;
-                    }
-
-                    return;
-                }
-
-                // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                if (ViewModel.Settings.IsSendByEnterEnabled)
-                {
-                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send)
-                    {
-                        View?.Accept();
-                        AcceptsReturn = false;
-                    }
-                    else
-                    {
-                        AcceptsReturn = true;
-                    }
-                }
-                else
-                {
-                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send)
-                    {
-                        View?.Accept();
-                        AcceptsReturn = false;
-                    }
-                    else
-                    {
-                        AcceptsReturn = true;
-                    }
-                }
-            }
         }
 
         public ListView Autocomplete { get; set; }
@@ -113,19 +33,71 @@ namespace Unigram.Controls
         {
             if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
             {
-                if (Autocomplete != null && View.Autocomplete != null)
+                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+                if (!alt && !ctrl && !shift)
                 {
-                    Autocomplete.SelectionMode = ListViewSelectionMode.Single;
-
-                    var index = e.Key == VirtualKey.Up ? -1 : 1;
-                    var next = Autocomplete.SelectedIndex + index;
-                    if (next >= 0 && next < View.Autocomplete.Count)
+                    if (Autocomplete != null && View.Autocomplete != null)
                     {
-                        Autocomplete.SelectedIndex = next;
-                        Autocomplete.ScrollIntoView(Autocomplete.SelectedItem);
-                    }
+                        Autocomplete.SelectionMode = ListViewSelectionMode.Single;
 
-                    e.Handled = true;
+                        var index = e.Key == VirtualKey.Up ? -1 : 1;
+                        var next = Autocomplete.SelectedIndex + index;
+                        if (next >= 0 && next < View.Autocomplete.Count)
+                        {
+                            Autocomplete.SelectedIndex = next;
+                            Autocomplete.ScrollIntoView(Autocomplete.SelectedItem);
+                        }
+
+                        e.Handled = true;
+                    }
+                }
+            }
+            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && View.Autocomplete != null && !(View.Autocomplete is SearchStickersCollection))
+            {
+                var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as ListViewItem;
+                if (container != null)
+                {
+                    var peer = new ListViewItemAutomationPeer(container);
+                    var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                    provider.Invoke();
+                }
+
+                Logs.Logger.Debug(Logs.Target.Chat, "Tab pressed and handled");
+                e.Handled = true;
+            }
+            else if (e.Key == VirtualKey.Tab)
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                if (ctrl)
+                {
+                    return;
+                }
+            }
+            else if (e.Key == VirtualKey.Enter)
+            {
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+                var send = false;
+
+                if (ViewModel.Settings.IsSendByEnterEnabled)
+                {
+                    send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                }
+                else
+                {
+                    send = ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                }
+
+                AcceptsReturn = !send;
+                e.Handled = send;
+
+                if (send)
+                {
+                    View?.Accept();
                 }
             }
 
@@ -158,7 +130,7 @@ namespace Unigram.Controls
             }
             else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
             {
-                View.Autocomplete = new ChatTextBox.EmojiCollection(ViewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower());
+                View.Autocomplete = new ChatTextBox.EmojiCollection(ViewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
             }
             else
             {

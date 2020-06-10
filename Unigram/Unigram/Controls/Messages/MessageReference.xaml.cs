@@ -1,23 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Core;
+using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Telegram.Td.Api;
-using Unigram.ViewModels;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Documents;
 
 namespace Unigram.Controls.Messages
 {
@@ -68,6 +55,9 @@ namespace Unigram.Controls.Messages
             {
                 MessageId = 0;
                 Visibility = Visibility.Visible;
+
+                if (ThumbRoot != null)
+                    ThumbRoot.Visibility = Visibility.Collapsed;
 
                 TitleLabel.Text = embedded.WebPagePreview.SiteName;
                 ServiceLabel.Text = string.Empty;
@@ -158,10 +148,38 @@ namespace Unigram.Controls.Messages
 
                 ThumbImage.ImageSource = new BitmapImage(new Uri("file:///" + photoSize.Photo.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             }
-            else if (photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
+            else
             {
                 ThumbImage.ImageSource = null;
-                message.ProtoService.DownloadFile(photoSize.Photo.Id, 1);
+
+                if (photoSize.Photo.Local.CanBeDownloaded && !photoSize.Photo.Local.IsDownloadingActive)
+                {
+                    message.ProtoService.DownloadFile(photoSize.Photo.Id, 1);
+                }
+            }
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail)
+        {
+            if (thumbnail.File.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
+            {
+                double ratioX = (double)36 / thumbnail.Width;
+                double ratioY = (double)36 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                ThumbImage.ImageSource = new BitmapImage(new Uri("file:///" + thumbnail.File.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            }
+            else
+            {
+                ThumbImage.ImageSource = null;
+
+                if (thumbnail.File.Local.CanBeDownloaded && !thumbnail.File.Local.IsDownloadingActive)
+                {
+                    message.ProtoService.DownloadFile(thumbnail.File.Id, 1);
+                }
             }
         }
 
@@ -181,6 +199,8 @@ namespace Unigram.Controls.Messages
                     return SetCallTemplate(message, call, title);
                 case MessageContact contact:
                     return SetContactTemplate(message, contact, title);
+                case MessageDice dice:
+                    return SetDiceTemplate(message, dice, title);
                 case MessageDocument document:
                     return SetDocumentTemplate(message, document, title);
                 case MessageGame game:
@@ -327,6 +347,20 @@ namespace Unigram.Controls.Messages
             TitleLabel.Text = GetFromLabel(message, title);
             ServiceLabel.Text = string.Empty;
             MessageLabel.Text = text.Text.Text.Replace("\r\n", "\n").Replace('\n', ' ');
+
+            return true;
+        }
+
+        private bool SetDiceTemplate(MessageViewModel message, MessageDice dice, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = string.Empty;
+            MessageLabel.Text = dice.Emoji;
 
             return true;
         }
@@ -846,6 +880,140 @@ namespace Unigram.Controls.Messages
             }
 
             return title ?? string.Empty;
+        }
+
+        public static string GetServicePart(Message message)
+        {
+            if (message.Content is MessageGame gameMedia)
+            {
+                return "\uD83C\uDFAE " + gameMedia.Game.Title;
+            }
+            if (message.Content is MessageExpiredVideo)
+            {
+                return Strings.Resources.AttachVideoExpired;
+            }
+            else if (message.Content is MessageExpiredPhoto)
+            {
+                return Strings.Resources.AttachPhotoExpired;
+            }
+            else if (message.Content is MessageVideoNote)
+            {
+                return Strings.Resources.AttachRound;
+            }
+            else if (message.Content is MessageSticker sticker)
+            {
+                if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
+                {
+                    return Strings.Resources.AttachSticker;
+                }
+
+                return $"{sticker.Sticker.Emoji} {Strings.Resources.AttachSticker}";
+            }
+
+            string GetCaption(string caption)
+            {
+                return string.IsNullOrEmpty(caption) ? string.Empty : ", ";
+            }
+
+            if (message.Content is MessageVoiceNote voiceNote)
+            {
+                return Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text);
+            }
+            else if (message.Content is MessageVideo video)
+            {
+                return (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text);
+            }
+            else if (message.Content is MessageAnimation animation)
+            {
+                return Strings.Resources.AttachGif + GetCaption(animation.Caption.Text);
+            }
+            else if (message.Content is MessageAudio audio)
+            {
+                var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
+                var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
+
+                if (performer == null || title == null)
+                {
+                    return Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text);
+                }
+                else
+                {
+                    return $"\uD83C\uDFB5 {performer} - {title}" + GetCaption(audio.Caption.Text);
+                }
+            }
+            else if (message.Content is MessageDocument document)
+            {
+                if (string.IsNullOrEmpty(document.Document.FileName))
+                {
+                    return Strings.Resources.AttachDocument + GetCaption(document.Caption.Text);
+                }
+
+                return document.Document.FileName + GetCaption(document.Caption.Text);
+            }
+            else if (message.Content is MessageInvoice invoice)
+            {
+                return invoice.Title;
+            }
+            else if (message.Content is MessageContact)
+            {
+                return Strings.Resources.AttachContact;
+            }
+            else if (message.Content is MessageLocation location)
+            {
+                return (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
+            }
+            else if (message.Content is MessageVenue vanue)
+            {
+                return Strings.Resources.AttachLocation;
+            }
+            else if (message.Content is MessagePhoto photo)
+            {
+                return (photo.IsSecret ? Strings.Resources.AttachDestructingPhoto : Strings.Resources.AttachPhoto) + GetCaption(photo.Caption.Text);
+            }
+            else if (message.Content is MessagePoll poll)
+            {
+                return $"\uD83D\uDCCA {poll.Poll.Question}";
+            }
+            else if (message.Content is MessageCall call)
+            {
+                var outgoing = message.IsOutgoing;
+                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+
+                return (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
+            }
+            else if (message.Content is MessageUnsupported)
+            {
+                return Strings.Resources.UnsupportedAttachment;
+            }
+
+            return string.Empty;
+        }
+
+        public static string GetTextPart(Message value)
+        {
+            switch (value.Content)
+            {
+                case MessageAnimation animation:
+                    return animation.Caption.Text.Replace('\n', ' ');
+                case MessageAudio audio:
+                    return audio.Caption.Text.Replace('\n', ' ');
+                case MessageDocument document:
+                    return document.Caption.Text.Replace('\n', ' ');
+                case MessagePhoto photo:
+                    return photo.Caption.Text.Replace('\n', ' ');
+                case MessageVideo video:
+                    return video.Caption.Text.Replace('\n', ' ');
+                case MessageVoiceNote voiceNote:
+                    return voiceNote.Caption.Text.Replace('\n', ' ');
+
+                case MessageText text:
+                    return text.Text.Text.Replace('\n', ' ');
+
+                case MessageDice dice:
+                    return dice.Emoji;
+            }
+
+            return string.Empty;
         }
     }
 }

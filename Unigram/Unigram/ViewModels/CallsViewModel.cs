@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -10,14 +9,13 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Services;
-using Unigram.Strings;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
     public class CallsViewModel : TLViewModelBase
     {
-        public CallsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public CallsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new ItemsCollection(protoService, cacheService);
@@ -127,7 +125,7 @@ namespace Unigram.ViewModels
         public RelayCommand<TLCallGroup> CallDeleteCommand { get; }
         private async void CallDeleteExecute(TLCallGroup group)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ConfirmDeleteCallLog, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ConfirmDeleteCallLog, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

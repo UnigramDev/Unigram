@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Collections;
-using Unigram.Common;
 using Unigram.Services;
-using Windows.Foundation;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
 {

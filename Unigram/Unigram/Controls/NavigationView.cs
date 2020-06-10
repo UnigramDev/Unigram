@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Foundation.Collections;
-using Windows.Foundation.Metadata;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
@@ -15,6 +7,8 @@ namespace Unigram.Controls
     {
         private Button TogglePaneButton;
         private SplitView RootSplitView;
+
+        private Thickness? _previousTopPadding;
 
         public NavigationView()
         {
@@ -28,15 +22,8 @@ namespace Unigram.Controls
 
             TogglePaneButton.Click += Toggle_Click;
 
-            if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Controls.SplitView", "PaneOpening"))
-            {
-                RootSplitView.PaneOpening += OnPaneOpening;
-                RootSplitView.PaneClosing += OnPaneClosing;
-            }
-            else
-            {
-                RootSplitView.RegisterPropertyChangedCallback(SplitView.IsPaneOpenProperty, OnPaneOpenChanged);
-            }
+            RootSplitView.PaneOpening += OnPaneOpening;
+            RootSplitView.PaneClosing += OnPaneClosing;
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
@@ -46,17 +33,21 @@ namespace Unigram.Controls
 
         private void OnPaneOpening(SplitView sender, object args)
         {
+            _previousTopPadding = TopPadding;
+            TopPadding = new Thickness();
+
             TogglePaneButton.RequestedTheme = ElementTheme.Dark;
         }
 
         private void OnPaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
         {
-            TogglePaneButton.RequestedTheme = ElementTheme.Default;
-        }
+            if (_previousTopPadding != null)
+            {
+                TopPadding = _previousTopPadding.Value;
+                _previousTopPadding = null;
+            } 
 
-        private void OnPaneOpenChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            TogglePaneButton.RequestedTheme = RootSplitView.IsPaneOpen ? ElementTheme.Dark : ElementTheme.Default;
+            TogglePaneButton.RequestedTheme = ElementTheme.Default;
         }
 
         #region IsPaneOpen

@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Numerics;
 using System.Threading.Tasks;
-using Unigram.Common;
+using Unigram.Charts;
+using Unigram.Controls;
+using Unigram.Entities;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Editing;
-using Windows.Media.Effects;
-using Windows.Media.MediaProperties;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -21,16 +19,16 @@ namespace Unigram.Common
 {
     public static class ImageHelper
     {
-        public static async Task<(int Width, int Height)> GetScaleAsync(StorageFile file, int requestedMinSide = 1280, Rect? crop = null)
+        public static async Task<(int Width, int Height)> GetScaleAsync(StorageFile file, int requestedMinSide = 1280, BitmapEditState editState = null)
         {
             var props = await file.Properties.GetImagePropertiesAsync();
             var width = props.Width;
             var height = props.Height;
 
-            if (crop.HasValue)
+            if (editState?.Rectangle is Rect crop)
             {
-                width = (uint)crop.Value.Width;
-                height = (uint)crop.Value.Height;
+                width = (uint)(crop.Width * props.Width);
+                height = (uint)(crop.Height * props.Height);
             }
 
             if (width > requestedMinSide || height > requestedMinSide)
@@ -39,7 +37,19 @@ namespace Unigram.Common
                 double ratioY = (double)requestedMinSide / height;
                 double ratio = Math.Min(ratioX, ratioY);
 
+                if (editState?.Rotation == BitmapRotation.Clockwise90Degrees ||
+                    editState?.Rotation == BitmapRotation.Clockwise270Degrees)
+                {
+                    return ((int)(height * ratio), (int)(width * ratio));
+                }
+
                 return ((int)(width * ratio), (int)(height * ratio));
+            }
+
+            if (editState?.Rotation == BitmapRotation.Clockwise90Degrees ||
+                editState?.Rotation == BitmapRotation.Clockwise270Degrees)
+            {
+                return ((int)height, (int)width);
             }
 
             return ((int)width, (int)height);
@@ -95,11 +105,12 @@ namespace Unigram.Common
 
                     var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
-                    var propertySet = new BitmapPropertySet();
-                    var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
-                    propertySet.Add("ImageQuality", qualityValue);
+                    // Not using ATM, quality is too low
+                    //var propertySet = new BitmapPropertySet();
+                    //var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
+                    //propertySet.Add("ImageQuality", qualityValue);
 
-                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, resizedStream);
+                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, resizedStream/*, propertySet*/);
                     encoder.SetSoftwareBitmap(pixelData);
                     await encoder.FlushAsync();
                 }
@@ -247,7 +258,7 @@ namespace Unigram.Common
             return result;
         }
 
-        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77)
+        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None)
         {
             if (file == null)
             {
@@ -271,7 +282,13 @@ namespace Unigram.Common
                     cropHeight = cropHeight * ratio;
                 }
 
-                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(cropWidth, cropHeight), new Size(decoder.PixelWidth, decoder.PixelHeight), min, max);
+                cropRectangle = new Rect(
+                    cropRectangle.X * decoder.PixelWidth,
+                    cropRectangle.Y * decoder.PixelHeight,
+                    cropRectangle.Width * decoder.PixelWidth,
+                    cropRectangle.Height * decoder.PixelHeight);
+
+                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), min, max);
 
                 var bounds = new BitmapBounds();
                 bounds.X = (uint)scaledCrop.X;
@@ -284,6 +301,8 @@ namespace Unigram.Common
                 transform.ScaledHeight = (uint)scaledSize.Height;
                 transform.Bounds = bounds;
                 transform.InterpolationMode = BitmapInterpolationMode.Linear;
+                transform.Rotation = rotation;
+                transform.Flip = flip;
 
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
@@ -335,7 +354,7 @@ namespace Unigram.Common
             return (new Rect(x, y, w, h), new Size(ratioW, ratioH));
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, Rect cropRectangle)
+        public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, BitmapEditState editState)
         {
             if (sourceFile.ContentType.Equals("video/mp4"))
             {
@@ -347,39 +366,73 @@ namespace Unigram.Common
 
                 using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.GetWidth(), (int)props.GetHeight(), VideoFramePrecision.NearestKeyFrame))
                 {
-                    return await CropAndPreviewAsync(imageStream, cropRectangle);
+                    return await CropAndPreviewAsync(imageStream, editState);
                 }
             }
 
             using (var imageStream = await sourceFile.OpenReadAsync())
             {
-                return await CropAndPreviewAsync(imageStream, cropRectangle);
+                return await CropAndPreviewAsync(imageStream, editState);
             }
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, Rect cropRectangle)
+        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, BitmapEditState editState)
         {
             var decoder = await BitmapDecoder.CreateAsync(imageStream);
+            var cropWidth = (double)decoder.PixelWidth;
+            var cropHeight = (double)decoder.PixelHeight;
+
+            if (decoder.PixelWidth > 1280 || decoder.PixelHeight > 1280)
+            {
+                double ratioX = (double)1280 / cropWidth;
+                double ratioY = (double)1280 / cropHeight;
+                double ratio = Math.Min(ratioX, ratioY);
+
+                cropWidth = cropWidth * ratio;
+                cropHeight = cropHeight * ratio;
+            }
+
+            var cropRectangle = new Rect(
+                editState.Rectangle.X * decoder.PixelWidth,
+                editState.Rectangle.Y * decoder.PixelHeight,
+                editState.Rectangle.Width * decoder.PixelWidth,
+                editState.Rectangle.Height * decoder.PixelHeight);
+
+            var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), 1280, 0);
+
             var bounds = new BitmapBounds();
-            bounds.X = (uint)cropRectangle.X;
-            bounds.Y = (uint)cropRectangle.Y;
-            bounds.Width = (uint)cropRectangle.Width;
-            bounds.Height = (uint)cropRectangle.Height;
+            bounds.X = (uint)scaledCrop.X;
+            bounds.Y = (uint)scaledCrop.Y;
+            bounds.Width = (uint)scaledCrop.Width;
+            bounds.Height = (uint)scaledCrop.Height;
 
-            var transform = ComputeScalingTransformForSourceImage(decoder);
+            var transform = new BitmapTransform();
+            transform.ScaledWidth = (uint)scaledSize.Width;
+            transform.ScaledHeight = (uint)scaledSize.Height;
             transform.Bounds = bounds;
+            transform.InterpolationMode = BitmapInterpolationMode.Linear;
+            transform.Rotation = editState.Rotation;
+            transform.Flip = editState.Flip;
 
-            var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+            var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
-            var propertySet = new BitmapPropertySet();
-            var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
-            propertySet.Add("ImageQuality", qualityValue);
+            if (editState.Strokes != null)
+            {
+                var stream = await DrawStrokesAsync(pixelData, editState.Strokes, editState.Rectangle, editState.Rotation, editState.Flip);
 
-            var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-            var bitmapImage = new SoftwareBitmapSource();
-            await bitmapImage.SetBitmapAsync(bitmap);
+                var bitmapImage = new BitmapImage();
+                await bitmapImage.SetSourceAsync(stream);
 
-            return bitmapImage;
+                return bitmapImage;
+            }
+            else
+            {
+
+                var bitmapImage = new SoftwareBitmapSource();
+                await bitmapImage.SetBitmapAsync(pixelData);
+
+                return bitmapImage;
+            }
         }
 
         public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile)
@@ -410,138 +463,201 @@ namespace Unigram.Common
 
                 transform.ScaledWidth = (uint)(sourceDecoder.PixelWidth * ratio);
                 transform.ScaledHeight = (uint)(sourceDecoder.PixelHeight * ratio);
-
+                transform.InterpolationMode = BitmapInterpolationMode.Linear;
             }
 
             return transform;
         }
 
-        //public static async Task<TLPhotoSizeBase> GetVideoThumbnailAsync(StorageFile file, VideoProperties props, VideoTransformEffectDefinition effect)
-        //{
-        //    double originalWidth = props.GetWidth();
-        //    double originalHeight = props.GetHeight();
+        public static async Task<IRandomAccessStream> DrawStrokesAsync(SoftwareBitmap file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, BitmapRotation rotation, BitmapFlip flip)
+        {
+            var device = CanvasDevice.GetSharedDevice();
+            var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, file);
+            var canvas = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
 
-        //    if (effect != null && !effect.CropRectangle.IsEmpty)
-        //    {
-        //        file = await CropAsync(file, effect.CropRectangle);
-        //        originalWidth = effect.CropRectangle.Width;
-        //        originalHeight = effect.CropRectangle.Height;
-        //    }
+            var size = canvas.Size.ToVector2();
+            var canvasSize = canvas.Size.ToVector2();
 
-        //    TLPhotoSizeBase result;
-        //    var desiredName = string.Format("{0}_{1}_{2}.jpg", "fileLocation.VolumeId", "fileLocation.LocalId", "fileLocation.Secret");
-        //    var desiredFile = await FileUtils.CreateTempFileAsync(desiredName);
+            var scaleX = 1 / (float)rectangle.Width;
+            var scaleY = 1 / (float)rectangle.Height;
 
-        //    using (var fileStream = await OpenReadAsync(file))
-        //    using (var outputStream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
-        //    {
-        //        var decoder = await BitmapDecoder.CreateAsync(fileStream);
+            var offsetX = (float)rectangle.X * scaleX;
+            var offsetY = (float)rectangle.Y * scaleY;
 
-        //        double ratioX = (double)90 / originalWidth;
-        //        double ratioY = (double)90 / originalHeight;
-        //        double ratio = Math.Min(ratioX, ratioY);
+            if (rotation == BitmapRotation.Clockwise270Degrees ||
+                rotation == BitmapRotation.Clockwise90Degrees)
+            {
+                size = new Vector2(size.Y, size.X);
 
-        //        uint width = (uint)(originalWidth * ratio);
-        //        uint height = (uint)(originalHeight * ratio);
+                scaleX = scaleY;
+                scaleY = 1 * 1 / (float)rectangle.Width;
+            }
 
-        //        var transform = new BitmapTransform();
-        //        transform.ScaledWidth = width;
-        //        transform.ScaledHeight = height;
-        //        transform.InterpolationMode = BitmapInterpolationMode.Linear;
+            using (var session = canvas.CreateDrawingSession())
+            {
+                session.DrawImage(bitmap);
 
-        //        if (effect != null)
-        //        {
-        //            transform.Flip = effect.Mirror == MediaMirroringOptions.Horizontal ? BitmapFlip.Horizontal : BitmapFlip.None;
-        //        }
+                switch (rotation)
+                {
+                    case BitmapRotation.Clockwise90Degrees:
+                        var transform1 = Matrix3x2.CreateRotation(MathFEx.ToRadians(90));
+                        transform1.Translation = new Vector2(size.Y, 0);
+                        session.Transform = transform1;
+                        break;
+                    case BitmapRotation.Clockwise180Degrees:
+                        var transform2 = Matrix3x2.CreateRotation(MathFEx.ToRadians(180));
+                        transform2.Translation = new Vector2(size.X, size.Y);
+                        session.Transform = transform2;
+                        break;
+                    case BitmapRotation.Clockwise270Degrees:
+                        var transform3 = Matrix3x2.CreateRotation(MathFEx.ToRadians(270));
+                        transform3.Translation = new Vector2(0, size.X);
+                        session.Transform = transform3;
+                        break;
+                }
 
-        //        var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                switch (flip)
+                {
+                    case BitmapFlip.Horizontal:
+                        switch (rotation)
+                        {
+                            case BitmapRotation.Clockwise90Degrees:
+                            case BitmapRotation.Clockwise270Degrees:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(1, -1, canvasSize / 2));
+                                break;
+                            default:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(-1, 1, canvasSize / 2));
+                                break;
+                        }
+                        break;
+                    case BitmapFlip.Vertical:
+                        switch (rotation)
+                        {
+                            case BitmapRotation.None:
+                            case BitmapRotation.Clockwise180Degrees:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(1, -1, canvasSize / 2));
+                                break;
+                            default:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(-1, 1, canvasSize / 2));
+                                break;
+                        }
+                        break;
+                }
 
-        //        var propertySet = new BitmapPropertySet();
-        //        var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
-        //        propertySet.Add("ImageQuality", qualityValue);
+                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(scaleX, scaleY));
+                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateTranslation(-(offsetX * size.X), -(offsetY * size.Y)));
 
-        //        var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
-        //        encoder.SetSoftwareBitmap(pixelData);
-        //        await encoder.FlushAsync();
+                foreach (var builder in strokes)
+                {
+                    PencilCanvas.DrawPath(session, builder, size);
+                }
+            }
 
-        //        result = new TLPhotoSize
-        //        {
-        //            W = (int)width,
-        //            H = (int)height,
-        //            Size = (int)outputStream.Size,
-        //            Type = string.Empty
-        //        };
-        //    }
+            bitmap.Dispose();
 
-        //    return result;
-        //}
+            var stream = new InMemoryRandomAccessStream();
+            await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
 
-        //public static async Task<TLPhotoSizeBase> GetFileThumbnailAsync(StorageFile file)
-        //{
-        //    //file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\Thumb.jpg");
+            canvas.Dispose();
 
-        //    //var imageProps = await file.Properties.GetImagePropertiesAsync();
-        //    var videoProps = await file.Properties.GetVideoPropertiesAsync();
-        //    if (videoProps.Duration > TimeSpan.Zero && videoProps.Width > 0 && videoProps.Height > 0)
-        //    {
-        //        return await GetVideoThumbnailAsync(file, videoProps, null);
-        //    }
+            stream.Seek(0);
+            return stream;
+        }
 
-        //    //if (imageProps.Width > 0 || videoProps.Width > 0)
-        //    //{
-        //    try
-        //    {
-        //        using (var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 96, ThumbnailOptions.ResizeThumbnail))
-        //        {
-        //            if (thumb != null && thumb.Type == ThumbnailType.Image)
-        //            {
-        //                var randomStream = thumb as IRandomAccessStream;
+        public static async Task<StorageFile> DrawStrokesAsync(StorageFile file, IReadOnlyList<SmoothPathBuilder> strokes, Rect rectangle, BitmapRotation rotation, BitmapFlip flip)
+        {
+            var device = CanvasDevice.GetSharedDevice();
+            var bitmap = await CanvasBitmap.LoadAsync(device, file.Path);
+            var canvas = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
 
-        //                var originalWidth = (int)thumb.OriginalWidth;
-        //                var originalHeight = (int)thumb.OriginalHeight;
+            var size = canvas.Size.ToVector2();
+            var canvasSize = canvas.Size.ToVector2();
 
-        //                if (thumb.ContentType != "image/jpeg")
-        //                {
-        //                    var memoryStream = new InMemoryRandomAccessStream();
-        //                    var bitmapDecoder = await BitmapDecoder.CreateAsync(thumb);
-        //                    var pixelDataProvider = await bitmapDecoder.GetPixelDataAsync();
-        //                    var bitmapEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, memoryStream);
-        //                    bitmapEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, bitmapDecoder.PixelWidth, bitmapDecoder.PixelHeight, bitmapDecoder.DpiX, bitmapDecoder.DpiY, pixelDataProvider.DetachPixelData());
-        //                    await bitmapEncoder.FlushAsync();
-        //                    randomStream = memoryStream;
-        //                }
+            var scaleX = 1 / (float)rectangle.Width;
+            var scaleY = 1 / (float)rectangle.Height;
 
-        //                var desiredName = string.Format("{0}_{1}_{2}.jpg", "fileLocation.VolumeId", "fileLocation.LocalId", "fileLocation.Secret");
-        //                var desiredFile = await FileUtils.CreateTempFileAsync(desiredName);
+            var offsetX = (float)rectangle.X * scaleX;
+            var offsetY = (float)rectangle.Y * scaleY;
 
-        //                var buffer = new Windows.Storage.Streams.Buffer(Convert.ToUInt32(randomStream.Size));
-        //                var buffer2 = await randomStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
-        //                using (var stream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
-        //                {
-        //                    await stream.WriteAsync(buffer2);
-        //                    stream.Dispose();
-        //                }
+            if (rotation == BitmapRotation.Clockwise270Degrees ||
+                rotation == BitmapRotation.Clockwise90Degrees)
+            {
+                size = new Vector2(size.Y, size.X);
 
-        //                var result = new TLPhotoSize
-        //                {
-        //                    W = originalWidth,
-        //                    H = originalHeight,
-        //                    Size = (int)randomStream.Size,
-        //                    Type = string.Empty
-        //                };
+                scaleX = scaleY;
+                scaleY = 1 * 1 / (float)rectangle.Width;
+            }
 
-        //                randomStream.Dispose();
-        //                return result;
-        //            }
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return new TLPhotoSizeEmpty();
-        //    }
-        //    //}
+            using (var session = canvas.CreateDrawingSession())
+            {
+                session.DrawImage(bitmap);
 
-        //    return null;
-        //}
+                switch (rotation)
+                {
+                    case BitmapRotation.Clockwise90Degrees:
+                        var transform1 = Matrix3x2.CreateRotation(MathFEx.ToRadians(90));
+                        transform1.Translation = new Vector2(size.Y, 0);
+                        session.Transform = transform1;
+                        break;
+                    case BitmapRotation.Clockwise180Degrees:
+                        var transform2 = Matrix3x2.CreateRotation(MathFEx.ToRadians(180));
+                        transform2.Translation = new Vector2(size.X, size.Y);
+                        session.Transform = transform2;
+                        break;
+                    case BitmapRotation.Clockwise270Degrees:
+                        var transform3 = Matrix3x2.CreateRotation(MathFEx.ToRadians(270));
+                        transform3.Translation = new Vector2(0, size.X);
+                        session.Transform = transform3;
+                        break;
+                }
+
+                switch (flip)
+                {
+                    case BitmapFlip.Horizontal:
+                        switch (rotation)
+                        {
+                            case BitmapRotation.Clockwise90Degrees:
+                            case BitmapRotation.Clockwise270Degrees:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(1, -1, canvasSize / 2));
+                                break;
+                            default:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(-1, 1, canvasSize / 2));
+                                break;
+                        }
+                        break;
+                    case BitmapFlip.Vertical:
+                        switch (rotation)
+                        {
+                            case BitmapRotation.None:
+                            case BitmapRotation.Clockwise180Degrees:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(1, -1, canvasSize / 2));
+                                break;
+                            default:
+                                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(-1, 1, canvasSize / 2));
+                                break;
+                        }
+                        break;
+                }
+
+                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateScale(scaleX, scaleY));
+                session.Transform = Matrix3x2.Multiply(session.Transform, Matrix3x2.CreateTranslation(-(offsetX * size.X), -(offsetY * size.Y)));
+
+                foreach (var builder in strokes)
+                {
+                    PencilCanvas.DrawPath(session, builder, size);
+                }
+            }
+
+            bitmap.Dispose();
+
+            using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
+            }
+
+            canvas.Dispose();
+
+            return file;
+        }
     }
 }

@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Unigram.Strings;
-using Windows.Globalization.DateTimeFormatting;
-using Windows.Globalization.NumberFormatting;
-using Windows.UI;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.System.UserProfile;
-using Windows.Globalization;
-using Unigram.Common;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Native;
 using Unigram.Services;
+using Windows.Globalization.DateTimeFormatting;
+using Windows.System.UserProfile;
 
 namespace Unigram.Converters
 {
@@ -39,6 +32,7 @@ namespace Unigram.Converters
         public DateTimeFormatter LongTime { get; private set; }
 
         public DateTimeFormatter MonthFull { get; private set; }
+        public DateTimeFormatter MonthAbbreviatedDay { get; private set; }
         public DateTimeFormatter MonthFullYear { get; private set; }
         public DateTimeFormatter DayMonthFull { get; private set; }
         public DateTimeFormatter DayMonthFullYear { get; private set; }
@@ -56,6 +50,7 @@ namespace Unigram.Converters
             LongDate = new DateTimeFormatter("longdate", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             LongTime = new DateTimeFormatter("longtime", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             MonthFull = new DateTimeFormatter("month.full", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            MonthAbbreviatedDay = new DateTimeFormatter("month.abbreviated day", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             MonthFullYear = new DateTimeFormatter("month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             DayMonthFull = new DateTimeFormatter("day month.full", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
@@ -303,7 +298,7 @@ namespace Unigram.Converters
             return Utils.UnixTimestampToDateTime(value);
         }
 
-        public string ShortNumber(int number)
+        public static string ShortNumber(int number)
         {
             var K = string.Empty;
             var lastDec = 0;

@@ -1,0 +1,28 @@
+﻿<controls:ContentPopup
+    x:Class="Unigram.Views.Popups.EditShortcutPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Popups"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="TITLE"
+    FocusPrimaryButton="False"
+    PrimaryButtonText="Button1"
+    SecondaryButtonText="Button2"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
+
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}" Padding="0,0,0,16">
+        <controls:HeaderedControl Header="Press desired key combination">
+            <TextBox
+                x:Name="TextField"
+                Loaded="TextField_Loaded"
+                IsReadOnly="True"
+                Margin="12,8"/>
+        </controls:HeaderedControl>
+    </Grid>
+</controls:ContentPopup>

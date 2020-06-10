@@ -1,21 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Selectors;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -73,15 +61,17 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateContent(MessageViewModel message, WebPage webPage)
         {
-            if (Media.Child is Messages.IContent content && content.IsValid(message.Content, false))
+            if (Media.Child is IContent content && content.IsValid(message.Content, false))
             {
                 content.UpdateMessage(message);
             }
             else
             {
+                var maxWidth = (double)App.Current.Resources["MessageMaxWidth"];
+
                 if (webPage.Animation != null)
                 {
-                    Media.Child = new AnimationContent(message);
+                    Media.Child = new AnimationContent(message) { MaxWidth = maxWidth };
                 }
                 else if (webPage.Audio != null)
                 {
@@ -104,7 +94,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (webPage.Video != null)
                 {
-                    Media.Child = new VideoContent(message);
+                    Media.Child = new VideoContent(message) { MaxWidth = maxWidth };
                 }
                 else if (webPage.VideoNote != null)
                 {
@@ -117,7 +107,7 @@ namespace Unigram.Controls.Messages.Content
                 else if (webPage.Photo != null)
                 {
                     // Photo at last: web page preview might have both a file and a thumbnail
-                    Media.Child = new PhotoContent(message);
+                    Media.Child = new PhotoContent(message) { MaxWidth = maxWidth };
                 }
                 else
                 {

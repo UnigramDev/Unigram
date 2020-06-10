@@ -1,4 +1,4 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Settings.SettingsStoragePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -19,22 +19,19 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader
             Text="{CustomResource StorageUsage}" 
             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
             ItemsSource="{x:Bind ViewModel.Statistics.ByChat, Mode=OneWay}"
             ItemClick="ListView_ItemClick"
             IsItemClickEnabled="True"
             SelectionMode="None"
-            ContainerContentChanging="OnContainerContentChanging"
-            Grid.Row="1">
+            ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl
@@ -88,11 +85,9 @@
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </controls:TableListView>
     </Grid>
-</Page>
+</local:HostedPage>

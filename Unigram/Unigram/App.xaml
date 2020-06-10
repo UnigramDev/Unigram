@@ -1,8 +1,8 @@
-<template:BootStrapper
+<navigation:BootStrapper
     x:Class="Unigram.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:template="using:Template10.Common"
+    xmlns:navigation="using:Unigram.Navigation"
     xmlns:themes="using:Unigram.Themes"
     xmlns:common="using:Unigram.Common"
     xmlns:views="using:Unigram.Views"
@@ -142,6 +142,16 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
+            <Thickness x:Key="GlyphButtonPadding">4</Thickness>
+            <CornerRadius x:Key="GlyphButtonCornerRadius">4</CornerRadius>
+            
+            <Style x:Key="DefaultListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+
+            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}"/>
+
             <SolidColorBrush x:Key="GridViewItemCheckBrush" Color="White"/>
 
             <x:Double x:Key="PaneToggleButtonSize">48</x:Double>
@@ -255,13 +265,12 @@
 
             <ResourceDictionary.MergedDictionaries>
                 <themes:Fluent/>
-                <!--<ResourceDictionary Source="ms-appx:///Themes/ThemeGreen.xaml"/>-->
                 <common:Theme/>
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
+                <ResourceDictionary Source="ms-appx:///Themes/TeachingTip.xaml"/>
                 <themes:Messages/>
-                <!--<ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 
-</template:BootStrapper>
+</navigation:BootStrapper>

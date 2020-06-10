@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/09/2019 11:41:07
+// 	Generated: 06/01/2020 13:37:23
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -35,6 +35,17 @@ namespace Unigram.Strings
             resourceLoader = LocaleService.Current;
         }
 
+        /// <summary>
+        /// Localized resource similar to "Abort"
+        /// </summary>
+        public static string Abort
+        {
+            get
+            {
+                return resourceLoader.GetString("Abort");
+            }
+        }
+        
         /// <summary>
         /// Localized resource similar to "Abort recovery email setup"
         /// </summary>
@@ -916,6 +927,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Higher quality"
+        /// </summary>
+        public static string AccDescrVideoCompressHigh
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrVideoCompressHigh");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Smaller size"
+        /// </summary>
+        public static string AccDescrVideoCompressLow
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrVideoCompressLow");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Record video message"
         /// </summary>
         public static string AccDescrVideoMessage
@@ -1011,6 +1044,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccountSwitch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Release for archive"
+        /// </summary>
+        public static string AccReleaseForArchive
+        {
+            get
+            {
+                return resourceLoader.GetString("AccReleaseForArchive");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Swipe down for archive"
+        /// </summary>
+        public static string AccSwipeForArchive
+        {
+            get
+            {
+                return resourceLoader.GetString("AccSwipeForArchive");
             }
         }
         
@@ -1521,6 +1576,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "un1 pinned a quiz"
+        /// </summary>
+        public static string ActionPinnedQuiz
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionPinnedQuiz");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "un1 pinned a video message"
         /// </summary>
         public static string ActionPinnedRound
@@ -1774,7 +1840,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Add an option..."
+        /// Localized resource similar to "Add an explanation"
+        /// </summary>
+        public static string AddAnExplanation
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAnExplanation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users will see this text after choosing the wrong answer, good for educational purposes."
+        /// </summary>
+        public static string AddAnExplanationInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAnExplanationInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add an Option..."
         /// </summary>
         public static string AddAnOption
         {
@@ -1908,6 +1996,17 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Add Contact"
         /// </summary>
+        public static string AddContactPhonebookTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AddContactPhonebookTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Contact"
+        /// </summary>
         public static string AddContactTitle
         {
             get
@@ -1957,6 +2056,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddMasksInstalled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} has been added to your masks."
+        /// </summary>
+        public static string AddMasksInstalledInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AddMasksInstalledInfo");
             }
         }
         
@@ -2049,7 +2159,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Add People Nearby"
+        /// Localized resource similar to "Find People Nearby"
         /// </summary>
         public static string AddPeopleNearby
         {
@@ -2122,6 +2232,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddStickersInstalled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} has been added to your stickers."
+        /// </summary>
+        public static string AddStickersInstalledInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AddStickersInstalledInfo");
             }
         }
         
@@ -2225,6 +2346,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Do you want to add **{0}** to the group **{1}**?"
+        /// </summary>
+        public static string AddToTheGroupAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("AddToTheGroupAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add bot"
+        /// </summary>
+        public static string AddToTheGroupAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AddToTheGroupAlertTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Number of last messages to forward:"
         /// </summary>
         public static string AddToTheGroupForwardCount
@@ -2243,6 +2386,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddToTheGroupTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user because they are on the list of Removed Users and you can't unban them."
+        /// </summary>
+        public static string AddUserErrorBlacklisted
+        {
+            get
+            {
+                return resourceLoader.GetString("AddUserErrorBlacklisted");
             }
         }
         
@@ -2698,6 +2852,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Animated Stickers"
+        /// </summary>
+        public static string AnimatedStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("AnimatedStickers");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Anonymous Poll"
         /// </summary>
         public static string AnonymousPoll
@@ -2705,6 +2870,94 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AnonymousPoll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Anonymous Quiz"
+        /// </summary>
+        public static string AnonymousQuizPoll
+        {
+            get
+            {
+                return resourceLoader.GetString("AnonymousQuizPoll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string AnswerFew
+        {
+            get
+            {
+                return resourceLoader.GetString("AnswerFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string AnswerMany
+        {
+            get
+            {
+                return resourceLoader.GetString("AnswerMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} answer"
+        /// </summary>
+        public static string AnswerOne
+        {
+            get
+            {
+                return resourceLoader.GetString("AnswerOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Answer options"
+        /// </summary>
+        public static string AnswerOptions
+        {
+            get
+            {
+                return resourceLoader.GetString("AnswerOptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} answers"
+        /// </summary>
+        public static string AnswerOther
+        {
+            get
+            {
+                return resourceLoader.GetString("AnswerOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string AnswerTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("AnswerTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string AnswerZero
+        {
+            get
+            {
+                return resourceLoader.GetString("AnswerZero");
             }
         }
         
@@ -2727,6 +2980,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Appearance");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Browse the app's folder"
+        /// </summary>
+        public static string AppFolderInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("AppFolderInfo");
             }
         }
         
@@ -3041,6 +3305,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to archive the selected sticker sets?"
+        /// </summary>
+        public static string ArchiveStickersAlertMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("ArchiveStickersAlertMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archive {0}"
+        /// </summary>
+        public static string ArchiveStickerSetsAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ArchiveStickerSetsAlertTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "are typing..."
         /// </summary>
         public static string AreTyping
@@ -3103,6 +3389,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AreYouSureClearDrafts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete cloud drafts"
+        /// </summary>
+        public static string AreYouSureClearDraftsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureClearDraftsTitle");
             }
         }
         
@@ -3283,6 +3580,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Delete GIF"
+        /// </summary>
+        public static string AreYouSureDeleteGIFTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeleteGIFTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to delete {0}?"
         /// </summary>
         public static string AreYouSureDeleteMessages
@@ -3301,6 +3609,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AreYouSureDeletePhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete photo"
+        /// </summary>
+        public static string AreYouSureDeletePhotoTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeletePhotoTitle");
             }
         }
         
@@ -3349,6 +3668,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete the chat with **{0}** and block them?"
+        /// </summary>
+        public static string AreYouSureDeleteThisChatWithBot
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeleteThisChatWithBot");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to delete the chat **{0}**?"
         /// </summary>
         public static string AreYouSureDeleteThisChatWithGroup
@@ -3389,6 +3719,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AreYouSureDeleteVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete video"
+        /// </summary>
+        public static string AreYouSureDeleteVideoTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureDeleteVideoTitle");
             }
         }
         
@@ -3452,6 +3793,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Terminate sessions"
+        /// </summary>
+        public static string AreYouSureSessionsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureSessionsTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Terminate session"
+        /// </summary>
+        public static string AreYouSureSessionTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("AreYouSureSessionTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to share your phone number?"
         /// </summary>
         public static string AreYouSureShareMyContactInfo
@@ -3474,7 +3837,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to share your phone number {0} with **{1}**?"
+        /// Localized resource similar to "Do you want to share your phone number {0} with **{1}**?"
         /// </summary>
         public static string AreYouSureShareMyContactInfoUser
         {
@@ -3685,7 +4048,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The admins of this group have restricted you from sending inline content here"
+        /// Localized resource similar to "The admins of this group have restricted you from sending inline content here."
         /// </summary>
         public static string AttachInlineRestrictedForever
         {
@@ -3901,6 +4264,118 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("August");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan QR Code"
+        /// </summary>
+        public static string AuthAnotherClient
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClient");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "https://desktop.telegram.org/"
+        /// </summary>
+        public static string AuthAnotherClientDownloadClientUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientDownloadClientUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Download Telegram on your computer from *desktop.telegram.org*."
+        /// </summary>
+        public static string AuthAnotherClientInfo1
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientInfo1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Run Telegram Desktop to get the QR code."
+        /// </summary>
+        public static string AuthAnotherClientInfo2
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientInfo2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan the QR code to connect your account."
+        /// </summary>
+        public static string AuthAnotherClientInfo3
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientInfo3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No auth token found"
+        /// </summary>
+        public static string AuthAnotherClientNotFound
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientNotFound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Auth successful"
+        /// </summary>
+        public static string AuthAnotherClientOk
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientOk");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scan QR Code"
+        /// </summary>
+        public static string AuthAnotherClientScan
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientScan");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Token invalid or already expired."
+        /// </summary>
+        public static string AuthAnotherClientTokenError
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientTokenError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This code can be used to allow someone to log in to your Telegram account.
+        ///
+        ///To confirm Telegram login, please go to Settings > Devices > Scan QR and scan the code."
+        /// </summary>
+        public static string AuthAnotherClientUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("AuthAnotherClientUrl");
             }
         }
         
@@ -4499,6 +4974,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Auto-Night Mode is off"
+        /// </summary>
+        public static string AutoNightModeOff
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoNightModeOff");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Preferred night theme"
         /// </summary>
         public static string AutoNightPreferred
@@ -4528,6 +5014,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AutoNightScheduled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "System Default"
+        /// </summary>
+        public static string AutoNightSystemDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoNightSystemDefault");
             }
         }
         
@@ -4707,6 +5204,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("BackgroundBrightness");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose pattern"
+        /// </summary>
+        public static string BackgroundChoosePattern
+        {
+            get
+            {
+                return resourceLoader.GetString("BackgroundChoosePattern");
             }
         }
         
@@ -5096,6 +5604,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Do you want to block **{0}** from messaging and calling you on Telegram?"
+        /// </summary>
+        public static string BlockUserMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("BlockUserMessage");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Block User"
         /// </summary>
         public static string BlockUserMultiTitle
@@ -5103,6 +5622,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("BlockUserMultiTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Block users"
+        /// </summary>
+        public static string BlockUsers
+        {
+            get
+            {
+                return resourceLoader.GetString("BlockUsers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to block **{0}** from messaging and calling you on Telegram?"
+        /// </summary>
+        public static string BlockUsersMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("BlockUsersMessage");
             }
         }
         
@@ -5338,6 +5879,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Message corners"
+        /// </summary>
+        public static string BubbleRadius
+        {
+            get
+            {
+                return resourceLoader.GetString("BubbleRadius");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Built-in themes"
         /// </summary>
         public static string BuiltInThemes
@@ -5389,6 +5941,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CacheEmpty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} freed on your device!"
+        /// </summary>
+        public static string CacheWasCleared
+        {
+            get
+            {
+                return resourceLoader.GetString("CacheWasCleared");
             }
         }
         
@@ -5536,7 +6099,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, **{0}** doesn't accept calls."
+        /// Localized resource similar to "Sorry, you cannot call {0} because of their privacy settings."
         /// </summary>
         public static string CallNotAvailable
         {
@@ -5602,7 +6165,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Calls"
+        /// Localized resource similar to "Call settings"
         /// </summary>
         public static string CallsDataUsage
         {
@@ -5699,6 +6262,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CancelEmailQuestion");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Abort setup"
+        /// </summary>
+        public static string CancelEmailQuestionTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelEmailQuestionTitle");
             }
         }
         
@@ -5809,6 +6383,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Caption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Card number copied to clipboard"
+        /// </summary>
+        public static string CardNumberCopied
+        {
+            get
+            {
+                return resourceLoader.GetString("CardNumberCopied");
             }
         }
         
@@ -5969,6 +6554,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to change your chat wallpaper to a color?"
+        /// </summary>
+        public static string ChangeWallpaperToColor
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangeWallpaperToColor");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Add Admin"
         /// </summary>
         public static string ChannelAddAdmin
@@ -6020,6 +6616,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChannelAddMembers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Subscribers"
+        /// </summary>
+        public static string ChannelAddSubscribers
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelAddSubscribers");
             }
         }
         
@@ -6277,7 +6884,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Wait! Deleting this channel will remove all members and all messages will be lost. Delete the channel anyway?"
+        /// Localized resource similar to "Wait! Deleting this channel will remove all subscribers and all messages will be lost. Delete the channel anyway?"
         /// </summary>
         public static string ChannelDeleteAlert
         {
@@ -6651,6 +7258,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} posted the quiz "{1}""
+        /// </summary>
+        public static string ChannelMessageQuiz2
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelMessageQuiz2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} posted a video message"
         /// </summary>
         public static string ChannelMessageRound
@@ -6717,7 +7335,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Members will receive a silent notification"
+        /// Localized resource similar to "Subscribers will receive a silent notification"
         /// </summary>
         public static string ChannelNotifyMembersInfoOff
         {
@@ -6728,7 +7346,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Members will be notified when you post"
+        /// Localized resource similar to "Subscribers will be notified when you post"
         /// </summary>
         public static string ChannelNotifyMembersInfoOn
         {
@@ -6847,6 +7465,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ChannelPublicEmptyUsername");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose a link"
+        /// </summary>
+        public static string ChannelPublicEmptyUsernameTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelPublicEmptyUsernameTitle");
             }
         }
         
@@ -7071,6 +7700,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Too many communities"
+        /// </summary>
+        public static string ChannelTooMuchTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelTooMuchTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Channel Type"
         /// </summary>
         public static string ChannelType
@@ -7186,6 +7826,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Warning"
+        /// </summary>
+        public static string ChannelVerifiedWarning
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelVerifiedWarning");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "admin"
         /// </summary>
         public static string ChatAdmin
@@ -7243,11 +7894,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "MMMM d"
         /// </summary>
-        public static string ChatDate
+        public static string chatDate
         {
             get
             {
-                return resourceLoader.GetString("ChatDate");
+                return resourceLoader.GetString("chatDate");
             }
         }
         
@@ -7276,11 +7927,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "MMMM d, yyyy"
         /// </summary>
-        public static string ChatFullDate
+        public static string chatFullDate
         {
             get
             {
-                return resourceLoader.GetString("ChatFullDate");
+                return resourceLoader.GetString("chatFullDate");
             }
         }
         
@@ -7978,7 +8629,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Upload from gallery"
+        /// Localized resource similar to "Upload from Gallery"
         /// </summary>
         public static string ChooseFromGallery
         {
@@ -8242,6 +8893,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Clear Local Database"
+        /// </summary>
+        public static string ClearLocalDatabase
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearLocalDatabase");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Clear Cache"
         /// </summary>
         public static string ClearMediaCache
@@ -8286,6 +8948,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Clear history"
+        /// </summary>
+        public static string ClearRecentHistory
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearRecentHistory");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Clear search history?"
         /// </summary>
         public static string ClearSearch
@@ -8315,6 +8988,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ClearSearchAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove"
+        /// </summary>
+        public static string ClearSearchRemove
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearSearchRemove");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Search history"
+        /// </summary>
+        public static string ClearSearchSingleAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearSearchSingleAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from your search history?"
+        /// </summary>
+        public static string ClearSearchSingleChatAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearSearchSingleChatAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from your search history?"
+        /// </summary>
+        public static string ClearSearchSingleUserAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearSearchSingleUserAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear Telegram Cache"
+        /// </summary>
+        public static string ClearTelegramCache
+        {
+            get
+            {
+                return resourceLoader.GetString("ClearTelegramCache");
             }
         }
         
@@ -8418,6 +9146,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Background"
+        /// </summary>
+        public static string ColorPickerBackground
+        {
+            get
+            {
+                return resourceLoader.GetString("ColorPickerBackground");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Accent Color"
+        /// </summary>
+        public static string ColorPickerMainColor
+        {
+            get
+            {
+                return resourceLoader.GetString("ColorPickerMainColor");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "My Messages"
+        /// </summary>
+        public static string ColorPickerMyMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("ColorPickerMyMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "RESET"
+        /// </summary>
+        public static string ColorPickerReset
+        {
+            get
+            {
+                return resourceLoader.GetString("ColorPickerReset");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "RESET ALL"
+        /// </summary>
+        public static string ColorPickerResetAll
+        {
+            get
+            {
+                return resourceLoader.GetString("ColorPickerResetAll");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Pink"
         /// </summary>
         public static string ColorPink
@@ -8458,6 +9241,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ColorTheme");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Color theme changed."
+        /// </summary>
+        public static string ColorThemeChanged
+        {
+            get
+            {
+                return resourceLoader.GetString("ColorThemeChanged");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You can change it back in *Chat Settings*."
+        /// </summary>
+        public static string ColorThemeChangedInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ColorThemeChangedInfo");
             }
         }
         
@@ -8506,6 +9311,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CommonGroupsFew
+        {
+            get
+            {
+                return resourceLoader.GetString("CommonGroupsFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CommonGroupsMany
+        {
+            get
+            {
+                return resourceLoader.GetString("CommonGroupsMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} group in common"
+        /// </summary>
+        public static string CommonGroupsOne
+        {
+            get
+            {
+                return resourceLoader.GetString("CommonGroupsOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} groups in common"
+        /// </summary>
+        public static string CommonGroupsOther
+        {
+            get
+            {
+                return resourceLoader.GetString("CommonGroupsOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CommonGroupsTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("CommonGroupsTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CommonGroupsZero
+        {
+            get
+            {
+                return resourceLoader.GetString("CommonGroupsZero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} is using an older version of Telegram, so secret photos will be shown in compatibility mode.
         ///
         ///Once {1} updates Telegram, photos with timers for 1 minute or less will start working in 'Tap and hold to view' mode, and you will be notified whenever the other party takes a screenshot."
@@ -8519,7 +9390,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to delete this entry from the calls log?"
+        /// Localized resource similar to "Do you want to delete this entry from the call log?"
         /// </summary>
         public static string ConfirmDeleteCallLog
         {
@@ -8669,6 +9540,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ContactNotRegistered");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite to Telegram"
+        /// </summary>
+        public static string ContactNotRegisteredTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ContactNotRegisteredTitle");
             }
         }
         
@@ -8884,6 +9766,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Copy"
+        /// </summary>
+        public static string CopyCardNumber
+        {
+            get
+            {
+                return resourceLoader.GetString("CopyCardNumber");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Copy Link"
         /// </summary>
         public static string CopyLink
@@ -8891,6 +9784,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CopyLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CountOfResultsFew
+        {
+            get
+            {
+                return resourceLoader.GetString("CountOfResultsFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CountOfResultsMany
+        {
+            get
+            {
+                return resourceLoader.GetString("CountOfResultsMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} of {1} results"
+        /// </summary>
+        public static string CountOfResultsOne
+        {
+            get
+            {
+                return resourceLoader.GetString("CountOfResultsOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} of {1} results"
+        /// </summary>
+        public static string CountOfResultsOther
+        {
+            get
+            {
+                return resourceLoader.GetString("CountOfResultsOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CountOfResultsTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("CountOfResultsTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CountOfResultsZero
+        {
+            get
+            {
+                return resourceLoader.GetString("CountOfResultsZero");
             }
         }
         
@@ -8968,6 +9927,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CreateNewContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create New Folder"
+        /// </summary>
+        public static string CreateNewFilter
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateNewFilter");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create folders for different groups of chats and quickly switch between them."
+        /// </summary>
+        public static string CreateNewFilterInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateNewFilterInfo");
             }
         }
         
@@ -9238,6 +10219,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Send a **:darts:** emoji to try your luck."
+        /// </summary>
+        public static string DartInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("DartInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Data and Storage"
         /// </summary>
         public static string DataSettings
@@ -9469,6 +10461,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Disable pause music when recording"
+        /// </summary>
+        public static string DebugMenuDisablePauseMusic
+        {
+            get
+            {
+                return resourceLoader.GetString("DebugMenuDisablePauseMusic");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable smooth keyboard"
+        /// </summary>
+        public static string DebugMenuDisableSmoothKeyboard
+        {
+            get
+            {
+                return resourceLoader.GetString("DebugMenuDisableSmoothKeyboard");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Enable in-app camera"
         /// </summary>
         public static string DebugMenuEnableCamera
@@ -9487,6 +10501,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DebugMenuEnableLogs");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable pause music when recording"
+        /// </summary>
+        public static string DebugMenuEnablePauseMusic
+        {
+            get
+            {
+                return resourceLoader.GetString("DebugMenuEnablePauseMusic");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable smooth keyboard"
+        /// </summary>
+        public static string DebugMenuEnableSmoothKeyboard
+        {
+            get
+            {
+                return resourceLoader.GetString("DebugMenuEnableSmoothKeyboard");
             }
         }
         
@@ -9535,7 +10571,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Reset Dialogs"
+        /// Localized resource similar to "Reset Chats"
         /// </summary>
         public static string DebugMenuResetDialogs
         {
@@ -9733,6 +10769,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string DeleteBackgroundFew
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteBackgroundFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string DeleteBackgroundMany
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteBackgroundMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete background"
+        /// </summary>
+        public static string DeleteBackgroundOne
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteBackgroundOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete {0} backgrounds"
+        /// </summary>
+        public static string DeleteBackgroundOther
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteBackgroundOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string DeleteBackgroundTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteBackgroundTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string DeleteBackgroundZero
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteBackgroundZero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Ban user"
         /// </summary>
         public static string DeleteBanUser
@@ -9832,6 +10934,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Delete from Recent"
+        /// </summary>
+        public static string DeleteFromRecent
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteFromRecent");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Delete GIF?"
         /// </summary>
         public static string DeleteGif
@@ -9850,6 +10963,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DeleteLocalization");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete **{0}** language pack?"
+        /// </summary>
+        public static string DeleteLocalizationText
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteLocalizationText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete language pack"
+        /// </summary>
+        public static string DeleteLocalizationTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteLocalizationTitle");
             }
         }
         
@@ -9986,6 +11121,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to delete the selected sticker sets?"
+        /// </summary>
+        public static string DeleteStickersAlertMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteStickersAlertMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete {0}"
+        /// </summary>
+        public static string DeleteStickerSetsAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteStickerSetsAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete theme"
+        /// </summary>
+        public static string DeleteTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteTheme");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to delete this theme?"
         /// </summary>
         public static string DeleteThemeAlert
@@ -9997,6 +11165,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Delete theme"
+        /// </summary>
+        public static string DeleteThemeTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteThemeTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete chats"
+        /// </summary>
+        public static string DeleteTheseChats
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteTheseChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete chats"
+        /// </summary>
+        public static string DeleteTheseChatsBothSides
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteTheseChatsBothSides");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Delete this chat"
         /// </summary>
         public static string DeleteThisChat
@@ -10004,6 +11205,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DeleteThisChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete this chat"
+        /// </summary>
+        public static string DeleteThisChatBothSides
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteThisChatBothSides");
             }
         }
         
@@ -10052,6 +11264,83 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Devices"
+        /// </summary>
+        public static string Devices
+        {
+            get
+            {
+                return resourceLoader.GetString("Devices");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Device storage"
+        /// </summary>
+        public static string DeviceStorage
+        {
+            get
+            {
+                return resourceLoader.GetString("DeviceStorage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin"
+        /// </summary>
+        public static string DialogPin
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogPin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin"
+        /// </summary>
+        public static string DialogUnpin
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send a {0} emoji to try your luck."
+        /// </summary>
+        public static string DiceEmojiInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("DiceEmojiInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send a ?? emoji to any chat to get a random number from Telegram."
+        /// </summary>
+        public static string DiceInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("DiceInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send a **:dice:** emoji to any chat to roll a die."
+        /// </summary>
+        public static string DiceInfo2
+        {
+            get
+            {
+                return resourceLoader.GetString("DiceInfo2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Didn't get the code?"
         /// </summary>
         public static string DidNotGetTheCode
@@ -10074,6 +11363,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Directions"
+        /// </summary>
+        public static string Directions
+        {
+            get
+            {
+                return resourceLoader.GetString("Directions");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Direct Share"
         /// </summary>
         public static string DirectShare
@@ -10092,6 +11392,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DirectShareInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable"
+        /// </summary>
+        public static string Disable
+        {
+            get
+            {
+                return resourceLoader.GetString("Disable");
             }
         }
         
@@ -10191,6 +11502,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DiscardVoiceMessageTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disconnect"
+        /// </summary>
+        public static string Disconnect
+        {
+            get
+            {
+                return resourceLoader.GetString("Disconnect");
             }
         }
         
@@ -10481,17 +11803,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Done");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You need Telegram to log in to **{0}**. Would you like to install it now?"
-        /// </summary>
-        public static string DownloadTelegramText
-        {
-            get
-            {
-                return resourceLoader.GetString("DownloadTelegramText");
             }
         }
         
@@ -10969,6 +12280,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Edit colors"
+        /// </summary>
+        public static string EditThemeColors
+        {
+            get
+            {
+                return resourceLoader.GetString("EditThemeColors");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Edit Theme"
         /// </summary>
         public static string EditThemeTitle
@@ -11224,6 +12546,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EnableAnimations");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enabled Notifications"
+        /// </summary>
+        public static string EnabledNotifications
+        {
+            get
+            {
+                return resourceLoader.GetString("EnabledNotifications");
             }
         }
         
@@ -11526,6 +12859,19 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EnterThemeName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tap **Create** if you want to share your theme with others or customize each color manually.
+        ///
+        ///Please enter theme name:"
+        /// </summary>
+        public static string EnterThemeNameEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("EnterThemeNameEdit");
             }
         }
         
@@ -12698,6 +14044,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "un1 stopped the quiz:"
+        /// </summary>
+        public static string EventLogStopQuiz
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogStopQuiz");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "un1 made group history hidden for new members"
         /// </summary>
         public static string EventLogToggledInvitesHistoryOff
@@ -12951,6 +14308,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Browse your external storage"
+        /// </summary>
+        public static string ExternalFolderInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("ExternalFolderInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "External Storage"
         /// </summary>
         public static string ExternalStorage
@@ -12980,6 +14348,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FavoriteStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Trending GIFs"
+        /// </summary>
+        public static string FeaturedGifs
+        {
+            get
+            {
+                return resourceLoader.GetString("FeaturedGifs");
             }
         }
         
@@ -13105,6 +14484,820 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Add Chats"
+        /// </summary>
+        public static string FilterAddChats
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Exception"
+        /// </summary>
+        public static string FilterAddException
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddException");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Adding chats"
+        /// </summary>
+        public static string FilterAddingChats
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddingChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please wait a few moments while we fill this folder for you..."
+        /// </summary>
+        public static string FilterAddingChatsInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddingChatsInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to folder"
+        /// </summary>
+        public static string FilterAddTo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddTo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add more than 100 chats in a folder."
+        /// </summary>
+        public static string FilterAddToAlertFullText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddToAlertFullText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Folder is full"
+        /// </summary>
+        public static string FilterAddToAlertFullTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAddToAlertFullTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All Chats"
+        /// </summary>
+        public static string FilterAllChats
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAllChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All"
+        /// </summary>
+        public static string FilterAllChatsShort
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAllChatsShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Include Chats"
+        /// </summary>
+        public static string FilterAlwaysShow
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAlwaysShow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archived"
+        /// </summary>
+        public static string FilterArchived
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterArchived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open *Settings > Folders* to organize your chats into folders."
+        /// </summary>
+        public static string FilterAvailableText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAvailableText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat folders"
+        /// </summary>
+        public static string FilterAvailableTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterAvailableTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Bots"
+        /// </summary>
+        public static string FilterBots
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterBots");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channels"
+        /// </summary>
+        public static string FilterChannels
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterChannels");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chats"
+        /// </summary>
+        public static string FilterChats
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat types"
+        /// </summary>
+        public static string FilterChatTypes
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterChatTypes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contact"
+        /// </summary>
+        public static string FilterContact
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Contacts"
+        /// </summary>
+        public static string FilterContacts
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterContacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove Folder"
+        /// </summary>
+        public static string FilterDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove this folder? Your chats will not be deleted."
+        /// </summary>
+        public static string FilterDeleteAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterDeleteAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete"
+        /// </summary>
+        public static string FilterDeleteItem
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterDeleteItem");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have edited this folder. Apply changes?"
+        /// </summary>
+        public static string FilterDiscardAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterDiscardAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You have not finished creating the folder yet. Create now?"
+        /// </summary>
+        public static string FilterDiscardNewAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterDiscardNewAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create"
+        /// </summary>
+        public static string FilterDiscardNewSave
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterDiscardNewSave");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Create Folder?"
+        /// </summary>
+        public static string FilterDiscardNewTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterDiscardNewTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Apply Changes?"
+        /// </summary>
+        public static string FilterDiscardTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterDiscardTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit folder"
+        /// </summary>
+        public static string FilterEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterEdit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit folders"
+        /// </summary>
+        public static string FilterEditAll
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterEditAll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit"
+        /// </summary>
+        public static string FilterEditItem
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterEditItem");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Excluded Chats"
+        /// </summary>
+        public static string FilterExclude
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterExclude");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Exclude Archived"
+        /// </summary>
+        public static string FilterExcludeArchived
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterExcludeArchived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose chats and types of chats that will not appear in this folder."
+        /// </summary>
+        public static string FilterExcludeInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterExcludeInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Exclude Muted"
+        /// </summary>
+        public static string FilterExcludeMuted
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterExcludeMuted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Exclude Read"
+        /// </summary>
+        public static string FilterExcludeRead
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterExcludeRead");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Groups"
+        /// </summary>
+        public static string FilterGroups
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterGroups");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Included Chats"
+        /// </summary>
+        public static string FilterInclude
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterInclude");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose chats and types of chats that will appear in this folder."
+        /// </summary>
+        public static string FilterIncludeInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterIncludeInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Muted"
+        /// </summary>
+        public static string FilterMuted
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterMuted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Folder name"
+        /// </summary>
+        public static string FilterNameHint
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNameHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Not Muted"
+        /// </summary>
+        public static string FilterNameNonMuted
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNameNonMuted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unread"
+        /// </summary>
+        public static string FilterNameUnread
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNameUnread");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Exclude Chats"
+        /// </summary>
+        public static string FilterNeverShow
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNeverShow");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New Folder"
+        /// </summary>
+        public static string FilterNew
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No Chats"
+        /// </summary>
+        public static string FilterNoChats
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNoChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No chats found"
+        /// </summary>
+        public static string FilterNoChatsToDisplay
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNoChatsToDisplay");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No chats currently belong to this folder."
+        /// </summary>
+        public static string FilterNoChatsToDisplayInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNoChatsToDisplayInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Non-Contact"
+        /// </summary>
+        public static string FilterNonContact
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNonContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Non Contacts"
+        /// </summary>
+        public static string FilterNonContacts
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterNonContacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Read"
+        /// </summary>
+        public static string FilterRead
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRead");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recommended Folders"
+        /// </summary>
+        public static string FilterRecommended
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRecommended");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove Chats"
+        /// </summary>
+        public static string FilterRemoveChats
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from the always excluded list?"
+        /// </summary>
+        public static string FilterRemoveExclusionChatText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveExclusionChatText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from the always excluded list?"
+        /// </summary>
+        public static string FilterRemoveExclusionText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveExclusionText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove exception"
+        /// </summary>
+        public static string FilterRemoveExclusionTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveExclusionTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from the always excluded list?"
+        /// </summary>
+        public static string FilterRemoveExclusionUserText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveExclusionUserText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from folder"
+        /// </summary>
+        public static string FilterRemoveFrom
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveFrom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't exlude more then 100 chats in a folder."
+        /// </summary>
+        public static string FilterRemoveFromAlertFullText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveFromAlertFullText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from the always included list?"
+        /// </summary>
+        public static string FilterRemoveInclusionChatText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveInclusionChatText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from the always included list?"
+        /// </summary>
+        public static string FilterRemoveInclusionText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveInclusionText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove exception"
+        /// </summary>
+        public static string FilterRemoveInclusionTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveInclusionTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove "{0}" from the always included list?"
+        /// </summary>
+        public static string FilterRemoveInclusionUserText
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterRemoveInclusionUserText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reorder"
+        /// </summary>
+        public static string FilterReorder
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterReorder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Folders"
+        /// </summary>
+        public static string Filters
+        {
+            get
+            {
+                return resourceLoader.GetString("Filters");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Secret Chats"
+        /// </summary>
+        public static string FilterSecretChats
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterSecretChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilterShowMoreChatsFew
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterShowMoreChatsFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilterShowMoreChatsMany
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterShowMoreChatsMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show {0} More Chat"
+        /// </summary>
+        public static string FilterShowMoreChatsOne
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterShowMoreChatsOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show {0} More Chats"
+        /// </summary>
+        public static string FilterShowMoreChatsOther
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterShowMoreChatsOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilterShowMoreChatsTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterShowMoreChatsTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilterShowMoreChatsZero
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterShowMoreChatsZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Setup"
+        /// </summary>
+        public static string FiltersSetup
+        {
+            get
+            {
+                return resourceLoader.GetString("FiltersSetup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Set Up Folders"
+        /// </summary>
+        public static string FiltersSetupPinAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("FiltersSetupPinAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unread"
+        /// </summary>
+        public static string FilterUnread
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterUnread");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Final Results"
         /// </summary>
         public static string FinalResults
@@ -13193,6 +15386,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Followers"
+        /// </summary>
+        public static string FollowersChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("FollowersChartTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Font Size"
         /// </summary>
         public static string FontSize
@@ -13248,6 +15452,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Font Type"
+        /// </summary>
+        public static string FontType
+        {
+            get
+            {
+                return resourceLoader.GetString("FontType");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} ft away"
         /// </summary>
         public static string FootsAway
@@ -13272,209 +15487,209 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "{0} at {1}"
         /// </summary>
-        public static string FormatDateAtTime
+        public static string formatDateAtTime
         {
             get
             {
-                return resourceLoader.GetString("FormatDateAtTime");
+                return resourceLoader.GetString("formatDateAtTime");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM d"
         /// </summary>
-        public static string FormatDateSchedule
+        public static string formatDateSchedule
         {
             get
             {
-                return resourceLoader.GetString("FormatDateSchedule");
+                return resourceLoader.GetString("formatDateSchedule");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "EEE MMM d"
         /// </summary>
-        public static string FormatDateScheduleDay
+        public static string formatDateScheduleDay
         {
             get
             {
-                return resourceLoader.GetString("FormatDateScheduleDay");
+                return resourceLoader.GetString("formatDateScheduleDay");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM d yyyy"
         /// </summary>
-        public static string FormatDateScheduleYear
+        public static string formatDateScheduleYear
         {
             get
             {
-                return resourceLoader.GetString("FormatDateScheduleYear");
+                return resourceLoader.GetString("formatDateScheduleYear");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd yyyy, h:mm a"
         /// </summary>
-        public static string FormatterBannedUntil12H
+        public static string formatterBannedUntil12H
         {
             get
             {
-                return resourceLoader.GetString("FormatterBannedUntil12H");
+                return resourceLoader.GetString("formatterBannedUntil12H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd yyyy, HH:mm"
         /// </summary>
-        public static string FormatterBannedUntil24H
+        public static string formatterBannedUntil24H
         {
             get
             {
-                return resourceLoader.GetString("FormatterBannedUntil24H");
+                return resourceLoader.GetString("formatterBannedUntil24H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd, h:mm a"
         /// </summary>
-        public static string FormatterBannedUntilThisYear12H
+        public static string formatterBannedUntilThisYear12H
         {
             get
             {
-                return resourceLoader.GetString("FormatterBannedUntilThisYear12H");
+                return resourceLoader.GetString("formatterBannedUntilThisYear12H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd, HH:mm"
         /// </summary>
-        public static string FormatterBannedUntilThisYear24H
+        public static string formatterBannedUntilThisYear24H
         {
             get
             {
-                return resourceLoader.GetString("FormatterBannedUntilThisYear24H");
+                return resourceLoader.GetString("formatterBannedUntilThisYear24H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "h:mm a"
         /// </summary>
-        public static string FormatterDay12H
+        public static string formatterDay12H
         {
             get
             {
-                return resourceLoader.GetString("FormatterDay12H");
+                return resourceLoader.GetString("formatterDay12H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "HH:mm"
         /// </summary>
-        public static string FormatterDay24H
+        public static string formatterDay24H
         {
             get
             {
-                return resourceLoader.GetString("FormatterDay24H");
+                return resourceLoader.GetString("formatterDay24H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd"
         /// </summary>
-        public static string FormatterMonth
+        public static string formatterMonth
         {
             get
             {
-                return resourceLoader.GetString("FormatterMonth");
+                return resourceLoader.GetString("formatterMonth");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "LLLL"
         /// </summary>
-        public static string FormatterMonthName
+        public static string formatterMonthName
         {
             get
             {
-                return resourceLoader.GetString("FormatterMonthName");
+                return resourceLoader.GetString("formatterMonthName");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMMM yyyy"
         /// </summary>
-        public static string FormatterMonthYear
+        public static string formatterMonthYear
         {
             get
             {
-                return resourceLoader.GetString("FormatterMonthYear");
+                return resourceLoader.GetString("formatterMonthYear");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "LLLL yyyy"
         /// </summary>
-        public static string FormatterMonthYear2
+        public static string formatterMonthYear2
         {
             get
             {
-                return resourceLoader.GetString("FormatterMonthYear2");
+                return resourceLoader.GetString("formatterMonthYear2");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd yyyy, h:mm a"
         /// </summary>
-        public static string FormatterStats12H
+        public static string formatterStats12H
         {
             get
             {
-                return resourceLoader.GetString("FormatterStats12H");
+                return resourceLoader.GetString("formatterStats12H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "MMM dd yyyy, HH:mm"
         /// </summary>
-        public static string FormatterStats24H
+        public static string formatterStats24H
         {
             get
             {
-                return resourceLoader.GetString("FormatterStats24H");
+                return resourceLoader.GetString("formatterStats24H");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "EEE"
         /// </summary>
-        public static string FormatterWeek
+        public static string formatterWeek
         {
             get
             {
-                return resourceLoader.GetString("FormatterWeek");
+                return resourceLoader.GetString("formatterWeek");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "dd.MM.yy"
         /// </summary>
-        public static string FormatterYear
+        public static string formatterYear
         {
             get
             {
-                return resourceLoader.GetString("FormatterYear");
+                return resourceLoader.GetString("formatterYear");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "dd.MM.yyyy"
         /// </summary>
-        public static string FormatterYearMax
+        public static string formatterYearMax
         {
             get
             {
-                return resourceLoader.GetString("FormatterYearMax");
+                return resourceLoader.GetString("formatterYearMax");
             }
         }
         
@@ -14348,7 +16563,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "From gallery"
+        /// Localized resource similar to "From Gallery"
         /// </summary>
         public static string FromGalley
         {
@@ -14436,6 +16651,50 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string GIFsFew
+        {
+            get
+            {
+                return resourceLoader.GetString("GIFsFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string GIFsMany
+        {
+            get
+            {
+                return resourceLoader.GetString("GIFsMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} GIF"
+        /// </summary>
+        public static string GIFsOne
+        {
+            get
+            {
+                return resourceLoader.GetString("GIFsOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} GIFs"
+        /// </summary>
+        public static string GIFsOther
+        {
+            get
+            {
+                return resourceLoader.GetString("GIFsOther");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "GIFS"
         /// </summary>
         public static string GifsTab
@@ -14443,6 +16702,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("GifsTab");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "GIFs"
+        /// </summary>
+        public static string GifsTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("GifsTab2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string GIFsTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("GIFsTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string GIFsZero
+        {
+            get
+            {
+                return resourceLoader.GetString("GIFsZero");
             }
         }
         
@@ -14532,6 +16824,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("GpsDisabledAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please enable your GPS to access location-based features."
+        /// </summary>
+        public static string GpsDisabledAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("GpsDisabledAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable GPS"
+        /// </summary>
+        public static string GpsDisabledAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("GpsDisabledAlertTitle");
             }
         }
         
@@ -14945,6 +17259,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Growth"
+        /// </summary>
+        public static string GrowthChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("GrowthChartTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "HASHTAGS"
         /// </summary>
         public static string Hashtags
@@ -14974,6 +17299,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("HiddenName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide above the list"
+        /// </summary>
+        public static string HideAboveTheList
+        {
+            get
+            {
+                return resourceLoader.GetString("HideAboveTheList");
             }
         }
         
@@ -15198,6 +17534,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Images"
+        /// </summary>
+        public static string ImagesTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("ImagesTab2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Import Contacts"
         /// </summary>
         public static string ImportContacts
@@ -15205,6 +17552,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ImportContacts");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "channel, inactive for {0}"
+        /// </summary>
+        public static string InactiveChannelSignature
+        {
+            get
+            {
+                return resourceLoader.GetString("InactiveChannelSignature");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Inactive chats"
+        /// </summary>
+        public static string InactiveChats
+        {
+            get
+            {
+                return resourceLoader.GetString("InactiveChats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0}, inactive for {1}"
+        /// </summary>
+        public static string InactiveChatSignature
+        {
+            get
+            {
+                return resourceLoader.GetString("InactiveChatSignature");
             }
         }
         
@@ -15348,6 +17728,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("InstantViewReference");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Interactions"
+        /// </summary>
+        public static string InteractionsChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("InteractionsChartTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Browse your file system"
+        /// </summary>
+        public static string InternalFolderInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("InternalFolderInfo");
             }
         }
         
@@ -15706,66 +18108,77 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string ItemsFew
+        public static string itemsFew
         {
             get
             {
-                return resourceLoader.GetString("ItemsFew");
+                return resourceLoader.GetString("itemsFew");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string ItemsMany
+        public static string itemsMany
         {
             get
             {
-                return resourceLoader.GetString("ItemsMany");
+                return resourceLoader.GetString("itemsMany");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} item"
         /// </summary>
-        public static string ItemsOne
+        public static string itemsOne
         {
             get
             {
-                return resourceLoader.GetString("ItemsOne");
+                return resourceLoader.GetString("itemsOne");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} items"
         /// </summary>
-        public static string ItemsOther
+        public static string itemsOther
         {
             get
             {
-                return resourceLoader.GetString("ItemsOther");
+                return resourceLoader.GetString("itemsOther");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string ItemsTwo
+        public static string itemsTwo
         {
             get
             {
-                return resourceLoader.GetString("ItemsTwo");
+                return resourceLoader.GetString("itemsTwo");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string ItemsZero
+        public static string itemsZero
         {
             get
             {
-                return resourceLoader.GetString("ItemsZero");
+                return resourceLoader.GetString("itemsZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "IV Interactions"
+        /// </summary>
+        public static string IVInteractionsChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("IVInteractionsChartTitle");
             }
         }
         
@@ -16029,6 +18442,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LanguageSame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Languages"
+        /// </summary>
+        public static string LanguagesChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LanguagesChartTitle");
             }
         }
         
@@ -16308,6 +18732,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Leave {0}"
+        /// </summary>
+        public static string LeaveChats
+        {
+            get
+            {
+                return resourceLoader.GetString("LeaveChats");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Leave group"
         /// </summary>
         public static string LeaveMegaMenu
@@ -16337,6 +18772,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LedDisabled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Limit Reached"
+        /// </summary>
+        public static string LimitReached
+        {
+            get
+            {
+                return resourceLoader.GetString("LimitReached");
             }
         }
         
@@ -16507,6 +18953,50 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string LinksFew
+        {
+            get
+            {
+                return resourceLoader.GetString("LinksFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string LinksMany
+        {
+            get
+            {
+                return resourceLoader.GetString("LinksMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} link"
+        /// </summary>
+        public static string LinksOne
+        {
+            get
+            {
+                return resourceLoader.GetString("LinksOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} links"
+        /// </summary>
+        public static string LinksOther
+        {
+            get
+            {
+                return resourceLoader.GetString("LinksOther");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Shared Links"
         /// </summary>
         public static string LinksTitle
@@ -16514,6 +19004,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LinksTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string LinksTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("LinksTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string LinksZero
+        {
+            get
+            {
+                return resourceLoader.GetString("LinksZero");
             }
         }
         
@@ -16536,6 +19048,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LiveLocationAlertPrivate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Live Location"
+        /// </summary>
+        public static string LiveLocationContext
+        {
+            get
+            {
+                return resourceLoader.GetString("LiveLocationContext");
             }
         }
         
@@ -16569,6 +19092,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LoadingFullImage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Loading stats..."
+        /// </summary>
+        public static string LoadingStats
+        {
+            get
+            {
+                return resourceLoader.GetString("LoadingStats");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please wait a few moments while we are generating graphs."
+        /// </summary>
+        public static string LoadingStatsDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("LoadingStatsDescription");
             }
         }
         
@@ -16617,6 +19162,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to clear cached text messages?"
+        /// </summary>
+        public static string LocalDatabaseClearText
+        {
+            get
+            {
+                return resourceLoader.GetString("LocalDatabaseClearText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear local database"
+        /// </summary>
+        public static string LocalDatabaseClearTextTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("LocalDatabaseClearTextTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Clearing the local database will delete the texts of cached messages and compress the database to save internal disk space. Telegram needs some data to work, so database size will not reach zero.
         ///
         ///This operation can take a few minutes to complete."
@@ -16626,6 +19193,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LocalDatabaseInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Telegram Local Database"
+        /// </summary>
+        public static string LocalDatabaseSize
+        {
+            get
+            {
+                return resourceLoader.GetString("LocalDatabaseSize");
             }
         }
         
@@ -16773,17 +19351,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Log in with Telegram"
-        /// </summary>
-        public static string LoginWithTelegram
-        {
-            get
-            {
-                return resourceLoader.GetString("LoginWithTelegram");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Log out"
         /// </summary>
         public static string LogOut
@@ -16839,6 +19406,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Animated stickers will play continuously in chats."
+        /// </summary>
+        public static string LoopAnimatedStickersInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("LoopAnimatedStickersInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Your device is almost out of disk space. To free some space, you can set up Telegram to cache only recent media."
         /// </summary>
         public static string LowDiskSpaceMessage
@@ -16890,6 +19468,41 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MakeAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Make Myself Visible"
+        /// </summary>
+        public static string MakeMyselfVisible
+        {
+            get
+            {
+                return resourceLoader.GetString("MakeMyselfVisible");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users nearby will be able to view your profile and send you messages. This may help you find new friends, but could also attract excessive attention. You can stop sharing your profile at any time.
+        ///
+        ///Your phone number will remain hidden."
+        /// </summary>
+        public static string MakeMyselfVisibleInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("MakeMyselfVisibleInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show Your Profile?"
+        /// </summary>
+        public static string MakeMyselfVisibleTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("MakeMyselfVisibleTitle");
             }
         }
         
@@ -16993,6 +19606,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Map preview provider"
+        /// </summary>
+        public static string MapPreviewProviderTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("MapPreviewProviderTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Yandex"
         /// </summary>
         public static string MapPreviewProviderYandex
@@ -17011,6 +19635,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("March");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Mark all as read"
+        /// </summary>
+        public static string MarkAllAsRead
+        {
+            get
+            {
+                return resourceLoader.GetString("MarkAllAsRead");
             }
         }
         
@@ -17044,6 +19679,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Masks");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Masks archived."
+        /// </summary>
+        public static string MasksArchived
+        {
+            get
+            {
+                return resourceLoader.GetString("MasksArchived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} has been moved to your archive."
+        /// </summary>
+        public static string MasksArchivedInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("MasksArchivedInfo");
             }
         }
         
@@ -17132,6 +19789,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MasksRemoved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is no longer in your masks."
+        /// </summary>
+        public static string MasksRemovedInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("MasksRemovedInfo");
             }
         }
         
@@ -17436,6 +20104,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MembersCountSelectedFew
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersCountSelectedFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MembersCountSelectedMany
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersCountSelectedMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} of {1} selected"
+        /// </summary>
+        public static string MembersCountSelectedOne
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersCountSelectedOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} of {1} selected"
+        /// </summary>
+        public static string MembersCountSelectedOther
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersCountSelectedOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MembersCountSelectedTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersCountSelectedTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MembersCountSelectedZero
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersCountSelectedZero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "up to {0}"
         /// </summary>
         public static string MembersCountZero
@@ -17678,6 +20412,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Scheduled until online"
+        /// </summary>
+        public static string MessageScheduledUntilOnline
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageScheduledUntilOnline");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Voting will become available after the message is published."
         /// </summary>
         public static string MessageScheduledVote
@@ -17685,6 +20430,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessageScheduledVote");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Poll results will become available after the message is published."
+        /// </summary>
+        public static string MessageScheduledVoteResults
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageScheduledVoteResults");
             }
         }
         
@@ -17735,44 +20491,44 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string MessagesFew
+        public static string messagesFew
         {
             get
             {
-                return resourceLoader.GetString("MessagesFew");
+                return resourceLoader.GetString("messagesFew");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string MessagesMany
+        public static string messagesMany
         {
             get
             {
-                return resourceLoader.GetString("MessagesMany");
+                return resourceLoader.GetString("messagesMany");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} message"
         /// </summary>
-        public static string MessagesOne
+        public static string messagesOne
         {
             get
             {
-                return resourceLoader.GetString("MessagesOne");
+                return resourceLoader.GetString("messagesOne");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} messages"
         /// </summary>
-        public static string MessagesOther
+        public static string messagesOther
         {
             get
             {
-                return resourceLoader.GetString("MessagesOther");
+                return resourceLoader.GetString("messagesOther");
             }
         }
         
@@ -17790,22 +20546,22 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string MessagesTwo
+        public static string messagesTwo
         {
             get
             {
-                return resourceLoader.GetString("MessagesTwo");
+                return resourceLoader.GetString("messagesTwo");
             }
         }
         
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
-        public static string MessagesZero
+        public static string messagesZero
         {
             get
             {
-                return resourceLoader.GetString("MessagesZero");
+                return resourceLoader.GetString("messagesZero");
             }
         }
         
@@ -18173,6 +20929,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MusicFilesFew
+        {
+            get
+            {
+                return resourceLoader.GetString("MusicFilesFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MusicFilesMany
+        {
+            get
+            {
+                return resourceLoader.GetString("MusicFilesMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} music file"
+        /// </summary>
+        public static string MusicFilesOne
+        {
+            get
+            {
+                return resourceLoader.GetString("MusicFilesOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} music files"
+        /// </summary>
+        public static string MusicFilesOther
+        {
+            get
+            {
+                return resourceLoader.GetString("MusicFilesOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MusicFilesTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("MusicFilesTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MusicFilesZero
+        {
+            get
+            {
+                return resourceLoader.GetString("MusicFilesZero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "To send music files"
         /// </summary>
         public static string MusicInfo
@@ -18272,6 +21094,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Or choose a venue"
+        /// </summary>
+        public static string NearbyVenue
+        {
+            get
+            {
+                return resourceLoader.GetString("NearbyVenue");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Data Usage"
         /// </summary>
         public static string NetworkUsage
@@ -18294,6 +21127,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Mobile"
+        /// </summary>
+        public static string NetworkUsageMobileTab
+        {
+            get
+            {
+                return resourceLoader.GetString("NetworkUsageMobileTab");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "ROAMING"
         /// </summary>
         public static string NetworkUsageRoaming
@@ -18301,6 +21145,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NetworkUsageRoaming");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Roaming"
+        /// </summary>
+        public static string NetworkUsageRoamingTab
+        {
+            get
+            {
+                return resourceLoader.GetString("NetworkUsageRoamingTab");
             }
         }
         
@@ -18323,6 +21178,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NetworkUsageWiFi");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wi-Fi"
+        /// </summary>
+        public static string NetworkUsageWiFiTab
+        {
+            get
+            {
+                return resourceLoader.GetString("NetworkUsageWiFiTab");
             }
         }
         
@@ -18426,6 +21292,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "New followers by source"
+        /// </summary>
+        public static string NewFollowersBySourceChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("NewFollowersBySourceChartTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "New Group"
         /// </summary>
         public static string NewGroup
@@ -18525,6 +21402,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "New Quiz"
+        /// </summary>
+        public static string NewQuiz
+        {
+            get
+            {
+                return resourceLoader.GetString("NewQuiz");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "New Secret Chat"
         /// </summary>
         public static string NewSecretChat
@@ -18569,6 +21457,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "It's morning in *Tokyo* ??"
+        /// </summary>
+        public static string NewThemePreviewLine3
+        {
+            get
+            {
+                return resourceLoader.GetString("NewThemePreviewLine3");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Bob Harris"
         /// </summary>
         public static string NewThemePreviewName
@@ -18587,6 +21486,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NewThemePreviewReply");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Good morning"
+        /// </summary>
+        public static string NewThemePreviewReply2
+        {
+            get
+            {
+                return resourceLoader.GetString("NewThemePreviewReply2");
             }
         }
         
@@ -18620,6 +21530,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NoAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No audio files"
+        /// </summary>
+        public static string NoAudioFiles
+        {
+            get
+            {
+                return resourceLoader.GetString("NoAudioFiles");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your music library is empty."
+        /// </summary>
+        public static string NoAudioFilesInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("NoAudioFilesInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No results found"
+        /// </summary>
+        public static string NoAudioFound
+        {
+            get
+            {
+                return resourceLoader.GetString("NoAudioFound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "There are no matches with **{0}** in your music library."
+        /// </summary>
+        public static string NoAudioFoundInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("NoAudioFoundInfo");
             }
         }
         
@@ -18802,6 +21756,50 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "No results found"
+        /// </summary>
+        public static string NoFilesFound
+        {
+            get
+            {
+                return resourceLoader.GetString("NoFilesFound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "There are no matches with **{0}** in current directory."
+        /// </summary>
+        public static string NoFilesFoundInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("NoFilesFoundInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This folder is empty."
+        /// </summary>
+        public static string NoFilesInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("NoFilesInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No GIFs"
+        /// </summary>
+        public static string NoGIFs
+        {
+            get
+            {
+                return resourceLoader.GetString("NoGIFs");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "No GIFs found"
         /// </summary>
         public static string NoGIFsFound
@@ -18956,6 +21954,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "No places found"
+        /// </summary>
+        public static string NoPlacesFound
+        {
+            get
+            {
+                return resourceLoader.GetString("NoPlacesFound");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "There are no matches with **{0}** near you."
+        /// </summary>
+        public static string NoPlacesFoundInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("NoPlacesFoundInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "You don't have a video player, please install one to continue"
         /// </summary>
         public static string NoPlayerInstalled
@@ -19007,6 +22027,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NoRecentPhotos");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No recent searches"
+        /// </summary>
+        public static string NoRecentSearches
+        {
+            get
+            {
+                return resourceLoader.GetString("NoRecentSearches");
             }
         }
         
@@ -19073,6 +22104,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NoSharedFilesSecret");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "GIFs from this chat will be shown here."
+        /// </summary>
+        public static string NoSharedGifSecret
+        {
+            get
+            {
+                return resourceLoader.GetString("NoSharedGifSecret");
             }
         }
         
@@ -19462,6 +22504,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned the quiz "{2}" in the group {1}"
+        /// </summary>
+        public static string NotificationActionPinnedQuiz2
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedQuiz2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned the quiz "{1}""
+        /// </summary>
+        public static string NotificationActionPinnedQuizChannel2
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedQuizChannel2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned a video message in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedRound
@@ -19733,6 +22797,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationGroupLeftMember");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram"
+        /// </summary>
+        public static string NotificationHiddenChatName
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationHiddenChatName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "User"
+        /// </summary>
+        public static string NotificationHiddenChatUserName
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationHiddenChatUserName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New message"
+        /// </summary>
+        public static string NotificationHiddenMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationHiddenMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram"
+        /// </summary>
+        public static string NotificationHiddenName
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationHiddenName");
             }
         }
         
@@ -20034,6 +23142,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} sent the quiz "{2}" to the group {1}"
+        /// </summary>
+        public static string NotificationMessageGroupQuiz2
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationMessageGroupQuiz2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} sent a video message to the group {1}"
         /// </summary>
         public static string NotificationMessageGroupRound
@@ -20173,6 +23292,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationMessagePoll2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sent you the quiz "{1}""
+        /// </summary>
+        public static string NotificationMessageQuiz2
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationMessageQuiz2");
             }
         }
         
@@ -20327,6 +23457,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationsChannels");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Notifications"
+        /// </summary>
+        public static string NotificationsChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsChartTitle");
             }
         }
         
@@ -20859,6 +24000,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Nobody answered"
+        /// </summary>
+        public static string NoVotesQuiz
+        {
+            get
+            {
+                return resourceLoader.GetString("NoVotesQuiz");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} is now in your contact list."
         /// </summary>
         public static string NowInContacts
@@ -20910,6 +24062,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OK");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "1 result"
+        /// </summary>
+        public static string OneResult
+        {
+            get
+            {
+                return resourceLoader.GetString("OneResult");
             }
         }
         
@@ -21086,6 +24249,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OpenInBrowser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open in editor"
+        /// </summary>
+        public static string OpenInEditor
+        {
+            get
+            {
+                return resourceLoader.GetString("OpenInEditor");
             }
         }
         
@@ -21286,6 +24460,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OtherSessions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "More Stickers"
+        /// </summary>
+        public static string OtherStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("OtherStickers");
             }
         }
         
@@ -22461,506 +25646,506 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Arabic"
         /// </summary>
-        public static string PassportLanguageAR
+        public static string PassportLanguage_AR
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageAR");
+                return resourceLoader.GetString("PassportLanguage_AR");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Azerbaijani"
         /// </summary>
-        public static string PassportLanguageAZ
+        public static string PassportLanguage_AZ
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageAZ");
+                return resourceLoader.GetString("PassportLanguage_AZ");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Bulgarian"
         /// </summary>
-        public static string PassportLanguageBG
+        public static string PassportLanguage_BG
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageBG");
+                return resourceLoader.GetString("PassportLanguage_BG");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Bangla"
         /// </summary>
-        public static string PassportLanguageBN
+        public static string PassportLanguage_BN
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageBN");
+                return resourceLoader.GetString("PassportLanguage_BN");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Czech"
         /// </summary>
-        public static string PassportLanguageCS
+        public static string PassportLanguage_CS
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageCS");
+                return resourceLoader.GetString("PassportLanguage_CS");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Danish"
         /// </summary>
-        public static string PassportLanguageDA
+        public static string PassportLanguage_DA
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageDA");
+                return resourceLoader.GetString("PassportLanguage_DA");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "German"
         /// </summary>
-        public static string PassportLanguageDE
+        public static string PassportLanguage_DE
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageDE");
+                return resourceLoader.GetString("PassportLanguage_DE");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Divehi"
         /// </summary>
-        public static string PassportLanguageDV
+        public static string PassportLanguage_DV
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageDV");
+                return resourceLoader.GetString("PassportLanguage_DV");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Dzongkha"
         /// </summary>
-        public static string PassportLanguageDZ
+        public static string PassportLanguage_DZ
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageDZ");
+                return resourceLoader.GetString("PassportLanguage_DZ");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Greek"
         /// </summary>
-        public static string PassportLanguageEL
+        public static string PassportLanguage_EL
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageEL");
+                return resourceLoader.GetString("PassportLanguage_EL");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Spanish"
         /// </summary>
-        public static string PassportLanguageES
+        public static string PassportLanguage_ES
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageES");
+                return resourceLoader.GetString("PassportLanguage_ES");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Estonian"
         /// </summary>
-        public static string PassportLanguageET
+        public static string PassportLanguage_ET
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageET");
+                return resourceLoader.GetString("PassportLanguage_ET");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Persian"
         /// </summary>
-        public static string PassportLanguageFA
+        public static string PassportLanguage_FA
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageFA");
+                return resourceLoader.GetString("PassportLanguage_FA");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "French"
         /// </summary>
-        public static string PassportLanguageFR
+        public static string PassportLanguage_FR
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageFR");
+                return resourceLoader.GetString("PassportLanguage_FR");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Hebrew"
         /// </summary>
-        public static string PassportLanguageHE
+        public static string PassportLanguage_HE
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageHE");
+                return resourceLoader.GetString("PassportLanguage_HE");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Croatian"
         /// </summary>
-        public static string PassportLanguageHR
+        public static string PassportLanguage_HR
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageHR");
+                return resourceLoader.GetString("PassportLanguage_HR");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Hungarian"
         /// </summary>
-        public static string PassportLanguageHU
+        public static string PassportLanguage_HU
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageHU");
+                return resourceLoader.GetString("PassportLanguage_HU");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Armenian"
         /// </summary>
-        public static string PassportLanguageHY
+        public static string PassportLanguage_HY
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageHY");
+                return resourceLoader.GetString("PassportLanguage_HY");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Indonesian"
         /// </summary>
-        public static string PassportLanguageID
+        public static string PassportLanguage_ID
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageID");
+                return resourceLoader.GetString("PassportLanguage_ID");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Icelandic"
         /// </summary>
-        public static string PassportLanguageIS
+        public static string PassportLanguage_IS
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageIS");
+                return resourceLoader.GetString("PassportLanguage_IS");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Italian"
         /// </summary>
-        public static string PassportLanguageIT
+        public static string PassportLanguage_IT
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageIT");
+                return resourceLoader.GetString("PassportLanguage_IT");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Japanese"
         /// </summary>
-        public static string PassportLanguageJA
+        public static string PassportLanguage_JA
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageJA");
+                return resourceLoader.GetString("PassportLanguage_JA");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Georgian"
         /// </summary>
-        public static string PassportLanguageKA
+        public static string PassportLanguage_KA
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageKA");
+                return resourceLoader.GetString("PassportLanguage_KA");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Khmer"
         /// </summary>
-        public static string PassportLanguageKM
+        public static string PassportLanguage_KM
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageKM");
+                return resourceLoader.GetString("PassportLanguage_KM");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Korean"
         /// </summary>
-        public static string PassportLanguageKO
+        public static string PassportLanguage_KO
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageKO");
+                return resourceLoader.GetString("PassportLanguage_KO");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Lao"
         /// </summary>
-        public static string PassportLanguageLO
+        public static string PassportLanguage_LO
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageLO");
+                return resourceLoader.GetString("PassportLanguage_LO");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Lithuanian"
         /// </summary>
-        public static string PassportLanguageLT
+        public static string PassportLanguage_LT
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageLT");
+                return resourceLoader.GetString("PassportLanguage_LT");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Latvian"
         /// </summary>
-        public static string PassportLanguageLV
+        public static string PassportLanguage_LV
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageLV");
+                return resourceLoader.GetString("PassportLanguage_LV");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Macedonian"
         /// </summary>
-        public static string PassportLanguageMK
+        public static string PassportLanguage_MK
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageMK");
+                return resourceLoader.GetString("PassportLanguage_MK");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Mongolian"
         /// </summary>
-        public static string PassportLanguageMN
+        public static string PassportLanguage_MN
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageMN");
+                return resourceLoader.GetString("PassportLanguage_MN");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Malay"
         /// </summary>
-        public static string PassportLanguageMS
+        public static string PassportLanguage_MS
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageMS");
+                return resourceLoader.GetString("PassportLanguage_MS");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Burmese"
         /// </summary>
-        public static string PassportLanguageMY
+        public static string PassportLanguage_MY
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageMY");
+                return resourceLoader.GetString("PassportLanguage_MY");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Nepali"
         /// </summary>
-        public static string PassportLanguageNE
+        public static string PassportLanguage_NE
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageNE");
+                return resourceLoader.GetString("PassportLanguage_NE");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Dutch"
         /// </summary>
-        public static string PassportLanguageNL
+        public static string PassportLanguage_NL
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageNL");
+                return resourceLoader.GetString("PassportLanguage_NL");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Polish"
         /// </summary>
-        public static string PassportLanguagePL
+        public static string PassportLanguage_PL
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguagePL");
+                return resourceLoader.GetString("PassportLanguage_PL");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Portuguese"
         /// </summary>
-        public static string PassportLanguagePT
+        public static string PassportLanguage_PT
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguagePT");
+                return resourceLoader.GetString("PassportLanguage_PT");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Romanian"
         /// </summary>
-        public static string PassportLanguageRO
+        public static string PassportLanguage_RO
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageRO");
+                return resourceLoader.GetString("PassportLanguage_RO");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Russian"
         /// </summary>
-        public static string PassportLanguageRU
+        public static string PassportLanguage_RU
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageRU");
+                return resourceLoader.GetString("PassportLanguage_RU");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Slovak"
         /// </summary>
-        public static string PassportLanguageSK
+        public static string PassportLanguage_SK
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageSK");
+                return resourceLoader.GetString("PassportLanguage_SK");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Slovenian"
         /// </summary>
-        public static string PassportLanguageSL
+        public static string PassportLanguage_SL
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageSL");
+                return resourceLoader.GetString("PassportLanguage_SL");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Thai"
         /// </summary>
-        public static string PassportLanguageTH
+        public static string PassportLanguage_TH
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageTH");
+                return resourceLoader.GetString("PassportLanguage_TH");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Turkmen"
         /// </summary>
-        public static string PassportLanguageTK
+        public static string PassportLanguage_TK
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageTK");
+                return resourceLoader.GetString("PassportLanguage_TK");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Turkish"
         /// </summary>
-        public static string PassportLanguageTR
+        public static string PassportLanguage_TR
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageTR");
+                return resourceLoader.GetString("PassportLanguage_TR");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Ukrainian"
         /// </summary>
-        public static string PassportLanguageUK
+        public static string PassportLanguage_UK
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageUK");
+                return resourceLoader.GetString("PassportLanguage_UK");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Uzbek"
         /// </summary>
-        public static string PassportLanguageUZ
+        public static string PassportLanguage_UZ
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageUZ");
+                return resourceLoader.GetString("PassportLanguage_UZ");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Vietnamese"
         /// </summary>
-        public static string PassportLanguageVI
+        public static string PassportLanguage_VI
         {
             get
             {
-                return resourceLoader.GetString("PassportLanguageVI");
+                return resourceLoader.GetString("PassportLanguage_VI");
             }
         }
         
@@ -23431,55 +26616,55 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
-        public static string PassportSDKCancel
+        public static string PassportSDK_Cancel
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKCancel");
+                return resourceLoader.GetString("PassportSDK_Cancel");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "You need Telegram to log in to **{0}**. Would you like to install it now?"
         /// </summary>
-        public static string PassportSDKDownloadTelegram
+        public static string PassportSDK_DownloadTelegram
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKDownloadTelegram");
+                return resourceLoader.GetString("PassportSDK_DownloadTelegram");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Log in with Telegram"
         /// </summary>
-        public static string PassportSDKLogInWithTelegram
+        public static string PassportSDK_LogInWithTelegram
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKLogInWithTelegram");
+                return resourceLoader.GetString("PassportSDK_LogInWithTelegram");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Open Google Play"
         /// </summary>
-        public static string PassportSDKOpenGooglePlay
+        public static string PassportSDK_OpenGooglePlay
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKOpenGooglePlay");
+                return resourceLoader.GetString("PassportSDK_OpenGooglePlay");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "Telegram Passport"
         /// </summary>
-        public static string PassportSDKTelegramPassport
+        public static string PassportSDK_TelegramPassport
         {
             get
             {
-                return resourceLoader.GetString("PassportSDKTelegramPassport");
+                return resourceLoader.GetString("PassportSDK_TelegramPassport");
             }
         }
         
@@ -23788,6 +26973,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PasswordReset");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Paste from clipboard"
+        /// </summary>
+        public static string PasteFromClipboard
+        {
+            get
+            {
+                return resourceLoader.GetString("PasteFromClipboard");
             }
         }
         
@@ -24557,6 +27753,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Exchange contact info with people nearby and find new friends."
+        /// </summary>
+        public static string PeopleNearbyInfo2
+        {
+            get
+            {
+                return resourceLoader.GetString("PeopleNearbyInfo2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "To let you connect with friends across all your devices, your contacts will be continuously synced with Telegram's heavily encrypted cloud servers."
         /// </summary>
         public static string PermissionContacts
@@ -24975,6 +28182,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Sorry, you can't pin any more chats to the top."
+        /// </summary>
+        public static string PinFolderLimitReached
+        {
+            get
+            {
+                return resourceLoader.GetString("PinFolderLimitReached");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Ping: {0} ms"
         /// </summary>
         public static string Ping
@@ -24982,6 +28200,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Ping");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin in the list"
+        /// </summary>
+        public static string PinInTheList
+        {
+            get
+            {
+                return resourceLoader.GetString("PinInTheList");
             }
         }
         
@@ -25107,13 +28336,35 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you can only pin {0} in your main list. If you're looking for more organization, try archiving some chats – the Archived Chats folder allows unlimited pins."
+        /// Localized resource similar to "Sorry, you can only pin {0} in your main list. For more organization, your Archived Chats list allows unlimited pins."
         /// </summary>
         public static string PinToTopLimitReached
         {
             get
             {
                 return resourceLoader.GetString("PinToTopLimitReached");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only pin {0} to the top in the main list. More chats can be pinned in Chat Folders and your Archive."
+        /// </summary>
+        public static string PinToTopLimitReached2
+        {
+            get
+            {
+                return resourceLoader.GetString("PinToTopLimitReached2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Places in this area"
+        /// </summary>
+        public static string PlacesInThisArea
+        {
+            get
+            {
+                return resourceLoader.GetString("PlacesInThisArea");
             }
         }
         
@@ -25283,6 +28534,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Anonymous Voting"
+        /// </summary>
+        public static string PollAnonymous
+        {
+            get
+            {
+                return resourceLoader.GetString("PollAnonymous");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, polls can’t be forwarded to secret chats."
+        /// </summary>
+        public static string PollCantForwardSecretChat
+        {
+            get
+            {
+                return resourceLoader.GetString("PollCantForwardSecretChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Collapse"
+        /// </summary>
+        public static string PollCollapse
+        {
+            get
+            {
+                return resourceLoader.GetString("PollCollapse");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Expand"
+        /// </summary>
+        public static string PollExpand
+        {
+            get
+            {
+                return resourceLoader.GetString("PollExpand");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Multiple Answers"
+        /// </summary>
+        public static string PollMultiple
+        {
+            get
+            {
+                return resourceLoader.GetString("PollMultiple");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Poll options"
         /// </summary>
         public static string PollOptions
@@ -25290,6 +28596,83 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PollOptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Poll question"
+        /// </summary>
+        public static string PollQuestion
+        {
+            get
+            {
+                return resourceLoader.GetString("PollQuestion");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quiz Mode"
+        /// </summary>
+        public static string PollQuiz
+        {
+            get
+            {
+                return resourceLoader.GetString("PollQuiz");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Poll Results"
+        /// </summary>
+        public static string PollResults
+        {
+            get
+            {
+                return resourceLoader.GetString("PollResults");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select an option first"
+        /// </summary>
+        public static string PollSelectOption
+        {
+            get
+            {
+                return resourceLoader.GetString("PollSelectOption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VOTE"
+        /// </summary>
+        public static string PollSubmitVotes
+        {
+            get
+            {
+                return resourceLoader.GetString("PollSubmitVotes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tap to choose the correct answer"
+        /// </summary>
+        public static string PollTapToSelect
+        {
+            get
+            {
+                return resourceLoader.GetString("PollTapToSelect");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "VIEW RESULTS"
+        /// </summary>
+        public static string PollViewResults
+        {
+            get
+            {
+                return resourceLoader.GetString("PollViewResults");
             }
         }
         
@@ -25327,13 +28710,24 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Leave feedback about this preview"
+        /// Localized resource similar to "Report a bug with this preview"
         /// </summary>
         public static string PreviewFeedback
         {
             get
             {
                 return resourceLoader.GetString("PreviewFeedback");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wrong layout?"
+        /// </summary>
+        public static string PreviewFeedback2
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviewFeedback2");
             }
         }
         
@@ -25635,6 +29029,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to clear your payment and shipping info?"
+        /// </summary>
+        public static string PrivacyPaymentsClearAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyPaymentsClearAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear payment info"
+        /// </summary>
+        public static string PrivacyPaymentsClearAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivacyPaymentsClearAlertTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "You can delete your shipping info and instruct all payment providers to remove your saved credit cards. Note that Telegram never stores your credit card data."
         /// </summary>
         public static string PrivacyPaymentsClearInfo
@@ -25910,6 +29326,116 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Hide"
+        /// </summary>
+        public static string PsaHide
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaHide");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to hide the selected chat?"
+        /// </summary>
+        public static string PsaHideChatAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaHideChatAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hide chat"
+        /// </summary>
+        public static string PsaHideChatAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaHideChatAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. Learn more about this initiative at https://telegram.org/blog/coronavirus"
+        /// </summary>
+        public static string PsaInfo_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaInfo_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "COVID-19 Notification"
+        /// </summary>
+        public static string PsaMessage_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessage_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Important Notification"
+        /// </summary>
+        public static string PsaMessageDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessageDefault");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. Learn more about this initiative at https://telegram.org/blog/coronavirus"
+        /// </summary>
+        public static string PsaMessageInfo_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessageInfo_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This is an important notification."
+        /// </summary>
+        public static string PsaMessageInfoDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaMessageInfoDefault");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "COVID-19"
+        /// </summary>
+        public static string PsaType_covid
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaType_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "PSA"
+        /// </summary>
+        public static string PsaTypeDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaTypeDefault");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, the target user has too many public groups or channels already. Please ask them to make one of their existing groups or channels private first."
         /// </summary>
         public static string PublicChannelsTooMuch
@@ -25917,6 +29443,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PublicChannelsTooMuch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Poll"
+        /// </summary>
+        public static string PublicPoll
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicPoll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, polls with visible votes can’t be forwarded to channels."
+        /// </summary>
+        public static string PublicPollCantForward
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicPollCantForward");
             }
         }
         
@@ -26005,6 +29553,83 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("QuickReplyDefault4");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quiz answers"
+        /// </summary>
+        public static string QuizAnswers
+        {
+            get
+            {
+                return resourceLoader.GetString("QuizAnswers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Polls in Quiz Mode have one correct answer. Users can't revoke their answers."
+        /// </summary>
+        public static string QuizInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("QuizInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Quiz"
+        /// </summary>
+        public static string QuizPoll
+        {
+            get
+            {
+                return resourceLoader.GetString("QuizPoll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Well done!"
+        /// </summary>
+        public static string QuizWellDone
+        {
+            get
+            {
+                return resourceLoader.GetString("QuizWellDone");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You chose the right answer."
+        /// </summary>
+        public static string QuizWellDoneInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("QuizWellDoneInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Wrong answer!"
+        /// </summary>
+        public static string QuizWrongAnswer
+        {
+            get
+            {
+                return resourceLoader.GetString("QuizWrongAnswer");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You missed the correct option."
+        /// </summary>
+        public static string QuizWrongAnswerInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("QuizWrongAnswerInfo");
             }
         }
         
@@ -26108,6 +29733,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Recent files"
+        /// </summary>
+        public static string RecentFiles
+        {
+            get
+            {
+                return resourceLoader.GetString("RecentFiles");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Files A-Z"
+        /// </summary>
+        public static string RecentFilesAZ
+        {
+            get
+            {
+                return resourceLoader.GetString("RecentFilesAZ");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Recently viewed"
         /// </summary>
         public static string RecentlyViewed
@@ -26126,6 +29773,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RecentlyViewedHide");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recent posts"
+        /// </summary>
+        public static string RecentPosts
+        {
+            get
+            {
+                return resourceLoader.GetString("RecentPosts");
             }
         }
         
@@ -26346,6 +30004,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RemovedFromFavorites");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sticker was removed from Recent"
+        /// </summary>
+        public static string RemovedFromRecent
+        {
+            get
+            {
+                return resourceLoader.GetString("RemovedFromRecent");
             }
         }
         
@@ -26715,6 +30384,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Report"
+        /// </summary>
+        public static string ReportUserLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("ReportUserLocation");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Resend code"
         /// </summary>
         public static string ResendCode
@@ -26961,6 +30641,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Reset all notifications"
+        /// </summary>
+        public static string ResetNotificationsAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsAlertTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "All notification settings reset to default"
         /// </summary>
         public static string ResetNotificationsText
@@ -27025,6 +30716,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RestoreEmailSentInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recovery code"
+        /// </summary>
+        public static string RestoreEmailSentTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("RestoreEmailSentTitle");
             }
         }
         
@@ -27231,6 +30933,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Do you want to apply the new colors you chose?"
+        /// </summary>
+        public static string SaveChangesAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("SaveChangesAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save changes?"
+        /// </summary>
+        public static string SaveChangesAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SaveChangesAlertTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Saved Messages"
         /// </summary>
         public static string SavedMessages
@@ -27352,6 +31076,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Hold this button to schedule your message or send it without sound."
+        /// </summary>
+        public static string ScheduledOrNoSoundHint
+        {
+            get
+            {
+                return resourceLoader.GetString("ScheduledOrNoSoundHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Schedule message"
         /// </summary>
         public static string ScheduleMessage
@@ -27359,6 +31094,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ScheduleMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send when {0} comes online"
+        /// </summary>
+        public static string ScheduleWhenOnline
+        {
+            get
+            {
+                return resourceLoader.GetString("ScheduleWhenOnline");
             }
         }
         
@@ -27585,6 +31331,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Search music"
+        /// </summary>
+        public static string SearchMusic
+        {
+            get
+            {
+                return resourceLoader.GetString("SearchMusic");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Search Recent Files"
+        /// </summary>
+        public static string SearchRecentFiles
+        {
+            get
+            {
+                return resourceLoader.GetString("SearchRecentFiles");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Search sticker sets"
         /// </summary>
         public static string SearchStickersHint
@@ -27592,6 +31360,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SearchStickersHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Search trending stickers"
+        /// </summary>
+        public static string SearchTrendingStickersHint
+        {
+            get
+            {
+                return resourceLoader.GetString("SearchTrendingStickersHint");
             }
         }
         
@@ -27882,7 +31661,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Select from gallery"
+        /// Localized resource similar to "Select from Gallery"
         /// </summary>
         public static string SelectFromGallery
         {
@@ -27970,6 +31749,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Do you want to send this contact to **{0}**?"
+        /// </summary>
+        public static string SendContactToGroupText
+        {
+            get
+            {
+                return resourceLoader.GetString("SendContactToGroupText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to send this contact to **{0}**?"
+        /// </summary>
+        public static string SendContactToText
+        {
+            get
+            {
+                return resourceLoader.GetString("SendContactToText");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "'Send on' MMM d 'at' HH:mm"
         /// </summary>
         public static string SendDayAt
@@ -27992,6 +31793,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "SEND"
+        /// </summary>
+        public static string SendDice
+        {
+            get
+            {
+                return resourceLoader.GetString("SendDice");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Share game to {0}?"
         /// </summary>
         public static string SendGameTo
@@ -28010,6 +31822,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SendGameToGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to share this game to **{0}**?"
+        /// </summary>
+        public static string SendGameToGroupText
+        {
+            get
+            {
+                return resourceLoader.GetString("SendGameToGroupText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to share this game to **{0}**?"
+        /// </summary>
+        public static string SendGameToText
+        {
+            get
+            {
+                return resourceLoader.GetString("SendGameToText");
             }
         }
         
@@ -28179,6 +32013,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Share my Live Location"
+        /// </summary>
+        public static string SendLiveLocationMenu
+        {
+            get
+            {
+                return resourceLoader.GetString("SendLiveLocationMenu");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Send my current location"
         /// </summary>
         public static string SendLocation
@@ -28186,6 +32031,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SendLocation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send Message"
+        /// </summary>
+        public static string SendMessageLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("SendMessageLocation");
             }
         }
         
@@ -28230,6 +32086,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SendMessagesToGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to send this message to **{0}**?"
+        /// </summary>
+        public static string SendMessagesToGroupText
+        {
+            get
+            {
+                return resourceLoader.GetString("SendMessagesToGroupText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to send this message to **{0}**?"
+        /// </summary>
+        public static string SendMessagesToText
+        {
+            get
+            {
+                return resourceLoader.GetString("SendMessagesToText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send message"
+        /// </summary>
+        public static string SendMessageTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SendMessageTitle");
             }
         }
         
@@ -28621,6 +32510,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Debug"
+        /// </summary>
+        public static string SettingsDebug
+        {
+            get
+            {
+                return resourceLoader.GetString("SettingsDebug");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Frequently asked questions"
         /// </summary>
         public static string SettingsFaqSearchTitle
@@ -28808,6 +32708,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Share Contact"
+        /// </summary>
+        public static string ShareContactTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ShareContactTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Audio files"
         /// </summary>
         public static string SharedAudioFiles
@@ -28852,6 +32763,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Files"
+        /// </summary>
+        public static string SharedFilesTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedFilesTab2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "GIFs"
+        /// </summary>
+        public static string SharedGIFsTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedGIFsTab2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Groups"
+        /// </summary>
+        public static string SharedGroupsTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedGroupsTab2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Links"
         /// </summary>
         public static string SharedLinks
@@ -28870,6 +32814,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SharedLinksTab");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Links"
+        /// </summary>
+        public static string SharedLinksTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedLinksTab2");
             }
         }
         
@@ -28896,6 +32851,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Media"
+        /// </summary>
+        public static string SharedMediaTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedMediaTab2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shared Media"
+        /// </summary>
+        public static string SharedMediaTabFull2
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedMediaTabFull2");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Shared Media"
         /// </summary>
         public static string SharedMediaTitle
@@ -28914,6 +32891,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SharedMusicTab");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Audio"
+        /// </summary>
+        public static string SharedMusicTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedMusicTab2");
             }
         }
         
@@ -28947,6 +32935,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SharedVoiceTab");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Voice Messages"
+        /// </summary>
+        public static string SharedVoiceTab2
+        {
+            get
+            {
+                return resourceLoader.GetString("SharedVoiceTab2");
             }
         }
         
@@ -29028,6 +33027,83 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string SharesFew
+        {
+            get
+            {
+                return resourceLoader.GetString("SharesFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string SharesMany
+        {
+            get
+            {
+                return resourceLoader.GetString("SharesMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} share"
+        /// </summary>
+        public static string SharesOne
+        {
+            get
+            {
+                return resourceLoader.GetString("SharesOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} shares"
+        /// </summary>
+        public static string SharesOther
+        {
+            get
+            {
+                return resourceLoader.GetString("SharesOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Shares Per Post"
+        /// </summary>
+        public static string SharesPerPost
+        {
+            get
+            {
+                return resourceLoader.GetString("SharesPerPost");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string SharesTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("SharesTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string SharesZero
+        {
+            get
+            {
+                return resourceLoader.GetString("SharesZero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Share Telegram..."
         /// </summary>
         public static string ShareTelegram
@@ -29035,6 +33111,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ShareTelegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share theme"
+        /// </summary>
+        public static string ShareTheme
+        {
+            get
+            {
+                return resourceLoader.GetString("ShareTheme");
             }
         }
         
@@ -29061,7 +33148,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Share your location?"
+        /// Localized resource similar to "Share Your Location?"
         /// </summary>
         public static string ShareYouLocationTitle
         {
@@ -29171,6 +33258,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show all GIFs"
+        /// </summary>
+        public static string ShowAllGIFs
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowAllGIFs");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Show all media"
         /// </summary>
         public static string ShowAllMedia
@@ -29189,6 +33287,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ShowAllThemes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show as grid"
+        /// </summary>
+        public static string ShowAsGrid
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowAsGrid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show as list"
+        /// </summary>
+        public static string ShowAsList
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowAsList");
             }
         }
         
@@ -29226,13 +33346,79 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Turn this off if you want to receive notifications only from your active account."
+        /// Localized resource similar to "Turn this off if you want to receive notifications only from the account you are currently using."
         /// </summary>
         public static string ShowNotificationsForInfo
         {
             get
             {
                 return resourceLoader.GetString("ShowNotificationsForInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ShowVotesFew
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowVotesFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ShowVotesMany
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowVotesMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show More ({0})"
+        /// </summary>
+        public static string ShowVotesOne
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowVotesOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Show More ({0})"
+        /// </summary>
+        public static string ShowVotesOther
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowVotesOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ShowVotesTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowVotesTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ShowVotesZero
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowVotesZero");
             }
         }
         
@@ -29277,6 +33463,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SlideToCancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Slide up to lock recording"
+        /// </summary>
+        public static string SlideUpToLock
+        {
+            get
+            {
+                return resourceLoader.GetString("SlideUpToLock");
             }
         }
         
@@ -29471,7 +33668,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You will be able to add more users after you finish creating the group and convert it to a supergroup."
+        /// Localized resource similar to "You will be able to add more members after you create the group."
         /// </summary>
         public static string SoftUserLimitAlert
         {
@@ -29603,6 +33800,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Overview"
+        /// </summary>
+        public static string StatisticOverview
+        {
+            get
+            {
+                return resourceLoader.GetString("StatisticOverview");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Statistics"
         /// </summary>
         public static string Statistics
@@ -29625,6 +33833,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Stickers archived."
+        /// </summary>
+        public static string StickersArchived
+        {
+            get
+            {
+                return resourceLoader.GetString("StickersArchived");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} has been moved to your archive."
+        /// </summary>
+        public static string StickersArchivedInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("StickersArchivedInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Artists are welcome to add their own sticker sets using our @stickers bot."
+        /// </summary>
+        public static string StickersBotInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("StickersBotInfo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Copy link"
         /// </summary>
         public static string StickersCopy
@@ -29632,6 +33873,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("StickersCopy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string StickerSetsFew
+        {
+            get
+            {
+                return resourceLoader.GetString("StickerSetsFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string StickerSetsMany
+        {
+            get
+            {
+                return resourceLoader.GetString("StickerSetsMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sticker set"
+        /// </summary>
+        public static string StickerSetsOne
+        {
+            get
+            {
+                return resourceLoader.GetString("StickerSetsOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sticker sets"
+        /// </summary>
+        public static string StickerSetsOther
+        {
+            get
+            {
+                return resourceLoader.GetString("StickerSetsOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string StickerSetsTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("StickerSetsTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string StickerSetsZero
+        {
+            get
+            {
+                return resourceLoader.GetString("StickerSetsZero");
             }
         }
         
@@ -29724,6 +34031,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} is no longer in your stickers."
+        /// </summary>
+        public static string StickersRemovedInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("StickersRemovedInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reorder"
+        /// </summary>
+        public static string StickersReorder
+        {
+            get
+            {
+                return resourceLoader.GetString("StickersReorder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Move stickers to reorder."
+        /// </summary>
+        public static string StickersReorderHint
+        {
+            get
+            {
+                return resourceLoader.GetString("StickersReorderHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Share"
         /// </summary>
         public static string StickersShare
@@ -29812,6 +34152,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Do you want to stop sharing your live location?"
+        /// </summary>
+        public static string StopLiveLocationAlertAllText
+        {
+            get
+            {
+                return resourceLoader.GetString("StopLiveLocationAlertAllText");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to stop sharing live location with {0}?"
         /// </summary>
         public static string StopLiveLocationAlertToGroup
@@ -29823,6 +34174,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Do you want to stop sharing your live location with **{0}**?"
+        /// </summary>
+        public static string StopLiveLocationAlertToGroupText
+        {
+            get
+            {
+                return resourceLoader.GetString("StopLiveLocationAlertToGroupText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop location sharing"
+        /// </summary>
+        public static string StopLiveLocationAlertToTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("StopLiveLocationAlertToTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to stop sharing live location with {0}?"
         /// </summary>
         public static string StopLiveLocationAlertToUser
@@ -29830,6 +34203,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("StopLiveLocationAlertToUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to stop sharing your live location with **{0}**?"
+        /// </summary>
+        public static string StopLiveLocationAlertToUserText
+        {
+            get
+            {
+                return resourceLoader.GetString("StopLiveLocationAlertToUserText");
             }
         }
         
@@ -29874,6 +34258,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("StopPollAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop Quiz"
+        /// </summary>
+        public static string StopQuiz
+        {
+            get
+            {
+                return resourceLoader.GetString("StopQuiz");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "If you stop this quiz now, nobody will be able to submit answers. This action cannot be undone."
+        /// </summary>
+        public static string StopQuizAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("StopQuizAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop quiz?"
+        /// </summary>
+        public static string StopQuizAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("StopQuizAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Stop Showing Me"
+        /// </summary>
+        public static string StopShowingMe
+        {
+            get
+            {
+                return resourceLoader.GetString("StopShowingMe");
             }
         }
         
@@ -30021,6 +34449,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Disable suggestions"
+        /// </summary>
+        public static string SuggestContactsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SuggestContactsTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Suggest stickers by emoji"
         /// </summary>
         public static string SuggestStickers
@@ -30127,6 +34566,30 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SyncContactsDeleteInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This will remove your contacts from the Telegram servers.
+        ///
+        ///If '**Sync Contacts**' is enabled, contacts will be re-synced."
+        /// </summary>
+        public static string SyncContactsDeleteText
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsDeleteText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete contacts"
+        /// </summary>
+        public static string SyncContactsDeleteTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("SyncContactsDeleteTitle");
             }
         }
         
@@ -30241,6 +34704,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Tap to send this location"
+        /// </summary>
+        public static string TapToSendLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("TapToSendLocation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tap to view as a list."
+        /// </summary>
+        public static string TapToViewAsList
+        {
+            get
+            {
+                return resourceLoader.GetString("TapToViewAsList");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Teal"
         /// </summary>
         public static string Teal
@@ -30248,6 +34733,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Teal");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Telegram Cache"
+        /// </summary>
+        public static string TelegramCacheSize
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramCacheSize");
             }
         }
         
@@ -30397,6 +34893,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Delete Telegram passport"
+        /// </summary>
+        public static string TelegramPassportDeleteTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramPassportDeleteTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Telegram for Android {0}"
         /// </summary>
         public static string TelegramVersion
@@ -30404,6 +34911,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TelegramVersion");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Terminate"
+        /// </summary>
+        public static string Terminate
+        {
+            get
+            {
+                return resourceLoader.GetString("Terminate");
             }
         }
         
@@ -30452,6 +34970,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to terminate this session?"
+        /// </summary>
+        public static string TerminateSessionText
+        {
+            get
+            {
+                return resourceLoader.GetString("TerminateSessionText");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Tap to disconnect from your Telegram account."
         /// </summary>
         public static string TerminateWebSessionInfo
@@ -30474,6 +35003,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Disconnect websites"
+        /// </summary>
+        public static string TerminateWebSessionsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TerminateWebSessionsTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Block {0}"
         /// </summary>
         public static string TerminateWebSessionStop
@@ -30481,6 +35021,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TerminateWebSessionStop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to disconnect {0}?"
+        /// </summary>
+        public static string TerminateWebSessionText
+        {
+            get
+            {
+                return resourceLoader.GetString("TerminateWebSessionText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disconnect website"
+        /// </summary>
+        public static string TerminateWebSessionTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TerminateWebSessionTitle");
             }
         }
         
@@ -30519,6 +35081,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Hold the **word**, then move the cursor to select more text to copy."
+        /// </summary>
+        public static string TextSelectionHit
+        {
+            get
+            {
+                return resourceLoader.GetString("TextSelectionHit");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Message Text Size"
         /// </summary>
         public static string TextSize
@@ -30537,28 +35110,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TextSizeHeader");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Cancel"
-        /// </summary>
-        public static string TgCancel
-        {
-            get
-            {
-                return resourceLoader.GetString("TgCancel");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Open Google Play"
-        /// </summary>
-        public static string TgOpenGooglePlay
-        {
-            get
-            {
-                return resourceLoader.GetString("TgOpenGooglePlay");
             }
         }
         
@@ -30592,6 +35143,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ThemeBlue");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Classic"
+        /// </summary>
+        public static string ThemeClassic
+        {
+            get
+            {
+                return resourceLoader.GetString("ThemeClassic");
             }
         }
         
@@ -30640,6 +35202,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ThemeDarkBlue");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Day"
+        /// </summary>
+        public static string ThemeDay
+        {
+            get
+            {
+                return resourceLoader.GetString("ThemeDay");
             }
         }
         
@@ -30762,6 +35335,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ThemeNamePlaceholder");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Night"
+        /// </summary>
+        public static string ThemeNight
+        {
+            get
+            {
+                return resourceLoader.GetString("ThemeNight");
             }
         }
         
@@ -31063,6 +35647,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Reset to default"
+        /// </summary>
+        public static string ThemeResetToDefaults
+        {
+            get
+            {
+                return resourceLoader.GetString("ThemeResetToDefaults");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to reset text size and color settings?"
+        /// </summary>
+        public static string ThemeResetToDefaultsText
+        {
+            get
+            {
+                return resourceLoader.GetString("ThemeResetToDefaultsText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset settings"
+        /// </summary>
+        public static string ThemeResetToDefaultsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ThemeResetToDefaultsTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Set link"
         /// </summary>
         public static string ThemeSetUrl
@@ -31229,6 +35846,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "today at {0}"
+        /// </summary>
+        public static string TodayAtFormattedWithToday
+        {
+            get
+            {
+                return resourceLoader.GetString("TodayAtFormattedWithToday");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too Many Communities"
+        /// </summary>
+        public static string TooManyCommunities
+        {
+            get
+            {
+                return resourceLoader.GetString("TooManyCommunities");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you are a member of too many groups or channels. Please leave some before creating a new one."
+        /// </summary>
+        public static string TooManyCommunitiesHintCreate
+        {
+            get
+            {
+                return resourceLoader.GetString("TooManyCommunitiesHintCreate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you are a member of too many groups and channels. For technical reasons, you need to leave some first before changing this setting in your groups."
+        /// </summary>
+        public static string TooManyCommunitiesHintEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("TooManyCommunitiesHintEdit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you are a member of too many groups or channels. Please leave some before joining a new one."
+        /// </summary>
+        public static string TooManyCommunitiesHintJoin
+        {
+            get
+            {
+                return resourceLoader.GetString("TooManyCommunitiesHintJoin");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Too many tries.
         ///Please try again in {0}."
         /// </summary>
@@ -31237,6 +35909,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TooManyTries");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Views by hours (UTC)"
+        /// </summary>
+        public static string TopHoursChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TopHoursChartTitle");
             }
         }
         
@@ -31280,7 +35963,7 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Warning, this will irreversibly delete your Telegram account along with all the data you store in the Telegram cloud.
         ///
-        ///Important: You can Cancel now and export your data before deleting your account instead of losing it all. (To do this, open the latest version of Telegram Desktop and go to Settings > Export Telegram Data.)"
+        ///Important: You can cancel now and export your data before deleting your account instead of losing it all. (To do this, open the latest version of Telegram Desktop and go to Settings > Advanced > Export Telegram data.)"
         /// </summary>
         public static string TosDeclineDeleteAccount
         {
@@ -31315,6 +35998,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} Free"
+        /// </summary>
+        public static string TotalDeviceFreeSize
+        {
+            get
+            {
+                return resourceLoader.GetString("TotalDeviceFreeSize");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} Other Data"
+        /// </summary>
+        public static string TotalDeviceSize
+        {
+            get
+            {
+                return resourceLoader.GetString("TotalDeviceSize");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Turn Password Off"
         /// </summary>
         public static string TurnPasswordOff
@@ -31344,6 +36049,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TurnPasswordOffQuestion");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable password"
+        /// </summary>
+        public static string TurnPasswordOffQuestionTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TurnPasswordOffQuestionTitle");
             }
         }
         
@@ -32217,6 +36933,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Sorry, the target user is a member of too many groups and channels. Please ask them to leave some first."
+        /// </summary>
+        public static string UserChannelTooMuchJoin
+        {
+            get
+            {
+                return resourceLoader.GetString("UserChannelTooMuchJoin");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Username"
         /// </summary>
         public static string Username
@@ -32695,6 +37422,138 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
+        public static string UsersCountFew
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UsersCountMany
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} user"
+        /// </summary>
+        public static string UsersCountOne
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} users"
+        /// </summary>
+        public static string UsersCountOther
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UsersCountTitleFew
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountTitleFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UsersCountTitleMany
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountTitleMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} user"
+        /// </summary>
+        public static string UsersCountTitleOne
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountTitleOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} users"
+        /// </summary>
+        public static string UsersCountTitleOther
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountTitleOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UsersCountTitleTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountTitleTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UsersCountTitleZero
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountTitleZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UsersCountTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string UsersCountZero
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersCountZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
         public static string UsersFew
         {
             get
@@ -32913,6 +37772,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Video quality is too low to change compression settings."
+        /// </summary>
+        public static string VideoQualityIsTooLow
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoQualityIsTooLow");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string VideosFew
@@ -33089,6 +37959,94 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Views by source"
+        /// </summary>
+        public static string ViewsBySourceChartTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewsBySourceChartTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ViewsFew
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewsFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ViewsMany
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewsMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} view"
+        /// </summary>
+        public static string ViewsOne
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewsOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} views"
+        /// </summary>
+        public static string ViewsOther
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewsOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Views Per Post"
+        /// </summary>
+        public static string ViewsPerPost
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewsPerPost");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ViewsTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewsTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string ViewsZero
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewsZero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Vignette"
         /// </summary>
         public static string Vignette
@@ -33096,6 +38054,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Vignette");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string VoiceFew
+        {
+            get
+            {
+                return resourceLoader.GetString("VoiceFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string VoiceMany
+        {
+            get
+            {
+                return resourceLoader.GetString("VoiceMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} voice message"
+        /// </summary>
+        public static string VoiceOne
+        {
+            get
+            {
+                return resourceLoader.GetString("VoiceOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} voice messages"
+        /// </summary>
+        public static string VoiceOther
+        {
+            get
+            {
+                return resourceLoader.GetString("VoiceOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string VoiceTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("VoiceTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string VoiceZero
+        {
+            get
+            {
+                return resourceLoader.GetString("VoiceZero");
             }
         }
         
@@ -34257,1769 +39281,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Scheduled until online"
+        /// Localized resource similar to "Zoom out"
         /// </summary>
-        public static string MessageScheduledUntilOnline
+        public static string ZoomOut
         {
             get
             {
-                return resourceLoader.GetString("MessageScheduledUntilOnline");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Send when {0} comes online"
-        /// </summary>
-        public static string ScheduleWhenOnline
-        {
-            get
-            {
-                return resourceLoader.GetString("ScheduleWhenOnline");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Wallet"
-        /// </summary>
-        public static string Wallet
-        {
-            get
-            {
-                return resourceLoader.GetString("Wallet");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Scan QR Code"
-        /// </summary>
-        public static string WalletScanCode
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletScanCode");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "QR Code"
-        /// </summary>
-        public static string WalletQRCode
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletQRCode");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "No wallet address found in the selected image."
-        /// </summary>
-        public static string WalletScanImageNotFound
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletScanImageNotFound");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "No wallet address found"
-        /// </summary>
-        public static string WalletScanCodeNotFound
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletScanCodeNotFound");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Gram Wallet"
-        /// </summary>
-        public static string GramWallet
-        {
-            get
-            {
-                return resourceLoader.GetString("GramWallet");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Create My Wallet"
-        /// </summary>
-        public static string CreateMyWallet
-        {
-            get
-            {
-                return resourceLoader.GetString("CreateMyWallet");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Import existing wallet"
-        /// </summary>
-        public static string ImportExistingWallet
-        {
-            get
-            {
-                return resourceLoader.GetString("ImportExistingWallet");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Congratulations"
-        /// </summary>
-        public static string WalletCongratulations
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletCongratulations");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Your Gram wallet has just been created. Only you control it.
-        ///    
-        ///To be able to always have access to it, please write down secret words and set up a secure passcode."
-        /// </summary>
-        public static string WalletCongratulationsinfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletCongratulationsinfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Continue"
-        /// </summary>
-        public static string WalletContinue
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletContinue");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "CLOSE"
-        /// </summary>
-        public static string WalletClose
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletClose");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "24 Secret Words"
-        /// </summary>
-        public static string WalletSecretWords
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecretWords");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Secret Words"
-        /// </summary>
-        public static string WalletSecretWordsTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecretWordsTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Write down these 24 words in the correct order and store them in a secret place.
-        ///
-        ///Use these secret words to restore access to your wallet if you lose your passcode or Telegram account."
-        /// </summary>
-        public static string WalletSecretWordsInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecretWordsInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Done"
-        /// </summary>
-        public static string WalletDone
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletDone");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sure done?"
-        /// </summary>
-        public static string WalletSecretWordsAlertTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecretWordsAlertTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You didn’t have enough time to write these words down."
-        /// </summary>
-        public static string WalletSecretWordsAlertText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecretWordsAlertText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "OK, SORRY"
-        /// </summary>
-        public static string WalletSecretWordsAlertButton
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecretWordsAlertButton");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Test time!"
-        /// </summary>
-        public static string WalletTestTime
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestTime");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Test Time!"
-        /// </summary>
-        public static string WalletTestTimeTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestTimeTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Now let’s check that you wrote your secret words correctly.
-        ///
-        ///Please enter the words **{0}**, **{1}** and **{2}** below:"
-        /// </summary>
-        public static string WalletTestTimeInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestTimeInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Incorrect words"
-        /// </summary>
-        public static string WalletTestTimeAlertTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestTimeAlertTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "The secret words you have entered do not match the ones in the list."
-        /// </summary>
-        public static string WalletTestTimeAlertText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestTimeAlertText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "See words"
-        /// </summary>
-        public static string WalletTestTimeAlertButtonSee
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestTimeAlertButtonSee");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Try again"
-        /// </summary>
-        public static string WalletTestTimeAlertButtonTry
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestTimeAlertButtonTry");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Ready to go!"
-        /// </summary>
-        public static string WalletReady
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletReady");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You are all set. Now you have a wallet that only you control — directly, without middlemen or bankers."
-        /// </summary>
-        public static string WalletReadyInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletReadyInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "View My Wallet"
-        /// </summary>
-        public static string WalletView
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletView");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You can restore access to your wallet by entering the 24 words you wrote down when creating the wallet."
-        /// </summary>
-        public static string WalletImportInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletImportInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "I don’t have them"
-        /// </summary>
-        public static string WalletImportDontHave
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletImportDontHave");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Incorrect words"
-        /// </summary>
-        public static string WalletImportAlertTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletImportAlertTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sorry, you have entered incorrect secret words. Please double check and try again."
-        /// </summary>
-        public static string WalletImportAlertText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletImportAlertText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Too Bad!"
-        /// </summary>
-        public static string WalletTooBad
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTooBad");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Without the secret words you can’t restore access to the wallet."
-        /// </summary>
-        public static string WalletTooBadInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTooBadInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Enter 24 secret words"
-        /// </summary>
-        public static string WalletTooBadEnter
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTooBadEnter");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Create a new empty wallet instead"
-        /// </summary>
-        public static string WalletTooBadCreate
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTooBadCreate");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Perfect!"
-        /// </summary>
-        public static string WalletPerfect
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletPerfect");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Now set up a passcode to secure your transactions."
-        /// </summary>
-        public static string WalletPerfectInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletPerfectInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Set a Passcode"
-        /// </summary>
-        public static string WalletPerfectSetPasscode
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletPerfectSetPasscode");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Set a Passcode"
-        /// </summary>
-        public static string WalletSetPasscode
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscode");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Repeat the Passcode"
-        /// </summary>
-        public static string WalletSetPasscodeRepeat
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscodeRepeat");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Passcode options"
-        /// </summary>
-        public static string WalletSetPasscodeOptions
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscodeOptions");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Enter code"
-        /// </summary>
-        public static string WalletSetPasscodeEnterCode
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscodeEnterCode");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Choose code type"
-        /// </summary>
-        public static string WalletSetPasscodeChooseType
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscodeChooseType");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "4-Digit code"
-        /// </summary>
-        public static string WalletSetPasscode4Digit
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscode4Digit");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "6-Digit code"
-        /// </summary>
-        public static string WalletSetPasscode6Digit
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscode6Digit");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Custom numeric code"
-        /// </summary>
-        public static string WalletSetPasscodeCustom
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscodeCustom");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Passcodes do not match"
-        /// </summary>
-        public static string WalletSetPasscodeError
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscodeError");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Minimum passcode length is 4"
-        /// </summary>
-        public static string WalletSetPasscodeMinLength
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSetPasscodeMinLength");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Done!"
-        /// </summary>
-        public static string WalletSendDone
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendDone");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} Grams have been sent to"
-        /// </summary>
-        public static string WalletSendDoneText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendDoneText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Your balance"
-        /// </summary>
-        public static string WalletYourBalance
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletYourBalance");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Receive"
-        /// </summary>
-        public static string WalletReceive
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletReceive");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Send"
-        /// </summary>
-        public static string WalletSend
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSend");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Wallet Created"
-        /// </summary>
-        public static string WalletCreated
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletCreated");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Your wallet address"
-        /// </summary>
-        public static string WalletYourAddress
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletYourAddress");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "from:"
-        /// </summary>
-        public static string WalletFrom
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletFrom");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "to:"
-        /// </summary>
-        public static string WalletTo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Your Wallet Address"
-        /// </summary>
-        public static string WalletReceiveYourAddress
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletReceiveYourAddress");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Copy wallet address"
-        /// </summary>
-        public static string WalletCopyAddress
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletCopyAddress");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Create invoice"
-        /// </summary>
-        public static string WalletCreateInvoice
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletCreateInvoice");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Share Wallet Address"
-        /// </summary>
-        public static string WalletShareAddress
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletShareAddress");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "updated a few seconds ago"
-        /// </summary>
-        public static string WalletUpdatedFewSecondsAgo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletUpdatedFewSecondsAgo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "updated {0} ago"
-        /// </summary>
-        public static string WalletUpdatedTimeAgo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletUpdatedTimeAgo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Swipe down to refresh"
-        /// </summary>
-        public static string WalletSwipeToRefresh
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSwipeToRefresh");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Release to refresh"
-        /// </summary>
-        public static string WalletReleaseToRefresh
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletReleaseToRefresh");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "updating"
-        /// </summary>
-        public static string WalletUpdating
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletUpdating");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "updating {0}%"
-        /// </summary>
-        public static string WalletUpdatingProgress
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletUpdatingProgress");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Send Grams"
-        /// </summary>
-        public static string WalletSendGrams
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendGrams");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Recipient wallet address"
-        /// </summary>
-        public static string WalletSendRecipient
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendRecipient");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Enter wallet address"
-        /// </summary>
-        public static string WalletEnterWalletAddress
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletEnterWalletAddress");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Copy the 48-letter wallet address of the recipient here or ask them to send you a ton:// link."
-        /// </summary>
-        public static string WalletAddressCopy
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletAddressCopy");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Amount"
-        /// </summary>
-        public static string WalletAmount
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletAmount");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Comment (optional)"
-        /// </summary>
-        public static string WalletComment
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletComment");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You can specify the amount and purpose of the payment to save the sender some time:"
-        /// </summary>
-        public static string WalletInvoiceInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletInvoiceInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Share Invoice URL"
-        /// </summary>
-        public static string WalletShareInvoiceUrl
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletShareInvoiceUrl");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Share this address with other Gram
-        ///wallet owners to receive Grams from them."
-        /// </summary>
-        public static string WalletShareInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletShareInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Share this link to receive Test Grams.
-        ///Note: this link won't work for real Grams."
-        /// </summary>
-        public static string WalletTestShareInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestShareInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Share this link with other Gram wallet owners to receive **{0} Grams** from them."
-        /// </summary>
-        public static string WalletShareInvoiceUrlInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletShareInvoiceUrlInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Share this link to receive **{0} Test Grams**.
-        ///Note: this link won't work for real Grams."
-        /// </summary>
-        public static string WalletTestShareInvoiceUrlInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTestShareInvoiceUrlInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Create Invoice"
-        /// </summary>
-        public static string WalletCreateInvoiceTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletCreateInvoiceTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Your Invoice"
-        /// </summary>
-        public static string WalletYourInvoice
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletYourInvoice");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Confirmation"
-        /// </summary>
-        public static string WalletConfirmation
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfirmation");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Do you want to send **{0} Grams** to:"
-        /// </summary>
-        public static string WalletConfirmationText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfirmationText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Confirm"
-        /// </summary>
-        public static string WalletConfirm
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfirm");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Enter passcode"
-        /// </summary>
-        public static string WalletEnterPasscode
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletEnterPasscode");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Your passcode contains {0}."
-        /// </summary>
-        public static string WalletPasscodeLength
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletPasscodeLength");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sending Grams"
-        /// </summary>
-        public static string WalletSendingGrams
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendingGrams");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Please wait a few seconds for your transaction to be processed..."
-        /// </summary>
-        public static string WalletSendingGramsInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendingGramsInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Please confirm your credentials to send Grams."
-        /// </summary>
-        public static string WalletSendConfirmCredentials
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendConfirmCredentials");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Please confirm your credentials to continue."
-        /// </summary>
-        public static string WalletExportConfirmContinue
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletExportConfirmContinue");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Please confirm your credentials to export your wallet."
-        /// </summary>
-        public static string WalletExportConfirmCredentials
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletExportConfirmCredentials");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Export Wallet"
-        /// </summary>
-        public static string WalletExport
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletExport");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Delete Wallet"
-        /// </summary>
-        public static string WalletDelete
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletDelete");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Wallet Settings"
-        /// </summary>
-        public static string WalletSettings
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSettings");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Server Settings"
-        /// </summary>
-        public static string WalletServerSettings
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletServerSettings");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Change Passcode"
-        /// </summary>
-        public static string WalletChangePasscode
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletChangePasscode");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Delete wallet"
-        /// </summary>
-        public static string WalletDeleteTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletDeleteTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Unfortunately, your wallet is no longer available because of a change in your device's lockscreen parameters. Please use your secret words to restore the wallet."
-        /// </summary>
-        public static string WalletKeystoreInvalidated
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletKeystoreInvalidated");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Telegram needs access to your camera so that you can scan QR codes."
-        /// </summary>
-        public static string WalletPermissionNoCamera
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletPermissionNoCamera");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Security"
-        /// </summary>
-        public static string WalletSecurityAlertTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecurityAlertTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "For better security, we recommend you to set up lockscreen biometric authentication."
-        /// </summary>
-        public static string WalletSecurityAlertTextBiometric
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecurityAlertTextBiometric");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "For better security, we recommend you to set up a lockscreen password and biometric authentication."
-        /// </summary>
-        public static string WalletSecurityAlertTextLockscreenBiometric
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecurityAlertTextLockscreenBiometric");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "For better security, we recommend you to set up a lockscreen password or pin."
-        /// </summary>
-        public static string WalletSecurityAlertTextLockscreen
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecurityAlertTextLockscreen");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Create anyway"
-        /// </summary>
-        public static string WalletSecurityAlertCreateContinue
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecurityAlertCreateContinue");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Import anyway"
-        /// </summary>
-        public static string WalletSecurityAlertImportContinue
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecurityAlertImportContinue");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Setup"
-        /// </summary>
-        public static string WalletSecurityAlertSetup
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSecurityAlertSetup");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Touch the fingerprint sensor"
-        /// </summary>
-        public static string WalletTouchFingerprint
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTouchFingerprint");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Fingerprint not recognized. Try again."
-        /// </summary>
-        public static string WalletTouchFingerprintNotRecognized
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTouchFingerprintNotRecognized");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Too many attempts. Please try again later."
-        /// </summary>
-        public static string WalletBiometricTooManyAttempts
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletBiometricTooManyAttempts");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Warning"
-        /// </summary>
-        public static string WalletSendWarningTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendWarningTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This address belongs to an empty wallet. Are you sure you want to transfer grams to it?"
-        /// </summary>
-        public static string WalletSendWarningText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendWarningText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Send anyway"
-        /// </summary>
-        public static string WalletSendWarningSendAnyway
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendWarningSendAnyway");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Balance: {0}"
-        /// </summary>
-        public static string WalletSendBalance
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendBalance");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Share QR"
-        /// </summary>
-        public static string WalletShareQr
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletShareQr");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Transaction"
-        /// </summary>
-        public static string WalletTransaction
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTransaction");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Comment"
-        /// </summary>
-        public static string WalletTransactionComment
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTransactionComment");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Recipient"
-        /// </summary>
-        public static string WalletTransactionRecipient
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTransactionRecipient");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sender"
-        /// </summary>
-        public static string WalletTransactionSender
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTransactionSender");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Send Grams to this Address"
-        /// </summary>
-        public static string WalletTransactionSendGrams
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTransactionSendGrams");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Address copied to clipboard"
-        /// </summary>
-        public static string WalletTransactionAddressCopied
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTransactionAddressCopied");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} storage fee"
-        /// </summary>
-        public static string WalletStorageFee
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletStorageFee");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} transaction fee"
-        /// </summary>
-        public static string WalletTransactionFee
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTransactionFee");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} blockchain fees"
-        /// </summary>
-        public static string WalletBlockchainFees
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletBlockchainFees");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Insufficient Grams"
-        /// </summary>
-        public static string WalletInsufficientGramsTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletInsufficientGramsTitle");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Unfortunately, your transfer couldn't be completed. You don't have enough grams."
-        /// </summary>
-        public static string WalletInsufficientGramsText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletInsufficientGramsText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sending Grams from a wallet to the same wallet doesn't make sense, you will simply waste a portion of the value on blockchain fees."
-        /// </summary>
-        public static string WalletSendSameWalletText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendSameWalletText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Proceed"
-        /// </summary>
-        public static string WalletSendSameWalletProceed
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendSameWalletProceed");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This link can be used to send money on the TON Blockchain. To do this, you need to set up a Gram wallet first."
-        /// </summary>
-        public static string WalletTonLinkNoWalletText
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTonLinkNoWalletText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Create Wallet"
-        /// </summary>
-        public static string WalletTonLinkNoWalletCreateWallet
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTonLinkNoWalletCreateWallet");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Are you sure you want to log out?
-        ///
-        ///Logging out will cancel all your **secret chats** and **unlink your Gram wallet** from the app.
-        ///
-        ///You will be able to restore your wallet using 24 secret words – or import another wallet."
-        /// </summary>
-        public static string WalletTelegramLogout
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTelegramLogout");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Pending"
-        /// </summary>
-        public static string WalletPendingTransactions
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletPendingTransactions");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Date"
-        /// </summary>
-        public static string WalletDate
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletDate");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Blockchain fee: ~{0} Grams"
-        /// </summary>
-        public static string WalletFee
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletFee");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Please wait until the current transaction is completed."
-        /// </summary>
-        public static string WalletPendingWait
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletPendingWait");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Blockchain ID"
-        /// </summary>
-        public static string WalletBlockchainName
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletBlockchainName");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Config source"
-        /// </summary>
-        public static string WalletConfigType
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfigType");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Using a different configuration allows you to change Lite Server addresses."
-        /// </summary>
-        public static string WalletConfigTypeInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfigTypeInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Url"
-        /// </summary>
-        public static string WalletConfigTypeUrl
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfigTypeUrl");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Json"
-        /// </summary>
-        public static string WalletConfigTypeJson
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfigTypeJson");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Config json"
-        /// </summary>
-        public static string WalletConfigTypeJsonHeader
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfigTypeJsonHeader");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Config url"
-        /// </summary>
-        public static string WalletConfigTypeUrlHeader
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfigTypeUrlHeader");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Enter config json"
-        /// </summary>
-        public static string WalletConfigTypeJsonHint
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfigTypeJsonHint");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Enter config url"
-        /// </summary>
-        public static string WalletConfigTypeUrlHint
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletConfigTypeUrlHint");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Enter blockchain ID"
-        /// </summary>
-        public static string WalletBlockchainNameHint
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletBlockchainNameHint");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This setting is for developers. Change it only if you are working on creating your own TON network."
-        /// </summary>
-        public static string WalletBlockchainNameInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletBlockchainNameInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Are you sure you want to change the blockchain ID? You don't need this unless you're testing your own TON network.
-        ///
-        ///If you proceed, you will need to reconnect your wallet using 24 secret words."
-        /// </summary>
-        public static string WalletBlockchainNameWarning
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletBlockchainNameWarning");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Error"
-        /// </summary>
-        public static string WalletError
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletError");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "App was unable to load blockchain config from the given url. Please make sure that url is corrent and you have an active Internet connection."
-        /// </summary>
-        public static string WalletBlockchainConfigLoadError
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletBlockchainConfigLoadError");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sorry, this config is invalid."
-        /// </summary>
-        public static string WalletBlockchainConfigInvalid
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletBlockchainConfigInvalid");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "App was unable to load blockchain config. Please make sure that you have an active Internet connection."
-        /// </summary>
-        public static string WalletCreateBlockchainConfigLoadError
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletCreateBlockchainConfigLoadError");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Please wait while the wallet finishes syncing with the TON Blockchain."
-        /// </summary>
-        public static string WalletSendSyncInProgress
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletSendSyncInProgress");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "The gram wallet allows you to make fast and secure blockchain-based payments without intermediaries."
-        /// </summary>
-        public static string GramWalletInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("GramWalletInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "This will disconnect the wallet from this app. You will be able to restore your wallet using 24 secret words – or import another wallet.
-        ///
-        ///Wallets are located in the TON Blockchain, which is not controlled by Telegram. If you want a wallet to be deleted, simply transfer all the grams from it and leave it empty."
-        /// </summary>
-        public static string WalletDeleteInfo
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletDeleteInfo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "https://telegram.org/tos/wallet"
-        /// </summary>
-        public static string WalletTosUrl
-        {
-            get
-            {
-                return resourceLoader.GetString("WalletTosUrl");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "By creating a wallet you accept the
-        ///*Terms and Conditions*."
-        /// </summary>
-        public static string CreateMyWalletTerms
-        {
-            get
-            {
-                return resourceLoader.GetString("CreateMyWalletTerms");
+                return resourceLoader.GetString("ZoomOut");
             }
         }
     }

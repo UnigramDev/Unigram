@@ -1,24 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -49,7 +35,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
-                UpdateThumbnail(message, sticker.Thumbnail.Photo);
+                UpdateThumbnail(message, sticker.Thumbnail, sticker.Thumbnail.File);
             }
 
             UpdateFile(message, sticker.StickerValue);
@@ -57,7 +43,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message) { }
 
-        public async void UpdateFile(MessageViewModel message, File file)
+        public void UpdateFile(MessageViewModel message, File file)
         {
             var sticker = GetContent(message.Content);
             if (sticker == null)
@@ -65,9 +51,9 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (sticker.Thumbnail != null && sticker.Thumbnail.Photo.Id == file.Id)
+            if (sticker.Thumbnail != null && sticker.Thumbnail.File.Id == file.Id)
             {
-                UpdateThumbnail(message, file);
+                UpdateThumbnail(message, sticker.Thumbnail, file);
                 return;
             }
             else if (sticker.StickerValue.Id != file.Id)
@@ -77,7 +63,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -85,11 +71,11 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatWebp)
             {
-                Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
+                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetWebPFrame(file.Local.Path) };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

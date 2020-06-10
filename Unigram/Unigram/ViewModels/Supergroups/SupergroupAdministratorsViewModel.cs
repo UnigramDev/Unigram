@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
-using Unigram.ViewModels.Delegates;
 using Unigram.Views.Supergroups;
 
 namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupAdministratorsViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupAdministratorsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SupergroupAdministratorsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), null)
         {
             EventLogCommand = new RelayCommand(EventLogExecute);

@@ -84,7 +84,7 @@ namespace Unigram.ViewModels.Settings
                                     total.SentBytes += file.SentBytes;
                                     total.ReceivedBytes += file.ReceivedBytes;
                                 }
-                                else if (entry is NetworkStatisticsEntryCall call) 
+                                else if (entry is NetworkStatisticsEntryCall call)
                                 {
                                     results.Add(entry);
 
@@ -151,7 +151,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 await ProtoService.SendAsync(new ResetNetworkStatistics());
@@ -172,11 +172,11 @@ namespace Unigram.ViewModels.Settings
             switch (Key)
             {
                 case TdNetworkType.Mobile:
-                    return Strings.Resources.NetworkUsageMobile;
+                    return Strings.Resources.NetworkUsageMobileTab;
                 case TdNetworkType.MobileRoaming:
-                    return Strings.Resources.NetworkUsageRoaming;
+                    return Strings.Resources.NetworkUsageRoamingTab;
                 case TdNetworkType.WiFi:
-                    return Strings.Resources.NetworkUsageWiFi;
+                    return Strings.Resources.NetworkUsageWiFiTab;
                 default:
                     return Key.ToString();
             }
@@ -333,7 +333,7 @@ namespace Unigram.ViewModels.Settings
     //    public RelayCommand ResetCommand { get; }
     //    private async void ResetExecute()
     //    {
-    //        var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
+    //        var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetStatisticsAlert, Strings.Resources.AppName, Strings.Resources.Reset, Strings.Resources.Cancel);
     //        if (confirm == ContentDialogResult.Primary)
     //        {
     //            _statsService.ResetStats(Type);

@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using Unigram.Services;
 using Unigram.Views;
-using Windows.Foundation.Metadata;
-using Windows.Phone.Devices.Notification;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -16,7 +10,7 @@ namespace Unigram.Common
 {
     public class VisualUtilities
     {
-        public static async void ShakeView(FrameworkElement view, float x = 2, bool vibrate = false)
+        public static void ShakeView(FrameworkElement view, float x = 2)
         {
             // We use first child inside the control (usually a Grid)
             // so we don't have to worry about absolute offset
@@ -36,12 +30,6 @@ namespace Unigram.Common
             animation.InsertKeyFrame(1, 0);
 
             visual.StartAnimation("Offset.X", animation);
-
-            if (vibrate)
-            {
-                var service = TLContainer.Current.Resolve<IVibrationService>();
-                await service.VibrateAsync();
-            }
         }
 
         #region IsVisible

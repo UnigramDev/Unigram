@@ -1,100 +1,98 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Users.UserCreatePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Users"
+    xmlns:local="using:Unigram.Views"
     xmlns:models="using:Unigram.Entities"
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource AddContactTitle}"
             Glyph="&#xE10B;"/>
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <StackPanel>
+            <controls:HeaderedControl>
+                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.FirstName, ViewModel.LastName), Mode=OneWay}" Height="64" Width="64" Margin="12,8" Grid.RowSpan="2"/>
 
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture x:Name="Photo" Source="{x:Bind ConvertPhoto(ViewModel.FirstName, ViewModel.LastName), Mode=OneWay}" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
+                    <StackPanel VerticalAlignment="Center" Grid.Column="1" Grid.RowSpan="2">
+                    </StackPanel>
+                </Grid>
 
-                <StackPanel VerticalAlignment="Center" Grid.Column="1" Grid.RowSpan="2">
-                </StackPanel>
-            </Grid>
-            
-            <TextBox x:Name="FirstName"
-                     Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     MaxLength="{StaticResource UserFirstNameMaxLength}"
-                     PlaceholderText="{CustomResource FirstName}"
-                     Loaded="FirstName_Loaded"
-                     Margin="12,12,12,0"
-                     Grid.Row="1"/>
-            <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     MaxLength="{StaticResource UserLastNameMaxLength}"
-                     PlaceholderText="{CustomResource LastName}"
-                     Margin="12,12,12,24"
-                     Grid.Row="2"/>
+                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
 
-            <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
-                      SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
-                      PlaceholderText="{CustomResource ChooseCountry}"
-                      MinWidth="280"
-                      HorizontalAlignment="Stretch"
-                      Margin="12,12,12,0"
-                      Grid.Row="3">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:Country">
-                        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                            <Run Text="{x:Bind DisplayName}"/>
-                            <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-                        </TextBlock>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+                <TextBox x:Name="FirstName"
+                         Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="{StaticResource UserFirstNameMaxLength}"
+                         PlaceholderText="{CustomResource FirstName}"
+                         Loaded="FirstName_Loaded"
+                         Margin="12,8,12,0"
+                         Grid.Row="1"/>
+                <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="{StaticResource UserLastNameMaxLength}"
+                         PlaceholderText="{CustomResource LastName}"
+                         Margin="12,12,12,8"
+                         Grid.Row="2"/>
+            </controls:HeaderedControl>
 
-            <Grid Margin="12,12,12,4" Grid.Row="4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+            <controls:HeaderedControl>
+                <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
+                          SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                          PlaceholderText="{CustomResource ChooseCountry}"
+                          MinWidth="280"
+                          HorizontalAlignment="Stretch"
+                          Margin="12,8,12,4"
+                          Grid.Row="3">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:Country">
+                            <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+                                <Run Text="{x:Bind DisplayName}"/>
+                                <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
-                <TextBox x:Name="PhoneCode"
-                         Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Margin="0,0,8,0"
-                         Width="30"
-                         InputScope="TelephoneNumber"
-                         PlaceholderText="+"
-                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:PhoneTextBox x:Name="PrimaryInput"
-                                       Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                       PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
-                                       KeyDown="PrimaryInput_KeyDown"
-                                       MinWidth="200"
-                                       InputScope="TelephoneNumber"
-                                       IsTextPredictionEnabled="False"
-                                       Grid.Column="1"/>
+                <Grid Margin="12,8" Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
-            </Grid>
-        </Grid>
+                    <TextBox x:Name="PhoneCode"
+                             Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Margin="0,0,8,0"
+                             Width="30"
+                             InputScope="TelephoneNumber"
+                             PlaceholderText="+"
+                             Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
+                    <controls:PhoneTextBox
+                        x:Name="PrimaryInput"
+                        Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
+                        KeyDown="PrimaryInput_KeyDown"
+                        MinWidth="200"
+                        InputScope="TelephoneNumber"
+                        IsTextPredictionEnabled="False"
+                        Grid.Column="1"/>
+
+                </Grid>
+            </controls:HeaderedControl>
+        </StackPanel>
     </Grid>
-</Page>
+</local:HostedPage>

@@ -1,0 +1,165 @@
+﻿<local:HostedPage
+    x:Class="Unigram.Views.Folders.FolderPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="OnLoaded">
+
+    <local:HostedPage.Header>
+        <controls:ButtonPageHeader
+            Text="{x:Bind ConvertTitle(ViewModel.Filter), Mode=OneWay}"
+            Command="{x:Bind ViewModel.SendCommand}"
+            Glyph="&#xE10B;"/>
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <muxc:ItemsRepeaterScrollHost>
+            <ScrollViewer
+                VerticalScrollBarVisibility="Auto"
+                VerticalScrollMode="Auto">
+                <StackPanel>
+                    <StackPanel MaxWidth="640">
+                        <controls:LottieView
+                            IsLoopingEnabled="False"
+                            Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs"
+                            Width="140"
+                            Height="140"
+                            Margin="0,24,0,0"/>
+                    </StackPanel>
+
+                    <controls:HeaderedControl
+                        Header="{CustomResource FilterNameHint}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox
+                                x:Name="TitleField"
+                                Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                MaxLength="12"
+                                Margin="12,8,0,8"/>
+
+                            <controls:AnimatedBitmapButton
+                                x:Name="EmojiButton"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                UriSource="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
+                                Click="Emoji_Click"
+                                Grid.Column="1">
+                                <FlyoutBase.AttachedFlyout>
+                                    <Flyout>
+                                        <GridView
+                                            x:Name="EmojiList"
+                                            ItemClick="EmojiList_ItemClick"
+                                            ContainerContentChanging="EmojiList_ContainerContentChanging"
+                                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                            ScrollViewer.HorizontalScrollMode="Disabled"
+                                            SelectionMode="Single"
+                                            IsItemClickEnabled="True"
+                                            Margin="0,0,-4,-14"
+                                            Width="258">
+                                            <GridView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <BitmapIcon Width="36" Height="36"/>
+                                                </DataTemplate>
+                                            </GridView.ItemTemplate>
+                                            <GridView.ItemContainerStyle>
+                                                <Style TargetType="GridViewItem">
+                                                    <Setter Property="FontFamily" Value="{StaticResource TelegramThemeFontFamily}" />
+                                                    <Setter Property="FontSize" Value="16"/>
+                                                    <Setter Property="MinWidth" Value="0"/>
+                                                    <Setter Property="MinHeight" Value="0"/>
+                                                </Style>
+                                            </GridView.ItemContainerStyle>
+                                            <GridView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <ItemsWrapGrid
+                                                        ItemWidth="43"
+                                                        ItemHeight="43"
+                                                        MaximumRowsOrColumns="6"
+                                                        Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </GridView.ItemsPanel>
+                                        </GridView>
+                                    </Flyout>
+                                </FlyoutBase.AttachedFlyout>
+                            </controls:AnimatedBitmapButton>
+                        </Grid>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        Header="{CustomResource FilterInclude}"
+                        Footer="{CustomResource FilterIncludeInfo}">
+                        <controls:BadgeButton
+                            Command="{x:Bind ViewModel.AddIncludeCommand}"
+                            Content="{CustomResource FilterAddChats}"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.Include}"
+                            ElementPrepared="OnElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button ContextRequested="Include_ContextRequested" Style="{StaticResource EmptyButtonStyle}">
+                                        <Grid Margin="12,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <controls:ProfilePicture IsHitTestVisible="False" Width="36" Height="36" Margin="0,0,12,0"/>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                TextWrapping="NoWrap"
+                                                TextTrimming="CharacterEllipsis"
+                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Grid.Column="1"/>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        Header="{CustomResource FilterExclude}"
+                        Footer="{CustomResource FilterExcludeInfo}">
+                        <controls:BadgeButton
+                            Command="{x:Bind ViewModel.AddExcludeCommand}"
+                            Content="{CustomResource FilterAddChats}"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.Exclude}"
+                            ElementPrepared="OnElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button ContextRequested="Exclude_ContextRequested" Style="{StaticResource EmptyButtonStyle}">
+                                        <Grid Margin="12,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <controls:ProfilePicture IsHitTestVisible="False" Width="36" Height="36" Margin="0,0,12,0"/>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                TextWrapping="NoWrap"
+                                                TextTrimming="CharacterEllipsis"
+                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                Style="{StaticResource BodyTextBlockStyle}"
+                                                Grid.Column="1"/>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+                </StackPanel>
+            </ScrollViewer>
+        </muxc:ItemsRepeaterScrollHost>
+    </Grid>
+</local:HostedPage>

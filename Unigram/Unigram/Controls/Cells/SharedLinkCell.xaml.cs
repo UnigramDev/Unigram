@@ -1,25 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
-using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Services;
-using Unigram.ViewModels;
-using Unigram.Views;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Unigram.Services.Navigation;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Cells
 {
@@ -66,7 +56,7 @@ namespace Unigram.Controls.Cells
                     title = webPage.SiteName;
                 }
 
-                description = string.IsNullOrEmpty(webPage.Description) ? null : webPage.Description;
+                description = string.IsNullOrEmpty(webPage.Description?.Text) ? null : webPage.Description?.Text;
                 webPageLink = webPage.Url;
                 webPageCached = webPage.InstantViewVersion != 0;
 
@@ -238,6 +228,11 @@ namespace Unigram.Controls.Cells
                 var link = links[i];
                 if (MessageHelper.TryCreateUri(link, out Uri uri))
                 {
+                    if (Photo.Source == null)
+                    {
+                        Photo.Source = PlaceholderHelper.GetNameForChat(uri.Host, 96, uri.GetHashCode());
+                    }
+
                     var textBlock = new RichTextBlock { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, IsTextSelectionEnabled = false };
                     var paragraph = new Paragraph();
                     var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
@@ -260,7 +255,7 @@ namespace Unigram.Controls.Cells
                     textBlock.Blocks.Add(paragraph);
                     textBlock.ContextRequested += Paragraph_ContextRequested;
 
-                    MessageHelper.SetEntity(hyperlink, link);
+                    MessageHelper.SetEntityData(hyperlink, link);
 
                     ToolTipService.SetToolTip(hyperlink, link);
                     Grid.SetRow(textBlock, i);
@@ -273,7 +268,7 @@ namespace Unigram.Controls.Cells
 
         private void Paragraph_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            MessageHelper.Hyperlink_ContextRequested(sender, args);
+            MessageHelper.Hyperlink_ContextRequested(null, sender, args);
         }
 
         private void InstantView_Click(Hyperlink sender, string link)

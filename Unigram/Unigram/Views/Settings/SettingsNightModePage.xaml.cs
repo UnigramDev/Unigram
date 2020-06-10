@@ -1,30 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
-using Windows.Devices.Geolocation;
-using Windows.Devices.Sensors;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsNightModePage : Page
+    public sealed partial class SettingsNightModePage : HostedPage
     {
         public SettingsNightModeViewModel ViewModel => DataContext as SettingsNightModeViewModel;
 
@@ -106,7 +95,7 @@ namespace Unigram.Views.Settings
 
         private string ConvertTimeSpan(TimeSpan time)
         {
-            return BindConvert.Current.ShortTime.Format(new DateTime(1, 1, 1, time.Hours, time.Minutes, 0));
+            return BindConvert.Current.ShortTime.Format(new DateTime(2020, 1, 1) + time);
         }
 
         private string ConvertSunDate(bool enabled, Location location)

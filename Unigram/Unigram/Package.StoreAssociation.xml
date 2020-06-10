@@ -361,6 +361,7 @@
   <ProductReservedInfo>
     <MainPackageIdentityName>38833FF26BA1D.UnigramPreview</MainPackageIdentityName>
     <ReservedNames>
+      <ReservedName>Unigram Experimental</ReservedName>
       <ReservedName>Unigram Preview</ReservedName>
       <ReservedName>Unigram (Alpha)</ReservedName>
       <ReservedName>Unigram (Beta)</ReservedName>

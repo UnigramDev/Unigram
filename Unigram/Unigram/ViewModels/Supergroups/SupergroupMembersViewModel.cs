@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
-using Unigram.Views.Channels;
-using Unigram.Views.Chats;
+using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -28,6 +27,7 @@ namespace Unigram.ViewModels.Supergroups
             MemberRemoveCommand = new RelayCommand<ChatMember>(MemberRemoveExecute);
         }
 
+        public bool IsEmbedded { get; set; }
 
         protected Chat _chat;
         public Chat Chat
@@ -70,7 +70,7 @@ namespace Unigram.ViewModels.Supergroups
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
-                Members = new ChatMemberGroupedCollection(ProtoService, supergroup.SupergroupId);
+                Members = new ChatMemberGroupedCollection(ProtoService, supergroup.SupergroupId, !IsEmbedded);
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
@@ -81,7 +81,7 @@ namespace Unigram.ViewModels.Supergroups
                     basicDelegate.UpdateBasicGroup(chat, item);
                 }
 
-                Members = new ChatMemberGroupedCollection(ProtoService, chat.Id, string.Empty);
+                Members = new ChatMemberGroupedCollection(ProtoService, chat.Id, string.Empty, !IsEmbedded);
             }
 
             return Task.CompletedTask;
@@ -132,7 +132,7 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         public RelayCommand AddCommand { get; }
-        private void AddExecute()
+        private async void AddExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -140,7 +140,25 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(ChatInvitePage), chat.Id);
+            var selected = await SharePopup.PickChatAsync(Strings.Resources.SelectContact);
+            var user = CacheService.GetUser(selected);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.AddToTheGroup, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new AddChatMember(chat.Id, user.Id, CacheService.Options.ForwardedMessageCountMax));
+            if (response is Error error)
+            {
+
+            }
         }
 
         #region Context menu

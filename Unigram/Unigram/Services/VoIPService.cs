@@ -1,20 +1,16 @@
 ﻿using libtgvoip;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Services.ViewService;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Services.Updates;
+using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation.Metadata;
+using Unigram.Views.Popups;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
@@ -56,10 +52,13 @@ namespace Unigram.Services
         {
             _viewService = viewService;
 
-            _mediaPlayer = new MediaPlayer();
-            _mediaPlayer.CommandManager.IsEnabled = false;
-            _mediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Communications;
-            _mediaPlayer.AudioCategory = MediaPlayerAudioCategory.Communications;
+            if (ApiInfo.IsMediaSupported)
+            {
+                _mediaPlayer = new MediaPlayer();
+                _mediaPlayer.CommandManager.IsEnabled = false;
+                _mediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Communications;
+                _mediaPlayer.AudioCategory = MediaPlayerAudioCategory.Communications;
+            }
 
             aggregator.Subscribe(this);
         }
@@ -276,7 +275,8 @@ namespace Unigram.Services
 
         private async Task SendRatingAsync(int callId)
         {
-            var dialog = new CallRatingView();
+            var dialog = new CallRatingPopup();
+
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {

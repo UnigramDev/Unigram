@@ -312,8 +312,6 @@
                     AutomationProperties.Name="{CustomResource VoipEndCall}"
                     ToolTipService.ToolTip="{CustomResource VoipEndCall}"/>
             </Border>
-
-            <controls:GlyphToggleButton x:Name="Routing" x:DeferLoadStrategy="Lazy" Click="Routing_Click" CheckedGlyph="&#xE767;" HorizontalAlignment="Left" Margin="12,0,0,0" Grid.Column="4"/>
         </Grid>
     </Grid>
 </Page>

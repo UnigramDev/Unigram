@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Services;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -21,7 +15,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatUnreadMentionCount>,
         IHandle<UpdateChatReadOutbox>,
         IHandle<UpdateChatReadInbox>,
-        IHandle<UpdateChatDraftMessage>,
+        //IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatDefaultDisableNotification>,
         IHandle<UpdateChatPinnedMessage>,
         IHandle<UpdateChatActionBar>,
@@ -386,7 +380,7 @@ namespace Unigram.ViewModels
             {
                 return message.SchedulingState != null;
             }
-            
+
             return message.SchedulingState == null;
         }
 
@@ -395,13 +389,18 @@ namespace Unigram.ViewModels
             if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
                 var endReached = IsEndReached();
-                BeginOnUIThread(() => InsertMessage(update.Message, endReached));
+                BeginOnUIThread(() => InsertMessage(update.Message));
+
+                if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
+                {
+                    _pushService.PlaySound();
+                }
             }
         }
 
         public void Handle(UpdateDeleteMessages update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id && !update.FromCache)
             {
                 BeginOnUIThread(() =>
                 {
@@ -459,6 +458,12 @@ namespace Unigram.ViewModels
                                 Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
                             }
                         }
+
+                        if (Items.Count - 1 == i && Items[i].Content is MessageHeaderUnread)
+                        {
+                            Items.RemoveAt(i);
+                            i--;
+                        }
                     }
 
                     foreach (var id in update.MessageIds)
@@ -506,6 +511,7 @@ namespace Unigram.ViewModels
                     else
                     {
                         bubble.UpdateMessageContent(message);
+                        Delegate?.ViewVisibleMessages(false);
 
                         if (_chat?.PinnedMessageId == message.Id)
                         {
@@ -591,13 +597,31 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateMessageSendSucceeded update)
         {
-            if (update.Message.ChatId == _chat?.Id)
+            if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
+                //if (Items.Count > 0 && Items[Items.Count - 1].Id == update.OldMessageId)
+                //{
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
+                    message.GeneratedContentUnread = true;
                     ProcessFiles(_chat, new[] { message });
-                }, (bubble, message) => bubble.UpdateMessage(message));
+                }, (bubble, message) =>
+                {
+                    bubble.UpdateMessage(message);
+                    Delegate?.ViewVisibleMessages(false);
+                });
+                //}
+                //else
+                //{
+                //    var endReached = IsEndReached();
+                //    BeginOnUIThread(() => InsertMessage(update.Message, update.OldMessageId));
+                //}
+
+                if (Settings.Notifications.InAppSounds)
+                {
+                    _pushService.PlaySound();
+                }
             }
         }
 
@@ -840,7 +864,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async void InsertMessage(Message message, bool endReached)
+        private async void InsertMessage(Message message, long? oldMessageId = null)
         {
             using (await _insertLock.WaitAsync())
             {
@@ -854,17 +878,28 @@ namespace Unigram.ViewModels
                 if (IsFirstSliceLoaded == true || IsSchedule)
                 {
                     var messageCommon = _messageFactory.Create(this, message);
+                    messageCommon.GeneratedContentUnread = true;
+
                     var result = new List<MessageViewModel> { messageCommon };
                     await ProcessMessagesAsync(_chat, result);
 
                     if (result.Count > 0)
                     {
+                        if (oldMessageId != null)
+                        {
+                            var oldMessage = Items.FirstOrDefault(x => x.Id == oldMessageId);
+                            if (oldMessage != null)
+                            {
+                                Items.Remove(oldMessage);
+                            }
+                        }
+
                         InsertMessageInOrder(Items, result[0]);
                     }
                 }
                 else if (message.IsOutgoing)
                 {
-                    await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom, 4);
+                    await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
                 }
             }
         }

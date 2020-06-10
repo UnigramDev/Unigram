@@ -1,8 +1,8 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Settings.SettingsSessionsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:cells="using:Unigram.Controls.Cells"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -21,19 +21,16 @@
         <CollectionViewSource x:Name="ItemsSource" Source="{x:Bind ViewModel.Items}" IsSourceGrouped="True"/>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource SessionsTitle}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ListView ItemsSource="{x:Bind ItemsSource.View}"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   ContainerContentChanging="OnContainerContentChanging"
-                  ItemClick="ListView_ItemClick"
-                  Grid.Row="1">
+                  ItemClick="ListView_ItemClick">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderContainerStyle>
@@ -138,4 +135,4 @@
             </ListView.ItemsPanel>
         </ListView>
     </Grid>
-</Page>
+</local:HostedPage>

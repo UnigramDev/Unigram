@@ -1,14 +1,12 @@
-﻿using System;
+﻿using RLottie;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO.Compression;
+using System.Xml.Linq;
 using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Services;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -123,7 +121,7 @@ namespace Unigram.Common
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert(firstName, lastName), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert(firstName, lastName), stream);
 
                     bitmap.SetSource(stream);
                 }
@@ -140,7 +138,7 @@ namespace Unigram.Common
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert((object)name), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert((object)name), stream);
 
                     bitmap.SetSource(stream);
                 }
@@ -157,7 +155,7 @@ namespace Unigram.Common
             {
                 try
                 {
-                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[color], InitialNameStringConverter.Convert(title), stream);
+                    PlaceholderImageHelper.GetForCurrentView().DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert(title), stream);
 
                     bitmap.SetSource(stream);
                 }
@@ -298,6 +296,11 @@ namespace Unigram.Common
             return null;
         }
 
+        public static ImageSource GetBitmap(IProtoService protoService, PhotoSize photoSize)
+        {
+            return GetBitmap(protoService, photoSize.Photo, photoSize.Width, photoSize.Height);
+        }
+
         public static ImageSource GetBitmap(IProtoService protoService, File file, int width, int height)
         {
             if (file.Local.IsDownloadingCompleted)
@@ -310,6 +313,132 @@ namespace Unigram.Common
             }
 
             return null;
+        }
+
+        public static ImageSource GetVector(IProtoService protoService, File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var text = GetSvgXml(file);
+
+                var bitmap = new BitmapImage();
+                using (var stream = new InMemoryRandomAccessStream())
+                {
+                    try
+                    {
+                        PlaceholderImageHelper.GetForCurrentView().DrawSvg(text, stream);
+
+                        bitmap.SetSource(stream);
+                    }
+                    catch { }
+                }
+
+                return bitmap;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            {
+                protoService.DownloadFile(file.Id, 1);
+            }
+
+            return null;
+        }
+
+        public static LoadedImageSurface GetVectorSurface(IProtoService protoService, File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var text = GetSvgXml(file);
+
+                var bitmap = default(LoadedImageSurface);
+                using (var stream = new InMemoryRandomAccessStream())
+                {
+                    try
+                    {
+                        var size = PlaceholderImageHelper.GetForCurrentView().DrawSvg(text, stream);
+                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Windows.Foundation.Size(size.Width / 3, size.Height / 3));
+                    }
+                    catch { }
+                }
+
+                return bitmap;
+            }
+            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && protoService != null)
+            {
+                protoService.DownloadFile(file.Id, 1);
+            }
+
+            return null;
+        }
+
+        private static string GetSvgXml(File file)
+        {
+            var styles = new Dictionary<string, string>();
+            var text = string.Empty;
+
+            using (var source = System.IO.File.OpenRead(file.Local.Path))
+            using (var decompress = new GZipStream(source, CompressionMode.Decompress))
+            using (var reader = new System.IO.StreamReader(decompress))
+            {
+                text = reader.ReadToEnd();
+            }
+
+            var document = XDocument.Parse(text);
+            var svg = XNamespace.Get("http://www.w3.org/2000/svg");
+
+            foreach (var styleNode in document.Root.Descendants(svg + "style"))
+            {
+                var currentStyleString = styleNode.Value;
+                int currentClassNameStartIndex = -1;
+                int currentClassContentsStartIndex = -1;
+
+                string currentClassName = null;
+
+                for (int i = 0; i < currentStyleString.Length; i++)
+                {
+                    var c = currentStyleString[i];
+                    if (currentClassNameStartIndex != -1)
+                    {
+                        if (!char.IsLetterOrDigit(c))
+                        {
+                            currentClassName = currentStyleString.Substring(currentClassNameStartIndex, i - currentClassNameStartIndex);
+                            currentClassNameStartIndex = -1;
+                        }
+                    }
+                    else if (currentClassContentsStartIndex != -1)
+                    {
+                        if (c == '}')
+                        {
+                            var classContents = currentStyleString.Substring(currentClassContentsStartIndex, i - currentClassContentsStartIndex);
+                            if (currentClassName != null && classContents != null)
+                            {
+                                styles[currentClassName] = classContents;
+                                currentClassName = null;
+                            }
+                            currentClassContentsStartIndex = -1;
+                        }
+                    }
+
+                    if (currentClassNameStartIndex == -1 && currentClassContentsStartIndex == -1)
+                    {
+                        if (c == '.')
+                        {
+                            currentClassNameStartIndex = i + 1;
+                        }
+                        else if (c == '{')
+                        {
+                            currentClassContentsStartIndex = i + 1;
+                        }
+                    }
+                }
+
+            }
+
+            foreach (var styleName in styles)
+            {
+                text = text.Replace($"class=\"{styleName.Key}\"", $"style=\"{styleName.Value}\"");
+            }
+
+            return text;
         }
 
         public static ImageSource GetBlurred(string path, float amount = 3)
@@ -329,32 +458,44 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static async Task<ImageSource> GetWebpAsync(string path)
+        public static ImageSource GetQr(string data, Color foreground, Color background)
         {
-            if (ApiInfo.CanDecodeWebp)
+            var bitmap = new BitmapImage();
+            using (var stream = new InMemoryRandomAccessStream())
             {
-                return new BitmapImage(new Uri("file:///" + path));
-            }
-            else
-            {
-                var temp = await StorageFile.GetFileFromPathAsync(path);
-                var buffer = await FileIO.ReadBufferAsync(temp);
+                try
+                {
+                    PlaceholderImageHelper.GetForCurrentView().DrawQr(data, foreground, background, stream);
 
-                return WebPImage.DecodeFromBuffer(buffer);
+                    bitmap.SetSource(stream);
+                }
+                catch { }
             }
+
+            return bitmap;
         }
 
-        public static ImageSource GetLottieFrame(string path, int frame, int width, int height)
+        public static ImageSource GetWebPFrame(string path)
         {
-            var animation = RLottie.Animation.LoadFromFile(path);
+            return WebPImage.DecodeFromPath(path);
+        }
+
+        public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
+        {
+            var animation = LottieAnimation.LoadFromFile(path, false, null);
             if (animation == null)
             {
+                if (webp)
+                {
+                    return GetWebPFrame(path);
+                }
+
                 return null;
             }
 
-            var bytes = animation.RenderSync(frame, width, height);
             var bitmap = new WriteableBitmap(width, height);
-            bitmap.PixelBuffer.AsStream().Write(bytes, 0, bytes.Length);
+            animation.RenderSync(bitmap, frame);
+            animation.Dispose();
 
             return bitmap;
         }

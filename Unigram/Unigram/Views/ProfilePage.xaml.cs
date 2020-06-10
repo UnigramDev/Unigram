@@ -1,42 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Template10.Common;
-using Unigram.Controls;
-using Unigram.Controls.Views;
-using Unigram.Views;
+using System.Numerics;
+using System.Reactive.Linq;
+using Telegram.Td.Api;
+using Unigram.Collections;
+using Unigram.Common;
+using Unigram.Controls.Gallery;
+using Unigram.Converters;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
+using Unigram.Views.Supergroups;
+using Unigram.Views.Users;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Common;
-using System.Windows.Input;
-using Telegram.Td.Api;
-using Unigram.Converters;
-using Unigram.Collections;
-using Unigram.ViewModels.Chats;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Text;
-using Unigram.ViewModels.Delegates;
-using System.Reactive.Linq;
-using Unigram.Controls.Gallery;
-using Windows.Foundation.Metadata;
-using Windows.UI.Xaml.Hosting;
-using System.Numerics;
 
 namespace Unigram.Views
 {
-    public sealed partial class ProfilePage : Page, IProfileDelegate
+    public sealed partial class ProfilePage : HostedPage, IProfileDelegate
     {
         public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
 
@@ -44,6 +35,8 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(this);
+            SharedMedia.DataContext = ViewModel.ChatSharedMedia;
+            SharedMedia.ViewModel.Delegate = SharedMedia;
 
             if (ApiInfo.CanAddContextRequestedEvent)
             {
@@ -196,11 +189,17 @@ namespace Unigram.Views
                 DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
             }
 
-            ViewModel.SharedCount[5] = fullInfo.GroupInCommonCount;
-            ViewModel.RaisePropertyChanged(() => ViewModel.SharedCount);
+            //UserCommonChats.Badge = fullInfo.GroupInCommonCount;
+            //UserCommonChats.Visibility = fullInfo.GroupInCommonCount > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-            UserCommonChats.Badge = fullInfo.GroupInCommonCount;
-            UserCommonChats.Visibility = fullInfo.GroupInCommonCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            if (fullInfo.GroupInCommonCount > 0)
+            {
+                SharedMedia.Tab = new UserCommonChatsPage { DataContext = ViewModel.UserCommonChats, IsEmbedded = true };
+            }
+            else
+            {
+                SharedMedia.Tab = null;
+            }
 
             Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
             Edit.Visibility = Visibility.Collapsed;
@@ -257,7 +256,7 @@ namespace Unigram.Views
 
             DescriptionPanel.Visibility = Visibility.Collapsed;
 
-            UserCommonChats.Visibility = Visibility.Collapsed;
+            //UserCommonChats.Visibility = Visibility.Collapsed;
             UserStartSecret.Visibility = Visibility.Collapsed;
 
             MiscPanel.Visibility = Visibility.Collapsed;
@@ -268,11 +267,13 @@ namespace Unigram.Views
             GroupLeave.Visibility = Visibility.Collapsed;
 
             ChannelMembersPanel.Visibility = Visibility.Collapsed;
-            MembersPanel.Visibility = Visibility.Visible;
+            MembersPanel.Visibility = Visibility.Collapsed;
             //Admins.Visibility = Visibility.Collapsed;
             //Banned.Visibility = Visibility.Collapsed;
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
+
+            SharedMedia.Tab = new SupergroupMembersPage { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -318,7 +319,7 @@ namespace Unigram.Views
             GroupInvite.Visibility = !group.IsChannel && group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
 
             ChannelMembersPanel.Visibility = group.IsChannel && (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator) ? Visibility.Visible : Visibility.Collapsed;
-            MembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+            MembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Collapsed;
             //Admins.Visibility = Visibility.Collapsed;
             //Banned.Visibility = Visibility.Collapsed;
             //Restricted.Visibility = Visibility.Collapsed;
@@ -331,10 +332,19 @@ namespace Unigram.Views
 
             // Unused:
             UserPhone.Visibility = Visibility.Collapsed;
-            UserCommonChats.Visibility = Visibility.Collapsed;
+            //UserCommonChats.Visibility = Visibility.Collapsed;
             UserStartSecret.Visibility = Visibility.Collapsed;
             SecretLifetime.Visibility = Visibility.Collapsed;
             SecretHashKey.Visibility = Visibility.Collapsed;
+
+            if (group.IsChannel)
+            {
+                SharedMedia.Tab = null;
+            }
+            else
+            {
+                SharedMedia.Tab = new SupergroupMembersPage { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
+            }
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -368,39 +378,30 @@ namespace Unigram.Views
                 Photo.Source = PlaceholderHelper.GetChat(null, chat, 64);
             }
 
-            for (int i = 0; i < ScrollingHost.Items.Count; i++)
-            {
-                var member = ScrollingHost.Items[i] as ChatMember;
+            //for (int i = 0; i < ScrollingHost.Items.Count; i++)
+            //{
+            //    var member = ScrollingHost.Items[i] as ChatMember;
 
-                var user = ViewModel.ProtoService.GetUser(member.UserId);
-                if (user == null)
-                {
-                    return;
-                }
+            //    var user = ViewModel.ProtoService.GetUser(member.UserId);
+            //    if (user == null)
+            //    {
+            //        return;
+            //    }
 
-                if (user.UpdateFile(file))
-                {
-                    var container = ScrollingHost.ContainerFromIndex(i) as ListViewItem;
-                    if (container == null)
-                    {
-                        return;
-                    }
+            //    if (user.UpdateFile(file))
+            //    {
+            //        var container = ScrollingHost.ContainerFromIndex(i) as ListViewItem;
+            //        if (container == null)
+            //        {
+            //            return;
+            //        }
 
-                    var content = container.ContentTemplateRoot as Grid;
+            //        var content = container.ContentTemplateRoot as Grid;
 
-                    var photo = content.Children[0] as ProfilePicture;
-                    photo.Source = PlaceholderHelper.GetUser(null, user, 36);
-                }
-            }
-        }
-
-        #endregion
-
-        #region Binding
-
-        private Visibility ConvertSharedCount(int a, int b, int c, int d, int e, int f)
-        {
-            return a > 0 || b > 0 || c > 0 || d > 0 || e > 0 || f > 0 ? Visibility.Visible : Visibility.Collapsed;
+            //        var photo = content.Children[0] as ProfilePicture;
+            //        photo.Source = PlaceholderHelper.GetUser(null, user, 36);
+            //    }
+            //}
         }
 
         #endregion
@@ -409,7 +410,7 @@ namespace Unigram.Views
 
         private void About_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            MessageHelper.Hyperlink_ContextRequested(sender, args);
+            MessageHelper.Hyperlink_ContextRequested(null, sender, args);
         }
 
         private void About_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -543,7 +544,7 @@ namespace Unigram.Views
                 {
                     if (supergroup.IsChannel)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
+                        //flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
                     }
                     else
                     {
@@ -588,7 +589,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
             }
 
-            flyout.CreateFlyoutItem(null, Strings.Resources.AddShortcut, new FontIcon { Glyph = Icons.Pin });
+            //flyout.CreateFlyoutItem(null, Strings.Resources.AddShortcut, new FontIcon { Glyph = Icons.Pin });
 
             if (flyout.Items.Count > 0)
             {
@@ -698,79 +699,6 @@ namespace Unigram.Views
 
         #endregion
 
-        #region Recycle
-
-        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
-        {
-            if (args.ItemContainer == null)
-            {
-                args.ItemContainer = new TextListViewItem();
-                args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
-            }
-
-            args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplateSelector.SelectTemplate(args.Item);
-
-            args.IsContainerPrepared = true;
-        }
-
-        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var member = args.Item as ChatMember;
-
-            content.Tag = member;
-
-            var user = ViewModel.ProtoService.GetUser(member.UserId);
-            if (user == null)
-            {
-                return;
-            }
-
-            if (args.Phase == 0)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.Source = null;
-
-                var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
-            }
-            else if (args.Phase == 1)
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = LastSeenConverter.GetLabel(user, false);
-
-                if (member.Status is ChatMemberStatusAdministrator administrator)
-                {
-                    var label = content.Children[3] as TextBlock;
-                    label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
-                }
-                else if (member.Status is ChatMemberStatusCreator creator)
-                {
-                    var label = content.Children[3] as TextBlock;
-                    label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
-                }
-            }
-            else if (args.Phase == 2)
-            {
-                var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
-            }
-
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-            }
-
-            args.Handled = true;
-        }
-
-        #endregion
-
         #region Entities
 
         private void GetEntities(string text)
@@ -834,7 +762,7 @@ namespace Unigram.Views
 
                     if (entity.Type is TextEntityTypeUrl)
                     {
-                        MessageHelper.SetEntity(hyperlink, data);
+                        MessageHelper.SetEntityData(hyperlink, data);
                     }
                 }
                 else if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeMentionName)
@@ -844,7 +772,7 @@ namespace Unigram.Views
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
                         data = textUrl.Url;
-                        MessageHelper.SetEntity(hyperlink, textUrl.Url);
+                        MessageHelper.SetEntityData(hyperlink, textUrl.Url);
                         ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                     }
                     else if (entity.Type is TextEntityTypeMentionName mentionName)
@@ -917,17 +845,76 @@ namespace Unigram.Views
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            return;
+        private double _scrollingHost;
+        private bool _scrollingHostDisabled = false;
 
-            var scrollViewer = ScrollingHost.GetScrollViewer();
-            if (scrollViewer == null)
+        private double _sharedMedia;
+        private bool _sharedMediaDisabled = true;
+
+        private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs args)
+        {
+            var scrollViewer = sender as ScrollViewer;
+            if (_scrollingHostDisabled)
             {
+                if (!args.IsIntermediate)
+                {
+                    scrollViewer.ChangeView(null, scrollViewer.ScrollableHeight, null, true);
+                }
+
+                _scrollingHost = scrollViewer.VerticalOffset;
                 return;
             }
 
-            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
+            if (scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight - 12 && _scrollingHost < scrollViewer.VerticalOffset)
+            {
+                _scrollingHostDisabled = true;
+                scrollViewer.ChangeView(null, scrollViewer.ScrollableHeight, null, true);
+                scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
+                scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+
+                SharedMedia.SetScrollMode(true);
+                _sharedMediaDisabled = false;
+            }
+
+            _scrollingHost = scrollViewer.VerticalOffset;
+        }
+
+        private void SharedMedia_ViewChanged(object sender, ScrollViewerViewChangedEventArgs args)
+        {
+            var scrollViewer2 = SharedMedia.GetScrollViewer();
+            if (_sharedMediaDisabled)
+            {
+                if (!args.IsIntermediate)
+                {
+                    scrollViewer2.ChangeView(null, 12, null, false);
+                }
+
+                _sharedMedia = scrollViewer2.VerticalOffset;
+                return;
+            }
+
+            if (scrollViewer2.VerticalOffset <= 12 && _sharedMedia > scrollViewer2.VerticalOffset)
+            {
+                ScrollingHost.VerticalScrollMode = ScrollMode.Auto;
+                ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight - 48, null, false);
+                _scrollingHostDisabled = false;
+
+                _sharedMediaDisabled = true;
+                SharedMedia.SetScrollMode(false);
+            }
+
+            _sharedMedia = scrollViewer2.VerticalOffset;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            ScrollingHost.ViewChanged += ScrollingHost_ViewChanged;
+            SharedMedia.ViewChanged += SharedMedia_ViewChanged;
+
+            return;
+
+            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ScrollingHost);
             var header = ElementCompositionPreview.GetElementVisual(HeaderPanel);
             var info = ElementCompositionPreview.GetElementVisual(ScrollingInfo);
 
@@ -1007,6 +994,11 @@ namespace Unigram.Views
             action.StartAnimation("Opacity", animOpacity);
             action.StartAnimation("Scale.X", animOpacity);
             action.StartAnimation("Scale.Y", animOpacity);
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SharedMedia.Height = e.NewSize.Height;
         }
     }
 }

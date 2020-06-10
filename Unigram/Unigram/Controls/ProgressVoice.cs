@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Telegram.Td.Api;
 using Windows.Foundation;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
@@ -83,9 +78,9 @@ namespace Unigram.Controls
                 var lineHeight = result[lineIndex] * (double)(imageHeight - 2.0) + 2.0;
 
                 var x1 = (int)(index * (lineWidth + space));
-                var y1 = imageHeight - (int)lineHeight;
+                var y1 = (imageHeight - (int)lineHeight) / 2;
                 var x2 = (int)(index * (lineWidth + space) + lineWidth);
-                var y2 = imageHeight;
+                var y2 = imageHeight - y1;
 
                 geometry1.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x1, y1), new Point(x2, y2)) });
                 geometry2.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x1, y1), new Point(x2, y2)) });

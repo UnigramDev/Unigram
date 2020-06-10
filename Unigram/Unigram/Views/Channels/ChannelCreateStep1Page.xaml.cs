@@ -1,28 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.ViewModels.Channels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Unigram.Views.Popups;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.Storage.Pickers;
-using Unigram.Controls.Views;
-using Unigram.Controls;
-using Unigram.Common;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views.Channels
 {
-    public sealed partial class ChannelCreateStep1Page : Page
+    public sealed partial class ChannelCreateStep1Page : HostedPage
     {
         public ChannelCreateStep1ViewModel ViewModel => DataContext as ChannelCreateStep1ViewModel;
 
@@ -47,14 +36,10 @@ namespace Unigram.Views.Channels
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file)
-                {
-                    CroppingProportions = ImageCroppingProportions.Square,
-                    IsCropEnabled = false
-                };
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary)
+                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }

@@ -1,25 +1,15 @@
 ﻿using System;
-using Template10.Services.NavigationService;
-using Windows.System;
-using Windows.UI.Core;
+using System.Collections.Generic;
+using System.ComponentModel;
+using Unigram.Navigation;
+using Unigram.Services;
+using Unigram.Services.Navigation;
+using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Views;
-using Template10.Common;
-using Windows.UI.Xaml.Media;
-using Unigram.Services;
-using Unigram.Views.Users;
-using System.Diagnostics;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml.Input;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Composition;
-using System.Numerics;
-using System.Collections.Generic;
-using Unigram.Common;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls
 {
@@ -86,7 +76,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnBackRequested(object sender, HandledRoutedEventArgs args)
+        private void OnBackRequested(object sender, HandledEventArgs args)
         {
             //var type = BackStackType.Navigation;
             //if (_backStack.Count > 0)
@@ -236,6 +226,9 @@ namespace Unigram.Controls
 
             MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
 
+            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
+
             if (DetailFrame != null)
             {
                 var parent = VisualTreeHelper.GetParent(DetailFrame) as UIElement;
@@ -283,6 +276,15 @@ namespace Unigram.Controls
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
+            if (e.Content is HostedPage hosted)
+            {
+                DetailHeader = hosted.Header;
+            }
+            else
+            {
+                DetailHeader = null;
+            }
+
             if (AdaptivePanel == null)
             {
                 return;
@@ -513,18 +515,40 @@ namespace Unigram.Controls
 
         #region PageHeader
 
-
-
-        public UIElement PageHeader
+        public UIElement Banner
         {
             get { return (UIElement)GetValue(PageHeaderProperty); }
             set { SetValue(PageHeaderProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for PageHeader.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PageHeaderProperty =
-            DependencyProperty.Register("PageHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+            DependencyProperty.Register("Banner", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
 
+        #endregion
+
+        #region MasterHeader
+
+        public UIElement MasterHeader
+        {
+            get { return (UIElement)GetValue(MasterHeaderProperty); }
+            set { SetValue(MasterHeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty MasterHeaderProperty =
+            DependencyProperty.Register("MasterHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region DetailHeader
+
+        public UIElement DetailHeader
+        {
+            get { return (UIElement)GetValue(DetailHeaderProperty); }
+            set { SetValue(DetailHeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty DetailHeaderProperty =
+            DependencyProperty.Register("DetailHeader", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
 
         #endregion
 

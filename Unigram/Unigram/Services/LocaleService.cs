@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -52,7 +50,7 @@ namespace Unigram.Services
         }
 
         private static ILocaleService _current;
-        public static ILocaleService Current => _current = _current ?? new LocaleService();
+        public static ILocaleService Current => _current ??= new LocaleService();
 
         public async Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh)
         {
@@ -67,13 +65,15 @@ namespace Unigram.Services
             foreach (var protoService in TLContainer.Current.ResolveAll<IProtoService>())
             {
 #if DEBUG
-                //var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
-                //if (test is LanguagePackStrings strings)
-                //{
-                //    saveRemoteLocaleStrings(info.Id, strings);
-                //}
+                await protoService.SendAsync(new SynchronizeLanguagePack(info.Id));
 
-                //return new Error();
+                var test = await protoService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
+                if (test is LanguagePackStrings strings)
+                {
+                    saveRemoteLocaleStrings(info.Id, strings);
+                }
+
+                return new Error();
 #endif
 
                 var response = await protoService.SendAsync(new SetOption("language_pack_id", new OptionValueString(info.Id)));
@@ -104,6 +104,8 @@ namespace Unigram.Services
         {
             string GetName(string value)
             {
+                return value;
+
                 var split = value.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
                 var result = string.Empty;
 
@@ -125,6 +127,19 @@ namespace Unigram.Services
                 {
                     if (difference.Strings[a].Value is LanguagePackStringValueOrdinary single)
                     {
+                        if (difference.Strings[a].Key == difference.Strings[a].Key.ToLower())
+                        {
+                            continue;
+                        }
+                        //else if (difference.Strings[a].Key == difference.Strings[a].Key.ToUpper())
+                        //{
+                        //    continue;
+                        //}
+                        else if (difference.Strings[a].Key.StartsWith('_'))
+                        {
+                            continue;
+                        }
+
                         if (already.Contains(GetName(difference.Strings[a].Key).ToLower()))
                         {
                             continue;
@@ -316,7 +331,7 @@ namespace Unigram.Services
                 return values[key] = GetValue(ordinary.Value);
             }
 
-#if DEBUG
+#if zDEBUG
             var text = _loader.GetString(key);
             if (text.Length > 0)
             {
@@ -366,7 +381,7 @@ namespace Unigram.Services
                 }
             }
 
-#if DEBUG
+#if zDEBUG
             var text = _loader.GetString(selector);
             if (text.Length > 0)
             {
@@ -396,7 +411,7 @@ namespace Unigram.Services
             });
         }
 
-#region Handle
+        #region Handle
 
         public void Handle(UpdateLanguagePackStrings update)
         {
@@ -424,7 +439,7 @@ namespace Unigram.Services
             }
         }
 
-#endregion
+        #endregion
 
         private Dictionary<string, string> GetLanguagePack(string key)
         {

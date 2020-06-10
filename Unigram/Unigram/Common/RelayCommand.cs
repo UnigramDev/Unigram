@@ -17,10 +17,10 @@
 // ****************************************************************************
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Windows.Input;
-using System.Reflection;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Windows.Input;
 
 namespace Unigram.Common
 {

@@ -9,14 +9,16 @@
     xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:microsoft="using:Microsoft.UI.Xaml.Controls">
 
+    <Style TargetType="local:PhoneTextBox" BasedOn="{StaticResource DefaultTextBoxStyle}" />
+    <Style TargetType="local:FormattedTextBox" BasedOn="{StaticResource DefaultRichEditBoxStyle}" />
+    
     <Style TargetType="local:NavigationView">
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationView">
                     <Grid>
-                        <Grid Width="{StaticResource PaneToggleButtonSize}"
-                              Visibility="{TemplateBinding PaneToggleButtonVisibility}"
+                        <Grid Visibility="{TemplateBinding PaneToggleButtonVisibility}"
                               Margin="0,0,0,0"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top"
@@ -29,7 +31,7 @@
                             <local:GlyphButton x:Name="TogglePaneButton"
                                                Grid.Row="1"
                                                Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                               Width="{ThemeResource AppBarThemeCompactHeight}"
+                                               Width="40"
                                                Height="{ThemeResource AppBarThemeCompactHeight}"
                                                FontSize="{StaticResource GlyphButtonFontSize}"
                                                AutomationProperties.LandmarkType="Navigation"
@@ -196,111 +198,201 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:LottieView">
-                    <xaml:CanvasAnimatedControl x:Name="Canvas"/>
+                    <Grid>
+                        <Image x:Name="Thumbnail" Source="{TemplateBinding Thumbnail}"/>
+                        <xaml:CanvasControl x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="local:QRCodeView">
+    <Style TargetType="local:AnimationView">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:QRCodeView">
-                    <xaml:CanvasControl x:Name="Canvas"/>
+                <ControlTemplate TargetType="local:AnimationView">
+                    <Grid>
+                        <Image x:Name="Thumbnail" Source="{TemplateBinding Thumbnail}"/>
+                        <xaml:CanvasControl x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="local:HeaderedControl">
-        <!--<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-        <Setter Property="VerticalContentAlignment" Value="Stretch"/>-->
-        <Setter Property="Padding" Value="0,16,0,8"/>
+    <Style TargetType="local:QrCode">
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:HeaderedControl">
-                    <!--<Grid x:Name="LayoutRoot" Padding="{TemplateBinding Padding}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup>
-                                <VisualState x:Name="NarrowState"/>
-                                <VisualState x:Name="WideState">
-                                    <VisualState.Setters>
-                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}"/>
-                                        <Setter Target="ContentPanel.Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-                                        <Setter Target="ContentPanel.CornerRadius" Value="8"/>
-                                        <Setter Target="Presenter.Margin" Value="0,0,0,-1"/>
-                                        <Setter Target="ContentRoot.MaxWidth" Value="640"/>
-                                        <Setter Target="HeaderLabel.Margin" Value="12,0,12,8"/>
-                                        <Setter Target="FooterLabel.Margin" Value="12,8,12,0"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="ContentRoot">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                x:Name="HeaderLabel"
-                                Text="{TemplateBinding Header}"
-                                Margin="12,0,12,0"
-                                Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                                Grid.Column="1"/>
+                <ControlTemplate TargetType="local:QrCode">
+                    <Image x:Name="Canvas"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-                            <Border x:Name="ContentPanel" Grid.Column="1" Grid.Row="1">
-                                <ItemsPresenter x:Name="Presenter"/>
-                            </Border>
+    <Style TargetType="local:TableListView">
+        <Setter Property="ItemsPanelCornerRadius" Value="8" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="TabNavigation" Value="Once" />
+        <Setter Property="IsSwipeEnabled" Value="True" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+        <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
+        <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="True" />
+        <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
+        <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="ItemContainerTransitions">
+            <Setter.Value>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                    <ContentThemeTransition />
+                    <ReorderThemeTransition />
+                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                </TransitionCollection>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        VerticalAlignment="Top"
+                        Margin="12,0"
+                        MaxWidth="640"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListView">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer x:Name="ScrollViewer"
+                            TabNavigation="{TemplateBinding TabNavigation}"
+                            HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                            VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                            IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                            IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                            IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                            ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                            BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                            AutomationProperties.AccessibilityView="Raw">
+                            <ItemsPresenter Header="{TemplateBinding Header}"
+                                HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                Footer="{TemplateBinding Footer}"
+                                FooterTemplate="{TemplateBinding FooterTemplate}"
+                                FooterTransitions="{TemplateBinding FooterTransitions}"
+                                Padding="{TemplateBinding Padding}" />
+                        </ScrollViewer>
+                    </Border>
 
-                            <TextBlock
-                                x:Name="FooterLabel"
-                                common:TextBlockHelper.Markdown="{TemplateBinding Footer}"
-                                Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                                Margin="12,8,12,0"
-                                Grid.Column="1"
-                                Grid.Row="2"/>
-                        </Grid>
-                    </Grid>-->
-                    <Grid x:Name="LayoutRoot" Padding="{TemplateBinding Padding}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup>
-                                <VisualState x:Name="NarrowState"/>
-                                <VisualState x:Name="WideState">
-                                    <VisualState.Setters>
-                                        <Setter Target="ContentPanel.CornerRadius" Value="8"/>
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="ContentRoot" MaxWidth="640">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                x:Name="HeaderLabel"
-                                Text="{TemplateBinding Header}"
-                                Margin="12,0,12,8"
-                                Style="{StaticResource SettingsGroupTextBlockStyle}"
-                                Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                                Grid.Column="1"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-                            <Border x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="1" Grid.Row="1">
-                                <ItemsPresenter x:Name="Presenter" Margin="0,0,0,-1"/>
-                            </Border>
+    <Style TargetType="local:TopNavView">
+        <Setter Property="Height" Value="{StaticResource NavigationViewTopPaneHeight}"/>
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="TabNavigation" Value="Once" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto" />
+        <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="True" />
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
+        <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="False" />
+        <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
+        <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <!--<Setter Property="ItemContainerTransitions">
+            <Setter.Value>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                    <ContentThemeTransition />
+                    <ReorderThemeTransition />
+                    <EntranceThemeTransition IsStaggeringEnabled="False" />
+                </TransitionCollection>
+            </Setter.Value>
+        </Setter>-->
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:TopNavView">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer
+                            x:Name="ScrollViewer"
+                            TabNavigation="{TemplateBinding TabNavigation}"
+                            HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                            VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                            IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                            IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                            IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                            ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                            BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                            AutomationProperties.AccessibilityView="Raw">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-                            <TextBlock
-                                x:Name="FooterLabel"
-                                common:TextBlockHelper.Markdown="{TemplateBinding Footer}"
-                                Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                                Margin="12,8,12,0"
-                                Grid.Column="1"
-                                Grid.Row="2"/>
+    <Style TargetType="local:TopNavViewItem">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:TopNavViewItem">
+                    <Grid Background="Transparent">
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Grid.Column="1"
+                            Margin="12,0"
+                            TextWrapping="NoWrap"
+                            Foreground="{TemplateBinding Foreground}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Content="{TemplateBinding Content}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                            VerticalAlignment="Center"
+                            AutomationProperties.AccessibilityView="Raw"/>
+                        <Grid
+                            x:Name="SelectionIndicatorGrid"
+                            Margin="12,0,12,4"
+                            VerticalAlignment="Bottom">
+                            <Rectangle
+                                x:Name="SelectionIndicator"
+                                Height="2"
+                                Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}"
+                                Opacity="0"
+                                RadiusX="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -308,7 +400,157 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:TLContentDialog">
+    <Style TargetType="local:HeaderedControl">
+        <Setter Property="Radius" Value="8"/>
+        <Setter Property="Padding" Value="0,16,0,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:HeaderedControl">
+                    <Grid x:Name="ContentRoot" Padding="{TemplateBinding Padding}" Margin="12,0" MaxWidth="640">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            x:Name="HeaderLabel"
+                            Text="{TemplateBinding Header}"
+                            Margin="12,0,12,6"
+                            Style="{StaticResource SettingsGroupTextBlockStyle}"
+                            Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                            Grid.Column="1"/>
+
+                        <Border x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="{TemplateBinding Radius}" Grid.Column="1" Grid.Row="1">
+                            <ItemsPresenter x:Name="Presenter" Margin="0,0,0,-1"/>
+                        </Border>
+
+                        <TextBlock
+                            x:Name="FooterLabel"
+                            common:TextBlockHelper.Markdown="{TemplateBinding Footer}"
+                            Style="{StaticResource InfoCaptionTextBlockStyle}"
+                            Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                            Margin="12,8,12,8"
+                            Grid.Column="1"
+                            Grid.Row="2"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:PencilCanvas">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PencilCanvas">
+                    <xaml:CanvasControl
+                        x:Name="Canvas"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ColorPicker">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ColorPicker">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Spectrum">
+                            <Canvas>
+                                <Canvas.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                        <GradientStop Color="#FFFFFFFF" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Canvas.Background>
+
+                                <Border x:Name="SpectrumThumb" Width="20" Height="20" CornerRadius="10" BorderThickness="2" BorderBrush="Black">
+                                    <Border CornerRadius="8" BorderThickness="2" BorderBrush="White"/>
+                                </Border>
+                            </Canvas>
+                        </Border>
+
+                        <Slider
+                            x:Name="ValueSlider"
+                            IsDirectionReversed="True"
+                            IsThumbToolTipEnabled="False"
+                            Margin="12"
+                            Grid.Row="1"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ColorSlider">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ColorSlider">
+                    <Grid x:Name="LayoutRoot" Height="20">
+                        <Grid
+                            x:Name="Container"
+                            Background="Transparent"
+                            VerticalAlignment="Top"
+                            Height="20">
+                            
+                            <Border
+                                VerticalAlignment="Bottom"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10"
+                                Height="20"/>
+                            <Border
+                                VerticalAlignment="Bottom"
+                                HorizontalAlignment="Left">
+                                <Border 
+                                    Margin="-24,-14"
+                                    Width="48"
+                                    Height="48">
+                                    <Border
+                                        x:Name="Thumb"
+                                        Background="{ThemeResource SystemControlBackgroundChromeWhiteBrush}"
+                                        BorderBrush="{ThemeResource SystemControlForegroundChromeHighBrush}"
+                                        BorderThickness="2"
+                                        CornerRadius="24">
+                                        <Ellipse
+                                            x:Name="ThumbDrop"
+                                            Stroke="White"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            Margin="1.5,1.5,0,0"
+                                            Width="40"
+                                            Height="40"/>
+                                    </Border>
+                                </Border>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ConfettiView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ConfettiView">
+                    <xaml:CanvasAnimatedControl
+                        x:Name="Canvas"
+                        Paused="True"
+                        IsHitTestVisible="False"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ContentPopup">
         <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{ThemeResource ContentDialogBackground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ContentDialogBorderBrush}" />
@@ -317,8 +559,8 @@
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MaxHeight" Value="{ThemeResource ContentDialogMaxHeight}" />
         <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />
-        <Setter Property="MaxWidth" Value="{ThemeResource ContentDialogMaxWidth}" />
-        <Setter Property="MinWidth" Value="{ThemeResource ContentDialogMinWidth}" />
+        <Setter Property="MaxWidth" Value="320" />
+        <Setter Property="MinWidth" Value="320" />
         <Setter Property="TitleTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -331,7 +573,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:TLContentDialog">
+                <ControlTemplate TargetType="local:ContentPopup">
                     <Border x:Name="Container">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ButtonsVisibilityStates">
@@ -434,8 +676,9 @@
                                     MaxWidth="{TemplateBinding MaxWidth}"
                                     MaxHeight="{TemplateBinding MaxHeight}"
                                     MinWidth="{TemplateBinding MinWidth}"
-                                    MinHeight="{TemplateBinding MinHeight}">
-                                <Grid x:Name="DialogSpace" VerticalAlignment="Stretch" Padding="0,0,0,12">
+                                    MinHeight="{TemplateBinding MinHeight}"
+                                    CornerRadius="8">
+                                <Grid x:Name="DialogSpace" VerticalAlignment="Stretch">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
@@ -452,7 +695,6 @@
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
                                             <ContentControl x:Name="Title"
-                                                            Margin="{ThemeResource ContentDialogTitleMargin}"
                                                             Content="{TemplateBinding Title}"
                                                             ContentTemplate="{TemplateBinding TitleTemplate}"
                                                             FontSize="20"
@@ -492,7 +734,8 @@
                                           Margin="12,0"
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Bottom"
-                                        XYFocusKeyboardNavigation="Enabled">
+                                          XYFocusKeyboardNavigation="Enabled"
+                                          Padding="0,8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="0.5*"/>
@@ -500,6 +743,7 @@
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <Button x:Name="PrimaryButton"
+                                                contract7Present:CornerRadius="2,2,2,4"
                                                 Content="{TemplateBinding PrimaryButtonText}"
                                                 IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
                                                 Style="{TemplateBinding PrimaryButtonStyle}"
@@ -509,6 +753,7 @@
                                                 Margin="0,0,2,0"
                                                 Grid.Column="0" />
                                         <Button x:Name="SecondaryButton"
+                                                contract7Present:CornerRadius="2,2,4,2"
                                                 Content="{TemplateBinding SecondaryButtonText}"
                                                 IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
                                                 Style="{TemplateBinding SecondaryButtonStyle}"
@@ -1607,7 +1852,7 @@
                 <ControlTemplate TargetType="local:PeriodTimer">
                     <Grid Background="{TemplateBinding Background}" CornerRadius="18">
                         <local:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="0"/>
-                        <TextBlock x:Name="TimeoutLabel" Text="15" Foreground="{ThemeResource MessageHeaderBorderBrush}" FontWeight="SemiBold" TextLineBounds="TrimToBaseline,TrimToCapHeight" TextAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TimeoutLabel" Text="15" Foreground="{ThemeResource MessageHeaderBorderBrush}" FontWeight="SemiBold" TextLineBounds="Tight" TextAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -1657,21 +1902,21 @@
     <Style TargetType="local:ImageCropper">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-        <Setter Property="Background" Value="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}" />
+        <Setter Property="Background" Value="Black" />
         <Setter Property="Padding" Value="48" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ImageCropper">
-                    <Grid x:Name="LayoutRoot" Margin="{TemplateBinding Padding}">
+                    <Grid Padding="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualStateGroup.Transitions>
-                                    <VisualTransition GeneratedDuration="0:0:0.3" To="Disabled">
+                                    <VisualTransition GeneratedDuration="0:0:0.150" From="Disabled">
                                         <VisualTransition.GeneratedEasingFunction>
                                             <CubicEase EasingMode="EaseInOut"/>
                                         </VisualTransition.GeneratedEasingFunction>
                                     </VisualTransition>
-                                    <VisualTransition GeneratedDuration="0:0:0.3" From="Disabled" >
+                                    <VisualTransition GeneratedDuration="0:0:0.150" From="Normal" To="Disabled">
                                         <VisualTransition.GeneratedEasingFunction>
                                             <CubicEase EasingMode="EaseInOut"/>
                                         </VisualTransition.GeneratedEasingFunction>
@@ -1685,7 +1930,7 @@
                                         <Setter Target="Clip.IsHitTestVisible" Value="False"/>
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <DoubleAnimation From="0.6" To="1" Storyboard.TargetName="Clip" Storyboard.TargetProperty="Opacity"/>
+                                        <DoubleAnimation From="0.6" To="0" Storyboard.TargetName="Clip" Storyboard.TargetProperty="Opacity"/>
                                         <DoubleAnimation From="1.0" To="0" Storyboard.TargetName="ThumbsContainer" Storyboard.TargetProperty="Opacity"/>
                                     </Storyboard>
                                 </VisualState>
@@ -1694,15 +1939,19 @@
 
                         <Grid.Resources>
                             <Style x:Key="CircularThumbStyle" TargetType="local:ImageCropperThumb">
-                                <Setter Property="Background" Value="White" />
-                                <Setter Property="BorderBrush" Value="Black" />
+                                <Setter Property="Width" Value="20" />
+                                <Setter Property="Height" Value="20" />
+                                <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundChromeWhiteBrush}" />
+                                <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundChromeHighBrush}" />
                                 <Setter Property="BorderThickness" Value="1" />
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="local:ImageCropperThumb">
-                                            <Grid Background="Transparent">
-                                                <Ellipse Width="20" Height="20" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="{TemplateBinding BorderThickness}" />
-                                            </Grid>
+                                            <Border
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="10" />
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
@@ -1727,27 +1976,23 @@
                             </Style>
                         </Grid.Resources>
 
-                        <Canvas>
+                        <Grid x:Name="LayoutRoot" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Grid x:Name="ImageThumb" RenderTransformOrigin="0.5,0.5" ManipulationMode="Rotate,Scale,TranslateX,TranslateY">
                                 <Grid.RenderTransform>
                                     <CompositeTransform x:Name="ImageThumbTransform" />
                                 </Grid.RenderTransform>
-                                <Image x:Name="ImageViewer" Stretch="None"/>
-                                <ContentPresenter HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <Image x:Name="ImageViewer" Stretch="Uniform"/>
+                                <ContentPresenter x:Name="ImagePresenter"
+                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
                             </Grid>
 
-                            <Path x:Name="Clip" Opacity="0.6" Fill="{TemplateBinding Background}" Stroke="Transparent" StrokeThickness="1">
-                                <Path.Data>
-                                    <GeometryGroup>
-                                        <RectangleGeometry x:Name="OuterClip"/>
-                                        <RectangleGeometry x:Name="InnerClip"/>
-                                    </GeometryGroup>
-                                </Path.Data>
-                            </Path>
+                            <Path x:Name="Clip" Opacity="0.6" Fill="{TemplateBinding Background}" Stroke="Transparent" StrokeThickness="1"/>
 
                             <Grid x:Name="ThumbsContainer">
-                                <Rectangle Stroke="White" StrokeThickness="2" Margin="-2" />
+                                <Rectangle x:Name="MiddleThumb" Fill="Transparent" />
 
                                 <local:ImageCropperThumb x:Name="LeftThumb" Style="{StaticResource VerticalSideThumbStyle}" Margin="-11,-11,-10,-11" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
                                 <local:ImageCropperThumb x:Name="TopThumb" Style="{StaticResource HorizontalSideThumbStyle}" Margin="-11,-11,-11,-10" HorizontalAlignment="Stretch" VerticalAlignment="Top" />
@@ -1759,7 +2004,7 @@
                                 <local:ImageCropperThumb x:Name="BottomLeftThumb" Style="{StaticResource CircularThumbStyle}" Margin="-11,-10,-10,-11" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
                                 <local:ImageCropperThumb x:Name="BottomRightThumb" Style="{StaticResource CircularThumbStyle}" Margin="-10,-10,-11,-11" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
                             </Grid>
-                        </Canvas>
+                        </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -1828,7 +2073,7 @@
                                     Margin="0,0,0,24"
                                     Grid.Row="4">
                                     
-                                    <Button
+                                    <local:BadgeButton
                                         Content="{TemplateBinding ButtonText}"
                                         Command="{TemplateBinding ButtonCommand}"
                                         Visibility="{TemplateBinding ButtonVisibility}"
@@ -1881,10 +2126,15 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -1932,108 +2182,151 @@
     </Style>
     
     <Style TargetType="local:ButtonPageHeader">
-        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
+        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ButtonPageHeader">
-                    <Border Background="{TemplateBinding Background}">
-                        <contract7Present:Border.BackgroundTransition>
+                    <Grid Background="{TemplateBinding Background}">
+                        <contract7Present:Grid.BackgroundTransition>
                             <BrushTransition/>
-                        </contract7Present:Border.BackgroundTransition>
-                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
-                            <local:GlyphButton Glyph="{TemplateBinding Glyph}"
-                                               Command="{TemplateBinding Command}"
-                                               CommandParameter="{TemplateBinding CommandParameter}"
-                                               Visibility="{TemplateBinding CommandVisibility}"
-                                               Style="{StaticResource HeaderGlyphButtonStyle}"
-                                               AutomationProperties.Name="{TemplateBinding CommandToolTip}"
-                                               ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
-                                               Grid.Column="2"/>
-                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
-                        </Grid>
+                        </contract7Present:Grid.BackgroundTransition>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="3"/>
 
-                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
-                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
-                             </Button>
-                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                             </Grid>-->
-                    </Border>
+                        <local:BackButton
+                            Width="40"
+                            Margin="0,0,-12,0"
+                            Visibility="{TemplateBinding BackVisibility}"/>
+                        <TextBlock
+                            Text="{TemplateBinding Text}"
+                            Foreground="{TemplateBinding Foreground}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            VerticalAlignment="Center"
+                            Margin="12,0"
+                            Grid.Column="1"/>
+                        <local:GlyphButton
+                            Glyph="{TemplateBinding Glyph}"
+                            Command="{TemplateBinding Command}"
+                            CommandParameter="{TemplateBinding CommandParameter}"
+                            Visibility="{TemplateBinding CommandVisibility}"
+                            Style="{StaticResource HeaderGlyphButtonStyle}"
+                            AutomationProperties.Name="{TemplateBinding CommandToolTip}"
+                            ToolTipService.ToolTip="{TemplateBinding CommandToolTip}"
+                            Grid.Column="2"/>
+                        <microsoft:ProgressBar
+                            IsIndeterminate="{TemplateBinding IsLoading}"
+                            Background="Transparent"
+                            VerticalAlignment="Bottom"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="3"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style TargetType="local:ContentPageHeader">
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
+        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
-                    <Border Background="{TemplateBinding Background}">
-                        <contract7Present:Border.BackgroundTransition>
-                            <BrushTransition/>
-                        </contract7Present:Border.BackgroundTransition>
-                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-                            <ContentPresenter Foreground="{TemplateBinding Foreground}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1"/>
-                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                        </Grid>
+                    <Grid Background="{TemplateBinding Background}">
+                        <contract7Present:Grid.BackgroundTransition>
+                            <contract7Present:BrushTransition/>
+                        </contract7Present:Grid.BackgroundTransition>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="2"/>
 
-                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
-                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
-                             </Button>
-                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                             </Grid>-->
-                    </Border>
+                        <ContentPresenter
+                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Grid.Column="1"/>
+                        <local:BackButton
+                            Width="40"
+                            Margin="0,0,-12,0"
+                            Visibility="{TemplateBinding BackVisibility}"/>
+                        <microsoft:ProgressBar
+                            IsIndeterminate="{TemplateBinding IsLoading}"
+                            Background="Transparent"
+                            VerticalAlignment="Bottom"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="2"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style TargetType="local:PageHeader">
-        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource PageHeaderBorderBrush}"/>
         <Setter Property="Foreground" Value="{ThemeResource PageHeaderForegroundBrush}"/>
         <Setter Property="Background" Value="{ThemeResource PageHeaderBackgroundBrush}"/>
+        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageHeader">
-                    <Border Background="{TemplateBinding Background}">
-                        <contract7Present:Border.BackgroundTransition>
-                            <BrushTransition/>
-                        </contract7Present:Border.BackgroundTransition>
-                        <Grid Height="{ThemeResource AppBarThemeCompactHeight}" Margin="{TemplateBinding Padding}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <local:GlyphButton x:Name="BackButton" Glyph="&#xE72B;" Height="{ThemeResource AppBarThemeCompactHeight}" FontSize="15" Width="40" Margin="0,0,-12,0" Visibility="{TemplateBinding BackVisibility}" AutomationProperties.Name="{CustomResource AccDescrGoBack}" ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"/>
-                            <TextBlock Text="{TemplateBinding Text}" Foreground="{TemplateBinding Foreground}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0" Grid.Column="1"/>
-                            <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                        </Grid>
+                    <Grid Background="{TemplateBinding Background}">
+                        <contract7Present:Grid.BackgroundTransition>
+                            <contract7Present:BrushTransition/>
+                        </contract7Present:Grid.BackgroundTransition>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="2"/>
 
-                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
-                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                             <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
-                             </Button>
-                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                             </Grid>-->
-                    </Border>
+                        <local:BackButton
+                            Width="40"
+                            Margin="0,0,-12,0"
+                            Visibility="{TemplateBinding BackVisibility}"/>
+                        <TextBlock
+                            Text="{TemplateBinding Text}"
+                            Foreground="{TemplateBinding Foreground}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            VerticalAlignment="Center"
+                            Margin="12,0"
+                            Grid.Column="1"/>
+                        <microsoft:ProgressBar
+                            IsIndeterminate="{TemplateBinding IsLoading}"
+                            Background="Transparent"
+                            VerticalAlignment="Bottom"
+                            IsHitTestVisible="False"
+                            Grid.ColumnSpan="2"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -2322,16 +2615,15 @@
                                         Content="{TemplateBinding PlaceholderText}"
                                         IsHitTestVisible="False" 
                                         VerticalAlignment="Center"/>
-                        <ContentControl x:Name="InlinePlaceholderTextContentPresenter"
-                                        Grid.Row="1"
-                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                        Margin="{TemplateBinding BorderThickness}"
-                                        Padding="{TemplateBinding Padding}"
-                                        IsTabStop="False"
-                                        Grid.ColumnSpan="2"
-                                        Content="{TemplateBinding InlinePlaceholderText}"
-                                        IsHitTestVisible="False" 
-                                        VerticalAlignment="Center"/>
+                        <TextBlock
+                            x:Name="InlinePlaceholderTextContentPresenter"
+                            Grid.Row="1"
+                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                            Margin="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            Grid.ColumnSpan="2"
+                            IsHitTestVisible="False" 
+                            VerticalAlignment="Center"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -2791,10 +3083,15 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="chats:ChatSendButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -2876,10 +3173,15 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="chats:ChatRecordButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal"/>
@@ -2995,23 +3297,26 @@
                                 Visibility="Collapsed"/>
                             <TextBlock
                                 x:Name="UncheckedContentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding UncheckedGlyph}"/>
+                                Text="{TemplateBinding UncheckedGlyph}"
+                                Width="20"
+                                Height="20"
+                                Margin="10"/>
                         </Grid>
 
                         <TextBlock
-                                x:Name="LockedContentPresenter"
+                            x:Name="LockedContentPresenter"
                             Foreground="White"
-                                FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Text="&#xE919;"
-                                Visibility="Collapsed"/>
+                            FontFamily="{StaticResource TelegramThemeFontFamily}"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Text="&#xE919;"
+                            Visibility="Collapsed"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -3036,10 +3341,14 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphToggleButton">
-                    <Grid Background="{TemplateBinding Background}">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal"/>
@@ -3155,10 +3464,15 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphHyperlinkButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3221,10 +3535,15 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphRadioButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3300,10 +3619,15 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GlyphButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3350,6 +3674,229 @@
         </Setter>
     </Style>
 
+    <Style TargetType="chats:ChatStickerButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="Glyph" Value="&#xE700;" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Width" Value="48" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="chats:ChatStickerButton">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TelegramBackgroundAccentBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TelegramBackgroundAccentBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TelegramBackgroundAccentBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TelegramBackgroundAccentBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TelegramBackgroundAccentBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TelegramBackgroundAccentBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedDisabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="RootGrid">
+                            <TextBlock
+                                x:Name="ContentPresenter1"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"/>
+                            <TextBlock
+                                x:Name="ContentPresenter2"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"/>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:AnimatedBitmapButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Width" Value="48" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:AnimatedBitmapButton">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter1">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter2">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="RootGrid">
+                            <BitmapIcon
+                                x:Name="ContentPresenter1"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Width="36"
+                                Height="36"/>
+                            <BitmapIcon
+                                x:Name="ContentPresenter2"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Width="36"
+                                Height="36"/>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:AnimatedGlyphButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -3368,10 +3915,14 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimatedGlyphButton">
-                    <Grid Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3452,10 +4003,14 @@
         <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimatedGlyphToggleButton">
-                    <Grid Background="{TemplateBinding Background}">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />

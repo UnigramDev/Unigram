@@ -1,6 +1,4 @@
-﻿using LinqToVisualTree;
-using System;
-using System.Linq;
+﻿using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -8,7 +6,6 @@ using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -18,7 +15,6 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Chats
 {
@@ -348,30 +344,6 @@ namespace Unigram.Controls.Chats
         public void RequestIgnored(InteractionTracker sender, InteractionTrackerRequestIgnoredArgs args)
         {
 
-        }
-
-
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            if (SettingsService.Current.IsAdaptiveWideEnabled && availableSize.Width >= 880)
-            {
-                return base.MeasureOverride(new Size(Math.Min(availableSize.Width, 542 /* 432 + 50 + 12 */), availableSize.Height));
-            }
-
-            return base.MeasureOverride(availableSize);
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (SettingsService.Current.IsAdaptiveWideEnabled && finalSize.Width >= 880)
-            {
-                var size = new Size(Math.Min(finalSize.Width, 542 /* 432 + 50 + 12 */), finalSize.Height);
-                _presenter.Arrange(new Rect(0, 0, size.Width, size.Height));
-
-                return finalSize;
-            }
-
-            return base.ArrangeOverride(finalSize);
         }
     }
 

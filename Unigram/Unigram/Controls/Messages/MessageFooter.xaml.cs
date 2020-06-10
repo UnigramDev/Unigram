@@ -1,25 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Globalization.DateTimeFormatting;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages
 {
@@ -90,7 +80,7 @@ namespace Unigram.Controls.Messages
             var number = string.Empty;
             if (message.Views > 0)
             {
-                number = BindConvert.Current.ShortNumber(Math.Max(message.Views, 1));
+                number = BindConvert.ShortNumber(Math.Max(message.Views, 1));
                 number += "   ";
             }
 

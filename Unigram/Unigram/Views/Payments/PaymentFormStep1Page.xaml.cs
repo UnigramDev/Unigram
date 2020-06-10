@@ -1,26 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
+﻿using Unigram.Common;
 using Unigram.ViewModels.Payments;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Hosting;
-using Unigram.Common;
 
 namespace Unigram.Views.Payments
 {
-    public sealed partial class PaymentFormStep1Page : Page
+    public sealed partial class PaymentFormStep1Page : HostedPage
     {
         public PaymentFormStep1ViewModel ViewModel => DataContext as PaymentFormStep1ViewModel;
 

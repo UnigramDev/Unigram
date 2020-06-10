@@ -1,35 +1,21 @@
-﻿using System;
+﻿using LinqToVisualTree;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Controls;
-using Unigram.Controls.Views;
-using Unigram.Strings;
-using Unigram.Themes;
-using Unigram.ViewModels.Channels;
-using Unigram.Views.Users;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls.Messages;
+using Unigram.ViewModels;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using LinqToVisualTree;
-using Unigram.Common;
-using Unigram.ViewModels.Supergroups;
-using System.Diagnostics;
-using Telegram.Td.Api;
-using Unigram.ViewModels;
-using Unigram.Controls.Messages;
-using Unigram.ViewModels.Delegates;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEventLogPage : Page, IChatDelegate
+    public sealed partial class SupergroupEventLogPage : HostedPage, IChatDelegate
     {
         public SupergroupEventLogViewModel ViewModel => DataContext as SupergroupEventLogViewModel;
 

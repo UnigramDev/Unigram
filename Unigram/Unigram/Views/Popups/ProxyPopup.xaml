@@ -1,0 +1,99 @@
+<controls:ContentPopup
+    x:Class="Unigram.Views.Popups.ProxyPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Popups"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    TitleTemplate="{x:Null}"
+    PrimaryButtonText="OK"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <ContentDialog.Title>
+        <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Text="{CustomResource ProxyDetails}"
+                Style="{StaticResource BaseTextBlockStyle}"
+                VerticalAlignment="Center"
+                Margin="12,0"/>
+            <controls:GlyphButton
+                x:Name="ShareButton"
+                Click="Share_Click"
+                Glyph="&#xE72D;"
+                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                Grid.Column="1"
+                Visibility="Collapsed"/>
+        </Grid>
+    </ContentDialog.Title>
+    
+    <StackPanel Background="{ThemeResource PageBackgroundDarkBrush}" Width="320">
+        <controls:HeaderedControl>
+            <RadioButton
+                x:Name="TypeSocks"
+                Content="{CustomResource UseProxySocks5}"
+                Checked="Type_Toggled"
+                Unchecked="Type_Toggled"
+                IsChecked="True"
+                Margin="12,6,12,0"/>
+            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+
+            <RadioButton
+                x:Name="TypeHttp"
+                Content="HTTP"
+                Checked="Type_Toggled"
+                Unchecked="Type_Toggled"
+                Margin="12,0,12,0"/>
+            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+
+            <RadioButton
+                x:Name="TypeProto"
+                Content="{CustomResource UseProxyTelegram}"
+                Checked="Type_Toggled"
+                Unchecked="Type_Toggled"
+                Margin="12,0,12,0"/>
+            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+        </controls:HeaderedControl>
+
+        <controls:HeaderedControl x:Name="FieldPanel" Footer="{CustomResource UseProxyInfo}">
+            <TextBox
+                x:Name="FieldServer"
+                PlaceholderText="{CustomResource UseProxyAddress}"
+                Margin="12,12,12,12"/>
+            <TextBox
+                x:Name="FieldPort"
+                PlaceholderText="{CustomResource UseProxyPort}"
+                InputScope="Number"
+                Margin="12,0,12,12"/>
+            <StackPanel x:Name="TypeSocksPanel">
+                <TextBox
+                    x:Name="FieldUsername"
+                    PlaceholderText="{CustomResource UseProxyUsername}"
+                    Margin="12,0,12,12"/>
+                <PasswordBox
+                    x:Name="FieldPassword"
+                    PlaceholderText="{CustomResource UseProxyPassword}"
+                    Margin="12,0,12,12"/>
+            </StackPanel>
+            <StackPanel x:Name="TypeProtoPanel" Visibility="Collapsed">
+                <TextBox
+                    x:Name="FieldSecret"
+                    PlaceholderText="{CustomResource UseProxySecret}"
+                    Margin="12,0,12,12"/>
+            </StackPanel>
+            <StackPanel x:Name="TypeHttpPanel" Visibility="Collapsed">
+                <CheckBox
+                    x:Name="FieldTransparent"
+                    Content="Transparent TCP connection"
+                    Margin="12,0,12,8"/>
+            </StackPanel>
+        </controls:HeaderedControl>
+    </StackPanel>
+</controls:ContentPopup>

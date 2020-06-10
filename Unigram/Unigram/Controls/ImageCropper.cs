@@ -1,28 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls
 {
-    public enum ImageCroppingProportions
+    public enum BitmapProportions
     {
         Custom,
         Original,
@@ -41,6 +34,12 @@ namespace Unigram.Controls
         SixteenOverNine,
     }
 
+    public enum ImageCropperMask
+    {
+        Rectangle,
+        Ellipse
+    }
+
     public sealed class ImageCropperThumb : Control
     {
         #region constructors
@@ -53,123 +52,62 @@ namespace Unigram.Controls
 
     public class ImageCropper : ContentControl
     {
-        #region fields
-        private static readonly DependencyProperty s_proportionsProperty = DependencyProperty.Register("Proportions", typeof(ImageCroppingProportions), typeof(ImageCropper),
-            new PropertyMetadata(ImageCroppingProportions.Original, new PropertyChangedCallback(ProportionsProperty_Changed)));
-        private static readonly DependencyProperty s_cropRectangleProperty = DependencyProperty.Register("CropRectangle", typeof(Rect), typeof(ImageCropper),
-            new PropertyMetadata(new Rect(0.0, 0.0, 100.0, 100.0), new PropertyChangedCallback(CropRectangleProperty_Changed)));
-        //private static readonly DependencyProperty s_rotationAngleProperty = DependencyProperty.Register("RotationAngle", typeof(double), typeof(ImageCropper),
-        //    new PropertyMetadata(0.0, new PropertyChangedCallback(RotationAngleProperty_Changed)));
-        private static readonly DependencyProperty s_isCropEnabledProperty = DependencyProperty.Register("IsCropEnabled", typeof(bool), typeof(ImageCropper),
-            new PropertyMetadata(true, new PropertyChangedCallback(IsCropEnabled_Changed)));
-
-        private static Size s_minimumSize = new Size(100, 100);
+        private Dictionary<uint, Point> m_pointerPositions;
 
         private StorageFile m_imageSource;
-        private ImageSource m_imagePreview;
-        private bool m_imageWaiting;
+        private Size m_imageSize;
 
-        private Geometry m_outerClip;
-        private Geometry m_innerClip;
+        private Rect m_current;
+        private Rect m_rectangle;
+
+        private ImageCropperMask _mask = ImageCropperMask.Rectangle;
+
+        private BitmapProportions _proportions = BitmapProportions.Custom;
+        private BitmapRotation _rotation;
+        private BitmapFlip _flip;
 
         private Grid m_layoutRoot;
         private Image m_imageViewer;
-        private FrameworkElement m_imageThumb;
-        private CompositeTransform m_imageThumbTransform;
-        private Grid m_thumbsContainer; 
-        private Dictionary<uint, Point> m_pointerPositions;
-        private Size m_imageSize;
-        private Rect m_thumbsRectangle;
-        private Rect m_currentThumbsRectangle;
-        private Rect m_imageRectangle;
-        private Rect m_cropRectangle;
-        #endregion
 
-        #region properties
-        public static DependencyProperty ProportionsProperty
-        {
-            get { return s_proportionsProperty; }
-        }
+        private FrameworkElement m_imagePresenter;
+        private CompositeTransform m_imagePresenterTransform;
 
-        public ImageCroppingProportions Proportions
-        {
-            get { return (ImageCroppingProportions)GetValue(s_proportionsProperty); }
-            set { SetValue(s_proportionsProperty, value); }
-        }
+        private Path m_clip;
+        private RectangleGeometry m_outerClip;
+        private Geometry m_innerClip;
 
-        public int MaxZoomFactor
-        {
-            get { return (int)GetValue(MaxZoomFactorProperty); }
-            set { SetValue(MaxZoomFactorProperty, value); }
-        }
-        
-        public static readonly DependencyProperty MaxZoomFactorProperty =
-            DependencyProperty.Register("MaxZoomFactor", typeof(int), typeof(ImageCropper), new PropertyMetadata(3));
+        private Grid m_thumbsContainer;
 
-        public int CurrentZoomFactor { get; private set; }
-
-        //public static DependencyProperty RotationAngleProperty
-        //{
-        //    get { return s_rotationAngleProperty; }
-        //}
-
-        //public double RotationAngle
-        //{
-        //    get { return (double)GetValue(s_rotationAngleProperty); }
-        //    set { SetValue(s_rotationAngleProperty, value); }
-        //}
-
-        public static DependencyProperty CropRectangleProperty
-        {
-            get { return s_cropRectangleProperty; }
-        }
-
-        public Rect CropRectangle
-        {
-            get { return (Rect)GetValue(s_cropRectangleProperty); }
-            set { SetValue(s_cropRectangleProperty, value); }
-        }
-
-        public static DependencyProperty IsCropEnabledProperty
-        {
-            get { return s_isCropEnabledProperty; }
-        }
-
-        public bool IsCropEnabled
-        {
-            get { return (bool)GetValue(s_isCropEnabledProperty); }
-            set { SetValue(s_isCropEnabledProperty, value); }
-        }
-        #endregion
-
-        #region constructors
         public ImageCropper()
         {
             DefaultStyleKey = typeof(ImageCropper);
 
-            m_imageSize = new Size(100, 00);
-            m_cropRectangle = new Rect(0.0, 0.0, 100.0, 100.0);
             m_pointerPositions = new Dictionary<uint, Point>();
 
-            SizeChanged += ImageCropper_SizeChanged;
+            m_current = new Rect(0, 0, 1, 1);
+            m_rectangle = new Rect(0, 0, 1, 1);
         }
-        #endregion
 
-        #region methods
         protected override void OnApplyTemplate()
         {
+            base.OnApplyTemplate();
+
             m_layoutRoot = (Grid)GetTemplateChild("LayoutRoot");
             m_imageViewer = (Image)GetTemplateChild("ImageViewer");
-            m_imageThumb = (FrameworkElement)GetTemplateChild("ImageThumb");
-
-            m_imageThumb.ManipulationDelta += ImageThumb_ManipulationDelta;
-            m_imageThumb.PointerWheelChanged += ImageThumb_PointerWheelChanged;
-
-            m_outerClip = (Geometry)GetTemplateChild("OuterClip");
-            m_innerClip = (Geometry)GetTemplateChild("InnerClip");
-
+            m_imagePresenter = (FrameworkElement)GetTemplateChild("ImagePresenter");
             m_thumbsContainer = (Grid)GetTemplateChild("ThumbsContainer");
-            m_imageThumbTransform = (CompositeTransform)GetTemplateChild("ImageThumbTransform");
+
+            m_clip = (Path)GetTemplateChild("Clip");
+
+            if (m_clip != null)
+            {
+                SetMask(_mask);
+            }
+
+            m_imageViewer.SizeChanged += ImageViewer_SizeChanged;
+
+            m_imagePresenter.RenderTransformOrigin = new Point(0.5, 0.5);
+            m_imagePresenter.RenderTransform = m_imagePresenterTransform = new CompositeTransform();
 
             var leftThumb = (ImageCropperThumb)GetTemplateChild("LeftThumb");
             if (leftThumb != null)
@@ -251,403 +189,420 @@ namespace Unigram.Controls
                 bottomRightThumb.PointerMoved += BottomRightThumb_PointerMoved;
             }
 
-            if (m_imageWaiting)
+            var middleThumb = (Rectangle)GetTemplateChild("MiddleThumb");
+            if (middleThumb != null)
             {
-                m_imageWaiting = false;
-                SetSource(m_imageSource, m_imagePreview, m_imageSize.Width, m_imageSize.Height);
-            }
-            else
-            {
-                UpdateCropRectangle(CropRectangle, false);
+                middleThumb.PointerPressed += Thumb_PointerPressed;
+                middleThumb.PointerReleased += Thumb_PointerReleased;
+                middleThumb.PointerMoved += MiddleThumb_PointerMoved;
             }
         }
 
-        private void UpdateThumbs(Rect thumbsRectangle)
+        private void UpdateTutteCose(Rect rect, bool animate = false)
         {
-            Canvas.SetLeft(m_thumbsContainer, thumbsRectangle.Left);
-            Canvas.SetTop(m_thumbsContainer, thumbsRectangle.Top);
+            m_current = rect;
 
-            m_thumbsContainer.Width = thumbsRectangle.Width;
-            m_thumbsContainer.Height = thumbsRectangle.Height;
+            if (m_thumbsContainer == null)
+            {
+                return;
+            }
+
+            var w = m_layoutRoot.ActualWidth;
+            var h = m_layoutRoot.ActualHeight;
+
+            if (w == 0 || h == 0)
+            {
+                return;
+            }
+
+            m_thumbsContainer.Margin = new Thickness(
+                rect.Left * w,
+                rect.Top * h,
+                w - rect.Right * w,
+                h - rect.Bottom * h);
+
+            //if (animate && _clipVisual != null)
+            //{
+            //    var animation = Window.Current.Compositor.CreatePathKeyFrameAnimation();
+            //    animation.InsertKeyFrame(0, _clipGeometry.Path);
+            //    animation.InsertKeyFrame(1, GetCheckMark(_clipVisual.Size, new Rect(rect.Left * w, rect.Top * h, rect.Width * w, rect.Height * h)));
+            //    animation.Duration = TimeSpan.FromSeconds(3);
+
+            //    _clipGeometry.StartAnimation("Path", animation);
+            //}
+            //else
+            //{
+            //    if (_clipVisual != null)
+            //    {
+            //        _clipGeometry.StopAnimation("Path");
+
+            //        _clipVisual.Size = new Size(m_layoutRoot.ActualWidth, m_layoutRoot.ActualHeight).ToVector2();
+            //        _clipGeometry.Path = GetCheckMark(_clipVisual.Size, new Rect(rect.Left * w, rect.Top * h, rect.Width * w, rect.Height * h));
+            //    }
+            //    else
+            //    {
+            m_outerClip.Rect = new Rect(0, 0, m_layoutRoot.ActualWidth, m_layoutRoot.ActualHeight);
+            //m_innerClip.Rect = new Rect(rect.Left * w, rect.Top * h, rect.Width * w, rect.Height * h);
+            //    }
+            //}
 
             switch (m_innerClip)
             {
                 case RectangleGeometry rectangle:
-                    rectangle.Rect = thumbsRectangle;
+                    rectangle.Rect = new Rect(rect.Left * w, rect.Top * h, rect.Width * w, rect.Height * h);
                     break;
                 case EllipseGeometry ellipse:
-                    ellipse.Center = new Point(thumbsRectangle.Left + thumbsRectangle.Width / 2, thumbsRectangle.Top + thumbsRectangle.Height / 2);
-                    ellipse.RadiusX = thumbsRectangle.Width / 2;
-                    ellipse.RadiusY = thumbsRectangle.Height / 2;
+                    ellipse.Center = new Point((rect.Left + rect.Width / 2) * w, (rect.Top + rect.Height / 2) * h);
+                    ellipse.RadiusX = rect.Width / 2 * w;
+                    ellipse.RadiusY = rect.Height / 2 * h;
                     break;
             }
         }
 
-        private void UpdateCropRectangle(bool animate)
-        {
-            var cropScaleX = m_imageRectangle.Width / m_imageSize.Width;
-            var cropScaleY = m_imageRectangle.Height / m_imageSize.Height;
-            m_cropRectangle = new Rect((m_currentThumbsRectangle.X - m_imageRectangle.X) / cropScaleX,
-                (m_currentThumbsRectangle.Y - m_imageRectangle.Y) / cropScaleY,
-                m_currentThumbsRectangle.Width / cropScaleX, m_currentThumbsRectangle.Height / cropScaleY);
+        #region Pointer events
 
-            UpdateCropRectangle(m_cropRectangle, animate);
+        private void Thumb_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
         }
 
-        private void UpdateCropRectangle(Rect cropRectangle, bool animate)
+        private void Thumb_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (m_layoutRoot != null)
+            ((UIElement)sender).CapturePointer(e.Pointer);
+
+            var pointer = e.GetCurrentPoint(m_layoutRoot);
+            m_pointerPositions[pointer.PointerId] = pointer.Position;
+
+            m_current = m_rectangle;
+
+            e.Handled = true;
+        }
+
+        private void Thumb_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            m_pointerPositions.Remove(e.Pointer.PointerId);
+
+            ((UIElement)sender).ReleasePointerCapture(e.Pointer);
+
+            //UpdateCropRectangle(true);
+            m_rectangle = m_current;
+
+            e.Handled = true;
+        }
+
+        private void MiddleThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
             {
-                Size thumbsRectangleSize;
-                var cropScale = cropRectangle.Width / cropRectangle.Height;
-                if (m_layoutRoot.ActualWidth / m_layoutRoot.ActualHeight < cropScale)
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
+
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetX = (position.X - startPosition.X) / w;
+                var offsetY = (position.Y - startPosition.Y) / h;
+
+                var left = Math.Clamp(m_rectangle.Left + offsetX, 0, 1 - m_rectangle.Width);
+                var top = Math.Clamp(m_rectangle.Top + offsetY, 0, 1 - m_rectangle.Height);
+                var width = m_rectangle.Right - left;
+                var height = m_rectangle.Bottom - top;
+
+                var cropScale = (width * w) / (height * h);
+                var proportionalCropScale = GetProportionsFactor(BitmapProportions.Custom, cropScale);
+
+                if (cropScale < proportionalCropScale)
                 {
-                    thumbsRectangleSize = new Size(m_layoutRoot.ActualWidth, m_layoutRoot.ActualWidth / cropScale);
+                    var cropHeight = ((width * w) / proportionalCropScale) / h;
+
+                    m_current.X = left;
+                    m_current.Y = top + (height - cropHeight);
                 }
                 else
                 {
-                    thumbsRectangleSize = new Size(m_layoutRoot.ActualHeight * cropScale, m_layoutRoot.ActualHeight);
+                    var cropWidth = ((height * h) * proportionalCropScale) / w;
+
+                    m_current.X = left + (width - cropWidth);
+                    m_current.Y = top;
                 }
 
-                var finalThumbsRectangle = new Rect((m_layoutRoot.ActualWidth - thumbsRectangleSize.Width) / 2.0,
-                    (m_layoutRoot.ActualHeight - thumbsRectangleSize.Height) / 2.0, thumbsRectangleSize.Width, thumbsRectangleSize.Height);
+                //m_current = new Rect(left, top, width, height);
+                UpdateTutteCose(m_current);
+            }
+        }
 
-                m_thumbsRectangle = m_currentThumbsRectangle = finalThumbsRectangle;
+        private void TopLeftThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
+            {
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
 
-                var imageScaleX = finalThumbsRectangle.Width / cropRectangle.Width;
-                var imageScaleY = finalThumbsRectangle.Height / cropRectangle.Height;
-                var imageRectangleWidth = m_imageSize.Width * imageScaleX;
-                var imageRectangleHeight = m_imageSize.Height * imageScaleY;
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetX = (position.X - startPosition.X) / w;
+                var offsetY = (position.Y - startPosition.Y) / h;
 
-                m_imageRectangle = new Rect(finalThumbsRectangle.X - cropRectangle.X * imageScaleX,
-                    finalThumbsRectangle.Y - cropRectangle.Y * imageScaleY,
-                    imageRectangleWidth, imageRectangleHeight);
+                var left = Math.Clamp(m_rectangle.Left + offsetX, 0, m_rectangle.Right);
+                var top = Math.Clamp(m_rectangle.Top + offsetY, 0, m_rectangle.Bottom);
+                var width = m_rectangle.Right - left;
+                var height = m_rectangle.Bottom - top;
 
-                if (animate)
+                var cropScale = (width * w) / (height * h);
+                var proportionalCropScale = GetProportionsFactor(_proportions, cropScale);
+
+                if (cropScale < proportionalCropScale)
                 {
-                    AnimateToCropRectangle(m_thumbsRectangle, m_imageRectangle);
+                    var cropHeight = ((width * w) / proportionalCropScale) / h;
+
+                    m_current.X = left;
+                    m_current.Y = top + (height - cropHeight);
+                    m_current.Width = width;
+                    m_current.Height = cropHeight;
                 }
                 else
                 {
-                    UpdateThumbs(m_thumbsRectangle);
+                    var cropWidth = ((height * h) * proportionalCropScale) / w;
 
-                    m_imageThumbTransform.ScaleX = m_imageRectangle.Width / m_imageSize.Width;
-                    m_imageThumbTransform.ScaleY = m_imageRectangle.Height / m_imageSize.Height;
-                    m_imageThumbTransform.TranslateX = (m_imageRectangle.Width - m_thumbsRectangle.Width) / 2.0 - m_thumbsRectangle.X + m_imageRectangle.X;
-                    m_imageThumbTransform.TranslateY = (m_imageRectangle.Height - m_thumbsRectangle.Height) / 2.0 - m_thumbsRectangle.Y + m_imageRectangle.Y;
+                    m_current.X = left + (width - cropWidth);
+                    m_current.Y = top;
+                    m_current.Width = cropWidth;
+                    m_current.Height = height;
                 }
-            }
 
-            CropRectangle = cropRectangle;
-        }
-
-        private void AnimateToCropRectangle(Rect thumbsRectangle, Rect imageRectangle)
-        {
-            var storyboard = new Storyboard();
-            var ease = new CubicEase { EasingMode = EasingMode.EaseInOut };
-
-            storyboard.Children.Add(CreateAnimation(thumbsRectangle.Width, m_thumbsContainer, "FrameworkElement.Width", ease, true));
-            storyboard.Children.Add(CreateAnimation(thumbsRectangle.Height, m_thumbsContainer, "FrameworkElement.Height", ease, true));
-            storyboard.Children.Add(CreateAnimation(thumbsRectangle.Left, m_thumbsContainer, "(Canvas.Left)", ease, false));
-            storyboard.Children.Add(CreateAnimation(thumbsRectangle.Top, m_thumbsContainer, "(Canvas.Top)", ease, false));
-
-            storyboard.Children.Add(CreateAnimation(imageRectangle.Width / m_imageSize.Width, m_imageThumbTransform, "CompositeTransform.ScaleX", ease, false));
-            storyboard.Children.Add(CreateAnimation(imageRectangle.Height / m_imageSize.Height, m_imageThumbTransform, "CompositeTransform.ScaleY", ease, false));
-            storyboard.Children.Add(CreateAnimation((imageRectangle.Width - thumbsRectangle.Width) / 2.0 - thumbsRectangle.X + imageRectangle.X, m_imageThumbTransform, "CompositeTransform.TranslateX", ease, false));
-            storyboard.Children.Add(CreateAnimation((imageRectangle.Height - thumbsRectangle.Height) / 2.0 - thumbsRectangle.Y + imageRectangle.Y, m_imageThumbTransform, "CompositeTransform.TranslateY", ease, false));
-
-            switch (m_innerClip)
-            {
-                case RectangleGeometry rectangle:
-                    rectangle.Rect = thumbsRectangle;
-                    break;
-                case EllipseGeometry ellipse:
-                    var centerAnimation = new PointAnimation();
-                    centerAnimation.To = new Point(thumbsRectangle.Left + thumbsRectangle.Width / 2, thumbsRectangle.Top + thumbsRectangle.Height / 2);
-                    centerAnimation.EasingFunction = ease;
-                    centerAnimation.Duration = TimeSpan.FromMilliseconds(300);
-                    centerAnimation.EnableDependentAnimation = true;
-
-                    Storyboard.SetTarget(centerAnimation, ellipse);
-                    Storyboard.SetTargetProperty(centerAnimation, "EllipseGeometry.Center");
-
-                    storyboard.Children.Add(centerAnimation);
-
-                    storyboard.Children.Add(CreateAnimation(thumbsRectangle.Width / 2.0, ellipse, "EllipseGeometry.RadiusX", ease, true));
-                    storyboard.Children.Add(CreateAnimation(thumbsRectangle.Height / 2.0, ellipse, "EllipseGeometry.RadiusY", ease, true));
-                    break;
-            }
-
-            storyboard.Begin();
-        }
-
-        private double GetProportionsFactor(ImageCroppingProportions proportions, double defaultValue)
-        {
-            switch (proportions)
-            {
-                case ImageCroppingProportions.Original:
-                    return m_imageSize.Width / m_imageSize.Height;
-                case ImageCroppingProportions.Square:
-                    return 1.0;
-                // Portrait
-                case ImageCroppingProportions.TwoOverThree:
-                    return 2.0 / 3.0;
-                case ImageCroppingProportions.ThreeOverFive:
-                    return 3.0 / 5.0;
-                case ImageCroppingProportions.ThreeOverFour:
-                    return 3.0 / 4.0;
-                case ImageCroppingProportions.FourOverFive:
-                    return 4.0 / 5.0;
-                case ImageCroppingProportions.FiveOverSeven:
-                    return 5.0 / 7.0;
-                case ImageCroppingProportions.NineOverSixteen:
-                    return 9.0 / 16.0;
-                // Landscape
-                case ImageCroppingProportions.ThreeOverTwo:
-                    return 3.0 / 2.0;
-                case ImageCroppingProportions.FiveOverThree:
-                    return 5.0 / 3.0;
-                case ImageCroppingProportions.FourOverThree:
-                    return 4.0 / 3.0;
-                case ImageCroppingProportions.FiveOverFour:
-                    return 5.0 / 4.0;
-                case ImageCroppingProportions.SevenOverFive:
-                    return 7.0 / 5.0;
-                case ImageCroppingProportions.SixteenOverNine:
-                    return 16.0 / 9.0;
-                default:
-                    return defaultValue;
+                //m_current = new Rect(left, top, width, height);
+                UpdateTutteCose(m_current);
             }
         }
 
-        public static IReadOnlyList<ImageCroppingProportions> GetProportionsFor(double width, double height)
+        private void TopThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            var items = new List<ImageCroppingProportions>();
-            items.Add(ImageCroppingProportions.Original);
-            items.Add(ImageCroppingProportions.Square);
-
-            if (width > height)
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
             {
-                items.Add(ImageCroppingProportions.ThreeOverTwo);
-                items.Add(ImageCroppingProportions.FiveOverThree);
-                items.Add(ImageCroppingProportions.FourOverThree);
-                items.Add(ImageCroppingProportions.FiveOverFour);
-                items.Add(ImageCroppingProportions.SevenOverFive);
-                items.Add(ImageCroppingProportions.SixteenOverNine);
-            }
-            else
-            {
-                items.Add(ImageCroppingProportions.TwoOverThree);
-                items.Add(ImageCroppingProportions.ThreeOverFive);
-                items.Add(ImageCroppingProportions.ThreeOverFour);
-                items.Add(ImageCroppingProportions.FourOverFive);
-                items.Add(ImageCroppingProportions.FiveOverSeven);
-                items.Add(ImageCroppingProportions.NineOverSixteen);
-            }
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
 
-            return items;
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetY = (position.Y - startPosition.Y) / h;
+
+                var top = Math.Clamp(m_rectangle.Top + offsetY, 0, m_rectangle.Bottom);
+                var height = m_rectangle.Bottom - top;
+
+                var cropScale = (m_current.Width * w) / (height * h);
+                var proportionalCropScale = GetProportionsFactor(_proportions, cropScale);
+
+                var cropWidth = Math.Min(w, (height * h) * proportionalCropScale) / w;
+
+                m_current.Y = top;
+                m_current.X = Math.Clamp(m_current.X + (m_current.Width - cropWidth) / 2.0, 0, 1 - cropWidth);
+                m_current.Width = cropWidth;
+                m_current.Height = ((cropWidth * w) / proportionalCropScale) / h;
+
+                //m_current = new Rect(left, top, width, height);
+                UpdateTutteCose(m_current);
+            }
         }
 
-        public async void SetSource(StorageFile file)
+        private void LeftThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            await SetSourceAsync(file);
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
+            {
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
+
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetX = (position.X - startPosition.X) / w;
+
+                var left = Math.Clamp(m_rectangle.Left + offsetX, 0, m_rectangle.Right);
+                var width = m_rectangle.Right - left;
+
+                var cropScale = (width * w) / (m_current.Height * h);
+                var proportionalCropScale = GetProportionsFactor(_proportions, cropScale);
+
+                var cropHeight = Math.Min(h, (width * w) / proportionalCropScale) / h;
+
+                m_current.Y = Math.Clamp(m_current.Y + (m_current.Height - cropHeight) / 2.0, 0, 1 - cropHeight);
+                m_current.X = left;
+                m_current.Width = ((cropHeight * h) * proportionalCropScale) / w;
+                m_current.Height = cropHeight;
+
+                //m_current = new Rect(left, top, width, height);
+                UpdateTutteCose(m_current);
+            }
         }
 
-        public async Task<StorageFile> CropAsync(int min = 1280, int max = 0)
+        private void BottomRightThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            var croppedFile = await ImageHelper.CropAsync(m_imageSource, null, CropRectangle, min, max);
-
-            return croppedFile;
-        }
-
-        public async Task SetSourceAsync(StorageFile file, BitmapRotation rotation = BitmapRotation.None)
-        {
-            SoftwareBitmapSource source;
-            using (var fileStream = await ImageHelper.OpenReadAsync(file))
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
             {
-                var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
 
-                transform.Rotation = rotation;
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetX = (position.X - startPosition.X) / w;
+                var offsetY = (position.Y - startPosition.Y) / h;
 
-                var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                source = new SoftwareBitmapSource();
-                await source.SetBitmapAsync(software);
+                var right = Math.Clamp(m_rectangle.Right + offsetX, m_current.Left, 1);
+                var bottom = Math.Clamp(m_rectangle.Bottom + offsetY, m_current.Top, 1);
+                var width = right - m_rectangle.Left;
+                var height = bottom - m_rectangle.Top;
 
-                SetSource(file, source, software.PixelWidth, software.PixelHeight);
-            }
+                var cropScale = (width * w) / (height * h);
+                var proportionalCropScale = GetProportionsFactor(_proportions, cropScale);
 
-            Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
-            Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
-
-            var imageScale = m_imageSize.Width / m_imageSize.Height;
-            var cropScale = GetProportionsFactor(Proportions, imageScale);
-            if (imageScale < cropScale)
-            {
-                var cropHeight = m_imageSize.Width / cropScale;
-                m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
-            }
-            else
-            {
-                var cropWidth = m_imageSize.Height * cropScale;
-                m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
-            }
-
-            UpdateCropRectangle(m_cropRectangle, false);
-        }
-
-        public void SetSource(StorageFile file, ImageSource source, double width, double height)
-        {
-            m_imagePreview = source;
-            m_imageSource = file;
-            m_imageSize = new Size(width, height);
-
-            if (m_imageViewer != null)
-            {
-                m_imageViewer.Source = m_imagePreview;
-
-                Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
-                Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
-
-                var imageScale = m_imageSize.Width / m_imageSize.Height;
-                var cropScale = GetProportionsFactor(Proportions, imageScale);
-                if (imageScale < cropScale)
+                if (cropScale < proportionalCropScale)
                 {
-                    var cropHeight = m_imageSize.Width / cropScale;
-                    m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
+                    var cropHeight = ((width * w) / proportionalCropScale) / h;
+
+                    m_current.Width = width;
+                    m_current.Height = cropHeight;
                 }
                 else
                 {
-                    var cropWidth = m_imageSize.Height * cropScale;
-                    m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
+                    var cropWidth = ((height * h) * proportionalCropScale) / w;
+
+                    m_current.Width = cropWidth;
+                    m_current.Height = height;
                 }
 
-                UpdateCropRectangle(m_cropRectangle, false);
+                UpdateTutteCose(m_current);
+                e.Handled = true;
+            }
+        }
 
-                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("Crop");
-                if (animation != null)
+        private void BottomThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
+            {
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
+
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetY = (position.Y - startPosition.Y) / h;
+
+                var bottom = Math.Clamp(m_rectangle.Bottom + offsetY, m_current.Top, 1);
+                var height = bottom - m_rectangle.Top;
+
+                var cropScale = (m_current.Width * w) / (height * h);
+                var proportionalCropScale = GetProportionsFactor(_proportions, cropScale);
+
+                var cropWidth = Math.Min(w, (height * h) * proportionalCropScale) / w;
+
+                m_current.X = Math.Clamp(m_current.X + (m_current.Width - cropWidth) / 2.0, 0, 1 - cropWidth);
+                m_current.Width = cropWidth;
+                m_current.Height = ((cropWidth * w) / proportionalCropScale) / h;
+
+                UpdateTutteCose(m_current);
+                e.Handled = true;
+            }
+        }
+
+        private void RightThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
+            {
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
+
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetX = (position.X - startPosition.X) / w;
+
+                var right = Math.Clamp(m_rectangle.Right + offsetX, m_current.Left, 1);
+                var width = right - m_rectangle.Left;
+
+                var cropScale = (width * w) / (m_current.Height * h);
+                var proportionalCropScale = GetProportionsFactor(_proportions, cropScale);
+
+                var cropHeight = Math.Min(h, (width * w) / proportionalCropScale) / h;
+
+                m_current.Y = Math.Clamp(m_current.Y + (m_current.Height - cropHeight) / 2.0, 0, 1 - cropHeight);
+                m_current.Width = ((cropHeight * h) * proportionalCropScale) / w;
+                m_current.Height = cropHeight;
+
+                UpdateTutteCose(m_current);
+                e.Handled = true;
+            }
+        }
+
+        private void BottomLeftThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
+            {
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
+
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetX = (position.X - startPosition.X) / w;
+                var offsetY = (position.Y - startPosition.Y) / h;
+
+                var left = Math.Clamp(m_rectangle.Left + offsetX, 0, m_rectangle.Right);
+                var bottom = Math.Clamp(m_rectangle.Bottom + offsetY, m_current.Top, 1);
+                var width = m_rectangle.Right - left;
+                var height = bottom - m_rectangle.Top;
+
+                var cropScale = (width * w) / (height * h);
+                var proportionalCropScale = GetProportionsFactor(_proportions, cropScale);
+
+                if (cropScale < proportionalCropScale)
                 {
-                    animation.TryStart(m_imageViewer);
+                    var cropHeight = ((width * w) / proportionalCropScale) / h;
+
+                    m_current.X = left;
+                    m_current.Width = width;
+                    m_current.Height = cropHeight;
                 }
-            }
-            else
-            {
-                m_imageWaiting = true;
+                else
+                {
+                    var cropWidth = ((height * h) * proportionalCropScale) / w;
+
+                    m_current.X = left + (width - cropWidth);
+                    m_current.Width = cropWidth;
+                    m_current.Height = height;
+                }
+
+                //m_current = new Rect(left, top, width, height);
+                UpdateTutteCose(m_current);
             }
         }
 
-        public void Reset(ImageCroppingProportions? proportions = null)
+        private void TopRightThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            var imageScale = m_imageSize.Width / m_imageSize.Height;
-            var cropScale = GetProportionsFactor(proportions ?? Proportions, imageScale);
-            if (imageScale < cropScale)
+            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
             {
-                var cropHeight = m_imageSize.Width / cropScale;
-                m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
-            }
-            else
-            {
-                var cropWidth = m_imageSize.Height * cropScale;
-                m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
-            }
+                var w = m_layoutRoot.ActualWidth;
+                var h = m_layoutRoot.ActualHeight;
 
-            UpdateCropRectangle(m_cropRectangle, true);
-        }
+                var position = e.GetCurrentPoint(m_layoutRoot).Position;
+                var offsetX = (position.X - startPosition.X) / w;
+                var offsetY = (position.Y - startPosition.Y) / h;
 
-        public ConnectedAnimation Prepare()
-        {
-            return ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Crop", m_imageViewer);
-        }
+                var right = Math.Clamp(m_rectangle.Right + offsetX, m_current.Left, 1);
+                var top = Math.Clamp(m_rectangle.Top + offsetY, 0, m_rectangle.Bottom);
+                var width = right - m_rectangle.Left;
+                var height = m_rectangle.Bottom - top;
 
-        private void OnProportionsChanged(ImageCroppingProportions oldValue, ImageCroppingProportions newValue)
-        {
-            var cropScale = m_cropRectangle.Width / m_cropRectangle.Height;
-            var proportionalCropScale = GetProportionsFactor(Proportions, cropScale);
+                var cropScale = (width * w) / (height * h);
+                var proportionalCropScale = GetProportionsFactor(_proportions, cropScale);
 
-            if (cropScale < proportionalCropScale)
-            {
-                var cropHeight = m_cropRectangle.Width / proportionalCropScale;
+                if (cropScale < proportionalCropScale)
+                {
+                    var cropHeight = ((width * w) / proportionalCropScale) / h;
 
-                m_cropRectangle.Y = Clamp(m_cropRectangle.Y + (m_cropRectangle.Height - cropHeight) / 2.0, 0.0, m_imageSize.Height - cropHeight);
-                m_cropRectangle.Height = cropHeight;
-            }
-            else
-            {
-                var cropWidth = m_cropRectangle.Height * proportionalCropScale;
+                    m_current.Y = top + (height - cropHeight);
+                    m_current.Width = width;
+                    m_current.Height = cropHeight;
+                }
+                else
+                {
+                    var cropWidth = ((height * h) * proportionalCropScale) / w;
 
-                m_cropRectangle.X = Clamp(m_cropRectangle.X + (m_cropRectangle.Width - cropWidth) / 2.0, 0.0, m_imageSize.Width - cropWidth);
-                m_cropRectangle.Width = cropWidth;
-            }
+                    m_current.Y = top;
+                    m_current.Width = cropWidth;
+                    m_current.Height = height;
+                }
 
-            UpdateCropRectangle(m_cropRectangle, true);
-        }
-
-        //protected virtual void OnRotationAngleChanged(double oldValue, double newValue)
-        //{
-        //}
-
-        protected virtual void OnCropRectangleChanged(Rect oldValue, Rect newValue)
-        {
-            if (newValue.IsEmpty)
-            {
-                Reset();
-            }
-            else if (newValue != m_cropRectangle)
-            {
-                m_cropRectangle = newValue;
-                UpdateCropRectangle(m_cropRectangle, false);
+                //m_current = new Rect(left, top, width, height);
+                UpdateTutteCose(m_current);
             }
         }
 
-        protected virtual void OnIsCropEnabledChanged(bool oldValue, bool newValue)
-        {
-            VisualStateManager.GoToState(this, newValue ? "Normal" : "Disabled", true);
-        }
-
-        private static Size GetImageSourceSize(ImageSource imageSource)
-        {
-            switch (imageSource)
-            {
-                case BitmapImage bitmapImage:
-                    return new Size(bitmapImage.PixelWidth, bitmapImage.PixelHeight);
-                case RenderTargetBitmap renderTargetBitmap:
-                    return new Size(renderTargetBitmap.PixelWidth, renderTargetBitmap.PixelHeight);
-                case null:
-                    return default(Size);
-                default:
-                    return default(Size);
-            }
-        }
-
-        private static double Clamp(double value, double minimum, double maximum)
-        {
-            if (value < minimum)
-                value = minimum;
-
-            if (value > maximum)
-                value = maximum;
-
-            return value;
-        }
-
-        private static DoubleAnimation CreateAnimation(double to, DependencyObject target, string propertyName, EasingFunctionBase ease, bool enableDependentAnimation)
-        {
-            var animation = new DoubleAnimation()
-            {
-                To = to,
-                Duration = TimeSpan.FromMilliseconds(300),
-                EnableDependentAnimation = enableDependentAnimation,
-                EasingFunction = ease
-            };
-
-            Storyboard.SetTarget(animation, target);
-            Storyboard.SetTargetProperty(animation, propertyName);
-
-            return animation;
-        }
-        #endregion
-
-        #region event methods
         private void NWSEThumb_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeNorthwestSoutheast, 1);
@@ -668,504 +623,328 @@ namespace Unigram.Controls
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.SizeNorthSouth, 1);
         }
 
-        private void Thumb_PointerExited(object sender, PointerRoutedEventArgs e)
+        #endregion
+
+        #region Rectangle
+
+        public void SetRectangle(Rect rectangle, bool animate = true)
         {
-            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 1);
-        }
-
-        private void Thumb_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            ((UIElement)sender).CapturePointer(e.Pointer);
-
-            var pointer = e.GetCurrentPoint(m_layoutRoot);
-            m_pointerPositions[pointer.PointerId] = pointer.Position;
-
-            e.Handled = true;
-        }
-
-        private void Thumb_PointerReleased(object sender, PointerRoutedEventArgs e)
-        {
-            m_pointerPositions.Remove(e.Pointer.PointerId);
-
-            ((UIElement)sender).ReleasePointerCapture(e.Pointer);
-
-            UpdateCropRectangle(true);
-
-            e.Handled = true;
-        }
-
-        private void ImageThumb_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            if (e.Delta.Scale != 1.0)
+            if (rectangle.X < 0)
             {
-                double width;
-                double height;
-                var imageScale = m_imageRectangle.Width / m_imageRectangle.Height;
-
-                if (m_thumbsRectangle.Width / m_thumbsRectangle.Height < imageScale)
-                {
-                    height = Math.Max(m_imageRectangle.Height * e.Delta.Scale, m_thumbsRectangle.Height);
-                    width = height * imageScale;
-                }
-                else
-                {
-                    width = Math.Max(m_imageRectangle.Width * e.Delta.Scale, m_thumbsRectangle.Width);
-                    height = width / imageScale;
-                }
-
-                m_imageRectangle.X = Clamp(m_imageRectangle.Left + (m_imageRectangle.Width - width) / 2.0, m_thumbsRectangle.Right - width, m_thumbsRectangle.Left);
-                m_imageRectangle.Y = Clamp(m_imageRectangle.Top + (m_imageRectangle.Height - height) / 2.0, m_thumbsRectangle.Bottom - height, m_thumbsRectangle.Top);
-                m_imageRectangle.Width = width;
-                m_imageRectangle.Height = height;
-
-                UpdateCropRectangle(false);
-
-                e.Handled = true;
+                rectangle.X = 0;
             }
-            else if (e.Delta.Translation.X != 0.0 || e.Delta.Translation.Y != 0.0)
+            if (rectangle.Y < 0)
             {
-                m_imageRectangle.X = Clamp(m_imageRectangle.Left + e.Delta.Translation.X, m_thumbsRectangle.Right - m_imageRectangle.Width, m_thumbsRectangle.Left);
-                m_imageRectangle.Y = Clamp(m_imageRectangle.Top + e.Delta.Translation.Y, m_thumbsRectangle.Bottom - m_imageRectangle.Height, m_thumbsRectangle.Top);
-
-                UpdateCropRectangle(false);
-
-                e.Handled = true;
+                rectangle.Y = 0;
             }
-        }
-
-        private void ImageThumb_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-        {
-            if (!IsCropEnabled)
+            if (rectangle.Right > 1)
             {
-                return;
+                rectangle.Width = 1 - rectangle.X;
+            }
+            if (rectangle.Bottom > 1)
+            {
+                rectangle.Height = 1 - rectangle.Y;
             }
 
-            var mouseWheelDelta = e.GetCurrentPoint(sender as UIElement).Properties.MouseWheelDelta / 100;
-            if (mouseWheelDelta == 0)
-            {
-                return;
-            }
-            
-            if (mouseWheelDelta > 0)
-            {
-                ZoomIn();
-            }
-            else
-            {
-                ZoomOut();
-            }
+            m_current = rectangle;
+            m_rectangle = rectangle;
 
-            e.Handled = true;
-        }
-
-        private void ZoomIn(double zoomInFactor = 1.1)
-        {
-            if (CurrentZoomFactor >= MaxZoomFactor)
-            {
-                return;
-            }
-
-            CurrentZoomFactor++;
-
-            double width;
-            double height;
-            var imageScale = m_imageRectangle.Width / m_imageRectangle.Height;
-
-            if (m_thumbsRectangle.Width / m_thumbsRectangle.Height < imageScale)
-            {
-                height = Math.Max(m_imageRectangle.Height * zoomInFactor, m_thumbsRectangle.Height);
-                width = height * imageScale;
-            }
-            else
-            {
-                width = Math.Max(m_imageRectangle.Width * zoomInFactor, m_thumbsRectangle.Width);
-                height = width / imageScale;
-            }
-
-            m_imageRectangle.X = Clamp(m_imageRectangle.Left + (m_imageRectangle.Width - width) / 2.0, m_thumbsRectangle.Right - width, m_thumbsRectangle.Left);
-            m_imageRectangle.Y = Clamp(m_imageRectangle.Top + (m_imageRectangle.Height - height) / 2.0, m_thumbsRectangle.Bottom - height, m_thumbsRectangle.Top);
-            m_imageRectangle.Width = width;
-            m_imageRectangle.Height = height;
-
-            UpdateCropRectangle(false);
-        }
-
-        private void ZoomOut(double zoomOutFactor = 0.9)
-        {
-            if (CurrentZoomFactor <= 0)
-            {
-                return;
-            }
-
-            CurrentZoomFactor--;
-
-            double width;
-            double height;
-            var imageScale = m_imageRectangle.Width / m_imageRectangle.Height;
-
-            if (m_thumbsRectangle.Width / m_thumbsRectangle.Height < imageScale)
-            {
-                height = Math.Max(m_imageRectangle.Height * zoomOutFactor, m_thumbsRectangle.Height);
-                width = height * imageScale;
-            }
-            else
-            {
-                width = Math.Max(m_imageRectangle.Width * zoomOutFactor, m_thumbsRectangle.Width);
-                height = width / imageScale;
-            }
-
-            m_imageRectangle.X = Clamp(m_imageRectangle.Left + (m_imageRectangle.Width - width) / 2.0, m_thumbsRectangle.Right - width, m_thumbsRectangle.Left);
-            m_imageRectangle.Y = Clamp(m_imageRectangle.Top + (m_imageRectangle.Height - height) / 2.0, m_thumbsRectangle.Bottom - height, m_thumbsRectangle.Top);
-            m_imageRectangle.Width = width;
-            m_imageRectangle.Height = height;
-
-            UpdateCropRectangle(false);
-        }
-
-        private void TopLeftThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
-            {
-                var position = e.GetCurrentPoint(m_layoutRoot).Position;
-                var offsetX = position.X - startPosition.X;
-                var offsetY = position.Y - startPosition.Y;
-
-                var left = Clamp(m_thumbsRectangle.Left + offsetX, m_imageRectangle.Left, m_thumbsRectangle.Right - s_minimumSize.Width);
-                var top = Clamp(m_thumbsRectangle.Top + offsetY, m_imageRectangle.Top, m_thumbsRectangle.Bottom - s_minimumSize.Height);
-                var width = m_currentThumbsRectangle.Right - left;
-                var height = m_currentThumbsRectangle.Bottom - top;
-
-                var cropScale = width / height;
-                var proportionalCropScale = GetProportionsFactor(Proportions, cropScale);
-
-                if (cropScale < proportionalCropScale)
-                {
-                    var cropHeight = width / proportionalCropScale;
-
-                    m_currentThumbsRectangle.X = left;
-                    m_currentThumbsRectangle.Y = top + (height - cropHeight);
-                    m_currentThumbsRectangle.Width = width;
-                    m_currentThumbsRectangle.Height = cropHeight;
-                }
-                else
-                {
-                    var cropWidth = height * proportionalCropScale;
-
-                    m_currentThumbsRectangle.X = left + (width - cropWidth);
-                    m_currentThumbsRectangle.Y = top;
-                    m_currentThumbsRectangle.Width = cropWidth;
-                    m_currentThumbsRectangle.Height = height;
-                }
-
-                if (m_currentThumbsRectangle.Left < m_thumbsRectangle.Left || m_currentThumbsRectangle.Top < m_thumbsRectangle.Top)
-                {
-                    UpdateCropRectangle(false);
-                }
-                else
-                {
-                    UpdateThumbs(m_currentThumbsRectangle);
-                }
-
-                e.Handled = true;
-            }
-        }
-
-        private void TopRightThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
-            {
-                var position = e.GetCurrentPoint(m_layoutRoot).Position;
-                var offsetX = position.X - startPosition.X;
-                var offsetY = position.Y - startPosition.Y;
-
-                var top = Clamp(m_thumbsRectangle.Top + offsetY, m_imageRectangle.Top, m_thumbsRectangle.Bottom - s_minimumSize.Height);
-                var right = Clamp(m_thumbsRectangle.Right + offsetX, m_thumbsRectangle.Left + s_minimumSize.Width, m_imageRectangle.Right);
-                var width = right - m_currentThumbsRectangle.Left;
-                var height = m_currentThumbsRectangle.Bottom - top;
-
-                var cropScale = width / height;
-                var proportionalCropScale = GetProportionsFactor(Proportions, cropScale);
-
-                if (cropScale < proportionalCropScale)
-                {
-                    var cropHeight = width / proportionalCropScale;
-
-                    m_currentThumbsRectangle.Y = top + (height - cropHeight);
-                    m_currentThumbsRectangle.Width = width;
-                    m_currentThumbsRectangle.Height = cropHeight;
-                }
-                else
-                {
-                    var cropWidth = height * proportionalCropScale;
-
-                    m_currentThumbsRectangle.Y = top;
-                    m_currentThumbsRectangle.Width = cropWidth;
-                    m_currentThumbsRectangle.Height = height;
-                }
-
-                if (m_currentThumbsRectangle.Left < m_thumbsRectangle.Left || m_currentThumbsRectangle.Right > m_thumbsRectangle.Right)
-                {
-                    UpdateCropRectangle(false);
-                }
-                else
-                {
-                    UpdateThumbs(m_currentThumbsRectangle);
-                }
-
-                e.Handled = true;
-            }
-        }
-
-        private void BottomLeftThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
-            {
-                var position = e.GetCurrentPoint(m_layoutRoot).Position;
-                var offsetX = position.X - startPosition.X;
-                var offsetY = position.Y - startPosition.Y;
-
-                var left = Clamp(m_thumbsRectangle.Left + offsetX, m_imageRectangle.Left, m_thumbsRectangle.Right - s_minimumSize.Width);
-                var bottom = Clamp(m_thumbsRectangle.Bottom + offsetY, m_thumbsRectangle.Top + s_minimumSize.Height, m_imageRectangle.Bottom);
-                var width = m_currentThumbsRectangle.Right - left;
-                var height = bottom - m_currentThumbsRectangle.Top;
-
-                var cropScale = width / height;
-                var proportionalCropScale = GetProportionsFactor(Proportions, cropScale);
-
-                if (cropScale < proportionalCropScale)
-                {
-                    var cropHeight = width / proportionalCropScale;
-
-                    m_currentThumbsRectangle.X = left;
-                    m_currentThumbsRectangle.Width = width;
-                    m_currentThumbsRectangle.Height = cropHeight;
-                }
-                else
-                {
-                    var cropWidth = height * proportionalCropScale;
-
-                    m_currentThumbsRectangle.X = left + (width - cropWidth);
-                    m_currentThumbsRectangle.Width = cropWidth;
-                    m_currentThumbsRectangle.Height = height;
-                }
-
-                if (m_currentThumbsRectangle.Bottom > m_thumbsRectangle.Bottom || m_currentThumbsRectangle.Left < m_thumbsRectangle.Left)
-                {
-                    UpdateCropRectangle(false);
-                }
-                else
-                {
-                    UpdateThumbs(m_currentThumbsRectangle);
-                }
-
-                e.Handled = true;
-            }
-        }
-
-        private void BottomRightThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
-            {
-                var position = e.GetCurrentPoint(m_layoutRoot).Position;
-                var offsetX = position.X - startPosition.X;
-                var offsetY = position.Y - startPosition.Y;
-
-                var right = Clamp(m_thumbsRectangle.Right + offsetX, m_thumbsRectangle.Left + s_minimumSize.Width, m_imageRectangle.Right);
-                var bottom = Clamp(m_thumbsRectangle.Bottom + offsetY, m_thumbsRectangle.Top + s_minimumSize.Height, m_imageRectangle.Bottom);
-                var width = right - m_currentThumbsRectangle.Left;
-                var height = bottom - m_currentThumbsRectangle.Top;
-
-                var cropScale = width / height;
-                var proportionalCropScale = GetProportionsFactor(Proportions, cropScale);
-
-                if (cropScale < proportionalCropScale)
-                {
-                    var cropHeight = width / proportionalCropScale;
-
-                    m_currentThumbsRectangle.Width = width;
-                    m_currentThumbsRectangle.Height = cropHeight;
-                }
-                else
-                {
-                    var cropWidth = height * proportionalCropScale;
-
-                    m_currentThumbsRectangle.Width = cropWidth;
-                    m_currentThumbsRectangle.Height = height;
-                }
-
-                if (m_currentThumbsRectangle.Bottom > m_thumbsRectangle.Bottom || m_currentThumbsRectangle.Right > m_thumbsRectangle.Right)
-                {
-                    UpdateCropRectangle(false);
-                }
-                else
-                {
-                    UpdateThumbs(m_currentThumbsRectangle);
-                }
-
-                e.Handled = true;
-            }
-        }
-
-        private void BottomThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
-            {
-                var position = e.GetCurrentPoint(m_layoutRoot).Position;
-                var offsetY = position.Y - startPosition.Y;
-
-                var bottom = Clamp(m_thumbsRectangle.Bottom + offsetY, m_thumbsRectangle.Top + s_minimumSize.Height, m_imageRectangle.Bottom);
-                var height = bottom - m_currentThumbsRectangle.Top;
-
-                var proportionalCropScale = GetProportionsFactor(Proportions, m_currentThumbsRectangle.Width / height);
-                var cropWidth = Math.Min(m_imageRectangle.Width, height * proportionalCropScale);
-
-                m_currentThumbsRectangle.X = Clamp(m_currentThumbsRectangle.X + (m_currentThumbsRectangle.Width - cropWidth) / 2.0, m_imageRectangle.X, m_imageRectangle.Right - cropWidth);
-                m_currentThumbsRectangle.Width = cropWidth;
-                m_currentThumbsRectangle.Height = cropWidth / proportionalCropScale;
-
-                if (m_currentThumbsRectangle.Bottom > m_thumbsRectangle.Bottom)
-                {
-                    UpdateCropRectangle(false);
-                }
-                else
-                {
-                    UpdateThumbs(m_currentThumbsRectangle);
-                }
-
-                e.Handled = true;
-            }
-        }
-
-        private void RightThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
-            {
-                var position = e.GetCurrentPoint(m_layoutRoot).Position;
-                var offsetX = position.X - startPosition.X;
-
-                var right = Clamp(m_thumbsRectangle.Right + offsetX, m_thumbsRectangle.Left + s_minimumSize.Width, m_imageRectangle.Right);
-                var width = right - m_currentThumbsRectangle.Left;
-
-                var proportionalCropScale = GetProportionsFactor(Proportions, width / m_currentThumbsRectangle.Height);
-                var cropHeight = Math.Min(m_imageRectangle.Height, width / proportionalCropScale);
-
-                m_currentThumbsRectangle.Y = Clamp(m_currentThumbsRectangle.Y + (m_currentThumbsRectangle.Height - cropHeight) / 2.0, m_imageRectangle.Y, m_imageRectangle.Bottom - cropHeight);
-                m_currentThumbsRectangle.Width = cropHeight * proportionalCropScale;
-                m_currentThumbsRectangle.Height = cropHeight;
-
-                if (m_currentThumbsRectangle.Right > m_thumbsRectangle.Right)
-                {
-                    UpdateCropRectangle(false);
-                }
-                else
-                {
-                    UpdateThumbs(m_currentThumbsRectangle);
-                }
-
-                e.Handled = true;
-            }
-        }
-
-        private void TopThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
-            {
-                var position = e.GetCurrentPoint(m_layoutRoot).Position;
-                var offsetY = position.Y - startPosition.Y;
-
-                var top = Clamp(m_thumbsRectangle.Top + offsetY, m_imageRectangle.Top, m_thumbsRectangle.Bottom - s_minimumSize.Height);
-                var height = m_currentThumbsRectangle.Bottom - top;
-
-                var proportionalCropScale = GetProportionsFactor(Proportions, m_currentThumbsRectangle.Width / height);
-                var cropWidth = Math.Min(m_imageRectangle.Width, height * proportionalCropScale);
-
-                m_currentThumbsRectangle.Y = top;
-                m_currentThumbsRectangle.X = Clamp(m_currentThumbsRectangle.X + (m_currentThumbsRectangle.Width - cropWidth) / 2.0, m_imageRectangle.X, m_imageRectangle.Right - cropWidth);
-                m_currentThumbsRectangle.Width = cropWidth;
-                m_currentThumbsRectangle.Height = cropWidth / proportionalCropScale;
-
-                if (m_currentThumbsRectangle.Top < m_thumbsRectangle.Top)
-                {
-                    UpdateCropRectangle(false);
-                }
-                else
-                {
-                    UpdateThumbs(m_currentThumbsRectangle);
-                }
-
-                e.Handled = true;
-            }
-        }
-
-        private void LeftThumb_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            if (e.Pointer.IsInContact && m_pointerPositions.TryGetValue(e.Pointer.PointerId, out Point startPosition))
-            {
-                var position = e.GetCurrentPoint(m_layoutRoot).Position;
-                var offsetX = position.X - startPosition.X;
-
-                var left = Clamp(m_thumbsRectangle.Left + offsetX, m_imageRectangle.Left, m_thumbsRectangle.Right - s_minimumSize.Width);
-                var width = m_currentThumbsRectangle.Right - left;
-
-                var proportionalCropScale = GetProportionsFactor(Proportions, width / m_currentThumbsRectangle.Height);
-                var cropHeight = Math.Min(m_imageRectangle.Height, width / proportionalCropScale);
-
-                m_currentThumbsRectangle.X = left;
-                m_currentThumbsRectangle.Y = Clamp(m_currentThumbsRectangle.Y + (m_currentThumbsRectangle.Height - cropHeight) / 2.0, m_imageRectangle.Y, m_imageRectangle.Bottom - cropHeight);
-                m_currentThumbsRectangle.Width = cropHeight * proportionalCropScale;
-                m_currentThumbsRectangle.Height = cropHeight;
-
-                if (m_currentThumbsRectangle.Left < m_thumbsRectangle.Left)
-                {
-                    UpdateCropRectangle(false);
-                }
-                else
-                {
-                    UpdateThumbs(m_currentThumbsRectangle);
-                }
-
-                e.Handled = true;
-            }
-        }
-
-        private void ImageCropper_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //Clip = new RectangleGeometry() { Rect = new Rect(default(Point), e.NewSize) };
-
-            switch (m_outerClip)
-            {
-                case RectangleGeometry rectangle:
-                    rectangle.Rect = new Rect(-Padding.Left, -Padding.Top, ActualWidth, ActualHeight);
-                    break;
-            }
-
-            Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
-            Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
-
-            UpdateCropRectangle(m_cropRectangle, false);
-        }
-
-        private static void ProportionsProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ImageCropper)d).OnProportionsChanged((ImageCroppingProportions)e.OldValue, (ImageCroppingProportions)e.NewValue);
-        }
-
-        //private static void RotationAngleProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    ((ImageCropper)d).OnRotationAngleChanged((double)e.OldValue, (double)e.NewValue);
-        //}
-
-        private static void CropRectangleProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ImageCropper)d).OnCropRectangleChanged((Rect)e.OldValue, (Rect)e.NewValue);
-        }
-
-        private static void IsCropEnabled_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ImageCropper)d).OnIsCropEnabledChanged((bool)e.OldValue, (bool)e.NewValue);
+            UpdateTutteCose(rectangle, animate);
         }
 
         #endregion
-    }
 
+        #region Proportions
+
+        public void SetProportions(BitmapProportions value, bool animate = true)
+        {
+            _proportions = value;
+
+            var cropScale = (m_rectangle.Width * m_imageSize.Width) / (m_rectangle.Height * m_imageSize.Height);
+            var proportionalCropScale = GetProportionsFactor(value, cropScale);
+
+            if (cropScale < proportionalCropScale)
+            {
+                var cropHeight = ((m_rectangle.Width * m_imageSize.Width) / proportionalCropScale) / m_imageSize.Height;
+
+                m_rectangle.Y = Math.Clamp(m_rectangle.Y + (m_rectangle.Height - cropHeight) / 2.0, 0.0, m_imageSize.Height - cropHeight);
+                m_rectangle.Height = cropHeight;
+            }
+            else
+            {
+                var cropWidth = ((m_rectangle.Height * m_imageSize.Height) * proportionalCropScale) / m_imageSize.Width;
+
+                m_rectangle.X = Math.Clamp(m_rectangle.X + (m_rectangle.Width - cropWidth) / 2.0, 0.0, m_imageSize.Width - cropWidth);
+                m_rectangle.Width = cropWidth;
+            }
+
+            UpdateTutteCose(m_rectangle, animate);
+        }
+
+        private double GetProportionsFactor(BitmapProportions proportions, double defaultValue)
+        {
+            switch (proportions)
+            {
+                case BitmapProportions.Original:
+                    return m_imageSize.Width / m_imageSize.Height;
+                case BitmapProportions.Square:
+                    return 1.0;
+                // Portrait
+                case BitmapProportions.TwoOverThree:
+                    return 2.0 / 3.0;
+                case BitmapProportions.ThreeOverFive:
+                    return 3.0 / 5.0;
+                case BitmapProportions.ThreeOverFour:
+                    return 3.0 / 4.0;
+                case BitmapProportions.FourOverFive:
+                    return 4.0 / 5.0;
+                case BitmapProportions.FiveOverSeven:
+                    return 5.0 / 7.0;
+                case BitmapProportions.NineOverSixteen:
+                    return 9.0 / 16.0;
+                // Landscape
+                case BitmapProportions.ThreeOverTwo:
+                    return 3.0 / 2.0;
+                case BitmapProportions.FiveOverThree:
+                    return 5.0 / 3.0;
+                case BitmapProportions.FourOverThree:
+                    return 4.0 / 3.0;
+                case BitmapProportions.FiveOverFour:
+                    return 5.0 / 4.0;
+                case BitmapProportions.SevenOverFive:
+                    return 7.0 / 5.0;
+                case BitmapProportions.SixteenOverNine:
+                    return 16.0 / 9.0;
+                default:
+                    return defaultValue;
+            }
+        }
+
+        public IReadOnlyList<BitmapProportions> GetProportions()
+        {
+            return GetProportionsFor(m_imageSize.Width, m_imageSize.Height);
+        }
+
+        public static IReadOnlyList<BitmapProportions> GetProportionsFor(double width, double height)
+        {
+            var items = new List<BitmapProportions>();
+            items.Add(BitmapProportions.Original);
+            items.Add(BitmapProportions.Square);
+
+            if (width > height)
+            {
+                items.Add(BitmapProportions.ThreeOverTwo);
+                items.Add(BitmapProportions.FiveOverThree);
+                items.Add(BitmapProportions.FourOverThree);
+                items.Add(BitmapProportions.FiveOverFour);
+                items.Add(BitmapProportions.SevenOverFive);
+                items.Add(BitmapProportions.SixteenOverNine);
+            }
+            else
+            {
+                items.Add(BitmapProportions.TwoOverThree);
+                items.Add(BitmapProportions.ThreeOverFive);
+                items.Add(BitmapProportions.ThreeOverFour);
+                items.Add(BitmapProportions.FourOverFive);
+                items.Add(BitmapProportions.FiveOverSeven);
+                items.Add(BitmapProportions.NineOverSixteen);
+            }
+
+            return items;
+        }
+
+        #endregion
+
+        #region Mask
+
+        public void SetMask(ImageCropperMask mask)
+        {
+            _mask = mask;
+
+            var clip = m_clip;
+            if (clip == null)
+            {
+                return;
+            }
+
+            var group = new GeometryGroup();
+            group.Children.Add(m_outerClip = new RectangleGeometry());
+            group.Children.Add(m_innerClip = mask == ImageCropperMask.Rectangle
+                ? (Geometry)new RectangleGeometry()
+                : new EllipseGeometry());
+
+            clip.Data = group;
+            UpdateTutteCose(m_rectangle);
+        }
+
+        #endregion
+
+        #region Properties
+
+        public int PixelWidth => (int)m_imageSize.Width;
+        public int PixelHeight => (int)m_imageSize.Height;
+
+        public BitmapProportions Proportions => _proportions;
+
+        public Rect CropRectangle => m_rectangle;
+
+        private bool _isCropEnabled = true;
+        public bool IsCropEnabled
+        {
+            get => _isCropEnabled;
+            set
+            {
+                _isCropEnabled = value;
+                VisualStateManager.GoToState(this, value ? "Normal" : "Disabled", true);
+            }
+        }
+
+        public ImageCropperMask Mask => _mask;
+
+        #endregion
+
+        #region Source
+
+        public async Task SetSourceAsync(StorageFile file, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None, BitmapProportions proportions = BitmapProportions.Custom, Rect? cropRectangle = null)
+        {
+            _rotation = rotation;
+            _flip = flip;
+
+            SoftwareBitmapSource source;
+            using (var fileStream = await ImageHelper.OpenReadAsync(file))
+            {
+                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+                var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
+
+                transform.Rotation = rotation;
+                transform.Flip = flip;
+
+                var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                source = new SoftwareBitmapSource();
+                await source.SetBitmapAsync(software);
+
+                SetSource(file, source, software.PixelWidth, software.PixelHeight, proportions, cropRectangle);
+            }
+
+            UpdatePresenterTransform();
+        }
+
+        public void SetSource(StorageFile file, ImageSource source, double width, double height, BitmapProportions proportions = BitmapProportions.Custom, Rect? cropRectangle = null)
+        {
+            m_imageViewer.Source = source;
+
+            //m_imagePreview = source;
+            m_imageSource = file;
+            m_imageSize = new Size(width, height);
+
+            if (cropRectangle is Rect rectangle)
+            {
+                SetProportions(proportions, false);
+                SetRectangle(rectangle, false);
+            }
+            else
+            {
+                SetRectangle(new Rect(0, 0, 1, 1), false);
+                SetProportions(proportions, false);
+            }
+
+            //m_suppressUpdates = true;
+
+            //Proportions = proportions;
+
+            //if (m_imageViewer != null)
+            //{
+            //    m_imageViewer.Source = m_imagePreview;
+
+            //    Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
+            //    Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
+
+            //    var imageScale = m_imageSize.Width / m_imageSize.Height;
+            //    var cropScale = GetProportionsFactor(Proportions, imageScale);
+            //    if (imageScale < cropScale)
+            //    {
+            //        var cropHeight = m_imageSize.Width / cropScale;
+            //        m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
+            //    }
+            //    else
+            //    {
+            //        var cropWidth = m_imageSize.Height * cropScale;
+            //        m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
+            //    }
+
+            //    if (cropRectangle != null)
+            //    {
+            //        m_cropRectangle = cropRectangle.Value;
+            //    }
+
+            //    UpdateCropRectangle(m_cropRectangle, false);
+            //}
+            //else
+            //{
+            //    m_imageWaiting = true;
+            //}
+        }
+
+        public async Task<StorageFile> CropAsync(int min = 1280, int max = 0)
+        {
+            return await ImageHelper.CropAsync(m_imageSource, null, m_rectangle, min, max, rotation: _rotation, flip: _flip);
+        }
+
+        #endregion
+
+        #region Content
+
+        private void ImageViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var horizontal = -e.NewSize.Height;
+            var vertical = -e.NewSize.Width;
+
+            //if (e.NewSize.Width > e.NewSize.Height)
+            //{
+            //    horizontal = 0;
+            //}
+            //else
+            //{
+            //    vertical = 0;
+            //}
+
+            switch (_rotation)
+            {
+                case BitmapRotation.None:
+                case BitmapRotation.Clockwise180Degrees:
+                    m_imagePresenter.Margin = new Thickness(horizontal, vertical, horizontal, vertical);
+                    m_imagePresenter.Width = e.NewSize.Width;
+                    m_imagePresenter.Height = e.NewSize.Height;
+                    m_imagePresenterTransform.Rotation = _rotation == BitmapRotation.None
+                        ? 0
+                        : 180;
+                    break;
+                case BitmapRotation.Clockwise90Degrees:
+                case BitmapRotation.Clockwise270Degrees:
+                    m_imagePresenter.Margin = new Thickness(horizontal, vertical, horizontal, vertical);
+                    m_imagePresenter.Width = e.NewSize.Height;
+                    m_imagePresenter.Height = e.NewSize.Width;
+                    m_imagePresenterTransform.Rotation = _rotation == BitmapRotation.Clockwise90Degrees
+                        ? 90
+                        : 270;
+                    break;
+            }
+
+            UpdatePresenterTransform();
+            UpdateTutteCose(m_rectangle);
+        }
+
+        private void UpdatePresenterTransform()
+        {
+            m_imagePresenterTransform.ScaleX = _flip == BitmapFlip.Horizontal
+                ? -1
+                : 1;
+            m_imagePresenterTransform.ScaleY = _flip == BitmapFlip.Vertical
+                ? -1
+                : 1;
+        }
+
+        #endregion
+
+    }
 }

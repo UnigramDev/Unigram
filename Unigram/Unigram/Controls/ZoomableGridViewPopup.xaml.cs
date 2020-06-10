@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -82,7 +73,7 @@ namespace Unigram.Controls
 
             if (sticker.Thumbnail != null)
             {
-                UpdateThumbnail(protoService, sticker.Thumbnail.Photo);
+                UpdateThumbnail(protoService, sticker.Thumbnail.File);
             }
 
             UpdateFile(protoService, sticker.StickerValue);
@@ -94,11 +85,11 @@ namespace Unigram.Controls
             }
         }
 
-        public async void UpdateFile(IProtoService protoService, File file)
+        public void UpdateFile(IProtoService protoService, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -107,11 +98,11 @@ namespace Unigram.Controls
             }
         }
 
-        private async void UpdateThumbnail(IProtoService protoService, File file)
+        private void UpdateThumbnail(IProtoService protoService, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Container.Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
+                Container.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetWebPFrame(file.Local.Path) };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

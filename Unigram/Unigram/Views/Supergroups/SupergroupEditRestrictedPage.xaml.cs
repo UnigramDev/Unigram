@@ -1,29 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Unigram.ViewModels.Users;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditRestrictedPage : Page, IMemberDelegate
+    public sealed partial class SupergroupEditRestrictedPage : HostedPage, IMemberDelegate
     {
         public SupergroupEditRestrictedViewModel ViewModel => DataContext as SupergroupEditRestrictedViewModel;
 

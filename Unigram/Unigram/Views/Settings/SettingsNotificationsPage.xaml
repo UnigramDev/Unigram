@@ -1,25 +1,22 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Settings.SettingsNotificationsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:settings="using:Unigram.ViewModels.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource NotificationsAndSounds}"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,24">
                 <controls:HeaderedControl
                     Header="{CustomResource ShowNotificationsFor}"
@@ -79,14 +76,6 @@
                         Margin="12,0,12,0"/>
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
 
-                    <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsVibrationAvailable}">
-                        <CheckBox
-                            IsChecked="{x:Bind ViewModel.InAppVibrate, Mode=TwoWay}"
-                            Content="{CustomResource InAppVibrate}"
-                            Margin="12,0,12,0"/>
-                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
-                    </StackPanel>
-
                     <CheckBox 
                         IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}"
                         Content="{CustomResource InAppPreview}"
@@ -129,4 +118,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</Page>
+</local:HostedPage>

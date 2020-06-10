@@ -1,24 +1,21 @@
-﻿<Page
+﻿<local:HostedPage
     x:Class="Unigram.Views.Settings.SettingsVoIPPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:PageHeader Text="Call Settings"/>
-
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
+                      VerticalScrollMode="Auto">
             <StackPanel>
                 <controls:HeaderedControl
                     Header="Speakers and headphones">
@@ -56,4 +53,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-</Page>
+</local:HostedPage>

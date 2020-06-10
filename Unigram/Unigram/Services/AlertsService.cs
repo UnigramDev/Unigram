@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Converters;
+using Unigram.Navigation;
 
 namespace Unigram.Services
 {
@@ -303,7 +297,7 @@ namespace Unigram.Services
 
         private static async void ShowPeerFloodAlert(IDispatcherWrapper fragment, int reason)
         {
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
             dialog.PrimaryButtonText = Strings.Resources.OK;
 
@@ -354,7 +348,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
             dialog.Message = text;
             dialog.PrimaryButtonText = Strings.Resources.OK;
@@ -385,7 +379,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
             dialog.PrimaryButtonText = Strings.Resources.OK;
 

@@ -1,0 +1,22 @@
+<controls:ContentPopup
+    x:Class="Unigram.Views.Popups.EditUserNamePopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Popups"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Edit name"
+    PrimaryButtonText="OK"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <StackPanel>
+        <TextBox x:Name="TextFirstName" TextChanged="OnTextChanged" PlaceholderText="{CustomResource FirstName}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Margin="12,12,12,12"/>
+        <TextBox x:Name="TextLastName" TextChanged="OnTextChanged" PlaceholderText="{CustomResource LastName}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Margin="12,0,12,12"/>
+
+        <CheckBox x:Name="SharePhoneCheck"/>
+    </StackPanel>
+</controls:ContentPopup>

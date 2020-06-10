@@ -1,0 +1,100 @@
+<UserControl
+    x:Class="Unigram.Controls.InlineBotResultsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    DataContextChanged="OnDataContextChanged"
+    SizeChanged="OnSizeChanged"
+    Unloaded="OnUnloaded">
+
+    <UserControl.Resources>
+
+        <DataTemplate x:Key="ResultTemplate">
+            <Button Click="Result_Click" Style="{StaticResource EmptyButtonStyle}">
+                <Grid Margin="12,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                          Width="48"
+                          Height="48"
+                          VerticalAlignment="Top"
+                          Margin="0,0,12,0"
+                          CornerRadius="4"
+                          Grid.RowSpan="2">
+                        <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                    <TextBlock Style="{StaticResource BaseTextBlockStyle}" Margin="0,0,0,2" VerticalAlignment="Bottom" Grid.Column="1"/>
+                    <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,-2,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1"/>
+                </Grid>
+            </Button>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MediaTemplate">
+            <Button Click="Result_Click" Margin="0,0,2,2" Style="{StaticResource GridViewButtonStyle}">
+                <Grid>
+                    <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
+            </Button>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StickerTemplate">
+            <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
+                <Grid>
+                    <Image Stretch="Uniform"/>
+                </Grid>
+            </Button>
+        </DataTemplate>
+
+        <controls:MosaicLayout x:Key="MosaicLayout"/>
+        
+        <muxc:StackLayout x:Key="StackLayout"/>
+        <muxc:UniformGridLayout x:Key="GridLayout" MinItemWidth="40" MinItemHeight="40" ItemsStretch="Uniform" />
+    </UserControl.Resources>
+
+    <Grid x:Name="Root" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid x:Name="LayoutRoot">
+            <muxc:ItemsRepeaterScrollHost>
+                <ScrollViewer
+                    x:Name="ScrollingHost"
+                    ViewChanged="OnViewChanged"
+                    VerticalScrollBarVisibility="Auto"
+                    VerticalScrollMode="Auto">
+                    <StackPanel>
+                        <controls:BadgeButton
+                            x:Name="SwitchPm"
+                            Command="{x:Bind ViewModel.SwitchCommand}"
+                            CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPmParameter, Mode=OneWay}"
+                            Content="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPmText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                            Style="{StaticResource SwitchPmButtonStyle}"/>
+                        
+                        <muxc:ItemsRepeater
+                            x:Name="Repeater"
+                            ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
+                            Tag="{x:Bind ConvertSource(ViewModel.InlineBotResults), Mode=OneWay}"
+                            ElementPrepared="OnElementPrepared"
+                            ElementClearing="OnElementClearing"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </muxc:ItemsRepeaterScrollHost>
+        </Grid>
+
+        <Border x:Name="PermissionsPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <TextBlock x:Name="PermissionsLabel" VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
+        </Border>
+    </Grid>
+</UserControl>

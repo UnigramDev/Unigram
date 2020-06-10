@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -16,21 +13,32 @@ namespace Unigram.ViewModels.Users
 {
     public class UserCommonChatsViewModel : TLViewModelBase
     {
-        public UserCommonChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public UserCommonChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (parameter is int userId)
+            if (parameter is long chatId)
             {
-                //if (Items != null)
-                //{
-                //    Items.HasMoreItems = false;
-                //    Items.Clear();
-                //}
+                var chat = CacheService.GetChat(chatId);
+                if (chat == null)
+                {
+                    return Task.CompletedTask;
+                }
 
+                var user = CacheService.GetUser(chat);
+                if (user == null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                Items = new ItemsCollection(ProtoService, user.Id);
+                RaisePropertyChanged(() => Items);
+            }
+            else if (parameter is int userId)
+            {
                 Items = new ItemsCollection(ProtoService, userId);
                 RaisePropertyChanged(() => Items);
             }

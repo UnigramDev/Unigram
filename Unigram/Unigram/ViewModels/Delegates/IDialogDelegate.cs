@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Telegram.Td.Api;
+using Unigram.Controls.Chats;
 using Unigram.ViewModels.Chats;
 using Windows.UI.Xaml;
 
@@ -23,10 +24,13 @@ namespace Unigram.ViewModels.Delegates
         void UpdateComposerHeader(Chat chat, MessageComposerHeader header);
         void UpdateSearchMask(Chat chat, ChatSearchViewModel search);
 
+        void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection);
+
 
 
         void PlayMessage(MessageViewModel message, FrameworkElement target);
 
+        void ViewVisibleMessages(bool intermediate);
 
 
         void HideStickers();

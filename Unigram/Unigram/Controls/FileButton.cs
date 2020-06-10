@@ -1,15 +1,8 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
-using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,6 +30,8 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(FileButton);
         }
+
+        public bool IsSmall { get; set; }
 
         protected override void OnApplyTemplate()
         {
@@ -114,13 +109,13 @@ namespace Unigram.Controls
             switch (state)
             {
                 case MessageContentState.Download:
-                    OnGlyphChanged(Icons.Download, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.Download, Glyph, _state != state && _state != MessageContentState.None);
                     break;
                 case MessageContentState.Downloading:
-                    OnGlyphChanged(Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
                     break;
                 case MessageContentState.Uploading:
-                    OnGlyphChanged(Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
                     break;
                 case MessageContentState.Confirm:
                     OnGlyphChanged(Icons.Confirm, Glyph, _state != state && _state != MessageContentState.None);

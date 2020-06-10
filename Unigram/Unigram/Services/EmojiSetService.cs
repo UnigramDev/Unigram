@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -141,7 +140,7 @@ namespace Unigram.Services
 
             await _protoService.SendAsync(new OpenChat(chat.Id));
 
-            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, 0, 0, 0, 100, new SearchMessagesFilterDocument())) as Messages;
+            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#emoji", 0, 0, 0, 100, new SearchMessagesFilterDocument())) as Messages;
             if (response == null)
             {
                 _protoService.Send(new CloseChat(chat.Id));

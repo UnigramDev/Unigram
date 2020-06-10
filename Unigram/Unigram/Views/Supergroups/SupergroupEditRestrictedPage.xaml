@@ -1,4 +1,4 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Supergroups.SupergroupEditRestrictedPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,21 +16,18 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource UserRestrictions}"
             Glyph="&#xE10B;"/>
+    </local:HostedPage.Header>
 
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:ScrollViewerBackground 
             Background="{ThemeResource PageSubHeaderBackgroundBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
+            VerticalAlignment="Top"/>
         <ScrollViewer
             x:Name="ScrollingHost"
             VerticalScrollBarVisibility="Auto"
@@ -121,4 +118,4 @@
         </ScrollViewer>
 
     </Grid>
-</Page>
+</local:HostedPage>

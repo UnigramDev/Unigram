@@ -1,29 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
-using Template10.Common;
-using Template10.Services.NavigationService;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Services;
-using Unigram.Services.Settings;
+using Unigram.Services.Navigation;
 using Unigram.ViewModels;
 using Unigram.Views.SignIn;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System.Profile;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -177,6 +170,7 @@ namespace Unigram.Views.Host
                         service.Navigate(typeof(MainPage));
                         break;
                     case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
+                    case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
                         service.Navigate(typeof(SignInPage));
                         service.Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));
                         break;
@@ -203,19 +197,26 @@ namespace Unigram.Views.Host
             Navigation.Content = service.Frame;
         }
 
-        private void Destroy(NavigationService service)
+        private void Destroy(NavigationService master)
         {
-            if (service.Frame.Content is IRootContentPage content)
+            if (master.Frame.Content is IRootContentPage content)
             {
                 content.Root = null;
                 content.Dispose();
             }
 
-            service.Frame.Navigating -= OnNavigating;
-            service.Frame.Navigated -= OnNavigated;
+            master.Frame.Navigating -= OnNavigating;
+            master.Frame.Navigated -= OnNavigated;
+            master.Frame.Navigate(typeof(BlankPage));
 
-            WindowContext.GetForCurrentView().NavigationServices.Remove(service);
-            WindowContext.GetForCurrentView().NavigationServices.RemoveByFrameId($"Main{service.FrameFacade.FrameId}");
+            var detail = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
+            if (detail != null)
+            {
+                detail.Navigate(typeof(BlankPage));
+            }
+
+            WindowContext.GetForCurrentView().NavigationServices.Remove(master);
+            WindowContext.GetForCurrentView().NavigationServices.Remove(detail);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
@@ -388,10 +389,6 @@ namespace Unigram.Views.Host
                     {
                         content.FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
                     }
-                    else if (destination == RootDestination.Wallet)
-                    {
-                        content.FontFamily = new FontFamily("Segoe UI Emoji");
-                    }
                     else
                     {
                         content.FontFamily = new FontFamily("Segoe MDL2 Assets");
@@ -419,7 +416,7 @@ namespace Unigram.Views.Host
                         break;
 
                     case RootDestination.Chats:
-                        content.Text = "Chats";
+                        content.Text = Strings.Resources.FilterChats;
                         content.Glyph = "\uE8BD";
                         break;
                     case RootDestination.Contacts:
@@ -433,11 +430,6 @@ namespace Unigram.Views.Host
                     case RootDestination.Settings:
                         content.Text = Strings.Resources.Settings;
                         content.Glyph = "\uE115";
-                        break;
-
-                    case RootDestination.Wallet:
-                        content.Text = Strings.Resources.Wallet;
-                        content.Glyph = "\uD83D\uDC8E";
                         break;
 
                     case RootDestination.SavedMessages:
@@ -465,7 +457,7 @@ namespace Unigram.Views.Host
             Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);
         }
 
-        private void OnItemClick(object sender, ItemClickEventArgs e)
+        private async void OnItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is ISessionService session)
             {
@@ -480,7 +472,24 @@ namespace Unigram.Views.Host
             {
                 if (destination == RootDestination.AddAccount)
                 {
+#if DEBUG
+                    var dialog = new MessagePopup();
+                    dialog.Title = "Environment";
+                    dialog.Message = "Choose your environment";
+                    dialog.PrimaryButtonText = "Live";
+                    dialog.SecondaryButtonText = "Test";
+                    dialog.CloseButtonText = "Cancel";
+
+                    var confirm = await dialog.ShowQueuedAsync();
+                    if (confirm == ContentDialogResult.None)
+                    {
+                        return;
+                    }
+
+                    Switch(_lifetime.Create(test: confirm == ContentDialogResult.Secondary));
+#else
                     Switch(_lifetime.Create());
+#endif
                 }
                 else if (_navigationService?.Frame?.Content is IRootContentPage content)
                 {
@@ -582,8 +591,6 @@ namespace Unigram.Views.Host
         Settings,
 
         InviteFriends,
-
-        Wallet,
 
         SavedMessages,
         News,

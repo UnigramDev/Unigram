@@ -1,32 +1,25 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Services;
-using Unigram.Native;
 using Unigram.Views;
 using Unigram.Views.Payments;
+using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
-using Windows.UI.Popups;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml;
-using Template10.Common;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -135,8 +128,19 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var items = messages.Select(x => x.Get()).ToArray();
+
+            var response = await ProtoService.SendAsync(new GetMessages(chat.Id, items.Select(x => x.Id).ToArray()));
+            if (response is Messages updated)
+            {
+                for (int i = 0; i < updated.MessagesValue.Count; i++)
+                {
+                    items[i] = updated.MessagesValue[i];
+                }
+            }
+
             var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
-            var dialog = new DeleteMessagesView(CacheService, messages.Select(x => x.Get()).ToArray());
+            var dialog = new DeleteMessagesPopup(CacheService, items.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -191,7 +195,7 @@ namespace Unigram.ViewModels
             DisposeSearch();
             SelectionMode = ListViewSelectionMode.None;
 
-            await ShareView.GetForCurrentView().ShowAsync(message.Get());
+            await SharePopup.GetForCurrentView().ShowAsync(message.Get());
 
             TextField?.Focus(FocusState.Programmatic);
         }
@@ -205,11 +209,11 @@ namespace Unigram.ViewModels
         {
             if (message.Content is MessageAlbum album)
             {
-                await ShareView.GetForCurrentView().ShowAsync(album.Layout.Messages.Select(x => x.Get()).ToList());
+                await SharePopup.GetForCurrentView().ShowAsync(album.Layout.Messages.Select(x => x.Get()).ToList());
             }
             else
             {
-                await ShareView.GetForCurrentView().ShowAsync(message.Get());
+                await SharePopup.GetForCurrentView().ShowAsync(message.Get());
             }
         }
 
@@ -255,7 +259,7 @@ namespace Unigram.ViewModels
                 DisposeSearch();
                 SelectionMode = ListViewSelectionMode.None;
 
-                await ShareView.GetForCurrentView().ShowAsync(messages);
+                await SharePopup.GetForCurrentView().ShowAsync(messages);
 
                 TextField?.Focus(FocusState.Programmatic);
             }
@@ -461,24 +465,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatChild, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt5 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
-            var stack = new StackPanel();
-            stack.Children.Add(opt1);
-            stack.Children.Add(opt2);
-            stack.Children.Add(opt3);
-            stack.Children.Add(opt4);
-            stack.Children.Add(opt5);
-            stack.Margin = new Thickness(12, 16, 12, 0);
+            var items = new[]
+            {
+                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, true),
+                new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
+                new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
+                new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
+                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
+            };
 
-            var dialog = new TLContentDialog();
-            dialog.Content = stack;
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.ReportChat;
-            dialog.IsPrimaryButtonEnabled = true;
-            dialog.IsSecondaryButtonEnabled = true;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -488,15 +485,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var reason = opt1.IsChecked == true
-                ? new ChatReportReasonSpam()
-                : (opt2.IsChecked == true
-                    ? new ChatReportReasonViolence()
-                    : (opt3.IsChecked == true
-                        ? new ChatReportReasonPornography()
-                        : (opt4.IsChecked == true
-                            ? new ChatReportReasonChildAbuse()
-                            : (ChatReportReason)new ChatReportReasonCustom())));
+            var reason = dialog.SelectedIndex as ChatReportReason;
+            if (reason == null)
+            {
+                return;
+            }
 
             if (reason is ChatReportReasonCustom other)
             {
@@ -701,7 +694,7 @@ namespace Unigram.ViewModels
                     dataPackage.SetText(link.Url);
                     ClipboardEx.TrySetContent(dataPackage);
 
-                    await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else
@@ -796,7 +789,7 @@ namespace Unigram.ViewModels
 
             if (chat.PinnedMessageId == message.Id)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     ProtoService.Send(new UnpinChatMessage(chat.Id));
@@ -804,7 +797,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var dialog = new TLMessageDialog();
+                var dialog = new MessagePopup();
                 dialog.Title = Strings.Resources.AppName;
                 dialog.Message = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
                     ? Strings.Resources.PinMessageAlertChannel
@@ -841,24 +834,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var opt1 = new RadioButton { Content = Strings.Resources.ReportChatSpam, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt2 = new RadioButton { Content = Strings.Resources.ReportChatViolence, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt3 = new RadioButton { Content = Strings.Resources.ReportChatPornography, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt4 = new RadioButton { Content = Strings.Resources.ReportChatChild, HorizontalAlignment = HorizontalAlignment.Stretch };
-            var opt5 = new RadioButton { Content = Strings.Resources.ReportChatOther, HorizontalAlignment = HorizontalAlignment.Stretch, IsChecked = true };
-            var stack = new StackPanel();
-            stack.Children.Add(opt1);
-            stack.Children.Add(opt2);
-            stack.Children.Add(opt3);
-            stack.Children.Add(opt4);
-            stack.Children.Add(opt5);
-            stack.Margin = new Thickness(12, 16, 12, 0);
+            var items = new[]
+            {
+                new SelectRadioItem(new ChatReportReasonSpam(), Strings.Resources.ReportChatSpam, true),
+                new SelectRadioItem(new ChatReportReasonViolence(), Strings.Resources.ReportChatViolence, false),
+                new SelectRadioItem(new ChatReportReasonPornography(), Strings.Resources.ReportChatPornography, false),
+                new SelectRadioItem(new ChatReportReasonChildAbuse(), Strings.Resources.ReportChatChild, false),
+                new SelectRadioItem(new ChatReportReasonCustom(), Strings.Resources.ReportChatOther, false)
+            };
 
-            var dialog = new TLContentDialog();
-            dialog.Content = stack;
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.ReportChat;
-            dialog.IsPrimaryButtonEnabled = true;
-            dialog.IsSecondaryButtonEnabled = true;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
@@ -868,15 +854,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var reason = opt1.IsChecked == true
-                ? new ChatReportReasonSpam()
-                : (opt2.IsChecked == true
-                    ? new ChatReportReasonViolence()
-                    : (opt3.IsChecked == true
-                        ? new ChatReportReasonPornography()
-                        : (opt4.IsChecked == true
-                            ? new ChatReportReasonChildAbuse()
-                            : (ChatReportReason)new ChatReportReasonCustom())));
+            var reason = dialog.SelectedIndex as ChatReportReason;
+            if (reason == null)
+            {
+                return;
+            }
 
             if (reason is ChatReportReasonCustom other)
             {
@@ -925,7 +907,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, options.SchedulingState)); 
+            ProtoService.Send(new EditMessageSchedulingState(message.ChatId, message.Id, options.SchedulingState));
         }
 
         #endregion
@@ -938,7 +920,7 @@ namespace Unigram.ViewModels
             {
                 if (message.SchedulingState != null)
                 {
-                    await TLMessageDialog.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(Strings.Resources.MessageScheduledBotAction, Strings.Resources.AppName, Strings.Resources.OK);
                     return;
                 }
 
@@ -963,7 +945,7 @@ namespace Unigram.ViewModels
                     else
                     {
                         // TODO:
-                        await TLMessageDialog.ShowAsync("Payments are coming soon!", Strings.Resources.AppName, "OK");
+                        await MessagePopup.ShowAsync("Payments are coming soon!", Strings.Resources.AppName, "OK");
                         return;
 
                         var response = await ProtoService.SendAsync(new GetPaymentForm(chat.Id, message.Id));
@@ -1008,7 +990,7 @@ namespace Unigram.ViewModels
                     }
                     else if (response is LoginUrlInfoRequestConfirmation requestConfirmation)
                     {
-                        var dialog = new LoginUrlInfoView(CacheService, requestConfirmation);
+                        var dialog = new LoginUrlInfoPopup(CacheService, requestConfirmation);
                         var confirm = await dialog.ShowQueuedAsync();
                         if (confirm != ContentDialogResult.Primary || !dialog.HasAccepted)
                         {
@@ -1047,7 +1029,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        await ShareView.GetForCurrentView().ShowAsync(switchInline, bot);
+                        await SharePopup.GetForCurrentView().ShowAsync(switchInline, bot);
                     }
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
@@ -1060,7 +1042,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
-                            var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, urlButton.Url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                             if (confirm != ContentDialogResult.Primary)
                             {
                                 return;
@@ -1085,14 +1067,14 @@ namespace Unigram.ViewModels
                         {
                             if (answer.ShowAlert)
                             {
-                                await new TLMessageDialog(answer.Text).ShowQueuedAsync();
+                                await new MessagePopup(answer.Text).ShowQueuedAsync();
                             }
                             else
                             {
                                 if (bot == null)
                                 {
                                     // TODO:
-                                    await new TLMessageDialog(answer.Text).ShowQueuedAsync();
+                                    await new MessagePopup(answer.Text).ShowQueuedAsync();
                                     return;
                                 }
 
@@ -1109,7 +1091,7 @@ namespace Unigram.ViewModels
                                 }
                                 else
                                 {
-                                    //var dialog = new TLMessageDialog(response.Result.Url, "Open this link?");
+                                    //var dialog = new MessagePopup(response.Result.Url, "Open this link?");
                                     //dialog.PrimaryButtonText = "OK";
                                     //dialog.SecondaryButtonText = "Cancel";
 
@@ -1176,7 +1158,7 @@ namespace Unigram.ViewModels
                             }
                         }
 
-                        var confirm = await TLMessageDialog.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
@@ -1185,7 +1167,7 @@ namespace Unigram.ViewModels
                 }
                 else if (keyboardButton.Type is KeyboardButtonTypeRequestLocation requestLocation)
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         var location = await _locationService.GetPositionAsync();
@@ -1194,6 +1176,10 @@ namespace Unigram.ViewModels
                             await SendMessageAsync(0, new InputMessageLocation(location, 0), null);
                         }
                     }
+                }
+                else if (keyboardButton.Type is KeyboardButtonTypeRequestPoll requestPoll)
+                {
+                    await SendPollAsync(requestPoll.ForceQuiz, requestPoll.ForceRegular, _chat?.Type is ChatTypeSupergroup super && super.IsChannel);
                 }
                 else if (keyboardButton.Type is KeyboardButtonTypeText textButton)
                 {
@@ -1439,7 +1425,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var dialog = new EditUserNameView(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
+            var dialog = new EditUserNamePopup(user.FirstName, user.LastName, fullInfo.NeedPhoneNumberPrivacyException);
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -1460,7 +1446,7 @@ namespace Unigram.ViewModels
             {
                 var date = BindConvert.Current.DateTime(message.Date);
 
-                var dialog = new Controls.Views.CalendarView();
+                var dialog = new CalendarPopup();
                 dialog.MaxDate = DateTimeOffset.Now.Date;
                 dialog.SelectedDates.Add(date);
 
@@ -1507,7 +1493,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.StopPollAlertText, Strings.Resources.StopPollAlertTitle, Strings.Resources.Stop, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.StopPollAlertText, Strings.Resources.StopPollAlertTitle, Strings.Resources.Stop, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

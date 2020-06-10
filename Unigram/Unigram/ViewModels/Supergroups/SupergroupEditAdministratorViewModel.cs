@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -13,7 +10,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
-using Unigram.Views.Users;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Supergroups
@@ -163,7 +159,7 @@ namespace Unigram.ViewModels.Supergroups
                     (supergroup.IsChannel ? _canEditMessages : true) &&
                     (supergroup.IsChannel ? true : _canPinMessages) &&
                     (supergroup.IsChannel ? _canPostMessages : true) &&
-                    (supergroup.IsChannel ? true :_canRestrictMembers);
+                    (supergroup.IsChannel ? true : _canRestrictMembers);
             }
         }
 
@@ -330,7 +326,7 @@ namespace Unigram.ViewModels.Supergroups
             ChatMemberStatus status;
             if (member.Status is ChatMemberStatusCreator creator)
             {
-                status = new ChatMemberStatusCreator(_customTitle, creator.IsMember);
+                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, creator.IsMember);
             }
             else
             {
@@ -344,7 +340,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = supergroup.IsChannel ? _canPostMessages : false,
                     CanPromoteMembers = _canPromoteMembers,
                     CanRestrictMembers = supergroup.IsChannel ? false : _canRestrictMembers,
-                    CustomTitle = _customTitle
+                    CustomTitle = _customTitle ?? string.Empty
                 };
             }
 
@@ -409,7 +405,7 @@ namespace Unigram.ViewModels.Supergroups
                     builder.AppendLine(Strings.Resources.EditAdminTransferAlertText3);
                 }
 
-                var confirm = await TLMessageDialog.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(builder.ToString(), Strings.Resources.EditAdminTransferAlertTitle, primary, Strings.Resources.Cancel);
                 if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordPage));
@@ -417,7 +413,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.EditAdminTransferReadyAlertText, supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.EditAdminTransferReadyAlertText, supergroup.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer, Strings.Resources.EditAdminTransferChangeOwner, Strings.Resources.Cancel);
                 if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     return;

@@ -1,4 +1,4 @@
-<Page
+<local:HostedPage
     x:Class="Unigram.Views.Supergroups.SupergroupEditAdministratorPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,27 +16,19 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+    <local:HostedPage.Header>
         <controls:ButtonPageHeader
             x:Name="Header"
             Text="{CustomResource EditAdmin}"
             Glyph="&#xE10B;"
             Command="{x:Bind ViewModel.SendCommand}"/>
-
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"
-            Grid.Row="1"/>
+    </local:HostedPage.Header>
+    
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer
             x:Name="ScrollingHost"
             VerticalScrollBarVisibility="Auto"
-            VerticalScrollMode="Auto"
-            Grid.Row="1">
+            VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,24">
                 <controls:HeaderedControl>
                     <Grid>
@@ -129,6 +121,7 @@
                         x:Name="EditRankField"
                         Text="{x:Bind ViewModel.CustomTitle, Mode=TwoWay}"
                         PlaceholderText="{CustomResource ChannelCreator}"
+                        MaxLength="16"
                         Margin="12,8"/>
                 </controls:HeaderedControl>
                 
@@ -143,4 +136,4 @@
         </ScrollViewer>
 
     </Grid>
-</Page>
+</local:HostedPage>

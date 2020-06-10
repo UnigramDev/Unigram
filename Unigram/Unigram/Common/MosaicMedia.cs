@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Windows.Foundation;
 
@@ -11,12 +8,15 @@ namespace Unigram.Common
 {
     public class MosaicMediaPosition
     {
+        public int Index { get; private set; }
+
         public object Item { get; private set; }
 
         public double Width { get; private set; }
 
-        public MosaicMediaPosition(object item, double width)
+        public MosaicMediaPosition(int index, object item, double width)
         {
+            Index = index;
             Item = item;
             Width = width;
         }
@@ -45,9 +45,8 @@ namespace Unigram.Common
             _items = items;
         }
 
-        public static IList<MosaicMediaRow> Calculate(IList items)
+        public static IList<MosaicMediaRow> Calculate(IList items, double width = 320)
         {
-            var width = 320;
             var mosaic = new MosaicMedia(items);
             var preferredRowSize = mosaic.PrepareLayout(width);
 
@@ -57,7 +56,7 @@ namespace Unigram.Common
             {
                 for (int k = 0; k < items.Count; k++)
                 {
-                    result[k] = new MosaicMediaRow(1) { new MosaicMediaPosition(items[k], 0) };
+                    result[k] = new MosaicMediaRow(1) { new MosaicMediaPosition(k, items[k], 0) };
                 }
             }
             else
@@ -69,7 +68,7 @@ namespace Unigram.Common
 
                     for (int j = 0; j < mosaic.rows[i].Count; j++)
                     {
-                        result[i].Add(new MosaicMediaPosition(items[index], mosaic.itemSpans[index] / preferredRowSize));
+                        result[i].Add(new MosaicMediaPosition(index, items[index], mosaic.itemSpans[index] / preferredRowSize));
                         index++;
                     }
                 }
@@ -283,26 +282,19 @@ namespace Unigram.Common
             }
             else if (_items[i] is InlineQueryResult inlineResult)
             {
-                if (inlineResult.IsMedia())
+                switch (inlineResult)
                 {
-                    switch (inlineResult)
-                    {
-                        case InlineQueryResultAnimation animationResult:
-                            return new Size(animationResult.Animation.Width, animationResult.Animation.Height);
-                        case InlineQueryResultPhoto photoResult:
-                            var big = photoResult.Photo.GetBig();
-                            if (big != null)
-                            {
-                                return new Size(big.Width, big.Height);
-                            }
-                            return Size.Empty;
-                        default:
-                            return Size.Empty;
-                    }
-                }
-                else
-                {
-                    return Size.Empty;
+                    case InlineQueryResultAnimation animationResult:
+                        return new Size(animationResult.Animation.Width, animationResult.Animation.Height);
+                    case InlineQueryResultPhoto photoResult:
+                        var big = photoResult.Photo.GetBig();
+                        if (big != null)
+                        {
+                            return new Size(big.Width, big.Height);
+                        }
+                        return Size.Empty;
+                    default:
+                        return Size.Empty;
                 }
             }
 

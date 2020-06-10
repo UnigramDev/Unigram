@@ -1,18 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
 using Unigram.Services;
-using Unigram.Views;
-using Unigram.Views.SignIn;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -22,7 +14,7 @@ namespace Unigram.ViewModels.SignIn
     {
         private AuthorizationStateWaitPassword _parameters;
 
-        public SignInPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SignInPasswordViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
@@ -124,12 +116,12 @@ namespace Unigram.ViewModels.SignIn
                 if (response is Error error)
                 {
                     IsLoading = false;
-                    await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
             else
             {
-                await TLMessageDialog.ShowAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.RestorePasswordNoEmailText, Strings.Resources.RestorePasswordNoEmailTitle, Strings.Resources.OK);
                 IsResettable = true;
             }
         }
@@ -137,7 +129,7 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetMyAccountWarningText, Strings.Resources.ResetMyAccountWarning, Strings.Resources.ResetMyAccountWarningReset, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetMyAccountWarningText, Strings.Resources.ResetMyAccountWarning, Strings.Resources.ResetMyAccountWarningReset, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 IsLoading = true;
@@ -162,7 +154,7 @@ namespace Unigram.ViewModels.SignIn
 
                     if (error.Message.Contains("2FA_RECENT_CONFIRM"))
                     {
-                        await TLMessageDialog.ShowAsync(Strings.Resources.ResetAccountCancelledAlert, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(Strings.Resources.ResetAccountCancelledAlert, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                     else if (error.Message.StartsWith("2FA_CONFIRM_WAIT_"))
                     {
@@ -170,7 +162,7 @@ namespace Unigram.ViewModels.SignIn
                     }
                     else
                     {
-                        await TLMessageDialog.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                     }
                 }
             }

@@ -1,43 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
-using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using LinqToVisualTree;
-using System.Threading.Tasks;
-using Unigram.Controls;
-using Template10.Common;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using Unigram.Common;
-using Windows.UI.Core;
-using Windows.System;
-using System.Windows.Input;
-using Unigram.Strings;
-using Unigram.ViewModels.Dialogs;
-using Telegram.Td.Api;
-using Unigram.Controls.Views;
-using Unigram.ViewModels.Delegates;
+using System.Linq;
+using System.Numerics;
 using System.Reactive.Linq;
-using Unigram.ViewModels.Chats;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Controls.Cells;
+using Unigram.Controls.Chats;
 using Unigram.Controls.Gallery;
 using Unigram.Converters;
-using Unigram.Controls.Chats;
+using Unigram.Navigation;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Chats
 {
-    public sealed partial class ChatSharedMediaPage : Page, INavigablePage, IFileDelegate
+    public sealed partial class ChatSharedMediaPage : HostedPage, INavigablePage, IFileDelegate
     {
         public ChatSharedMediaViewModel ViewModel => DataContext as ChatSharedMediaViewModel;
 
@@ -48,21 +33,207 @@ namespace Unigram.Views.Chats
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
-            MediaHeader.Content = Camelize(Strings.Resources.SharedMediaTab);
-            FilesHeader.Content = Camelize(Strings.Resources.SharedFilesTab);
-            LinksHeader.Content = Camelize(Strings.Resources.SharedLinksTab);
-            MusicHeader.Content = Camelize(Strings.Resources.SharedMusicTab);
-            VoiceHeader.Content = Camelize(Strings.Resources.SharedVoiceTab);
-
             InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
             InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
             InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
+            InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
+
+            _tabs = new ObservableCollection<ChatSharedMediaTab>();
+            _tabs.Add(_mediaHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedMediaTab2 });
+            _tabs.Add(_filesHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedFilesTab2 });
+            _tabs.Add(_linksHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedLinksTab2 });
+            _tabs.Add(_musicHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedMusicTab2 });
+            _tabs.Add(_voiceHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedVoiceTab2 });
+
+            Header.ItemsSource = _tabs;
+            Header.SelectedIndex = 0;
         }
 
-        private string Camelize(string text)
+        private readonly ObservableCollection<ChatSharedMediaTab> _tabs;
+        private ChatSharedMediaTab _mediaHeader;
+        private ChatSharedMediaTab _filesHeader;
+        private ChatSharedMediaTab _linksHeader;
+        private ChatSharedMediaTab _musicHeader;
+        private ChatSharedMediaTab _voiceHeader;
+
+        private bool _isLocked = false;
+
+        private bool _isEmbedded;
+        public bool IsEmbedded
         {
-            return text.Substring(0, 1).ToUpper() + text.Substring(1).ToLower();
+            get => _isEmbedded;
+            set
+            {
+                Update(value, _isLocked);
+            }
         }
+
+        private IProfileTab _tab;
+        public IProfileTab Tab
+        {
+            get => _tab;
+            set
+            {
+                if (_tab != null && _tab is Page old)
+                {
+                    old.Loaded -= Tab_Loaded;
+
+                    ScrollingHost.Items.RemoveAt(_tab.Index);
+                    _tabs.RemoveAt(_tab.Index);
+                }
+
+                _tab = value;
+
+                if (value != null && value is Page page)
+                {
+                    page.Loaded += Tab_Loaded;
+
+                    var pivotItem = new PivotItem
+                    {
+                        Header = value.Text,
+                        Content = page
+                    };
+
+                    ScrollingHost.Items.Insert(value.Index, pivotItem);
+
+                    _tabs.Insert(value.Index, new ChatSharedMediaTab { Text = value.Text });
+                }
+            }
+        }
+
+        private void Update(bool embedded, bool locked)
+        {
+            _tab?.Update(embedded, locked);
+
+            _isEmbedded = embedded;
+            _isLocked = locked;
+
+            var previous = (float)HeaderPage.ActualWidth;
+            var size = embedded && !locked ? 640 : (float)ActualWidth;
+
+            //Header.IsBackEnabled = !embedded;
+            //Header.IsBackButtonVisible = embedded ? Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Collapsed : Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Visible;
+            Header.Height = embedded ? 40 : 48;
+            HeaderPage.Height = embedded ? 40 : 48;
+            HeaderPage.BackVisibility = embedded ? Visibility.Collapsed : Visibility.Visible;
+            HeaderPanel.CornerRadius = new CornerRadius(embedded && !locked ? 8 : 0, embedded && !locked ? 8 : 0, 0, 0);
+            HeaderPanel.MaxWidth = embedded && !locked ? 640 : double.PositiveInfinity;
+            HeaderPanel.Margin = new Thickness(embedded && !locked ? 12 : 0, 0, embedded && !locked ? 12 : 0, 0);
+
+            HeaderMedia.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 8 : 8, 0, 0);
+            HeaderFiles.Padding = HeaderLinks.Padding = HeaderMusic.Padding = HeaderVoice.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 16 : 16, 0, 8);
+            HeaderFiles.Radius = HeaderLinks.Radius = HeaderMusic.Radius = HeaderVoice.Radius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
+
+            var header = ElementCompositionPreview.GetElementVisual(HeaderPage);
+            var animator = ElementCompositionPreview.GetElementVisual(HeaderAnimator);
+
+            var offset = header.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(0, new Vector3(previous > size ? -((previous - size) / 2) : (size - previous) / 2, 0, 0));
+            offset.InsertKeyFrame(1, new Vector3(0));
+
+            var scale = header.Compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, new Vector3(previous / size, 1, 1));
+            scale.InsertKeyFrame(1, new Vector3(1));
+
+            header.StartAnimation("Offset", offset);
+            animator.StartAnimation("Offset", offset);
+            animator.StartAnimation("Scale", scale);
+        }
+
+        public ScrollViewer GetScrollViewer()
+        {
+            var tab = _tab;
+            var shift = 0;
+
+            if (tab?.Index < 1)
+            {
+                shift -= 1;
+            }
+
+            switch (ScrollingHost.SelectedIndex + shift)
+            {
+                case 0:
+                    return ScrollingMedia.GetScrollViewer();
+                case 1:
+                    return ScrollingFiles.GetScrollViewer();
+                case 2:
+                    return ScrollingLinks.GetScrollViewer();
+                case 3:
+                    return ScrollingMusic.GetScrollViewer();
+                case 4:
+                    return ScrollingVoice.GetScrollViewer();
+            }
+
+            if (ScrollingHost.SelectedIndex == tab.Index)
+            {
+                return tab.GetScrollViewer();
+            }
+
+            return null;
+        }
+
+        public void SetScrollMode(bool enable)
+        {
+            foreach (var scrollViewer in GetScrollViewers())
+            {
+                if (enable)
+                {
+                    scrollViewer.VerticalScrollMode = ScrollMode.Auto;
+                    scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                    scrollViewer.ChangeView(null, 12, null, true);
+                }
+                else
+                {
+                    scrollViewer.ChangeView(null, 12, null, true);
+                    scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
+                    scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                }
+
+                Update(_isEmbedded, enable);
+            }
+        }
+
+        private IEnumerable<ScrollViewer> GetScrollViewers()
+        {
+            var viewer1 = ScrollingMedia.GetScrollViewer();
+            if (viewer1 != null)
+            {
+                yield return viewer1;
+            }
+
+            var viewer2 = ScrollingFiles.GetScrollViewer();
+            if (viewer2 != null)
+            {
+                yield return viewer2;
+            }
+
+            var viewer3 = ScrollingLinks.GetScrollViewer();
+            if (viewer3 != null)
+            {
+                yield return viewer3;
+            }
+
+            var viewer4 = ScrollingMusic.GetScrollViewer();
+            if (viewer4 != null)
+            {
+                yield return viewer4;
+            }
+
+            var viewer5 = ScrollingVoice.GetScrollViewer();
+            if (viewer5 != null)
+            {
+                yield return viewer5;
+            }
+
+            var viewer6 = _tab?.GetScrollViewer();
+            if (viewer6 != null)
+            {
+                yield return viewer6;
+            }
+        }
+
+        public event EventHandler<ScrollViewerViewChangedEventArgs> ViewChanged;
+        public event EventHandler<EventArgs> ViewRequested;
 
         private void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
         {
@@ -77,7 +248,15 @@ namespace Unigram.Views.Chats
         {
             if (e.PropertyName.Equals("SelectedItems"))
             {
-                switch (ScrollingHost.SelectedIndex)
+                var tab = _tab;
+                var shift = 0;
+
+                if (tab?.Index < 1)
+                {
+                    shift -= 1;
+                }
+
+                switch (ScrollingHost.SelectedIndex + shift)
                 {
                     case 0:
                         ScrollingMedia.SelectedItems.AddRange(ViewModel.SelectedItems);
@@ -98,7 +277,7 @@ namespace Unigram.Views.Chats
             }
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public void OnBackRequested(HandledEventArgs args)
         {
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
@@ -250,7 +429,7 @@ namespace Unigram.Views.Chats
                 {
                     var grid = hyperlink.Content as Grid;
                     var photo = grid.Children[0] as Image;
-                    photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.Photo, 0, 0);
+                    photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.File, 0, 0);
 
                     var panel = grid.Children[1] as Grid;
                     var duration = panel.Children[1] as TextBlock;
@@ -322,11 +501,11 @@ namespace Unigram.Views.Chats
                     else if (message.Content is MessageVideo video)
                     {
                         var thumb = video.Video.Thumbnail;
-                        if (thumb != null && thumb.Photo.Id == file.Id && file.Local.IsDownloadingCompleted)
+                        if (thumb != null && thumb.File.Id == file.Id && file.Local.IsDownloadingCompleted)
                         {
                             var grid = content.Content as Grid;
                             var thumbnail = grid.Children[0] as Image;
-                            thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, thumb.Photo, 0, 0);
+                            thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, thumb.File, 0, 0);
                         }
                     }
                 }
@@ -419,57 +598,185 @@ namespace Unigram.Views.Chats
             }
         }
 
-        private void NavigationView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
+        private void Header_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (args.InvokedItemContainer == MediaHeader)
+            if (e.ClickedItem is ChatSharedMediaTab tab)
             {
-                ScrollingHost.SelectedIndex = 0;
-            }
-            else if (args.InvokedItemContainer == FilesHeader)
-            {
-                ScrollingHost.SelectedIndex = 1;
-            }
-            else if (args.InvokedItemContainer == LinksHeader)
-            {
-                ScrollingHost.SelectedIndex = 2;
-            }
-            else if (args.InvokedItemContainer == MusicHeader)
-            {
-                ScrollingHost.SelectedIndex = 3;
-            }
-            else if (args.InvokedItemContainer == VoiceHeader)
-            {
-                ScrollingHost.SelectedIndex = 4;
+                ScrollingHost.SelectedIndex = _tabs.IndexOf(tab);
             }
         }
 
         private void ScrollingHost_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ScrollingHost.SelectedIndex == 0)
+            Header.SelectedItem = _tabs[ScrollingHost.SelectedIndex];
+        }
+
+        private void Scrolling_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!_isEmbedded)
             {
-                Header.SelectedItem = MediaHeader;
+                return;
             }
-            else if (ScrollingHost.SelectedIndex == 1)
+
+            var selector = sender as ListViewBase;
+            selector.ItemsPanelRoot.MinHeight = ScrollingHost.ActualHeight + 12;
+
+            if (selector == ScrollingMedia)
             {
-                Header.SelectedItem = FilesHeader;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingMedia_SizeChanged;
             }
-            else if (ScrollingHost.SelectedIndex == 2)
+            else if (selector == ScrollingFiles)
             {
-                Header.SelectedItem = LinksHeader;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingFiles_SizeChanged;
             }
-            else if (ScrollingHost.SelectedIndex == 3)
+            else if (selector == ScrollingLinks)
             {
-                Header.SelectedItem = MusicHeader;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingLinks_SizeChanged;
             }
-            else if (ScrollingHost.SelectedIndex == 4)
+            else if (selector == ScrollingMusic)
             {
-                Header.SelectedItem = VoiceHeader;
+                selector.ItemsPanelRoot.SizeChanged += ScrollingMusic_SizeChanged;
+            }
+            else if (selector == ScrollingVoice)
+            {
+                selector.ItemsPanelRoot.SizeChanged += ScrollingVoice_SizeChanged;
+            }
+
+            var scrollViewer = selector.GetScrollViewer();
+            scrollViewer.ChangeView(null, 12, null, true);
+            scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
+        }
+
+        private void Tab_Loaded(object sender, RoutedEventArgs e)
+        {
+            var tab = sender as IProfileTab;
+            tab.Update(_isEmbedded, _isLocked);
+
+            var selector = tab.GetSelector();
+            selector.ItemsPanelRoot.MinHeight = ScrollingHost.ActualHeight + 12;
+
+            selector.ItemsPanelRoot.SizeChanged += Tab_SizeChanged;
+
+            var scrollViewer = selector.GetScrollViewer();
+            scrollViewer.ChangeView(null, 12, null, true);
+            scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+            scrollViewer.ViewChanged += ScrollViewer_ViewChanged;
+        }
+
+        private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            ViewChanged?.Invoke(sender, e);
+        }
+
+        private void ScrollingHost_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!_isEmbedded)
+            {
+                return;
+            }
+
+            if (ScrollingMedia.ItemsPanelRoot != null)
+            {
+                ScrollingMedia.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
+                ScrollingMedia.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+
+            if (ScrollingFiles.ItemsPanelRoot != null)
+            {
+                ScrollingFiles.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
+                ScrollingFiles.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+
+            if (ScrollingLinks.ItemsPanelRoot != null)
+            {
+                ScrollingLinks.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
+                ScrollingLinks.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+
+            if (ScrollingMusic.ItemsPanelRoot != null)
+            {
+                ScrollingMusic.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
+                ScrollingMusic.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+
+            if (ScrollingVoice.ItemsPanelRoot != null)
+            {
+                ScrollingVoice.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
+                ScrollingVoice.GetScrollViewer().ChangeView(null, 12, null, true);
             }
         }
 
-        private void Header_BackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
+        private void Tab_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Frame.GoBack();
+            if (_tab.GetScrollViewer().VerticalOffset < 12)
+            {
+                _tab.GetSelector().ItemsPanelRoot.SizeChanged -= Tab_SizeChanged;
+                _tab.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
         }
+
+        private void ScrollingMedia_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingMedia.GetScrollViewer().VerticalOffset < 12)
+            {
+                ScrollingMedia.ItemsPanelRoot.SizeChanged -= ScrollingMedia_SizeChanged;
+                ScrollingMedia.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+        }
+
+        private void ScrollingFiles_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingFiles.GetScrollViewer().VerticalOffset < 12)
+            {
+                ScrollingFiles.ItemsPanelRoot.SizeChanged -= ScrollingFiles_SizeChanged;
+                ScrollingFiles.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+        }
+
+        private void ScrollingLinks_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingLinks.GetScrollViewer().VerticalOffset < 12)
+            {
+                ScrollingLinks.ItemsPanelRoot.SizeChanged -= ScrollingLinks_SizeChanged;
+                ScrollingLinks.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+        }
+
+        private void ScrollingMusic_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingMusic.GetScrollViewer().VerticalOffset < 12)
+            {
+                ScrollingMusic.ItemsPanelRoot.SizeChanged -= ScrollingMusic_SizeChanged;
+                ScrollingMusic.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+        }
+
+        private void ScrollingVoice_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ScrollingVoice.GetScrollViewer().VerticalOffset < 12)
+            {
+                ScrollingVoice.ItemsPanelRoot.SizeChanged -= ScrollingVoice_SizeChanged;
+                ScrollingVoice.GetScrollViewer().ChangeView(null, 12, null, true);
+            }
+        }
+    }
+
+    public class ChatSharedMediaTab
+    {
+        public string Text { get; set; }
+    }
+
+    public interface IProfileTab
+    {
+        int Index { get; }
+        string Text { get; }
+
+        ListViewBase GetSelector();
+        ScrollViewer GetScrollViewer();
+
+        void Update(bool embedded, bool locked);
     }
 }

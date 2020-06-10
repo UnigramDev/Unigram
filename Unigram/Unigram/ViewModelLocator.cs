@@ -2,28 +2,24 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Telegram.Td;
-using Template10.Services.ViewService;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Factories;
+using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Dialogs;
-using Unigram.ViewModels.Passport;
+using Unigram.ViewModels.Drawers;
+using Unigram.ViewModels.Folders;
 using Unigram.ViewModels.Payments;
-using Unigram.ViewModels.SecretChats;
 using Unigram.ViewModels.Settings;
 using Unigram.ViewModels.Settings.Password;
 using Unigram.ViewModels.Settings.Privacy;
 using Unigram.ViewModels.SignIn;
 using Unigram.ViewModels.Supergroups;
 using Unigram.ViewModels.Users;
-using Unigram.ViewModels.Wallet;
 using Unigram.Views;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
 
 namespace Unigram
@@ -97,10 +93,6 @@ namespace Unigram
                     .WithParameter("online", session == SettingsService.Current.ActiveSession)
                     .As<IProtoService, ICacheService>()
                     .SingleInstance();
-                builder.RegisterType<TonService>()
-                    .WithParameter("session", session)
-                    .As<ITonService>()
-                    .SingleInstance();
                 builder.RegisterType<EncryptionService>()
                     .WithParameter("session", session)
                     .As<IEncryptionService>()
@@ -126,8 +118,14 @@ namespace Unigram
                     .AutoActivate();
                 builder.RegisterType<EmojiSetService>()
                     .As<IEmojiSetService>()
-                    .SingleInstance()
-                    .AutoActivate();
+                    .SingleInstance();
+                builder.RegisterType<CloudUpdateService>()
+                    .As<ICloudUpdateService>()
+                    .SingleInstance();
+
+                builder.RegisterType<ShortcutsService>()
+                    .As<IShortcutsService>()
+                    .SingleInstance();
                 //builder.RegisterType<OptionsService>()
                 //    .As<IOptionsService>()
                 //    .SingleInstance()
@@ -140,32 +138,20 @@ namespace Unigram
                 builder.RegisterType<EventAggregator>().As<IEventAggregator>().SingleInstance();
 
                 builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
-                builder.RegisterType<LiveLocationService>().As<ILiveLocationService>().SingleInstance();
                 builder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
                 //builder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
-                builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
-                builder.RegisterType<HockeyUpdateService>().As<IHockeyUpdateService>().SingleInstance();
                 builder.RegisterType<ThemeService>().As<IThemeService>().SingleInstance();
 
                 builder.RegisterType<MessageFactory>().As<IMessageFactory>().SingleInstance();
 
-                // Disabled due to crashes on Mobile: 
-                // The RPC server is unavailable.
-                //if (ApiInformation.IsTypePresent("Windows.Devices.Haptics.VibrationDevice") || ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
-                //{
-                //    // Introduced in Creators Update
-                //    container.ContainerBuilder.RegisterType<VibrationService>().As<IVibrationService>().SingleInstance();
-                //}
+                //if (ApiInfo.IsMediaSupported)
+                {
+                    builder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
+                }
                 //else
-                if (ApiInformation.IsTypePresent("Windows.Phone.Devices.Notification.VibrationDevice"))
-                {
-                    // To keep vibration compatibility with Anniversary Update
-                    builder.RegisterType<WindowsPhoneVibrationService>().As<IVibrationService>().SingleInstance();
-                }
-                else
-                {
-                    builder.RegisterType<FakeVibrationService>().As<IVibrationService>().SingleInstance();
-                }
+                //{
+                //    builder.RegisterType<DummyPlaybackService>().As<IPlaybackService>().SingleInstance();
+                //}
 
                 builder.RegisterType<SessionService>().As<ISessionService>()
                     .WithParameter("session", session)
@@ -182,10 +168,12 @@ namespace Unigram
                 builder.RegisterType<SignInRecoveryViewModel>();
                 builder.RegisterType<MainViewModel>();//.SingleInstance();
                 builder.RegisterType<ShareViewModel>();//.SingleInstance();
-                builder.RegisterType<DialogShareLocationViewModel>().SingleInstance();
+                builder.RegisterType<SendLocationViewModel>().SingleInstance();
                 builder.RegisterType<ChatsViewModel>();//.SingleInstance();
                 builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
                 builder.RegisterType<DialogScheduledViewModel>();
+                builder.RegisterType<AnimationDrawerViewModel>();
+                builder.RegisterType<StickerDrawerViewModel>();
                 builder.RegisterType<ProfileViewModel>();
                 builder.RegisterType<UserCommonChatsViewModel>();
                 builder.RegisterType<UserCreateViewModel>();
@@ -199,22 +187,19 @@ namespace Unigram
                 builder.RegisterType<SupergroupAddAdministratorViewModel>();
                 builder.RegisterType<SupergroupAddRestrictedViewModel>();
                 builder.RegisterType<LiveLocationViewModel>();
-                builder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
                 builder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupAdministratorsViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupBannedViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupPermissionsViewModel>();// .SingleInstance();
                 builder.RegisterType<SupergroupMembersViewModel>();// .SingleInstance();
                 builder.RegisterType<ChatSharedMediaViewModel>(); // .SingleInstance();
-                builder.RegisterType<UsersSelectionViewModel>(); //.SingleInstance();
+                builder.RegisterType<ChatStatisticsViewModel>();
                 builder.RegisterType<ChannelCreateStep1ViewModel>(); //.SingleInstance();
                 builder.RegisterType<ChannelCreateStep2ViewModel>(); //.SingleInstance();
-                builder.RegisterType<ChannelCreateStep3ViewModel>(); //.SingleInstance();
                 builder.RegisterType<BasicGroupCreateStep1ViewModel>(); //.SingleInstance();
-                builder.RegisterType<BasicGroupCreateStep2ViewModel>(); //.SingleInstance();
-                builder.RegisterType<SecretChatCreateViewModel>();
                 builder.RegisterType<InstantViewModel>(); //.SingleInstance();
                 builder.RegisterType<LogOutViewModel>().SingleInstance();
+                builder.RegisterType<DiagnosticsViewModel>();
                 builder.RegisterType<SettingsViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsAdvancedViewModel>().SingleInstance();
                 builder.RegisterType<SettingsPhoneIntroViewModel>().SingleInstance();
@@ -226,7 +211,6 @@ namespace Unigram
                 builder.RegisterType<SettingsSessionsViewModel>();
                 builder.RegisterType<SettingsWebSessionsViewModel>();
                 builder.RegisterType<SettingsBlockedUsersViewModel>();
-                builder.RegisterType<SettingsBlockUserViewModel>();
                 builder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
                 builder.RegisterType<SettingsNotificationsExceptionsViewModel>();
                 builder.RegisterType<SettingsDataAndStorageViewModel>().SingleInstance();
@@ -259,9 +243,10 @@ namespace Unigram
                 builder.RegisterType<SettingsAppearanceViewModel>().SingleInstance();
                 builder.RegisterType<SettingsThemesViewModel>().SingleInstance();
                 builder.RegisterType<SettingsNightModeViewModel>().SingleInstance();
-                builder.RegisterType<SettingsWallpapersViewModel>();//.SingleInstance();
+                builder.RegisterType<SettingsBackgroundsViewModel>();//.SingleInstance();
                 builder.RegisterType<SettingsVoIPViewModel>();
-                builder.RegisterType<WallpaperViewModel>();
+                builder.RegisterType<SettingsShortcutsViewModel>();
+                builder.RegisterType<BackgroundViewModel>();
                 builder.RegisterType<AttachedStickersViewModel>();
                 builder.RegisterType<ViewModels.StickerSetViewModel>();
                 builder.RegisterType<PaymentFormStep1ViewModel>();
@@ -270,24 +255,10 @@ namespace Unigram
                 builder.RegisterType<PaymentFormStep4ViewModel>();
                 builder.RegisterType<PaymentFormStep5ViewModel>();
                 builder.RegisterType<PaymentReceiptViewModel>();
-                builder.RegisterType<PassportViewModel>();
-                builder.RegisterType<PassportDocumentViewModelBase>();
-                builder.RegisterType<PassportAddressViewModel>();
                 builder.RegisterType<InviteViewModel>();
                 builder.RegisterType<ChatsNearbyViewModel>();
-
-                builder.RegisterType<WalletViewModel>();
-                builder.RegisterType<WalletSettingsViewModel>();
-                builder.RegisterType<WalletCreateViewModel>();
-                builder.RegisterType<WalletTestViewModel>();
-                builder.RegisterType<WalletImportViewModel>();
-                builder.RegisterType<WalletExportViewModel>();
-                builder.RegisterType<WalletReceiveViewModel>();
-                builder.RegisterType<WalletInvoiceViewModel>();
-                builder.RegisterType<WalletSendViewModel>();
-                builder.RegisterType<WalletSendingViewModel>();
-                builder.RegisterType<WalletTransactionViewModel>();
-                builder.RegisterType<WalletInfoViewModel>();
+                builder.RegisterType<FoldersViewModel>();
+                builder.RegisterType<FolderViewModel>();
 
                 return builder.Build();
             });

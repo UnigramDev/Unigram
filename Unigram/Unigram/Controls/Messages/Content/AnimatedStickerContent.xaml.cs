@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Services.Updates;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -32,42 +22,6 @@ namespace Unigram.Controls.Messages.Content
             UpdateMessage(message);
         }
 
-        private static readonly Dictionary<uint, uint> _thumbColor1 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0xca907aU },
-			{ 0xffb139U, 0xedc5a5U },
-			{ 0xffd140U, 0xf7e3c3U },
-			{ 0xffdf79U, 0xfbefd6U },
-	    };
-        private static readonly Dictionary<uint, uint> _thumbColor2 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0xaa7c60U },
-			{ 0xffb139U, 0xc8a987U },
-			{ 0xffd140U, 0xddc89fU },
-			{ 0xffdf79U, 0xe6d6b2U },
-	    };
-        private static readonly Dictionary<uint, uint> _thumbColor3 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0x8c6148U },
-			{ 0xffb139U, 0xad8562U },
-			{ 0xffd140U, 0xc49e76U },
-			{ 0xffdf79U, 0xd4b188U },
-	    };
-        private static readonly Dictionary<uint, uint> _thumbColor4 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0x6e3c2cU },
-			{ 0xffb139U, 0x925a34U },
-			{ 0xffd140U, 0xa16e46U },
-			{ 0xffdf79U, 0xac7a52U },
-	    };
-        private static readonly Dictionary<uint, uint> _thumbColor5 = new Dictionary<uint, uint>
-        {
-			{ 0xf77e41U, 0x291c12U },
-			{ 0xffb139U, 0x472a22U },
-			{ 0xffd140U, 0x573b30U },
-			{ 0xffdf79U, 0x68493cU },
-	    };
-
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
@@ -78,36 +32,17 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            //Background = null;
-            //Texture.Source = null;
-            //Texture.Constraint = message;
-            if (message.GeneratedContent != null)
+            if (message.Content is MessageText text)
+            {
+                Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
+                Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
+                Player.ColorReplacements = Emoji.GetColorReplacements(text.Text.Text);
+            }
+            else if (message.Content is MessageDice)
             {
                 Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
                 Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
                 Player.ColorReplacements = null;
-
-                if (message.Content is MessageText text && text.Text.Text.StartsWith("\uD83D\uDC4D"))
-                {
-                    switch (text.Text.Text.Last())
-                    {
-                        case '\uDFFB':
-                            Player.ColorReplacements = _thumbColor1;
-                            break;
-                        case '\uDFFC':
-                            Player.ColorReplacements = _thumbColor2;
-                            break;
-                        case '\uDFFD':
-                            Player.ColorReplacements = _thumbColor3;
-                            break;
-                        case '\uDFFE':
-                            Player.ColorReplacements = _thumbColor4;
-                            break;
-                        case '\uDFFF':
-                            Player.ColorReplacements = _thumbColor5;
-                            break;
-                    }
-                }
             }
             else
             {
@@ -118,7 +53,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
-                UpdateThumbnail(message, sticker.Thumbnail.Photo);
+                UpdateThumbnail(message, sticker.Thumbnail.File);
             }
 
             UpdateFile(message, sticker.StickerValue);
@@ -134,7 +69,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (sticker.Thumbnail != null && sticker.Thumbnail.Photo.Id == file.Id)
+            if (sticker.Thumbnail != null && sticker.Thumbnail.File.Id == file.Id)
             {
                 UpdateThumbnail(message, file);
                 return;
@@ -146,17 +81,21 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                if (SettingsService.Current.Diagnostics.PlayStickers)
-                {
-                    LayoutRoot.Background = null;
+                Player.IsLoopingEnabled = (message.Content is MessageDice dice && dice.Value == 0) || (message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled);
+                Player.IsCachingEnabled = !(message.Content is MessageDice dies && !message.GeneratedContentUnread);
+                Player.Source = new Uri("file:///" + file.Local.Path);
 
-                    Player.IsCachingEnabled = SettingsService.Current.Diagnostics.CacheStickers;
-                    Player.IsLoopingEnabled = message.GeneratedContent == null && SettingsService.Current.Stickers.IsLoopingEnabled;
-                    Player.Source = new Uri("file:///" + file.Local.Path);
+                if (message.IsOutgoing &&
+                    message.GeneratedContentUnread &&
+                    message.Content is MessageDice dais &&
+                    dais.FinalStateSticker != null &&
+                    dais.SuccessAnimationFrameNumber != 0)
+                {
+                    Player.IndexChanged += OnIndexChanged;
                 }
                 else
                 {
-                    Player.Source = null;
+                    Player.IndexChanged -= OnIndexChanged;
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -165,11 +104,20 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, File file)
+        private void OnIndexChanged(object sender, int e)
+        {
+            if (_message?.Content is MessageDice dice && dice.SuccessAnimationFrameNumber == e)
+            {
+                _message.Delegate.Aggregator.Publish(new UpdateConfetti());
+                Player.IndexChanged -= OnIndexChanged;
+            }
+        }
+
+        private void UpdateThumbnail(MessageViewModel message, File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                LayoutRoot.Background = new ImageBrush { ImageSource = await PlaceholderHelper.GetWebpAsync(file.Local.Path) };
+                Player.Thumbnail = PlaceholderHelper.GetWebPFrame(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -217,7 +165,26 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.GeneratedContent != null)
+            if (_message.Content is MessageDice dice)
+            {
+                string text;
+                switch (dice.Emoji)
+                {
+                    case "\uD83C\uDFB2":
+                        text = Strings.Resources.DiceInfo2;
+                        break;
+                    case "\uD83C\uDFAF":
+                        text = Strings.Resources.DartInfo;
+                        break;
+                    default:
+                        text = string.Format(Strings.Resources.DiceEmojiInfo, dice.Emoji);
+                        break;
+                }
+
+                var formatted = Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
+                Window.Current.ShowTeachingTip(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
+            }
+            else if (_message.Content is MessageText)
             {
                 Player.Play();
             }

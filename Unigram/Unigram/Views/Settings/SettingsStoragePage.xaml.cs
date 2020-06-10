@@ -1,27 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
-using Unigram.ViewModels.Settings;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Common;
+using Unigram.ViewModels.Settings;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsStoragePage : Page
+    public sealed partial class SettingsStoragePage : HostedPage
     {
         public SettingsStorageViewModel ViewModel => DataContext as SettingsStorageViewModel;
 
@@ -55,7 +42,7 @@ namespace Unigram.Views.Settings
             else if (args.Phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = FileSizeConverter.Convert(statistics.Size);
+                subtitle.Text = FileSizeConverter.Convert(statistics.Size, true);
             }
             else if (args.Phase == 2)
             {

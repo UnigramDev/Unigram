@@ -1,0 +1,26 @@
+<controls:ContentPopup
+    x:Class="Unigram.Views.Popups.SettingsPasscodeConfirmPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Popups"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Passcode"
+    PrimaryButtonText="OK"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <StackPanel>
+        <PasswordBox
+            x:Name="Confirm"
+            PlaceholderText="{CustomResource EnterCurrentPasscode}"
+            MaxLength="4"
+            PasswordChanged="Confirm_Changed"
+            KeyDown="Password_KeyDown"
+            InputScope="NumericPin"
+            Margin="12,12,12,12"/>
+    </StackPanel>
+</controls:ContentPopup>

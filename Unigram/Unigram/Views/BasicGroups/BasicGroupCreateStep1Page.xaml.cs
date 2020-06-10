@@ -1,29 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
-using Unigram.ViewModels.Chats;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.ViewModels.BasicGroups;
+using Unigram.Views.Popups;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.Storage.Pickers;
-using Unigram.Common;
-using Unigram.Controls.Views;
-using Unigram.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using Unigram.ViewModels.BasicGroups;
 
 namespace Unigram.Views.BasicGroups
 {
-    public sealed partial class BasicGroupCreateStep1Page : Page
+    public sealed partial class BasicGroupCreateStep1Page : HostedPage
     {
         public BasicGroupCreateStep1ViewModel ViewModel => DataContext as BasicGroupCreateStep1ViewModel;
 
@@ -48,14 +37,10 @@ namespace Unigram.Views.BasicGroups
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file)
-                {
-                    CroppingProportions = ImageCroppingProportions.Square,
-                    IsCropEnabled = false
-                };
+                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary)
+                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
@@ -80,5 +65,33 @@ namespace Unigram.Views.BasicGroups
         }
 
         #endregion
+
+        private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        {
+            var button = args.Element as Button;
+            var content = button.Content as Grid;
+
+            var chat = button.DataContext as Chat;
+
+            var title = content.Children[1] as TextBlock;
+            title.Text = ViewModel.ProtoService.GetTitle(chat);
+
+            //if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+            //{
+            //    var subtitle = content.Children[2] as TextBlock;
+            //    subtitle.Text = string.Format("{0}, {1}", BindConvert.Distance(nearby.Distance), Locale.Declension("Members", supergroup.MemberCount));
+            //}
+            //else
+            //{
+            //    var subtitle = content.Children[2] as TextBlock;
+            //    subtitle.Text = BindConvert.Distance(nearby.Distance);
+            //}
+
+            var photo = content.Children[0] as ProfilePicture;
+            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+
+            //button.Command = ViewModel.OpenChatCommand;
+            //button.CommandParameter = nearby;
+        }
     }
 }

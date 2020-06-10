@@ -1,16 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Services;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -207,7 +203,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (stickerSet.Name.Equals("tg/recentlyUsed"))
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.ClearRecentEmoji, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -217,7 +213,7 @@ namespace Unigram.ViewModels.Settings
             }
             else
             {
-                await StickerSetView.GetForCurrentView().ShowAsync(stickerSet.Id);
+                await StickerSetPopup.GetForCurrentView().ShowAsync(stickerSet.Id);
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using Telegram.Td.Api;
-using Template10.Mvvm;
 using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
@@ -30,6 +29,10 @@ namespace Unigram.ViewModels.Gallery
         public virtual string Caption { get; private set; }
 
         public virtual int Date { get; private set; }
+
+        public virtual int Duration { get; private set; }
+
+        public virtual string MimeType { get; private set; }
 
         public bool IsPhoto => !IsVideo;
 

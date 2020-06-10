@@ -6,20 +6,18 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Td;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Native.Tasks;
-using Unigram.Views;
+using Unigram.Navigation;
 using Windows.ApplicationModel.AppService;
-using Windows.Data.Json;
 using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
-using Windows.System.Threading;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
 
@@ -32,6 +30,8 @@ namespace Unigram.Services
         Task CloseAsync();
 
         Task ProcessAsync(Dictionary<string, string> data);
+
+        void PlaySound();
 
         #region Chats related
 
@@ -62,7 +62,7 @@ namespace Unigram.Services
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
 
-        private bool _suppress;
+        private bool? _suppress;
 
         public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
@@ -81,6 +81,18 @@ namespace Unigram.Services
             Handle(unreadCount.UnreadMessageCount);
         }
 
+        private void UpdateBadge(int count)
+        {
+            //var tick = Environment.TickCount;
+            //if (tick < _tickCount + 500)
+            //{
+            //    return;
+            //}
+
+            //_tickCount = tick;
+            NotificationTask.UpdatePrimaryBadge(count);
+        }
+
         public async void Handle(UpdateTermsOfService update)
         {
             var terms = update.TermsOfService;
@@ -91,14 +103,14 @@ namespace Unigram.Services
 
             async void DeleteAccount()
             {
-                var decline = await TLMessageDialog.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
                 if (decline != ContentDialogResult.Primary)
                 {
                     Handle(update);
                     return;
                 }
 
-                var delete = await TLMessageDialog.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
                 if (delete != ContentDialogResult.Primary)
                 {
                     Handle(update);
@@ -113,7 +125,7 @@ namespace Unigram.Services
                 await Task.Delay(2000);
                 BeginOnUIThread(async () =>
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(terms.Text, Strings.Resources.PrivacyPolicyAndTerms, Strings.Resources.Agree, Strings.Resources.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
                         DeleteAccount();
@@ -122,7 +134,7 @@ namespace Unigram.Services
 
                     if (terms.MinUserAge > 0)
                     {
-                        var age = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.TosAgeText, terms.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
+                        var age = await MessagePopup.ShowAsync(string.Format(Strings.Resources.TosAgeText, terms.MinUserAge), Strings.Resources.TosAgeTitle, Strings.Resources.Agree, Strings.Resources.Cancel);
                         if (age != ContentDialogResult.Primary)
                         {
                             DeleteAccount();
@@ -153,7 +165,7 @@ namespace Unigram.Services
             {
                 if (update.Type.StartsWith("AUTH_KEY_DROP_"))
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
+                    var confirm = await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.LogOut, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         _protoService.Send(new Destroy());
@@ -161,7 +173,7 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    await TLMessageDialog.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
+                    await MessagePopup.ShowAsync(text, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             });
         }
@@ -188,55 +200,51 @@ namespace Unigram.Services
 
         public async void Handle(UpdateUnreadMessageCount update)
         {
-            if (update.ChatList is ChatListArchive)
-            {
-                return;
-            }
-
             if (!_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
 
-            if (_settings.Notifications.IncludeMutedChats)
+            if (update.ChatList is ChatListMain)
             {
-                NotificationTask.UpdatePrimaryBadge(update.UnreadCount);
-            }
-            else
-            {
-                NotificationTask.UpdatePrimaryBadge(update.UnreadUnmutedCount);
-            }
+                if (_settings.Notifications.IncludeMutedChats)
+                {
+                    UpdateBadge(update.UnreadCount);
+                }
+                else
+                {
+                    UpdateBadge(update.UnreadUnmutedCount);
+                }
 
-            if (App.Connection is AppServiceConnection connection)
-            {
-                await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                if (App.Connection is AppServiceConnection connection)
+                {
+                    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                }
             }
         }
 
         public async void Handle(UpdateUnreadChatCount update)
         {
-            if (update.ChatList is ChatListArchive)
-            {
-                return;
-            }
-
             if (_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
                 return;
             }
 
-            if (_settings.Notifications.IncludeMutedChats)
+            if (update.ChatList is ChatListMain)
             {
-                NotificationTask.UpdatePrimaryBadge(update.UnreadCount);
-            }
-            else
-            {
-                NotificationTask.UpdatePrimaryBadge(update.UnreadUnmutedCount);
-            }
+                if (_settings.Notifications.IncludeMutedChats)
+                {
+                    UpdateBadge(update.UnreadCount);
+                }
+                else
+                {
+                    UpdateBadge(update.UnreadUnmutedCount);
+                }
 
-            if (App.Connection is AppServiceConnection connection)
-            {
-                await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                if (App.Connection is AppServiceConnection connection)
+                {
+                    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
+                }
             }
         }
 
@@ -246,6 +254,19 @@ namespace Unigram.Services
             {
                 CreateToastCollection(update.User);
             }
+        }
+
+        public void PlaySound()
+        {
+            if (!_settings.Notifications.InAppSounds)
+            {
+                return;
+            }
+
+            Task.Run(() =>
+            {
+                SoundEffects.Play(SoundEffect.Sent);
+            });
         }
 
         public void Handle(UpdateActiveNotifications update)
@@ -258,14 +279,21 @@ namespace Unigram.Services
 
         public void Handle(UpdateHavePendingNotifications update)
         {
-            //Logs.Logger.Info(Logs.LoggerTag.Notifications, "UpdateHavePendingNotifications: " + update.HavePendingNotifications);
-            //_suppress = update.HavePendingNotifications;
-            //_suppress = update.HaveUnreceivedNotifications || update.HaveDelayedNotifications;
+            // We want to ignore both delayed and unreceived notifications,
+            // as they're the result of update difference on sync.
+            if (_suppress == null)
+            {
+                _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
+            }
+            else if (!update.HaveDelayedNotifications && !update.HaveUnreceivedNotifications)
+            {
+                _suppress = false;
+            }
         }
 
         public async void Handle(UpdateNotificationGroup update)
         {
-            if (_suppress)
+            if (_suppress == true)
             {
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
@@ -357,11 +385,6 @@ namespace Unigram.Services
             Update(chat, async () =>
             {
                 await NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, $"{_sessionService.Id}", sound, launch, tag, group, picture, string.Empty, date, loc_key);
-
-                if (_sessionService.IsActive)
-                {
-                    NotificationTask.UpdatePrimaryTile($"{_protoService.SessionId}", caption, content, picture);
-                }
             });
 
             if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
@@ -372,7 +395,7 @@ namespace Unigram.Services
 
         private void Update(Chat chat, Action action)
         {
-            var open = TLWindowContext.ActiveWrappers.Cast<TLWindowContext>().Any(x => x.IsChatOpen(_protoService.SessionId, chat.Id));
+            var open = WindowContext.ActiveWrappers.Cast<TLWindowContext>().Any(x => x.IsChatOpen(_protoService.SessionId, chat.Id));
             if (open)
             {
                 return;
@@ -498,7 +521,7 @@ namespace Unigram.Services
 
                     channel.PushNotificationReceived += OnPushNotificationReceived;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     _alreadyRegistered = false;
                     _settings.NotificationsToken = null;
@@ -619,10 +642,15 @@ namespace Unigram.Services
                 if (string.Equals(action, "reply", StringComparison.OrdinalIgnoreCase) && data.TryGetValue("input", out string text))
                 {
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
-                    var entities = Markdown.Parse(ref messageText);
+                    var formatted = Client.Execute(new ParseMarkdown(new FormattedText(messageText, new TextEntity[0]))) as FormattedText;
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
-                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, new SendMessageOptions(false, true, null), null, new InputMessageText(new FormattedText(messageText, entities), false, false)));
+                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, new SendMessageOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
+                
+                    if (chat.Type is ChatTypePrivate)
+                    {
+                        await _protoService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, true));
+                    }
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
                 {
@@ -703,6 +731,9 @@ namespace Unigram.Services
 
                 case MessageText text:
                     return text.Text.Text;
+
+                case MessageDice dice:
+                    return dice.Emoji;
             }
 
             return string.Empty;
@@ -978,13 +1009,13 @@ namespace Unigram.Services
                 var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio?.Performer;
                 var title = string.IsNullOrEmpty(audio.Audio?.Title) ? null : audio.Audio?.Title;
 
-                if (performer == null && title == null)
+                if (performer == null || title == null)
                 {
                     return result + Strings.Resources.AttachMusic;
                 }
                 else
                 {
-                    return $"{result}{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}";
+                    return $"{result}{performer} - {title}";
                 }
             }
             else if (message.Content is PushMessageContentDocument document)

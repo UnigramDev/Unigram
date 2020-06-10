@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Template10.Services.NavigationService;
-using Unigram.Views.Payments;
+﻿using Telegram.Td.Api;
 using Unigram.Services;
-using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormViewModelBase : TLViewModelBase
     {
-        public PaymentFormViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public PaymentFormViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
         }

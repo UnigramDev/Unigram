@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Delegates
 {
@@ -22,6 +18,8 @@ namespace Unigram.ViewModels.Delegates
 
 
         void Navigate(object item);
+
+        void UpdateChatLastMessage(Chat chat);
     }
 
     public interface IChatListDelegate

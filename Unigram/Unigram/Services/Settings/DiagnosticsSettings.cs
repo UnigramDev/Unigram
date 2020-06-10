@@ -1,50 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
-
-namespace Unigram.Services.Settings
+﻿namespace Unigram.Services.Settings
 {
     public class DiagnosticsSettings : SettingsServiceBase
     {
         public DiagnosticsSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("Diagnostics", ApplicationDataCreateDisposition.Always))
+            : base("Diagnostics")
         {
         }
 
-        private bool? _playStickers;
-        public bool PlayStickers
+        private bool? _bubbleKnockout;
+        public bool BubbleKnockout
         {
             get
             {
-                if (_playStickers == null)
-                    _playStickers = GetValueOrDefault("PlayStickers", true);
+                if (_bubbleKnockout == null)
+                    _bubbleKnockout = GetValueOrDefault("BubbleKnockout", false);
 
-                return _playStickers ?? true;
+                return _bubbleKnockout ?? false;
             }
             set
             {
-                _playStickers = value;
-                AddOrUpdateValue("PlayStickers", value);
-            }
-        }
-
-        private bool? _cacheStickers;
-        public bool CacheStickers
-        {
-            get
-            {
-                if (_cacheStickers == null)
-                    _cacheStickers = GetValueOrDefault("CacheStickers", true);
-
-                return _cacheStickers ?? true;
-            }
-            set
-            {
-                _cacheStickers = value;
-                AddOrUpdateValue("CacheStickers", value);
+                _bubbleKnockout = value;
+                AddOrUpdateValue("BubbleKnockout", value);
             }
         }
     }

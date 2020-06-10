@@ -1,30 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Services;
-using Unigram.Services.Settings;
+using Unigram.Services.Navigation;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System.Profile;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Host
 {
     public sealed partial class StandalonePage : Page
     {
+        private readonly INavigationService _navigationService;
+        private readonly IShortcutsService _shortcutsService;
+
         public StandalonePage(INavigationService navigationService)
         {
             if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
@@ -36,7 +30,10 @@ namespace Unigram.Views.Host
 
             InitializeTitleBar();
 
-            Grid.SetRow(navigationService.Frame, 1);
+            _navigationService = navigationService;
+            _shortcutsService = TLContainer.Current.Resolve<IShortcutsService>(navigationService.SessionId);
+
+            Grid.SetRow(navigationService.Frame, 2);
             LayoutRoot.Children.Add(navigationService.Frame);
 
             if (navigationService is TLNavigationService service && service.ProtoService != null)
@@ -47,6 +44,39 @@ namespace Unigram.Views.Host
                     StatusLabel.Text = string.Format("{0} - {1}", user.GetFullName(), "Unigram");
                     ApplicationView.GetForCurrentView().Title = user.GetFullName();
                 }
+            }
+
+            navigationService.Frame.Navigated += OnNavigated;
+
+            if (navigationService.Frame.Content is HostedPage hosted)
+            {
+                PageHeader.Content = hosted.Header;
+            }
+            else
+            {
+                PageHeader.Content = null;
+            }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            WindowContext.GetForCurrentView().AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+        }
+
+        private void OnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        {
+            if (e.Content is HostedPage hosted)
+            {
+                PageHeader.Content = hosted.Header;
+            }
+            else
+            {
+                PageHeader.Content = null;
             }
         }
 
@@ -84,6 +114,33 @@ namespace Unigram.Views.Host
                 {
                     contentDialog.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
                 }
+            }
+        }
+
+        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            var commands = _shortcutsService.Process(args);
+
+            foreach (var command in commands)
+            {
+                ProcessAppCommands(command, args);
+            }
+        }
+
+        private void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
+        {
+            if (command == ShortcutCommand.Search)
+            {
+                if (_navigationService.Frame.Content is ISearchablePage child)
+                {
+                    child.Search();
+                }
+
+                args.Handled = true;
+            }
+            else if (command == ShortcutCommand.Close)
+            {
+                Window.Current.Close();
             }
         }
     }

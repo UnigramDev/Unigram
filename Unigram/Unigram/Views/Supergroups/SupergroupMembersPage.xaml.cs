@@ -1,34 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.ComponentModel;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.ViewModels;
-using Unigram.ViewModels.Channels;
+using Unigram.Navigation;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Unigram.Views.Users;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Unigram.Views.Chats;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersPage : Page, IBasicAndSupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupMembersPage : HostedPage, IProfileTab, IBasicAndSupergroupDelegate, INavigablePage
     {
         public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
 
@@ -51,7 +38,49 @@ namespace Unigram.Views.Supergroups
             });
         }
 
-        public void OnBackRequested(HandledRoutedEventArgs args)
+        public int Index { get => 0; }
+        public string Text { get => Strings.Resources.ChannelMembers; }
+
+        public ListViewBase GetSelector()
+        {
+            return ScrollingHost;
+        }
+
+        public ScrollViewer GetScrollViewer()
+        {
+            return ScrollingHost.GetScrollViewer();
+        }
+
+        private bool _isLocked;
+
+        private bool _isEmbedded;
+        public bool IsEmbedded
+        {
+            get => _isEmbedded;
+            set
+            {
+                Update(value, _isLocked);
+            }
+        }
+
+        public void Update(bool embedded, bool locked)
+        {
+            _isEmbedded = embedded;
+            _isLocked = locked;
+
+            Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
+            ListHeader.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
+            ScrollingHost.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 16 : 16, 0, 0);
+            ScrollingHost.ItemsPanelCornerRadius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
+            //ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
+
+            if (embedded)
+            {
+                Footer.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void OnBackRequested(HandledEventArgs args)
         {
             if (ContentPanel.Visibility == Visibility.Collapsed)
             {
@@ -203,7 +232,26 @@ namespace Unigram.Views.Supergroups
             else if (args.Phase == 1)
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ProtoService, member);
+                var label = content.Children[3] as TextBlock;
+
+                if (_isEmbedded)
+                {
+                    subtitle.Text = LastSeenConverter.GetLabel(user, false);
+
+                    if (member.Status is ChatMemberStatusAdministrator administrator)
+                    {
+                        label.Text = string.IsNullOrEmpty(administrator.CustomTitle) ? Strings.Resources.ChannelAdmin : administrator.CustomTitle;
+                    }
+                    else if (member.Status is ChatMemberStatusCreator creator)
+                    {
+                        label.Text = string.IsNullOrEmpty(creator.CustomTitle) ? Strings.Resources.ChannelCreator : creator.CustomTitle;
+                    }
+                }
+                else
+                {
+                    subtitle.Text = ChannelParticipantToTypeConverter.Convert(ViewModel.ProtoService, member);
+                    label.Text = string.Empty;
+                }
             }
             else if (args.Phase == 2)
             {

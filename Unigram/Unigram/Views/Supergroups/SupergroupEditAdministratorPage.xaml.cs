@@ -1,29 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Views;
 using Unigram.Converters;
-using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
-using Unigram.ViewModels.Users;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditAdministratorPage : Page, IMemberDelegate
+    public sealed partial class SupergroupEditAdministratorPage : HostedPage, IMemberDelegate
     {
         public SupergroupEditAdministratorViewModel ViewModel => DataContext as SupergroupEditAdministratorViewModel;
 
@@ -67,7 +51,7 @@ namespace Unigram.Views.Supergroups
         {
             if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
             {
-                var canBeEdited = member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited;
+                var canBeEdited = (member.Status is ChatMemberStatusCreator && member.UserId == ViewModel.CacheService.Options.MyId) || (member.Status is ChatMemberStatusAdministrator administrator && administrator.CanBeEdited);
 
                 Header.CommandVisibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;
                 DismissPanel.Visibility = canBeEdited ? Visibility.Visible : Visibility.Collapsed;

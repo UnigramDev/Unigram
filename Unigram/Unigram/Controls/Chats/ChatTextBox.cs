@@ -1,54 +1,38 @@
-﻿using LinqToVisualTree;
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Views;
+using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Text;
+using Windows.UI.Text.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
-using Unigram.Native;
-using System.Collections.ObjectModel;
-using Windows.UI.Xaml.Automation;
-using Unigram.Entities;
-using Telegram.Td.Api;
-using Unigram.Services;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Collections;
-using Template10.Common;
-using System.Windows.Input;
-using Windows.Foundation.Metadata;
-using Windows.UI.Xaml.Controls.Primitives;
-using Unigram.Controls.Views;
-using Unigram.Converters;
-using Windows.Graphics.Imaging;
-using System.Collections;
-using System.Globalization;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls.Chats
 {
     public class ChatTextBox : FormattedTextBox
     {
-        private ContentControl InlinePlaceholderTextContentPresenter;
+        private TextBlock InlinePlaceholderTextContentPresenter;
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -72,28 +56,12 @@ namespace Unigram.Controls.Chats
 
         protected override void OnApplyTemplate()
         {
-            InlinePlaceholderTextContentPresenter = (ContentControl)GetTemplateChild("InlinePlaceholderTextContentPresenter");
+            InlinePlaceholderTextContentPresenter = (TextBlock)GetTemplateChild("InlinePlaceholderTextContentPresenter");
 
             base.OnApplyTemplate();
         }
 
-        public void InsertText(string text, bool allowPreceding = true, bool allowTrailing = true)
-        {
-            var start = Document.Selection.StartPosition;
-            var end = Document.Selection.EndPosition;
-
-            var preceding = start > 0 && !char.IsWhiteSpace(Document.GetRange(start - 1, start).Character);
-            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character) || Document.GetRange(end, end + 1).Character == '\r';
-
-            var block = string.Format("{0}{1}{2}",
-                preceding && allowPreceding ? " " : "",
-                text,
-                trailing && allowTrailing ? " " : "");
-
-            Document.Selection.SetText(TextSetOptions.None, block);
-            Document.Selection.StartPosition = Document.Selection.EndPosition;
-        }
-
+        public event EventHandler Sending;
         public event EventHandler<TappedRoutedEventArgs> Capture;
 
         protected override void OnTapped(TappedRoutedEventArgs e)
@@ -119,35 +87,12 @@ namespace Unigram.Controls.Chats
                     e.Handled = true;
                 }
 
-                var bitmap = await package.GetBitmapAsync();
-                var media = new ObservableCollection<StorageMedia>();
-
-                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
-                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
-
-                using (var stream = await bitmap.OpenReadAsync())
-                {
-                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                    var photo = await StoragePhoto.CreateAsync(result, true);
-                    if (photo == null)
-                    {
-                        return;
-                    }
-
-                    media.Add(photo);
-                }
-
-                if (package.AvailableFormats.Contains(StandardDataFormats.Text))
-                {
-                    media[0].Caption = new FormattedText(await package.GetTextAsync(), new TextEntity[0]);
-                }
-
-                ViewModel.SendMediaExecute(media, media[0]);
+                await ViewModel.HandlePackageAsync(package);
             }
-            else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
-            {
+            //else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
+            //{
 
-            }
+            //}
             else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
                 if (e != null)
@@ -155,44 +100,7 @@ namespace Unigram.Controls.Chats
                     e.Handled = true;
                 }
 
-                var items = await package.GetStorageItemsAsync();
-                var media = new ObservableCollection<StorageMedia>();
-                var files = new List<StorageFile>(items.Count);
-
-                foreach (var file in items.OfType<StorageFile>())
-                {
-                    if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var photo = await StoragePhoto.CreateAsync(file, true);
-                        if (photo != null)
-                        {
-                            media.Add(photo);
-                        }
-                    }
-                    else if (file.ContentType == "video/mp4")
-                    {
-                        var video = await StorageVideo.CreateAsync(file, true);
-                        if (video != null)
-                        {
-                            media.Add(video);
-                        }
-                    }
-
-                    files.Add(file);
-                }
-
-                // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count > 0 && media.Count == files.Count)
-                {
-                    ViewModel.SendMediaExecute(media, media[0]);
-                }
-                else if (files.Count > 0)
-                {
-                    ViewModel.SendFileExecute(files);
-                }
+                await ViewModel.HandlePackageAsync(package);
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
             {
@@ -411,6 +319,40 @@ namespace Unigram.Controls.Chats
             }
         }
 
+        private CancellationTokenSource _inlineBotToken;
+
+        private void CancelInlineBotToken()
+        {
+            if (_inlineBotToken != null)
+            {
+                _inlineBotToken.Cancel();
+                _inlineBotToken.Dispose();
+                _inlineBotToken = null;
+            }
+        }
+
+        private void GetInlineBotResults(string inlineQuery)
+        {
+            if (string.Equals(inlineQuery, ViewModel.InlineBotResults?.Query, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            CancelInlineBotToken();
+
+            _inlineBotToken = new CancellationTokenSource();
+            ViewModel.GetInlineBotResults(inlineQuery, _inlineBotToken.Token);
+        }
+
+        private void ClearInlineBotResults()
+        {
+            CancelInlineBotToken();
+
+            ViewModel.CurrentInlineBot = null;
+            ViewModel.InlineBotResults = null;
+            UpdateInlinePlaceholder(null, null);
+        }
+
         private async void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             Document.GetText(TextGetOptions.NoHidden, out string text);
@@ -421,7 +363,7 @@ namespace Unigram.Controls.Chats
             {
                 ViewModel.Autocomplete = null;
 
-                ViewModel.GetInlineBotResults(inlineQuery);
+                GetInlineBotResults(inlineQuery);
                 return;
             }
 
@@ -435,30 +377,33 @@ namespace Unigram.Controls.Chats
 
             if (TryGetAutocomplete(text, query, out var autocomplete))
             {
-                ViewModel.CurrentInlineBot = null;
-                ViewModel.InlineBotResults = null;
-                InlinePlaceholderText = string.Empty;
-
+                ClearInlineBotResults();
                 ViewModel.Autocomplete = autocomplete;
             }
             else
             {
                 ViewModel.Autocomplete = null;
 
-                if (SearchByInlineBot(query, out string username, out int index) && await ViewModel.ResolveInlineBotAsync(username))
+                CancelInlineBotToken();
+
+                var token = (_inlineBotToken = new CancellationTokenSource()).Token;
+                if (SearchByInlineBot(query, out string username, out int index) && await ViewModel.ResolveInlineBotAsync(username, token))
                 {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
                     if (SearchInlineBotResults(text, out query))
                     {
                         ViewModel.Autocomplete = null;
 
-                        ViewModel.GetInlineBotResults(query);
+                        GetInlineBotResults(query);
                         return;
                     }
                 }
 
-                ViewModel.CurrentInlineBot = null;
-                ViewModel.InlineBotResults = null;
-                InlinePlaceholderText = string.Empty;
+                ClearInlineBotResults();
             }
         }
 
@@ -494,7 +439,7 @@ namespace Unigram.Controls.Chats
             }
             else if (SearchByEmoji(query, out string replacement) && replacement.Length > 0)
             {
-                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement);
+                autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 return true;
             }
             else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
@@ -597,13 +542,15 @@ namespace Unigram.Controls.Chats
         {
             private readonly IProtoService _protoService;
             private readonly string _query;
+            private readonly string _inputLanguage;
 
             private bool _hasMore = true;
 
-            public EmojiCollection(IProtoService protoService, string query)
+            public EmojiCollection(IProtoService protoService, string query, string inputLanguage)
             {
                 _protoService = protoService;
                 _query = query;
+                _inputLanguage = inputLanguage;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -613,13 +560,36 @@ namespace Unigram.Controls.Chats
                     count = 0;
                     _hasMore = false;
 
-                    var response = await _protoService.SendAsync(new SearchEmojis(_query, false));
-                    if (response is Emojis emojis)
+                    if (string.IsNullOrWhiteSpace(_query))
                     {
-                        foreach (var emoji in emojis.EmojisValue)
+                        foreach (var emoji in SettingsService.Current.Emoji.GetRecentEmoji())
                         {
-                            Add(new EmojiData(emoji));
+                            Add(emoji);
                             count++;
+                        }
+                    }
+                    else
+                    {
+                        var response = await _protoService.SendAsync(new SearchEmojis(_query, false, new[] { _inputLanguage }));
+                        if (response is Emojis emojis)
+                        {
+                            var results = emojis.EmojisValue.Reverse();
+                            results = results.OrderBy(x =>
+                            {
+                                var index = SettingsService.Current.Emoji.RecentEmoji.IndexOf(x);
+                                if (index < 0)
+                                {
+                                    return int.MaxValue;
+                                }
+
+                                return index;
+                            });
+
+                            foreach (var emoji in results)
+                            {
+                                Add(new EmojiData(emoji));
+                                count++;
+                            }
                         }
                     }
 
@@ -637,14 +607,16 @@ namespace Unigram.Controls.Chats
             private readonly IProtoService _protoService;
             private readonly string _query;
             private readonly EmojiSkinTone _skin;
+            private readonly string _inputLanguage;
 
             private bool _hasMore = true;
 
-            public EmojiGroupCollection(IProtoService protoService, string query, EmojiSkinTone skin)
+            public EmojiGroupCollection(IProtoService protoService, string query, EmojiSkinTone skin, string inputLanguage)
             {
                 _protoService = protoService;
                 _query = query;
                 _skin = skin;
+                _inputLanguage = inputLanguage;
             }
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -653,7 +625,7 @@ namespace Unigram.Controls.Chats
                 {
                     _hasMore = false;
 
-                    Add(await Emoji.SearchAsync(_protoService, _query, _skin));
+                    Add(await Emoji.SearchAsync(_protoService, _query, _skin, _inputLanguage));
 
                     return new LoadMoreItemsResult { Count = 1 };
                 });
@@ -743,6 +715,8 @@ namespace Unigram.Controls.Chats
 
         public async Task SendAsync(bool disableNotification = false)
         {
+            Sending?.Invoke(this, EventArgs.Empty);
+
             var options = new SendMessageOptions(disableNotification, false, null);
 
             var text = GetFormattedText(true);
@@ -751,6 +725,8 @@ namespace Unigram.Controls.Chats
 
         public async Task ScheduleAsync()
         {
+            Sending?.Invoke(this, EventArgs.Empty);
+
             var options = await ViewModel.PickSendMessageOptionsAsync(true);
             if (options == null)
             {
@@ -764,6 +740,11 @@ namespace Unigram.Controls.Chats
         protected override void OnGettingFormattedText()
         {
             FormatText();
+        }
+
+        protected override void OnSettingText()
+        {
+            UpdateInlinePlaceholder(null, null);
         }
 
         public override bool IsEmpty
@@ -1042,16 +1023,14 @@ namespace Unigram.Controls.Chats
                     {
                         if (string.Equals(text.TrimStart(), "@" + username, StringComparison.OrdinalIgnoreCase))
                         {
-                            ViewModel.CurrentInlineBot = null;
-                            ViewModel.InlineBotResults = null;
-                            InlinePlaceholderText = string.Empty;
+                            ClearInlineBotResults();
                         }
                         else
                         {
                             var user = ViewModel.CurrentInlineBot;
                             if (user != null && user.Type is UserTypeBot bot)
                             {
-                                InlinePlaceholderText = bot.InlineQueryPlaceholder;
+                                UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
                             }
                         }
                     }
@@ -1060,19 +1039,17 @@ namespace Unigram.Controls.Chats
                         var user = ViewModel.CurrentInlineBot;
                         if (user != null && user.Type is UserTypeBot bot)
                         {
-                            InlinePlaceholderText = bot.InlineQueryPlaceholder;
+                            UpdateInlinePlaceholder(username, bot.InlineQueryPlaceholder);
                         }
                     }
                     else
                     {
-                        InlinePlaceholderText = string.Empty;
+                        UpdateInlinePlaceholder(null, null);
                     }
                 }
                 else
                 {
-                    ViewModel.CurrentInlineBot = null;
-                    ViewModel.InlineBotResults = null;
-                    InlinePlaceholderText = string.Empty;
+                    ClearInlineBotResults();
                 }
             }
 
@@ -1090,46 +1067,23 @@ namespace Unigram.Controls.Chats
             return text.Substring(0, index) + replace + text.Substring(index + search.Length);
         }
 
-        private void UpdateInlinePlaceholder()
+        private void UpdateInlinePlaceholder(string username, string placeholder)
         {
             if (InlinePlaceholderTextContentPresenter != null)
             {
-                var placeholder = Text;
-                if (placeholder == null)
+                InlinePlaceholderTextContentPresenter.Inlines.Clear();
+
+                if (username != null && placeholder != null)
                 {
-                    return;
+                    InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = "@" + username + " ", Foreground = null });
+                    InlinePlaceholderTextContentPresenter.Inlines.Add(new Run { Text = placeholder });
                 }
-
-                var range = Document.GetRange(Text.Length, Text.Length);
-                range.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
-
-                var translateTransform = new TranslateTransform();
-                translateTransform.X = rect.X;
-                InlinePlaceholderTextContentPresenter.RenderTransform = translateTransform;
             }
         }
 
         #endregion
 
         public string Text { get; private set; }
-
-        #region InlinePlaceholderText
-
-        public string InlinePlaceholderText
-        {
-            get { return (string)GetValue(InlinePlaceholderTextProperty); }
-            set { SetValue(InlinePlaceholderTextProperty, value); }
-        }
-
-        public static readonly DependencyProperty InlinePlaceholderTextProperty =
-            DependencyProperty.Register("InlinePlaceholderText", typeof(string), typeof(ChatTextBox), new PropertyMetadata(null, OnInlinePlaceholderTextChanged));
-
-        private static void OnInlinePlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ChatTextBox)d).UpdateInlinePlaceholder();
-        }
-
-        #endregion
 
         #region Reply
 

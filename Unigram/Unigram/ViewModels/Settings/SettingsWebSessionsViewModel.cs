@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -16,7 +14,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsWebSessionsViewModel : TLViewModelBase
     {
-        public SettingsWebSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SettingsWebSessionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new SortedObservableCollection<ConnectedWebsite>(new TLAuthorizationComparer());
@@ -91,7 +89,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var dialog = new TLMessageDialog();
+            var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
             dialog.Message = string.Format(Strings.Resources.TerminateWebSessionQuestion, session.DomainName);
             dialog.PrimaryButtonText = Strings.Resources.OK;
@@ -118,7 +116,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand TerminateOthersCommand { get; }
         private async void TerminateOtherExecute()
         {
-            var terminate = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var terminate = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureWebSessions, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (terminate == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new DisconnectAllWebsites());

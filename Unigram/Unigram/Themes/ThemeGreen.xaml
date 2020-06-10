@@ -6,6 +6,8 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
             <!-- Common -->
+            <Color x:Key="SystemAccentColor">#71BAFA</Color>
+            
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{StaticResource SystemChromeLowColor}"/>
             <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
             <StaticResource x:Key="ContentDialogBackground" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
@@ -14,8 +16,10 @@
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
             <StaticResource x:Key="PageHeaderDisabledBrush" ResourceKey="SystemControlForegroundBaseMediumBrush"/>
 
-            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
-            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+            <StaticResource x:Key="PageTitleBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
+            <StaticResource x:Key="PageHeaderBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
             <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
 
             <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
@@ -24,7 +28,7 @@
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#89DF9E"/>
             <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
 
-            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColor}"/>
 
             <SolidColorBrush x:Key="ChatFromLabelBrush" Color="{ThemeResource SystemAccentColor}"/>
             <SolidColorBrush x:Key="ChatDraftLabelBrush" Color="#DD4B39"/>
@@ -1229,6 +1233,8 @@
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <!-- Common -->
+            <Color x:Key="SystemAccentColor">#158DCD</Color>
+
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FFFFFFFF"/>
             <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
             <StaticResource x:Key="ContentDialogBackground" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
@@ -1237,8 +1243,10 @@
             <SolidColorBrush x:Key="PageHeaderHighlightBrush" Color="{ThemeResource SystemAccentColor}"/>
             <StaticResource x:Key="PageHeaderDisabledBrush" ResourceKey="SystemControlForegroundBaseMediumBrush"/>
 
-            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
-            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageTitleBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
+            <StaticResource x:Key="PageHeaderBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+            <StaticResource x:Key="PageSubHeaderBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
             <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
 
             <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
@@ -1247,7 +1255,7 @@
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#00B12C"/>
             <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
 
-            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+            <SolidColorBrush x:Key="ChatLastMessageStateBrush" Color="{ThemeResource SystemAccentColor}"/>
 
             <SolidColorBrush x:Key="ChatFromLabelBrush" Color="#3C7EB0"/>
             <SolidColorBrush x:Key="ChatDraftLabelBrush" Color="#DD4B39"/>

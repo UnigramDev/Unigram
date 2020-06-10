@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
-using Telegram.Td.Api;
-using Unigram.Views.Settings.Privacy;
-using Unigram.Controls;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Controls.Views;
-using Unigram.ViewModels.Settings.Privacy;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -243,41 +238,129 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AlwaysCommand { get; }
         public async void AlwaysExecute()
         {
-            var viewModel = new SettingsPrivacyAlwaysViewModel(ProtoService, CacheService, Settings, Aggregator, _inputKey);
-            var dialog = new UsersPickerView(viewModel, _rules);
+            var chats = new List<long>();
+            var users = new List<int>();
 
-            var confirm = await dialog.ShowAsync();
+            foreach (var id in _allowedUsers.UserIds)
+            {
+                var chat = await ProtoService.SendAsync(new CreatePrivateChat(id, true)) as Chat;
+                if (chat != null)
+                {
+                    chats.Add(chat.Id);
+                }
+            }
+
+            foreach (var id in _allowedChatMembers.ChatIds)
+            {
+                chats.Add(id);
+            }
+
+            var dialog = SharePopup.GetForCurrentView();
+            dialog.ViewModel.AllowEmptySelection = true;
+
+            switch (_inputKey)
+            {
+                case UserPrivacySettingAllowCalls allowCalls:
+                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
+                case UserPrivacySettingAllowChatInvites allowChatInvites:
+                case UserPrivacySettingShowProfilePhoto showProfilePhoto:
+                case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
+                default:
+                    dialog.ViewModel.Title = Strings.Resources.AlwaysAllow;
+                    break;
+                case UserPrivacySettingShowStatus showStatus:
+                    dialog.ViewModel.Title = Strings.Resources.AlwaysShareWithTitle;
+                    break;
+            }
+
+            var confirm = await dialog.PickAsync(chats, SearchChatsType.PrivateAndGroups);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var result = viewModel.Rule;
-            if (result != null)
+            chats.Clear();
+            users.Clear();
+
+            foreach (var chat in dialog.ViewModel.SelectedItems)
             {
-                _allowedUsers = result;
-                AllowedBadge = GetBadge(_allowedUsers.UserIds, _allowedChatMembers.ChatIds);
+                if (chat.Type is ChatTypePrivate privata)
+                {
+                    users.Add(privata.UserId);
+                }
+                else
+                {
+                    chats.Add(chat.Id);
+                }
             }
+
+            _allowedUsers = new UserPrivacySettingRuleAllowUsers(users);
+            _allowedChatMembers = new UserPrivacySettingRuleAllowChatMembers(chats);
+
+            AllowedBadge = GetBadge(_allowedUsers.UserIds, _allowedChatMembers.ChatIds);
         }
 
         public RelayCommand NeverCommand { get; }
         public async void NeverExecute()
         {
-            var viewModel = new SettingsPrivacyNeverViewModel(ProtoService, CacheService, Settings, Aggregator, _inputKey);
-            var dialog = new UsersPickerView(viewModel, _rules);
+            var chats = new List<long>();
+            var users = new List<int>();
 
-            var confirm = await dialog.ShowAsync();
+            foreach (var id in _restrictedUsers.UserIds)
+            {
+                var chat = await ProtoService.SendAsync(new CreatePrivateChat(id, true)) as Chat;
+                if (chat != null)
+                {
+                    chats.Add(chat.Id);
+                }
+            }
+
+            foreach (var id in _restrictedChatMembers.ChatIds)
+            {
+                chats.Add(id);
+            }
+
+            var dialog = SharePopup.GetForCurrentView();
+
+            switch (_inputKey)
+            {
+                case UserPrivacySettingAllowCalls allowCalls:
+                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
+                case UserPrivacySettingAllowChatInvites allowChatInvites:
+                case UserPrivacySettingShowProfilePhoto showProfilePhoto:
+                case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
+                default:
+                    dialog.ViewModel.Title = Strings.Resources.NeverAllow;
+                    break;
+                case UserPrivacySettingShowStatus showStatus:
+                    dialog.ViewModel.Title = Strings.Resources.NeverShareWithTitle;
+                    break;
+            }
+
+            var confirm = await dialog.PickAsync(chats, SearchChatsType.PrivateAndGroups);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var result = viewModel.Rule;
-            if (result != null)
+            chats.Clear();
+            users.Clear();
+
+            foreach (var chat in dialog.ViewModel.SelectedItems)
             {
-                _restrictedUsers = result;
-                RestrictedBadge = GetBadge(_restrictedUsers.UserIds, _restrictedChatMembers.ChatIds);
+                if (chat.Type is ChatTypePrivate privata)
+                {
+                    users.Add(privata.UserId);
+                }
+                else
+                {
+                    chats.Add(chat.Id);
+                }
             }
+
+            _restrictedUsers = new UserPrivacySettingRuleRestrictUsers(users);
+            _restrictedChatMembers = new UserPrivacySettingRuleRestrictChatMembers(chats);
+            RestrictedBadge = GetBadge(_restrictedUsers.UserIds, _restrictedChatMembers.ChatIds);
         }
 
         public RelayCommand SendCommand { get; }

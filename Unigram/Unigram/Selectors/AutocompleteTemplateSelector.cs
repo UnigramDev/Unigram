@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -31,7 +26,7 @@ namespace Unigram.Selectors
             {
                 return CommandTemplate;
             }
-            else if (item is Sticker || item is ViewModels.Dialogs.StickerViewModel)
+            else if (item is Sticker || item is StickerViewModel)
             {
                 return StickerTemplate;
             }
@@ -40,9 +35,7 @@ namespace Unigram.Selectors
                 return EmojiTemplate;
             }
 
-            //return ItemTemplate;
-
-            return base.SelectTemplateCore(item, container);
+            return ItemTemplate ?? base.SelectTemplateCore(item, container);
         }
     }
 }

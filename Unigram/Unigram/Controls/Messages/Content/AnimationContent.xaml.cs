@@ -1,22 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -46,7 +33,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (animation.Thumbnail != null)
             {
-                UpdateThumbnail(message, animation.Thumbnail.Photo);
+                UpdateThumbnail(message, animation.Thumbnail, animation.Thumbnail.File);
             }
 
             UpdateFile(message, animation.AnimationValue);
@@ -69,9 +56,9 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (animation.Thumbnail != null && animation.Thumbnail.Photo.Id == file.Id)
+            if (animation.Thumbnail != null && animation.Thumbnail.File.Id == file.Id)
             {
-                UpdateThumbnail(message, file);
+                UpdateThumbnail(message, animation.Thumbnail, file);
                 return;
             }
             else if (animation.AnimationValue.Id != file.Id)
@@ -135,9 +122,9 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
             {
                 //Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
                 Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);

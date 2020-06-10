@@ -18,8 +18,27 @@
     </Grid.ColumnDefinitions>
     <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
         <Border x:Name="Texture" CornerRadius="24"/>
-        <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource InlineFileButtonStyle}"/>
+        <controls:FileButton
+            x:Name="Button"
+            Click="Button_Click"
+            Style="{StaticResource InlineFileButtonStyle}"/>
     </Grid>
+    <Grid
+        x:Name="DownloadPanel"
+        Width="20"
+        Height="20"
+        CornerRadius="10"
+        Margin="0,0,-4,-2"
+        Background="{ThemeResource MessageMediaBackgroundBrush}"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom">
+        <controls:FileButton
+            x:Name="Download"
+            IsSmall="True"
+            Click="Download_Click"
+            Style="{StaticResource StreamFileButtonStyle}"/>
+    </Grid>
+
     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
         <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
         <TextBlock x:Name="Subtitle" Style="{StaticResource DisabledCaptionTextBlockStyle}"/>

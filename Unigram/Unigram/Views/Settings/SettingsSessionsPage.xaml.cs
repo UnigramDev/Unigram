@@ -1,25 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unigram.Views;
+﻿using System.Linq;
+using Telegram.Td.Api;
+using Unigram.Controls.Cells;
 using Unigram.ViewModels.Settings;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Controls.Cells;
-using Telegram.Td.Api;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsSessionsPage : Page
+    public sealed partial class SettingsSessionsPage : HostedPage
     {
         public SettingsSessionsViewModel ViewModel => DataContext as SettingsSessionsViewModel;
 

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
-using Unigram.Converters;
 using Unigram.Services;
 using Windows.UI.Xaml;
 
@@ -41,6 +36,8 @@ namespace Unigram.ViewModels
             {
                 Set(ref _inlineBotResults, value);
                 RaisePropertyChanged(() => InlineBotResultsVisibility);
+
+                _inlineBotResults?.Reset();
             }
         }
 
@@ -52,7 +49,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task<bool> ResolveInlineBotAsync(string text)
+        public async Task<bool> ResolveInlineBotAsync(string text, CancellationToken token)
         {
             var username = text.TrimStart('@').TrimEnd(' ');
             if (string.IsNullOrEmpty(username))
@@ -73,6 +70,11 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new SearchPublicChat(username));
             if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
+                if (token.IsCancellationRequested)
+                {
+                    return true;
+                }
+
                 var user = ProtoService.GetUser(privata.UserId);
                 if (user.Type is UserTypeBot bot && bot.IsInline)
                 {
@@ -85,7 +87,7 @@ namespace Unigram.ViewModels
         }
 
 
-        public async void ResolveInlineBot(string text, string command = null)
+        public async void ResolveInlineBot(string text, string command = null, CancellationToken token = default)
         {
             var username = text.TrimStart('@').TrimEnd(' ');
 
@@ -102,12 +104,17 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new SearchPublicChat(username));
             if (response is Chat result && result.Type is ChatTypePrivate privata)
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 CurrentInlineBot = ProtoService.GetUser(privata.UserId);
-                GetInlineBotResults(command ?? string.Empty);
+                GetInlineBotResults(command ?? string.Empty, token);
             }
         }
 
-        public async void GetInlineBotResults(string query)
+        public async void GetInlineBotResults(string query, CancellationToken token)
         {
             if (CurrentInlineBot == null)
             {
@@ -139,7 +146,7 @@ namespace Unigram.ViewModels
                 var collection = new BotResultsCollection(ProtoService, _currentInlineBot.Id, chat.Id, null, query);
                 var result = await collection.LoadMoreItemsAsync(0);
 
-                if (collection.Results != null)
+                if (collection.Results != null && !token.IsCancellationRequested)
                 {
                     InlineBotResults = collection;
                 }
@@ -183,11 +190,11 @@ namespace Unigram.ViewModels
             //{
             //    if (channel.BannedRights.IsForever())
             //    {
-            //        await TLMessageDialog.ShowAsync(Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AppName, Strings.Resources.OK);
+            //        await MessagePopup.ShowAsync(Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AppName, Strings.Resources.OK);
             //    }
             //    else
             //    {
-            //        await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
+            //        await MessagePopup.ShowAsync(string.Format(Strings.Resources.AttachMediaRestricted, BindConvert.Current.BannedUntil(channel.BannedRights.UntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
             //    }
 
             //    return;
@@ -221,7 +228,7 @@ namespace Unigram.ViewModels
         }
     }
 
-    public class BotResultsCollection : IncrementalCollection<MosaicMediaRow>
+    public class BotResultsCollection : IncrementalCollection<InlineQueryResult>
     {
         private readonly IProtoService _protoService;
 
@@ -261,14 +268,15 @@ namespace Unigram.ViewModels
 
         public InlineQueryResults Results => _results;
 
-        public bool IsGallery => false;
+        public string Query => _query;
 
-        public Int64 InlineQueryId => _results.InlineQueryId;
-        public String NextOffset => _results.NextOffset;
+        public long InlineQueryId => _results.InlineQueryId;
+        public string NextOffset => _results.NextOffset;
+
         public string SwitchPmParameter => _results.SwitchPmParameter;
         public string SwitchPmText => _results.SwitchPmText;
 
-        public override async Task<IList<MosaicMediaRow>> LoadDataAsync()
+        public override async Task<IList<InlineQueryResult>> LoadDataAsync()
         {
             if (_nextOffset != null)
             {
@@ -283,11 +291,11 @@ namespace Unigram.ViewModels
                         _queryIds[item] = results.InlineQueryId;
                     }
 
-                    return MosaicMedia.Calculate(results.Results.ToList());
+                    return results.Results;
                 }
             }
 
-            return new MosaicMediaRow[0];
+            return new InlineQueryResult[0];
         }
     }
 }

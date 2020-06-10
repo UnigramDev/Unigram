@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
-using Unigram.ViewModels.Dialogs;
+using Unigram.Controls.Gallery;
+using Unigram.Services;
+using Unigram.Services.Settings;
+using Unigram.Services.Updates;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Gallery;
 using Unigram.Views;
+using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Gallery;
-using Unigram.Services.Settings;
-using Unigram.Controls.Gallery;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -238,7 +237,7 @@ namespace Unigram.ViewModels
             {
                 if (file.Local.Path.EndsWith(".unigram-theme"))
                 {
-                    await new ThemePreviewView(file.Local.Path).ShowQueuedAsync();
+                    await new ThemePreviewPopup(file.Local.Path).ShowQueuedAsync();
                     return;
                 }
 
@@ -281,7 +280,7 @@ namespace Unigram.ViewModels
         {
             if (sticker.SetId != 0)
             {
-                await StickerSetView.GetForCurrentView().ShowAsync(sticker.SetId, Sticker_Click);
+                await StickerSetPopup.GetForCurrentView().ShowAsync(sticker.SetId, Sticker_Click);
             }
         }
 
@@ -315,7 +314,7 @@ namespace Unigram.ViewModels
             CallCommand.Execute();
         }
 
-        public void VotePoll(MessageViewModel message, PollOption option)
+        public async void VotePoll(MessageViewModel message, IList<PollOption> options)
         {
             var poll = message.Content as MessagePoll;
             if (poll == null)
@@ -323,7 +322,35 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SetPollAnswer(message.ChatId, message.Id, new int[] { poll.Poll.Options.IndexOf(option) }));
+            var ids = options.Select(x => poll.Poll.Options.IndexOf(x)).ToArray();
+            if (ids.IsEmpty())
+            {
+                return;
+            }
+
+            await ProtoService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, ids));
+
+            var updated = message.Content as MessagePoll;
+            if (updated.Poll.Type is PollTypeQuiz quiz)
+            {
+                if (quiz.CorrectOptionId == ids[0])
+                {
+                    Aggregator.Publish(new UpdateConfetti());
+                }
+                else
+                {
+                    var container = ListField?.ContainerFromItem(message) as SelectorItem;
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+
+                    var bubble = root.FindName("Bubble") as FrameworkElement;
+                    if (bubble == null)
+                    {
+                        return;
+                    }
+
+                    VisualUtilities.ShakeView(bubble);
+                }
+            }
         }
 
 
@@ -351,7 +378,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                await TLMessageDialog.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.NoUsernameFound, Strings.Resources.AppName, Strings.Resources.OK);
             }
         }
 
@@ -445,7 +472,7 @@ namespace Unigram.ViewModels
 
                     if (untrust)
                     {
-                        var confirm = await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+                        var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.OpenUrlAlert, url), Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm != ContentDialogResult.Primary)
                         {
                             return;
@@ -461,8 +488,23 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void OpenBankCardNumber(string number)
+        {
+            //var response = await ProtoService.SendAsync(new GetBankCardInfo(number));
+            //if (response is BankCardInfo info)
+            //{
+            //    var url = info.Actions.FirstOrDefault(x => x.)
+            //}
+        }
+
         public async void OpenMedia(MessageViewModel message, FrameworkElement target)
         {
+            if (message.Content is MessagePoll poll)
+            {
+                await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
+                return;
+            }
+
             GalleryViewModelBase viewModel = null;
 
             var webPage = message.Content is MessageText text ? text.WebPage : null;
@@ -551,6 +593,11 @@ namespace Unigram.ViewModels
                 {
                     if (string.IsNullOrEmpty(admin.CustomTitle))
                     {
+                        if (admin.IsOwner)
+                        {
+                            return Strings.Resources.ChannelCreator;
+                        }
+
                         return Strings.Resources.ChannelAdmin;
                     }
 

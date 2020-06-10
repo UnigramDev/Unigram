@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -70,6 +66,14 @@ namespace Unigram.Collections
                     else if (_type == SearchChatsType.BasicAndSupergroups && !(chat.Type is ChatTypeBasicGroup) && !(chat.Type is ChatTypeSupergroup))
                     {
                         return !_protoService.CanPostMessages(chat);
+                    }
+                    else if (_type == SearchChatsType.PrivateAndGroups)
+                    {
+                        return !(chat.Type is ChatTypePrivate || chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel);
+                    }
+                    else if (_type == SearchChatsType.Private)
+                    {
+                        return !(chat.Type is ChatTypePrivate);
                     }
 
                     return false;
@@ -210,6 +214,8 @@ namespace Unigram.Collections
     {
         All,
         Post,
-        BasicAndSupergroups,
+        Private,
+        PrivateAndGroups,
+        BasicAndSupergroups
     }
 }

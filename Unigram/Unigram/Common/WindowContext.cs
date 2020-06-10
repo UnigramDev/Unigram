@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
-using Template10.Services.NavigationService;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Native;
+using Unigram.Navigation;
 using Unigram.Services;
-using Unigram.Services.Settings;
-using Unigram.ViewModels;
+using Unigram.Services.Navigation;
 using Unigram.Views;
+using Unigram.Views.Popups;
 using Unigram.Views.SignIn;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -168,18 +162,6 @@ namespace Unigram.Common
             // Buttons feedback
             titleBar.ButtonPressedBackgroundColor = buttonPressed;
             titleBar.ButtonHoverBackgroundColor = buttonHover;
-
-            // Mobile Status Bar
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
-                var foregroundBrush = Application.Current.Resources["PageHeaderForegroundBrush"] as SolidColorBrush;
-
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = backgroundBrush.Color;
-                statusBar.ForegroundColor = foregroundBrush.Color;
-                statusBar.BackgroundOpacity = 1;
-            }
         }
 
         #endregion
@@ -245,6 +227,7 @@ namespace Unigram.Common
                         UseActivatedArgs(args, service);
                         break;
                     case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
+                    case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
                         service.Navigate(service.CurrentPageType != null ? typeof(SignInPage) : typeof(IntroPage));
                         break;
                     case AuthorizationStateWaitCode waitCode:
@@ -256,7 +239,7 @@ namespace Unigram.Common
                     case AuthorizationStateWaitPassword waitPassword:
                         if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
                         {
-                            await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
+                            await MessagePopup.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                         }
 
                         service.Navigate(typeof(SignInPasswordPage));
@@ -436,7 +419,7 @@ namespace Unigram.Common
                     service.NavigateToMain(string.Empty);
                 }
 
-                await new ThemePreviewView(file.Files[0].Path).ShowQueuedAsync();
+                await new ThemePreviewPopup(file.Files[0].Path).ShowQueuedAsync();
             }
             else
             {
@@ -544,26 +527,14 @@ namespace Unigram.Common
             });
         }
 
-        private async void ShowStatus(string text)
+        private void ShowStatus(string text)
         {
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().Title = text;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                StatusBar.GetForCurrentView().ProgressIndicator.Text = text;
-                await StatusBar.GetForCurrentView().ProgressIndicator.ShowAsync();
-            }
         }
 
-        private async void HideStatus()
+        private void HideStatus()
         {
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().Title = string.Empty;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                StatusBar.GetForCurrentView().ProgressIndicator.Text = string.Empty;
-                await StatusBar.GetForCurrentView().ProgressIndicator.HideAsync();
-            }
         }
 
 

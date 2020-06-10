@@ -4,19 +4,18 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using Telegram.Td.Api;
-using Template10.Common;
-using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
+using Unigram.Services.Navigation;
 using Unigram.ViewModels.Delegates;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -37,6 +36,8 @@ namespace Unigram.Controls.Cells
     public sealed partial class ChatCell : ToggleButton
     {
         private Chat _chat;
+        private ChatList _chatList;
+
         private IProtoService _protoService;
         private IChatListDelegate _delegate;
 
@@ -69,12 +70,12 @@ namespace Unigram.Controls.Cells
             _delegate = delegato;
         }
 
-        public void UpdateChat(IProtoService protoService, IChatListDelegate delegato, Chat chat)
+        public void UpdateChat(IProtoService protoService, IChatListDelegate delegato, Chat chat, ChatList chatList)
         {
             _protoService = protoService;
             _delegate = delegato;
 
-            Update(chat);
+            Update(chat, chatList);
         }
 
         public void UpdateMessage(IProtoService protoService, IChatListDelegate delegato, Message message)
@@ -275,19 +276,29 @@ namespace Unigram.Controls.Cells
 
         #region Updates
 
-        public void UpdateChatLastMessage(Chat chat)
+        public void UpdateChatLastMessage(Chat chat, ChatPosition position = null)
         {
+            if (position == null)
+            {
+                position = chat.GetPosition(_chatList);
+            }
+
             DraftLabel.Text = UpdateDraftLabel(chat);
-            FromLabel.Text = UpdateFromLabel(chat);
-            BriefLabel.Text = UpdateBriefLabel(chat);
-            TimeLabel.Text = UpdateTimeLabel(chat);
+            FromLabel.Text = UpdateFromLabel(chat, position);
+            BriefLabel.Text = UpdateBriefLabel(chat, position);
+            TimeLabel.Text = UpdateTimeLabel(chat, position);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public void UpdateChatReadInbox(Chat chat)
+        public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
         {
-            PinnedIcon.Visibility = (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread) && chat.IsPinned ? Visibility.Visible : Visibility.Collapsed;
+            if (position == null)
+            {
+                position = chat.GetPosition(_chatList);
+            }
+
+            PinnedIcon.Visibility = (chat.UnreadCount == 0 && !chat.IsMarkedAsUnread) && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
             UnreadLabel.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
 
@@ -304,9 +315,9 @@ namespace Unigram.Controls.Cells
 
         }
 
-        public void UpdateChatUnreadMentionCount(Chat chat)
+        public void UpdateChatUnreadMentionCount(Chat chat, ChatPosition position = null)
         {
-            UpdateChatReadInbox(chat);
+            UpdateChatReadInbox(chat, position);
             UnreadMentionsBadge.Visibility = chat.UnreadMentionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -397,10 +408,14 @@ namespace Unigram.Controls.Cells
             _onlineBadge.StartAnimation("Opacity", opacity);
         }
 
-        private void Update(Chat chat)
+        private void Update(Chat chat, ChatList chatList)
         {
             _chat = chat;
+            _chatList = chatList;
+
             Tag = chat;
+
+            var position = chat.GetPosition(chatList);
 
             //UpdateViewState(chat, ChatFilterMode.None, false, false);
 
@@ -408,9 +423,9 @@ namespace Unigram.Controls.Cells
             UpdateChatPhoto(chat);
             UpdateChatType(chat);
 
-            UpdateChatLastMessage(chat);
+            UpdateChatLastMessage(chat, position);
             //UpdateChatReadInbox(chat);
-            UpdateChatUnreadMentionCount(chat);
+            UpdateChatUnreadMentionCount(chat, position);
             UpdateNotificationSettings(chat);
             UpdateChatActions(chat, _protoService.GetChatActions(chat.Id));
 
@@ -437,9 +452,11 @@ namespace Unigram.Controls.Cells
             {
                 _expanded = threeLines;
 
+                var position = chat.GetPosition(_chatList);
+
                 DraftLabel.Text = UpdateDraftLabel(chat);
-                FromLabel.Text = UpdateFromLabel(chat);
-                BriefLabel.Text = UpdateBriefLabel(chat);
+                FromLabel.Text = UpdateFromLabel(chat, position);
+                BriefLabel.Text = UpdateBriefLabel(chat, position);
             }
         }
 
@@ -457,8 +474,13 @@ namespace Unigram.Controls.Cells
             }
         }
 
-        private string UpdateBriefLabel(Chat chat)
+        private string UpdateBriefLabel(Chat chat, ChatPosition position)
         {
+            if (position?.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
+            {
+                return psa.Text.Replace('\n', ' ');
+            }
+
             var topMessage = chat.LastMessage;
             if (topMessage != null)
             {
@@ -535,6 +557,9 @@ namespace Unigram.Controls.Cells
 
                 case MessageText text:
                     return text.Text.Text.Replace('\n', ' ');
+
+                case MessageDice dice:
+                    return dice.Emoji;
             }
 
             return string.Empty;
@@ -554,9 +579,13 @@ namespace Unigram.Controls.Cells
             return string.Empty;
         }
 
-        private string UpdateFromLabel(Chat chat)
+        private string UpdateFromLabel(Chat chat, ChatPosition position)
         {
-            if (chat.DraftMessage != null)
+            if (position?.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
+            {
+                return string.Empty;
+            }
+            else if (chat.DraftMessage != null)
             {
                 switch (chat.DraftMessage.InputMessageText)
                 {
@@ -670,13 +699,13 @@ namespace Unigram.Controls.Cells
                 var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
                 var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
 
-                if (performer == null && title == null)
+                if (performer == null || title == null)
                 {
                     return result + Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text);
                 }
                 else
                 {
-                    return $"{result}\uD83C\uDFB5 {performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
+                    return $"{result}\uD83C\uDFB5 {performer} - {title}" + GetCaption(audio.Caption.Text);
                 }
             }
             else if (message.Content is MessageDocument document)
@@ -818,11 +847,21 @@ namespace Unigram.Controls.Cells
             return string.Empty;
         }
 
-        private string UpdateTimeLabel(Chat chat)
+        private string UpdateTimeLabel(Chat chat, ChatPosition position)
         {
-            if (_protoService != null && _protoService.IsChatSponsored(chat))
+            if (position?.Source is ChatSourceMtprotoProxy)
             {
                 return Strings.Resources.UseProxySponsor;
+            }
+            else if (position?.Source is ChatSourcePublicServiceAnnouncement psa)
+            {
+                var type = LocaleService.Current.GetString("PsaType_" + psa.Type);
+                if (type.Length > 0)
+                {
+                    return type;
+                }
+
+                return Strings.Resources.PsaTypeDefault;
             }
 
             var lastMessage = chat.LastMessage;
@@ -1182,7 +1221,7 @@ namespace Unigram.Controls.Cells
                 }
 
                 _selectionPhoto.Scale = new Vector3(selected ? 40f / 48f : 1);
-                _selectionOutline.Scale = new Vector3(selected ? 1: 40f / 48f);
+                _selectionOutline.Scale = new Vector3(selected ? 1 : 40f / 48f);
                 _selectionOutline.Opacity = selected ? 1 : 0;
             }
         }

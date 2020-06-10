@@ -1,23 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Template10.Common;
-using Template10.Mvvm;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Services;
+using Unigram.Services.Settings;
+using Unigram.Views.Popups;
+using Unigram.Views.Settings;
+using Windows.Storage.AccessCache;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Unigram.Services;
-using Unigram.Views.Settings;
-using Telegram.Td.Api;
-using Windows.Storage.Pickers;
-using Windows.Storage.AccessCache;
-using Unigram.Services.Settings;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -126,39 +121,29 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand UseLessDataCommand { get; }
         private async void UseLessDataExecute()
         {
-            var dialog = new TLContentDialog();
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 0, Content = Strings.Resources.UseLessDataNever, IsChecked = UseLessData == libtgvoip.DataSavingMode.Never });
-            stack.Children.Add(new RadioButton { Tag = 1, Content = Strings.Resources.UseLessDataOnMobile, IsChecked = UseLessData == libtgvoip.DataSavingMode.MobileOnly });
-            stack.Children.Add(new RadioButton { Tag = 2, Content = Strings.Resources.UseLessDataAlways, IsChecked = UseLessData == libtgvoip.DataSavingMode.Always });
+            var items = new[]
+            {
+                new SelectRadioItem(libtgvoip.DataSavingMode.Never, Strings.Resources.UseLessDataNever, UseLessData == libtgvoip.DataSavingMode.Never),
+                new SelectRadioItem(libtgvoip.DataSavingMode.MobileOnly, Strings.Resources.UseLessDataOnMobile, UseLessData == libtgvoip.DataSavingMode.MobileOnly),
+                new SelectRadioItem(libtgvoip.DataSavingMode.Always, Strings.Resources.UseLessDataAlways, UseLessData == libtgvoip.DataSavingMode.Always),
+            };
 
+            var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.VoipUseLessData;
-            dialog.Content = stack;
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is libtgvoip.DataSavingMode index)
             {
-                var mode = 1;
-                foreach (RadioButton current in stack.Children)
-                {
-                    if (current.IsChecked == true)
-                    {
-                        mode = (int)current.Tag;
-                        break;
-                    }
-                }
-
-                UseLessData = (libtgvoip.DataSavingMode)mode;
+                UseLessData = index;
             }
         }
 
         public RelayCommand DownloadLocationCommand { get; }
         private async void DownloadLocationExecute()
         {
-            var dialog = new TLContentDialog();
+            var dialog = new ContentPopup();
             var stack = new StackPanel();
             stack.Margin = new Thickness(12, 16, 12, 0);
             stack.Children.Add(new RadioButton { Tag = 1, Content = "Temp folder, cleared on logout or uninstall", IsChecked = FilesDirectory == null });
@@ -223,7 +208,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetAutoDownloadCommand { get; }
         private async void ResetAutoDownloadExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ResetAutomaticMediaDownloadAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.SendAsync(new GetAutoDownloadSettingsPresets());

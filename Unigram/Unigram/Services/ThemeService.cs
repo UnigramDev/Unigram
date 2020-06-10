@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Td;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Common;
+using Unigram.Navigation;
 using Unigram.Services.Settings;
-using Unigram.Services.Updates;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Unigram.Services
@@ -35,13 +35,26 @@ namespace Unigram.Services
 
     public class ThemeService : IThemeService
     {
+        private readonly IProtoService _protoService;
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        public ThemeService(ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly UISettings _uiSettings;
+
+        public ThemeService(IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
         {
+            _protoService = protoService;
             _settingsService = settingsService;
             _aggregator = aggregator;
+
+            _uiSettings = new UISettings();
+            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
+        }
+
+        private void OnColorValuesChanged(UISettings sender, object args)
+        {
+            _aggregator.Publish(new UpdateSelectedBackground(true, _protoService.GetSelectedBackground(true)));
+            _aggregator.Publish(new UpdateSelectedBackground(false, _protoService.GetSelectedBackground(false)));
         }
 
         public Dictionary<string, string[]> GetMapping(TelegramTheme flags)
@@ -138,7 +151,15 @@ namespace Unigram.Services
         {
             var lines = await FileIO.ReadLinesAsync(file);
             var theme = new ThemeCustomInfo(official);
-            theme.Path = file.Path;
+
+            if (official)
+            {
+                theme.Path = Path.GetRelativePath(Package.Current.InstalledLocation.Path, file.Path);
+            }
+            else
+            {
+                theme.Path = file.Path;
+            }
 
             foreach (var line in lines)
             {
@@ -248,7 +269,8 @@ namespace Unigram.Services
                 });
             }
 
-            _aggregator.Publish(new UpdateWallpaper(0, 0));
+            _aggregator.Publish(new UpdateSelectedBackground(true, _protoService.GetSelectedBackground(true)));
+            _aggregator.Publish(new UpdateSelectedBackground(false, _protoService.GetSelectedBackground(false)));
         }
 
         public async void Refresh()
@@ -461,7 +483,7 @@ namespace Unigram.Services
             { "TelegramSeparatorMediumBrush", "SystemControlBackgroundChromeMediumBrush" },
             { "ChatOnlineBadgeBrush", Color.FromArgb(0xFF, 0x89, 0xDF, 0x9E) },
             { "ChatVerifiedBadgeBrush", "SystemAccentColor" },
-            { "ChatLastMessageStateBrush", "SystemAccentColorLight2" },
+            { "ChatLastMessageStateBrush", "SystemAccentColor" },
             { "ChatFromLabelBrush", "SystemAccentColor" },
             { "ChatDraftLabelBrush", Color.FromArgb(0xFF, 0xDD, 0x4B, 0x39) },
             { "ChatUnreadBadgeMutedBrush", Color.FromArgb(0xFF, 0x44, 0x44, 0x44) },
@@ -1571,7 +1593,7 @@ namespace Unigram.Services
             { "TelegramSeparatorMediumBrush", "SystemControlBackgroundChromeMediumLowBrush" },
             { "ChatOnlineBadgeBrush", Color.FromArgb(0xFF, 0x00, 0xB1, 0x2C) },
             { "ChatVerifiedBadgeBrush", "SystemAccentColor" },
-            { "ChatLastMessageStateBrush", "SystemAccentColorLight1" },
+            { "ChatLastMessageStateBrush", "SystemAccentColor" },
             { "ChatFromLabelBrush", Color.FromArgb(0xFF, 0x3C, 0x7E, 0xB0) },
             { "ChatDraftLabelBrush", Color.FromArgb(0xFF, 0xDD, 0x4B, 0x39) },
             { "ChatUnreadBadgeMutedBrush", Color.FromArgb(0xFF, 0xBB, 0xBB, 0xBB) },

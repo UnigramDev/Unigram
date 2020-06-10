@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.ViewModels;
 
@@ -117,7 +115,7 @@ namespace Unigram.Common
             for (int a = 0; a < count; a++)
             {
                 MessageViewModel messageObject = Messages[a];
-                IList<PhotoSize> photoThumbs = null;
+                PhotoSize photoSize = null;
                 if (a == 0)
                 {
                     //isOut = messageObject.isOutOwner();
@@ -126,15 +124,14 @@ namespace Unigram.Common
                 int h = 0;
                 if (messageObject.Content is MessagePhoto photoMedia)
                 {
-                    photoThumbs = photoMedia.Photo.Sizes;
+                    photoSize = GetClosestPhotoSizeWithSize(photoMedia.Photo.Sizes, 1280, false);
                 }
                 else if (messageObject.Content is MessageVideo videoMedia)
                 {
                     w = videoMedia.Video.Width;
                     h = videoMedia.Video.Height;
-                    photoThumbs = new List<PhotoSize> { videoMedia.Video.Thumbnail };
+                    photoSize = new PhotoSize("x", videoMedia.Video.Thumbnail.File, videoMedia.Video.Thumbnail.Width, videoMedia.Video.Thumbnail.Height);
                 }
-                PhotoSize photoSize = GetClosestPhotoSizeWithSize(photoThumbs, 1280);
                 w = photoSize?.Width > 0 ? photoSize.Width : w;
                 h = photoSize?.Height > 0 ? photoSize.Height : h;
 

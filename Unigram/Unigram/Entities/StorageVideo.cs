@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Converters;
@@ -12,7 +7,6 @@ using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Entities
 {
@@ -47,8 +41,6 @@ namespace Unigram.Entities
         public override uint Width => Properties.GetWidth();
         public override uint Height => Properties.GetHeight();
 
-        public override bool IsAnimatable => true;
-
         public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
         {
             try
@@ -69,7 +61,7 @@ namespace Unigram.Entities
 
                 if (video.Width > 0 && video.Height > 0)
                 {
-                    return new StorageVideo(file, basic, video, profile) { IsSelected = selected };
+                    return new StorageVideo(file, basic, video, profile);
                 }
 
                 return null;
@@ -166,10 +158,10 @@ namespace Unigram.Entities
             int originalWidth = this.originalWidth;
             int originalHeight = this.originalHeight;
 
-            if (CropRectangle.HasValue)
+            if (_editState is BitmapEditState state && state.Rectangle is Rect rectangle)
             {
-                originalWidth = (int)CropRectangle.Value.Width;
-                originalHeight = (int)CropRectangle.Value.Height;
+                originalWidth = (int)rectangle.Width;
+                originalHeight = (int)rectangle.Height;
             }
 
             Compression = 6;
@@ -199,21 +191,6 @@ namespace Unigram.Entities
             {
                 Compression = MaxCompression - 1;
             }
-        }
-
-        public override StorageMedia Clone()
-        {
-            var item = new StorageVideo(File, _basic, Properties, Profile);
-            item._thumbnail = _thumbnail;
-            item._preview = _preview;
-
-            return item;
-        }
-
-        public override void Reset()
-        {
-            base.Reset();
-            Refresh();
         }
 
         private int originalWidth;
@@ -248,10 +225,10 @@ namespace Unigram.Entities
             int originalWidth = (int)Properties.Width;
             int originalHeight = (int)Properties.Height;
 
-            if (CropRectangle.HasValue)
+            if (_editState is BitmapEditState state && state.Rectangle is Rect rectangle)
             {
-                originalWidth = (int)CropRectangle.Value.Width;
-                originalHeight = (int)CropRectangle.Value.Height;
+                originalWidth = (int)rectangle.Width;
+                originalHeight = (int)rectangle.Height;
             }
 
             int resultWidth = originalWidth;
@@ -300,9 +277,9 @@ namespace Unigram.Entities
             }
 
             var profile = await MediaEncodingProfile.CreateFromFileAsync(File);
-            profile.Video.Width = (uint)resultWidth;
-            profile.Video.Height = (uint)resultHeight;
-            profile.Video.Bitrate = (uint)bitrate;
+            //profile.Video.Width = (uint)resultWidth;
+            //profile.Video.Height = (uint)resultHeight;
+            //profile.Video.Bitrate = (uint)bitrate;
 
             if (_isMuted)
             {
@@ -407,11 +384,11 @@ namespace Unigram.Entities
 
         public VideoTransformEffectDefinition GetTransform()
         {
-            var crop = CropRectangle;
-            if (crop.HasValue)
+            var crop = _editState?.Rectangle ?? Rect.Empty;
+            if (!(crop.IsEmpty || (crop.X == 0 && crop.Y == 0 && crop.Width == 1 && crop.Height == 1)))
             {
                 var transform = new VideoTransformEffectDefinition();
-                transform.CropRectangle = crop.Value;
+                transform.CropRectangle = crop;
 
                 return transform;
             }

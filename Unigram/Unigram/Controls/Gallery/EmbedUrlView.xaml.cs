@@ -1,29 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
-using Template10.Common;
-using Unigram.Services;
+using Unigram.Navigation;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.System.Display;
 using Windows.UI.Composition;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Gallery
 {
@@ -76,11 +67,7 @@ namespace Unigram.Controls.Gallery
             {
                 _closing = closing;
 
-                if (SettingsService.Current.AreAnimationsEnabled)
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
-                }
-
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
                 Load(message, parameter);
 
                 //if (_compactLifetime != null)
@@ -135,7 +122,7 @@ namespace Unigram.Controls.Gallery
             Presenter.Child = _surface = new WebView { Source = new Uri(webPage.EmbedUrl) };
         }
 
-        public void OnBackRequesting(HandledRoutedEventArgs e)
+        public void OnBackRequesting(HandledEventArgs e)
         {
             //Unload();
             //Dispose();
@@ -143,7 +130,7 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             //var container = GetContainer(0);
             //var root = container.Presenter;
@@ -154,28 +141,21 @@ namespace Unigram.Controls.Gallery
 
                 var root = Preview.Presenter;
 
-                if (SettingsService.Current.AreAnimationsEnabled)
+                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                if (animation != null)
                 {
-                    var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                    if (animation != null)
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                     {
-                        if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                        {
-                            animation.Configuration = new BasicConnectedAnimationConfiguration();
-                        }
+                        animation.Configuration = new BasicConnectedAnimationConfiguration();
+                    }
 
-                        var element = _closing();
-                        if (element.ActualWidth > 0 && animation.TryStart(element))
-                        {
-                            animation.Completed += (s, args) =>
-                            {
-                                Hide();
-                            };
-                        }
-                        else
+                    var element = _closing();
+                    if (element.ActualWidth > 0 && animation.TryStart(element))
+                    {
+                        animation.Completed += (s, args) =>
                         {
                             Hide();
-                        }
+                        };
                     }
                     else
                     {
@@ -218,28 +198,25 @@ namespace Unigram.Controls.Gallery
 
         private void Preview_ImageOpened(object sender, RoutedEventArgs e)
         {
-            if (SettingsService.Current.AreAnimationsEnabled)
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+            if (animation != null)
             {
-                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                if (animation != null)
+                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                 {
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                    animation.Configuration = new BasicConnectedAnimationConfiguration();
+                }
+
+                //_layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
+
+                if (animation.TryStart(Preview.Presenter))
+                {
+                    animation.Completed += (s, args) =>
                     {
-                        animation.Configuration = new BasicConnectedAnimationConfiguration();
-                    }
+                        Presenter.Opacity = 1;
+                        Preview.Opacity = 0;
+                    };
 
-                    //_layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
-
-                    if (animation.TryStart(Preview.Presenter))
-                    {
-                        animation.Completed += (s, args) =>
-                        {
-                            Presenter.Opacity = 1;
-                            Preview.Opacity = 0;
-                        };
-
-                        return;
-                    }
+                    return;
                 }
             }
         }
@@ -248,7 +225,7 @@ namespace Unigram.Controls.Gallery
         {
             if (_window == null)
             {
-                OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+                OnBackRequestedOverride(this, new HandledEventArgs());
 
                 // Create a new AppWindow
                 _window = await AppWindow.TryCreateAsync();

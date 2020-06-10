@@ -1,26 +1,26 @@
 ﻿using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
+using System.Numerics;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Native;
+using Unigram.Navigation;
 using Unigram.Services;
-using Unigram.ViewModels;
+using Unigram.Services.Navigation;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
-using Windows.UI.Popups;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -34,6 +34,11 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static Version ToVersion(this PackageVersion version)
+        {
+            return new Version(version.Major, version.Minor, version.Build, version.Revision);
+        }
+
         public static string ToQuery(this Dictionary<string, string> dictionary)
         {
             var result = string.Empty;
@@ -44,6 +49,73 @@ namespace Unigram.Common
             }
 
             return result.TrimEnd('&');
+        }
+
+        public static Vector2 GetActualSize(this FrameworkElement element)
+        {
+            return new Vector2((float)element.ActualWidth, (float)element.ActualHeight);
+        }
+
+        public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
+        {
+            ShowTeachingTip(app, target, new FormattedText(text, new TextEntity[0]), placement);
+            return;
+
+            var tip = new Microsoft.UI.Xaml.Controls.TeachingTip
+            {
+                Target = target,
+                PreferredPlacement = placement,
+                IsLightDismissEnabled = true,
+                Subtitle = text
+            };
+            if (app.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = tip;
+            }
+            else
+            {
+                target.Resources["TeachingTip"] = tip;
+            }
+            tip.IsOpen = true;
+        }
+
+        public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
+        {
+            var label = new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap
+            };
+            var tip = new Microsoft.UI.Xaml.Controls.TeachingTip
+            {
+                Target = target,
+                PreferredPlacement = placement,
+                IsLightDismissEnabled = true,
+                Content = label,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch
+            };
+
+            TextBlockHelper.SetFormattedText(label, text);
+
+            if (app.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = tip;
+            }
+            else
+            {
+                target.Resources["TeachingTip"] = tip;
+            }
+            tip.IsOpen = true;
+        }
+
+        public static Color ToColor(this int color)
+        {
+            return Color.FromArgb(0xFF, (byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
+        }
+
+        public static int ToValue(this Color color)
+        {
+            return (color.R << 16) + (color.G << 8) + color.B;
         }
 
         public static int ToTimestamp(this DateTime dateTime)
@@ -564,6 +636,14 @@ namespace Unigram.Common
             return list.Count == 0;
         }
 
+        public static void ForEach<T>(this IEnumerable<T> list, Action<T> action)
+        {
+            foreach (var item in list)
+            {
+                action?.Invoke(item);
+            }
+        }
+
         public static List<Control> AllChildren(this DependencyObject parent)
         {
             var list = new List<Control>();
@@ -807,12 +887,26 @@ namespace Unigram.Common
 
         public static ScrollViewer GetScrollViewer(this ListViewBase listViewBase)
         {
-            if (listViewBase is ChatsListView bubble)
-            {
-                return bubble.ScrollingHost;
-            }
+            //if (listViewBase is ChatsListView bubble)
+            //{
+            //    return bubble.ScrollingHost;
+            //}
 
             return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
         }
+
+        public static ScrollViewer GetScrollViewer(this Pivot listViewBase)
+        {
+            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+        }
+    }
+
+    public static class Template10Utils
+    {
+        public static WindowContext GetWindowWrapper(this INavigationService service)
+            => WindowContext.ActiveWrappers.FirstOrDefault(x => x.NavigationServices.Contains(service));
+
+        public static IDispatcherWrapper GetDispatcherWrapper(this INavigationService service)
+            => service.GetWindowWrapper()?.Dispatcher;
     }
 }

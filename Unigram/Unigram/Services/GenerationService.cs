@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Entities;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
@@ -157,7 +156,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -168,18 +167,20 @@ namespace Unigram.Services
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
-                await file.CopyAndReplaceAsync(temp);
-
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
-
                 if (IsTemporary(file))
                 {
-                    await file.DeleteAsync();
+                    await file.MoveAndReplaceAsync(temp);
                 }
+                else
+                {
+                    await file.CopyAndReplaceAsync(temp);
+                }
+
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, null));
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -192,8 +193,16 @@ namespace Unigram.Services
 
                 if (args.Length > 3)
                 {
-                    var rect = JsonConvert.DeserializeObject<Rect>(args[2]);
-                    await ImageHelper.CropAsync(file, temp, rect);
+                    var editState = JsonConvert.DeserializeObject<BitmapEditState>(args[2]);
+                    var rectangle = editState.Rectangle;
+
+                    await ImageHelper.CropAsync(file, temp, rectangle, rotation: editState.Rotation, flip: editState.Flip);
+
+                    var drawing = editState.Strokes;
+                    if (drawing != null && drawing.Count > 0)
+                    {
+                        await ImageHelper.DrawStrokesAsync(temp, drawing, rectangle, editState.Rotation, editState.Flip);
+                    }
                 }
                 else
                 {
@@ -209,7 +218,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -234,7 +243,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -243,22 +252,27 @@ namespace Unigram.Services
             try
             {
                 var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
-                if (conversion.Transcode)
+                if (conversion.Mute)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
-                    var transcoder = new MediaTranscoder();
-
                     var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
-                    profile.Video.Width = conversion.Width;
-                    profile.Video.Height = conversion.Height;
-                    profile.Video.Bitrate = conversion.Bitrate;
+                    if (profile.Audio == null && conversion.Mute)
+                    {
+                        await CopyAsync(update, args);
+                        return;
+                    }
+                    //profile.Video.Width = conversion.Width;
+                    //profile.Video.Height = conversion.Height;
+                    //profile.Video.Bitrate = conversion.Bitrate;
 
                     if (conversion.Mute)
                     {
                         profile.Audio = null;
                     }
+
+                    var transcoder = new MediaTranscoder();
 
                     if (conversion.Transform)
                     {
@@ -296,7 +310,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -305,7 +319,7 @@ namespace Unigram.Services
             try
             {
                 var conversion = JsonConvert.DeserializeObject<VideoConversion>(args[2]);
-                if (conversion.Transcode)
+                //if (conversion.Transcode)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                     var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
@@ -315,12 +329,12 @@ namespace Unigram.Services
                     double originalWidth = props.GetWidth();
                     double originalHeight = props.GetHeight();
 
-                    if (!conversion.CropRectangle.IsEmpty())
-                    {
-                        file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle);
-                        originalWidth = conversion.CropRectangle.Width;
-                        originalHeight = conversion.CropRectangle.Height;
-                    }
+                    //if (!conversion.CropRectangle.IsEmpty())
+                    //{
+                    //    file = await ImageHelper.CropAsync(file, temp, conversion.CropRectangle);
+                    //    originalWidth = conversion.CropRectangle.Width;
+                    //    originalHeight = conversion.CropRectangle.Height;
+                    //}
 
                     using (var fileStream = await ImageHelper.OpenReadAsync(file))
                     using (var outputStream = await temp.OpenAsync(FileAccessMode.ReadWrite))
@@ -356,7 +370,7 @@ namespace Unigram.Services
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 
@@ -368,7 +382,7 @@ namespace Unigram.Services
                 var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                 var mode = ThumbnailMode.DocumentsView;
-                if (file.ContentType.StartsWith("audio"))
+                if (file.ContentType.StartsWith("audio/"))
                 {
                     mode = ThumbnailMode.MusicView;
                 }
@@ -389,13 +403,13 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "No thumbnail found")));
+                        _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID No thumbnail found")));
                     }
                 }
             }
             catch (Exception ex)
             {
-                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, ex.ToString())));
+                _protoService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
         }
 

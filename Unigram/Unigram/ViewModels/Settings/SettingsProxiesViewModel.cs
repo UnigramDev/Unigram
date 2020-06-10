@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Mvvm;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
+using Unigram.Navigation;
 using Unigram.Services;
-using Windows.ApplicationModel.DataTransfer;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -143,7 +141,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
-            var dialog = new ProxyView();
+            var dialog = new ProxyPopup();
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
             {
@@ -179,7 +177,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ConnectionViewModel> EditCommand { get; }
         private async void EditExecute(ConnectionViewModel connection)
         {
-            var dialog = new ProxyView(connection as ProxyViewModel);
+            var dialog = new ProxyPopup(connection as ProxyViewModel);
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
             {
@@ -203,7 +201,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ProxyViewModel> RemoveCommand { get; }
         private async void RemoveExecute(ProxyViewModel proxy)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.DeleteProxy, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.DeleteProxy, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -224,7 +222,7 @@ namespace Unigram.ViewModels.Settings
             var response = await ProtoService.SendAsync(new GetProxyLink(proxy.Id));
             if (response is Text text && Uri.TryCreate(text.TextValue, UriKind.Absolute, out Uri uri))
             {
-                await ShareView.GetForCurrentView().ShowAsync(uri, Strings.Resources.Proxy);
+                await SharePopup.GetForCurrentView().ShowAsync(uri, Strings.Resources.Proxy);
             }
         }
 

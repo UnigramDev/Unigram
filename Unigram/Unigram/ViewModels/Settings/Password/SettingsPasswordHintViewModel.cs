@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
@@ -46,7 +43,7 @@ namespace Unigram.ViewModels.Settings.Password
 
             if (string.Equals(password, hint))
             {
-                await TLMessageDialog.ShowAsync(Strings.Resources.PasswordAsHintError, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.PasswordAsHintError, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 

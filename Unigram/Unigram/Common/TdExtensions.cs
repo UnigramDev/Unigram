@@ -1,20 +1,208 @@
 ﻿using libtgvoip;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Selectors;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Settings;
+using Windows.Foundation;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
 {
+    public static class TdBackground
+    {
+        public static BackgroundType FromUri(Uri uri)
+        {
+            var slug = uri.Segments.Last();
+            var query = uri.Query.ParseQueryString();
+
+            var split = slug.Split('-');
+            if (split.Length > 0 && int.TryParse(split[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int topColor))
+            {
+                if (split.Length > 1 && int.TryParse(split[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int bottomColor))
+                {
+                    query.TryGetValue("rotation", out string rotationKey);
+                    int.TryParse(rotationKey ?? string.Empty, out int rotation);
+
+                    return new BackgroundTypeFill(new BackgroundFillGradient(topColor, bottomColor, rotation));
+                }
+
+                return new BackgroundTypeFill(new BackgroundFillSolid(topColor));
+            }
+            else
+            {
+                query.TryGetValue("mode", out string modeKey);
+                query.TryGetValue("bg_color", out string bg_colorKey);
+
+                var modeSplit = modeKey?.ToLower().Split('+') ?? new string[0];
+                var bgSplit = bg_colorKey?.Split('-') ?? new string[0];
+
+                if (bgSplit.Length > 0 && int.TryParse(bgSplit[0], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int bgTopColor))
+                {
+                    BackgroundFill fill;
+                    if (bgSplit.Length > 1 && int.TryParse(bgSplit[1], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int bgBottomColor))
+                    {
+                        query.TryGetValue("rotation", out string rotationKey1);
+                        int.TryParse(rotationKey1 ?? string.Empty, out int rotation1);
+
+                        fill = new BackgroundFillGradient(bgTopColor, bgBottomColor, rotation1);
+                    }
+                    else
+                    {
+                        fill = new BackgroundFillSolid(bgTopColor);
+                    }
+
+                    query.TryGetValue("intensity", out string intensityKey);
+                    int.TryParse(intensityKey, out int intensity);
+
+                    return new BackgroundTypePattern(fill, intensity, modeSplit.Contains("motion"));
+                }
+                else
+                {
+                    return new BackgroundTypeWallpaper(modeSplit.Contains("blur"), modeSplit.Contains("motion"));
+                }
+            }
+        }
+
+        public static string ToString(Background background)
+        {
+            if (background.Type is BackgroundTypeFill typeFill)
+            {
+                if (typeFill.Fill is BackgroundFillSolid fillSolid)
+                {
+                    var color = fillSolid.Color.ToColor();
+                    return string.Format("{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
+                }
+                else if (typeFill.Fill is BackgroundFillGradient fillGradient)
+                {
+                    var topColor = fillGradient.TopColor.ToColor();
+                    var bottomColor = fillGradient.BottomColor.ToColor();
+
+                    return string.Format("{0:X2}{1:X2}{2:X2}-{3:X2}{4:X2}{5:X2}?rotation={6}", topColor.R, topColor.G, topColor.B, bottomColor.R, bottomColor.G, bottomColor.B, fillGradient.RotationAngle);
+                }
+            }
+            else if (background.Type is BackgroundTypePattern typePattern)
+            {
+                string builder = "?";
+                if (typePattern.Fill is BackgroundFillSolid fillSolid)
+                {
+                    var color = fillSolid.Color.ToColor();
+                    builder += string.Format("bg_color={0:X2}{1:X2}{2:X2}&", color.R, color.G, color.B);
+                }
+                else if (typePattern.Fill is BackgroundFillGradient fillGradient)
+                {
+                    var topColor = fillGradient.TopColor.ToColor();
+                    var bottomColor = fillGradient.BottomColor.ToColor();
+
+                    builder += string.Format("bg_color={0:X2}{1:X2}{2:X2}-{3:X2}{4:X2}{5:X2}&rotation={6}&", topColor.R, topColor.G, topColor.B, bottomColor.R, bottomColor.G, bottomColor.B, fillGradient.RotationAngle);
+                }
+
+                builder += $"intensity={typePattern.Intensity}&";
+
+                if (typePattern.IsMoving)
+                {
+                    builder += "mode=motion";
+                }
+
+                return background.Name + builder.TrimEnd('&');
+            }
+            else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
+            {
+                string builder = string.Empty;
+
+                if (typeWallpaper.IsMoving)
+                {
+                    builder += "?mode=motion";
+                }
+
+                if (typeWallpaper.IsBlurred)
+                {
+                    if (builder.Length > 0)
+                    {
+                        builder += "+blur";
+                    }
+                    else
+                    {
+                        builder += "?mode=blur";
+                    }
+                }
+
+                return background.Name + builder;
+            }
+
+            return null;
+        }
+
+        public static LinearGradientBrush GetGradient(int topColor, int bottomColor, int angle)
+        {
+            return GetGradient(topColor.ToColor(), bottomColor.ToColor(), angle);
+        }
+
+        public static LinearGradientBrush GetGradient(Color topColor, Color bottomColor, int angle)
+        {
+            Point topPoint;
+            Point bottomPoint;
+
+            switch (angle)
+            {
+                case 0:
+                case 360:
+                    topPoint = new Point(0.5, 0);
+                    bottomPoint = new Point(0.5, 1);
+                    break;
+                case 45:
+                default:
+                    topPoint = new Point(1, 0);
+                    bottomPoint = new Point(0, 1);
+                    break;
+                case 90:
+                    topPoint = new Point(1, 0.5);
+                    bottomPoint = new Point(0, 0.5);
+                    break;
+                case 135:
+                    topPoint = new Point(1, 1);
+                    bottomPoint = new Point(0, 0);
+                    break;
+                case 180:
+                    topPoint = new Point(0.5, 1);
+                    bottomPoint = new Point(0.5, 0);
+                    break;
+                case 225:
+                    topPoint = new Point(0, 1);
+                    bottomPoint = new Point(1, 0);
+                    break;
+                case 270:
+                    topPoint = new Point(0, 0.5);
+                    bottomPoint = new Point(1, 0.5);
+                    break;
+                case 315:
+                    topPoint = new Point(0, 0);
+                    bottomPoint = new Point(1, 1);
+                    break;
+            }
+
+            var brush = new LinearGradientBrush();
+            brush.GradientStops.Add(new GradientStop { Color = topColor, Offset = 0 });
+            brush.GradientStops.Add(new GradientStop { Color = bottomColor, Offset = 1 });
+            brush.StartPoint = topPoint;
+            brush.EndPoint = bottomPoint;
+
+            return brush;
+        }
+    }
+
     public static class TdExtensions
     {
+        public static File InvalidFile()
+        {
+            return new File(0, 0, 0, new LocalFile(string.Empty, false, false, false, false, 0, 0, 0), new RemoteFile(string.Empty, string.Empty, false, false, 0));
+        }
+
         #region Passport
 
         public static PersonalDocument GetPersonalDocument(this PassportElement element)
@@ -314,6 +502,44 @@ namespace Unigram.Common
 
         #endregion
 
+        public static bool IsMoving(this Background background)
+        {
+            if (background?.Type is BackgroundTypePattern pattern)
+            {
+                return pattern.IsMoving;
+            }
+            else if (background?.Type is BackgroundTypeWallpaper wallpaper)
+            {
+                return wallpaper.IsMoving;
+            }
+
+            return false;
+        }
+
+        public static Brush ToBrush(this BackgroundTypeFill fill)
+        {
+            return fill.Fill.ToBrush();
+        }
+
+        public static Brush ToBrush(this BackgroundTypePattern pattern)
+        {
+            return pattern.Fill.ToBrush();
+        }
+
+        public static Brush ToBrush(this BackgroundFill fill)
+        {
+            if (fill is BackgroundFillSolid solid)
+            {
+                return new SolidColorBrush(solid.Color.ToColor());
+            }
+            else if (fill is BackgroundFillGradient gradient)
+            {
+                return TdBackground.GetGradient(gradient.TopColor, gradient.BottomColor, gradient.RotationAngle);
+            }
+
+            return null;
+        }
+
         public static bool ListEquals(this ChatList x, ChatList y, bool allowNull = true)
         {
             if ((x is ChatListMain || x == null) && (y is ChatListMain || (y == null && allowNull)))
@@ -323,6 +549,10 @@ namespace Unigram.Common
             if (x is ChatListArchive && y is ChatListArchive)
             {
                 return true;
+            }
+            else if (x is ChatListFilter filterX && y is ChatListFilter filterY)
+            {
+                return filterX.ChatFilterId == filterY.ChatFilterId;
             }
 
             return false;
@@ -342,8 +572,8 @@ namespace Unigram.Common
 
         public static bool IsInstantGallery(this WebPage webPage)
         {
-            return webPage.InstantViewVersion != 0 && 
-                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) || 
+            return webPage.InstantViewVersion != 0 &&
+                (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
         }
@@ -356,6 +586,16 @@ namespace Unigram.Common
             }
 
             return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
+        }
+
+        public static InputThumbnail ToInput(this Thumbnail thumbnail)
+        {
+            if (thumbnail == null)
+            {
+                return null;
+            }
+
+            return new InputThumbnail(new InputFileId(thumbnail.File.Id), thumbnail.Width, thumbnail.Height);
         }
 
         public static bool AreEqual(this Message x, Message y)
@@ -749,45 +989,45 @@ namespace Unigram.Common
             switch (message.Content)
             {
                 case MessageAnimation animation:
-                    return animation.Animation.Thumbnail?.Photo;
+                    return animation.Animation.Thumbnail?.File;
                 case MessageAudio audio:
                     return audio.Audio.AudioValue;
                 case MessageDocument document:
-                    return document.Document.Thumbnail?.Photo;
+                    return document.Document.Thumbnail?.File;
                 case MessageGame game:
-                    return game.Game.Animation?.Thumbnail?.Photo;
+                    return game.Game.Animation?.Thumbnail?.File;
                 case MessageSticker sticker:
-                    return sticker.Sticker.Thumbnail?.Photo;
+                    return sticker.Sticker.Thumbnail?.File;
                 case MessageText text:
                     if (text.WebPage != null && text.WebPage.Animation != null)
                     {
-                        return text.WebPage.Animation.Thumbnail?.Photo;
+                        return text.WebPage.Animation.Thumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.Audio != null)
                     {
-                        return text.WebPage.Audio.AlbumCoverThumbnail?.Photo;
+                        return text.WebPage.Audio.AlbumCoverThumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.Document != null)
                     {
-                        return text.WebPage.Document.Thumbnail?.Photo;
+                        return text.WebPage.Document.Thumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.Sticker != null)
                     {
-                        return text.WebPage.Sticker.Thumbnail?.Photo;
+                        return text.WebPage.Sticker.Thumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.Video != null)
                     {
-                        return text.WebPage.Video.Thumbnail?.Photo;
+                        return text.WebPage.Video.Thumbnail?.File;
                     }
                     else if (text.WebPage != null && text.WebPage.VideoNote != null)
                     {
-                        return text.WebPage.VideoNote.Thumbnail?.Photo;
+                        return text.WebPage.VideoNote.Thumbnail?.File;
                     }
                     break;
                 case MessageVideo video:
-                    return video.Video.Thumbnail?.Photo;
+                    return video.Video.Thumbnail?.File;
                 case MessageVideoNote videoNote:
-                    return videoNote.VideoNote.Thumbnail?.Photo;
+                    return videoNote.VideoNote.Thumbnail?.File;
             }
 
             return null;
@@ -955,14 +1195,7 @@ namespace Unigram.Common
             switch (result)
             {
                 case InlineQueryResultAnimation animation:
-                    return true;
-                    return string.IsNullOrEmpty(animation.Title);
-                case InlineQueryResultLocation location:
-                    return string.IsNullOrEmpty(location.Title);
                 case InlineQueryResultPhoto photo:
-                    return true;
-                    return string.IsNullOrEmpty(photo.Title);
-                case InlineQueryResultSticker sticker:
                     return true;
                 case InlineQueryResultVideo video:
                     return string.IsNullOrEmpty(video.Title);
@@ -1067,14 +1300,19 @@ namespace Unigram.Common
             var performer = string.IsNullOrEmpty(audio.Performer) ? null : audio.Performer;
             var title = string.IsNullOrEmpty(audio.Title) ? null : audio.Title;
 
-            if (performer == null && title == null)
+            if (performer == null || title == null)
             {
                 return audio.FileName;
             }
             else
             {
-                return $"{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}";
+                return $"{performer} - {title}";
             }
+        }
+
+        public static ChatPosition GetPosition(this Chat chat, ChatList chatList)
+        {
+            return chat.Positions.FirstOrDefault(x => x.List.ListEquals(chatList));
         }
 
         public static TdNetworkType GetNetworkType(this NetworkStatisticsEntry entry)
@@ -1090,7 +1328,7 @@ namespace Unigram.Common
                     case NetworkTypeNone none:
                         return TdNetworkType.None;
                     case NetworkTypeOther other:
-                        //return TdNetworkType.Other;
+                    //return TdNetworkType.Other;
                     case NetworkTypeWiFi wifi:
                         return TdNetworkType.WiFi;
                 }
@@ -1106,7 +1344,7 @@ namespace Unigram.Common
                     case NetworkTypeNone none:
                         return TdNetworkType.None;
                     case NetworkTypeOther other:
-                        //return TdNetworkType.Other;
+                    //return TdNetworkType.Other;
                     case NetworkTypeWiFi wifi:
                         return TdNetworkType.WiFi;
                 }
@@ -1179,9 +1417,9 @@ namespace Unigram.Common
                 return false;
             }
 
-            if (background.Document.Thumbnail != null && background.Document.Thumbnail.Photo.Id == file.Id)
+            if (background.Document.Thumbnail != null && background.Document.Thumbnail.File.Id == file.Id)
             {
-                background.Document.Thumbnail.Photo = file;
+                background.Document.Thumbnail.File = file;
                 any = true;
             }
 
@@ -1625,6 +1863,17 @@ namespace Unigram.Common
 
 
 
+        public static bool UpdateFile(this Thumbnail thumbnail, File file)
+        {
+            if (thumbnail.File.Id == file.Id)
+            {
+                thumbnail.File = file;
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool UpdateFile(this PhotoSize size, File file)
         {
             if (size.Photo.Id == file.Id)
@@ -1713,6 +1962,39 @@ namespace Unigram.Common
             }
         }
 
+        public static bool UpdateFile(this InlineQueryResult result, File file)
+        {
+            switch (result)
+            {
+                case InlineQueryResultAnimation animation:
+                    return animation.Animation.UpdateFile(file);
+                case InlineQueryResultArticle article:
+                    return article.Thumbnail?.UpdateFile(file) ?? false;
+                case InlineQueryResultAudio audio:
+                    return audio.Audio.UpdateFile(file);
+                case InlineQueryResultContact contact:
+                    return contact.Thumbnail?.UpdateFile(file) ?? false;
+                case InlineQueryResultDocument document:
+                    return document.Document.UpdateFile(file);
+                case InlineQueryResultGame game:
+                    return game.Game.UpdateFile(file);
+                case InlineQueryResultLocation location:
+                    return location.Thumbnail?.UpdateFile(file) ?? false;
+                case InlineQueryResultPhoto photo:
+                    return photo.Photo.UpdateFile(file);
+                case InlineQueryResultSticker sticker:
+                    return sticker.Sticker.UpdateFile(file);
+                case InlineQueryResultVenue venue:
+                    return venue.Thumbnail?.UpdateFile(file) ?? false;
+                case InlineQueryResultVideo video:
+                    return video.Video.UpdateFile(file);
+                case InlineQueryResultVoiceNote voiceNote:
+                    return voiceNote.VoiceNote.UpdateFile(file);
+                default:
+                    return false;
+            }
+        }
+
 
 
         public static bool UpdateFile(this MessageAnimation animation, File file)
@@ -1723,9 +2005,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this Animation animation, File file)
         {
             var any = false;
-            if (animation.Thumbnail != null && animation.Thumbnail.Photo.Id == file.Id)
+            if (animation.Thumbnail != null && animation.Thumbnail.File.Id == file.Id)
             {
-                animation.Thumbnail.Photo = file;
+                animation.Thumbnail.File = file;
                 any = true;
             }
 
@@ -1748,9 +2030,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this Audio audio, File file)
         {
             var any = false;
-            if (audio.AlbumCoverThumbnail != null && audio.AlbumCoverThumbnail.Photo.Id == file.Id)
+            if (audio.AlbumCoverThumbnail != null && audio.AlbumCoverThumbnail.File.Id == file.Id)
             {
-                audio.AlbumCoverThumbnail.Photo = file;
+                audio.AlbumCoverThumbnail.File = file;
                 any = true;
             }
 
@@ -1773,9 +2055,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this Document document, File file)
         {
             var any = false;
-            if (document.Thumbnail != null && document.Thumbnail.Photo.Id == file.Id)
+            if (document.Thumbnail != null && document.Thumbnail.File.Id == file.Id)
             {
-                document.Thumbnail.Photo = file;
+                document.Thumbnail.File = file;
                 any = true;
             }
 
@@ -1889,9 +2171,9 @@ namespace Unigram.Common
 
         public static bool UpdateFile(this Sticker sticker, File file)
         {
-            if (sticker.Thumbnail != null && sticker.Thumbnail.Photo.Id == file.Id)
+            if (sticker.Thumbnail != null && sticker.Thumbnail.File.Id == file.Id)
             {
-                sticker.Thumbnail.Photo = file;
+                sticker.Thumbnail.File = file;
                 return true;
             }
             if (sticker.StickerValue.Id == file.Id)
@@ -1971,9 +2253,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this Video video, File file)
         {
             var any = false;
-            if (video.Thumbnail != null && video.Thumbnail.Photo.Id == file.Id)
+            if (video.Thumbnail != null && video.Thumbnail.File.Id == file.Id)
             {
-                video.Thumbnail.Photo = file;
+                video.Thumbnail.File = file;
                 any = true;
             }
 
@@ -1996,9 +2278,9 @@ namespace Unigram.Common
         public static bool UpdateFile(this VideoNote videoNote, File file)
         {
             var any = false;
-            if (videoNote.Thumbnail != null && videoNote.Thumbnail.Photo.Id == file.Id)
+            if (videoNote.Thumbnail != null && videoNote.Thumbnail.File.Id == file.Id)
             {
-                videoNote.Thumbnail.Photo = file;
+                videoNote.Thumbnail.File = file;
                 any = true;
             }
 
@@ -2044,6 +2326,32 @@ namespace Unigram.Common
             file.Size = update.Size;
             file.Local = update.Local;
             file.Remote = update.Remote;
+        }
+
+        public static void Update(this LocalFile local, LocalFile update)
+        {
+            local.CanBeDeleted = update.CanBeDeleted;
+            local.CanBeDownloaded = update.CanBeDownloaded;
+            local.DownloadedPrefixSize = update.DownloadedPrefixSize;
+            local.DownloadedSize = update.DownloadedSize;
+            local.DownloadOffset = update.DownloadOffset;
+            local.IsDownloadingActive = update.IsDownloadingActive;
+            local.IsDownloadingCompleted = update.IsDownloadingCompleted;
+            local.Path = update.Path;
+        }
+
+        public static void Update(this RemoteFile remote, RemoteFile update)
+        {
+            remote.Id = update.Id;
+            remote.IsUploadingActive = update.IsUploadingActive;
+            remote.IsUploadingCompleted = update.IsUploadingCompleted;
+            remote.UniqueId = update.UniqueId;
+            remote.UploadedSize = update.UploadedSize;
+        }
+
+        public static File GetLocalFile(string path)
+        {
+            return new File(0, 0, 0, new LocalFile(System.IO.Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, path), false, false, false, true, 0, 0, 0), new RemoteFile(string.Empty, string.Empty, false, false, 0));
         }
     }
 }

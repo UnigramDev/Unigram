@@ -1,19 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Common;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls.Views;
-using Unigram.Converters;
+using Unigram.Navigation;
 using Unigram.Services;
-using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
-using Unigram.ViewModels.Users;
+using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -98,7 +90,6 @@ namespace Unigram.ViewModels.Gallery
                 Set(ref _selectedItem, value);
                 OnSelectedItemChanged(value);
                 //RaisePropertyChanged(() => SelectedIndex);
-                RaisePropertyChanged(() => Position);
             }
         }
 
@@ -151,7 +142,10 @@ namespace Unigram.ViewModels.Gallery
         protected virtual void LoadPrevious() { }
         protected virtual void LoadNext() { }
 
-        protected virtual void OnSelectedItemChanged(GalleryContent item) { }
+        protected virtual void OnSelectedItemChanged(GalleryContent item)
+        {
+            RaisePropertyChanged(() => Position);
+        }
 
         public virtual bool CanDelete
         {
@@ -190,11 +184,11 @@ namespace Unigram.ViewModels.Gallery
                 {
                     if (sets.Sets.Count > 1)
                     {
-                        await AttachedStickersView.GetForCurrentView().ShowAsync(sets.Sets);
+                        await AttachedStickersPopup.GetForCurrentView().ShowAsync(sets.Sets);
                     }
                     else if (sets.Sets.Count > 0)
                     {
-                        await StickerSetView.GetForCurrentView().ShowAsync(sets.Sets[0].Id);
+                        await StickerSetPopup.GetForCurrentView().ShowAsync(sets.Sets[0].Id);
                     }
                 }
             }

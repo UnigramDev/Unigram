@@ -1,28 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Services.SerializationService;
 using Unigram.Common;
-using Unigram.Controls.Views;
-using Unigram.Services;
 using Unigram.Native;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Unigram.Services;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class GamePage : Page
+    public sealed partial class GamePage : HostedPage
     {
         private Message _shareMessage;
 
@@ -72,7 +60,7 @@ namespace Unigram.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            await ShareView.GetForCurrentView().ShowAsync(_shareMessage);
+            await SharePopup.GetForCurrentView().ShowAsync(_shareMessage);
         }
 
         private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
@@ -81,7 +69,7 @@ namespace Unigram.Views
             {
                 this.BeginOnUIThread(async () =>
                 {
-                    await ShareView.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
+                    await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
                 });
             }));
         }

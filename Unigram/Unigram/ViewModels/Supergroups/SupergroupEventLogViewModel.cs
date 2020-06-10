@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Factories;
-using Unigram.Strings;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -136,7 +134,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var dialog = new SupergroupEventLogFiltersView();
+            var dialog = new SupergroupEventLogFiltersPopup();
 
             var confirm = await dialog.ShowAsync(ProtoService, supergroup.Id, _filters, _userIds);
             if (confirm == ContentDialogResult.Primary)
@@ -158,7 +156,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            await TLMessageDialog.ShowAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.Resources.EventLogInfoDetailChannel : Strings.Resources.EventLogInfoDetail, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
+            await MessagePopup.ShowAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.Resources.EventLogInfoDetailChannel : Strings.Resources.EventLogInfoDetail, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
         }
 
         public ItemsCollection Items { get; protected set; }
@@ -304,7 +302,7 @@ namespace Unigram.ViewModels.Supergroups
                 if (item.Action is ChatEventDescriptionChanged descriptionChanged)
                 {
                     var text = new FormattedText(descriptionChanged.NewDescription, new TextEntity[0]);
-                    var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousGroupDescription, Description = descriptionChanged.OldDescription };
+                    var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
 
                     return new MessageText(text, webPage);
                 }
@@ -313,7 +311,7 @@ namespace Unigram.ViewModels.Supergroups
                     var link = string.IsNullOrEmpty(usernameChanged.NewUsername) ? string.Empty : MeUrlPrefixConverter.Convert(_protoService, usernameChanged.NewUsername);
 
                     var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
-                    var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = MeUrlPrefixConverter.Convert(_protoService, usernameChanged.OldUsername) };
+                    var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.Resources.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(_protoService, usernameChanged.OldUsername) } };
 
                     return new MessageText(text, webPage);
                 }
@@ -902,6 +900,10 @@ namespace Unigram.ViewModels.Supergroups
         {
         }
 
+        public void OpenBankCardNumber(string number)
+        {
+        }
+
         public void OpenUser(int userId)
         {
         }
@@ -936,7 +938,7 @@ namespace Unigram.ViewModels.Supergroups
             throw new NotImplementedException();
         }
 
-        public void VotePoll(MessageViewModel message, PollOption option)
+        public void VotePoll(MessageViewModel message, IList<PollOption> options)
         {
             throw new NotImplementedException();
         }

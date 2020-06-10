@@ -1,28 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Unigram
+﻿namespace Unigram
 {
     public static partial class Constants
     {
         public static readonly int ApiId;
         public static readonly string ApiHash;
 
+        public static readonly string AppCenterId;
 
 
         public const int TypingTimeout = 300;
+        public const int AnimatedThrottle = 200;
 
         public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };
         public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };
 
         public const string WallpaperFileName = "wallpaper.jpg";
         public const string WallpaperLocalFileName = "wallpaper.local.jpg";
+        public const string WallpaperColorFileName = "wallpaper.color.jpg";
         public const int WallpaperLocalId = -1;
 
-        public const string AppCenterId = "7d36a426-0af5-4125-bbf6-db407911ed3b"; // "e5a0f6f85ab944ebbc1650fa22b8ac44"; // "7d36a4260af54125bbf6db407911ed3b";
+        public const int ChatListMain = 0;
+        public const int ChatListArchive = 1;
 
         public static readonly string[] TelegramHosts = new string[]
         {

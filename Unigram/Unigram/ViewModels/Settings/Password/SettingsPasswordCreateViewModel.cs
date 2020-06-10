@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
@@ -47,7 +43,7 @@ namespace Unigram.ViewModels.Settings.Password
             if (!string.Equals(field1, field2))
             {
                 // Error
-                await TLMessageDialog.ShowAsync(Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
+                await MessagePopup.ShowAsync(Strings.Resources.PasswordDoNotMatch, Strings.Resources.AppName, Strings.Resources.OK);
                 return;
             }
 

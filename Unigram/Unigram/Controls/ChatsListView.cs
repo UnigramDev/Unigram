@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Controls.Cells;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Controls
 {
-    public class ChatsListView : GroupedListView
+    public class ChatsListView : SelectListView
     {
         public ChatsViewModel ViewModel => DataContext as ChatsViewModel;
 
@@ -159,7 +153,7 @@ namespace Unigram.Controls
             {
                 content.UpdateService(ViewModel.ProtoService, ViewModel);
                 content.UpdateViewState(args.Item as Chat, SelectedItem2 == args.Item && SelectionMode2 == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
-                content.UpdateChat(ViewModel.ProtoService, ViewModel, args.Item as Chat);
+                content.UpdateChat(ViewModel.ProtoService, ViewModel, args.Item as Chat, ViewModel.Items.ChatList);
                 content.SetSelectionMode(SelectionMode2, false);
                 args.Handled = true;
             }

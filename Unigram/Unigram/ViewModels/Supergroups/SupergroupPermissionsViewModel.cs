@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -13,7 +10,7 @@ namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupPermissionsViewModel : SupergroupMembersViewModelBase
     {
-        public SupergroupPermissionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public SupergroupPermissionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator, null, query => new SupergroupMembersFilterRestricted(query))
         {
             SendCommand = new RelayCommand(SendExecute);
@@ -25,7 +22,7 @@ namespace Unigram.ViewModels.Supergroups
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            await  base.OnNavigatedToAsync(parameter, mode, state);
+            await base.OnNavigatedToAsync(parameter, mode, state);
 
             var chat = _chat;
             if (chat == null)

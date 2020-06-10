@@ -1,47 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.ComponentModel;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Template10.Common;
+using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Converters;
-using Unigram.ViewModels;
+using Unigram.Navigation;
+using Unigram.Services;
+using Unigram.Services.ViewService;
+using Unigram.ViewModels.Delegates;
+using Unigram.ViewModels.Gallery;
 using Unigram.Views;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
+using Windows.Graphics.Display;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.System.Display;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
-using LinqToVisualTree;
-using Windows.Foundation.Metadata;
-using Windows.UI;
-using Microsoft.Graphics.Canvas.Effects;
-using Windows.UI.ViewManagement;
-using Windows.System.Display;
-using Unigram.Common;
-using Windows.Graphics.Display;
-using Telegram.Td.Api;
-using System.Windows.Input;
-using Windows.Storage.Streams;
-using Unigram.Services;
-using Unigram.ViewModels.Delegates;
-using Template10.Services.ViewService;
-using Unigram.ViewModels.Gallery;
-using Unigram.Controls.Gallery;
-using Unigram.Native.Streaming;
 
 namespace Unigram.Controls.Gallery
 {
@@ -56,7 +44,7 @@ namespace Unigram.Controls.Gallery
         private DisplayRequest _request;
         private MediaPlayerElement _mediaPlayerElement;
         private MediaPlayer _mediaPlayer;
-        private FFmpegInteropMSS _streamingInterop;
+        private RemoteFileStream _streamingInterop;
         private Grid _surface;
 
         private Visual _layer;
@@ -138,7 +126,7 @@ namespace Unigram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
-                    OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+                    OnBackRequestedOverride(this, new HandledEventArgs());
                 }
             });
         }
@@ -284,10 +272,7 @@ namespace Unigram.Controls.Gallery
             {
                 _closing = closing;
 
-                if (SettingsService.Current.AreAnimationsEnabled)
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
-                }
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
 
                 if (_compactLifetime != null)
                 {
@@ -338,16 +323,9 @@ namespace Unigram.Controls.Gallery
             titlebar.ForegroundColor = Colors.White;
             //titlebar.ButtonBackgroundColor = Colors.Black;
             titlebar.ButtonForegroundColor = Colors.White;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = Colors.Black;
-                statusBar.ForegroundColor = Colors.White;
-            }
         }
 
-        public void OnBackRequesting(HandledRoutedEventArgs e)
+        public void OnBackRequesting(HandledEventArgs e)
         {
             if (!_wasFullScreen)
             {
@@ -360,7 +338,7 @@ namespace Unigram.Controls.Gallery
             e.Handled = true;
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledRoutedEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             if (!_wasFullScreen)
             {
@@ -376,28 +354,21 @@ namespace Unigram.Controls.Gallery
 
                 var root = Preview.Presenter;
 
-                if (SettingsService.Current.AreAnimationsEnabled)
+                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                if (animation != null)
                 {
-                    var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                    if (animation != null)
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                     {
-                        if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                        {
-                            animation.Configuration = new BasicConnectedAnimationConfiguration();
-                        }
+                        animation.Configuration = new BasicConnectedAnimationConfiguration();
+                    }
 
-                        var element = _closing();
-                        if (element.ActualWidth > 0 && animation.TryStart(element))
-                        {
-                            animation.Completed += (s, args) =>
-                            {
-                                Hide();
-                            };
-                        }
-                        else
+                    var element = _closing();
+                    if (element.ActualWidth > 0 && animation.TryStart(element))
+                    {
+                        animation.Completed += (s, args) =>
                         {
                             Hide();
-                        }
+                        };
                     }
                     else
                     {
@@ -463,34 +434,31 @@ namespace Unigram.Controls.Gallery
 
             var container = GetContainer(0);
 
-            if (SettingsService.Current.AreAnimationsEnabled)
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+            if (animation != null)
             {
-                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                if (animation != null)
+                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                 {
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                    {
-                        animation.Configuration = new BasicConnectedAnimationConfiguration();
-                    }
+                    animation.Configuration = new BasicConnectedAnimationConfiguration();
+                }
 
-                    _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
+                _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
 
-                    if (animation.TryStart(image.Presenter))
+                if (animation.TryStart(image.Presenter))
+                {
+                    animation.Completed += (s, args) =>
                     {
-                        animation.Completed += (s, args) =>
+                        Transport.Show();
+                        ScrollingHost.Opacity = 1;
+                        Preview.Opacity = 0;
+
+                        if (item.IsVideo && container != null)
                         {
-                            Transport.Show();
-                            ScrollingHost.Opacity = 1;
-                            Preview.Opacity = 0;
+                            Play(container.Presenter, item, item.GetFile());
+                        }
+                    };
 
-                            if (item.IsVideo && container != null)
-                            {
-                                Play(container.Presenter, item, item.GetFile());
-                            }
-                        };
-
-                        return;
-                    }
+                    return;
                 }
             }
 
@@ -535,7 +503,7 @@ namespace Unigram.Controls.Gallery
         private string ConvertDate(int value)
         {
             var date = Convert.DateTime(value);
-            return string.Format(Strings.Resources.FormatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+            return string.Format(Strings.Resources.formatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
         }
 
         private string ConvertOf(int index, int count)
@@ -619,13 +587,11 @@ namespace Unigram.Controls.Gallery
                 Transport.DownloadMaximum = file.Size;
                 Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
 
-                var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable && !file.Local.IsDownloadingCompleted;
+                var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable /*&& !file.Local.IsDownloadingCompleted*/;
                 if (streamable)
                 {
-                    _streamingInterop = new FFmpegInteropMSS(new FFmpegInteropConfig());
-                    var interop = await _streamingInterop.CreateFromFileAsync(ViewModel.ProtoService.Client, file);
-
-                    _mediaPlayer.Source = interop.CreateMediaPlaybackItem();
+                    _streamingInterop = new RemoteFileStream(item.ProtoService, file, TimeSpan.FromSeconds(item.Duration));
+                    _mediaPlayer.Source = MediaSource.CreateFromStream(_streamingInterop, item.MimeType);
 
                     Transport.DownloadMaximum = file.Size;
                     Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
@@ -1124,7 +1090,7 @@ namespace Unigram.Controls.Gallery
                 });
             };
 
-            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+            OnBackRequestedOverride(this, new HandledEventArgs());
         }
 
         #endregion
@@ -1265,7 +1231,7 @@ namespace Unigram.Controls.Gallery
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            OnBackRequestedOverride(this, new HandledRoutedEventArgs());
+            OnBackRequestedOverride(this, new HandledEventArgs());
         }
     }
 }

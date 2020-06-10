@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Controls.Chats;
 using Unigram.Services;
@@ -18,11 +19,15 @@ namespace Unigram.Collections
         private bool _first = true;
         private bool _hasMore = true;
 
+        private readonly List<int> _ids;
+
         public SearchStickersCollection(IProtoService protoService, ISettingsService settings, string query)
         {
             _protoService = protoService;
             _settings = settings;
             _query = query;
+
+            _ids = new List<int>();
         }
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
@@ -40,6 +45,8 @@ namespace Unigram.Collections
                     {
                         foreach (var sticker in stickers.StickersValue)
                         {
+                            _ids.Add(sticker.StickerValue.Id);
+
                             Add(sticker);
                             count++;
                         }
@@ -54,6 +61,11 @@ namespace Unigram.Collections
                     {
                         foreach (var sticker in stickers.StickersValue)
                         {
+                            if (_ids.Contains(sticker.StickerValue.Id))
+                            {
+                                continue;
+                            }
+
                             Add(sticker);
                             count++;
                         }

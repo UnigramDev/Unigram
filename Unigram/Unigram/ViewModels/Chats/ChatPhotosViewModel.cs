@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Gallery;
-using Unigram.ViewModels.Users;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Chats
 {

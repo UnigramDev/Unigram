@@ -146,5 +146,69 @@ namespace Unigram.ViewModels.Gallery
         public override bool CanView => true;
         public override bool CanCopy => !_message.IsSecret() && IsPhoto;
         public override bool CanSave => !_message.IsSecret();
+
+        public override int Duration
+        {
+            get
+            {
+                if (_message.Content is MessageVideo video)
+                {
+                    return video.Video.Duration;
+                }
+                else if (_message.Content is MessageAnimation animation)
+                {
+                    return animation.Animation.Duration;
+                }
+                else if (_message.Content is MessageGame game)
+                {
+                    return game.Game.Animation?.Duration ?? 0;
+                }
+                else if (_message.Content is MessageText text)
+                {
+                    if (text.WebPage?.Video != null)
+                    {
+                        return text.WebPage.Video.Duration;
+                    }
+                    else if (text.WebPage?.Animation != null)
+                    {
+                        return text.WebPage.Video.Duration;
+                    }
+                }
+
+                return 0;
+            }
+        }
+
+        public override string MimeType
+        {
+            get
+            {
+                if (_message.Content is MessageVideo video)
+                {
+                    return video.Video.MimeType;
+                }
+                else if (_message.Content is MessageAnimation animation)
+                {
+                    return animation.Animation.MimeType;
+                }
+                else if (_message.Content is MessageGame game)
+                {
+                    return game.Game.Animation?.MimeType;
+                }
+                else if (_message.Content is MessageText text)
+                {
+                    if (text.WebPage?.Video != null)
+                    {
+                        return text.WebPage.Video.MimeType;
+                    }
+                    else if (text.WebPage?.Animation != null)
+                    {
+                        return text.WebPage.Video.MimeType;
+                    }
+                }
+
+                return null;
+            }
+        }
     }
 }

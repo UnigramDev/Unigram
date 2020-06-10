@@ -1,22 +1,14 @@
-using System.Collections.Generic;
-using Unigram.Views.SignIn;
-using Unigram.Common;
-using Unigram.Entities;
 using System;
-using Windows.UI.Popups;
-using Windows.UI.Xaml;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Controls;
-using Windows.System;
-using Windows.UI.Core;
-using System.Diagnostics;
-using Unigram.Views;
-using Unigram.Views.Settings;
+using System.Collections.Generic;
 using System.Linq;
-using Unigram.Services;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Entities;
+using Unigram.Services;
+using Unigram.Views.Settings;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -165,11 +157,11 @@ namespace Unigram.ViewModels.Settings
 
                 if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
-                    await TLMessageDialog.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
+                    await MessagePopup.ShowAsync("Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.", "Telegram", "OK");
                 }
                 else
                 {
-                    await new TLMessageDialog(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
+                    await new MessagePopup(error.Message ?? "Error message", error.Code.ToString()).ShowQueuedAsync();
                 }
             }
         }

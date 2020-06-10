@@ -1,19 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Template10.Services.NavigationService;
-using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
+using Unigram.Services.Navigation;
 using Unigram.ViewModels.Delegates;
-using Unigram.Views.Settings;
+using Unigram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -103,15 +100,23 @@ namespace Unigram.ViewModels.Settings
         //}
 
         public RelayCommand BlockCommand { get; }
-        private void BlockExecute()
+        private async void BlockExecute()
         {
-            NavigationService.Navigate(typeof(SettingsBlockUserPage));
+            var selected = await SharePopup.PickChatAsync(Strings.Resources.BlockUser);
+            var user = CacheService.GetUser(selected);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new BlockUser(user.Id));
         }
 
         public RelayCommand<User> UnblockCommand { get; }
         private async void UnblockExecute(User user)
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 ProtoService.Send(new UnblockUser(user.Id));

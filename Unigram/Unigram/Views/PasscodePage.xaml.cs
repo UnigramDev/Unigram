@@ -1,30 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Template10.Common;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Converters;
 using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class PasscodePage : TLContentDialog
+    public sealed partial class PasscodePage : ContentPopup
     {
         private readonly IPasscodeService _passcodeService;
 

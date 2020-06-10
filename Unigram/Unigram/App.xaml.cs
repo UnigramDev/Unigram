@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Template10.Common;
-using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Services;
-using Unigram.Services.Settings;
+using Unigram.Services.Navigation;
+using Unigram.Services.Updates;
 using Unigram.Views;
 using Unigram.Views.Host;
 using Windows.ApplicationModel;
@@ -20,7 +20,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Media;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
@@ -31,11 +30,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Resources;
-#if !DEBUG
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-#endif
 
 namespace Unigram
 {
@@ -81,8 +75,8 @@ namespace Unigram
                 if (!string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop"))
                 {
                     _mediaExtensionManager = new MediaExtensionManager();
-                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
-                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".oga", "audio/ogg");
+                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".ogg", "audio/ogg");
+                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".oga", "audio/ogg");
                 }
             }
             catch
@@ -98,13 +92,15 @@ namespace Unigram
 
                 try
                 {
-                    await new TLMessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
+                    await new MessagePopup(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
                 }
                 catch { }
             };
 
 #if !DEBUG
-            AppCenter.Start(Constants.AppCenterId, typeof(Analytics), typeof(Crashes));
+            Microsoft.AppCenter.AppCenter.Start(Constants.AppCenterId,
+                typeof(Microsoft.AppCenter.Analytics.Analytics),
+                typeof(Microsoft.AppCenter.Crashes.Crashes));
 
             string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
             ulong version = ulong.Parse(deviceFamilyVersion);
@@ -112,8 +108,8 @@ namespace Unigram
             ulong minor = (version & 0x0000FFFF00000000L) >> 32;
             ulong build = (version & 0x00000000FFFF0000L) >> 16;
 
-            Analytics.TrackEvent($"{major}.{minor}.{build}");
-            Analytics.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent($"{major}.{minor}.{build}");
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
 #endif
         }
 
@@ -187,17 +183,6 @@ namespace Unigram
                     TLContainer.Current.Passcode.CloseTime = DateTime.MaxValue;
                 }
             }
-
-#if !DEBUG && !PREVIEW
-            if (e.Visible)
-            {
-                var dispatcher = Window.Current.Dispatcher;
-                Execute.BeginOnThreadPool(async () =>
-                {
-                    await new HockeyAppUpdateService().CheckForUpdatesAsync(Constants.HockeyAppId, dispatcher);
-                });
-            }
-#endif
         }
 
         private void HandleActivated(bool active)
@@ -205,7 +190,7 @@ namespace Unigram
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
             if (aggregator != null)
             {
-                aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
+                aggregator.Publish(new UpdateWindowActivated(active));
             }
 
             var cacheService = TLContainer.Current.Resolve<ICacheService>();
@@ -447,6 +432,7 @@ namespace Unigram
             });
 #endif
 
+#if DESKTOP_BRIDGE
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 try
@@ -458,6 +444,7 @@ namespace Unigram
                     // The app has been compiled without desktop bridge
                 }
             }
+#endif
 
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {

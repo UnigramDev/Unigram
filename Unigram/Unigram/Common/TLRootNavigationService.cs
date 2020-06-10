@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Td.Api;
-using Template10.Services.NavigationService;
+﻿using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.Services;
-using Unigram.ViewModels;
+using Unigram.Services.Navigation;
+using Unigram.ViewModels.SignIn;
 using Unigram.Views;
 using Unigram.Views.SignIn;
 using Windows.UI.Xaml.Controls;
@@ -35,14 +30,31 @@ namespace Unigram.Common
                     Navigate(typeof(MainPage));
                     break;
                 case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
+                case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
                     if (_lifetimeService.Items.Count > 1)
                     {
-                        Navigate(typeof(SignInPage));
+                        if (Frame.Content is SignInPage page && page.DataContext is SignInViewModel viewModel)
+                        {
+                            await viewModel.OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+                        }
+                        else
+                        {
+                            Navigate(typeof(SignInPage));
+                        }
+
+                        Frame.BackStack.Clear();
                         Frame.BackStack.Add(new PageStackEntry(typeof(BlankPage), null, null));
                     }
                     else
                     {
-                        Navigate(typeof(IntroPage));
+                        if (Frame.Content is SignInPage page && page.DataContext is SignInViewModel viewModel)
+                        {
+                            await viewModel.OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+                        }
+                        else
+                        {
+                            Navigate(typeof(IntroPage));
+                        }
                     }
                     break;
                 case AuthorizationStateWaitCode waitCode:
@@ -54,7 +66,7 @@ namespace Unigram.Common
                 case AuthorizationStateWaitPassword waitPassword:
                     if (!string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern))
                     {
-                        await TLMessageDialog.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(string.Format(Strings.Resources.RestoreEmailSent, waitPassword.RecoveryEmailAddressPattern), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
                     Navigate(string.IsNullOrEmpty(waitPassword.RecoveryEmailAddressPattern) ? typeof(SignInPasswordPage) : typeof(SignInRecoveryPage));

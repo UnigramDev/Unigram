@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -9,6 +8,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -27,8 +27,12 @@ namespace Unigram.ViewModels
             Chats = new MvxObservableCollection<ChatNearby>();
 
             OpenChatCommand = new RelayCommand<ChatNearby>(OpenChatExecute);
+            LoadMoreCommand = new RelayCommand(LoadMoreExecute);
         }
 
+        private bool _loadedMore;
+
+        private IList<ChatNearby> _remainingUsers;
         public MvxObservableCollection<ChatNearby> Users { get; private set; }
 
         private bool _isUsersEmpty;
@@ -52,7 +56,7 @@ namespace Unigram.ViewModels
             var location = await _locationService.GetPositionAsync();
             if (location == null)
             {
-                var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
+                var confirm = await MessagePopup.ShowAsync(Strings.Resources.GpsDisabledAlert, Strings.Resources.AppName, Strings.Resources.ConnectingToProxyEnable, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     await Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));
@@ -69,11 +73,23 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new SearchChatsNearby(location));
             if (response is ChatsNearby nearby)
             {
-                Users.ReplaceWith(nearby.UsersNearby);
+                if (nearby.UsersNearby.Count > 5)
+                {
+                    _remainingUsers = nearby.UsersNearby.Skip(5).ToList();
+                    Users.ReplaceWith(nearby.UsersNearby.Take(5));
+                }
+                else
+                {
+                    Users.ReplaceWith(nearby.UsersNearby);
+                }
+
                 Chats.ReplaceWith(nearby.SupergroupsNearby);
 
                 IsUsersEmpty = nearby.UsersNearby.IsEmpty();
                 IsChatsEmpty = nearby.SupergroupsNearby.IsEmpty();
+
+                RaisePropertyChanged(() => LoadMoreLabel);
+                RaisePropertyChanged(() => LoadMoreVisibility);
             }
 
             Aggregator.Subscribe(this);
@@ -89,7 +105,16 @@ namespace Unigram.ViewModels
         {
             BeginOnUIThread(() =>
             {
-                Users.ReplaceWith(update.UsersNearby);
+                if (update.UsersNearby.Count > 5 && !_loadedMore)
+                {
+                    _remainingUsers = update.UsersNearby.Skip(5).ToList();
+                    Users.ReplaceWith(update.UsersNearby.Take(5));
+                }
+                else
+                {
+                    Users.ReplaceWith(update.UsersNearby);
+                }
+
                 IsUsersEmpty = update.UsersNearby.IsEmpty();
             });
         }
@@ -98,6 +123,42 @@ namespace Unigram.ViewModels
         private void OpenChatExecute(ChatNearby nearby)
         {
             NavigationService.NavigateToChat(nearby.ChatId);
+        }
+
+        public RelayCommand LoadMoreCommand { get; }
+        private void LoadMoreExecute()
+        {
+            if (_remainingUsers != null)
+            {
+                Users.AddRange(_remainingUsers);
+
+                _remainingUsers = null;
+                _loadedMore = true;
+
+                RaisePropertyChanged(() => LoadMoreLabel);
+                RaisePropertyChanged(() => LoadMoreVisibility);
+            }
+        }
+
+        public string LoadMoreLabel
+        {
+            get
+            {
+                if (_remainingUsers != null && _remainingUsers.Count > 0)
+                {
+                    return Locale.Declension("ShowVotes", _remainingUsers.Count);
+                }
+
+                return null;
+            }
+        }
+
+        public Visibility LoadMoreVisibility
+        {
+            get
+            {
+                return _remainingUsers != null && _remainingUsers.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
     }
 }

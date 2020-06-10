@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +36,8 @@ namespace Unigram.Services
         private readonly DisposableMutex _syncLock;
         private readonly object _importedPhonesRoot;
 
+        private int[] _contacts;
+
         private CancellationTokenSource _syncToken;
 
         public ContactsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -48,6 +49,8 @@ namespace Unigram.Services
 
             _syncLock = new DisposableMutex();
             _importedPhonesRoot = new object();
+
+            _contacts = new int[0];
 
             _aggregator.Subscribe(this);
         }
@@ -94,6 +97,8 @@ namespace Unigram.Services
 
                 using (await _syncLock.WaitAsync(_syncToken.Token))
                 {
+                    //_contacts = result.UserIds.ToDictionary(x => x, y => _protoService.GetUser(y));
+
                     await ExportAsyncInternal(result);
                     await ImportAsyncInternal();
                 }
@@ -253,6 +258,42 @@ namespace Unigram.Services
                 return;
             }
 
+            var remove = new List<int>();
+
+            var existing = _contacts;
+            if (existing != null)
+            {
+                for (int i = 0; i < existing.Length; i++)
+                {
+                    var user = existing[i];
+                    var index = -1;
+
+                    for (int j = 0; j < result.UserIds.Count; j++)
+                    {
+                        if (result.UserIds[j] == user)
+                        {
+                            index = j;
+                            break;
+                        }
+                    }
+
+                    if (index == -1)
+                    {
+                        remove.Add(user);
+                        i--;
+                    }
+                }
+            }
+
+            foreach (var item in remove)
+            {
+                var contact = await contactList.GetContactFromRemoteIdAsync("u" + item);
+                if (contact != null)
+                {
+                    await contactList.DeleteContactAsync(contact);
+                }
+            }
+
             foreach (var item in result.UserIds)
             {
                 var user = _protoService.GetUser(item);
@@ -329,7 +370,7 @@ namespace Unigram.Services
             {
                 userDataAccount = await store.GetAccountAsync(id);
             }
-            
+
             if (userDataAccount == null)
             {
                 userDataAccount = await store.CreateAccountAsync($"{_cacheService.Options.MyId}");
@@ -349,7 +390,7 @@ namespace Unigram.Services
             {
                 contactList = await store.GetContactListAsync(id);
             }
-            
+
             if (contactList == null)
             {
                 contactList = await store.CreateContactListAsync(displayName, userDataAccount.Id);
@@ -376,7 +417,7 @@ namespace Unigram.Services
             {
                 contactList = await store.GetAnnotationListAsync(id);
             }
-            
+
             if (contactList == null)
             {
                 contactList = await store.CreateAnnotationListAsync(userDataAccount.Id);

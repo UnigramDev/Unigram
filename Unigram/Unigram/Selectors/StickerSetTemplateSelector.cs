@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Unigram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -12,30 +9,40 @@ namespace Unigram.Selectors
     {
         public DataTemplate GroupTemplate { get; set; }
         public DataTemplate RecentsTemplate { get; set; }
+        public DataTemplate TrendingTemplate { get; set; }
         public DataTemplate FavedTemplate { get; set; }
         public DataTemplate ItemTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is ViewModels.Dialogs.StickerSetViewModel stickerSet)
+            if (item is StickerSetViewModel stickerSet)
             {
-                if (stickerSet.Name.Equals("tg/recentlyUsed"))
+                if (string.Equals(stickerSet.Name, "tg/recentlyUsed", StringComparison.OrdinalIgnoreCase))
                 {
                     return RecentsTemplate ?? ItemTemplate;
                 }
-                else if (stickerSet.Name.Equals("tg/favedStickers"))
+                else if (string.Equals(stickerSet.Name, "tg/favedStickers", StringComparison.OrdinalIgnoreCase))
                 {
                     return FavedTemplate ?? ItemTemplate;
                 }
-                else if (stickerSet.Name.Equals("tg/groupStickers"))
+                else if (string.Equals(stickerSet.Name, "tg/groupStickers", StringComparison.OrdinalIgnoreCase))
                 {
                     return GroupTemplate ?? ItemTemplate;
                 }
-
-                return ItemTemplate;
+            }
+            else if (item is AnimationsCollection animations)
+            {
+                if (string.Equals(animations.Name, "tg/recentlyUsed", StringComparison.OrdinalIgnoreCase))
+                {
+                    return RecentsTemplate ?? ItemTemplate;
+                }
+                else if (string.Equals(animations.Name, "tg/trending", StringComparison.OrdinalIgnoreCase))
+                {
+                    return TrendingTemplate ?? ItemTemplate;
+                }
             }
 
-            return base.SelectTemplateCore(item, container);
+            return ItemTemplate;
         }
     }
 
@@ -43,29 +50,39 @@ namespace Unigram.Selectors
     {
         public Style RecentStyle { get; set; }
         public Style FavoriteStyle { get; set; }
+        public Style TrendingStyle { get; set; }
         public Style ItemStyle { get; set; }
 
         protected override Style SelectStyleCore(object item, DependencyObject container)
         {
-            if (item is ViewModels.Dialogs.StickerSetViewModel stickerSet)
+            if (item is StickerSetViewModel stickerSet)
             {
-                if (stickerSet.Name.Equals("tg/recentlyUsed"))
+                if (string.Equals(stickerSet.Name, "tg/recentlyUsed", StringComparison.OrdinalIgnoreCase))
                 {
                     return RecentStyle ?? ItemStyle;
                 }
-                else if (stickerSet.Name.Equals("tg/favedStickers"))
+                else if (string.Equals(stickerSet.Name, "tg/favedStickers", StringComparison.OrdinalIgnoreCase))
                 {
                     return FavoriteStyle ?? ItemStyle;
                 }
-                //else if (stickerSet.Name.Equals("tg/groupStickers"))
+                //else if (string.Equals(stickerSet.Name, "tg/groupStickers", StringComparison.OrdinalIgnoreCase))
                 //{
-                //    return GroupTemplate ?? ItemStyle;
+                //    return GroupTemplate ?? ItemTemplate;
                 //}
-
-                return ItemStyle;
+            }
+            else if (item is AnimationsCollection animations)
+            {
+                if (string.Equals(animations.Name, "tg/recentlyUsed", StringComparison.OrdinalIgnoreCase))
+                {
+                    return RecentStyle ?? ItemStyle;
+                }
+                else if (string.Equals(animations.Name, "tg/trending", StringComparison.OrdinalIgnoreCase))
+                {
+                    return TrendingStyle ?? ItemStyle;
+                }
             }
 
-            return base.SelectStyleCore(item, container);
+            return ItemStyle;
         }
     }
 }

@@ -1,28 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Native;
-using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Supergroups;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditStickerSetPage : Page
+    public sealed partial class SupergroupEditStickerSetPage : HostedPage
     {
         public SupergroupEditStickerSetViewModel ViewModel => DataContext as SupergroupEditStickerSetViewModel;
 
@@ -40,7 +27,7 @@ namespace Unigram.Views.Supergroups
 
         #region Recycle
 
-        private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
             {
@@ -70,22 +57,16 @@ namespace Unigram.Views.Supergroups
                     return;
                 }
 
-                var file = cover.Photo;
+                var file = cover.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    if (stickerSet.IsAnimated)
+                    if (cover.Format is ThumbnailFormatTgs)
                     {
-                        var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
-                        if (bitmap == null)
-                        {
-                            bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
-                        }
-
-                        photo.Source = bitmap;
+                        photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
                     }
                     else
                     {
-                        photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -103,7 +84,7 @@ namespace Unigram.Views.Supergroups
             args.Handled = true;
         }
 
-        private async void Grid_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private void Grid_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             var content = sender as Grid;
             var stickerSet = args.NewValue as StickerSetInfo;
@@ -129,22 +110,16 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
-            var file = cover.Photo;
+            var file = cover.File;
             if (file.Local.IsDownloadingCompleted)
             {
                 if (stickerSet.IsAnimated)
                 {
-                    var bitmap = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
-                    if (bitmap == null)
-                    {
-                        bitmap = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
-                    }
-
-                    photo.Source = bitmap;
+                    photo.Source = PlaceholderHelper.GetLottieFrame(file.Local.Path, 0, 48, 48);
                 }
                 else
                 {
-                    photo.Source = await PlaceholderHelper.GetWebpAsync(file.Local.Path);
+                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

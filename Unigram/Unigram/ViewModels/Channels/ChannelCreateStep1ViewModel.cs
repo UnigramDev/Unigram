@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Services;
 using Unigram.Views.Channels;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Services;
-using Telegram.Td.Api;
 
 namespace Unigram.ViewModels.Channels
 {
     public class ChannelCreateStep1ViewModel : TLViewModelBase
     {
-        public ChannelCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator) 
+        public ChannelCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));

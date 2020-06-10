@@ -88,10 +88,14 @@
             <Setter Property="FontSize" Value="20" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
+            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:GlyphToggleButton">
-                        <Grid Background="{TemplateBinding Background}">
+                        <Grid
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding Radius}"
+                            Margin="{StaticResource GlyphButtonPadding}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal"/>

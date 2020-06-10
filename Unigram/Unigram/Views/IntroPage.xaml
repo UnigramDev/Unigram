@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:common="using:Unigram.Common"
+    xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -119,7 +120,7 @@
             <Grid Width="200" Height="200" Background="Transparent">
                 <SwapChainPanel x:Name="SwapChain" Loaded="SwapChain_Loaded" Unloaded="SwapChain_Unloaded" Width="200" Height="200"/>
                 <Border Width="160" Height="160" CornerRadius="80">
-                    <Image Source="ms-appx:///Assets/Mockup/a0.png"/>
+                    <Image Source="ms-appx:///Assets/Logos/StoreLogo.scale-400.png"/>
                 </Border>
             </Grid>
             <StackPanel Opacity="0">
@@ -258,6 +259,10 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
 
-        <Button x:Name="Start" Click="Start_Click" Content="{CustomResource StartMessaging}" Style="{StaticResource StartButtonStyle}"/>
+        <controls:BadgeButton
+            x:Name="Start"
+            Click="Start_Click"
+            Content="{CustomResource StartMessaging}"
+            Style="{StaticResource StartButtonStyle}"/>
     </Grid>
 </Page>

@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Controls.Views;
 using Unigram.Logs;
-using Unigram.Native;
+using Unigram.Native.Media;
 using Unigram.ViewModels;
+using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Media;
@@ -15,7 +15,6 @@ using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Display;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -34,7 +33,7 @@ namespace Unigram.Controls.Chats
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private DispatcherTimer _timer;
-        private RoundVideoView _roundView = new RoundVideoView();
+        private RoundVideoPopop _roundView = new RoundVideoPopop();
 
         private DateTime _start;
 
@@ -380,7 +379,7 @@ namespace Unigram.Controls.Chats
 
                 this.BeginOnUIThread(async () =>
                 {
-                    var confirm = await TLMessageDialog.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                    var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));

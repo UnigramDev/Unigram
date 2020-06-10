@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Services;
 using Windows.Foundation;
@@ -48,7 +45,7 @@ namespace Unigram.Collections
                 if (last != null)
                 {
                     fromMessageId = last.Id;
-                    offset = 0; 
+                    offset = 0;
                 }
 
                 var response = await _protoService.SendAsync(new SearchChatMessages(_chatId, _query, _senderUserId, fromMessageId, offset, (int)count, _filter));

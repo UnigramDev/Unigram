@@ -31,7 +31,12 @@ namespace Unigram.ViewModels.Gallery
 
         public override File GetThumbnail()
         {
-            return _video.Thumbnail?.Photo;
+            if (_video.Thumbnail?.Format is ThumbnailFormatJpeg)
+            {
+                return _video.Thumbnail?.File;
+            }
+
+            return null;
         }
 
         public override (File File, string FileName) GetFileAndName()
@@ -53,5 +58,9 @@ namespace Unigram.ViewModels.Gallery
         public override bool IsVideo => true;
 
         public override bool CanSave => true;
+
+        public override int Duration => _video.Duration;
+
+        public override string MimeType => _video.MimeType;
     }
 }

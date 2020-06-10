@@ -1,14 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using Windows.Security.Cryptography.Core;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Globalization;
-using Windows.Security.Cryptography;
-using System.Diagnostics;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 
 namespace Unigram.Common
 {

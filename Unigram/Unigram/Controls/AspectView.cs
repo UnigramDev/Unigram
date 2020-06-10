@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls.Messages.Content;
+using Unigram.Entities;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -67,6 +64,16 @@ namespace Unigram.Controls
                 {
                     return base.MeasureOverride(availableSize);
                 }
+            }
+            else if (Constraint is ViewModels.Chats.ChartViewData)
+            {
+                width = 640;
+                height = 520;
+            }
+            else if (Constraint is StorageMedia media)
+            {
+                width = media.Width;
+                height = media.Height;
             }
 
             #region MessageContent
@@ -183,6 +190,11 @@ namespace Unigram.Controls
                 width = animation.Width;
                 height = animation.Height;
             }
+            else if (constraint is Document document)
+            {
+                width = document.Thumbnail?.Width ?? width;
+                height = document.Thumbnail?.Height ?? height;
+            }
             else if (constraint is Location location)
             {
                 width = 320;
@@ -256,9 +268,13 @@ namespace Unigram.Controls
                 height = 1600;
             }
 
+            if (width == 0 && height == 0)
+            {
+                width = int.MaxValue;
+                height = int.MaxValue;
+            }
 
-
-        Calculate:
+            Calculate:
             if (width > availableWidth || height > availableHeight)
             {
                 var ratioX = availableWidth / width;

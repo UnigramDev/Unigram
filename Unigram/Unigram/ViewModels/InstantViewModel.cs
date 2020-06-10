@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Controls.Views;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Xaml.Navigation;
@@ -20,7 +18,7 @@ namespace Unigram.ViewModels
     {
         private readonly IMessageFactory _messageFactory;
 
-        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IMessageFactory messageFactory, IEventAggregator aggregator) 
+        public InstantViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IMessageFactory messageFactory, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _messageFactory = messageFactory;
@@ -74,7 +72,7 @@ namespace Unigram.ViewModels
         {
             if (ShareLink != null)
             {
-                await ShareView.GetForCurrentView().ShowAsync(ShareLink, ShareTitle);
+                await SharePopup.GetForCurrentView().ShowAsync(ShareLink, ShareTitle);
             }
         }
 
@@ -101,7 +99,7 @@ namespace Unigram.ViewModels
             dataPackage.SetText(ShareLink.AbsoluteUri);
             ClipboardEx.TrySetContent(dataPackage);
 
-            await TLMessageDialog.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
+            await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);
         }
     }
 }
