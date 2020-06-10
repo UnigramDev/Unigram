@@ -334,9 +334,12 @@ namespace Unigram.Controls.Messages
                 else if (message.ForwardInfo != null)
                 {
                     var title = string.Empty;
+                    var foreground = default(SolidColorBrush);
+
                     if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                     {
                         title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                        foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                     {
@@ -350,8 +353,12 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = title ?? string.Empty });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    //hyperlink.Foreground = Convert.Bubble(message.FwdFrom?.FromId ?? message.FwdFrom?.ChannelId ?? 0);
                     hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                    if (foreground != null)
+                    {
+                        hyperlink.Foreground = foreground;
+                    }
 
                     paragraph.Inlines.Add(hyperlink);
                     shown = true;
@@ -371,9 +378,12 @@ namespace Unigram.Controls.Messages
             else if (!light && message.IsFirst && message.IsSaved())
             {
                 var title = string.Empty;
+                var foreground = default(SolidColorBrush);
+
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                 {
@@ -387,8 +397,12 @@ namespace Unigram.Controls.Messages
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(new Run { Text = title ?? string.Empty });
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
-                //hyperlink.Foreground = Convert.Bubble(message.FwdFrom?.FromId ?? message.FwdFrom?.ChannelId ?? 0);
                 hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                if (foreground != null)
+                {
+                    hyperlink.Foreground = foreground;
+                }
 
                 paragraph.Inlines.Add(hyperlink);
                 shown = true;
