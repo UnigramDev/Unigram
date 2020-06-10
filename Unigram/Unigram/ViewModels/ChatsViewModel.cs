@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
@@ -645,7 +646,7 @@ namespace Unigram.ViewModels
             RaisePropertyChanged(() => Items);
         }
 
-        public class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading,
+        public class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading,
             IHandle<UpdateChatDraftMessage>,
             IHandle<UpdateChatLastMessage>,
             IHandle<UpdateChatPosition>
@@ -707,7 +708,7 @@ namespace Unigram.ViewModels
                                     var next = NextIndexOf(chat, position.Order);
                                     if (next >= 0)
                                     {
-                                        Add(chat);
+                                        Insert(next, chat);
                                     }
 
                                     _lastChatId = chat.Id;
@@ -787,39 +788,21 @@ namespace Unigram.ViewModels
                 //var chat = GetChat(chatId);
                 if (chat != null /*&& _chatList.ListEquals(chat.ChatList)*/)
                 {
-                    _viewModel.BeginOnUIThread(async () =>
-                    {
-                        if (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId))
-                        {
-                            using (await _loadMoreLock.WaitAsync())
-                            {
-                                var next = NextIndexOf(chat, order);
-                                if (next >= 0)
-                                {
-                                    Remove(chat);
-                                    Insert(next, chat);
+                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(chat, order, lastMessage));
+                }
+            }
 
-                                    if (chat.Id == _viewModel._selectedItem)
-                                    {
-                                        _viewModel.Delegate?.SetSelectedItem(chat);
-                                    }
-                                    if (_viewModel.SelectedItems.Contains(chat))
-                                    {
-                                        _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
-                                    }
-                                }
-                                else if (lastMessage)
-                                {
-                                    _viewModel.Delegate?.UpdateChatLastMessage(chat);
-                                }
-                            }
-                        }
-                        else
+            private async void UpdateChatOrder(Chat chat, long order, bool lastMessage)
+            {
+                if (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId))
+                {
+                    using (await _loadMoreLock.WaitAsync())
+                    {
+                        var next = NextIndexOf(chat, order);
+                        if (next >= 0)
                         {
-                            using (await _loadMoreLock.WaitAsync())
-                            {
-                                Remove(chat);
-                            }
+                            Remove(chat);
+                            Insert(Math.Min(Count, next), chat);
 
                             if (chat.Id == _viewModel._selectedItem)
                             {
@@ -827,16 +810,36 @@ namespace Unigram.ViewModels
                             }
                             if (_viewModel.SelectedItems.Contains(chat))
                             {
-                                _viewModel.SelectedItems.Remove(chat);
                                 _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
                             }
-
-                            if (!_hasMoreItems)
-                            {
-                                await LoadMoreItemsAsync(0);
-                            }
                         }
-                    });
+                        else if (lastMessage)
+                        {
+                            _viewModel.Delegate?.UpdateChatLastMessage(chat);
+                        }
+                    }
+                }
+                else
+                {
+                    using (await _loadMoreLock.WaitAsync())
+                    {
+                        Remove(chat);
+                    }
+
+                    if (chat.Id == _viewModel._selectedItem)
+                    {
+                        _viewModel.Delegate?.SetSelectedItem(chat);
+                    }
+                    if (_viewModel.SelectedItems.Contains(chat))
+                    {
+                        _viewModel.SelectedItems.Remove(chat);
+                        _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                    }
+
+                    if (!_hasMoreItems)
+                    {
+                        await LoadMoreItemsAsync(0);
+                    }
                 }
             }
 
