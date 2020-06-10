@@ -95,6 +95,11 @@ namespace Unigram.Common
 
         public void ElementClearing(SelectorItem container)
         {
+            if (_handlerPressed == null || _handlerReleased == null || _handlerExited == null)
+            {
+                return;
+            }
+
             container.RemoveHandler(UIElement.PointerPressedEvent, _handlerPressed);
             container.RemoveHandler(UIElement.PointerReleasedEvent, _handlerReleased);
             container.RemoveHandler(UIElement.PointerExitedEvent, _handlerExited);
@@ -114,6 +119,14 @@ namespace Unigram.Common
         {
             _popupContent = null;
             _throttler.Stop();
+
+            if (_popupHost.IsOpen)
+            {
+                _popupHost.IsOpen = false;
+
+                Closing?.Invoke();
+                e.Handled = true;
+            }
         }
 
         private void OnPointerExited(object sender, PointerRoutedEventArgs e)
@@ -153,6 +166,8 @@ namespace Unigram.Common
 
         private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
+            _throttler.Stop();
+
             if (_popupHost.IsOpen)
             {
                 _popupHost.IsOpen = false;
