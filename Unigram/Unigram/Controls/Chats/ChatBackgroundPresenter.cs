@@ -22,6 +22,9 @@ namespace Unigram.Controls.Chats
         private IProtoService _protoService;
         private IEventAggregator _aggregator;
 
+        private Background _oldBackground = new Background();
+        private bool? _oldDark;
+
         private Rectangle _imageBackground;
         private Rectangle _colorBackground;
 
@@ -93,7 +96,13 @@ namespace Unigram.Controls.Chats
 
         public void Handle(UpdateSelectedBackground update)
         {
-            this.BeginOnUIThread(() => Update(_session, _protoService.SelectedBackground));
+            this.BeginOnUIThread(() =>
+            {
+                if (update.ForDarkTheme == SettingsService.Current.Appearance.IsDarkTheme())
+                {
+                    Update(_session, _protoService.SelectedBackground, update.ForDarkTheme);
+                }
+            });
         }
 
         public void Update(int session, IProtoService protoService, IEventAggregator aggregator)
@@ -104,11 +113,19 @@ namespace Unigram.Controls.Chats
 
             aggregator.Subscribe(this);
             //Update(session, settings.Wallpaper);
-            Update(session, protoService.SelectedBackground);
+            Update(session, protoService.SelectedBackground, SettingsService.Current.Appearance.IsDarkTheme());
         }
 
-        private void Update(int session, Background background)
+        private void Update(int session, Background background, bool dark)
         {
+            if (BackgroundEquals(_oldBackground, background) && _oldDark == dark)
+            {
+                return;
+            }
+
+            _oldBackground = background;
+            _oldDark = dark;
+
             if (background == null)
             {
                 UpdateMotion(false);
@@ -169,6 +186,29 @@ namespace Unigram.Controls.Chats
                 {
                     _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
+            }
+        }
+
+        private bool BackgroundEquals(Background prev, Background next)
+        {
+            return Equals(prev, next);
+
+            if (prev == null)
+            {
+                return false;
+            }
+
+            if (prev.Type is BackgroundTypeFill prevFill && next.Type is BackgroundTypeFill nextFill)
+            {
+
+            }
+            else if (prev.Type is BackgroundTypePattern prevPattern && next.Type is BackgroundTypePattern nextPattern)
+            {
+
+            }
+            else if (prev.Type is BackgroundTypeWallpaper prevWallpaper && next.Type is BackgroundTypeWallpaper nextWallpaper)
+            {
+
             }
         }
 
