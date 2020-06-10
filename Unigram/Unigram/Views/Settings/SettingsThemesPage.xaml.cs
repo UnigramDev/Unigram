@@ -42,11 +42,6 @@ namespace Unigram.Views.Settings
             var element = sender as FrameworkElement;
             var theme = element.Tag as ThemeInfoBase;
 
-            if (theme is ThemeSystemInfo)
-            {
-                return;
-            }
-
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Theme });
 
@@ -77,15 +72,11 @@ namespace Unigram.Views.Settings
 
             if (theme is ThemeCustomInfo custom)
             {
-                radio.IsChecked = string.Equals(SettingsService.Current.Appearance.RequestedThemePath, custom.Path, StringComparison.OrdinalIgnoreCase);
-            }
-            else if (theme is ThemeSystemInfo)
-            {
-                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemePath) && SettingsService.Current.Appearance.RequestedTheme == ElementTheme.Default;
+                radio.IsChecked = string.Equals(SettingsService.Current.Appearance.RequestedThemeCustom, custom.Path, StringComparison.OrdinalIgnoreCase);
             }
             else
             {
-                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemePath) && SettingsService.Current.Appearance.RequestedTheme == (theme.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
+                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemeCustom) && SettingsService.Current.Appearance.RequestedTheme == (theme.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
             }
         }
     }

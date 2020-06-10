@@ -12,6 +12,184 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="AccentRadioButtonStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Red" />
+            <Setter Property="Foreground" Value="{ThemeResource RadioButtonForeground}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource RadioButtonBorderBrush}" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="MinWidth" Value="24" />
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+            <Setter Property="FocusVisualMargin" Value="-7,-3,-7,-3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid x:Name="RootGrid"
+                              Background="Transparent"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              CornerRadius="{TemplateBinding CornerRadius}" >
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+
+                                    <VisualState x:Name="PointerOver">
+
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBorderBrushPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseStrokePointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseFillPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedStrokePointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedFillPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphFillPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphStrokePointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBorderBrushPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseStrokePressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseFillPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedStrokePressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedFillPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphFillPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphStrokePressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Disabled">
+
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBackgroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBorderBrushDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseStrokeDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseFillDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedStrokeDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonOuterEllipseCheckedFillDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphFillDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Stroke">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonCheckGlyphStrokeDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+
+                                    <VisualState x:Name="Checked">
+
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="CheckGlyph"
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            To="1"
+                                                            Duration="0" />
+                                            <DoubleAnimation Storyboard.TargetName="OuterEllipse"
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            To="0"
+                                                            Duration="0" />
+                                            <DoubleAnimation Storyboard.TargetName="CheckOuterEllipse"
+                                                            Storyboard.TargetProperty="Opacity"
+                                                            To="1"
+                                                            Duration="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Indeterminate" />
+
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Ellipse x:Name="OuterEllipse"
+                                        Width="24"
+                                        Height="24"
+                                        UseLayoutRounding="False"
+                                        Stroke="{TemplateBinding Background}"
+                                        Fill="{TemplateBinding Background}"
+                                        StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
+                            <Ellipse x:Name="CheckOuterEllipse"
+                                        Width="24"
+                                        Height="24"
+                                        UseLayoutRounding="False"
+                                        Stroke="{TemplateBinding Background}"
+                                        Fill="{TemplateBinding Background}"
+                                        Opacity="0"
+                                        StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
+                            <Ellipse x:Name="CheckGlyph"
+                                        Width="10"
+                                        Height="10"
+                                        UseLayoutRounding="False"
+                                        Opacity="0"
+                                        Fill="{ThemeResource RadioButtonCheckGlyphFill}"
+                                        Stroke="{ThemeResource RadioButtonCheckGlyphStroke}"/>
+
+                        </Grid>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
     <local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid>
@@ -116,12 +294,17 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="services:ThemeInfoBase">
                                 <StackPanel Margin="12,12,0,12">
-                                    <RadioButton Click="Switch_Click" Tag="{x:Bind}" GroupName="Theme" ContextRequested="Theme_ContextRequested" Style="{StaticResource ThemeRadioButtonStyle}">
+                                    <RadioButton
+                                        Click="Switch_Click"
+                                        Tag="{x:Bind}"
+                                        GroupName="Theme"
+                                        ContextRequested="Theme_ContextRequested"
+                                        Style="{StaticResource ThemeRadioButtonStyle}">
                                         <RadioButton.Background>
                                             <SolidColorBrush Color="{x:Bind ChatBackgroundColor}"/>
                                         </RadioButton.Background>
                                         <RadioButton.BorderBrush>
-                                            <SolidColorBrush Color="{x:Bind ChatBorderColor}"/>
+                                            <SolidColorBrush Color="{x:Bind AccentColor}"/>
                                         </RadioButton.BorderBrush>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -133,19 +316,19 @@
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <Rectangle Height="12" RadiusX="6" RadiusY="6" Margin="0,0,12,0" Grid.Column="1">
+                                            <Rectangle Height="16" RadiusX="8" RadiusY="8" Margin="0,0,12,0" Grid.Column="1">
                                                 <Rectangle.Fill>
                                                     <SolidColorBrush Color="{x:Bind MessageBackgroundColor}"/>
                                                 </Rectangle.Fill>
                                             </Rectangle>
-                                            <Rectangle Height="12" RadiusX="6" RadiusY="6" Margin="12,4,0,0" Grid.Column="1" Grid.Row="1">
+                                            <Rectangle Height="16" RadiusX="8" RadiusY="8" Margin="12,6,0,0" Grid.Column="1" Grid.Row="1">
                                                 <Rectangle.Fill>
                                                     <SolidColorBrush Color="{x:Bind MessageBackgroundOutColor}"/>
                                                 </Rectangle.Fill>
                                             </Rectangle>
                                         </Grid>
                                     </RadioButton>
-                                    <TextBlock Text="{x:Bind Name}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    <TextBlock Text="{x:Bind Name}" Margin="0,4,0,0" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -161,6 +344,65 @@
                     </ListView>
 
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
+
+                    <StackPanel Visibility="{x:Bind ViewModel.Accents.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ListView
+                            ItemsSource="{x:Bind ViewModel.Accents, Mode=OneWay}"
+                            SelectionMode="None"
+                            ContainerContentChanging="OnContainerContentChanging"
+                            Style="{StaticResource HorizontalListViewStyle}"
+                            ItemContainerTransitions="{x:Null}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="services:ThemeAccentInfo">
+                                    <RadioButton Click="Switch_Click" Tag="{x:Bind}" GroupName="Accent" Margin="12,12,0,12" Style="{StaticResource AccentRadioButtonStyle}">
+                                        <RadioButton.Background>
+                                            <SolidColorBrush Color="{x:Bind AccentColor}"/>
+                                        </RadioButton.Background>
+                                    </RadioButton>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="MinWidth" Value="0"/>
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.Footer>
+                                <HyperlinkButton Command="{x:Bind ViewModel.AccentThemeCommand}" Width="24" Height="24" Margin="12,12,12,12" Padding="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="9"/>
+                                            <RowDefinition Height="6"/>
+                                            <RowDefinition Height="9"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="9"/>
+                                            <ColumnDefinition Width="6"/>
+                                            <ColumnDefinition Width="9"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 5), Mode=OneWay}" Width="6" Height="6" Margin="0,0,-2,1" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 6), Mode=OneWay}" Width="6" Height="6" Margin="-2,0,0,1" VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="2"/>
+
+                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 4), Mode=OneWay}" Width="6" Height="6" Grid.Row="1" HorizontalAlignment="Left"/>
+                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 0), Mode=OneWay}" Width="6" Height="6" Grid.Row="1" Grid.Column="1"/>
+                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 1), Mode=OneWay}" Width="6" Height="6" Grid.Row="1" HorizontalAlignment="Right" Grid.Column="2"/>
+
+                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 3), Mode=OneWay}" Width="6" Height="6" Margin="0,1,-2,0" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Row="2"/>
+                                        <Ellipse Fill="{x:Bind ConvertAccent(ViewModel.Accents, 2), Mode=OneWay}" Width="6" Height="6" Margin="-2,1,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="2" Grid.Column="2"/>
+                                    </Grid>
+                                </HyperlinkButton>
+                            </ListView.Footer>
+                        </ListView>
+                    
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
+                    </StackPanel>
 
                     <controls:BadgeButton
                         Content="{CustomResource ShowAllThemes}"
@@ -221,7 +463,7 @@
                                         </Grid>
                                     </StackPanel>
                                 </RadioButton>
-                                <TextBlock Text="{CustomResource ChatListDefault}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                <TextBlock Text="{CustomResource ChatListDefault}" Margin="0,4,0,0" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </StackPanel>
 
                             <StackPanel Margin="0,12,0,12">
@@ -259,7 +501,7 @@
                                         </Grid>
                                     </StackPanel>
                                 </RadioButton>
-                                <TextBlock Text="{CustomResource ChatListExpanded}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                <TextBlock Text="{CustomResource ChatListExpanded}" Margin="0,4,0,0" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>

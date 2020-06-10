@@ -21,6 +21,8 @@ namespace Unigram.Controls
 
         public ColorTextBox()
         {
+            DefaultStyleKey = typeof(ColorTextBox);
+
             TextChanging += OnTextChanging;
             TextChanged += OnTextChanged;
 

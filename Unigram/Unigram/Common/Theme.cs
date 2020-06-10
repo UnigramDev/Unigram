@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Unigram.Services;
@@ -52,13 +53,23 @@ namespace Unigram.Common
 
         public void Initialize()
         {
-            var path = SettingsService.Current.Appearance.RequestedThemePath;
-            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            var settings = SettingsService.Current.Appearance;
+            if (settings.RequestedThemeType == TelegramThemeType.Custom && File.Exists(settings.RequestedThemeCustom))
             {
-                Update(SettingsService.Current.Appearance.RequestedTheme);
-                return;
+                InitializeCustom(settings.RequestedThemeCustom);
             }
+            else if (ThemeAccentInfo.IsAccent(settings.RequestedThemeType))
+            {
+                Update(ThemeAccentInfo.FromAccent(settings.RequestedThemeType, settings.Accents[settings.RequestedThemeType]));
+            }
+            else
+            {
+                Update();
+            }
+        }
 
+        private void InitializeCustom(string path)
+        {
             var lines = File.ReadAllLines(path);
             var dict = new ResourceDictionary();
 
@@ -103,7 +114,7 @@ namespace Unigram.Common
                 }
             }
 
-            Update(flags == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark);
+            Update();
 
             MergedDictionaries[0].MergedDictionaries.Clear();
             MergedDictionaries[0].MergedDictionaries.Add(dict);
@@ -118,7 +129,7 @@ namespace Unigram.Common
             }
         }
 
-        public void Update(ElementTheme flags)
+        public void Update()
         {
             try
             {
@@ -127,26 +138,29 @@ namespace Unigram.Common
                 ThemeDictionaries.Clear();
                 MergedDictionaries.Clear();
 
-                if (flags == ElementTheme.Default)
-                {
-                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeSystem.xaml") });
-                }
-                else
-                {
-                    MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
-                }
+                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
             }
             catch { }
         }
 
-        public void Update(ThemeCustomInfo custom)
+        public void Update(ThemeInfoBase info)
         {
-            if (custom == null)
+            if (info is ThemeCustomInfo custom)
             {
-                Update(SettingsService.Current.Appearance.RequestedTheme);
-                return;
+                Update(custom.Values);
             }
+            else if (info is ThemeAccentInfo colorized)
+            {
+                Update(colorized.Values);
+            }
+            else
+            {
+                Update();
+            }
+        }
 
+        private void Update(IDictionary<string, Color> values)
+        {
             try
             {
                 // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
@@ -158,7 +172,7 @@ namespace Unigram.Common
 
                 var dict = new ResourceDictionary();
 
-                foreach (var item in custom.Values)
+                foreach (var item in values)
                 {
                     if (item.Key.EndsWith("Brush"))
                     {

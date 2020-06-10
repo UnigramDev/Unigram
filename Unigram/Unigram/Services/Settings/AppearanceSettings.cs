@@ -25,6 +25,22 @@ namespace Unigram.Services.Settings
         Dark = 1 << 2,
     }
 
+    public enum TelegramThemeType
+    {
+        Classic = 0,
+        Day = 1,
+        Night = 2,
+        Tinted = 3,
+        Custom = 4
+    }
+
+    public enum NightMode
+    {
+        Disabled,
+        Scheduled,
+        Automatic
+    }
+
     public class InstalledEmojiSet
     {
         public string Id { get; set; }
@@ -40,6 +56,7 @@ namespace Unigram.Services.Settings
             : base(ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always))
         {
             _nightModeTimer = new Timer(CheckNightModeConditions, null, Timeout.Infinite, Timeout.Infinite);
+            MigrateTheme();
             UpdateTimer();
         }
 
@@ -165,22 +182,61 @@ namespace Unigram.Services.Settings
             };
         }
 
-        private string _requestedThemePath;
-        public string RequestedThemePath
+        private void MigrateTheme()
+        {
+            if (_container.Values.TryGet("ThemePath", out string path))
+            {
+                if (path.EndsWith("Assets\\Themes\\DarkBlue.unigram-theme"))
+                {
+                    RequestedThemeType = TelegramThemeType.Tinted;
+                    Accents[TelegramThemeType.Tinted] = ThemeAccentInfo.Accents[TelegramThemeType.Tinted];
+                }
+                else if (path.Length > 0 && System.IO.File.Exists(path))
+                {
+                    RequestedThemeType = TelegramThemeType.Custom;
+                    RequestedThemeCustom = path;
+                }
+
+                _container.Values.Remove("ThemePath");
+            }
+        }
+
+        private TelegramThemeType? _requestedThemeType;
+        public TelegramThemeType RequestedThemeType
         {
             get
             {
-                if (_requestedThemePath == null)
-                    _requestedThemePath = GetValueOrDefault(_container, "ThemePath", string.Empty);
+                if (_requestedThemeType == null)
+                    _requestedThemeType = (TelegramThemeType)GetValueOrDefault(_container, "ThemeType", 0);
 
-                return _requestedThemePath ?? string.Empty;
+                return _requestedThemeType ?? TelegramThemeType.Classic;
             }
             set
             {
-                _requestedThemePath = value ?? string.Empty;
-                AddOrUpdateValue(_container, "ThemePath", value);
+                _requestedThemeType = value;
+                AddOrUpdateValue(_container, "ThemeType", (int)value);
             }
         }
+
+        private string _requestedThemeCustom;
+        public string RequestedThemeCustom
+        {
+            get
+            {
+                if (_requestedThemeCustom == null)
+                    _requestedThemeCustom = GetValueOrDefault(_container, "ThemeCustom", string.Empty);
+
+                return _requestedThemeCustom ?? string.Empty;
+            }
+            set
+            {
+                _requestedThemeCustom = value ?? string.Empty;
+                AddOrUpdateValue(_container, "ThemeCustom", value);
+            }
+        }
+
+        private ThemeSettingsBase _accents;
+        public ThemeSettingsBase Accents => _accents ??= new ThemeSettingsBase(_container);
 
         private ElementTheme? _requestedTheme;
         public ElementTheme RequestedTheme
@@ -502,10 +558,22 @@ namespace Unigram.Services.Settings
         }
     }
 
-    public enum NightMode
+    public class ThemeSettingsBase : SettingsServiceBase
     {
-        Disabled,
-        Scheduled,
-        Automatic
+        public ThemeSettingsBase(ApplicationDataContainer container)
+            : base(container)
+        {
+        }
+
+        public Color this[TelegramThemeType type]
+        {
+            get => GetValueOrDefault(ConvertToKey(type, "Accent"), ThemeAccentInfo.Accents[type].ToValue()).ToColor();
+            set => AddOrUpdateValue(ConvertToKey(type, "Accent"), value.ToValue());
+        }
+
+        private string ConvertToKey(TelegramThemeType type, string key)
+        {
+            return $"{type}{key}";
+        }
     }
 }
