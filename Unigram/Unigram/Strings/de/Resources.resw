@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Einrichtung abbrechen</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Einrichtung abbrechen</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Download abbrechen</value>
   </data>
@@ -3008,6 +3011,9 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Warnung! Das wird **alle Nachrichten** in diesem Chat **für beide Teilnehmer löschen**.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Warnung! Das wird in diesem Chat **alle Nachrichten löschen**.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Löschen und Gruppe verlassen</value>
   </data>
@@ -3584,6 +3590,9 @@ Erfahre mehr unter telegram.org</value>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Kanalname</value>
   </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Code eingeben</value>
+  </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Aktuellen Pincode eingeben</value>
   </data>
@@ -4019,6 +4028,9 @@ Dauer: {1}</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Favoriten</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>Angesagte GIFs</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Angesagte Sticker</value>
   </data>
@@ -4064,6 +4076,15 @@ Dauer: {1}</value>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Bitte warte, bis wir den Ordner mit Chats füllen...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Zu Ordner hinzufügen</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>Mehr als 100 Chats kann man leider nicht aus einem Ordner ausschließen.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Limt erreicht</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>Alle Chats</value>
   </data>
@@ -4080,7 +4101,7 @@ Dauer: {1}</value>
     <value>*Einstellungen > Ordner* öffnen, um Chats in Ordnern zu sortieren.</value>
   </data>
   <data name="FilterAvailableTitle" xml:space="preserve">
-    <value>Chat-Ordner</value>
+    <value>Ordner</value>
   </data>
   <data name="FilterBots" xml:space="preserve">
     <value>Bots</value>
@@ -4088,11 +4109,26 @@ Dauer: {1}</value>
   <data name="FilterChannels" xml:space="preserve">
     <value>Kanäle</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{0}** wurde **{1}** hinzugefügt</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{0}** wurde aus **{1}** entfernt</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Chats</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{0}** wurde **{1}** hinzugefügt</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{0}** wurde aus **{1}** entfernt</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Chatarten</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Wähle einen Ordner</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Kontakt</value>
@@ -4212,6 +4248,12 @@ Chats in diesem Ordner.</value>
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>Wirklich "{0}" aus der Liste 'immer ausgeschlossen' entfernen?</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Aus Ordner entfernen</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>Mehr als 100 Chats kann man leider nicht einem Ordner hinzufügen.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Wirklich "{0}" aus den 'immer enthaltenen' Chats entfernen?</value>
   </data>
@@ -4259,6 +4301,12 @@ Chats in diesem Ordner.</value>
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>Ungelesen</value>
+  </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{0}** wurde **{1}** hinzugefügt</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}** wurde aus **{1}** entfernt</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Endergebnis</value>
@@ -4826,6 +4874,9 @@ Man kann die Gruppe auch über einen Einladungslink betreten, so lange die Perso
   </data>
   <data name="HoldToAudio" xml:space="preserve">
     <value>Halten für Audioaufnahme. Tippen für Video.</value>
+  </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>Halten, um Audio aufzunehmen.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Halten für Videoaufnahme. Tippen für Audio.</value>
@@ -6875,6 +6926,9 @@ synchronisiert benutzen.</value>
   <data name="PaintEdit" xml:space="preserve">
     <value>Bearbeiten</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>Gerahmt</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Kontur</value>
   </data>
@@ -7476,8 +7530,17 @@ Mehr dazu in unseren *FAQs*.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Passwort-Erinnerung</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>Hinweis</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Hinweis auf dein Passwort eingeben</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>Ein</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Passwort zurücksetzen</value>
@@ -7889,6 +7952,9 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Passwort eingeben</value>
   </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Neues Passwort festlegen</value>
+  </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Neues Passwort eingeben</value>
   </data>
@@ -8138,6 +8204,39 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   <data name="ProxySettings" xml:space="preserve">
     <value>Proxy-Einstellungen</value>
   </data>
+  <data name="PsaHide" xml:space="preserve">
+    <value>Verstecken</value>
+  </data>
+  <data name="PsaHideChatAlertText" xml:space="preserve">
+    <value>Wirklich diesen Chat verstecken?</value>
+  </data>
+  <data name="PsaHideChatAlertTitle" xml:space="preserve">
+    <value>Chat verstecken</value>
+  </data>
+  <data name="PsaInfo_covid" xml:space="preserve">
+    <value>Diese Nachricht enthält eine öffentliche Bekanntmachung hinsichtlich der aktuellen COVID-19 Pandemie. Erfahre mehr über diese Initiative unter https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfoDefault" xml:space="preserve">
+    <value>PSA info test</value>
+  </data>
+  <data name="PsaMessage_covid" xml:space="preserve">
+    <value>COVID-19 Benachrichtigung</value>
+  </data>
+  <data name="PsaMessageDefault" xml:space="preserve">
+    <value>Wichtige Benachrichtigung</value>
+  </data>
+  <data name="PsaMessageInfo_covid" xml:space="preserve">
+    <value>Diese Nachricht enthält eine öffentliche Bekanntmachung hinsichtlich der aktuellen COVID-19 Pandemie. Erfahre mehr über diese Initiative unter https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaMessageInfoDefault" xml:space="preserve">
+    <value>Das ist eine wichtige Benachrichtigung.</value>
+  </data>
+  <data name="PsaType_covid" xml:space="preserve">
+    <value>COVID-19</value>
+  </data>
+  <data name="PsaTypeDefault" xml:space="preserve">
+    <value>PSA</value>
+  </data>
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>Der ausgewählte Nutzer hat zu viele öffentliche Gruppen oder Kanäle. Bitte die Person, einfach einen Kanal oder eine Gruppe privat zu stellen.</value>
   </data>
@@ -8149,6 +8248,9 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Violett</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>Telegram benötigt zum Scannen von QR-Codes Zugriff auf deine Kamera.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Frage</value>
@@ -8263,6 +8365,10 @@ Wenn du mehr Ordnung brauchst, versuche einige Chats zu archivieren. Der Ordner 
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
     <value>Wiederherstellung</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
+    <value>E-Mail-Adresse
+für Wiederherstellung</value>
   </data>
   <data name="Red" xml:space="preserve">
     <value>Rot</value>
@@ -8944,7 +9050,7 @@ Bitte den Anruf nicht annehmen, Telegram kümmert sich um alles.</value>
     <value>Zusätzliches Passwort festlegen</value>
   </data>
   <data name="SetAdditionalPasswordInfo" xml:space="preserve">
-    <value>Du kannst ein eigenes Passwort festlegen, um dich an einem neuen Gerät anzumelden, zusätzlich zum SMS-Code.</value>
+    <value>Hier kannst du ein eigenes Passwort festlegen, um dich an einem neuen Gerät anzumelden, zusätzlich zum Code, der per SMS kommt.</value>
   </data>
   <data name="SetAdmins" xml:space="preserve">
     <value>Administratoren</value>
@@ -9220,6 +9326,9 @@ noch nichts gesucht</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Ausschalten, wenn du nur vom aktiven Konto Benachrichtigungen empfangen möchtest.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Sticker zeigen</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value/>
   </data>
@@ -9330,6 +9439,9 @@ Langsamer Modus ist aktiv, du kannst nicht mehr als eine gleichzeitig senden.</v
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Standard</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Ton stumm</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Starten</value>
@@ -9980,6 +10092,21 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Zweistufige Bestätigung</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Zurück zu Passport</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Zurück zu Einstellungen</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Passwort festgelegt!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>Du benötigt dieses Passwort neben dem Code, der dir per SMS geschickt wird, sobald du dich mit einem neuen Gerät anmeldest.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Passwort festlegen</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Zweistufige Bestätigung</value>
   </data>
@@ -10406,6 +10533,9 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   <data name="UserUnblocked" xml:space="preserve">
     <value>Nutzer freigegeben</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Verifizierungscode</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
   </data>
@@ -10812,9 +10942,12 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
     <value>Warnung</value>
   </data>
   <data name="YourEmailSkipWarningText" xml:space="preserve">
-    <value>Keine gute Idee.
+    <value>Das ist keine gute Idee.
 
-Wenn du dein Passwort vergisst, verlierst du den Zugang zu deinem Telegram Konto. Für immer, ohne Ausnahme.</value>
+Wenn du dein Passwort vergisst, verlierst du den Zugang zu deinem Telegram-Konto. Für immer, ohne Ausnahme.</value>
+  </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>Deine Wiederherstellungs-E-Mail für die zweistufige Bestätigung wurde geändert.</value>
   </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>Deine Wiederherstellungs-E-Mail für die zweistufige Bestätigung ist jetzt aktiv.</value>
@@ -10827,6 +10960,9 @@ Wenn du dein Passwort vergisst, verlierst du den Zugang zu deinem Telegram Konto
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Dein Passwort</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>Dein Passwort für die zweistufige Bestätigung wurde geändert.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Geschafft!</value>

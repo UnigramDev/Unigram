@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Скасувати встановлення двоетапної перевірки</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Скасувати встановлення</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Скасувати завантаження</value>
   </data>
@@ -701,7 +704,7 @@
     <value>Додати {0} до чату {1}?</value>
   </data>
   <data name="AddUserErrorBlacklisted" xml:space="preserve">
-    <value>Ви не можете додати цього користувача, оскількі він у списку Вилучених користувачів і ви не можете його розблокувати.</value>
+    <value>Ви не можете додати цього користувача, оскільки він у списку Вилучених користувачів і ви не можете його розблокувати.</value>
   </data>
   <data name="AdminWillBeRemoved" xml:space="preserve">
     <value>Користувача {0} буде вилучено з адміністраторів, якщо ви обмежите його.</value>
@@ -3000,6 +3003,9 @@
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Попередження! **Усі повідомлення** в цьому чаті буде видалено в **обох** співрозмовників.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Попередження! Це **видалить усі повідомлення** в цьому чаті.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Видалити та покинути групу</value>
   </data>
@@ -3572,6 +3578,9 @@
   <data name="EnterChannelName" xml:space="preserve">
     <value>Назва каналу</value>
   </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Введіть код</value>
+  </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Введіть поточний код блокування</value>
   </data>
@@ -3952,6 +3961,9 @@
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Улюблені</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>Популярні GIF</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Популярні наліпки</value>
   </data>
@@ -3997,6 +4009,15 @@
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Наповнення папки...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Додати до папки</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>З папки може бути виключено щонайбільше 100 чатів.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Досягнуто обмеження</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>Усі чати</value>
   </data>
@@ -4021,11 +4042,26 @@
   <data name="FilterChannels" xml:space="preserve">
     <value>Канали</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{0}** додано до **{1}**</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{0}** вилучено з **{1}**</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Чати</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{0}** додано до **{1}**</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{0}** вилучено з **{1}**</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Типи чатів</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Виберіть папку</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Контакт</value>
@@ -4144,6 +4180,12 @@
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>Ви дійсно хочете видалити «{0}» із списку виключених?</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Вилучити з папки</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>До папки може бути включено щонайбільше 100 чатів.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Ви дійсно хочете видалити «{0}» із списку включених?</value>
   </data>
@@ -4191,6 +4233,12 @@
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>Непрочитані</value>
+  </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{0}** додано до **{1}**</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}** вилучено з **{1}**</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Остаточні результати</value>
@@ -4759,6 +4807,9 @@
   <data name="HoldToAudio" xml:space="preserve">
     <value>Утримуйте для аудіо. Натисніть для відео.</value>
   </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>Утримуйте, щоб записувати голосове повідомлення.</value>
+  </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Утримуйте для відео. Натисніть для аудіо.</value>
   </data>
@@ -4979,7 +5030,7 @@
     <value/>
   </data>
   <data name="IVInteractionsChartTitle" xml:space="preserve">
-    <value>Взаємодії з IV</value>
+    <value>Взаємодії з Миттєвим переглядом</value>
   </data>
   <data name="January" xml:space="preserve">
     <value>Січень</value>
@@ -6803,6 +6854,9 @@
   <data name="PaintEdit" xml:space="preserve">
     <value>Редагувати</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>З тлом</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Обведений</value>
   </data>
@@ -7404,8 +7458,17 @@
   <data name="PasswordHint" xml:space="preserve">
     <value>Підказка пароля</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>Підказка</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Створіть підказку для свого пароля</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>Вимкнено</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>Увімкнено</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Відновлення пароля</value>
@@ -7809,6 +7872,9 @@
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Введіть пароль</value>
   </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Введіть новий пароль</value>
+  </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Введіть новий пароль</value>
   </data>
@@ -8058,6 +8124,39 @@
   <data name="ProxySettings" xml:space="preserve">
     <value>Налаштування проксі</value>
   </data>
+  <data name="PsaHide" xml:space="preserve">
+    <value>Приховати</value>
+  </data>
+  <data name="PsaHideChatAlertText" xml:space="preserve">
+    <value>Ви дійсно хочете приховати цей чат?</value>
+  </data>
+  <data name="PsaHideChatAlertTitle" xml:space="preserve">
+    <value>Приховати чат</value>
+  </data>
+  <data name="PsaInfo_covid" xml:space="preserve">
+    <value>Це екстрене оголошення про пандемію COVID-19. Докладніше про цю ініціативу: https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfoDefault" xml:space="preserve">
+    <value>Перевірка системи екстреного сповіщення</value>
+  </data>
+  <data name="PsaMessage_covid" xml:space="preserve">
+    <value>Сповіщення про COVID-19</value>
+  </data>
+  <data name="PsaMessageDefault" xml:space="preserve">
+    <value>Важливе сповіщення</value>
+  </data>
+  <data name="PsaMessageInfo_covid" xml:space="preserve">
+    <value>Це екстрене оголошення про пандемію COVID-19. Докладніше про цю ініціативу: https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaMessageInfoDefault" xml:space="preserve">
+    <value>Це важливе сповіщення.</value>
+  </data>
+  <data name="PsaType_covid" xml:space="preserve">
+    <value>COVID-19</value>
+  </data>
+  <data name="PsaTypeDefault" xml:space="preserve">
+    <value>PSA</value>
+  </data>
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>Цей користувач володіє максимальною кількістю публічних груп і каналів. Спершу запропонуйте йому зробити приватною одну з його груп або каналів.</value>
   </data>
@@ -8069,6 +8168,9 @@
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Фіолетовий</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>Telegram потрібен доступ до камери, щоб ви могли сканувати QR-коди.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Запитання</value>
@@ -8182,6 +8284,9 @@
     <value>записує відеоповідомлення...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
+    <value>Е-пошта для відновлення</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
     <value>Е-пошта для відновлення</value>
   </data>
   <data name="Red" xml:space="preserve">
@@ -9139,6 +9244,9 @@
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Вимкніть, якщо хочете отримувати сповіщення лише з поточного акаунта.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Показати наліпки</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value/>
   </data>
@@ -9249,6 +9357,9 @@
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Типово</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Звук вимкнено</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Почати</value>
@@ -9899,6 +10010,21 @@
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Двоетапна перевірка</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Повернутися до Passport</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Повернутися в Налаштування</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Пароль встановлено!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>Цей пароль запитуватиметься при вході з нового пристрою додатково до SMS-коду.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Встановити пароль</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Двоетапна перевірка</value>
   </data>
@@ -10326,6 +10452,9 @@ http://telegram.org/update</value>
   <data name="UserUnblocked" xml:space="preserve">
     <value>Користувача розблоковано</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Код підтвердження</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>через</value>
   </data>
@@ -10736,6 +10865,9 @@ http://telegram.org/update</value>
 
 Якщо ви забудете пароль, ви втратите доступ до акаунта Telegram. Його буде неможливо відновити.</value>
   </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>Е-пошту для відновлення паролю двоетапної перевірки змінено.</value>
+  </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>Адреса е-пошти для скидання пароля двоетапної перевірки тепер активна.</value>
   </data>
@@ -10747,6 +10879,9 @@ http://telegram.org/update</value>
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Ваш пароль</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>Пароль двоетапної перевірки змінено.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Успіх!</value>
@@ -10761,6 +10896,6 @@ http://telegram.org/update</value>
     <value>вас вилучили з групи</value>
   </data>
   <data name="ZoomOut" xml:space="preserve">
-    <value>Віддалити</value>
+    <value>Зменшити</value>
   </data>
 </root>

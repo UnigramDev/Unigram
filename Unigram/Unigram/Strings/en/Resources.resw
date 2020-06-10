@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Abort two-step verification setup</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Abort setup</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Cancel download</value>
   </data>
@@ -3006,6 +3009,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Warning! This will **delete all messages** in this chat for **both** participants.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Warning! This will **delete all messages** in this chat.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Delete and leave group</value>
   </data>
@@ -3579,6 +3585,9 @@ Learn more at telegram.org</value>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Channel name</value>
   </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Enter code</value>
+  </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Enter your current passcode</value>
   </data>
@@ -4066,10 +4075,10 @@ Duration: {1}</value>
     <value>Add to folder</value>
   </data>
   <data name="FilterAddToAlertFullText" xml:space="preserve">
-    <value>Sorry, you can't add more than 100 chats in a folder.</value>
+    <value>Sorry, you can't exclude more than 100 chats from a folder.</value>
   </data>
   <data name="FilterAddToAlertFullTitle" xml:space="preserve">
-    <value>Folder is full</value>
+    <value>Limit reached</value>
   </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>All Chats</value>
@@ -4095,11 +4104,26 @@ Duration: {1}</value>
   <data name="FilterChannels" xml:space="preserve">
     <value>Channels</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{0}** added to **{1}**</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{0}** removed from **{1}**</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Chats</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{0}** added to **{1}**</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{0}** removed from **{1}**</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Chat types</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Choose a folder</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Contact</value>
@@ -4222,7 +4246,7 @@ Duration: {1}</value>
     <value>Remove from folder</value>
   </data>
   <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
-    <value>Sorry, you can't exlude more then 100 chats in a folder.</value>
+    <value>Sorry, you can't add more than 100 chats to a folder.</value>
   </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Are you sure you want to remove "{0}" from the always included list?</value>
@@ -4271,6 +4295,12 @@ Duration: {1}</value>
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>Unread</value>
+  </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{0}** added to **{1}**</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}** removed from **{1}**</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Final Results</value>
@@ -4838,6 +4868,9 @@ Note that they can still join via the group's invite link as long as they are no
   </data>
   <data name="HoldToAudio" xml:space="preserve">
     <value>Hold to record audio. Tap to switch to video.</value>
+  </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>Hold to record audio.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Hold to record video. Tap to switch to audio.</value>
@@ -6885,6 +6918,9 @@ from multiple devices.</value>
   <data name="PaintEdit" xml:space="preserve">
     <value>Edit</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>Framed</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Outlined</value>
   </data>
@@ -7486,8 +7522,17 @@ You can visit our *FAQ* to learn more.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Password Hint</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>Hint</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Create a hint for your password</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>On</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Password Recovery</value>
@@ -7891,6 +7936,9 @@ Please turn on location services to enable this feature.</value>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Enter a password</value>
   </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Enter a new password</value>
+  </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Enter your new password</value>
   </data>
@@ -8144,13 +8192,16 @@ Please turn on location services to enable this feature.</value>
     <value>Hide</value>
   </data>
   <data name="PsaHideChatAlertText" xml:space="preserve">
-    <value>Are you sure you want to hide the selected chat?</value>
+    <value>Are you sure you want to hide this chat?</value>
   </data>
   <data name="PsaHideChatAlertTitle" xml:space="preserve">
     <value>Hide chat</value>
   </data>
   <data name="PsaInfo_covid" xml:space="preserve">
     <value>This message provides you with a public service announcement in relation to the ongoing COVID-19 pandemic. Learn more about this initiative at https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfoDefault" xml:space="preserve">
+    <value>PSA info test</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>COVID-19 Notification</value>
@@ -8181,6 +8232,9 @@ Please turn on location services to enable this feature.</value>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Purple</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>Telegram needs access to your camera so that you can scan QR codes.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Question</value>
@@ -8295,6 +8349,9 @@ Please turn on location services to enable this feature.</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
     <value>Recovery email</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
+    <value>Recovery Email</value>
   </data>
   <data name="Red" xml:space="preserve">
     <value>Red</value>
@@ -9251,6 +9308,9 @@ Don't accept the call, Telegram will process everything automatically.</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Turn this off if you want to receive notifications only from the account you are currently using.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Show stickers</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value/>
   </data>
@@ -9361,6 +9421,9 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Default</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Sound muted</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
@@ -10009,6 +10072,21 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Two-Step Verification</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Return to Passport</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Return to Settings</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Password Set!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>This password will be required when you log in on a new device in addition to the code you get in the SMS.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Set Password</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Two-Step Verification</value>
   </data>
@@ -10453,6 +10531,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="UserUnblocked" xml:space="preserve">
     <value>User unblocked</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Verification code</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
   </data>
@@ -10863,6 +10944,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
 
 If you forget your password, you will lose access to your Telegram account. There will be no way to restore it.</value>
   </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>Your recovery email for Two-Step Verification has been changed.</value>
+  </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>Your recovery email for Two-Step Verification is now active.</value>
   </data>
@@ -10874,6 +10958,9 @@ If you forget your password, you will lose access to your Telegram account. Ther
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Your Password</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>Your password for Two-Step Verification has been changed.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Success!</value>

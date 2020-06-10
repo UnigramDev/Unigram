@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Przerwij konfigurację weryfikacji dwustopniowej</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Przerwij konfigurację</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Anuluj pobieranie</value>
   </data>
@@ -2989,6 +2992,9 @@ W każdej chwili z tego miejsca możesz przywrócić domyślny motyw.</value>
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Ostrzeżenie! Spowoduje to **usunięcie wszystkich wiadomości** u **obu** uczestników tego czatu.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Ostrzeżenie! Spowoduje to **usunięcie wszystkich wiadomości** w tym czacie.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Usuń i opuść grupę</value>
   </data>
@@ -3348,7 +3354,7 @@ Każdy subskrybent kanału będzie mógł zobaczyć wiadomości w tej grupie.</v
     <value>Możesz przenieść tę grupę do **{0}** tylko wtedy, gdy:</value>
   </data>
   <data name="EditAdminTransferAlertText1" xml:space="preserve">
-    <value>Masz włączoną **weryfikację dwuetapową** przynajmniej od **7 dni**.</value>
+    <value>Masz włączoną **weryfikację dwustopniową** przynajmniej od **7 dni**.</value>
   </data>
   <data name="EditAdminTransferAlertText2" xml:space="preserve">
     <value>Zalogowano się na tym urządzeniu ponad **24 godziny** temu.</value>
@@ -3554,6 +3560,9 @@ Dowiedz się więcej na stronie telegram.org</value>
   </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Nazwa kanału</value>
+  </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Wprowadź kod</value>
   </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Wprowadź aktualny kod dostępu</value>
@@ -3931,6 +3940,9 @@ Czas trwania: {1}</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Ulubione</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>Popularne GIFy</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Popularne naklejki</value>
   </data>
@@ -3976,6 +3988,15 @@ Czas trwania: {1}</value>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Poczekaj chwilę, aż wypełnimy dla ciebie ten folder…</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Dodaj do folderu</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>Z folderu nie można wykluczyć więcej niż 100 czatów.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Osiągnięto limit</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>Wszystkie czaty</value>
   </data>
@@ -4000,11 +4021,26 @@ Czas trwania: {1}</value>
   <data name="FilterChannels" xml:space="preserve">
     <value>Kanały</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{0}** dodano do **{1}**</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{0}** usunięto z **{1}**</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Czaty</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{0}** dodano do **{1}**</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{0}** usunięto z **{1}**</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Typy czatów</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Wybierz folder</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Kontakt</value>
@@ -4114,6 +4150,12 @@ Czas trwania: {1}</value>
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>Czy na pewno chcesz usunąć „{0}” z listy zawsze wykluczonych?</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Usuń z folderu</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>Do folderu nie można dodać więcej niż 100 czatów.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Czy na pewno chcesz usunąć „{0}” z listy zawsze dołączonych?</value>
   </data>
@@ -4159,6 +4201,12 @@ Czas trwania: {1}</value>
   <data name="FilterUnread" xml:space="preserve">
     <value>Nieprzeczytane</value>
   </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{0}** dodano do **{1}**</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}** usunięto z **{1}**</value>
+  </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Wyniki końcowe</value>
   </data>
@@ -4175,7 +4223,7 @@ Czas trwania: {1}</value>
     <value>Imię (wymagane)</value>
   </data>
   <data name="FloodWait" xml:space="preserve">
-    <value>Przekroczona ilość prób, spróbuj ponownie później</value>
+    <value>Zbyt wiele prób, spróbuj ponownie później</value>
   </data>
   <data name="FloodWaitTime" xml:space="preserve">
     <value>Zbyt wiele prób, spróbuj ponownie za {0}</value>
@@ -4726,6 +4774,9 @@ Zauważ, że nadal może się przyłączyć za pośrednictwem linku zaproszenia 
   <data name="HoldToAudio" xml:space="preserve">
     <value>Trzymaj, aby nagrać audio. Dotknij, aby przełączyć na wideo.</value>
   </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>Trzymaj, aby nagrać audio.</value>
+  </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Trzymaj, aby nagrać wideo. Dotknij, aby przełączyć na audio.</value>
   </data>
@@ -5227,6 +5278,9 @@ Ten link działa tylko dla członków tego czatu.</value>
     <value>Wyczyszczenie lokalnej bazy danych spowoduje usunięcie tekstów zbuforowanych wiadomości i skompresowanie bazy, by zaoszczędzić miejsce w pamięci wewnętrznej. Telegram do działania potrzebuje niektórych danych, więc rozmiar bazy danych nie osiągnie zero.
 
 Operacja ta może potrwać kilka minut.</value>
+  </data>
+  <data name="LocalDatabaseSize" xml:space="preserve">
+    <value>{0} Lokalna baza danych</value>
   </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Dokumenty</value>
@@ -6759,6 +6813,9 @@ z wielu urządzeń.</value>
   <data name="PaintEdit" xml:space="preserve">
     <value>Edytuj</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>Obramowany</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Kontury</value>
   </data>
@@ -7360,8 +7417,17 @@ Więcej informacji na ten temat możesz znaleźć w naszym dziale *FAQ*.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Podpowiedź do hasła</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>Podpowiedź</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Utwórz podpowiedź dla hasła</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>Wył.</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>Wł.</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Odzyskiwanie hasła</value>
@@ -7739,7 +7805,7 @@ Aby włączyć tę funkcję, włącz usługi lokalizacyjne.</value>
     <value>Przypięta ankieta</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
-    <value>Powiadamiaj wszystkich członków</value>
+    <value>Powiadom wszystkich członków</value>
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Przypnij na górze</value>
@@ -7764,6 +7830,9 @@ Aby włączyć tę funkcję, włącz usługi lokalizacyjne.</value>
   </data>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Wprowadź hasło</value>
+  </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Wprowadź nowe hasło</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Wprowadź nowe hasło</value>
@@ -8026,6 +8095,9 @@ Aby włączyć tę funkcję, włącz usługi lokalizacyjne.</value>
   <data name="Purple" xml:space="preserve">
     <value>Fioletowy</value>
   </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>Aby móc skanować kody QR, Telegram musi mieć dostęp do aparatu.</value>
+  </data>
   <data name="Question" xml:space="preserve">
     <value>Pytanie</value>
   </data>
@@ -8138,6 +8210,9 @@ Aby włączyć tę funkcję, włącz usługi lokalizacyjne.</value>
     <value>nagrywanie wiadomości wideo...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
+    <value>E-mail odzyskiwania hasła</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
     <value>E-mail odzyskiwania hasła</value>
   </data>
   <data name="Red" xml:space="preserve">
@@ -9006,16 +9081,16 @@ Nie odbieraj połączenia, Telegram automatycznie przetworzy wszystko.</value>
     <value>Wyślij do…</value>
   </data>
   <data name="SharesFew" xml:space="preserve">
-    <value>{0} przekazania</value>
+    <value>{0} udostępnienia</value>
   </data>
   <data name="SharesMany" xml:space="preserve">
-    <value>{0} przekazań</value>
+    <value>{0} udostępnień</value>
   </data>
   <data name="SharesOne" xml:space="preserve">
-    <value>{0} przekazanie</value>
+    <value>{0} udostępnienie</value>
   </data>
   <data name="SharesOther" xml:space="preserve">
-    <value>{0} przekazania</value>
+    <value>{0} udostępnienia</value>
   </data>
   <data name="SharesPerPost" xml:space="preserve">
     <value>Udostępnienia na post</value>
@@ -9094,6 +9169,9 @@ Nie odbieraj połączenia, Telegram automatycznie przetworzy wszystko.</value>
   </data>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Wyłącz tę opcję, jeśli chcesz otrzymywać powiadomienia tylko z konta, którego aktualnie używasz.</value>
+  </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Pokaż naklejki</value>
   </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value>Pokaż więcej ({0})</value>
@@ -9205,6 +9283,9 @@ Jest włączony tryb wolny. Nie możesz wysłać więcej niż jedną wiadomość
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Domyślny</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Dźwięk wyciszony</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Rozpocznij</value>
@@ -9854,6 +9935,21 @@ Jeśli jednak nie odpowiadają ci te skromne wymagania Telegrama, nie będziemy 
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Weryfikacja dwustopniowa</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Wróć do Paszportu</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Wróć do ustawień</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Hasło ustawione!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>Oprócz kodu SMS to hasło trzeba będzie podawać podczas logowania z nowego urządzenia.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Ustaw hasło</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Weryfikacja dwustopniowa</value>
   </data>
@@ -10277,6 +10373,9 @@ Możesz użyć **a–z**, **0–9** i podkreśleń. Minimalna długość nazwy t
   <data name="UserUnblocked" xml:space="preserve">
     <value>Użytkownik odblokowany</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Kod weryfikacyjny</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>przez</value>
   </data>
@@ -10688,6 +10787,9 @@ Możesz użyć **a–z**, **0–9** i podkreśleń. Minimalna długość nazwy t
 
 Nie ma żadnego innego sposobu, aby odtworzyć hasło. Jeśli zapomnisz hasło, stracisz dostęp do konta.</value>
   </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>Twój e-mail odzyskiwania hasła weryfikacji dwustopniowej został zmieniony.</value>
+  </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>Twój e-mail odzyskiwania hasła weryfikacji dwustopniowej jest aktywny.</value>
   </data>
@@ -10699,6 +10801,9 @@ Nie ma żadnego innego sposobu, aby odtworzyć hasło. Jeśli zapomnisz hasło, 
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Twoje hasło</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>Twoje hasło weryfikacji dwustopniowej zostało zmienione.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Sukces!</value>

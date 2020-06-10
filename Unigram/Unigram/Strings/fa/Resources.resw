@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>لغو راه‌اندازی تأیید دو مرحله‌ای</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>لغو راه‌اندازی</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>لغو دانلود</value>
   </data>
@@ -3003,6 +3006,9 @@
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>هشدار! این کار **تمامی پیام‌ها**ی این گفتگو را برای **هر دو** طرف **حذف** می‌کند.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>هشدار! این کار **تمامی پیام‌ها** در این گفتگو را حذف خواهد کرد.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>حذف و ترک گروه</value>
   </data>
@@ -3575,6 +3581,9 @@
   <data name="EnterChannelName" xml:space="preserve">
     <value>نام کانال</value>
   </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>کد را وارد کنید</value>
+  </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>گذواژه فعلی خود را وارد کنید</value>
   </data>
@@ -3955,11 +3964,14 @@
   <data name="FavoriteStickers" xml:space="preserve">
     <value>علاقه‌مندی‌ها</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>گیف‌های محبوب</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>استیکرهای محبوب</value>
   </data>
   <data name="FeaturedStickersInfo" xml:space="preserve">
-    <value>این استکیرها در حال حاضر در تلگرام محبوب هستند. شما می‌توانید استیکرهای سفارشی را از طریق ربات @stickers اضافه کنید.</value>
+    <value>این استیکرها در حال حاضر در تلگرام محبوب هستند. شما می‌توانید استیکرهای سفارشی را از طریق ربات @stickers اضافه کنید.</value>
   </data>
   <data name="February" xml:space="preserve">
     <value>فوریه</value>
@@ -4000,6 +4012,15 @@
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>لطفاً تا پر شدن این پوشه چند لحظه صبر کنید...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>افزودن به پوشه</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>متأسفانه نمی‌توانید بیش از 100 گفتگو را در یک پوشه شامل نکنید.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>به سقف  مجاز رسیدید</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>تمامی گفتگوها</value>
   </data>
@@ -4024,11 +4045,26 @@
   <data name="FilterChannels" xml:space="preserve">
     <value>کانال‌ها</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**⁨{0}⁩** به **⁨{1}⁩** اضافه شد</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**⁨{0}⁩** از **⁨{1}⁩** حذف شد</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>گفتگوها</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**⁨{0}⁩** به **⁨{1}⁩** اضافه شد</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**⁨{0}⁩** از **⁨{1}⁩** حذف شد</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>انواع گفتگو</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>انتخاب پوشه</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>مخاطب</value>
@@ -4147,6 +4183,12 @@
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>آیا از حذف "⁨{0}⁩" از فهرست هرگز شامل نشده اطمینان دارید؟</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>حذف از پوشه</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>متأسفانه شما نمی‌توانید بیش از 100 گفتگو را به یک پوشه اضافه کنید.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>آیا از حذف "⁨{0}⁩" از فهرست همیشه شامل شده اطمینان دارید؟</value>
   </data>
@@ -4194,6 +4236,12 @@
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>خوانده نشده</value>
+  </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**⁨{0}⁩** به **⁨{1}⁩** اضافه شد</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**⁨{0}⁩** از **⁨{1}⁩** حذف شد</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>نتایج نهایی</value>
@@ -4761,6 +4809,9 @@
   </data>
   <data name="HoldToAudio" xml:space="preserve">
     <value>برای ضبط صدا نگه دارید. برای تغییر به ویدیو ضربه بزنید.</value>
+  </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>برای ضبط صدا، نگه دارید.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>برای ضبط ویدیو نگه دارید. برای تغییر به ضبط صدا ضربه بزنید.</value>
@@ -6807,6 +6858,9 @@
   <data name="PaintEdit" xml:space="preserve">
     <value>ویرایش</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>قاب شده</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>دورگیری شده</value>
   </data>
@@ -7407,8 +7461,17 @@
   <data name="PasswordHint" xml:space="preserve">
     <value>راهنمای گذرواژه</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>راهنما</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>برای گذرواژه خود یک راهنما ایجاد کنید</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>غیرفعال</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>فعال</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>بازیابی گذرواژه</value>
@@ -7684,8 +7747,7 @@
     <value>شماره تلفن</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
-    <value>کاربران در صورتی شماره تلفن جدید شما را می‌بینند که آن را در دفترچه تلفن خود ذخیره داشته باشند یا تنظیمات حریم خصوصی شما به آن‌ها اجازه دیدن شماره تلفنتان را بدهد.
-شما می‌توانید این گزینه را در قسمت تنظیمات > حریم خصوصی و امنیت > شماره تلفن تنظیم کنید.</value>
+    <value>کاربران در صورتی شماره تلفن جدید شما را می‌بینند که آن را در دفترچه تلفن خود ذخیره داشته باشند یا تنظیمات حریم خصوصی شما به آن‌ها اجازه دیدن شماره تلفنتان را بدهد. شما می‌توانید این گزینه را در قسمت تنظیمات > حریم خصوصی و امنیت > شماره تلفن تنظیم کنید.</value>
   </data>
   <data name="PhoneNumberChange" xml:space="preserve">
     <value>تغییر شماره تلفن</value>
@@ -7812,6 +7874,9 @@
   </data>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>یک گذرواژه وارد کنید</value>
+  </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>گذرواژه جدیدی را وارد کنید</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>گذرواژه‌ جدید خود را وارد کنید</value>
@@ -8066,33 +8131,33 @@
     <value>پنهان کردن</value>
   </data>
   <data name="PsaHideChatAlertText" xml:space="preserve">
-    <value>آیا از پنهان کردن گفتگوی انتخاب شده اطمینان دارید؟</value>
+    <value>آیا از پنهان کردن این گفتگو اطمینان دارید؟</value>
   </data>
   <data name="PsaHideChatAlertTitle" xml:space="preserve">
     <value>پنهان کردن گفتگو</value>
   </data>
   <data name="PsaInfo_covid" xml:space="preserve">
-    <value>این پیام، اعلان خدمات عمومی مربوط به بیماری فراگیر کوید-19 (کرونا)‌ کنونی را به شما ارائه می‌دهد. برای اطلاعات بیشتر درباره این ابتکار به لینک زیر مراجعه کنید:
+    <value>این پیام، اعلان خدمات عمومی مربوط به بیماری فراگیر کووید-19 (کرونا)‌ کنونی را به شما ارائه می‌دهد. برای اطلاعات بیشتر درباره این نوآوری به لینک زیر مراجعه کنید:
 https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="PsaInfoDefault" xml:space="preserve">
     <value>تست اطلاعات PSA</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
-    <value>اعلان کوید-19 (کرونا)</value>
+    <value>اعلان کووید-19 (کرونا)</value>
   </data>
   <data name="PsaMessageDefault" xml:space="preserve">
     <value>اعلان مهم</value>
   </data>
   <data name="PsaMessageInfo_covid" xml:space="preserve">
-    <value>این پیام، اعلان خدمات عمومی مربوط به بیماری فراگیر کوید-19 (کرونا)‌ کنونی را به شما ارائه می‌دهد. برای اطلاعات بیشتر درباره این ابتکار به لینک زیر مراجعه کنید:
+    <value>این پیام، اعلان خدمات عمومی مربوط به بیماری فراگیر کووید-19 (کرونا)‌ کنونی را به شما ارائه می‌دهد. برای اطلاعات بیشتر درباره این نوآوری به لینک زیر مراجعه کنید:
 https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>این یک اعلان مهم است.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
-    <value>PSA</value>
+    <value>کووید-19 (کرونا)</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -8108,6 +8173,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>بنفش</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>تلگرام باید به دوربین شما دسترسی داشته باشد تا بتوانید کدهای QR را اسکن کنید.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>پرسش</value>
@@ -8222,6 +8290,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
     <value>ایمیل بازیابی</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
+    <value>ایمیل بازیابی </value>
   </data>
   <data name="Red" xml:space="preserve">
     <value>قرمز</value>
@@ -8681,7 +8752,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>تلگرام</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
-    <value>آیا تمایل دارید پیش‌نمایش‌های لینک را در گفتگوی محرمانه فعال کنید؟ توجه داشته باشید که پیش‌نمایش‌های لینک در سرورهای تلگرام ایجاد می‌شوند.</value>
+    <value>آیا تمایل دارید پیش‌نمایش‌های لینک را در گفتگوهای محرمانه فعال کنید؟ توجه داشته باشید که پیش‌نمایش‌های لینک در سرورهای تلگرام ایجاد می‌شوند.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>پیش‌نمایش‌های لینک</value>
@@ -9177,6 +9248,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>در صورتی که تمایل دارید فقط از حساب کاربری که در حال حاضر از آن استفاده می‌کنید اعلان‌ دریافت کنید، این گزینه را غیرفعال نمایید.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>نمایش استیکرها</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value/>
   </data>
@@ -9287,6 +9361,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>پیش‌فرض</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>بی‌صدا شد</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>شروع</value>
@@ -9935,6 +10012,21 @@ https://telegram.org/blog/coronavirus</value>
   <data name="TwoStepVerification" xml:space="preserve">
     <value>تأیید دو مرحله‌ای</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>بازگشت به پاسپورت</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>بازگشت به تنظیمات</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>گذرواژه تنظیم شد!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>این گذرواژه‌ هنگام ورود به حساب کاربری در یک دستگاه جدید، علاوه بر کدی که از طریق پیامک دریافت می‌کنید از شما پرسیده شود.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>تنظیم گذرواژه</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>تأیید دو مرحله‌ای</value>
   </data>
@@ -10361,6 +10453,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UserUnblocked" xml:space="preserve">
     <value>مسدودیت کاربر رفع شد</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>کد تأیید</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>از طریق</value>
   </data>
@@ -10772,6 +10867,9 @@ https://telegram.org/blog/coronavirus</value>
 
 در صورت فراموش کردن گذرواژه، شما دسترسی به حساب کاربری تلگرام خود را از دست خواهید داد. هیچ راهی برای بازگرداندن حساب کاربری شما وجود نخواهد داشت.</value>
   </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>ایمیل بازیابی برای تأیید دو مرحله‌ای شما تغییر کرد.</value>
+  </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>ایمیل بازیابی شما برای تأیید دو مرحله‌ای هم اکنون فعال است.</value>
   </data>
@@ -10783,6 +10881,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>گذرواژه‌ شما</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>گذرواژه تأیید دو مرحله‌ای شما تغییر کرد.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>موفق شدید!</value>

@@ -935,13 +935,13 @@
     <value>고정된 대화방</value>
   </data>
   <data name="ArchiveHintText1" xml:space="preserve">
-    <value>알림이 켜진 대화방은 새로운 메시지가 도착했을 때 보관이 해제됩니다.</value>
+    <value>알림이 켜진 대화방은 새로운 메시지가 도착하면 보관이 해제됩니다.</value>
   </data>
   <data name="ArchiveHintText2" xml:space="preserve">
     <value>알림이 꺼진 대화방은 새로운 메시지가 도착해도 계속 보관됩니다.</value>
   </data>
   <data name="ArchiveHintText3" xml:space="preserve">
-    <value>보관한 대화방을 무제한으로 맨 위에 고정하실 수 있습니다.</value>
+    <value>보관한 대화방들은 개수 제한 없이 맨 위에 고정하실 수 있습니다.</value>
   </data>
   <data name="ArchivePinned" xml:space="preserve">
     <value>보관함 고정함</value>
@@ -1118,7 +1118,7 @@
   <data name="AskAQuestionInfo" xml:space="preserve">
     <value>텔레그램 지원 사항은 자원봉사자들이 처리합니다. 신속하게 응답해 드리고자 노력하지만, 다소 시간이 걸릴 수 있습니다.
 
-<![CDATA[<a href="https://telegram.org/faq/ko#a"> 자주 묻는 질문</a>]]>을 확인해 보세요. 잦은 질문에 대한 답과 <![CDATA[<a href="https://telegram.org/faq/ko#h">문제 해결</a>]]>을 위한 중요한 조언이 있습니다.</value>
+<![CDATA[<a href="https://telegram.org/faq/ko#325188137"> 자주 묻는 질문</a>]]>을 확인해 보세요. 잦은 질문에 대한 답과 <![CDATA[<a href="https://telegram.org/faq/ko#1478791328">문제 해결</a>]]>을 위한 중요한 조언이 있습니다.</value>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>봉사자에게 질문하기</value>
@@ -3557,7 +3557,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
 telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="EncryptionKeyLink" xml:space="preserve">
-    <value>https://telegram.org/faq#secret-chats</value>
+    <value>https://telegram.org/faq/ko#1498786448</value>
   </data>
   <data name="EncryptionProcessing" xml:space="preserve">
     <value>암호화 키 교환 중...</value>
@@ -7107,7 +7107,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>텔레그램 패스포트가 무엇인가요?</value>
   </data>
   <data name="PassportInfoUrl" xml:space="preserve">
-    <value>https://telegram.org/faq#passport</value>
+    <value>https://telegram.org/faq/ko#1660002760</value>
   </data>
   <data name="PassportLanguage_AR" xml:space="preserve">
     <value>아랍어</value>
@@ -8124,7 +8124,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value>가리기</value>
   </data>
   <data name="PsaHideChatAlertText" xml:space="preserve">
-    <value>정말 선택한 대화방을 가리시겠습니까?</value>
+    <value>정말 이 대화방을 가리시겠습니까?</value>
   </data>
   <data name="PsaHideChatAlertTitle" xml:space="preserve">
     <value>대화방 가리기</value>
@@ -8150,7 +8150,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>중요한 알림입니다.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
-    <value>공공발표</value>
+    <value>코로나19</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>공공발표</value>
@@ -9966,9 +9966,11 @@ https://telegram.org/blog/coronavirus</value>
 중요: 지금 취소하여 계정을 삭제하기 전에 데이터를 내보내실 수 있습니다. (최신 텔레그램 데스크톱을 열고 설정 > 고급 설정 > 텔레그램 데이터 내보내기에서 진행하실 수 있습니다.)</value>
   </data>
   <data name="TosUpdateDecline" xml:space="preserve">
-    <value>매우 유감스럽지만, 이는 곧 우리가 여기서 헤어져야 한다는 뜻입니다. 다른 서비스와 달리, 저희는 회원님의 정보를 광고 타게팅이나 다른 상업적 목적으로 이용하지 않습니다. 텔레그램은 다양한 기능을 가진 클라우드 서비스로서 작동하는 데 필요한 정보만을 저장합니다. 개인 정보 및 보안 설정에서 정보가 사용되는 방식을 조정(동기화된 연락처를 삭제하는 등)하실 수 있습니다.
+    <value>유감스럽게도, 텔레그램에 가입하실 수 없습니다.
 
-하지만 텔레그램의 간소한 요청이 회원님에게 만족스럽지 못하다면, 저희는 이 서비스를 제공해 드리기가 어렵습니다. 지금 계정을 비활성화하실 수 있습니다. 아니면 조금 더 살펴보고 정보 사용 방식이 끝내 마음에 들지 않을 때 비활성화하셔도 좋습니다.</value>
+다른 서비스와 달리 저희는 광고 타겟팅이나 다른 상업적 목적으로 귀하의 데이터를 사용하지 않습니다. 텔레그램이 안전하고 기능이 풍부한 클라우드 서비스로서 작동하는 데 필요한 정보만을 저장합니다. 개인 정보 및 보안 설정에서 데이터 사용 방식(동기화된 연락처 삭제 따위)을 설정하실 수 있습니다.
+
+하지만 텔레그램의 간소한 요구 사항에 두루 동의하실 수 없다면 저희로서 이 서비스를 제공해 드리기가 어렵습니다.</value>
   </data>
   <data name="TotalDataUsage" xml:space="preserve">
     <value>전체</value>

@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/01/2020 13:37:23
+// 	Generated: 06/10/2020 13:22:13
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -65,6 +65,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AbortPassword");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Abort setup"
+        /// </summary>
+        public static string AbortPasswordMenu
+        {
+            get
+            {
+                return resourceLoader.GetString("AbortPasswordMenu");
             }
         }
         
@@ -10736,6 +10747,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Warning! This will **delete all messages** in this chat."
+        /// </summary>
+        public static string DeleteAllMessagesSavedAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("DeleteAllMessagesSavedAlert");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Delete and leave group"
         /// </summary>
         public static string DeleteAndExit
@@ -12797,6 +12819,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Enter code"
+        /// </summary>
+        public static string EnterCode
+        {
+            get
+            {
+                return resourceLoader.GetString("EnterCode");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Enter your current passcode"
         /// </summary>
         public static string EnterCurrentPasscode
@@ -14539,7 +14572,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you can't add more than 100 chats in a folder."
+        /// Localized resource similar to "Sorry, you can't exclude more than 100 chats from a folder."
         /// </summary>
         public static string FilterAddToAlertFullText
         {
@@ -14550,7 +14583,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Folder is full"
+        /// Localized resource similar to "Limit reached"
         /// </summary>
         public static string FilterAddToAlertFullTitle
         {
@@ -14649,6 +14682,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "**{0}** added to **{1}**"
+        /// </summary>
+        public static string FilterChatAddedToExisting
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterChatAddedToExisting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** removed from **{1}**"
+        /// </summary>
+        public static string FilterChatRemovedFrom
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterChatRemovedFrom");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Chats"
         /// </summary>
         public static string FilterChats
@@ -14660,6 +14715,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "**{0}** added to **{1}**"
+        /// </summary>
+        public static string FilterChatsAddedToExisting
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterChatsAddedToExisting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** removed from **{1}**"
+        /// </summary>
+        public static string FilterChatsRemovedFrom
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterChatsRemovedFrom");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Chat types"
         /// </summary>
         public static string FilterChatTypes
@@ -14667,6 +14744,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FilterChatTypes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Choose a folder"
+        /// </summary>
+        public static string FilterChoose
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterChoose");
             }
         }
         
@@ -15111,7 +15199,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you can't exlude more then 100 chats in a folder."
+        /// Localized resource similar to "Sorry, you can't add more than 100 chats to a folder."
         /// </summary>
         public static string FilterRemoveFromAlertFullText
         {
@@ -15294,6 +15382,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FilterUnread");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** added to **{1}**"
+        /// </summary>
+        public static string FilterUserAddedToExisting
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterUserAddedToExisting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** removed from **{1}**"
+        /// </summary>
+        public static string FilterUserRemovedFrom
+        {
+            get
+            {
+                return resourceLoader.GetString("FilterUserRemovedFrom");
             }
         }
         
@@ -17365,6 +17475,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("HoldToAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Hold to record audio."
+        /// </summary>
+        public static string HoldToAudioOnly
+        {
+            get
+            {
+                return resourceLoader.GetString("HoldToAudioOnly");
             }
         }
         
@@ -24767,6 +24888,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Framed"
+        /// </summary>
+        public static string PaintFramed
+        {
+            get
+            {
+                return resourceLoader.GetString("PaintFramed");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Outlined"
         /// </summary>
         public static string PaintOutlined
@@ -26944,6 +27076,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Hint"
+        /// </summary>
+        public static string PasswordHintPlaceholder
+        {
+            get
+            {
+                return resourceLoader.GetString("PasswordHintPlaceholder");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Create a hint for your password"
         /// </summary>
         public static string PasswordHintText
@@ -26951,6 +27094,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PasswordHintText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Off"
+        /// </summary>
+        public static string PasswordOff
+        {
+            get
+            {
+                return resourceLoader.GetString("PasswordOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "On"
+        /// </summary>
+        public static string PasswordOn
+        {
+            get
+            {
+                return resourceLoader.GetString("PasswordOn");
             }
         }
         
@@ -28413,6 +28578,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Enter a new password"
+        /// </summary>
+        public static string PleaseEnterNewFirstPassword
+        {
+            get
+            {
+                return resourceLoader.GetString("PleaseEnterNewFirstPassword");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Enter your new password"
         /// </summary>
         public static string PleaseEnterPassword
@@ -29337,7 +29513,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to hide the selected chat?"
+        /// Localized resource similar to "Are you sure you want to hide this chat?"
         /// </summary>
         public static string PsaHideChatAlertText
         {
@@ -29366,6 +29542,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PsaInfo_covid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "PSA info test"
+        /// </summary>
+        public static string PsaInfoDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("PsaInfoDefault");
             }
         }
         
@@ -29476,6 +29663,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Purple");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram needs access to your camera so that you can scan QR codes."
+        /// </summary>
+        public static string QRCodePermissionNoCamera
+        {
+            get
+            {
+                return resourceLoader.GetString("QRCodePermissionNoCamera");
             }
         }
         
@@ -29894,6 +30092,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("RecoveryEmail");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recovery Email"
+        /// </summary>
+        public static string RecoveryEmailTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("RecoveryEmailTitle");
             }
         }
         
@@ -33357,6 +33566,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Show stickers"
+        /// </summary>
+        public static string ShowStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("ShowStickers");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string ShowVotesFew
@@ -33752,6 +33972,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SoundDefault");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sound muted"
+        /// </summary>
+        public static string SoundMuted
+        {
+            get
+            {
+                return resourceLoader.GetString("SoundMuted");
             }
         }
         
@@ -36075,6 +36306,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Return to Passport"
+        /// </summary>
+        public static string TwoStepVerificationPasswordReturnPassport
+        {
+            get
+            {
+                return resourceLoader.GetString("TwoStepVerificationPasswordReturnPassport");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Return to Settings"
+        /// </summary>
+        public static string TwoStepVerificationPasswordReturnSettings
+        {
+            get
+            {
+                return resourceLoader.GetString("TwoStepVerificationPasswordReturnSettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Password Set!"
+        /// </summary>
+        public static string TwoStepVerificationPasswordSet
+        {
+            get
+            {
+                return resourceLoader.GetString("TwoStepVerificationPasswordSet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This password will be required when you log in on a new device in addition to the code you get in the SMS."
+        /// </summary>
+        public static string TwoStepVerificationPasswordSetInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("TwoStepVerificationPasswordSetInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Set Password"
+        /// </summary>
+        public static string TwoStepVerificationSetPassword
+        {
+            get
+            {
+                return resourceLoader.GetString("TwoStepVerificationSetPassword");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Two-Step Verification"
         /// </summary>
         public static string TwoStepVerificationTitle
@@ -37695,6 +37981,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Verification code"
+        /// </summary>
+        public static string VerificationCode
+        {
+            get
+            {
+                return resourceLoader.GetString("VerificationCode");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "via"
         /// </summary>
         public static string ViaBot
@@ -39193,6 +39490,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Your recovery email for Two-Step Verification has been changed."
+        /// </summary>
+        public static string YourEmailSuccessChangedText
+        {
+            get
+            {
+                return resourceLoader.GetString("YourEmailSuccessChangedText");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Your recovery email for Two-Step Verification is now active."
         /// </summary>
         public static string YourEmailSuccessText
@@ -39233,6 +39541,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("YourPassword");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Your password for Two-Step Verification has been changed."
+        /// </summary>
+        public static string YourPasswordChangedSuccessText
+        {
+            get
+            {
+                return resourceLoader.GetString("YourPasswordChangedSuccessText");
             }
         }
         

@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Прервать настройку двухэтапной аутентификации</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Отменить настройку</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Отмена загрузки</value>
   </data>
@@ -2475,7 +2478,7 @@
     <value>Очистить кэш для {0}</value>
   </data>
   <data name="ClearCacheInfo" xml:space="preserve">
-    <value>Освободит память устройства; файлы останутся в облаке.</value>
+    <value>Освободите память устройства; файлы останутся в облаке.</value>
   </data>
   <data name="ClearFewChatsTitle" xml:space="preserve">
     <value>Очистить {0}</value>
@@ -3003,6 +3006,9 @@
   </data>
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Внимание! **Все сообщения** в чате будут удалены для Вас и **для Вашего собеседника**.</value>
+  </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Важно: это **удалит все сообщения** в чате.</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Удалить и покинуть группу</value>
@@ -3576,6 +3582,9 @@
   <data name="EnterChannelName" xml:space="preserve">
     <value>Имя канала</value>
   </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Ввести код</value>
+  </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Введите текущий код-пароль</value>
   </data>
@@ -4010,6 +4019,9 @@
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Избранные</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>Популярные GIF</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Популярные стикеры</value>
   </data>
@@ -4055,6 +4067,15 @@
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Добавление чатов в папку...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Добавить в папку</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>Из папки нельзя исключить больше 100 чатов.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Достигнут лимит</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>Все чаты</value>
   </data>
@@ -4079,11 +4100,26 @@
   <data name="FilterChannels" xml:space="preserve">
     <value>Каналы</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>Чат **{0}** добавлен в **{1}**</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>Чат **{0}** исключён из **{1}**</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Чаты</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{0}** добавлены в **{1}**</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{0}** исключены из **{1}**</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Типы чатов</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Выбрать папку</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Контакт</value>
@@ -4202,6 +4238,12 @@
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>Убрать "{0}" из списка чатов, которые не должны показываться в папке?</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Убрать из папки</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>В папку нельзя добавить больше 100 чатов.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Убрать "{0}" из списка чатов, которые должны показываться в папке?</value>
   </data>
@@ -4249,6 +4291,12 @@
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>Новые</value>
+  </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>Чат с **{0}** добавлен в **{1}**</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>Чат с **{0}** исключён из **{1}**</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Результаты</value>
@@ -4817,6 +4865,9 @@
   </data>
   <data name="HoldToAudio" xml:space="preserve">
     <value>Удерживайте для записи аудио. Нажмите для переключения на видео.</value>
+  </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>Удерживайте для записи аудио.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Удерживайте для записи видео. Нажмите для переключения на аудио.</value>
@@ -6859,6 +6910,9 @@
   <data name="PaintEdit" xml:space="preserve">
     <value>Изменить</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>С фоном</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Контур</value>
   </data>
@@ -7460,8 +7514,17 @@
   <data name="PasswordHint" xml:space="preserve">
     <value>Подсказка</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>Подсказка</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Введите подсказку для пароля</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>Выкл.</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>Вкл.</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Восстановление пароля</value>
@@ -7865,6 +7928,9 @@
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Введите пароль</value>
   </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Введите новый пароль</value>
+  </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Введите новый пароль</value>
   </data>
@@ -8118,7 +8184,7 @@
     <value>Скрыть</value>
   </data>
   <data name="PsaHideChatAlertText" xml:space="preserve">
-    <value>Вы точно хотите скрыть выбранный чат?</value>
+    <value>Вы точно хотите скрыть этот чат?</value>
   </data>
   <data name="PsaHideChatAlertTitle" xml:space="preserve">
     <value>Скрыть чат</value>
@@ -8142,7 +8208,7 @@
     <value>Это важное уведомление.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
-    <value>важно</value>
+    <value>COVID-19</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -8158,6 +8224,9 @@
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Фиолетовый</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>Чтобы Вы могли сканировать QR-коды, Telegram нужен доступ к камере.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Вопрос</value>
@@ -8271,6 +8340,9 @@
     <value>записывает видеосообщение...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
+    <value>Электронная почта</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
     <value>Электронная почта</value>
   </data>
   <data name="Red" xml:space="preserve">
@@ -9228,6 +9300,9 @@
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Отключите, если хотите получать только уведомления активного аккаунта.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Показать стикеры</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value>Показать больше ({0})</value>
   </data>
@@ -9338,6 +9413,9 @@
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>По умолчанию</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Уведомления выключены</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Начать</value>
@@ -9991,6 +10069,21 @@
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Двухэтапная аутентификация</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Вернуться к паспорту</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Вернуться к настройкам</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Пароль установлен</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>Этот пароль потребуется вводить при авторизации с нового устройства в дополнение к коду из SMS.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Задать пароль</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Двухэтапная аутентификация</value>
   </data>
@@ -10435,6 +10528,9 @@
   <data name="UserUnblocked" xml:space="preserve">
     <value>Пользователь разблокирован</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Код подтверждения</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
   </data>
@@ -10845,6 +10941,9 @@
 
 Если Вы забудете пароль, Вы потеряете доступ к своему аккаунту. Не будет никакого способа его восстановить.</value>
   </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>Почта для двухэтапной аутентификации изменена.</value>
+  </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>Адрес для восстановления пароля двухэтапной аутентификации активирован.</value>
   </data>
@@ -10856,6 +10955,9 @@
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Пароль</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>Пароль двухэтапной аутентификации изменён.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Готово!</value>
