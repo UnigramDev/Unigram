@@ -645,34 +645,11 @@ namespace Unigram.ViewModels
             RaisePropertyChanged(() => Items);
         }
 
-        public class ItemsCollection : SortedObservableCollection<Chat>, ISupportIncrementalLoading,
+        public class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading,
             IHandle<UpdateChatDraftMessage>,
             IHandle<UpdateChatLastMessage>,
             IHandle<UpdateChatPosition>
         {
-            class ChatComparer : IComparer<Chat>
-            {
-                private ChatList _chatList;
-
-                public ChatComparer(ChatList chatList)
-                {
-                    _chatList = chatList;
-                }
-
-                public int Compare(Chat x, Chat y)
-                {
-                    var positionX = x.GetPosition(_chatList);
-                    var positionY = y.GetPosition(_chatList);
-
-                    if (positionX != null && positionY != null)
-                    {
-                        return positionY.Order.CompareTo(positionX.Order);
-                    }
-
-                    return 0;
-                }
-            }
-
             private readonly IProtoService _protoService;
             private readonly IEventAggregator _aggregator;
 
@@ -693,7 +670,6 @@ namespace Unigram.ViewModels
             public ChatList ChatList => _chatList;
 
             public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList)
-                : base(new ChatComparer(chatList), true)
             {
                 _protoService = protoService;
                 _aggregator = aggregator;
@@ -728,7 +704,11 @@ namespace Unigram.ViewModels
                                     _internalChatId = chat.Id;
                                     _internalOrder = position.Order;
 
-                                    Add(chat);
+                                    var next = NextIndexOf(chat, position.Order);
+                                    if (next >= 0)
+                                    {
+                                        Add(chat);
+                                    }
 
                                     _lastChatId = chat.Id;
                                     _lastOrder = position.Order;
@@ -813,10 +793,8 @@ namespace Unigram.ViewModels
                         {
                             using (await _loadMoreLock.WaitAsync())
                             {
-                                var index = IndexOf(chat);
-                                var next = NextIndexOf(chat);
-
-                                if (next >= 0 && index != next)
+                                var next = NextIndexOf(chat, order);
+                                if (next >= 0)
                                 {
                                     Remove(chat);
                                     Insert(next, chat);
@@ -830,7 +808,7 @@ namespace Unigram.ViewModels
                                         _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
                                     }
                                 }
-                                else if (next >= 0 && lastMessage)
+                                else if (lastMessage)
                                 {
                                     _viewModel.Delegate?.UpdateChatLastMessage(chat);
                                 }
@@ -860,6 +838,33 @@ namespace Unigram.ViewModels
                         }
                     });
                 }
+            }
+
+            private int NextIndexOf(Chat chat, long order)
+            {
+                for (int i = 0; i < Count; i++)
+                {
+                    var item = this[i];
+
+                    var position = item.GetPosition(_chatList);
+                    if (position == null)
+                    {
+                        // This should actually never happen.
+                        continue;
+                    }
+
+                    if (order > position.Order || order == position.Order && chat.Id >= item.Id)
+                    {
+                        if (chat.Id == item.Id)
+                        {
+                            return -1;
+                        }
+
+                        return i;
+                    }
+                }
+
+                return Count;
             }
 
             private Chat GetChat(long chatId)
