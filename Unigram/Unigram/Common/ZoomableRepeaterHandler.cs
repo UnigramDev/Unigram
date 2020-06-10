@@ -48,9 +48,9 @@ namespace Unigram.Common
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _listView.PointerMoved += OnPointerMoved;
-            _listView.PointerReleased += OnPointerCaptureLost;
-            _listView.PointerCanceled += OnPointerCaptureLost;
-            _listView.PointerCaptureLost += OnPointerCaptureLost;
+            _listView.PointerReleased += OnPointerReleased;
+            _listView.PointerCanceled += OnPointerReleased;
+            _listView.PointerCaptureLost += OnPointerReleased;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -58,9 +58,9 @@ namespace Unigram.Common
             _listView.Loaded -= OnLoaded;
             _listView.Unloaded -= OnUnloaded;
             _listView.PointerMoved -= OnPointerMoved;
-            _listView.PointerReleased -= OnPointerCaptureLost;
-            _listView.PointerCanceled -= OnPointerCaptureLost;
-            _listView.PointerCaptureLost -= OnPointerCaptureLost;
+            _listView.PointerReleased -= OnPointerReleased;
+            _listView.PointerCanceled -= OnPointerReleased;
+            _listView.PointerCaptureLost -= OnPointerReleased;
         }
 
         public Action<int> DownloadFile
@@ -119,6 +119,8 @@ namespace Unigram.Common
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
             _popupContent = null;
+            _pointer = null;
+
             _throttler.Stop();
 
             if (_popupHost.IsOpen)
@@ -157,19 +159,6 @@ namespace Unigram.Common
 
                     _popupContent = content;
                 }
-            }
-        }
-
-        private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
-        {
-            _throttler.Stop();
-
-            if (_popupHost.IsOpen)
-            {
-                _popupHost.IsOpen = false;
-
-                Closing?.Invoke();
-                e.Handled = true;
             }
         }
 
