@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Core.Direct;
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Windows.Foundation;
 using Windows.System;
@@ -38,7 +39,25 @@ namespace Unigram.Common
             }
         }
 
+        public static void CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
+        {
+            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem)
+            {
+                flyout.Items.Add(new MenuFlyoutSeparator());
+            }
+        }
+
         public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, ICommand command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
+        {
+            flyout.Items.CreateFlyoutItem(visibility, command, parameter, text, icon, key, modifiers);
+        }
+
+        public static void CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Func<T, bool> visibility, ICommand command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
+        {
+            flyout.Items.CreateFlyoutItem(visibility, command, parameter, text, icon, key, modifiers);
+        }
+
+        public static void CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Func<T, bool> visibility, ICommand command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
         {
             var value = visibility(parameter as T);
             if (value)
@@ -58,26 +77,7 @@ namespace Unigram.Common
                     flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
                 }
 
-                flyout.Items.Add(flyoutItem);
-            }
-        }
-
-        public static void CreateSwipeItem<T>(this Microsoft.UI.Xaml.Controls.SwipeItems flyout, Func<T, bool> visibility, ICommand command, T parameter, string text, Microsoft.UI.Xaml.Controls.IconSource icon = null) where T : class
-        {
-            var value = visibility(parameter as T);
-            if (value)
-            {
-                var flyoutItem = new Microsoft.UI.Xaml.Controls.SwipeItem();
-                flyoutItem.Command = command;
-                flyoutItem.CommandParameter = parameter;
-                flyoutItem.Text = text;
-
-                if (icon != null)
-                {
-                    flyoutItem.IconSource = icon;
-                }
-
-                flyout.Add(flyoutItem);
+                items.Add(flyoutItem);
             }
         }
 
@@ -88,8 +88,8 @@ namespace Unigram.Common
             if (value)
             {
                 var flyoutItem = new MenuFlyoutItem();
-                flyoutItem.Command = command;
                 flyoutItem.CommandParameter = parameter;
+                flyoutItem.Command = command;
                 flyoutItem.Text = text;
 
                 if (icon != null)
@@ -128,10 +128,20 @@ namespace Unigram.Common
 
         public static void CreateFlyoutItem(this MenuFlyout flyout, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
+            flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers);
+        }
+
+        public static void CreateFlyoutItem(this MenuFlyoutSubItem flyout, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
+            flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers);
+        }
+
+        public static void CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = command != null;
-            flyoutItem.Command = command;
             flyoutItem.CommandParameter = parameter;
+            flyoutItem.Command = command;
             flyoutItem.Text = text;
 
             if (icon != null)
@@ -144,7 +154,7 @@ namespace Unigram.Common
                 flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
 
-            flyout.Items.Add(flyoutItem);
+            items.Add(flyoutItem);
         }
 
         public static IconElement GetGlyph(string glyph)

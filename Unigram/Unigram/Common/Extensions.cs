@@ -661,6 +661,18 @@ namespace Unigram.Common
             return list;
         }
 
+        public static IEnumerable<T> AllChildren<T>(this DependencyObject parent)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var _Child = VisualTreeHelper.GetChild(parent, i);
+                if (_Child is T)
+                {
+                    yield return (T)(object)_Child;
+                }
+            }
+        }
+
         public static T GetChild<T>(this DependencyObject parentContainer, string controlName)
         {
             var childControls = AllChildren(parentContainer);
