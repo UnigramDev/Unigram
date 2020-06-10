@@ -257,7 +257,7 @@ namespace Unigram.Controls
         }
     }
 
-    public class TopNavViewItem : ListViewItem
+    public class TopNavViewItem : TextListViewItem
     {
         public TopNavViewItem()
         {
