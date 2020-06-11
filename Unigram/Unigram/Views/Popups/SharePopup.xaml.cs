@@ -402,6 +402,11 @@ namespace Unigram.Views.Popups
 
             foreach (var chat in dialog.ViewModel.SelectedItems)
             {
+                if (chat == null)
+                {
+                    continue;
+                }
+
                 target.Add(new FilterChat { Chat = chat });
             }
 
@@ -828,6 +833,7 @@ namespace Unigram.Views.Popups
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
         }
 
