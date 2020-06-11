@@ -78,7 +78,7 @@ To work with Windows 10 N you will need Media Feature pack. To install it proper
 <a name="translations"></a>
 ## Translations
 Unigram has 18 built-in languages, but has access to unlimited packs using Telegram translations platform.
-If you are wishing to translate it to your language, you can do that [here](https://translations.telegram.org/en/android/), since Unigram uses the same translations as the official Telegram client for Android.
+If you are wishing to translate it to your language, you can do that [here](https://translations.telegram.org/en/android/), since Unigram uses the same translations as the official Telegram app for Android.
 
 <a name="wiki"></a>
 ## Wiki
