@@ -19,6 +19,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Chats
 {
@@ -30,8 +31,6 @@ namespace Unigram.Views.Chats
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChatSharedMediaViewModel, IFileDelegate>(this);
-
-            ViewModel.PropertyChanged += OnPropertyChanged;
 
             InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
             InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
@@ -47,6 +46,16 @@ namespace Unigram.Views.Chats
 
             Header.ItemsSource = _tabs;
             Header.SelectedIndex = 0;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
         private readonly ObservableCollection<ChatSharedMediaTab> _tabs;

@@ -575,7 +575,6 @@ namespace Unigram.Views.Popups
             {
                 flyout.ShowAt(sender as FrameworkElement);
             }
-
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

@@ -2,6 +2,7 @@
 using Unigram.ViewModels.SignIn;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.SignIn
 {
@@ -15,8 +16,16 @@ namespace Unigram.Views.SignIn
             DataContext = TLContainer.Current.Resolve<SignUpViewModel>();
 
             Transitions = ApiInfo.CreateSlideTransition();
+        }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
             ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

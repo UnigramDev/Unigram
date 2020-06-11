@@ -5,6 +5,7 @@ using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
@@ -16,8 +17,16 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsPhoneViewModel>();
+        }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
             ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
