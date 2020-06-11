@@ -40,7 +40,22 @@ namespace Unigram.Common
             _throttler.Tick += (s, args) =>
             {
                 _throttler.Stop();
-                DoSomething(_popupContent);
+
+                try
+                {
+                    DoSomething(_popupContent);
+                }
+                catch
+                {
+                    _popupContent = null;
+                    _pointer = null;
+
+                    if (_popupHost.IsOpen)
+                    {
+                        _popupHost.IsOpen = false;
+                        Closing?.Invoke();
+                    }
+                }
             };
         }
 
@@ -117,10 +132,10 @@ namespace Unigram.Common
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            _throttler.Stop();
+
             _popupContent = null;
             _pointer = null;
-
-            _throttler.Stop();
 
             if (_popupHost.IsOpen)
             {
