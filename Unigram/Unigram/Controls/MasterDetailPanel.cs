@@ -95,12 +95,12 @@ namespace Unigram.Controls
                 _registerEvents = false;
 
                 grip.PointerEntered += Grip_PointerEntered;
+                grip.PointerExited += Grip_PointerExited;
                 grip.PointerPressed += Grip_PointerPressed;
                 grip.PointerMoved += Grip_PointerMoved;
                 grip.PointerReleased += Grip_PointerReleased;
-                grip.PointerExited += Grip_PointerExited;
-                grip.PointerCanceled += Grip_PointerExited;
-                grip.PointerCaptureLost += Grip_PointerExited;
+                grip.PointerCanceled += Grip_PointerReleased;
+                grip.PointerCaptureLost += Grip_PointerReleased;
                 grip.Unloaded += Grip_Unloaded;
             }
 
