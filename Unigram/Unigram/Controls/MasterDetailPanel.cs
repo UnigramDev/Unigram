@@ -78,6 +78,8 @@ namespace Unigram.Controls
             }
         }
 
+        private bool _registerEvents = true;
+
         protected override Size MeasureOverride(Size availableSize)
         {
             var background = Children[0];
@@ -88,15 +90,13 @@ namespace Unigram.Controls
             var master = Children[5];
             var grip = Children[6] as FrameworkElement;
 
-            if (grip.ManipulationMode == ManipulationModes.System)
+            if (_registerEvents)
             {
-                grip.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateRailsY;
-                grip.ManipulationStarted += Grip_ManipulationStarted;
-                grip.ManipulationDelta += Grip_ManipulationDelta;
-                grip.ManipulationCompleted += Grip_ManipulationCompleted;
+                _registerEvents = false;
 
                 grip.PointerEntered += Grip_PointerEntered;
                 grip.PointerPressed += Grip_PointerPressed;
+                grip.PointerMoved += Grip_PointerMoved;
                 grip.PointerReleased += Grip_PointerReleased;
                 grip.PointerExited += Grip_PointerExited;
                 grip.PointerCanceled += Grip_PointerExited;
@@ -205,57 +205,11 @@ namespace Unigram.Controls
             return result;
         }
 
-        private void Grip_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
-        {
-            VisualStateManager.GoToState(Children[7] as UserControl, "Pressed", false);
-        }
-
-        private void Grip_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            var master = Children[5] as FrameworkElement;
-            var grip = Children[6];
-
-            var newWidth = master.ActualWidth + e.Cumulative.Translation.X + 8;
-            var newRatio = (newWidth < columnMinimalWidthLeft / 2)
-                ? 0
-                : newWidth / ActualWidth;
-
-            if (newRatio == 0 && _allowCompact)
-            {
-                newWidth = columnCompactWidthLeft;
-            }
-            else
-            {
-                newWidth = CountDialogsWidthFromRatio(ActualWidth, newRatio);
-            }
-
-            grip.Arrange(new Rect(newWidth, 0, 8, ActualHeight));
-            gripWidthRatio = newRatio;
-        }
-
-        private void Grip_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            VisualStateManager.GoToState(Children[6] as UserControl, "Normal", false);
-
-            dialogsWidthRatio = gripWidthRatio;
-            SettingsService.Current.DialogsWidthRatio = gripWidthRatio;
-
-            InvalidateMeasure();
-            InvalidateArrange();
-
-            if (e.Position.X < 0 || e.Position.X > 8)
-            {
-                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
-            }
-
-            foreach (var pointer in PointerCaptures)
-            {
-                ReleasePointerCapture(pointer);
-            }
-        }
-
         private static readonly CoreCursor _defaultCursor = new CoreCursor(CoreCursorType.Arrow, 1);
         private static readonly CoreCursor _resizeCursor = new CoreCursor(CoreCursorType.SizeWestEast, 1);
+
+        private bool _pointerPressed;
+        private double _pointerDelta;
 
         private void Grip_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
@@ -264,7 +218,14 @@ namespace Unigram.Controls
 
         private void Grip_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+            if (!_pointerPressed)
+            {
+                var point = e.GetCurrentPoint(Children[6]);
+                if (point.Position.X < 0 || point.Position.X > 8)
+                {
+                    Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+                }
+            }
         }
 
         private void Grip_Unloaded(object sender, RoutedEventArgs e)
@@ -274,15 +235,59 @@ namespace Unigram.Controls
 
         private void Grip_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(Children[6] as UserControl, "Pressed", false);
+            var master = Children[5] as FrameworkElement;
+            var grip = Children[6] as UserControl;
 
-            CapturePointer(e.Pointer);
+            _pointerPressed = true;
+            _pointerDelta = e.GetCurrentPoint(this).Position.X - master.ActualWidth;
+
+            VisualStateManager.GoToState(grip as UserControl, "Pressed", false);
+
+            grip.CapturePointer(e.Pointer);
             e.Handled = true;
+        }
+
+        private void Grip_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (_pointerPressed)
+            {
+                var master = Children[5] as FrameworkElement;
+                var grip = Children[6] as UserControl;
+
+                var point = e.GetCurrentPoint(this);
+
+                var newWidth = point.Position.X - _pointerDelta;
+                var newRatio = (newWidth < columnMinimalWidthLeft / 2)
+                    ? 0
+                    : newWidth / ActualWidth;
+
+                if (newRatio == 0 && _allowCompact)
+                {
+                    newWidth = columnCompactWidthLeft;
+                }
+                else
+                {
+                    newWidth = CountDialogsWidthFromRatio(ActualWidth, newRatio);
+                }
+
+                grip.Arrange(new Rect(newWidth, 0, 8, ActualHeight));
+                gripWidthRatio = newRatio;
+            }
         }
 
         private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            VisualStateManager.GoToState(Children[6] as UserControl, "Normal", false);
+            var master = Children[5] as FrameworkElement;
+            var grip = Children[6] as UserControl;
+
+            _pointerPressed = false;
+            VisualStateManager.GoToState(grip, "Normal", false);
+
+            dialogsWidthRatio = gripWidthRatio;
+            SettingsService.Current.DialogsWidthRatio = gripWidthRatio;
+
+            InvalidateMeasure();
+            InvalidateArrange();
 
             var point = e.GetCurrentPoint(Children[6]);
             if (point.Position.X < 0 || point.Position.X > 8)
@@ -290,7 +295,7 @@ namespace Unigram.Controls
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }
 
-            ReleasePointerCapture(e.Pointer);
+            grip.ReleasePointerCapture(e.Pointer);
             e.Handled = true;
         }
 
