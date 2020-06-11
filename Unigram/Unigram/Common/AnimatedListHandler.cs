@@ -84,7 +84,7 @@ namespace Unigram.Common
             //LoadVisibleItems(/*e.IsIntermediate*/ false);
         }
 
-        public void LoadVisibleItemsThrottled()
+        public void ThrottleVisibleItems()
         {
             _throttler.Stop();
             _throttler.Start();

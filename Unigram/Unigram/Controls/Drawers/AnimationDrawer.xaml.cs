@@ -24,10 +24,8 @@ namespace Unigram.Controls.Drawers
         public Action<Animation> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
-        private ZoomableRepeaterHandler _zoomer;
-
         private AnimatedRepeaterHandler<Animation> _handler;
-        private DispatcherTimer _throttler;
+        private ZoomableRepeaterHandler _zoomer;
 
         private FileContext<Animation> _animations = new FileContext<Animation>();
 
@@ -40,17 +38,9 @@ namespace Unigram.Controls.Drawers
             _handler = new AnimatedRepeaterHandler<Animation>(Repeater, ScrollingHost);
             _handler.DownloadFile = DownloadFile;
 
-            _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _throttler.Tick += (s, args) =>
-            {
-                _throttler.Stop();
-                _handler.LoadVisibleItems(false);
-            };
-
             _zoomer = new ZoomableRepeaterHandler(Repeater);
             _zoomer.Opening = _handler.UnloadVisibleItems;
-            _zoomer.Closing = _handler.LoadVisibleItemsThrottled;
+            _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
             _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
@@ -80,7 +70,7 @@ namespace Unigram.Controls.Drawers
         public void Activate()
         {
             _isActive = true;
-            _handler.LoadVisibleItemsThrottled();
+            _handler.ThrottleVisibleItems();
         }
 
         public void Deactivate()
@@ -176,7 +166,7 @@ namespace Unigram.Controls.Drawers
 
         private object ConvertItems(object items)
         {
-            _handler.LoadVisibleItemsThrottled();
+            _handler.ThrottleVisibleItems();
             return items;
         }
 
@@ -219,8 +209,7 @@ namespace Unigram.Controls.Drawers
                     }
                     else if (item.AnimationValue.Id == file.Id)
                     {
-                        _throttler.Stop();
-                        _throttler.Start();
+                        _handler.ThrottleVisibleItems();
                     }
                 }
             }

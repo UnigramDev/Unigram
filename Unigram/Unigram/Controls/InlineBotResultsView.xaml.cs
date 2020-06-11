@@ -18,10 +18,8 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private ZoomableRepeaterHandler _zoomer;
-
         private AnimatedRepeaterHandler<InlineQueryResult> _handler;
-        private DispatcherTimer _throttler;
+        private ZoomableRepeaterHandler _zoomer;
 
         private FileContext<InlineQueryResult> _files = new FileContext<InlineQueryResult>();
         private FileContext<InlineQueryResult> _thumbnails = new FileContext<InlineQueryResult>();
@@ -36,17 +34,9 @@ namespace Unigram.Controls
                 DownloadFile(_files, id, result);
             };
 
-            _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _throttler.Tick += (s, args) =>
-            {
-                _throttler.Stop();
-                _handler.LoadVisibleItems(false);
-            };
-
             _zoomer = new ZoomableRepeaterHandler(Repeater);
             _zoomer.Opening = _handler.UnloadVisibleItems;
-            _zoomer.Closing = _handler.LoadVisibleItemsThrottled;
+            _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
             _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
         }
@@ -167,8 +157,7 @@ namespace Unigram.Controls
                         continue;
                     }
 
-                    _throttler.Stop();
-                    _throttler.Start();
+                    _handler.ThrottleVisibleItems();
                 }
             }
 

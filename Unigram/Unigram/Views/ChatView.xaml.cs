@@ -107,7 +107,7 @@ namespace Unigram.Views
 
             _autocompleteZoomer = new ZoomableListHandler(ListAutocomplete);
             _autocompleteZoomer.Opening = _autocompleteHandler.UnloadVisibleItems;
-            _autocompleteZoomer.Closing = _autocompleteHandler.LoadVisibleItemsThrottled;
+            _autocompleteZoomer.Closing = _autocompleteHandler.ThrottleVisibleItems;
             _autocompleteZoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
             _autocompleteZoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
@@ -4230,7 +4230,7 @@ namespace Unigram.Views
                         }
                         else if (file.Id == sticker.StickerValue.Id)
                         {
-                            _autocompleteHandler.LoadVisibleItems(false);
+                            _autocompleteHandler.ThrottleVisibleItems();
                         }
                     }
                 }

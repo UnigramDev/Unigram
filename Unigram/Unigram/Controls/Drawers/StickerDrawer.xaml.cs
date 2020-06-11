@@ -30,10 +30,8 @@ namespace Unigram.Controls.Drawers
         public Action<Sticker> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
-        private readonly ZoomableListHandler _zoomer;
-
         private readonly AnimatedListHandler<StickerViewModel> _handler;
-        private readonly DispatcherTimer _throttler;
+        private readonly ZoomableListHandler _zoomer;
 
         private readonly AnimatedListHandler<StickerSetViewModel> _toolbarHandler;
 
@@ -54,17 +52,9 @@ namespace Unigram.Controls.Drawers
                 DownloadFile(_stickers, id, sticker);
             };
 
-            _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _throttler.Tick += (s, args) =>
-            {
-                _throttler.Stop();
-                _handler.LoadVisibleItems(false);
-            };
-
             _zoomer = new ZoomableListHandler(Stickers);
             _zoomer.Opening = _handler.UnloadVisibleItems;
-            _zoomer.Closing = _handler.LoadVisibleItemsThrottled;
+            _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
             _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
@@ -93,7 +83,7 @@ namespace Unigram.Controls.Drawers
         public void Activate()
         {
             _isActive = true;
-            _handler.LoadVisibleItemsThrottled();
+            _handler.ThrottleVisibleItems();
         }
 
         public void Deactivate()
@@ -157,8 +147,7 @@ namespace Unigram.Controls.Drawers
                     }
                     else if (item.StickerValue.Id == file.Id)
                     {
-                        _throttler.Stop();
-                        _throttler.Start();
+                        _handler.ThrottleVisibleItems();
                     }
                 }
             }
