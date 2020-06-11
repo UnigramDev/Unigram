@@ -13,7 +13,8 @@
     SecondaryButtonText="Button2"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    FocusPrimaryButton="False">
+    FocusPrimaryButton="False"
+    IsLightDismissEnabled="False">
 
     <ContentControl.Resources>
         <Style x:Key="ModernPivotRadioButtonStyle" TargetType="controls:PivotRadioButton">
