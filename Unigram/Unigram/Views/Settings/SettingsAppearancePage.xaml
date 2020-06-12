@@ -286,8 +286,10 @@
 
                 <controls:HeaderedControl
                     Header="{CustomResource ColorTheme}">
-                    <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                    <ListView x:Name="List"
+                              ItemsSource="{x:Bind ViewModel.Items}"
                               SelectionMode="None"
+                              ChoosingItemContainer="OnChoosingItemContainer"
                               ContainerContentChanging="OnContainerContentChanging"
                               Style="{StaticResource HorizontalListViewStyle}"
                               ItemContainerTransitions="{x:Null}">
@@ -295,10 +297,8 @@
                             <DataTemplate x:DataType="services:ThemeInfoBase">
                                 <StackPanel Margin="12,12,0,12">
                                     <RadioButton
-                                        Click="Switch_Click"
                                         Tag="{x:Bind}"
                                         GroupName="Theme"
-                                        ContextRequested="Theme_ContextRequested"
                                         Style="{StaticResource ThemeRadioButtonStyle}">
                                         <RadioButton.Background>
                                             <SolidColorBrush Color="{x:Bind ChatBackgroundColor}"/>
@@ -354,7 +354,7 @@
                             ItemContainerTransitions="{x:Null}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="services:ThemeAccentInfo">
-                                    <RadioButton Click="Switch_Click" Tag="{x:Bind}" GroupName="Accent" Margin="12,12,0,12" Style="{StaticResource AccentRadioButtonStyle}">
+                                    <RadioButton Tag="{x:Bind}" GroupName="Accent" Margin="12,12,0,12" Style="{StaticResource AccentRadioButtonStyle}">
                                         <RadioButton.Background>
                                             <SolidColorBrush Color="{x:Bind AccentColor}"/>
                                         </RadioButton.Background>

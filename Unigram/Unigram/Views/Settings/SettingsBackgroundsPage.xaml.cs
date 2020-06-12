@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -16,6 +17,8 @@ namespace Unigram.Views.Settings
     public sealed partial class SettingsBackgroundsPage : HostedPage, IHandle<UpdateFile>
     {
         public SettingsBackgroundsViewModel ViewModel => DataContext as SettingsBackgroundsViewModel;
+
+        private FileContext<Background> _backgrounds = new FileContext<Background>();
 
         public SettingsBackgroundsPage()
         {
@@ -74,7 +77,16 @@ namespace Unigram.Views.Settings
                 }
 
                 var content = root.Children[0] as Image;
-                content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.File, wallpaper.Document.Thumbnail.Width, wallpaper.Document.Thumbnail.Height);
+                var file = small.File;
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    content.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = wallpaper.Document.Thumbnail.Width, DecodePixelHeight = wallpaper.Document.Thumbnail.Height, DecodePixelType = DecodePixelType.Logical };
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    _backgrounds[file.Id].Add(wallpaper);
+                    ViewModel.ProtoService.DownloadFile(file.Id, 1);
+                }
 
                 if (wallpaper.Type is BackgroundTypePattern pattern)
                 {
@@ -96,12 +108,20 @@ namespace Unigram.Views.Settings
 
         public void Handle(UpdateFile update)
         {
-            this.BeginOnUIThread(() =>
+            var file = update.File;
+            if (!file.Local.IsDownloadingCompleted)
             {
-                foreach (var item in ViewModel.Items)
+                return;
+            }
+
+            if (_backgrounds.TryGetValue(update.File.Id, out List<Background> items))
+            {
+                this.BeginOnUIThread(() =>
                 {
-                    if (item.UpdateFile(update.File))
+                    foreach (var item in items)
                     {
+                        item.UpdateFile(update.File);
+
                         var container = List.ContainerFromItem(item) as SelectorItem;
                         if (container == null)
                         {
@@ -117,19 +137,19 @@ namespace Unigram.Views.Settings
                         var content = root.Children[0] as Image;
                         if (content == null)
                         {
-                            return;
+                            continue;
                         }
 
                         var small = item.Document?.Thumbnail;
                         if (small == null)
                         {
-                            return;
+                            continue;
                         }
 
-                        content.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.File, item.Document.Thumbnail.Width, item.Document.Thumbnail.Height);
+                        content.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = small.Width, DecodePixelHeight = small.Height, DecodePixelType = DecodePixelType.Logical };
                     }
-                }
-            });
+                });
+            }
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
