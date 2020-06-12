@@ -34,6 +34,21 @@ namespace Unigram.Views.Settings
             }
         }
 
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += User_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
@@ -64,6 +79,8 @@ namespace Unigram.Views.Settings
 
             args.Handled = true;
         }
+
+        #endregion
 
         private void User_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {

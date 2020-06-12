@@ -29,11 +29,12 @@
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="ListView_ItemClick"
             IsItemClickEnabled="True"
+            ChoosingItemContainer="OnChoosingItemContainer"
             ContainerContentChanging="OnContainerContentChanging"
             SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="0,6" Background="Transparent" ContextRequested="User_ContextRequested">
+                    <Grid Margin="0,6" Background="Transparent">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
