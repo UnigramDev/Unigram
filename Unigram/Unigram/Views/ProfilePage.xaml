@@ -36,6 +36,36 @@
                         Margin="12,0"/>
                 </Border>
 
+                <Grid x:Name="InfoPanel" Margin="12,0,0,0" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture
+                        x:Name="PhotoInfo"
+                        AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                        Width="{ThemeResource ChatPhotoSize}"
+                        Height="{ThemeResource ChatPhotoSize}"
+                        Margin="0,0,12,0"/>
+
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
+                        <TextBlock
+                            x:Name="TitleInfo"
+                            Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis"
+                            MaxLines="1"/>
+                        <TextBlock
+                            x:Name="SubtitleInfo"
+                            Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+
                 <controls:GlyphButton
                     x:Name="Call"
                     Glyph="&#xE13A;"

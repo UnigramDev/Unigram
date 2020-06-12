@@ -38,7 +38,7 @@
             <Border x:Name="HeaderAnimator" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}" BorderThickness="0,0,0,1"/>
             <!--<Border x:Name="HeaderAnimator" />-->
             <controls:ContentPageHeader x:Name="HeaderPage">
-                <controls:TopNavView x:Name="Header" IsItemClickEnabled="True" ItemClick="Header_ItemClick" DisplayMemberPath="Text" Grid.RowSpan="1"/>
+                <controls:TopNavView x:Name="Header" IsItemClickEnabled="True" ItemClick="Header_ItemClick" DisplayMemberPath="Title" Grid.RowSpan="1"/>
             </controls:ContentPageHeader>
         </Grid>
 

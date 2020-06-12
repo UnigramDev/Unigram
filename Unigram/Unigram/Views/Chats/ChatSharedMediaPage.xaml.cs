@@ -38,11 +38,11 @@ namespace Unigram.Views.Chats
             InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
 
             _tabs = new ObservableCollection<ChatSharedMediaTab>();
-            _tabs.Add(_mediaHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedMediaTab2 });
-            _tabs.Add(_filesHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedFilesTab2 });
-            _tabs.Add(_linksHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedLinksTab2 });
-            _tabs.Add(_musicHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedMusicTab2 });
-            _tabs.Add(_voiceHeader = new ChatSharedMediaTab { Text = Strings.Resources.SharedVoiceTab2 });
+            _tabs.Add(_mediaHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedMediaTab2 });
+            _tabs.Add(_filesHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedFilesTab2 });
+            _tabs.Add(_linksHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedLinksTab2 });
+            _tabs.Add(_musicHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedMusicTab2 });
+            _tabs.Add(_voiceHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedVoiceTab2 });
 
             Header.ItemsSource = _tabs;
             Header.SelectedIndex = 0;
@@ -105,7 +105,7 @@ namespace Unigram.Views.Chats
 
                     ScrollingHost.Items.Insert(value.Index, pivotItem);
 
-                    _tabs.Insert(value.Index, new ChatSharedMediaTab { Text = value.Text });
+                    _tabs.Insert(value.Index, new ChatSharedMediaTab { Title = value.Text });
                 }
             }
         }
@@ -242,7 +242,7 @@ namespace Unigram.Views.Chats
         }
 
         public event EventHandler<ScrollViewerViewChangedEventArgs> ViewChanged;
-        public event EventHandler<EventArgs> ViewRequested;
+        public event EventHandler<ChatSharedMediaTab> ViewRequested;
 
         private void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
         {
@@ -774,7 +774,9 @@ namespace Unigram.Views.Chats
 
     public class ChatSharedMediaTab
     {
-        public string Text { get; set; }
+        public string Title { get; set; }
+
+        public string Subtitle { get; set; }
     }
 
     public interface IProfileTab

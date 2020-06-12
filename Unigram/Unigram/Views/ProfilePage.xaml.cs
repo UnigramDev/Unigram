@@ -102,11 +102,13 @@ namespace Unigram.Views
         public void UpdateChatTitle(Chat chat)
         {
             Title.Text = ViewModel.ProtoService.GetTitle(chat);
+            TitleInfo.Text = Title.Text;
         }
 
         public void UpdateChatPhoto(Chat chat)
         {
             Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 64);
+            PhotoInfo.Source = Photo.Source;
         }
 
         public void UpdateChatNotificationSettings(Chat chat)
@@ -118,6 +120,7 @@ namespace Unigram.Views
         public void UpdateUser(Chat chat, User user, bool secret)
         {
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
+            SubtitleInfo.Text = Subtitle.Text;
 
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
@@ -144,7 +147,10 @@ namespace Unigram.Views
             }
             else
             {
-                if (user.Type is UserTypeBot || user.Id == ViewModel.CacheService.Options.MyId)
+                if (user.Type is UserTypeBot ||
+                    user.Id == ViewModel.CacheService.Options.MyId ||
+                    LastSeenConverter.IsServiceUser(user) ||
+                    LastSeenConverter.IsSupportUser(user))
                 {
                     MiscPanel.Visibility = Visibility.Collapsed;
                     UserStartSecret.Visibility = Visibility.Collapsed;
@@ -868,9 +874,7 @@ namespace Unigram.Views
             if (scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight - 12 && _scrollingHost < scrollViewer.VerticalOffset)
             {
                 _scrollingHostDisabled = true;
-                scrollViewer.ChangeView(null, scrollViewer.ScrollableHeight, null, true);
-                scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
-                scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                SetScrollMode(false);
 
                 SharedMedia.SetScrollMode(true);
                 _sharedMediaDisabled = false;
@@ -895,9 +899,7 @@ namespace Unigram.Views
 
             if (scrollViewer2.VerticalOffset <= 12 && _sharedMedia > scrollViewer2.VerticalOffset)
             {
-                ScrollingHost.VerticalScrollMode = ScrollMode.Auto;
-                ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-                ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight - 48, null, false);
+                SetScrollMode(true);
                 _scrollingHostDisabled = false;
 
                 _sharedMediaDisabled = true;
@@ -905,6 +907,28 @@ namespace Unigram.Views
             }
 
             _sharedMedia = scrollViewer2.VerticalOffset;
+        }
+
+        private void SetScrollMode(bool enable)
+        {
+            if (enable)
+            {
+                ScrollingHost.VerticalScrollMode = ScrollMode.Auto;
+                ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight - 48, null, false);
+
+                ScrollingInfo.Visibility = Visibility.Visible;
+                InfoPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null, true);
+                ScrollingHost.VerticalScrollMode = ScrollMode.Disabled;
+                ScrollingHost.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+
+                ScrollingInfo.Visibility = Visibility.Collapsed;
+                InfoPanel.Visibility = Visibility.Visible;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
