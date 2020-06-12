@@ -98,6 +98,9 @@ namespace Unigram.Views.Settings
             var title = content.Children[0] as TextBlock;
             var subtitle = content.Children[1] as TextBlock;
 
+            check.Click -= CheckBox_Click;
+            check.Click += CheckBox_Click;
+
             check.Background = new SolidColorBrush(item.Stroke);
             check.IsChecked = item.IsVisible;
 

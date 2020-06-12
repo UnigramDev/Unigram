@@ -20,7 +20,7 @@
         </Style>
     </ContentDialog.Resources>
     
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}" Width="320">
-        <controls:HeaderedControl x:Name="LayoutRoot" Margin="0,0,0,8"/>
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <controls:HeaderedControl x:Name="LayoutRoot" Margin="0,0,0,16"/>
     </Grid>
 </controls:ContentPopup>

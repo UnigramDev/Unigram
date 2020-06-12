@@ -25,10 +25,12 @@
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
+            x:Name="List"
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="List_ItemClick"
             IsItemClickEnabled="True"
             SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+            ChoosingItemContainer="OnChoosingItemContainer"
             VerticalContentAlignment="Top">
             <ListView.Header>
                 <StackPanel>
@@ -64,7 +66,7 @@
                     </selectors:ConnectionTemplateSelector.ItemTemplate>
                     <selectors:ConnectionTemplateSelector.ProxyTemplate>
                         <DataTemplate x:DataType="viewModels:ProxyViewModel">
-                            <Grid Padding="0,12" Background="Transparent" ContextRequested="Proxy_ContextRequested">
+                            <Grid Padding="0,12" Background="Transparent">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
