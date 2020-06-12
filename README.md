@@ -26,6 +26,7 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 - [Screenshots](#screenshots)
 - [Download without Microsoft Store](#alternativedownload)
 - [Windows 10 N](#windows10n)
+- [Translations](#translations)
 - [Wiki](#wiki)
 
 
@@ -68,13 +69,16 @@ Changelogs are provided both in [Releases section of our GitHub project](https:/
 
 <a name="alternativedownload"></a>
 ## Download without the store
-If you don't want Microsoft Store you can install Unigram from [here](https://unigramdev.github.io/).
-Only major updates will be posted here. If you care about minor updates you should use Microsoft Store.
+We release beta versions outside of the Microsoft Store. To install them just download the latest `.appxbundle` file from [this channel](https://t.me/unigramappx). Remember to follow the instructions in the first message.
 
 <a name="windows10n"></a>
 ## Windows 10 N
 To work with Windows 10 N you will need Media Feature pack. To install it properly go to ```Settings > Apps and Features > Add a feature.``` At this point, select Media Feature pack, install it and reboot. 
 
+<a name="translations"></a>
+## Translations
+Unigram has 18 built-in languages, but has access to unlimited packs using Telegram translations platform.
+If you are wishing to translate it to your language, you can do that [here](https://translations.telegram.org/en/android/), since Unigram uses the same translations as the official Telegram app for Android.
 
 <a name="wiki"></a>
 ## Wiki
