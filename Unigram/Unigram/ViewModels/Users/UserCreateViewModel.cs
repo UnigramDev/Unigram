@@ -167,17 +167,17 @@ namespace Unigram.ViewModels.Users
                     }
                     else
                     {
-                        await MessagePopup.ShowAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
+                        await MessagePopup.ShowAsync(Strings.Resources.InviteUser, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
                     }
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
+                    await MessagePopup.ShowAsync(Strings.Resources.InviteUser, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
                 }
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.Resources.ContactNotRegistered, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
+                await MessagePopup.ShowAsync(Strings.Resources.InviteUser, Strings.Resources.AppName, Strings.Resources.Invite, Strings.Resources.Cancel);
             }
         }
     }
