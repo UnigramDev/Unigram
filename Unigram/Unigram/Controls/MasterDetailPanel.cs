@@ -220,11 +220,7 @@ namespace Unigram.Controls
         {
             if (!_pointerPressed)
             {
-                var point = e.GetCurrentPoint(Children[6]);
-                if (point.Position.X < 0 || point.Position.X > 8)
-                {
-                    Window.Current.CoreWindow.PointerCursor = _defaultCursor;
-                }
+                Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }
         }
 
@@ -289,14 +285,14 @@ namespace Unigram.Controls
             InvalidateMeasure();
             InvalidateArrange();
 
+            grip.ReleasePointerCapture(e.Pointer);
+            e.Handled = true;
+
             var point = e.GetCurrentPoint(Children[6]);
             if (point.Position.X < 0 || point.Position.X > 8)
             {
                 Window.Current.CoreWindow.PointerCursor = _defaultCursor;
             }
-
-            grip.ReleasePointerCapture(e.Pointer);
-            e.Handled = true;
         }
 
         public event EventHandler ViewStateChanged;
