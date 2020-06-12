@@ -281,14 +281,16 @@ namespace Unigram.Services
         {
             // We want to ignore both delayed and unreceived notifications,
             // as they're the result of update difference on sync.
-            if (_suppress == null)
-            {
-                _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
-            }
-            else if (!update.HaveDelayedNotifications && !update.HaveUnreceivedNotifications)
-            {
-                _suppress = false;
-            }
+            _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
+
+            //if (_suppress == null)
+            //{
+            //    _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
+            //}
+            //else if (!update.HaveDelayedNotifications && !update.HaveUnreceivedNotifications)
+            //{
+            //    _suppress = false;
+            //}
         }
 
         public async void Handle(UpdateNotificationGroup update)
