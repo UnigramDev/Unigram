@@ -109,21 +109,6 @@ namespace Unigram.Controls.Drawers
         {
         }
 
-        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            if (ViewModel != null) Bindings.Update();
-            if (ViewModel == null) Bindings.StopTracking();
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Bindings.StopTracking();
-        }
-
         public void UpdateFile(File file)
         {
             if (_stickers.TryGetValue(file.Id, out List<StickerViewModel> items) && items.Count > 0)
