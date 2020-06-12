@@ -692,7 +692,8 @@ namespace Unigram.ViewModels
                 {
                     using (await _loadMoreLock.WaitAsync())
                     {
-                        var response = await _protoService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
+                        //var response = await _protoService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
+                        var response = await _protoService.GetChatListAsync(_chatList, Count, 20);
                         if (response is Telegram.Td.Api.Chats chats)
                         {
                             foreach (var id in chats.ChatIds)

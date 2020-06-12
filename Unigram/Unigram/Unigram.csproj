@@ -474,6 +474,7 @@
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
