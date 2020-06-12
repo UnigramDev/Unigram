@@ -22,9 +22,11 @@
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
+            x:Name="List"
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="ListView_ItemClick"
             IsItemClickEnabled="True"
+            ChoosingItemContainer="OnChoosingItemContainer"
             ContainerContentChanging="OnContainerContentChanging"
             SelectionMode="None"
             CanReorderItems="True"
@@ -56,7 +58,7 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="0,6" Background="Transparent" ContextRequested="StickerSet_ContextRequested">
+                    <Grid Margin="0,6" Background="Transparent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition />

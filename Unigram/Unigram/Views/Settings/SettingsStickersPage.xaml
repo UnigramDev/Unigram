@@ -15,10 +15,12 @@
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <controls:TableListView
+            x:Name="List"
             ItemsSource="{x:Bind ViewModel.Items}"
             ItemClick="ListView_ItemClick"
             IsItemClickEnabled="True"
             DragItemsCompleted="ListView_DragItemsCompleted"
+            ChoosingItemContainer="OnChoosingItemContainer"
             ContainerContentChanging="OnContainerContentChanging"
             CanReorderItems="True"
             CanDragItems="True"
@@ -71,7 +73,7 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="0,6" Background="Transparent" ContextRequested="StickerSet_ContextRequested">
+                    <Grid Margin="0,6" Background="Transparent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition />
