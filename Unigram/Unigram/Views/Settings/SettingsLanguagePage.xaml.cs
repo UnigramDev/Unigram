@@ -36,7 +36,7 @@ namespace Unigram.Views.Settings
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var info = element.Tag as LanguagePackInfo;
+            var info = List.ItemFromContainer(element) as LanguagePackInfo;
 
             if (!info.IsInstalled)
             {
@@ -49,6 +49,21 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
+
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Language_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -80,5 +95,7 @@ namespace Unigram.Views.Settings
                 presenter.CornerRadius = new CornerRadius(first ? 8 : 0, first ? 8 : 0, last ? 8 : 0, last ? 8 : 0);
             }
         }
+
+        #endregion
     }
 }

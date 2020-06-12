@@ -18,7 +18,8 @@
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <ListView ItemsSource="{x:Bind ItemsSource.View}"
+        <ListView x:Name="List"
+                  ItemsSource="{x:Bind ItemsSource.View}"
                   ContainerContentChanging="OnContainerContentChanging"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
@@ -49,7 +50,7 @@
             </ListView.GroupStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="td:LanguagePackInfo">
-                    <Grid Padding="12,6" Background="Transparent" ContextRequested="Language_ContextRequested" Tag="{x:Bind}">
+                    <Grid Padding="12,6" Background="Transparent">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
