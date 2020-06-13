@@ -345,6 +345,16 @@ namespace Unigram.Controls.Gallery
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
 
+            if (ViewModel != null)
+            {
+                ViewModel.Aggregator.Unsubscribe(this);
+
+                ViewModel.Delegate = null;
+                ViewModel.Items.CollectionChanged -= OnCollectionChanged;
+
+                Bindings.StopTracking();
+            }
+
             //var container = GetContainer(0);
             //var root = container.Presenter;
             if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
@@ -365,10 +375,14 @@ namespace Unigram.Controls.Gallery
                     var element = _closing();
                     if (element.ActualWidth > 0 && animation.TryStart(element))
                     {
-                        animation.Completed += (s, args) =>
+                        TypedEventHandler<ConnectedAnimation, object> handler = null;
+                        handler = (s, args) =>
                         {
+                            animation.Completed -= handler;
                             Hide();
                         };
+
+                        animation.Completed += handler;
                     }
                     else
                     {
@@ -446,8 +460,11 @@ namespace Unigram.Controls.Gallery
 
                 if (animation.TryStart(image.Presenter))
                 {
-                    animation.Completed += (s, args) =>
+                    TypedEventHandler<ConnectedAnimation, object> handler = null;
+                    handler = (s, args) =>
                     {
+                        animation.Completed -= handler;
+
                         Transport.Show();
                         ScrollingHost.Opacity = 1;
                         Preview.Opacity = 0;
@@ -457,6 +474,8 @@ namespace Unigram.Controls.Gallery
                             Play(container.Presenter, item, item.GetFile());
                         }
                     };
+
+                    animation.Completed += handler;
 
                     return;
                 }
@@ -548,7 +567,7 @@ namespace Unigram.Controls.Gallery
             catch { }
         }
 
-        private async void Play(Grid parent, GalleryContent item, File file)
+        private void Play(Grid parent, GalleryContent item, File file)
         {
             try
             {
