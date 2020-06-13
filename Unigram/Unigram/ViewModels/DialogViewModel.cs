@@ -219,7 +219,7 @@ namespace Unigram.ViewModels
         {
             if (!update.IsActive)
             {
-                SaveDraft();
+                BeginOnUIThread(SaveDraft);
             }
         }
 
