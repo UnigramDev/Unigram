@@ -159,7 +159,7 @@ namespace Unigram.Services
 
             if (_chatId == null)
             {
-                var chat = await _protoService.SendAsync(new SearchPublicChat("cGFnbGlhY2Npb19kaV9naGlhY2Npbw")) as Chat;
+                var chat = await _protoService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
                 if (chat != null)
                 {
                     _chatId = chat.Id;
