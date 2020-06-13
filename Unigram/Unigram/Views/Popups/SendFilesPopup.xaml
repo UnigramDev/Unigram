@@ -135,13 +135,11 @@
         </DataTemplate>
 
         <DataTemplate x:Key="MediaItemTemplate" x:DataType="entities:StorageMedia">
-            <controls:AspectView Constraint="{x:Bind}" MaxHeight="294">
+            <Grid MinHeight="48" MaxHeight="294">
                 <Image
                     x:Name="Preview"
                     Source="{x:Bind Preview, Mode=OneWay}"
-                    Stretch="UniformToFill"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"/>
+                    Stretch="Uniform"/>
 
                 <Border x:Name="Overlay" DataContextChanged="Grid_DataContextChanged" Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <!--<controls:FileButton x:Name="Button" Style="{StaticResource InlineFileButtonStyle}"/>-->
@@ -218,7 +216,7 @@
                         Radius="4,12,12,4"
                         Grid.Column="2"/>
                 </Grid>
-            </controls:AspectView>
+            </Grid>
             <!--<cells:SendMediaCell
                 Media="{x:Bind}"
                 Source="{x:Bind Preview, Mode=OneWay}"
