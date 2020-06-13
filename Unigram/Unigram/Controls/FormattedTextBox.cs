@@ -32,8 +32,6 @@ namespace Unigram.Controls
             ContextFlyout = new MenuFlyout();
             ContextFlyout.Opening += OnContextFlyoutOpening;
 
-            //ContextMenuOpening += OnContextMenuOpening;
-
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
             {
                 DisabledFormattingAccelerators = DisabledFormattingAccelerators.All;

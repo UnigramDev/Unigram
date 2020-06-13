@@ -55,6 +55,11 @@ namespace Unigram.Controls
             if (ViewModel == null) Bindings.StopTracking();
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
+        }
+
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             var layout = Resources["GridLayout"] as UniformGridLayout;
@@ -75,11 +80,6 @@ namespace Unigram.Controls
             {
                 layout.MaximumRowsOrColumns = (int)Math.Ceiling(e.NewSize.Width / 96);
             }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Bindings.StopTracking();
         }
 
         public event ItemClickEventHandler ItemClick;

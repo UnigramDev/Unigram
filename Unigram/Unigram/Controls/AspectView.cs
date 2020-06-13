@@ -70,11 +70,6 @@ namespace Unigram.Controls
                 width = 640;
                 height = 520;
             }
-            else if (Constraint is StorageMedia media)
-            {
-                width = media.Width;
-                height = media.Height;
-            }
 
             #region MessageContent
 

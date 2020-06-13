@@ -181,7 +181,12 @@ namespace Unigram.ViewModels
 
         public bool VerifyRights(Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary, out string label)
         {
-            if (ProtoService.TryGetSupergroup(chat, out var supergroup))
+            return VerifyRights(CacheService, chat, permission, global, forever, temporary, out label);
+        }
+
+        public static bool VerifyRights(ICacheService cacheService, Chat chat, Func<ChatPermissions, bool> permission, string global, string forever, string temporary, out string label)
+        {
+            if (cacheService.TryGetSupergroup(chat, out var supergroup))
             {
                 if (supergroup.Status is ChatMemberStatusRestricted restricted && !permission(restricted.Permissions))
                 {
