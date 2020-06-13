@@ -62,6 +62,8 @@ namespace Unigram.Services
                     offsetChatId = last.ChatId;
                 }
 
+                Monitor.Exit(_chatList);
+
                 var response = await _client.SendAsync(new GetChats(chatList, offsetOrder, offsetChatId, count - sorted.Count));
                 if (response is Chats chats)
                 {
@@ -69,9 +71,8 @@ namespace Unigram.Services
                     {
                         _haveFullChatList[index] = true;
                     }
-                    // chats had already been received through updates, let's retry request
 
-                    Monitor.Exit(_chatList);
+                    // chats had already been received through updates, let's retry request
                     return await GetChatListAsync(chatList, offset, limit);
                 }
 
