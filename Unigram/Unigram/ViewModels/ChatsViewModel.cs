@@ -849,13 +849,15 @@ namespace Unigram.ViewModels
 
             private int NextIndexOf(Chat chat, long order)
             {
-                var index = 0;
+                var prev = -1;
+                var next = 0;
 
                 for (int i = 0; i < Count; i++)
                 {
                     var item = this[i];
                     if (item.Id == chat.Id)
                     {
+                        prev = i;
                         continue;
                     }
 
@@ -863,15 +865,10 @@ namespace Unigram.ViewModels
 
                     if (order > position.Order || order == position.Order && chat.Id >= item.Id)
                     {
-                        if (chat.Id == item.Id)
-                        {
-                            return -1;
-                        }
-
-                        return index;
+                        return next == prev ? -1 : next;
                     }
 
-                    index++;
+                    next++;
                 }
 
                 return Count;
