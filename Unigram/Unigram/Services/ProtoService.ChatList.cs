@@ -81,12 +81,14 @@ namespace Unigram.Services
             }
 
             // have enough chats in the chat list to answer request
-            var result = new long[limit];
+            var result = new long[Math.Min(limit, sorted.Count - offset)];
             var pos = 0;
 
             using (var iter = sorted.GetEnumerator())
             {
-                for (int i = 0; i < count; i++)
+                int max = Math.Min(count, sorted.Count);
+
+                for (int i = 0; i < max; i++)
                 {
                     iter.MoveNext();
 
