@@ -780,104 +780,108 @@ namespace Unigram.ViewModels
 
         public async Task HandlePackageAsync(DataPackageView package)
         {
-            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+            try
             {
-                var bitmap = await package.GetBitmapAsync();
-                var media = new List<StorageFile>();
-
-                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
-                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
-
-                using (var stream = await bitmap.OpenReadAsync())
+                if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
-                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                    media.Add(result);
-                }
+                    var bitmap = await package.GetBitmapAsync();
+                    var media = new List<StorageFile>();
 
-                var captionElements = new List<string>();
+                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                    var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
-                if (package.AvailableFormats.Contains(StandardDataFormats.Text))
-                {
-                    var text = await package.GetTextAsync();
-                    captionElements.Add(text);
-                }
-                if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
-                {
-                    try
+                    using (var stream = await bitmap.OpenReadAsync())
                     {
-                        var webLink = await package.GetWebLinkAsync();
-                        captionElements.Add(webLink.AbsoluteUri);
+                        var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
+                        media.Add(result);
                     }
-                    catch { }
+
+                    var captionElements = new List<string>();
+
+                    if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+                    {
+                        var text = await package.GetTextAsync();
+                        captionElements.Add(text);
+                    }
+                    if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
+                    {
+                        try
+                        {
+                            var webLink = await package.GetWebLinkAsync();
+                            captionElements.Add(webLink.AbsoluteUri);
+                        }
+                        catch { }
+                    }
+
+                    FormattedText caption = null;
+                    if (captionElements.Count > 0)
+                    {
+                        var resultCaption = string.Join(Environment.NewLine, captionElements);
+                        caption = new FormattedText(resultCaption, new TextEntity[0])
+                            .Substring(0, CacheService.Options.MessageCaptionLengthMax);
+                    }
+
+                    SendFileExecute(media, caption);
                 }
-
-                FormattedText caption = null;
-                if (captionElements.Count > 0)
+                else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
-                    var resultCaption = string.Join(Environment.NewLine, captionElements);
-                    caption = new FormattedText(resultCaption, new TextEntity[0])
-                        .Substring(0, CacheService.Options.MessageCaptionLengthMax);
+                    var items = await package.GetStorageItemsAsync();
+                    var files = new List<StorageFile>(items.Count);
+
+                    foreach (var file in items.OfType<StorageFile>())
+                    {
+                        files.Add(file);
+                    }
+
+                    SendFileExecute(files);
                 }
-
-                SendFileExecute(media, caption);
-            }
-            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-            {
-                var items = await package.GetStorageItemsAsync();
-                var files = new List<StorageFile>(items.Count);
-
-                foreach (var file in items.OfType<StorageFile>())
+                //else if (e.DataView.Contains(StandardDataFormats.WebLink))
+                //{
+                //    // TODO: Invoke getting a preview of the weblink above the Textbox
+                //    var link = await e.DataView.GetWebLinkAsync();
+                //    if (TextField.Text == "")
+                //    {
+                //        TextField.Text = link.AbsolutePath;
+                //    }
+                //    else
+                //    {
+                //        TextField.Text = (TextField.Text + " " + link.AbsolutePath);
+                //    }
+                //
+                //    gridLoading.Visibility = Visibility.Collapsed;
+                //
+                //}
+                else if (package.AvailableFormats.Contains(StandardDataFormats.Text))
                 {
-                    files.Add(file);
+                    var field = TextField;
+                    if (field == null)
+                    {
+                        return;
+                    }
+
+                    var text = await package.GetTextAsync();
+
+                    if (package.Contains(StandardDataFormats.WebLink))
+                    {
+                        var link = await package.GetWebLinkAsync();
+                        text += Environment.NewLine + link.AbsoluteUri;
+                    }
+
+                    field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
                 }
-
-                SendFileExecute(files);
-            }
-            //else if (e.DataView.Contains(StandardDataFormats.WebLink))
-            //{
-            //    // TODO: Invoke getting a preview of the weblink above the Textbox
-            //    var link = await e.DataView.GetWebLinkAsync();
-            //    if (TextField.Text == "")
-            //    {
-            //        TextField.Text = link.AbsolutePath;
-            //    }
-            //    else
-            //    {
-            //        TextField.Text = (TextField.Text + " " + link.AbsolutePath);
-            //    }
-            //
-            //    gridLoading.Visibility = Visibility.Collapsed;
-            //
-            //}
-            else if (package.AvailableFormats.Contains(StandardDataFormats.Text))
-            {
-                var field = TextField;
-                if (field == null)
+                else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
                 {
-                    return;
-                }
+                    var field = TextField;
+                    if (field == null)
+                    {
+                        return;
+                    }
 
-                var text = await package.GetTextAsync();
-
-                if (package.Contains(StandardDataFormats.WebLink))
-                {
                     var link = await package.GetWebLinkAsync();
-                    text += Environment.NewLine + link.AbsoluteUri;
+                    field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, link.AbsoluteUri);
                 }
-
-                field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
             }
-            else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
-            {
-                var field = TextField;
-                if (field == null)
-                {
-                    return;
-                }
-
-                var link = await package.GetWebLinkAsync();
-                field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, link.AbsoluteUri);
-            }
+            catch { }
         }
 
 
