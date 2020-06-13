@@ -650,10 +650,6 @@ namespace Unigram.Views.Popups
             SearchField.Visibility = Visibility.Visible;
 
             SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_GotFocus(object sender, RoutedEventArgs e)
-        {
             Search_TextChanged(null, null);
         }
 
