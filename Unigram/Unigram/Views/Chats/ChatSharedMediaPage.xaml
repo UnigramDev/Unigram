@@ -82,14 +82,14 @@
                         <selectors:MessageContentTemplateSelector>
                             <selectors:MessageContentTemplateSelector.PhotoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                         <Image Stretch="UniformToFill"/>
                                     </controls:SimpleHyperlinkButton>
                                 </DataTemplate>
                             </selectors:MessageContentTemplateSelector.PhotoTemplate>
                             <selectors:MessageContentTemplateSelector.VideoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                         <Grid>
                                             <Image Stretch="UniformToFill"/>
                                                 
@@ -150,7 +150,7 @@
                         <selectors:MessageContentTemplateSelector>
                             <selectors:MessageContentTemplateSelector.MessageTemplate>
                                 <DataTemplate>
-                                    <cells:SharedFileCell ContextRequested="Message_ContextRequested"/>
+                                    <cells:SharedFileCell/>
                                 </DataTemplate>
                             </selectors:MessageContentTemplateSelector.MessageTemplate>
                             <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
@@ -206,7 +206,7 @@
                         <selectors:MessageContentTemplateSelector>
                             <selectors:MessageContentTemplateSelector.MessageTemplate>
                                 <DataTemplate>
-                                    <cells:SharedLinkCell ContextRequested="Message_ContextRequested"/>
+                                    <cells:SharedLinkCell/>
                                 </DataTemplate>
                             </selectors:MessageContentTemplateSelector.MessageTemplate>
                             <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
@@ -262,7 +262,7 @@
                         <selectors:MessageContentTemplateSelector>
                             <selectors:MessageContentTemplateSelector.MessageTemplate>
                                 <DataTemplate>
-                                    <cells:SharedAudioCell ContextRequested="Message_ContextRequested" Margin="0,6"/>
+                                    <cells:SharedAudioCell Margin="0,6"/>
                                 </DataTemplate>
                             </selectors:MessageContentTemplateSelector.MessageTemplate>
                             <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
@@ -318,7 +318,7 @@
                         <selectors:MessageContentTemplateSelector>
                             <selectors:MessageContentTemplateSelector.MessageTemplate>
                                 <DataTemplate>
-                                    <cells:SharedVoiceCell ContextRequested="Message_ContextRequested" Margin="0,6"/>
+                                    <cells:SharedVoiceCell Margin="0,6"/>
                                 </DataTemplate>
                             </selectors:MessageContentTemplateSelector.MessageTemplate>
                             <selectors:MessageContentTemplateSelector.HeaderDateTemplate>

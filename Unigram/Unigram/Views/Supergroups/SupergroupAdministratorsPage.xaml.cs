@@ -49,6 +49,19 @@ namespace Unigram.Views.Supergroups
 
         #region Recycle
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Member_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -58,6 +71,9 @@ namespace Unigram.Views.Supergroups
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
+
+            args.ItemContainer.Tag = args.Item;
+            content.Tag = args.Item;
 
             var user = ViewModel.ProtoService.GetUser(member.UserId);
             if (user == null)

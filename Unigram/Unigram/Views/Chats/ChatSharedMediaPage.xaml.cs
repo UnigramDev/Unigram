@@ -411,6 +411,7 @@ namespace Unigram.Views.Chats
                 }
 
                 args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContextRequested += Message_ContextRequested;
             }
 
             args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
@@ -423,6 +424,8 @@ namespace Unigram.Views.Chats
             {
                 return;
             }
+
+            args.ItemContainer.Tag = args.Item;
 
             var message = args.Item as Message;
             if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton hyperlink)
