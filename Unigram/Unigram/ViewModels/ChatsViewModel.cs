@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -688,46 +689,48 @@ namespace Unigram.ViewModels
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return AsyncInfo.Run(token => LoadMoreItemsAsync());
+            }
+
+            private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
+            {
+                using (await _loadMoreLock.WaitAsync())
                 {
-                    using (await _loadMoreLock.WaitAsync())
+                    //var response = await _protoService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
+                    var response = await _protoService.GetChatListAsync(_chatList, Count, 20);
+                    if (response is Telegram.Td.Api.Chats chats)
                     {
-                        //var response = await _protoService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
-                        var response = await _protoService.GetChatListAsync(_chatList, Count, 20);
-                        if (response is Telegram.Td.Api.Chats chats)
+                        foreach (var id in chats.ChatIds)
                         {
-                            foreach (var id in chats.ChatIds)
+                            var chat = _protoService.GetChat(id);
+                            var position = chat.GetPosition(_chatList);
+
+                            if (chat != null && position.Order != 0)
                             {
-                                var chat = _protoService.GetChat(id);
-                                var position = chat.GetPosition(_chatList);
+                                _internalChatId = chat.Id;
+                                _internalOrder = position.Order;
 
-                                if (chat != null && position.Order != 0)
+                                var next = NextIndexOf(chat, position.Order);
+                                if (next >= 0)
                                 {
-                                    _internalChatId = chat.Id;
-                                    _internalOrder = position.Order;
-
-                                    var next = NextIndexOf(chat, position.Order);
-                                    if (next >= 0)
-                                    {
-                                        Insert(next, chat);
-                                    }
-
-                                    _lastChatId = chat.Id;
-                                    _lastOrder = position.Order;
+                                    Insert(next, chat);
                                 }
+
+                                _lastChatId = chat.Id;
+                                _lastOrder = position.Order;
                             }
-
-                            _hasMoreItems = chats.ChatIds.Count > 0;
-                            _aggregator.Subscribe(this);
-
-                            _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-
-                            return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                         }
 
-                        return new LoadMoreItemsResult { Count = 0 };
+                        _hasMoreItems = chats.ChatIds.Count > 0;
+                        _aggregator.Subscribe(this);
+
+                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+
+                        return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                     }
-                });
+
+                    return new LoadMoreItemsResult { Count = 0 };
+                }
             }
 
             public bool HasMoreItems => _hasMoreItems;
