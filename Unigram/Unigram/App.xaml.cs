@@ -152,7 +152,17 @@ namespace Unigram
 
             _passcodeShown = true;
 
+            Window.Current.Content.Visibility = Visibility.Collapsed;
+
             var dialog = new PasscodePage();
+            TypedEventHandler<ContentDialog, ContentDialogClosingEventArgs> handler = null;
+            handler = (s, args) =>
+            {
+                dialog.Closing -= handler;
+                Window.Current.Content.Visibility = Visibility.Visible;
+            };
+
+            dialog.Closing += handler;
             var result = await dialog.ShowQueuedAsync();
 
             _passcodeShown = false;
