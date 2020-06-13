@@ -473,10 +473,11 @@ namespace Unigram.Common
         {
             var device = CanvasDevice.GetSharedDevice();
             var bitmap = CanvasBitmap.CreateFromSoftwareBitmap(device, file);
-            var canvas = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
+            var canvas1 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
+            var canvas2 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
 
-            var size = canvas.Size.ToVector2();
-            var canvasSize = canvas.Size.ToVector2();
+            var size = canvas1.Size.ToVector2();
+            var canvasSize = canvas1.Size.ToVector2();
 
             var scaleX = 1 / (float)rectangle.Width;
             var scaleY = 1 / (float)rectangle.Height;
@@ -493,10 +494,8 @@ namespace Unigram.Common
                 scaleY = 1 * 1 / (float)rectangle.Width;
             }
 
-            using (var session = canvas.CreateDrawingSession())
+            using (var session = canvas1.CreateDrawingSession())
             {
-                session.DrawImage(bitmap);
-
                 switch (rotation)
                 {
                     case BitmapRotation.Clockwise90Degrees:
@@ -553,12 +552,19 @@ namespace Unigram.Common
                 }
             }
 
+            using (var session = canvas2.CreateDrawingSession())
+            {
+                session.DrawImage(bitmap);
+                session.DrawImage(canvas1);
+            }
+
             bitmap.Dispose();
 
             var stream = new InMemoryRandomAccessStream();
-            await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
+            await canvas2.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
 
-            canvas.Dispose();
+            canvas2.Dispose();
+            canvas1.Dispose();
 
             stream.Seek(0);
             return stream;
@@ -568,10 +574,11 @@ namespace Unigram.Common
         {
             var device = CanvasDevice.GetSharedDevice();
             var bitmap = await CanvasBitmap.LoadAsync(device, file.Path);
-            var canvas = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
+            var canvas1 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
+            var canvas2 = new CanvasRenderTarget(device, (float)bitmap.Size.Width, (float)bitmap.Size.Height, bitmap.Dpi);
 
-            var size = canvas.Size.ToVector2();
-            var canvasSize = canvas.Size.ToVector2();
+            var size = canvas1.Size.ToVector2();
+            var canvasSize = canvas1.Size.ToVector2();
 
             var scaleX = 1 / (float)rectangle.Width;
             var scaleY = 1 / (float)rectangle.Height;
@@ -588,10 +595,8 @@ namespace Unigram.Common
                 scaleY = 1 * 1 / (float)rectangle.Width;
             }
 
-            using (var session = canvas.CreateDrawingSession())
+            using (var session = canvas1.CreateDrawingSession())
             {
-                session.DrawImage(bitmap);
-
                 switch (rotation)
                 {
                     case BitmapRotation.Clockwise90Degrees:
@@ -648,14 +653,21 @@ namespace Unigram.Common
                 }
             }
 
+            using (var session = canvas2.CreateDrawingSession())
+            {
+                session.DrawImage(bitmap);
+                session.DrawImage(canvas1);
+            }
+
             bitmap.Dispose();
 
             using (var stream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
-                await canvas.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
+                await canvas2.SaveAsync(stream, CanvasBitmapFileFormat.Jpeg/*, 0.77f*/);
             }
 
-            canvas.Dispose();
+            canvas2.Dispose();
+            canvas1.Dispose();
 
             return file;
         }
