@@ -62,7 +62,7 @@ namespace Unigram.Services
         private readonly DisposableMutex _registrationLock;
         private bool _alreadyRegistered;
 
-        private bool? _suppress;
+        private bool _suppress;
 
         public NotificationsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, ISessionService sessionService, IEventAggregator aggregator)
         {
@@ -281,7 +281,16 @@ namespace Unigram.Services
         {
             // We want to ignore both delayed and unreceived notifications,
             // as they're the result of update difference on sync.
-            _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
+            if (update.HaveDelayedNotifications && update.HaveUnreceivedNotifications)
+            {
+                _suppress = true;
+            }
+            else if (_suppress && !update.HaveDelayedNotifications && !update.HaveUnreceivedNotifications)
+            {
+                _suppress = false;
+            }
+
+            //_suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
 
             //if (_suppress == null)
             //{
@@ -295,7 +304,7 @@ namespace Unigram.Services
 
         public async void Handle(UpdateNotificationGroup update)
         {
-            if (_suppress == true)
+            if (_suppress)
             {
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
