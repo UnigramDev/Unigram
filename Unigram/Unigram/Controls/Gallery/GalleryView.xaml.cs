@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -116,7 +117,14 @@ namespace Unigram.Controls.Gallery
 
         public void Handle(UpdateDeleteMessages update)
         {
-
+            this.BeginOnUIThread(() =>
+            {
+                var viewModel = ViewModel;
+                if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.ChatId == update.ChatId && update.MessageIds.Any(x => x == message.Id))
+                {
+                    Hide();
+                }
+            });
         }
 
         public void Handle(UpdateMessageContent update)
@@ -124,7 +132,7 @@ namespace Unigram.Controls.Gallery
             this.BeginOnUIThread(() =>
             {
                 var viewModel = ViewModel;
-                if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
+                if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
                     Hide();
                 }
