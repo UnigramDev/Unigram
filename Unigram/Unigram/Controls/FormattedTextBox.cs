@@ -14,7 +14,9 @@ using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Text;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -49,6 +51,80 @@ namespace Unigram.Controls
                 CreateKeyboardAccelerator(VirtualKey.K);
                 CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             }
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+        }
+
+        public bool IsReplaceEmojiEnabled { get; set; } = true;
+
+        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        {
+            if (FocusState == FocusState.Unfocused || !IsReplaceEmojiEnabled || string.Equals(Document.Selection.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+
+            //var matches = Emoticon.Data.Keys.Where(x => x.EndsWith(character)).ToArray();
+            if (Emoticon.Matches.TryGetValue(character[0], out string[] matches))
+            {
+                var length = matches.Max(x => x.Length);
+                var start = Math.Max(Document.Selection.EndPosition - length, 0);
+
+                var range = Document.GetRange(start, Document.Selection.EndPosition);
+                range.GetText(TextGetOptions.NoHidden, out string value);
+
+                var emoticon = matches.FirstOrDefault(x => value.EndsWith(x));
+                if (emoticon != null)
+                {
+                    Document.BeginUndoGroup();
+                    range.SetRange(range.EndPosition - emoticon.Length, range.EndPosition);
+                    range.SetText(TextSetOptions.None, Emoticon.Data[emoticon]);
+                    range.SetRange(range.EndPosition, range.EndPosition);
+                    range.SetText(TextSetOptions.None, emoticon);
+                    range.CharacterFormat.Hidden = FormatEffect.On;
+                    Document.EndUndoGroup();
+
+                    Document.Selection.SetRange(range.EndPosition, range.EndPosition);
+                    args.Handled = true;
+                }
+            }
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Back && IsReplaceEmojiEnabled)
+            {
+                Document.GetText(TextGetOptions.None, out string text);
+
+                var range = Document.Selection.GetClone();
+                if (range.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.TryGetValue(range.Text, out string emoji))
+                {
+                    var emoticon = range.Text;
+
+                    Document.BeginUndoGroup();
+                    range.SetRange(range.StartPosition - emoji.Length, range.EndPosition);
+                    range.SetText(TextSetOptions.Unhide, emoticon);
+                    Document.EndUndoGroup();
+
+                    Document.Selection.SetRange(range.EndPosition, range.EndPosition);
+                    return;
+                }
+            }
+
+            base.OnKeyDown(e);
         }
 
         public event TypedEventHandler<FormattedTextBox, EventArgs> ShowFormatting;
