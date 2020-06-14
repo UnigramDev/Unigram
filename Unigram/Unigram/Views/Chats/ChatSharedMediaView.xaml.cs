@@ -249,6 +249,7 @@ namespace Unigram.Views.Chats
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
                 ViewModel.Find(filter(), field.Text);
+                field.Focus(FocusState.Programmatic);
             });
         }
 
