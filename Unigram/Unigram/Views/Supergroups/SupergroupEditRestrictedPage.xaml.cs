@@ -54,7 +54,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken) { }
 
-        public void UpdateMember(Chat chat, Supergroup group, User user, ChatMember member)
+        public void UpdateMember(Chat chat, User user, ChatMember member)
         {
             if (member.Status is ChatMemberStatusRestricted restricted)
             {

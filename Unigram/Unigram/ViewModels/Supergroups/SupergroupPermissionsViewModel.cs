@@ -11,7 +11,7 @@ namespace Unigram.ViewModels.Supergroups
     public class SupergroupPermissionsViewModel : SupergroupMembersViewModelBase
     {
         public SupergroupPermissionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, null, query => new SupergroupMembersFilterRestricted(query))
+            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRestricted(), query => new SupergroupMembersFilterRestricted(query))
         {
             SendCommand = new RelayCommand(SendExecute);
             AddCommand = new RelayCommand(AddExecute);

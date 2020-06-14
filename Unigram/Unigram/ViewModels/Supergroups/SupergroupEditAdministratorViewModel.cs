@@ -70,14 +70,12 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, bundle.UserId));
-            if (response is ChatMember member && chat.Type is ChatTypeSupergroup super)
+            if (response is ChatMember member)
             {
                 var item = ProtoService.GetUser(member.UserId);
                 var cache = ProtoService.GetUserFull(member.UserId);
 
-                var group = ProtoService.GetSupergroup(super.SupergroupId);
-
-                Delegate?.UpdateMember(chat, group, item, member);
+                Delegate?.UpdateMember(chat, item, member);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache == null)
