@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -43,6 +44,16 @@ namespace Unigram.Views
                 DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
                 DescriptionPanel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Description_ContextRequested), true);
             }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            SharedMedia.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            SharedMedia.OnNavigatedFrom(e);
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
@@ -200,7 +211,7 @@ namespace Unigram.Views
 
             if (fullInfo.GroupInCommonCount > 0)
             {
-                SharedMedia.Tab = new UserCommonChatsPage { DataContext = ViewModel.UserCommonChats, IsEmbedded = true };
+                SharedMedia.Tab = new UserCommonChatsView { DataContext = ViewModel.UserCommonChats, IsEmbedded = true };
             }
             else
             {
@@ -279,7 +290,7 @@ namespace Unigram.Views
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
 
-            SharedMedia.Tab = new SupergroupMembersPage { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
+            SharedMedia.Tab = new SupergroupMembersView { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -349,7 +360,7 @@ namespace Unigram.Views
             }
             else
             {
-                SharedMedia.Tab = new SupergroupMembersPage { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
+                SharedMedia.Tab = new SupergroupMembersView { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
             }
         }
 

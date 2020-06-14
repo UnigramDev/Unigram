@@ -181,7 +181,7 @@
 
                         <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
 
-                    <!--</controls:HeaderedControl>
+                        <!--</controls:HeaderedControl>
                         
                     <controls:HeaderedControl>-->
                         <Grid x:Name="DescriptionPanel" Visibility="Collapsed">
@@ -376,11 +376,7 @@
                         <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,0,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     </Border>
 
-                    <chats:ChatSharedMediaPage x:Name="SharedMedia" Margin="0,16,0,0" IsEmbedded="True" Height="0">
-                        <UserControl.Resources>
-                            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent"/>
-                        </UserControl.Resources>
-                    </chats:ChatSharedMediaPage>
+                    <chats:ChatSharedMediaView x:Name="SharedMedia" Margin="0,16,0,0" IsEmbedded="True" Height="0"/>
                 </StackPanel>
             </ScrollViewer>
         </Grid>

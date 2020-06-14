@@ -1,0 +1,376 @@
+<UserControl
+    x:Class="Unigram.Views.Chats.ChatSharedMediaView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
+    xmlns:cells="using:Unigram.Controls.Cells"
+    xmlns:controls ="using:Unigram.Controls"
+    xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+    xmlns:collections="using:Unigram.Collections"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="PivotItem">
+                <Setter Property="Margin" Value="0"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="HeaderPanel">
+            <Border x:Name="HeaderAnimator" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}" BorderThickness="0,0,0,1"/>
+            <!--<Border x:Name="HeaderAnimator" />-->
+            <controls:ContentPageHeader x:Name="HeaderPage">
+                <controls:TopNavView x:Name="Header" IsItemClickEnabled="True" ItemClick="Header_ItemClick" DisplayMemberPath="Title" Grid.RowSpan="1"/>
+            </controls:ContentPageHeader>
+        </Grid>
+
+        <Pivot x:Name="ScrollingHost"
+                SizeChanged="ScrollingHost_SizeChanged"
+                SelectionChanged="ScrollingHost_SelectionChanged"
+                SelectedIndex="{x:Bind ViewModel.SelectedIndex, Mode=TwoWay}"
+                IsLocked="{x:Bind ConvertSelectionMode(ViewModel.SelectionMode), Mode=OneWay}"
+                Style="{StaticResource HeaderlessPivotStyle}"
+                Grid.Row="1">
+            <PivotItem>
+                <controls:SelectGridView
+                    x:Name="ScrollingMedia"
+                    ItemsSource="{x:Bind ViewModel.Media, Mode=OneWay}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged"
+                    ChoosingItemContainer="OnChoosingItemContainer"
+                    ContainerContentChanging="OnContainerContentChanging"
+                    Loaded="Scrolling_Loaded"
+                    Padding="12,0,12,8"
+                    common:FluidGridView.OrientationOnly="False">
+                    <common:FluidGridView.Triggers>
+                        <common:LengthGridViewTrigger ItemLength="96"/>
+                    </common:FluidGridView.Triggers>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="4"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.Header>
+                            <Border x:Name="HeaderMedia" Padding="0,8,0,0"/>
+                    </GridView.Header>
+                    <GridView.Footer>
+                        <!--<Border Height="8"/>-->
+                        <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Media.IsLoading, Mode=OneWay}"/>
+                    </GridView.Footer>
+                    <GridView.ItemTemplateSelector>
+                        <selectors:MessageContentTemplateSelector>
+                            <selectors:MessageContentTemplateSelector.PhotoTemplate>
+                                <DataTemplate>
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                        <Image Stretch="UniformToFill"/>
+                                    </controls:SimpleHyperlinkButton>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.PhotoTemplate>
+                            <selectors:MessageContentTemplateSelector.VideoTemplate>
+                                <DataTemplate>
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                        <Grid>
+                                            <Image Stretch="UniformToFill"/>
+                                                
+                                            <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" Padding="4,4,8,4">
+                                                <FontIcon Glyph="&#xE102;" Foreground="White" HorizontalAlignment="Left" FontSize="12"/>
+                                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                                            </Grid>
+                                        </Grid>
+                                    </controls:SimpleHyperlinkButton>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.VideoTemplate>
+                            <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                <DataTemplate>
+                                    <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                        <TextBlock Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                        </selectors:MessageContentTemplateSelector>
+                    </GridView.ItemTemplateSelector>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8" MaxWidth="640" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </controls:SelectGridView>
+            </PivotItem>
+            <PivotItem>
+                <controls:SelectListView
+                    x:Name="ScrollingFiles"
+                    ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged"
+                    ChoosingItemContainer="OnChoosingItemContainer"
+                    ContainerContentChanging="OnContainerContentChanging"
+                    Loaded="Scrolling_Loaded">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <controls:HeaderedControl x:Name="HeaderFiles">
+                            <controls:SearchTextBox
+                                x:Name="SearchFiles"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
+                        </controls:HeaderedControl>
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <!--<Border Height="8"/>-->
+                        <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Files.IsLoading, Mode=OneWay}"/>
+                    </ListView.Footer>
+                    <ListView.ItemTemplateSelector>
+                        <selectors:MessageContentTemplateSelector>
+                            <selectors:MessageContentTemplateSelector.MessageTemplate>
+                                <DataTemplate>
+                                    <cells:SharedFileCell/>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.MessageTemplate>
+                            <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                <DataTemplate>
+                                    <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                        <TextBlock Margin="12,24,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                        </selectors:MessageContentTemplateSelector>
+                    </ListView.ItemTemplateSelector>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                VerticalAlignment="Top"
+                                Margin="12,0"
+                                MaxWidth="640"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </controls:SelectListView>
+            </PivotItem>
+            <PivotItem>
+                <controls:SelectListView
+                    x:Name="ScrollingLinks"
+                    ItemsSource="{x:Bind ViewModel.Links, Mode=OneWay}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged"
+                    ChoosingItemContainer="OnChoosingItemContainer"
+                    ContainerContentChanging="OnContainerContentChanging"
+                    Loaded="Scrolling_Loaded">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <controls:HeaderedControl x:Name="HeaderLinks">
+                            <controls:SearchTextBox
+                                x:Name="SearchLinks"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
+                        </controls:HeaderedControl>
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <!--<Border Height="8"/>-->
+                        <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Links.IsLoading, Mode=OneWay}"/>
+                    </ListView.Footer>
+                    <ListView.ItemTemplateSelector>
+                        <selectors:MessageContentTemplateSelector>
+                            <selectors:MessageContentTemplateSelector.MessageTemplate>
+                                <DataTemplate>
+                                    <cells:SharedLinkCell/>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.MessageTemplate>
+                            <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                <DataTemplate>
+                                    <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                        <TextBlock Margin="12,24,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                        </selectors:MessageContentTemplateSelector>
+                    </ListView.ItemTemplateSelector>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                VerticalAlignment="Top"
+                                Margin="12,0"
+                                MaxWidth="640"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </controls:SelectListView>
+            </PivotItem>
+            <PivotItem>
+                <controls:SelectListView
+                    x:Name="ScrollingMusic"
+                    ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged"
+                    ChoosingItemContainer="OnChoosingItemContainer"
+                    ContainerContentChanging="OnContainerContentChanging"
+                    Loaded="Scrolling_Loaded">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <controls:HeaderedControl x:Name="HeaderMusic">
+                            <controls:SearchTextBox
+                                x:Name="SearchMusic"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
+                        </controls:HeaderedControl>
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <!--<Border Height="8"/>-->
+                        <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Music.IsLoading, Mode=OneWay}"/>
+                    </ListView.Footer>
+                    <ListView.ItemTemplateSelector>
+                        <selectors:MessageContentTemplateSelector>
+                            <selectors:MessageContentTemplateSelector.MessageTemplate>
+                                <DataTemplate>
+                                    <cells:SharedAudioCell Margin="0,6"/>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.MessageTemplate>
+                            <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                <DataTemplate>
+                                    <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                        <TextBlock Margin="12,24,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                        </selectors:MessageContentTemplateSelector>
+                    </ListView.ItemTemplateSelector>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                VerticalAlignment="Top"
+                                Margin="12,0"
+                                MaxWidth="640"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </controls:SelectListView>
+            </PivotItem>
+            <PivotItem>
+                <controls:SelectListView
+                    x:Name="ScrollingVoice"
+                    ItemsSource="{x:Bind ViewModel.Voice, Mode=OneWay}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged"
+                    ChoosingItemContainer="OnChoosingItemContainer"
+                    ContainerContentChanging="OnContainerContentChanging"
+                    Loaded="Scrolling_Loaded">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <controls:HeaderedControl x:Name="HeaderVoice">
+                            <controls:SearchTextBox
+                                x:Name="SearchVoice"
+                                PlaceholderText="{CustomResource Search}"
+                                Style="{StaticResource QueryTextBoxStyle}"
+                                Margin="12,8"
+                                InputScope="Search"/>
+                        </controls:HeaderedControl>
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <!--<Border Height="8"/>-->
+                        <microsoft:ProgressBar Background="Transparent" IsIndeterminate="{x:Bind ViewModel.Voice.IsLoading, Mode=OneWay}"/>
+                    </ListView.Footer>
+                    <ListView.ItemTemplateSelector>
+                        <selectors:MessageContentTemplateSelector>
+                            <selectors:MessageContentTemplateSelector.MessageTemplate>
+                                <DataTemplate>
+                                    <cells:SharedVoiceCell Margin="0,6"/>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.MessageTemplate>
+                            <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                                <DataTemplate>
+                                    <Border Margin="-12,0" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                                        <TextBlock Margin="12,24,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </selectors:MessageContentTemplateSelector.HeaderDateTemplate>
+                        </selectors:MessageContentTemplateSelector>
+                    </ListView.ItemTemplateSelector>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                VerticalAlignment="Top"
+                                Margin="12,0"
+                                MaxWidth="640"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </controls:SelectListView>
+            </PivotItem>
+        </Pivot>
+
+        <controls:ContentPageHeader x:Name="ManagePanel" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                <controls:GlyphButton Glyph="&#xE72D;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
+
+                <ContentControl
+                    Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontWeight="SemiBold"
+                    Padding="12,0"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    Grid.Column="3">
+                    <ContentControl.ContentTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition/>
+                        </TransitionCollection>
+                    </ContentControl.ContentTransitions>
+                    <ContentControl.Clip>
+                        <RectangleGeometry Rect="0,0,200,48"/>
+                    </ContentControl.Clip>
+                </ContentControl>
+
+                <controls:GlyphButton Click="Manage_Click"
+                                      Glyph="&#xE10A;"
+                                      Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                      Style="{StaticResource HeaderGlyphButtonStyle}"
+                                      Grid.Column="4"/>
+            </Grid>
+        </controls:ContentPageHeader>
+    </Grid>
+</UserControl>

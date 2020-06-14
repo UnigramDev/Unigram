@@ -20,6 +20,7 @@
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ListView x:Name="List"
                   ItemsSource="{x:Bind ItemsSource.View}"
+                  ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"

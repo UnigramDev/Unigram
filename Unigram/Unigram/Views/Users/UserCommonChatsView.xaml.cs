@@ -9,14 +9,13 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Users
 {
-    public sealed partial class UserCommonChatsPage : HostedPage, IProfileTab, IFileDelegate
+    public sealed partial class UserCommonChatsView : UserControl, IProfileTab, IFileDelegate
     {
         public UserCommonChatsViewModel ViewModel => DataContext as UserCommonChatsViewModel;
 
-        public UserCommonChatsPage()
+        public UserCommonChatsView()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<UserCommonChatsViewModel>();
         }
 
         public int Index { get => 5; }
@@ -49,7 +48,7 @@ namespace Unigram.Views.Users
             _isEmbedded = embedded;
             _isLocked = locked;
 
-            Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
+            //Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
             ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
             List.ItemsPanelCornerRadius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
         }

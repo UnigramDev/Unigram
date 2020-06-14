@@ -769,36 +769,6 @@
                                 </Grid>
 
                                 <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Grid.Row="1"/>
-
-                                <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                                     -->
-                                <!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"-->
-                                <!--
-                                     <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                             MinWidth="20"
-                                             Height="20"
-                                             CornerRadius="10"
-                                             HorizontalAlignment="Center"
-                                             Margin="0,6,0,-12"
-                                             Canvas.ZIndex="1">
-                                         <TextBlock x:Name="UnreadCount"
-                                                    Text="{x:Bind ViewModel.UnreadUnmutedCount, Mode=OneWay}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                    TextAlignment="Center"
-                                                    Margin="4,2,4,0"/>
-                                     </Border>
-                                     <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                             BorderBrush="{ThemeResource TelegramSeparatorBrush}"
-                                             BorderThickness="1"
-                                             CornerRadius="24"
-                                             Margin="12,6"
-                                             Height="38"
-                                             Width="38"
-                                             Grid.ColumnSpan="2">
-                                         <controls:GlyphButton FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
-                                     </Border>
-                                     </StackPanel>-->
                             </Grid>
                         </Grid>
                     </PivotItem>
