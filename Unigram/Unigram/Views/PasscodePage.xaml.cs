@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -143,29 +144,27 @@ namespace Unigram.Views
 
             if (await KeyCredentialManager.IsSupportedAsync())
             {
-                var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
-                if (result.Credential != null)
+                Biometrics.Visibility = Visibility.Visible;
+
+                var windowContext = TLWindowContext.GetForCurrentView();
+                if (windowContext.ActivationMode != CoreWindowActivationMode.Deactivated)
                 {
-                    var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
-                    if (signResult.Status == KeyCredentialStatus.Success)
+                    var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
+                    if (result.Credential != null)
                     {
-                        Unlock();
+                        var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
+                        if (signResult.Status == KeyCredentialStatus.Success)
+                        {
+                            Unlock();
+                        }
                     }
                     else
                     {
-                        Biometrics.Visibility = Visibility.Visible;
-                    }
-                }
-                else
-                {
-                    var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Resources.AppName, KeyCredentialCreationOption.ReplaceExisting);
-                    if (creationResult.Status == KeyCredentialStatus.Success)
-                    {
-                        Unlock();
-                    }
-                    else
-                    {
-                        Biometrics.Visibility = Visibility.Visible;
+                        var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Resources.AppName, KeyCredentialCreationOption.ReplaceExisting);
+                        if (creationResult.Status == KeyCredentialStatus.Success)
+                        {
+                            Unlock();
+                        }
                     }
                 }
             }
