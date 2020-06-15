@@ -703,21 +703,21 @@ namespace Unigram.ViewModels
                         foreach (var id in chats.ChatIds)
                         {
                             var chat = _protoService.GetChat(id);
-                            var position = chat.GetPosition(_chatList);
+                            var order = chat.GetOrder(_chatList);
 
-                            if (chat != null && position.Order != 0)
+                            if (chat != null && order != 0)
                             {
                                 _internalChatId = chat.Id;
-                                _internalOrder = position.Order;
+                                _internalOrder = order;
 
-                                var next = NextIndexOf(chat, position.Order);
+                                var next = NextIndexOf(chat, order);
                                 if (next >= 0)
                                 {
                                     Insert(next, chat);
                                 }
 
                                 _lastChatId = chat.Id;
-                                _lastOrder = position.Order;
+                                _lastOrder = order;
                             }
                         }
 
@@ -758,12 +758,9 @@ namespace Unigram.ViewModels
             public void Handle(long chatId, IList<ChatPosition> positions, bool lastMessage = false)
             {
                 var chat = GetChat(chatId);
-                var position = chat?.GetPosition(_chatList);
+                var order = chat.GetOrder(_chatList);
 
-                if (position != null)
-                {
-                    Handle(chat, position.Order, lastMessage);
-                }
+                Handle(chat, order, lastMessage);
             }
 
             public void Handle(long chatId, long order)
@@ -861,9 +858,9 @@ namespace Unigram.ViewModels
                         continue;
                     }
 
-                    var position = item.GetPosition(_chatList);
+                    var itemOrder = item.GetOrder(_chatList);
 
-                    if (order > position.Order || order == position.Order && chat.Id >= item.Id)
+                    if (order > itemOrder || order == itemOrder && chat.Id >= item.Id)
                     {
                         return next == prev ? -1 : next;
                     }

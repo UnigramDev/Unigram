@@ -1094,6 +1094,24 @@ namespace Unigram.Common
             return null;
         }
 
+        public static long GetOrder(this Chat chat, ChatList chatList)
+        {
+            if (chat == null)
+            {
+                return 0;
+            }
+
+            for (int i = 0; i < chat.Positions.Count; i++)
+            {
+                if (chat.Positions[i].List.ListEquals(chatList))
+                {
+                    return chat.Positions[i].Order;
+                }
+            }
+
+            return 0;
+        }
+
         public static TdNetworkType GetNetworkType(this NetworkStatisticsEntry entry)
         {
             if (entry is NetworkStatisticsEntryCall call)
