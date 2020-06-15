@@ -11,6 +11,7 @@ namespace Unigram.Common
     /// </summary>
     public static class MessageDialogExtensions
     {
+        [ThreadStatic]
         private static TaskCompletionSource<ContentDialog> _currentDialogShowRequest;
 
         /// <summary>
