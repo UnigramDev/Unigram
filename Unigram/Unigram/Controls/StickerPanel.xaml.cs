@@ -53,7 +53,9 @@ namespace Unigram.Controls
 
             StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(protoService.SessionId);
             StickersRoot.ItemClick = Stickers_ItemClick;
-            StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args); ;
+            StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args);
+
+            EmojisRoot.DataContext = StickersRoot.DataContext;
 
             switch (SettingsService.Current.Stickers.SelectedTab)
             {
