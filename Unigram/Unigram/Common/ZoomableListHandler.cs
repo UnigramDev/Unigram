@@ -69,8 +69,6 @@ namespace Unigram.Common
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            _listView.Loaded -= OnLoaded;
-            _listView.Unloaded -= OnUnloaded;
             _listView.PointerMoved -= OnPointerMoved;
             _listView.PointerReleased -= OnPointerReleased;
             _listView.PointerCanceled -= OnPointerReleased;
