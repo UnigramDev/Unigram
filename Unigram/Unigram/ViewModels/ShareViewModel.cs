@@ -293,6 +293,13 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _sendAsAlbum;
+        public bool SendAsAlbum
+        {
+            get { return _sendAsAlbum; }
+            set { Set(ref _sendAsAlbum, value); }
+        }
+
         private bool _sendAsCopy;
         public bool SendAsCopy
         {
@@ -454,7 +461,7 @@ namespace Unigram.ViewModels
                             album = first.MediaAlbumId != 0 && _messages.All(x => x.MediaAlbumId == first.MediaAlbumId);
                         }
 
-                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new SendMessageOptions(false, false, null), album, _sendAsCopy, _removeCaptions));
+                        var response = await ProtoService.SendAsync(new ForwardMessages(chat.Id, _messages[0].ChatId, _messages.Select(x => x.Id).ToList(), new SendMessageOptions(false, false, null), album || _sendAsAlbum, _sendAsCopy, _removeCaptions));
                     }
                 }
 

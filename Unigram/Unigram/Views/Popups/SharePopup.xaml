@@ -52,6 +52,7 @@
                         Grid.Column="1">
                     <controls:GlyphButton.Flyout>
                         <MenuFlyout x:Name="MenuFlyout">
+                            <ToggleMenuFlyoutItem Text="Send as album" IsChecked="{x:Bind ViewModel.SendAsAlbum, Mode=TwoWay}"/>
                             <ToggleMenuFlyoutItem Text="Send as copy" IsChecked="{x:Bind ViewModel.SendAsCopy, Mode=TwoWay}"/>
                             <ToggleMenuFlyoutItem Text="Remove captions in copies" IsChecked="{x:Bind ViewModel.RemoveCaptions, Mode=TwoWay}"/>
                         </MenuFlyout>
