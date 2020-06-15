@@ -1023,7 +1023,6 @@ namespace Unigram.Controls.Gallery
         #region Compact overlay
 
         private static ViewLifetimeControl _compactLifetime;
-        private IViewService _viewService;
 
         private async void Compact_Click(object sender, RoutedEventArgs e)
         {
@@ -1032,8 +1031,6 @@ namespace Unigram.Controls.Gallery
             {
                 return;
             }
-
-            _viewService = TLContainer.Current.Resolve<IViewService>();
 
             if (_mediaPlayer == null || _mediaPlayer.Source == null)
             {
@@ -1076,7 +1073,9 @@ namespace Unigram.Controls.Gallery
                 height *= ratio;
             }
 
-            _compactLifetime = await _viewService.OpenAsync(() =>
+            var viewService = TLContainer.Current.Resolve<IViewService>();
+
+            _compactLifetime = await viewService.OpenAsync(() =>
             {
                 var element = new MediaPlayerElement();
                 element.RequestedTheme = ElementTheme.Dark;

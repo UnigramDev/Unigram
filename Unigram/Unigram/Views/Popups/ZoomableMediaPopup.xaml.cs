@@ -85,10 +85,14 @@ namespace Unigram.Views.Popups
 
             UpdateFile(sticker, sticker.StickerValue, true);
 
-            var response = await GetEmojisAsync(sticker.StickerValue.Id);
-            if (response is Emojis emojis)
+            var getEmojis = GetEmojisAsync;
+            if (getEmojis != null)
             {
-                Title.Text = string.Join(" ", emojis.EmojisValue);
+                var response = await getEmojis(sticker.StickerValue.Id);
+                if (response is Emojis emojis)
+                {
+                    Title.Text = string.Join(" ", emojis.EmojisValue);
+                }
             }
         }
 
