@@ -1033,7 +1033,7 @@ namespace Unigram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SharedMedia.Height = e.NewSize.Height;
+            SharedMedia.Height = e.NewSize.Height - 16;
         }
     }
 }

@@ -117,35 +117,20 @@ namespace Unigram.Views.Chats
             _isLocked = locked;
 
             var previous = (float)HeaderPage.ActualWidth;
-            var size = embedded && !locked ? 640 : (float)ActualWidth;
+            var size = embedded ? 640 : (float)ActualWidth;
 
             //Header.IsBackEnabled = !embedded;
             //Header.IsBackButtonVisible = embedded ? Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Collapsed : Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Visible;
             Header.Height = embedded ? 40 : 48;
             HeaderPage.Height = embedded ? 40 : 48;
             HeaderPage.BackVisibility = embedded ? Visibility.Collapsed : Visibility.Visible;
-            HeaderPanel.CornerRadius = new CornerRadius(embedded && !locked ? 8 : 0, embedded && !locked ? 8 : 0, 0, 0);
-            HeaderPanel.MaxWidth = embedded && !locked ? 640 : double.PositiveInfinity;
-            HeaderPanel.Margin = new Thickness(embedded && !locked ? 12 : 0, 0, embedded && !locked ? 12 : 0, 0);
+            HeaderPanel.CornerRadius = new CornerRadius(embedded ? 8 : 0, embedded ? 8 : 0, 0, 0);
+            HeaderPanel.MaxWidth = embedded ? 640 : double.PositiveInfinity;
+            HeaderPanel.Margin = new Thickness(embedded ? 12 : 0, 0, embedded ? 12 : 0, 0);
 
-            HeaderMedia.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 8 : 8, 0, 0);
-            HeaderFiles.Padding = HeaderLinks.Padding = HeaderMusic.Padding = HeaderVoice.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 16 : 16, 0, 8);
-            HeaderFiles.Radius = HeaderLinks.Radius = HeaderMusic.Radius = HeaderVoice.Radius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
-
-            var header = ElementCompositionPreview.GetElementVisual(HeaderPage);
-            var animator = ElementCompositionPreview.GetElementVisual(HeaderAnimator);
-
-            var offset = header.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(0, new Vector3(previous > size ? -((previous - size) / 2) : (size - previous) / 2, 0, 0));
-            offset.InsertKeyFrame(1, new Vector3(0));
-
-            var scale = header.Compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(0, new Vector3(previous / size, 1, 1));
-            scale.InsertKeyFrame(1, new Vector3(1));
-
-            header.StartAnimation("Offset", offset);
-            animator.StartAnimation("Offset", offset);
-            animator.StartAnimation("Scale", scale);
+            HeaderMedia.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 8 : 8, 0, 0);
+            HeaderFiles.Padding = HeaderLinks.Padding = HeaderMusic.Padding = HeaderVoice.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 8);
+            HeaderFiles.Radius = HeaderLinks.Radius = HeaderMusic.Radius = HeaderVoice.Radius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
         }
 
         public ScrollViewer GetScrollViewer()
