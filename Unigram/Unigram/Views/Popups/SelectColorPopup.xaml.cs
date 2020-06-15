@@ -15,10 +15,11 @@ namespace Unigram.Views.Popups
             SecondaryButtonText = Strings.Resources.Cancel;
         }
 
+        private Color _color;
         public Color Color
         {
-            get => Picker.Color;
-            set => Picker.Color = value;
+            get => _color;
+            set => Picker.Color = _color = value;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -31,12 +32,20 @@ namespace Unigram.Views.Popups
 
         private void TextField_ColorChanged(ColorTextBox sender, Controls.ColorChangedEventArgs args)
         {
+            _color = args.NewColor;
             Picker.Color = args.NewColor;
         }
 
         private void Picker_ColorChanged(Controls.ColorPicker sender, Controls.ColorChangedEventArgs args)
         {
+            _color = args.NewColor;
             TextField.Color = args.NewColor;
+        }
+
+        private void System_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            _color = default;
+            Hide(ContentDialogResult.Primary);
         }
     }
 }

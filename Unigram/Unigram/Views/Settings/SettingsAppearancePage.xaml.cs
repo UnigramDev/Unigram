@@ -70,7 +70,7 @@ namespace Unigram.Views.Settings
         {
             if (accents != null && accents.Count > index)
             {
-                return new SolidColorBrush(accents[index].AccentColor);
+                return new SolidColorBrush(accents[index].SelectionColor);
             }
 
             return null;

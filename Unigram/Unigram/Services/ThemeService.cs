@@ -304,7 +304,13 @@ namespace Unigram.Services
 
         public static ThemeAccentInfo FromAccent(TelegramThemeType type, Color accent)
         {
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], accent);
+            var color = accent;
+            if (color == default)
+            {
+                color = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
+            }
+
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], color);
             var values = new Dictionary<string, Color>();
 
             foreach (var item in _map[type])
@@ -324,6 +330,19 @@ namespace Unigram.Services
         public override bool IsOfficial { get; }
 
 
+
+        public override Color SelectionColor
+        {
+            get
+            {
+                if (AccentColor == default)
+                {
+                    return BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
+                }
+
+                return AccentColor;
+            }
+        }
 
         public override Color ChatBackgroundColor
         {
@@ -581,6 +600,8 @@ namespace Unigram.Services
                 return Color.FromArgb(0xFF, 0x2B, 0x52, 0x78);
             }
         }
+
+        public virtual Color SelectionColor => AccentColor;
 
         public virtual Color AccentColor
         {

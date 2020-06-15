@@ -340,6 +340,21 @@ namespace Unigram.Common
             return Color.FromArgb(a, r, g, b);
         }
 
+        public static Color FromHex(int hexValue)
+        {
+            byte a = (byte)((hexValue & 0xff000000) >> 24);
+            byte r = (byte)((hexValue & 0x00ff0000) >> 16);
+            byte g = (byte)((hexValue & 0x0000ff00) >> 8);
+            byte b = (byte)(hexValue & 0x000000ff);
+
+            return Color.FromArgb(a, r, g, b);
+        }
+
+        public static int ToHex(Color color)
+        {
+            return (color.A << 24) + (color.R << 16) + (color.G << 8) + color.B;
+        }
+
         public static HSV ToHSV(this Color color)
         {
             RGB rgb = color;

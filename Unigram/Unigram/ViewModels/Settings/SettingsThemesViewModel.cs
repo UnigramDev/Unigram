@@ -7,11 +7,13 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -199,8 +201,14 @@ namespace Unigram.ViewModels.Settings
             var type = Settings.Appearance.RequestedThemeType;
             if (ThemeAccentInfo.IsAccent(type))
             {
+                var accent = Settings.Appearance.Accents[type];
+                if (accent == default)
+                {
+                    accent = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
+                }
+
                 var dialog = new SelectColorPopup();
-                dialog.Color = Settings.Appearance.Accents[type];
+                dialog.Color = accent;
 
                 var confirm = await dialog.ShowAsync();
                 if (confirm == ContentDialogResult.Primary)
