@@ -28,6 +28,7 @@ namespace Unigram.Controls.Messages
         private MessageViewModel _message;
 
         private bool _placeholder;
+        private bool _placeholderVertical;
         private double _maxWidth;
 
         public MessageBubble()
@@ -61,13 +62,21 @@ namespace Unigram.Controls.Messages
             _message = message;
             Tag = message;
 
-            UpdateAttach(message);
-            UpdateMessageHeader(message);
-            UpdateMessageReply(message);
-            UpdateMessageContent(message);
+            if (message != null)
+            {
+                UpdateAttach(message);
+                UpdateMessageHeader(message);
+                UpdateMessageReply(message);
+                UpdateMessageContent(message);
 
-            Footer.UpdateMessage(message);
-            Markup.Update(message, message.ReplyMarkup);
+                Footer.UpdateMessage(message);
+                Markup.Update(message, message.ReplyMarkup);
+            }
+            else
+            {
+                Span.Inlines.Clear();
+                Media.Child = null;
+            }
 
             if (_highlight != null)
             {
@@ -928,10 +937,11 @@ namespace Unigram.Controls.Messages
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
 
-            if (adjust)
-            {
-                Span.Inlines.Add(new LineBreak());
-            }
+            _placeholderVertical = adjust;
+            //if (adjust)
+            //{
+            //    Span.Inlines.Add(new LineBreak());
+            //}
         }
 
         private bool GetEntities(MessageViewModel message, Span span, string text, out bool adjust)
@@ -1275,9 +1285,9 @@ namespace Unigram.Controls.Messages
                 var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
 
                 var diff = width - rect.Right;
-                if (diff < footerWidth)
+                if (diff < footerWidth || _placeholderVertical)
                 {
-                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right)
+                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right && !_placeholderVertical)
                     {
                         Message.Margin = new Thickness(0, 0, footerWidth, 0);
                     }
