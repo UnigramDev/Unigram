@@ -15,8 +15,6 @@ namespace Unigram.Controls.Chats
 {
     public class ChatActionIndicator : FrameworkElement
     {
-        private const float PI = 3.1415926535897931f;
-
         private Visual _previous;
         private AnimationType _action;
 
@@ -270,11 +268,11 @@ namespace Unigram.Controls.Chats
 
             ScalarNode alpha;
 
-            alpha = 1.0f - EF.Pow(EF.Cos(radiusz / (3.0f * delta) * PI), 10);
+            alpha = 1.0f - EF.Pow(EF.Cos(radiusz / (3.0f * delta) * MathF.PI), 10);
             ExpressionNode colorDot1 = EF.ColorRgb(alpha * 255, color.R, color.G, color.B);
-            alpha = 1.0f - EF.Pow(EF.Cos((radiusz + delta) / (3.0f * delta) * PI), 10);
+            alpha = 1.0f - EF.Pow(EF.Cos((radiusz + delta) / (3.0f * delta) * MathF.PI), 10);
             ExpressionNode colorDot2 = EF.ColorRgb(alpha * 255, color.R, color.G, color.B);
-            alpha = 1.0f - EF.Pow(EF.Cos((radiusz + delta * 2) / (3.0f * delta) * PI), 10);
+            alpha = 1.0f - EF.Pow(EF.Cos((radiusz + delta * 2) / (3.0f * delta) * MathF.PI), 10);
             ExpressionNode colorDot3 = EF.ColorRgb(alpha * 255, color.R, color.G, color.B);
 
             brushDot1.StartAnimation("Color", colorDot1);

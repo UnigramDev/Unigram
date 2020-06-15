@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
@@ -10,6 +11,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
@@ -22,21 +25,28 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsAppearanceViewModel>();
 
-            ViewModel.PropertyChanged += OnPropertyChanged;
-
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
 
             Message1.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
 
-            //UpdatePreview(true);
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
                 MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
             }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
         private void Wallpaper_Click(object sender, RoutedEventArgs e)
@@ -55,6 +65,16 @@ namespace Unigram.Views.Settings
         }
 
         #region Binding
+
+        private SolidColorBrush ConvertAccent(IList<ThemeAccentInfo> accents, int index)
+        {
+            if (accents != null && accents.Count > index)
+            {
+                return new SolidColorBrush(accents[index].SelectionColor);
+            }
+
+            return null;
+        }
 
         private string ConvertNightMode(NightMode mode)
         {
@@ -114,12 +134,7 @@ namespace Unigram.Views.Settings
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var theme = element.Tag as ThemeInfoBase;
-
-            if (theme is ThemeSystemInfo)
-            {
-                return;
-            }
+            var theme = List.ItemFromContainer(element) as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Theme });
@@ -137,6 +152,21 @@ namespace Unigram.Views.Settings
 
         #endregion
 
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Theme_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -145,25 +175,34 @@ namespace Unigram.Views.Settings
             }
 
             var theme = args.Item as ThemeInfoBase;
-            var root = args.ItemContainer.ContentTemplateRoot as StackPanel;
+            var radio = args.ItemContainer.ContentTemplateRoot as RadioButton;
 
-            var radio = root.Children[0] as RadioButton;
+            if (args.ItemContainer.ContentTemplateRoot is StackPanel root)
+            {
+                radio = root.Children[0] as RadioButton;
+            }
+
+            radio.Click -= Switch_Click;
+            radio.Click += Switch_Click;
 
             if (theme is ThemeCustomInfo custom)
             {
                 radio.RequestedTheme = custom.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = string.Equals(SettingsService.Current.Appearance.RequestedThemePath, custom.Path, StringComparison.OrdinalIgnoreCase);
+                radio.IsChecked = SettingsService.Current.Appearance.RequestedThemeType == TelegramThemeType.Custom && string.Equals(SettingsService.Current.Appearance.RequestedThemeCustom, custom.Path, StringComparison.OrdinalIgnoreCase);
             }
-            else if (theme is ThemeSystemInfo)
+            else if (theme is ThemeAccentInfo accent)
             {
-                radio.RequestedTheme = SettingsService.Current.Appearance.GetSystemTheme() == TelegramAppTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
-                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemePath) && SettingsService.Current.Appearance.RequestedTheme == ElementTheme.Default;
+                radio.RequestedTheme = accent.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
+                radio.IsChecked = SettingsService.Current.Appearance.RequestedThemeType == accent.Type && SettingsService.Current.Appearance.Accents[accent.Type] == accent.AccentColor;
             }
             else
             {
                 radio.RequestedTheme = theme.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemePath) && SettingsService.Current.Appearance.RequestedTheme == (theme.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
+                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemeCustom) && SettingsService.Current.Appearance.RequestedTheme == (theme.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
             }
         }
+
+        #endregion
+
     }
 }

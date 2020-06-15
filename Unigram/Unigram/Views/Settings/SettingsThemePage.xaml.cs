@@ -546,7 +546,7 @@ namespace Unigram.Views.Settings
         {
             _super = service.GetDefaultColor(model.Parent, key);
 
-            if (model.Values.TryGet(key, out Color mcolor))
+            if (model.Values.TryGetValue(key, out Color mcolor))
             {
                 _value = mcolor;
             }
@@ -587,7 +587,7 @@ namespace Unigram.Views.Settings
         {
             _super = service.GetDefaultColor(model.Parent, key);
 
-            if (model.Values.TryGet(key, out Color mcolor))
+            if (model.Values.TryGetValue(key, out Color mcolor))
             {
                 _value = mcolor;
             }

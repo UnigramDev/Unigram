@@ -3,9 +3,9 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
       xmlns:controls="using:Unigram.Controls"
-      xmlns:settings="using:Unigram.Views.Settings"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
@@ -15,7 +15,11 @@
             VerticalScrollMode="Auto"
             Grid.Row="1">
             <StackPanel Padding="0,16,0,24">
-                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+                <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <contract7Present:Grid.BackgroundTransition>
+                        <contract7Present:BrushTransition/>
+                    </contract7Present:Grid.BackgroundTransition>
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -86,6 +90,9 @@
 
                 <StackPanel
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <contract7Present:StackPanel.BackgroundTransition>
+                        <contract7Present:BrushTransition/>
+                    </contract7Present:StackPanel.BackgroundTransition>
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" />
                     
                     <controls:BadgeButton
@@ -110,7 +117,10 @@
 
                 <StackPanel
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Margin="0,24,0,0">
+                    Margin="0,16,0,0">
+                    <contract7Present:StackPanel.BackgroundTransition>
+                        <contract7Present:BrushTransition/>
+                    </contract7Present:StackPanel.BackgroundTransition>
                     <controls:BadgeButton
                         Content="{CustomResource Filters}"
                         Glyph="&#xF12B;"
@@ -120,7 +130,10 @@
                 
                 <StackPanel
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Margin="0,24,0,0">
+                    Margin="0,16,0,0">
+                    <contract7Present:StackPanel.BackgroundTransition>
+                        <contract7Present:BrushTransition/>
+                    </contract7Present:StackPanel.BackgroundTransition>
                     <controls:BadgeButton
                         Content="{CustomResource NotificationsAndSounds}"
                         Glyph="&#xEC42;"
@@ -160,7 +173,10 @@
                 
                 <StackPanel
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Margin="0,24,0,0">
+                    Margin="0,16,0,0">
+                    <contract7Present:StackPanel.BackgroundTransition>
+                        <contract7Present:BrushTransition/>
+                    </contract7Present:StackPanel.BackgroundTransition>
                     <controls:BadgeButton Content="{CustomResource AskAQuestion}"
                                           Glyph="&#xED15;"
                                           Command="{x:Bind ViewModel.AskCommand}"

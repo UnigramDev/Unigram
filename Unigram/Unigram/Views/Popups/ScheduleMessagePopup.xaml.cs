@@ -29,7 +29,7 @@ namespace Unigram.Views.Popups
             Date.MinDate = DateTime.Today;
             Date.MaxDate = DateTime.Today.AddYears(1);
 
-            Time.Time = DateTime.Today.TimeOfDay.Add(TimeSpan.FromMinutes(10));
+            Time.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromMinutes(10));
 
             Title = reminder ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage;
             PrimaryButtonText = Strings.Resources.OK;

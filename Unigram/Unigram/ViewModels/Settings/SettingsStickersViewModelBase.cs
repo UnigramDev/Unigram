@@ -32,12 +32,12 @@ namespace Unigram.ViewModels.Settings
             StickerSetRemoveCommand = new RelayCommand<StickerSetInfo>(StickerSetRemoveExecute);
             //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
             //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
-
-            Aggregator.Subscribe(this);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Aggregator.Subscribe(this);
+
             ProtoService.Send(new GetInstalledStickerSets(_masks), result =>
             {
                 if (result is StickerSets stickerSets)
@@ -82,6 +82,8 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
+            Aggregator.Unsubscribe(this);
+
             if (_needReorder && _newOrder.Count > 0)
             {
                 _needReorder = false;

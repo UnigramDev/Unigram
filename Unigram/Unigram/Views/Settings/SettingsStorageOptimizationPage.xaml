@@ -473,7 +473,6 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <controls:FauxCheckBox
-                        Click="CheckBox_Click"
                         Style="{StaticResource DefaultCheckBoxStyle}"
                         Margin="12,6,0,6">
                         <StackPanel>

@@ -402,6 +402,11 @@ namespace Unigram.Views.Popups
 
             foreach (var chat in dialog.ViewModel.SelectedItems)
             {
+                if (chat == null)
+                {
+                    continue;
+                }
+
                 target.Add(new FilterChat { Chat = chat });
             }
 
@@ -645,10 +650,6 @@ namespace Unigram.Views.Popups
             SearchField.Visibility = Visibility.Visible;
 
             SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_GotFocus(object sender, RoutedEventArgs e)
-        {
             Search_TextChanged(null, null);
         }
 
@@ -790,17 +791,18 @@ namespace Unigram.Views.Popups
             var selectedItems = ViewModel.SelectedItems;
 
             var index = items.IndexOf(chat);
-            if (index > -1)
+            if (index > 0)
             {
-                if (index > 0)
-                {
-                    items.Remove(chat);
-                    items.Insert(1, chat);
-                }
+                items.Remove(chat);
+                items.Insert(1, chat);
+            }
+            else if (items.Count > 0)
+            {
+                items.Insert(1, chat);
             }
             else
             {
-                items.Insert(1, chat);
+                items.Add(chat);
             }
 
             if (ChatsPanel.SelectionMode == ListViewSelectionMode.Multiple)
@@ -827,6 +829,7 @@ namespace Unigram.Views.Popups
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
         }
 

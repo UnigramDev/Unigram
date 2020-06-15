@@ -64,15 +64,15 @@ namespace Unigram.ViewModels.Settings
         private string _emojiSet;
         public string EmojiSet
         {
-            get { return _emojiSet; }
-            set { Set(ref _emojiSet, value); }
+            get => _emojiSet;
+            set => Set(ref _emojiSet, value);
         }
 
         private string _emojiSetId;
         public string EmojiSetId
         {
-            get { return _emojiSetId; }
-            set { Set(ref _emojiSetId, value); }
+            get => _emojiSetId;
+            set => Set(ref _emojiSetId, value);
         }
 
         public double FontSize
@@ -253,15 +253,15 @@ namespace Unigram.ViewModels.Settings
         private bool _useDefaultLayout;
         public bool UseDefaultLayout
         {
-            get { return _useDefaultLayout; }
-            set { Set(ref _useDefaultLayout, value); }
+            get => _useDefaultLayout;
+            set => Set(ref _useDefaultLayout, value);
         }
 
         private bool _useThreeLinesLayout;
         public bool UseThreeLinesLayout
         {
-            get { return _useThreeLinesLayout; }
-            set { Set(ref _useThreeLinesLayout, value); }
+            get => _useThreeLinesLayout;
+            set => Set(ref _useThreeLinesLayout, value);
         }
 
         #endregion

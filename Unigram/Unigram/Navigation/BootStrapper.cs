@@ -14,6 +14,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.System.Profile;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -51,6 +52,9 @@ namespace Unigram.Navigation
         public IDictionary<string, object> SessionState { get; set; } = new Dictionary<string, object>();
 
         internal volatile bool IsMainWindowCreated;
+
+        private UISettings _uiSettings;
+        public UISettings UISettings => _uiSettings ??= new UISettings();
 
         #region Debug
 

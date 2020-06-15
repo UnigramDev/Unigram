@@ -52,7 +52,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public void UpdateTheme()
+        public async void UpdateTheme()
         {
             Settings.Appearance.UpdateTimer();
 
@@ -65,7 +65,7 @@ namespace Unigram.ViewModels.Settings
 
             foreach (TLWindowContext window in WindowContext.ActiveWrappers)
             {
-                window.Dispatcher.Dispatch(() =>
+                await window.Dispatcher.DispatchAsync(() =>
                 {
                     window.UpdateTitleBar();
 
@@ -75,6 +75,9 @@ namespace Unigram.ViewModels.Settings
                     }
                 });
             }
+
+            Aggregator.Publish(new UpdateSelectedBackground(true, ProtoService.GetSelectedBackground(true)));
+            Aggregator.Publish(new UpdateSelectedBackground(false, ProtoService.GetSelectedBackground(false)));
         }
 
         public NightMode Mode

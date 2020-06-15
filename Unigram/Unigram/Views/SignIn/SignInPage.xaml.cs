@@ -11,6 +11,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.SignIn
 {
@@ -27,12 +28,18 @@ namespace Unigram.Views.SignIn
 
             Diagnostics.Text = $"Unigram " + GetVersion();
 
-            ViewModel.PropertyChanged += OnPropertyChanged;
-
-
-
             var token = ElementCompositionPreview.GetElementVisual(Token);
             token.Opacity = 0;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
         private string GetVersion()
@@ -40,7 +47,7 @@ namespace Unigram.Views.SignIn
             Package package = Package.Current;
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;
-            return string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build, version.Revision);
+            return string.Format("{0}.{1} ({2})", version.Major, version.Minor, version.Build, version.Revision);
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

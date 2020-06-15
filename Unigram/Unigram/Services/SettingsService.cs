@@ -194,8 +194,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (4UL << 48) | (0UL << 32) | (5072UL << 16);
-        public const string CurrentChangelog = "• Chat folders.\r\n• Stream Videos and Audio files.\r\n• Improved stickers, GIFs and emojis.\r\n\r\nRead more: https://telegra.ph/Unigram-40-05-28";
+        public const ulong CurrentVersion = (4UL << 48) | (1UL << 32) | (5204UL << 16);
+        public const string CurrentChangelog = "• New built-in themes: Classic, Day, Dark and Night.\r\n• Preview stickers and GIFs by click and hold them.\r\n• Improved app memory management.\r\n• More than a hundred between bug fixes and improvements.";
 
         public int Session => _session;
 
@@ -1086,7 +1086,7 @@ namespace Unigram.Services
                 return true;
             }
 
-            value = default(T);
+            value = default;
             return false;
         }
 
@@ -1099,6 +1099,7 @@ namespace Unigram.Services
     public enum ChatSetting
     {
         Index,
-        Pixel
+        Pixel,
+        ReadInboxMaxId
     }
 }

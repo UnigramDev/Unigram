@@ -49,7 +49,7 @@ namespace Unigram.ViewModels.Channels
                 }
 
                 NavigationService.NavigateToChat(chat);
-                NavigationService.ClearHistory();
+                NavigationService.GoBackAt(0, false);
                 //NavigationService.Navigate(typeof(ChannelCreateStep3Page), chat.Id);
             }
         }

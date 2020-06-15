@@ -124,7 +124,7 @@ namespace Unigram.ViewModels
 
             if (content is Animation animation)
             {
-                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), animation.AnimationValue.Size);
+                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), animation.AnimationValue.Size);
             }
             else if (content is Audio audio)
             {

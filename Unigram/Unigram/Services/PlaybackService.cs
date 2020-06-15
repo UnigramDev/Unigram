@@ -459,11 +459,11 @@ namespace Unigram.Services
             var index = items.IndexOf(CurrentPlayback);
             if (index == (_isReversed ? 0 : items.Count - 1))
             {
-                _mediaPlayer.Source = items[_isReversed ? items.Count - 1 : 0].Source;
+                SetSource(items, _isReversed ? items.Count - 1 : 0);
             }
             else
             {
-                _mediaPlayer.Source = items[_isReversed ? index - 1 : index + 1].Source;
+                SetSource(items, _isReversed ? index - 1 : index + 1);
             }
 
             _mediaPlayer.Play();
@@ -480,14 +480,22 @@ namespace Unigram.Services
             var index = items.IndexOf(CurrentPlayback);
             if (index == (_isReversed ? items.Count - 1 : 0))
             {
-                _mediaPlayer.Source = items[_isReversed ? 0 : items.Count - 1].Source;
+                SetSource(items, _isReversed ? 0 : items.Count - 1);
             }
             else
             {
-                _mediaPlayer.Source = items[_isReversed ? index + 1 : index - 1].Source;
+                SetSource(items, _isReversed ? index + 1 : index - 1);
             }
 
             _mediaPlayer.Play();
+        }
+
+        private void SetSource(List<PlaybackItem> items, int index)
+        {
+            if (index > 0 && index < items.Count - 1)
+            {
+                _mediaPlayer.Source = items[index].Source;
+            }
         }
 
         public void Clear()

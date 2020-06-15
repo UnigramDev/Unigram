@@ -33,8 +33,7 @@
             </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <RadioButton Click="EmojiSet_Click"
-                                 GroupName="EmojiFont"
+                    <RadioButton GroupName="EmojiFont"
                                  HorizontalContentAlignment="Stretch"
                                  HorizontalAlignment="Stretch"
                                  Padding="8,0,0,0"

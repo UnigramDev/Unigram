@@ -81,14 +81,14 @@ namespace Unigram.Views
                         var filter = filters.FirstOrDefault(x => x.Id == chatList.ChatFilterId);
                         if (filter != null)
                         {
-                            item.Items.Add(new MenuFlyoutItem { Command = ViewModel.FolderAddCommand, CommandParameter = (filter.Id, chat), Text = filter.Title, Icon = new FontIcon { Glyph = Icons.FromFilter(Icons.ParseFilter(filter.IconName)), FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } });
+                            item.CreateFlyoutItem(ViewModel.FolderAddCommand, (filter.Id, chat), filter.Title, new FontIcon { Glyph = Icons.FromFilter(Icons.ParseFilter(filter.IconName)), FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
                         }
                     }
 
                     if (filters.Count < 10 && item.Items.Count > 0)
                     {
-                        item.Items.Add(new MenuFlyoutSeparator());
-                        item.Items.Add(new MenuFlyoutItem { Command = ViewModel.FolderCreateCommand, CommandParameter = chat, Text = Strings.Resources.CreateNewFilter, Icon = new FontIcon { Glyph = Icons.Add } });
+                        item.CreateFlyoutSeparator();
+                        item.CreateFlyoutItem(ViewModel.FolderCreateCommand, chat, Strings.Resources.CreateNewFilter, new FontIcon { Glyph = Icons.Add });
 
                         flyout.Items.Add(item);
                     }

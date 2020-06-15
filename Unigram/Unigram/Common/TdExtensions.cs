@@ -203,257 +203,23 @@ namespace Unigram.Common
             return new File(0, 0, 0, new LocalFile(string.Empty, false, false, false, false, 0, 0, 0), new RemoteFile(string.Empty, string.Empty, false, false, 0));
         }
 
-        #region Passport
-
-        public static PersonalDocument GetPersonalDocument(this PassportElement element)
+        public static int ToId(this ChatList chatList)
         {
-            switch (element)
+            if (chatList is ChatListMain || chatList == null)
             {
-                case PassportElementBankStatement bankStatement:
-                    return bankStatement.BankStatement;
-                case PassportElementPassportRegistration passportRegistration:
-                    return passportRegistration.PassportRegistration;
-                case PassportElementRentalAgreement rentalAgreement:
-                    return rentalAgreement.RentalAgreement;
-                case PassportElementTemporaryRegistration temporaryRegistration:
-                    return temporaryRegistration.TemporaryRegistration;
-                case PassportElementUtilityBill utilityBill:
-                    return utilityBill.UtilityBill;
-                default:
-                    return null;
+                return 0;
             }
-        }
-
-        public static void SetPersonalDocument(this InputPassportElement element, InputPersonalDocument document)
-        {
-            switch (element)
+            else if (chatList is ChatListArchive)
             {
-                case InputPassportElementBankStatement bankStatement:
-                    bankStatement.BankStatement = document;
-                    break;
-                case InputPassportElementPassportRegistration passportRegistration:
-                    passportRegistration.PassportRegistration = document;
-                    break;
-                case InputPassportElementRentalAgreement rentalAgreement:
-                    rentalAgreement.RentalAgreement = document;
-                    break;
-                case InputPassportElementTemporaryRegistration temporaryRegistration:
-                    temporaryRegistration.TemporaryRegistration = document;
-                    break;
-                case InputPassportElementUtilityBill utilityBill:
-                    utilityBill.UtilityBill = document;
-                    break;
+                return 1;
             }
-        }
-
-        public static IdentityDocument GetIdentityDocument(this PassportElement element)
-        {
-            switch (element)
+            else if (chatList is ChatListFilter filter)
             {
-                case PassportElementDriverLicense driverLicense:
-                    return driverLicense.DriverLicense;
-                case PassportElementIdentityCard identityCard:
-                    return identityCard.IdentityCard;
-                case PassportElementInternalPassport internalPassport:
-                    return internalPassport.InternalPassport;
-                case PassportElementPassport passport:
-                    return passport.Passport;
-                default:
-                    return null;
-            }
-        }
-
-        public static InputPassportElement ToInputElement(this PassportElement element)
-        {
-            switch (element)
-            {
-                case PassportElementAddress address:
-                    return new InputPassportElementAddress();
-                case PassportElementPersonalDetails personalDetails:
-                    return new InputPassportElementPersonalDetails();
-                case PassportElementEmailAddress emailAddress:
-                    return new InputPassportElementEmailAddress();
-                case PassportElementPhoneNumber phoneNumber:
-                    return new InputPassportElementPhoneNumber();
-                case PassportElementBankStatement bankStatement:
-                    return new InputPassportElementBankStatement();
-                case PassportElementPassportRegistration passportRegistration:
-                    return new InputPassportElementPassportRegistration();
-                case PassportElementRentalAgreement rentalAgreement:
-                    return new InputPassportElementRentalAgreement();
-                case PassportElementTemporaryRegistration temporaryRegistration:
-                    return new InputPassportElementTemporaryRegistration();
-                case PassportElementUtilityBill utilityBill:
-                    return new InputPassportElementUtilityBill();
-                case PassportElementDriverLicense driverLicense:
-                    return new InputPassportElementDriverLicense();
-                case PassportElementIdentityCard identityCard:
-                    return new InputPassportElementIdentityCard();
-                case PassportElementInternalPassport internalPassport:
-                    return new InputPassportElementInternalPassport();
-                case PassportElementPassport passport:
-                    return new InputPassportElementPassport();
-                default:
-                    return null;
-            }
-        }
-
-        public static PassportElementType ToElementType(this PassportElement element)
-        {
-            switch (element)
-            {
-                case PassportElementAddress address:
-                    return new PassportElementTypeAddress();
-                case PassportElementPersonalDetails personalDetails:
-                    return new PassportElementTypePersonalDetails();
-                case PassportElementEmailAddress emailAddress:
-                    return new PassportElementTypeEmailAddress();
-                case PassportElementPhoneNumber phoneNumber:
-                    return new PassportElementTypePhoneNumber();
-                case PassportElementBankStatement bankStatement:
-                    return new PassportElementTypeBankStatement();
-                case PassportElementPassportRegistration passportRegistration:
-                    return new PassportElementTypePassportRegistration();
-                case PassportElementRentalAgreement rentalAgreement:
-                    return new PassportElementTypeRentalAgreement();
-                case PassportElementTemporaryRegistration temporaryRegistration:
-                    return new PassportElementTypeTemporaryRegistration();
-                case PassportElementUtilityBill utilityBill:
-                    return new PassportElementTypeUtilityBill();
-                case PassportElementDriverLicense driverLicense:
-                    return new PassportElementTypeDriverLicense();
-                case PassportElementIdentityCard identityCard:
-                    return new PassportElementTypeIdentityCard();
-                case PassportElementInternalPassport internalPassport:
-                    return new PassportElementTypeInternalPassport();
-                case PassportElementPassport passport:
-                    return new PassportElementTypePassport();
-                default:
-                    return null;
-            }
-        }
-
-        public static PassportElement GetElementForType(this PassportElementsWithErrors authorizationForm, PassportElementType type)
-        {
-            foreach (var element in authorizationForm.Elements)
-            {
-                if (element is PassportElementAddress && type is PassportElementTypeAddress)
-                {
-                    return element;
-                }
-                else if (element is PassportElementPersonalDetails && type is PassportElementTypePersonalDetails)
-                {
-                    return element;
-                }
-                else if (element is PassportElementEmailAddress && type is PassportElementTypeEmailAddress)
-                {
-                    return element;
-                }
-                else if (element is PassportElementPhoneNumber && type is PassportElementTypePhoneNumber)
-                {
-                    return element;
-                }
-                else if (element is PassportElementBankStatement && type is PassportElementTypeBankStatement)
-                {
-                    return element;
-                }
-                else if (element is PassportElementPassportRegistration && type is PassportElementTypePassportRegistration)
-                {
-                    return element;
-                }
-                else if (element is PassportElementRentalAgreement && type is PassportElementTypeRentalAgreement)
-                {
-                    return element;
-                }
-                else if (element is PassportElementTemporaryRegistration && type is PassportElementTypeTemporaryRegistration)
-                {
-                    return element;
-                }
-                else if (element is PassportElementUtilityBill && type is PassportElementTypeUtilityBill)
-                {
-                    return element;
-                }
-                else if (element is PassportElementDriverLicense && type is PassportElementTypeDriverLicense)
-                {
-                    return element;
-                }
-                else if (element is PassportElementIdentityCard && type is PassportElementTypeIdentityCard)
-                {
-                    return element;
-                }
-                else if (element is PassportElementInternalPassport && type is PassportElementTypeInternalPassport)
-                {
-                    return element;
-                }
-                else if (element is PassportElementPassport && type is PassportElementTypePassport)
-                {
-                    return element;
-                }
+                return filter.ChatFilterId;
             }
 
-            return null;
+            return -1;
         }
-
-        public static IEnumerable<PassportElementError> GetErrorsForType(this PassportElementsWithErrors authorizationForm, PassportElementType type)
-        {
-            foreach (var error in authorizationForm.Errors)
-            {
-                if (error.Type is PassportElementTypeAddress && type is PassportElementTypeAddress)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypePersonalDetails && type is PassportElementTypePersonalDetails)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypeEmailAddress && type is PassportElementTypeEmailAddress)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypePhoneNumber && type is PassportElementTypePhoneNumber)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypeBankStatement && type is PassportElementTypeBankStatement)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypePassportRegistration && type is PassportElementTypePassportRegistration)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypeRentalAgreement && type is PassportElementTypeRentalAgreement)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypeTemporaryRegistration && type is PassportElementTypeTemporaryRegistration)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypeUtilityBill && type is PassportElementTypeUtilityBill)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypeDriverLicense && type is PassportElementTypeDriverLicense)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypeIdentityCard && type is PassportElementTypeIdentityCard)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypeInternalPassport && type is PassportElementTypeInternalPassport)
-                {
-                    yield return error;
-                }
-                else if (error.Type is PassportElementTypePassport && type is PassportElementTypePassport)
-                {
-                    yield return error;
-                }
-            }
-        }
-
-        #endregion
 
         #region Json
 
@@ -1312,7 +1078,38 @@ namespace Unigram.Common
 
         public static ChatPosition GetPosition(this Chat chat, ChatList chatList)
         {
-            return chat.Positions.FirstOrDefault(x => x.List.ListEquals(chatList));
+            if (chat == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < chat.Positions.Count; i++)
+            {
+                if (chat.Positions[i].List.ListEquals(chatList))
+                {
+                    return chat.Positions[i];
+                }
+            }
+
+            return null;
+        }
+
+        public static long GetOrder(this Chat chat, ChatList chatList)
+        {
+            if (chat == null)
+            {
+                return 0;
+            }
+
+            for (int i = 0; i < chat.Positions.Count; i++)
+            {
+                if (chat.Positions[i].List.ListEquals(chatList))
+                {
+                    return chat.Positions[i].Order;
+                }
+            }
+
+            return 0;
         }
 
         public static TdNetworkType GetNetworkType(this NetworkStatisticsEntry entry)

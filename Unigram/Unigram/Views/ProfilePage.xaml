@@ -36,6 +36,36 @@
                         Margin="12,0"/>
                 </Border>
 
+                <Grid x:Name="InfoPanel" Margin="12,0,0,0" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture
+                        x:Name="PhotoInfo"
+                        AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                        Width="{ThemeResource ChatPhotoSize}"
+                        Height="{ThemeResource ChatPhotoSize}"
+                        Margin="0,0,12,0"/>
+
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
+                        <TextBlock
+                            x:Name="TitleInfo"
+                            Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis"
+                            MaxLines="1"/>
+                        <TextBlock
+                            x:Name="SubtitleInfo"
+                            Foreground="{ThemeResource PageHeaderDisabledBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+
                 <controls:GlyphButton
                     x:Name="Call"
                     Glyph="&#xE13A;"
@@ -120,7 +150,7 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+                                    <TextBlock x:Name="Title" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" IsTextSelectionEnabled="True" Style="{StaticResource BaseTextBlockStyle}" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
                                     <Grid x:Name="Verified" Visibility="Collapsed" Margin="4,0,0,-2" Grid.Column="2">
                                         <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
                                     </Grid>
@@ -151,7 +181,7 @@
 
                         <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
 
-                    <!--</controls:HeaderedControl>
+                        <!--</controls:HeaderedControl>
                         
                     <controls:HeaderedControl>-->
                         <Grid x:Name="DescriptionPanel" Visibility="Collapsed">
@@ -346,11 +376,7 @@
                         <TextBlock Text="{CustomResource ChannelMembers}" Margin="12,0,12,8" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     </Border>
 
-                    <chats:ChatSharedMediaPage x:Name="SharedMedia" Margin="0,16,0,0" IsEmbedded="True" Height="0">
-                        <UserControl.Resources>
-                            <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent"/>
-                        </UserControl.Resources>
-                    </chats:ChatSharedMediaPage>
+                    <chats:ChatSharedMediaView x:Name="SharedMedia" Margin="0,16,0,0" IsEmbedded="True" Height="0"/>
                 </StackPanel>
             </ScrollViewer>
         </Grid>

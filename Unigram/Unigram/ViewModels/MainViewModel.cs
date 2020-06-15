@@ -28,7 +28,8 @@ namespace Unigram.ViewModels
         IHandle<UpdateUnreadChatCount>,
         IHandle<UpdateChatFilters>,
         IHandle<UpdateAppVersion>,
-        IHandle<UpdateWindowActivated>
+        IHandle<UpdateWindowActivated>,
+        IDisposable
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
@@ -90,6 +91,23 @@ namespace Unigram.ViewModels
             FilterEditCommand = new RelayCommand<ChatFilterViewModel>(FilterEditExecute);
             FilterAddCommand = new RelayCommand<ChatFilterViewModel>(FilterAddExecute);
             FilterDeleteCommand = new RelayCommand<ChatFilterViewModel>(FilterDeleteExecute);
+        }
+
+        public void Dispose()
+        {
+            Aggregator.Unsubscribe(ArchivedChats.Items);
+            Aggregator.Unsubscribe(Chats.Items);
+            Aggregator.Unsubscribe(this);
+
+            ArchivedChats.Items.Clear();
+            Chats.Items.Clear();
+
+            Children.Clear();
+            Chats = null;
+            ArchivedChats = null;
+            Contacts = null;
+            Calls = null;
+            Settings = null;
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
@@ -497,7 +515,7 @@ namespace Unigram.ViewModels
 
             _title = info.Title;
             _icon = Icons.ParseFilter(info.IconName);
-            _glyph = Icons.FromFilter(_icon);
+            _iconUri = new Uri($"ms-appx:///Assets/Filters/{_icon}.png");
         }
 
         private ChatFilterViewModel()
@@ -509,7 +527,7 @@ namespace Unigram.ViewModels
         {
             Title = info.Title;
             Icon = Icons.ParseFilter(info.IconName);
-            Glyph = Icons.FromFilter(_icon);
+            IconUri = new Uri($"ms-appx:///Assets/Filters/{_icon}.png");
         }
 
         public ChatList ChatList { get; }
@@ -530,11 +548,11 @@ namespace Unigram.ViewModels
             set => Set(ref _icon, value);
         }
 
-        private string _glyph;
-        public string Glyph
+        private Uri _iconUri;
+        public Uri IconUri
         {
-            get => _glyph;
-            set => Set(ref _glyph, value);
+            get => _iconUri;
+            set => Set(ref _iconUri, value);
         }
 
         private int _unreadCount;

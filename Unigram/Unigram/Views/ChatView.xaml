@@ -893,6 +893,7 @@
                 <controls:OrientableListView
                     x:Name="ListAutocomplete"
                     ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                    ChoosingItemContainer="Autocomplete_ChoosingItemContainer"
                     ContainerContentChanging="Autocomplete_ContainerContentChanging"
                     AllowFocusOnInteraction="False"
                     IsItemClickEnabled="True"

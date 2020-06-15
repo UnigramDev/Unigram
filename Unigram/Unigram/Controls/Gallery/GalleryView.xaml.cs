@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -116,7 +117,14 @@ namespace Unigram.Controls.Gallery
 
         public void Handle(UpdateDeleteMessages update)
         {
-
+            this.BeginOnUIThread(() =>
+            {
+                var viewModel = ViewModel;
+                if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.ChatId == update.ChatId && update.MessageIds.Any(x => x == message.Id))
+                {
+                    Hide();
+                }
+            });
         }
 
         public void Handle(UpdateMessageContent update)
@@ -124,9 +132,9 @@ namespace Unigram.Controls.Gallery
             this.BeginOnUIThread(() =>
             {
                 var viewModel = ViewModel;
-                if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
+                if (viewModel != null && viewModel.FirstItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
                 {
-                    OnBackRequestedOverride(this, new HandledEventArgs());
+                    Hide();
                 }
             });
         }
@@ -345,6 +353,16 @@ namespace Unigram.Controls.Gallery
                 ApplicationView.GetForCurrentView().ExitFullScreenMode();
             }
 
+            if (ViewModel != null)
+            {
+                ViewModel.Aggregator.Unsubscribe(this);
+
+                ViewModel.Delegate = null;
+                ViewModel.Items.CollectionChanged -= OnCollectionChanged;
+
+                Bindings.StopTracking();
+            }
+
             //var container = GetContainer(0);
             //var root = container.Presenter;
             if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
@@ -365,10 +383,14 @@ namespace Unigram.Controls.Gallery
                     var element = _closing();
                     if (element.ActualWidth > 0 && animation.TryStart(element))
                     {
-                        animation.Completed += (s, args) =>
+                        TypedEventHandler<ConnectedAnimation, object> handler = null;
+                        handler = (s, args) =>
                         {
+                            animation.Completed -= handler;
                             Hide();
                         };
+
+                        animation.Completed += handler;
                     }
                     else
                     {
@@ -446,8 +468,11 @@ namespace Unigram.Controls.Gallery
 
                 if (animation.TryStart(image.Presenter))
                 {
-                    animation.Completed += (s, args) =>
+                    TypedEventHandler<ConnectedAnimation, object> handler = null;
+                    handler = (s, args) =>
                     {
+                        animation.Completed -= handler;
+
                         Transport.Show();
                         ScrollingHost.Opacity = 1;
                         Preview.Opacity = 0;
@@ -457,6 +482,8 @@ namespace Unigram.Controls.Gallery
                             Play(container.Presenter, item, item.GetFile());
                         }
                     };
+
+                    animation.Completed += handler;
 
                     return;
                 }
@@ -548,7 +575,7 @@ namespace Unigram.Controls.Gallery
             catch { }
         }
 
-        private async void Play(Grid parent, GalleryContent item, File file)
+        private void Play(Grid parent, GalleryContent item, File file)
         {
             try
             {
@@ -996,7 +1023,6 @@ namespace Unigram.Controls.Gallery
         #region Compact overlay
 
         private static ViewLifetimeControl _compactLifetime;
-        private IViewService _viewService;
 
         private async void Compact_Click(object sender, RoutedEventArgs e)
         {
@@ -1005,8 +1031,6 @@ namespace Unigram.Controls.Gallery
             {
                 return;
             }
-
-            _viewService = TLContainer.Current.Resolve<IViewService>();
 
             if (_mediaPlayer == null || _mediaPlayer.Source == null)
             {
@@ -1049,7 +1073,9 @@ namespace Unigram.Controls.Gallery
                 height *= ratio;
             }
 
-            _compactLifetime = await _viewService.OpenAsync(() =>
+            var viewService = TLContainer.Current.Resolve<IViewService>();
+
+            _compactLifetime = await viewService.OpenAsync(() =>
             {
                 var element = new MediaPlayerElement();
                 element.RequestedTheme = ElementTheme.Dark;

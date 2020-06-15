@@ -7,10 +7,13 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
 using Windows.Storage;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -28,8 +31,10 @@ namespace Unigram.ViewModels.Settings
 
             Items = new MvxObservableCollection<ThemeInfoBase>();
             Custom = new MvxObservableCollection<ThemeInfoBase>();
+            Accents = new MvxObservableCollection<ThemeAccentInfo>();
 
             NewThemeCommand = new RelayCommand(NewThemeExecute);
+            AccentThemeCommand = new RelayCommand(AccentThemeExecute);
 
             ThemeCreateCommand = new RelayCommand<ThemeInfoBase>(ThemeCreateExecute);
             ThemeShareCommand = new RelayCommand<ThemeCustomInfo>(ThemeShareExecute);
@@ -39,6 +44,7 @@ namespace Unigram.ViewModels.Settings
 
         public MvxObservableCollection<ThemeInfoBase> Items { get; private set; }
         public MvxObservableCollection<ThemeInfoBase> Custom { get; private set; }
+        public MvxObservableCollection<ThemeAccentInfo> Accents { get; private set; }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
@@ -55,11 +61,79 @@ namespace Unigram.ViewModels.Settings
 
         private async Task RefreshThemesAsync()
         {
-            Items.ReplaceWith(await _themeService.GetThemesAsync(false));
-            Custom.ReplaceWith(await _themeService.GetThemesAsync(true));
+            Items.ReplaceWith(_themeService.GetThemes());
+            Custom.ReplaceWith(await _themeService.GetCustomThemesAsync());
+
+            var type = Settings.Appearance.RequestedThemeType;
+            if (ThemeAccentInfo.IsAccent(type))
+            {
+                var accent = Settings.Appearance.Accents[type];
+                if (_defaultAccents[type].Contains(accent))
+                {
+                    Accents.ReplaceWith(_defaultAccents[type]
+                        .Select(x => ThemeAccentInfo.FromAccent(type, x)));
+                }
+                else
+                {
+                    Accents.ReplaceWith(_defaultAccents[type]
+                        .Take(_defaultAccents[type].Length - 1)
+                        .Union(new[] { accent })
+                        .Select(x => ThemeAccentInfo.FromAccent(type, x)));
+                }
+            }
+            else
+            {
+                Accents.Clear();
+            }
 
             AreCustomThemesAvailable = Custom.Count > 0;
         }
+
+        private readonly Dictionary<TelegramThemeType, Color[]> _defaultAccents = new Dictionary<TelegramThemeType, Color[]>
+        {
+            {
+                TelegramThemeType.Tinted, new Color[]
+                {
+                    ColorEx.FromHex(0xFF5288C1),
+                    ColorEx.FromHex(0xFF58bfe8),
+                    ColorEx.FromHex(0xFF466f42),
+                    ColorEx.FromHex(0xFFaa6084),
+                    ColorEx.FromHex(0xFFa46d3c),
+                    ColorEx.FromHex(0xFF917bbd),
+                    ColorEx.FromHex(0xFFab5149),
+                    ColorEx.FromHex(0xFF697b97),
+                    ColorEx.FromHex(0xFF9b834b),
+                }
+            },
+            {
+                TelegramThemeType.Night, new Color[]
+                {
+                    ColorEx.FromHex(0xFF5288C1),
+                    ColorEx.FromHex(0xFF58bfe8),
+                    ColorEx.FromHex(0xFF466f42),
+                    ColorEx.FromHex(0xFFaa6084),
+                    ColorEx.FromHex(0xFFa46d3c),
+                    ColorEx.FromHex(0xFF917bbd),
+                    ColorEx.FromHex(0xFFab5149),
+                    ColorEx.FromHex(0xFF697b97),
+                    ColorEx.FromHex(0xFF9b834b),
+                }
+            },
+            {
+                TelegramThemeType.Day, new Color[]
+                {
+                    ColorEx.FromHex(0xFF40A7E3),
+                    ColorEx.FromHex(0xFF45bce7),
+                    ColorEx.FromHex(0xFF52b440),
+                    ColorEx.FromHex(0xFFd46c99),
+                    ColorEx.FromHex(0xFFdf8a49),
+                    ColorEx.FromHex(0xFF9978c8),
+                    ColorEx.FromHex(0xFFc55245),
+                    ColorEx.FromHex(0xFF687b98),
+                    ColorEx.FromHex(0xFFdea922),
+                }
+            }
+        };
 
         //public bool IsSystemTheme
         //{
@@ -107,7 +181,7 @@ namespace Unigram.ViewModels.Settings
             {
                 if (x is ThemeCustomInfo custom)
                 {
-                    return string.Equals(SettingsService.Current.Appearance.RequestedThemePath, custom.Path, StringComparison.OrdinalIgnoreCase);
+                    return string.Equals(SettingsService.Current.Appearance.RequestedThemeCustom, custom.Path, StringComparison.OrdinalIgnoreCase);
                 }
                 else
                 {
@@ -118,6 +192,29 @@ namespace Unigram.ViewModels.Settings
             if (existing != null)
             {
                 ThemeCreateExecute(existing);
+            }
+        }
+
+        public RelayCommand AccentThemeCommand { get; }
+        private async void AccentThemeExecute()
+        {
+            var type = Settings.Appearance.RequestedThemeType;
+            if (ThemeAccentInfo.IsAccent(type))
+            {
+                var accent = Settings.Appearance.Accents[type];
+                if (accent == default)
+                {
+                    accent = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
+                }
+
+                var dialog = new SelectColorPopup();
+                dialog.Color = accent;
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    await SetThemeAsync(ThemeAccentInfo.FromAccent(type, dialog.Color));
+                }
             }
         }
 
@@ -153,6 +250,13 @@ namespace Unigram.ViewModels.Settings
             if (theme is ThemeCustomInfo custom)
             {
                 foreach (var item in custom.Values)
+                {
+                    preparing.Values[item.Key] = item.Value;
+                }
+            }
+            else if (theme is ThemeAccentInfo accent)
+            {
+                foreach (var item in accent.Values)
                 {
                     preparing.Values[item.Key] = item.Value;
                 }
@@ -200,7 +304,7 @@ namespace Unigram.ViewModels.Settings
             }
             catch { }
 
-            if (Settings.Appearance.RequestedThemePath == theme.Path)
+            if (Settings.Appearance.RequestedThemeCustom == theme.Path)
             {
                 await SetThemeAsync(new ThemeBundledInfo { Parent = theme.Parent });
             }

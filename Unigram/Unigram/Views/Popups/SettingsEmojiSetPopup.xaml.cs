@@ -39,25 +39,6 @@ namespace Unigram.Views.Popups
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-#if DEBUG
-            CloseButtonText = "Reset";
-            CloseButtonClick += (s, args) =>
-            {
-                args.Cancel = true;
-
-                foreach (var item in List.ItemsSource as ItemsCollection)
-                {
-                    if (item.IsOfficial)
-                    {
-                        continue;
-                    }
-
-                    _protoService.Send(new DeleteFileW(item.Document.Id));
-                    _protoService.Send(new DeleteFileW(item.Thumbnail.Id));
-                }
-            };
-#endif
-
             _aggregator.Subscribe(this);
             List.ItemsSource = _collection = new ItemsCollection(emojiSetService);
         }
@@ -135,6 +116,8 @@ namespace Unigram.Views.Popups
             var content = radio.Content as Grid;
             var emojiPack = args.Item as EmojiSet;
 
+            radio.Click -= EmojiSet_Click;
+            radio.Click += EmojiSet_Click;
             radio.IsChecked = SettingsService.Current.Appearance.EmojiSet.Id == emojiPack.Id;
 
             if (SettingsService.Current.Appearance.EmojiSet.Id == emojiPack.Id)

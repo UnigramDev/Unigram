@@ -12,9 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400"
-    DataContextChanged="OnDataContextChanged"
-    Unloaded="OnUnloaded">
+    d:DesignWidth="400">
 
     <UserControl.Resources>
         <CollectionViewSource x:Name="StickersSource" Source="{x:Bind ViewModel.Stickers, Mode=OneWay}" ItemsPath="Stickers" IsSourceGrouped="True"/>
@@ -30,7 +28,7 @@
             <TextBox x:Name="FieldStickers" PlaceholderText="{CustomResource SearchStickersHint}" TextChanged="FieldStickers_TextChanged" Margin="12,8"/>
         </Border>
 
-        <controls:ZoomableGridView
+        <GridView
             x:Name="Stickers"
             ItemsSource="{x:Bind StickersSource.View, Mode=OneWay}"
             common:FluidGridView.OrientationOnly="False"
@@ -114,10 +112,10 @@
             </GridView.ItemContainerTransitions>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal" AreStickyGroupHeadersEnabled="False" Loaded="OnLoaded"/>
+                    <ItemsWrapGrid Orientation="Horizontal" AreStickyGroupHeadersEnabled="False"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
-        </controls:ZoomableGridView>
+        </GridView>
                                 
         <Grid x:Name="ToolbarContainer">
             <Border x:Name="Separator"/>

@@ -3,6 +3,7 @@ using System.Threading;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
+using Unigram.Views;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -25,6 +26,22 @@ namespace Unigram.Services.Settings
         Dark = 1 << 2,
     }
 
+    public enum TelegramThemeType
+    {
+        Classic = 0,
+        Day = 1,
+        Night = 2,
+        Tinted = 3,
+        Custom = 4
+    }
+
+    public enum NightMode
+    {
+        Disabled,
+        Scheduled,
+        Automatic
+    }
+
     public class InstalledEmojiSet
     {
         public string Id { get; set; }
@@ -40,6 +57,7 @@ namespace Unigram.Services.Settings
             : base(ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always))
         {
             _nightModeTimer = new Timer(CheckNightModeConditions, null, Timeout.Infinite, Timeout.Infinite);
+            MigrateTheme();
             UpdateTimer();
         }
 
@@ -47,8 +65,8 @@ namespace Unigram.Services.Settings
         {
             if (NightMode == NightMode.Scheduled && RequestedTheme == ElementTheme.Light)
             {
-                var start = DateTime.Now.Date;
-                var end = DateTime.Now.Date;
+                var start = DateTime.Today;
+                var end = DateTime.Today;
 
                 if (IsLocationBased && Location.Latitude != 0 && Location.Longitude != 0)
                 {
@@ -103,7 +121,7 @@ namespace Unigram.Services.Settings
             }
         }
 
-        private void CheckNightModeConditions(object state)
+        private async void CheckNightModeConditions(object state)
         {
             UpdateTimer();
 
@@ -118,7 +136,7 @@ namespace Unigram.Services.Settings
 
                 foreach (TLWindowContext window in WindowContext.ActiveWrappers)
                 {
-                    window.Dispatcher.Dispatch(() =>
+                    await window.Dispatcher.DispatchAsync(() =>
                     {
                         window.UpdateTitleBar();
 
@@ -128,6 +146,12 @@ namespace Unigram.Services.Settings
                         }
                     });
                 }
+
+                var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
+                var protoService = TLContainer.Current.Resolve<IProtoService>();
+
+                aggregator.Publish(new UpdateSelectedBackground(true, protoService.GetSelectedBackground(true)));
+                aggregator.Publish(new UpdateSelectedBackground(false, protoService.GetSelectedBackground(false)));
             }
         }
 
@@ -165,22 +189,77 @@ namespace Unigram.Services.Settings
             };
         }
 
-        private string _requestedThemePath;
-        public string RequestedThemePath
+        private void MigrateTheme()
+        {
+            if (_container.Values.TryGet("ThemePath", out string path))
+            {
+                if (path.EndsWith("Assets\\Themes\\DarkBlue.unigram-theme"))
+                {
+                    RequestedThemeType = TelegramThemeType.Tinted;
+                    Accents[TelegramThemeType.Tinted] = ThemeAccentInfo.Accents[TelegramThemeType.Tinted];
+                }
+                else if (path.Length > 0 && System.IO.File.Exists(path))
+                {
+                    RequestedThemeType = TelegramThemeType.Custom;
+                    RequestedThemeCustom = path;
+                }
+
+                _container.Values.Remove("ThemePath");
+            }
+            else if (RequestedTheme == ElementTheme.Default)
+            {
+                var system = GetSystemTheme();
+                if (system == TelegramAppTheme.Dark)
+                {
+                    RequestedTheme = ElementTheme.Dark;
+                    RequestedThemeType = TelegramThemeType.Night;
+                    Accents[TelegramThemeType.Night] = default;
+                }
+                else if (system == TelegramAppTheme.Light)
+                {
+                    RequestedTheme = ElementTheme.Light;
+                    RequestedThemeType = TelegramThemeType.Day;
+                    Accents[TelegramThemeType.Day] = default;
+                }
+            }
+        }
+
+        private TelegramThemeType? _requestedThemeType;
+        public TelegramThemeType RequestedThemeType
         {
             get
             {
-                if (_requestedThemePath == null)
-                    _requestedThemePath = GetValueOrDefault(_container, "ThemePath", string.Empty);
+                if (_requestedThemeType == null)
+                    _requestedThemeType = (TelegramThemeType)GetValueOrDefault(_container, "ThemeType", 0);
 
-                return _requestedThemePath ?? string.Empty;
+                return _requestedThemeType ?? TelegramThemeType.Classic;
             }
             set
             {
-                _requestedThemePath = value ?? string.Empty;
-                AddOrUpdateValue(_container, "ThemePath", value);
+                _requestedThemeType = value;
+                AddOrUpdateValue(_container, "ThemeType", (int)value);
             }
         }
+
+        private string _requestedThemeCustom;
+        public string RequestedThemeCustom
+        {
+            get
+            {
+                if (_requestedThemeCustom == null)
+                    _requestedThemeCustom = GetValueOrDefault(_container, "ThemeCustom", string.Empty);
+
+                return _requestedThemeCustom ?? string.Empty;
+            }
+            set
+            {
+                _requestedThemeCustom = value ?? string.Empty;
+                AddOrUpdateValue(_container, "ThemeCustom", value);
+            }
+        }
+
+        private ThemeSettingsBase _accents;
+        public ThemeSettingsBase Accents => _accents ??= new ThemeSettingsBase(_container);
 
         private ElementTheme? _requestedTheme;
         public ElementTheme RequestedTheme
@@ -355,47 +434,29 @@ namespace Unigram.Services.Settings
         {
             if (NightMode == NightMode.Scheduled && RequestedTheme == ElementTheme.Light)
             {
-                var start = DateTime.Now.Date;
-                var end = DateTime.Now.Date;
+                TimeSpan start;
+                TimeSpan end;
 
                 if (IsLocationBased && Location.Latitude != 0 && Location.Longitude != 0)
                 {
                     var t = SunDate.CalculateSunriseSunset(Location.Latitude, Location.Longitude);
-                    var sunrise = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
-                    var sunset = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
-
-                    start = start.Add(sunset);
-                    end = end.Add(sunrise);
-
-                    if (sunrise > DateTime.Now.TimeOfDay)
-                    {
-                        start = start.AddDays(-1);
-                    }
-                    else if (sunrise < sunset)
-                    {
-                        end = end.AddDays(1);
-                    }
+                    start = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
+                    end = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
                 }
                 else
                 {
                     start = start.Add(From);
                     end = end.Add(To);
-
-                    if (From < DateTime.Now.TimeOfDay)
-                    {
-                        start = start.AddDays(-1);
-                    }
-                    else if (To < From)
-                    {
-                        end = end.AddDays(1);
-                    }
                 }
 
-                var now = DateTime.Now;
-                if (now >= start && now < end)
-                {
-                    return true;
-                }
+                var now = DateTime.Now.TimeOfDay;
+
+                // see if start comes before end
+                if (start < end)
+                    return start <= now && now <= end;
+
+                // start is after end, so do the inverse comparison
+                return !(end < now && now < start);
             }
 
             return null;
@@ -441,6 +502,8 @@ namespace Unigram.Services.Settings
 
         public bool IsLightTheme()
         {
+            return GetCalculatedApplicationTheme() == ApplicationTheme.Light;
+
             var app = App.Current as App;
             var current = app.UISettings.GetColorValue(UIColorType.Background);
 
@@ -464,7 +527,7 @@ namespace Unigram.Services.Settings
 
         public ApplicationTheme GetCalculatedApplicationTheme()
         {
-            var conditions = SettingsService.Current.Appearance.CheckNightModeConditions();
+            var conditions = CheckNightModeConditions();
             var theme = conditions == null
                 ? SettingsService.Current.Appearance.GetApplicationTheme()
                 : conditions == true
@@ -502,10 +565,22 @@ namespace Unigram.Services.Settings
         }
     }
 
-    public enum NightMode
+    public class ThemeSettingsBase : SettingsServiceBase
     {
-        Disabled,
-        Scheduled,
-        Automatic
+        public ThemeSettingsBase(ApplicationDataContainer container)
+            : base(container)
+        {
+        }
+
+        public Color this[TelegramThemeType type]
+        {
+            get => ColorEx.FromHex(GetValueOrDefault(ConvertToKey(type, "Accent"), ColorEx.ToHex(ThemeAccentInfo.Accents[type])));
+            set => AddOrUpdateValue(ConvertToKey(type, "Accent"), ColorEx.ToHex(value));
+        }
+
+        private string ConvertToKey(TelegramThemeType type, string key)
+        {
+            return $"{type}{key}";
+        }
     }
 }

@@ -43,10 +43,6 @@ namespace Unigram
         public static AppServiceConnection Connection { get; private set; }
         public static BackgroundTaskDeferral Deferral { get; private set; }
 
-        private readonly UISettings _uiSettings;
-
-        public UISettings UISettings => _uiSettings;
-
         private ExtendedExecutionSession _extendedSession;
         private MediaExtensionManager _mediaExtensionManager;
 
@@ -60,8 +56,6 @@ namespace Unigram
         public App()
         {
             Locator.Configure(/*session*/);
-
-            _uiSettings = new UISettings();
 
             if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
             {
@@ -86,16 +80,16 @@ namespace Unigram
 
             InactivityHelper.Detected += Inactivity_Detected;
 
-            UnhandledException += async (s, args) =>
-            {
-                args.Handled = true;
+            //UnhandledException += async (s, args) =>
+            //{
+            //    args.Handled = true;
 
-                try
-                {
-                    await new MessagePopup(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
-                }
-                catch { }
-            };
+            //    try
+            //    {
+            //        await new MessagePopup(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
+            //    }
+            //    catch { }
+            //};
 
 #if !DEBUG
             Microsoft.AppCenter.AppCenter.Start(Constants.AppCenterId,
@@ -142,7 +136,8 @@ namespace Unigram
             });
         }
 
-        private static volatile bool _passcodeShown;
+        [ThreadStatic]
+        private static bool _passcodeShown;
         public static async void ShowPasscode()
         {
             if (_passcodeShown)
@@ -152,7 +147,17 @@ namespace Unigram
 
             _passcodeShown = true;
 
+            Window.Current.Content.Visibility = Visibility.Collapsed;
+
             var dialog = new PasscodePage();
+            TypedEventHandler<ContentDialog, ContentDialogClosingEventArgs> handler = null;
+            handler = (s, args) =>
+            {
+                dialog.Closing -= handler;
+                Window.Current.Content.Visibility = Visibility.Visible;
+            };
+
+            dialog.Closing += handler;
             var result = await dialog.ShowQueuedAsync();
 
             _passcodeShown = false;
@@ -166,7 +171,7 @@ namespace Unigram
 
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
-            HandleActivated(e.Visible);
+            //HandleActivated(e.Visible);
 
             if (e.Visible && TLContainer.Current.Passcode.IsLockscreenRequired)
             {
@@ -315,6 +320,11 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            if (TLContainer.Current.Passcode.IsLockscreenRequired)
+            {
+                ShowPasscode();
+            }
+
             if (startKind == StartKind.Activate)
             {
                 var lifetime = TLContainer.Current.Lifetime;

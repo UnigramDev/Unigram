@@ -28,6 +28,7 @@ namespace Unigram.Controls.Messages
         private MessageViewModel _message;
 
         private bool _placeholder;
+        private bool _placeholderVertical;
         private double _maxWidth;
 
         public MessageBubble()
@@ -61,13 +62,21 @@ namespace Unigram.Controls.Messages
             _message = message;
             Tag = message;
 
-            UpdateAttach(message);
-            UpdateMessageHeader(message);
-            UpdateMessageReply(message);
-            UpdateMessageContent(message);
+            if (message != null)
+            {
+                UpdateAttach(message);
+                UpdateMessageHeader(message);
+                UpdateMessageReply(message);
+                UpdateMessageContent(message);
 
-            Footer.UpdateMessage(message);
-            Markup.Update(message, message.ReplyMarkup);
+                Footer.UpdateMessage(message);
+                Markup.Update(message, message.ReplyMarkup);
+            }
+            else
+            {
+                Span.Inlines.Clear();
+                Media.Child = null;
+            }
 
             if (_highlight != null)
             {
@@ -334,9 +343,12 @@ namespace Unigram.Controls.Messages
                 else if (message.ForwardInfo != null)
                 {
                     var title = string.Empty;
+                    var foreground = default(SolidColorBrush);
+
                     if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                     {
                         title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                        foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                     {
@@ -350,8 +362,12 @@ namespace Unigram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(new Run { Text = title ?? string.Empty });
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    //hyperlink.Foreground = Convert.Bubble(message.FwdFrom?.FromId ?? message.FwdFrom?.ChannelId ?? 0);
                     hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                    if (foreground != null)
+                    {
+                        hyperlink.Foreground = foreground;
+                    }
 
                     paragraph.Inlines.Add(hyperlink);
                     shown = true;
@@ -371,9 +387,12 @@ namespace Unigram.Controls.Messages
             else if (!light && message.IsFirst && message.IsSaved())
             {
                 var title = string.Empty;
+                var foreground = default(SolidColorBrush);
+
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
+                    foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
                 {
@@ -387,8 +406,12 @@ namespace Unigram.Controls.Messages
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(new Run { Text = title ?? string.Empty });
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
-                //hyperlink.Foreground = Convert.Bubble(message.FwdFrom?.FromId ?? message.FwdFrom?.ChannelId ?? 0);
                 hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                if (foreground != null)
+                {
+                    hyperlink.Foreground = foreground;
+                }
 
                 paragraph.Inlines.Add(hyperlink);
                 shown = true;
@@ -627,21 +650,18 @@ namespace Unigram.Controls.Messages
                 var right = -10;
                 var bottom = -6;
 
-                if (!(content is MessageVenue))
+                var chat = message.GetChat();
+                if (message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
                 {
-                    var chat = message.GetChat();
-                    if (message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
-                    {
-                        top = 4;
-                    }
-                    if (message.IsFirst && message.IsSaved())
-                    {
-                        top = 4;
-                    }
-                    if ((message.ForwardInfo != null && !message.IsSaved()) || message.ViaBotUserId != 0 || message.ReplyToMessageId != 0 || message.IsChannelPost)
-                    {
-                        top = 4;
-                    }
+                    top = 4;
+                }
+                if (message.IsFirst && message.IsSaved())
+                {
+                    top = 4;
+                }
+                if ((message.ForwardInfo != null && !message.IsSaved()) || message.ViaBotUserId != 0 || message.ReplyToMessageId != 0 || message.IsChannelPost)
+                {
+                    top = 4;
                 }
 
                 var caption = content is MessageVenue || content.HasCaption();
@@ -914,10 +934,11 @@ namespace Unigram.Controls.Messages
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
 
-            if (adjust)
-            {
-                Span.Inlines.Add(new LineBreak());
-            }
+            _placeholderVertical = adjust;
+            //if (adjust)
+            //{
+            //    Span.Inlines.Add(new LineBreak());
+            //}
         }
 
         private bool GetEntities(MessageViewModel message, Span span, string text, out bool adjust)
@@ -1261,9 +1282,9 @@ namespace Unigram.Controls.Messages
                 var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
 
                 var diff = width - rect.Right;
-                if (diff < footerWidth)
+                if (diff < footerWidth || _placeholderVertical)
                 {
-                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right)
+                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right && !_placeholderVertical)
                     {
                         Message.Margin = new Thickness(0, 0, footerWidth, 0);
                     }

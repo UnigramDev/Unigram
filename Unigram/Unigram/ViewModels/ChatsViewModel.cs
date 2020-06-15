@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -645,34 +647,11 @@ namespace Unigram.ViewModels
             RaisePropertyChanged(() => Items);
         }
 
-        public class ItemsCollection : SortedObservableCollection<Chat>, ISupportIncrementalLoading,
+        public class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading,
             IHandle<UpdateChatDraftMessage>,
             IHandle<UpdateChatLastMessage>,
             IHandle<UpdateChatPosition>
         {
-            class ChatComparer : IComparer<Chat>
-            {
-                private ChatList _chatList;
-
-                public ChatComparer(ChatList chatList)
-                {
-                    _chatList = chatList;
-                }
-
-                public int Compare(Chat x, Chat y)
-                {
-                    var positionX = x.GetPosition(_chatList);
-                    var positionY = y.GetPosition(_chatList);
-
-                    if (positionX != null && positionY != null)
-                    {
-                        return positionY.Order.CompareTo(positionX.Order);
-                    }
-
-                    return 0;
-                }
-            }
-
             private readonly IProtoService _protoService;
             private readonly IEventAggregator _aggregator;
 
@@ -693,7 +672,6 @@ namespace Unigram.ViewModels
             public ChatList ChatList => _chatList;
 
             public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList)
-                : base(new ChatComparer(chatList), true)
             {
                 _protoService = protoService;
                 _aggregator = aggregator;
@@ -711,41 +689,48 @@ namespace Unigram.ViewModels
 
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
-                return AsyncInfo.Run(async token =>
+                return AsyncInfo.Run(token => LoadMoreItemsAsync());
+            }
+
+            private async Task<LoadMoreItemsResult> LoadMoreItemsAsync()
+            {
+                using (await _loadMoreLock.WaitAsync())
                 {
-                    using (await _loadMoreLock.WaitAsync())
+                    //var response = await _protoService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
+                    var response = await _protoService.GetChatListAsync(_chatList, Count, 20);
+                    if (response is Telegram.Td.Api.Chats chats)
                     {
-                        var response = await _protoService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
-                        if (response is Telegram.Td.Api.Chats chats)
+                        foreach (var id in chats.ChatIds)
                         {
-                            foreach (var id in chats.ChatIds)
+                            var chat = _protoService.GetChat(id);
+                            var order = chat.GetOrder(_chatList);
+
+                            if (chat != null && order != 0)
                             {
-                                var chat = _protoService.GetChat(id);
-                                var position = chat.GetPosition(_chatList);
+                                _internalChatId = chat.Id;
+                                _internalOrder = order;
 
-                                if (chat != null && position.Order != 0)
+                                var next = NextIndexOf(chat, order);
+                                if (next >= 0)
                                 {
-                                    _internalChatId = chat.Id;
-                                    _internalOrder = position.Order;
-
-                                    Add(chat);
-
-                                    _lastChatId = chat.Id;
-                                    _lastOrder = position.Order;
+                                    Insert(next, chat);
                                 }
+
+                                _lastChatId = chat.Id;
+                                _lastOrder = order;
                             }
-
-                            _hasMoreItems = chats.ChatIds.Count > 0;
-                            _aggregator.Subscribe(this);
-
-                            _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-
-                            return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                         }
 
-                        return new LoadMoreItemsResult { Count = 0 };
+                        _hasMoreItems = chats.ChatIds.Count > 0;
+                        _aggregator.Subscribe(this);
+
+                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+
+                        return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                     }
-                });
+
+                    return new LoadMoreItemsResult { Count = 0 };
+                }
             }
 
             public bool HasMoreItems => _hasMoreItems;
@@ -773,12 +758,9 @@ namespace Unigram.ViewModels
             public void Handle(long chatId, IList<ChatPosition> positions, bool lastMessage = false)
             {
                 var chat = GetChat(chatId);
-                var position = chat?.GetPosition(_chatList);
+                var order = chat.GetOrder(_chatList);
 
-                if (position != null)
-                {
-                    Handle(chat, position.Order, lastMessage);
-                }
+                Handle(chat, order, lastMessage);
             }
 
             public void Handle(long chatId, long order)
@@ -807,41 +789,21 @@ namespace Unigram.ViewModels
                 //var chat = GetChat(chatId);
                 if (chat != null /*&& _chatList.ListEquals(chat.ChatList)*/)
                 {
-                    _viewModel.BeginOnUIThread(async () =>
+                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(chat, order, lastMessage));
+                }
+            }
+
+            private async void UpdateChatOrder(Chat chat, long order, bool lastMessage)
+            {
+                if (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId))
+                {
+                    using (await _loadMoreLock.WaitAsync())
                     {
-                        if (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId))
+                        var next = NextIndexOf(chat, order);
+                        if (next >= 0)
                         {
-                            using (await _loadMoreLock.WaitAsync())
-                            {
-                                var index = IndexOf(chat);
-                                var next = NextIndexOf(chat);
-
-                                if (next >= 0 && index != next)
-                                {
-                                    Remove(chat);
-                                    Insert(next, chat);
-
-                                    if (chat.Id == _viewModel._selectedItem)
-                                    {
-                                        _viewModel.Delegate?.SetSelectedItem(chat);
-                                    }
-                                    if (_viewModel.SelectedItems.Contains(chat))
-                                    {
-                                        _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
-                                    }
-                                }
-                                else if (next >= 0 && lastMessage)
-                                {
-                                    _viewModel.Delegate?.UpdateChatLastMessage(chat);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            using (await _loadMoreLock.WaitAsync())
-                            {
-                                Remove(chat);
-                            }
+                            Remove(chat);
+                            Insert(Math.Min(Count, next), chat);
 
                             if (chat.Id == _viewModel._selectedItem)
                             {
@@ -849,17 +811,64 @@ namespace Unigram.ViewModels
                             }
                             if (_viewModel.SelectedItems.Contains(chat))
                             {
-                                _viewModel.SelectedItems.Remove(chat);
                                 _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
                             }
-
-                            if (!_hasMoreItems)
-                            {
-                                await LoadMoreItemsAsync(0);
-                            }
                         }
-                    });
+                        else if (lastMessage)
+                        {
+                            _viewModel.Delegate?.UpdateChatLastMessage(chat);
+                        }
+                    }
                 }
+                else
+                {
+                    using (await _loadMoreLock.WaitAsync())
+                    {
+                        Remove(chat);
+                    }
+
+                    if (chat.Id == _viewModel._selectedItem)
+                    {
+                        _viewModel.Delegate?.SetSelectedItem(chat);
+                    }
+                    if (_viewModel.SelectedItems.Contains(chat))
+                    {
+                        _viewModel.SelectedItems.Remove(chat);
+                        _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                    }
+
+                    if (!_hasMoreItems)
+                    {
+                        await LoadMoreItemsAsync(0);
+                    }
+                }
+            }
+
+            private int NextIndexOf(Chat chat, long order)
+            {
+                var prev = -1;
+                var next = 0;
+
+                for (int i = 0; i < Count; i++)
+                {
+                    var item = this[i];
+                    if (item.Id == chat.Id)
+                    {
+                        prev = i;
+                        continue;
+                    }
+
+                    var itemOrder = item.GetOrder(_chatList);
+
+                    if (order > itemOrder || order == itemOrder && chat.Id >= item.Id)
+                    {
+                        return next == prev ? -1 : next;
+                    }
+
+                    next++;
+                }
+
+                return Count;
             }
 
             private Chat GetChat(long chatId)

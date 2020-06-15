@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -26,6 +27,8 @@ namespace Unigram.Services
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
         void CancelDownloadFile(int fileId, bool onlyIfPending = false);
         bool IsDownloadFileCanceled(int fileId);
+
+        Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
 
         int SessionId { get; }
 
@@ -108,7 +111,7 @@ namespace Unigram.Services
         bool IsDiceEmoji(string text, out string dice);
     }
 
-    public class ProtoService : IProtoService, ClientResultHandler
+    public partial class ProtoService : IProtoService, ClientResultHandler
     {
         private Client _client;
 
@@ -837,11 +840,11 @@ namespace Unigram.Services
 
         public bool TryGetUser(Chat chat, out User value)
         {
-            if (chat.Type is ChatTypePrivate privata)
+            if (chat?.Type is ChatTypePrivate privata)
             {
                 return TryGetUser(privata.UserId, out value);
             }
-            else if (chat.Type is ChatTypeSecret secret)
+            else if (chat?.Type is ChatTypeSecret secret)
             {
                 return TryGetUser(secret.UserId, out value);
             }
@@ -864,11 +867,11 @@ namespace Unigram.Services
 
         public UserFullInfo GetUserFull(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate privata)
+            if (chat?.Type is ChatTypePrivate privata)
             {
                 return GetUserFull(privata.UserId);
             }
-            else if (chat.Type is ChatTypeSecret secret)
+            else if (chat?.Type is ChatTypeSecret secret)
             {
                 return GetUserFull(secret.UserId);
             }
@@ -890,7 +893,7 @@ namespace Unigram.Services
 
         public BasicGroup GetBasicGroup(Chat chat)
         {
-            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            if (chat?.Type is ChatTypeBasicGroup basicGroup)
             {
                 return GetBasicGroup(basicGroup.BasicGroupId);
             }
@@ -905,7 +908,7 @@ namespace Unigram.Services
 
         public bool TryGetBasicGroup(Chat chat, out BasicGroup value)
         {
-            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            if (chat?.Type is ChatTypeBasicGroup basicGroup)
             {
                 return TryGetBasicGroup(basicGroup.BasicGroupId, out value);
             }
@@ -928,7 +931,7 @@ namespace Unigram.Services
 
         public BasicGroupFullInfo GetBasicGroupFull(Chat chat)
         {
-            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            if (chat?.Type is ChatTypeBasicGroup basicGroup)
             {
                 return GetBasicGroupFull(basicGroup.BasicGroupId);
             }
@@ -950,7 +953,7 @@ namespace Unigram.Services
 
         public Supergroup GetSupergroup(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            if (chat?.Type is ChatTypeSupergroup supergroup)
             {
                 return GetSupergroup(supergroup.SupergroupId);
             }
@@ -965,7 +968,7 @@ namespace Unigram.Services
 
         public bool TryGetSupergroup(Chat chat, out Supergroup value)
         {
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            if (chat?.Type is ChatTypeSupergroup supergroup)
             {
                 return TryGetSupergroup(supergroup.SupergroupId, out value);
             }
@@ -988,7 +991,7 @@ namespace Unigram.Services
 
         public SupergroupFullInfo GetSupergroupFull(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            if (chat?.Type is ChatTypeSupergroup supergroup)
             {
                 return GetSupergroupFull(supergroup.SupergroupId);
             }
@@ -1202,8 +1205,12 @@ namespace Unigram.Services
             {
                 if (_chats.TryGetValue(updateChatDraftMessage.ChatId, out Chat value))
                 {
-                    value.Positions = updateChatDraftMessage.Positions;
+                    Monitor.Enter(value);
+
                     value.DraftMessage = updateChatDraftMessage.DraftMessage;
+                    SetChatPositions(value, updateChatDraftMessage.Positions);
+                    
+                    Monitor.Exit(value);
                 }
             }
             else if (update is UpdateChatFilters updateChatFilters)
@@ -1228,8 +1235,12 @@ namespace Unigram.Services
             {
                 if (_chats.TryGetValue(updateChatLastMessage.ChatId, out Chat value))
                 {
-                    value.Positions = updateChatLastMessage.Positions;
+                    Monitor.Enter(value);
+
                     value.LastMessage = updateChatLastMessage.LastMessage;
+                    SetChatPositions(value, updateChatLastMessage.Positions);
+                    
+                    Monitor.Exit(value);
                 }
             }
             else if (update is UpdateChatNotificationSettings updateNotificationSettings)
@@ -1270,18 +1281,34 @@ namespace Unigram.Services
             {
                 if (_chats.TryGetValue(updateChatPosition.ChatId, out Chat value))
                 {
-                    var existing = value.GetPosition(updateChatPosition.Position.List);
-                    if (existing != null)
+                    Monitor.Enter(value);
+
+                    int i;
+                    for (i = 0; i < value.Positions.Count; i++)
                     {
-                        existing.IsPinned = updateChatPosition.Position.IsPinned;
-                        existing.List = updateChatPosition.Position.List;
-                        existing.Order = updateChatPosition.Position.Order;
-                        existing.Source = updateChatPosition.Position.Source;
+                        if (value.Positions[i].List.ToId()  == updateChatPosition.Position.List.ToId())
+                        {
+                            break;
+                        }
                     }
-                    else
+
+                    var newPositions = new List<ChatPosition>(value.Positions.Count + (updateChatPosition.Position.Order == 0 ? 0 : 1) - (i < value.Positions.Count ? 1 : 0));
+                    if (updateChatPosition.Position.Order != 0)
                     {
-                        value.Positions.Add(updateChatPosition.Position);
+                        newPositions.Add(updateChatPosition.Position);
                     }
+
+                    for (int j = 0; j < value.Positions.Count; j++)
+                    {
+                        if (j != i)
+                        {
+                            newPositions.Add(value.Positions[j]);
+                        }
+                    }
+
+                    SetChatPositions(value, newPositions);
+
+                    Monitor.Exit(value);
                 }
             }
             else if (update is UpdateChatReadInbox updateChatReadInbox)
@@ -1423,6 +1450,10 @@ namespace Unigram.Services
             else if (update is UpdateNewChat updateNewChat)
             {
                 _chats[updateNewChat.Chat.Id] = updateNewChat.Chat;
+
+                Monitor.Enter(updateNewChat.Chat);
+                SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
+                Monitor.Exit(updateNewChat.Chat);
 
                 if (updateNewChat.Chat.Photo != null)
                 {

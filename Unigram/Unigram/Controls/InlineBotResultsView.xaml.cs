@@ -19,7 +19,7 @@ namespace Unigram.Controls
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         private AnimatedRepeaterHandler<InlineQueryResult> _handler;
-        private DispatcherTimer _throttler;
+        private ZoomableRepeaterHandler _zoomer;
 
         private FileContext<InlineQueryResult> _files = new FileContext<InlineQueryResult>();
         private FileContext<InlineQueryResult> _thumbnails = new FileContext<InlineQueryResult>();
@@ -34,13 +34,11 @@ namespace Unigram.Controls
                 DownloadFile(_files, id, result);
             };
 
-            _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _throttler.Tick += (s, args) =>
-            {
-                _throttler.Stop();
-                _handler.LoadVisibleItems(false);
-            };
+            _zoomer = new ZoomableRepeaterHandler(Repeater);
+            _zoomer.Opening = _handler.UnloadVisibleItems;
+            _zoomer.Closing = _handler.ThrottleVisibleItems;
+            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
         }
 
         public void UpdateCornerRadius(double radius)
@@ -55,6 +53,11 @@ namespace Unigram.Controls
         {
             if (ViewModel != null) Bindings.Update();
             if (ViewModel == null) Bindings.StopTracking();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -77,16 +80,6 @@ namespace Unigram.Controls
             {
                 layout.MaximumRowsOrColumns = (int)Math.Ceiling(e.NewSize.Width / 96);
             }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Bindings.StopTracking();
-        }
-
-        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            ItemClick?.Invoke(sender, e);
         }
 
         public event ItemClickEventHandler ItemClick;
@@ -164,10 +157,11 @@ namespace Unigram.Controls
                         continue;
                     }
 
-                    _throttler.Stop();
-                    _throttler.Start();
+                    _handler.ThrottleVisibleItems();
                 }
             }
+
+            _zoomer.UpdateFile(file);
         }
 
         private void Item_Click(object item)
@@ -228,6 +222,8 @@ namespace Unigram.Controls
             var content = button.Content as Grid;
             if (content.Children[0] is Image image)
             {
+                _zoomer.ElementPrepared(args.Element);
+
                 if (result is InlineQueryResultAnimation || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
                 {
                     File file = null;
@@ -280,6 +276,8 @@ namespace Unigram.Controls
             }
             else if (content.Children[0] is Grid presenter)
             {
+                _zoomer.ElementClearing(args.Element);
+
                 //var presenter = content.Children[0] as Grid;
                 var thumb = presenter.Children[0] as Image;
 
@@ -391,6 +389,8 @@ namespace Unigram.Controls
 
         private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
         {
+            _zoomer.ElementClearing(args.Element);
+
             if (args.Element is Button button && button.Content is Grid content && content.Children[0] is Image image)
             {
                 if (content.Children.Count > 1)

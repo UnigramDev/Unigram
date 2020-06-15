@@ -34,6 +34,7 @@ namespace Unigram.Controls
         }
 
         public bool FocusPrimaryButton { get; set; } = true;
+        public bool IsLightDismissEnabled { get; set; } = true;
 
         protected override void OnApplyTemplate()
         {
@@ -72,7 +73,7 @@ namespace Unigram.Controls
         private void Rectangle_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
             var pointer = e.GetCurrentPoint(this);
-            if (pointer.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased)
+            if (pointer.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && IsLightDismissEnabled)
             {
                 Hide();
             }

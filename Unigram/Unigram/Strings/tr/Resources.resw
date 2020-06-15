@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>İki adımlı doğrulama kurulumundan vazgeç</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Kurulumu iptal et</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>İndirmeyi iptal et</value>
   </data>
@@ -326,7 +329,7 @@
     <value>Hesap</value>
   </data>
   <data name="AccountAlreadyLoggedIn" xml:space="preserve">
-    <value>Bu hesap, zaten bu uygulamadan giriş yaptı.</value>
+    <value>Bu hesap, zaten bu uygulama ile oturum açtı.</value>
   </data>
   <data name="AccountSettings" xml:space="preserve">
     <value>Hesap Ayarları</value>
@@ -359,7 +362,7 @@
     <value>un1 sizi ekledi</value>
   </data>
   <data name="ActionBotAllowed" xml:space="preserve">
-    <value>{0} adresine giriş yaptığınızda bu botun size mesaj göndermesine izin verdiniz.</value>
+    <value>{0} adresinde oturum açtığınızda bu botun size mesaj göndermesine izin verdiniz.</value>
   </data>
   <data name="ActionBotDocumentAddress" xml:space="preserve">
     <value>Adres</value>
@@ -428,7 +431,7 @@
     <value>Grup oluşturuldu</value>
   </data>
   <data name="ActionInviteUser" xml:space="preserve">
-    <value>un1, davet bağlantısıyla gruba katıldı</value>
+    <value>un1 davet bağlantısıyla gruba katıldı</value>
   </data>
   <data name="ActionInviteYou" xml:space="preserve">
     <value>Davet bağlantısı aracılığıyla gruba katıldınız</value>
@@ -1103,7 +1106,7 @@ Oturumu kapatmak tüm gizli sohbetlerinizi yok eder.</value>
     <value>Bu kişinin engellemesini kaldırmak istediğinizden emin misiniz?</value>
   </data>
   <data name="AreYouSureWebSessions" xml:space="preserve">
-    <value>Giriş yapmak için Telegram'ı kullandığınız tüm web sitelerinin bağlantısını kesmek istediğinizden emin misiniz?</value>
+    <value>Oturum açmak için Telegram'ı kullandığınız tüm web sitelerinin bağlantısını kesmek istediğinizden emin misiniz?</value>
   </data>
   <data name="ArticleByAuthor" xml:space="preserve">
     <value>{0} tarafından</value>
@@ -1243,9 +1246,9 @@ Birçok sorunun cevabına ve <![CDATA[<a href="https://telegram.org/faq/tr#sorun
     <value>Belirteç geçersiz veya süresi dolmuş.</value>
   </data>
   <data name="AuthAnotherClientUrl" xml:space="preserve">
-    <value>Bu kod, birinin Telegram hesabınıza giriş yapmasına izin vermek için kullanılabilir.
+    <value>Bu kod, birinin Telegram hesabınızda oturum açmasına izin vermek için kullanılabilir.
 
-Telegram girişini onaylamak için, lütfen Ayarlar > Cihazlar > QR Tara'ya gidin ve kodu tarayın.</value>
+Telegram oturumunu onaylamak için lütfen Ayarlar > Cihazlar > QR Tara'ya gidin ve kodu tarayın.</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Sesli mesajlar küçüktür, her zaman otomatik olarak indirilirler.</value>
@@ -2537,7 +2540,7 @@ Uzunluk en az 5 karakterdir.</value>
     <value>Kod</value>
   </data>
   <data name="CodeExpired" xml:space="preserve">
-    <value>Kodun süresi doldu, lütfen tekrar giriş yapmayı deneyin.</value>
+    <value>Kodun süresi doldu, lütfen yeniden oturum açın.</value>
   </data>
   <data name="ColorBlue" xml:space="preserve">
     <value>Mavi</value>
@@ -2999,6 +3002,9 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
   </data>
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Uyarı! Bu, **her iki** katılımcı için bu sohbetteki **tüm mesajları siler**.</value>
+  </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Uyarı! Bu, bu sohbetteki **tüm mesajları silecektir.**</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Grubu sil ve ayrıl</value>
@@ -3505,8 +3511,8 @@ Kanaldaki herkes bu gruptaki mesajları görebilir.</value>
     <value>Etkin Bildirimler</value>
   </data>
   <data name="EnabledPasswordText" xml:space="preserve">
-    <value>İki Adımlı doğrulamayı etkinleştirdiniz.
-Telegram hesabına giriş yapmak için burada belirlediğiniz şifreye ihtiyacınız olacak.</value>
+    <value>İki adımlı doğrulamayı etkinleştirdiniz.
+Telegram hesabınızda oturum açmak için burada belirlediğiniz şifreye ihtiyacınız olacak.</value>
   </data>
   <data name="EnableProxyAlert" xml:space="preserve">
     <value>Bu vekil sunucuyu silmek istediğinizden emin misiniz?</value>
@@ -3571,6 +3577,9 @@ telegram.org adresinden daha fazlasını öğrenebilirsiniz</value>
   </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Kanal adı</value>
+  </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Kodu girin</value>
   </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Geçerli şifrenizi giriniz</value>
@@ -3953,6 +3962,9 @@ Süre: {1}</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Favoriler</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>Popüler GIF'ler</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Popüler Çıkartmalar</value>
   </data>
@@ -3998,6 +4010,15 @@ Süre: {1}</value>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Bu klasörü sizin için doldururken lütfen birkaç dakika bekleyin...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Klasöre ekle</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>Üzgünüz, bir klasörden 100'den fazla sohbeti hariç tutamazsınız.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Sınıra ulaşıldı</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>Tüm Sohbetler</value>
   </data>
@@ -4022,11 +4043,26 @@ Süre: {1}</value>
   <data name="FilterChannels" xml:space="preserve">
     <value>Kanallar</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{1}** klasörüne **{0}** eklendi</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{1}** klasöründen **{0}** kaldırıldı</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Sohbetler</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{1}** klasörüne **{0}** eklendi</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{1}** klasöründen **{0}** kaldırıldı</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Sohbet türleri</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Bir klasör seçin</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Kişi</value>
@@ -4145,6 +4181,12 @@ Süre: {1}</value>
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>Her zaman hariç tutulan listesinden "{0}" sohbetini kaldırmak istediğinizden emin misiniz?</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Klasörden kaldır</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>Üzgünüz, bir klasöre 100'den fazla sohbet ekleyemezsiniz.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Her zaman dahil edilen listesinden "{0}" sohbetini kaldırmak istediğinizden emin misiniz?</value>
   </data>
@@ -4193,6 +4235,12 @@ Süre: {1}</value>
   <data name="FilterUnread" xml:space="preserve">
     <value>Okunmamış</value>
   </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{1}** klasörüne **{0}** eklendi</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{1}** klasöründen **{0}** kaldırıldı</value>
+  </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Kesin Sonuçlar</value>
   </data>
@@ -4209,10 +4257,10 @@ Süre: {1}</value>
     <value>Ad (zorunlu)</value>
   </data>
   <data name="FloodWait" xml:space="preserve">
-    <value>Çok fazla deneme. Daha sonra tekrar deneyiniz</value>
+    <value>Çok fazla girişim, lütfen daha sonra tekrar deneyin</value>
   </data>
   <data name="FloodWaitTime" xml:space="preserve">
-    <value>Çok fazla deneme, lütfen {0} içinde tekrar deneyin</value>
+    <value>Çok fazla girişim, lütfen {0} içinde tekrar deneyin</value>
   </data>
   <data name="Folder" xml:space="preserve">
     <value>Klasör</value>
@@ -4760,6 +4808,9 @@ Not: Çıkarılan Kullanıcılar listesinde bulunmadıkları sürece grubun dave
   <data name="HoldToAudio" xml:space="preserve">
     <value>Ses kaydetmek için basılı tutun. Videoya geçmek için dokunun.</value>
   </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>Ses kaydetmek için basılı tutun.</value>
+  </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Video kaydetmek için basılı tutun. Sese geçmek için dokunun.</value>
   </data>
@@ -4812,13 +4863,13 @@ Not: Çıkarılan Kullanıcılar listesinde bulunmadıkları sürece grubun dave
     <value>Kişileri İçeri Aktar</value>
   </data>
   <data name="InactiveChannelSignature" xml:space="preserve">
-    <value>kanal, {0} için etkin değil</value>
+    <value>kanal {0} içinde etkin olmadı</value>
   </data>
   <data name="InactiveChats" xml:space="preserve">
     <value>Etkin olmayan sohbetler</value>
   </data>
   <data name="InactiveChatSignature" xml:space="preserve">
-    <value>{0}, {1} için etkin değil</value>
+    <value>{1} için {0} etkin değil</value>
   </data>
   <data name="InAppNotifications" xml:space="preserve">
     <value>Uygulama içi bildirimler</value>
@@ -5007,7 +5058,7 @@ Not: Çıkarılan Kullanıcılar listesinde bulunmadıkları sürece grubun dave
     <value>Medyayı Sakla</value>
   </data>
   <data name="KeepMediaForever" xml:space="preserve">
-    <value>Her Zaman</value>
+    <value>Her zaman</value>
   </data>
   <data name="KeepMediaInfo" xml:space="preserve">
     <value>Bulut sohbet ortamındaki fotoğraflar, videolar ve diğer dosyalar **erişmediğiniz** bu sürede cihazınızın hafızasında yer açmak için cihazınızdan silinecektir. 
@@ -5296,7 +5347,7 @@ Bu işlemin tamamlanması birkaç dakika sürebilir.</value>
     <value>şimdi güncellendi</value>
   </data>
   <data name="LoginAttempts" xml:space="preserve">
-    <value>Hatalı giriş denemeleri</value>
+    <value>Hatalı oturum girişimleri</value>
   </data>
   <data name="LoginAttemptsInfo" xml:space="preserve">
     <value>Yukarıdaki cihazların mesajlarınıza erişimi yok. Kod doğru bir şekilde girildi, ancak şifre doğru girilmedi.</value>
@@ -6011,10 +6062,10 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
     <value>Başka etkin oturum yok</value>
   </data>
   <data name="NoOtherSessionsInfo" xml:space="preserve">
-    <value>Aynı telefon numarasını kullanarak diğer mobil, tablet ve masaüstü cihazınızdan Telegram'a giriş yapabilirsiniz. Tüm verileriniz anında eşitlenecektir.</value>
+    <value>Telegram'da aynı telefon numarasını kullanarak; diğer mobil, tablet ve masaüstü cihazlardan oturum açabilirsiniz. Tüm verileriniz anında eşitlenecektir.</value>
   </data>
   <data name="NoOtherWebSessions" xml:space="preserve">
-    <value>Etkin giriş yok.</value>
+    <value>Etkin oturum yok.</value>
   </data>
   <data name="NoOtherWebSessionsInfo" xml:space="preserve">
     <value>Telegram ile oturum açmayı destekleyen web sitelerinde oturum açabilirsiniz.</value>
@@ -6676,7 +6727,7 @@ Telegram Ekibi</value>
     <value>{0} bağlantısını açmak istiyor musunuz?</value>
   </data>
   <data name="OpenUrlOption1" xml:space="preserve">
-    <value>{0} adresine **{1}** olarak giriş yapın</value>
+    <value>{0} adresinde **{1}** olarak oturum açın</value>
   </data>
   <data name="OpenUrlOption2" xml:space="preserve">
     <value>**{0}** botunun bana mesaj göndermesine izin ver</value>
@@ -6709,9 +6760,9 @@ Telegram Ekibi</value>
     <value>Turuncu</value>
   </data>
   <data name="OtherLoginCode" xml:space="preserve">
-    <value>Giriş kodunuz **{0}**. Bu kodu giriş yapmak istediğiniz Telegram uygulaması içinde kullanın.
+    <value>Giriş kodunuz **{0}**. Bu kodu oturum açmaya çalıştığınız Telegram uygulamasına girin.
 
-Bu kodu kimseyle paylaşmayın.</value>
+Bu kodu kimseye vermeyin.</value>
   </data>
   <data name="OtherSessions" xml:space="preserve">
     <value>Etkin oturumlar</value>
@@ -6760,7 +6811,7 @@ Bu kodu kimseyle paylaşmayın.</value>
     <value>Telegram</value>
   </data>
   <data name="Page2Message" xml:space="preserve">
-    <value>**Telegram** mesajlarını diğer 
+    <value>**Telegram** mesajları diğer 
 uygulamalardan daha hızlı ulaştırır.</value>
   </data>
   <data name="Page2Title" xml:space="preserve">
@@ -6802,6 +6853,9 @@ cihazdan ulaşabilmenizi sağlar.</value>
   </data>
   <data name="PaintEdit" xml:space="preserve">
     <value>Düzenle</value>
+  </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>Çerçeveli</value>
   </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Anahatlı</value>
@@ -7318,10 +7372,10 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Vazgeç</value>
   </data>
   <data name="PassportSDK_DownloadTelegram" xml:space="preserve">
-    <value> **{0}** giriş yapmak için Telegram'a ihtiyacınız var. Şimdi yüklemek ister misiniz?</value>
+    <value> **{0}** botunda oturum açmak için Telegram'a ihtiyacınız var. Şimdi yüklemek ister misiniz?</value>
   </data>
   <data name="PassportSDK_LogInWithTelegram" xml:space="preserve">
-    <value>Telegram ile giriş yap</value>
+    <value>Telegram ile Oturum Aç</value>
   </data>
   <data name="PassportSDK_OpenGooglePlay" xml:space="preserve">
     <value>Google Play'i Aç</value>
@@ -7404,8 +7458,17 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Şifre İpucu</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>İpucu</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Şifreniz için bir ipucu oluşturun</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>Kapalı</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>Açık</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Şifre Kurtarma</value>
@@ -7507,7 +7570,7 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Bir şifre giriniz</value>
   </data>
   <data name="PaymentPasswordInfo" xml:space="preserve">
-    <value>Lütfen ödeme bilgilerinizi korumak için bir şifre oluşturun. Giriş yaptığınızda girmeniz istenecektir.</value>
+    <value>Lütfen ödeme bilgilerinizi korumak için bir şifre oluşturun. Oturum açtığınızda girmeniz istenir.</value>
   </data>
   <data name="PaymentPasswordReEnter" xml:space="preserve">
     <value>Şifrenizi yeniden giriniz</value>
@@ -7809,11 +7872,14 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Bir şifre giriniz</value>
   </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Yeni bir şifre giriniz</value>
+  </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Yeni şifrenizi giriniz</value>
   </data>
   <data name="PleaseLoginPassport" xml:space="preserve">
-    <value>Telegram Passport'u kullanmak için lütfen Telegram hesabınıza giriş yapınız.</value>
+    <value>Telegram Passport'u kullanmak için lütfen Telegram hesabınızda oturum açın.</value>
   </data>
   <data name="PleaseReEnterPassword" xml:space="preserve">
     <value>Şifrenizi yeniden giriniz</value>
@@ -7909,7 +7975,7 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
     <value>Botlar ve Web Siteleri</value>
   </data>
   <data name="PrivacyBotsInfo" xml:space="preserve">
-    <value>Giriş yapmak için Telegram kullandığınız web siteleri.</value>
+    <value>Oturum açmak için Telegram'ı kullandığınız web siteleri.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
     <value>Eşler arası seçeneğinin devre dışı bırakılması, IP adresinizi açığa çıkarmamak için tüm aramaları Telegram sunucularından iletir. Ancak bu ses kalitesini biraz azaltabilir.</value>
@@ -8062,7 +8128,7 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
     <value>Gizle</value>
   </data>
   <data name="PsaHideChatAlertText" xml:space="preserve">
-    <value>Seçili sohbetleri gizlemek istediğinizden emin misiniz?</value>
+    <value>Bu sohbeti gizlemek istediğinizden emin misiniz?</value>
   </data>
   <data name="PsaHideChatAlertTitle" xml:space="preserve">
     <value>Sohbeti gizle</value>
@@ -8086,7 +8152,7 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
     <value>Bu önemli bir bildirimdir.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
-    <value>KHD</value>
+    <value>COVID-19</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>KHD</value>
@@ -8102,6 +8168,9 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Mor</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>QR kodlarını tarayabilmeniz için Telegram'ın kameranıza erişmesi gerekiyor.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Soru</value>
@@ -8216,6 +8285,9 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
     <value>Kurtarma e-posta adresi</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
+    <value>Kurtarma E-postası</value>
   </data>
   <data name="Red" xml:space="preserve">
     <value>Kırmızı</value>
@@ -9172,6 +9244,9 @@ Cevaplamayın, Telegram herşeyi otomatik olarak yapacak.</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Yalnızca kullanmakta olduğunuz hesaptan bildirim almak istiyorsanız bunu kapatın.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Çıkartmaları göster</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value/>
   </data>
@@ -9281,6 +9356,9 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Varsayılan</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Ses kapatıldı</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Başlat</value>
@@ -9585,9 +9663,9 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
     <value>ŞİFRE OLUŞTUR</value>
   </data>
   <data name="TelegramPassportCreatePasswordInfo" xml:space="preserve">
-    <value>Lütfen kişisel verilerinizi uçtan uca şifreleme ile güvenceye almak için bir şifre oluşturun.
+    <value>Uçtan uca şifreleme ile kişisel verilerinizi korumak için bir şifre oluşturun.
 
-Bu şifre, Telegram'a yeni bir cihazdan her giriş yaptığınızda gerekli olacaktır.</value>
+Yeni bir cihazdan Telegram'da oturum açtığınızda bu şifre de gerekli olacaktır.</value>
   </data>
   <data name="TelegramPassportDelete" xml:space="preserve">
     <value>Telegram Passport'u Sil</value>
@@ -9879,7 +9957,7 @@ Teknik nedenlerden dolayı, bu ayarı gruplarınızda değiştirmeden önce birk
 Lütfen yenisine katılmadan önce birkaçından ayrılın.</value>
   </data>
   <data name="TooManyTries" xml:space="preserve">
-    <value>Çok fazla deneme.
+    <value>Çok fazla girişim.
 {0} içinde tekrar deneyin.</value>
   </data>
   <data name="TopHoursChartTitle" xml:space="preserve">
@@ -9927,10 +10005,25 @@ Eğer Telegram'ın makul istekleri size uygun gelmediyse bu servisi sağlamamız
     <value>Şifrenizi devre dışı bırakmak istediğinizden emin misiniz?</value>
   </data>
   <data name="TurnPasswordOffQuestionTitle" xml:space="preserve">
-    <value>Parolayı kapat</value>
+    <value>Şifreyi kapat</value>
   </data>
   <data name="TwoStepVerification" xml:space="preserve">
     <value>İki Adımlı Doğrulama</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Passport'a Dön</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Ayarlar'a Dön</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Şifre ayarlandı!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>Bu şifre, kısa mesaj ile aldığınız koda ek olarak yeni bir cihazda oturum açtığınızda gerekli olacaktır.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Şifre Ayarla</value>
   </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>İki Adımlı Doğrulama</value>
@@ -10359,6 +10452,9 @@ Uzunluk en az **5** karakterdir.</value>
   <data name="UserUnblocked" xml:space="preserve">
     <value>Kullanıcı engeli kaldırıldı</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Doğrulama kodu</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>aracılığıyla:</value>
   </data>
@@ -10621,7 +10717,7 @@ Uzunluk en az **5** karakterdir.</value>
     <value>Sıcaklık</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
-    <value>Telegram ile yapılan girişler</value>
+    <value>Telegram ile oturum açıldı</value>
   </data>
   <data name="WeeksFew" xml:space="preserve">
     <value/>
@@ -10769,6 +10865,9 @@ Uzunluk en az **5** karakterdir.</value>
 
 Eğer şifrenizi unutursanız, Telegram hesabınıza erişimi kaybedersiniz. Geri getirmenin yolu olmayacak.</value>
   </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>İki adımlı doğrulama için kurtarma e-postanız değiştirildi.</value>
+  </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>İki Adımlı Doğrulama için kurtarma e-posta adresiniz artık etkin.</value>
   </data>
@@ -10780,6 +10879,9 @@ Eğer şifrenizi unutursanız, Telegram hesabınıza erişimi kaybedersiniz. Ger
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Şifreniz</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>İki adımlı doğrulama için şifreniz değiştirildi.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Başarılı!</value>

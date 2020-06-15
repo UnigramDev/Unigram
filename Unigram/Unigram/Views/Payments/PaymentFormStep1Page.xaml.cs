@@ -1,5 +1,6 @@
 ﻿using Unigram.Common;
 using Unigram.ViewModels.Payments;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Payments
 {
@@ -11,8 +12,16 @@ namespace Unigram.Views.Payments
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentFormStep1ViewModel>();
+        }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
             ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
@@ -94,7 +93,7 @@ namespace Unigram.Views
             ViewModel.ArchivedChats.Delegate = this;
             ViewModel.ArchivedChats.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
-            NavigationCacheMode = NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Disabled;
 
             InitializeTitleBar();
             InitializeLocalization();
@@ -145,13 +144,20 @@ namespace Unigram.Views
             //}
         }
 
-        ~MainPage()
-        {
-            Debug.WriteLine("Released mainpage");
-        }
-
         public void Dispose()
         {
+            ViewModel.Settings.Delegate = null;
+            ViewModel.Chats.Delegate = null;
+            ViewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+            ViewModel.ArchivedChats.Delegate = null;
+            ViewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+
+            ViewModel.Aggregator.Unsubscribe(this);
+            ViewModel.Dispose();
+
+            MasterDetail.NavigationService.Frame.Navigating -= OnNavigating;
+            MasterDetail.NavigationService.Frame.Navigated -= OnNavigated;
+
             MasterDetail.Dispose();
             SettingsView.Dispose();
             //DataContext = null;
@@ -167,9 +173,6 @@ namespace Unigram.Views
             //TitleBarrr.Height = sender.Height;
             TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 6), GridUnitType.Pixel);
 
-            //PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
-            MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
-
             sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
             sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
         }
@@ -179,9 +182,6 @@ namespace Unigram.Views
             //TitleBarrr.Visibility = sender.IsVisible ? Visibility.Visible : Visibility.Collapsed;
             //TitleBarrr.Height = sender.Height;
             TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 6), GridUnitType.Pixel);
-
-            //PageHeader.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
-            MasterDetail.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
         }
 
         private void InitializeLocalization()
@@ -1696,13 +1696,7 @@ namespace Unigram.Views
             }
             catch { }
 
-            //if (rpMasterTitlebar.SelectedIndex > 0)
-            {
-                //if (Window.Current.Bounds.Width >= 501 && Window.Current.Bounds.Width < 820)
-                {
-                    MasterDetail.NavigationService.GoBackAt(0);
-                }
-            }
+            MasterDetail.NavigationService.GoBackAt(0);
 
             for (int i = 0; i < ViewModel.Children.Count; i++)
             {
@@ -2499,12 +2493,10 @@ namespace Unigram.Views
 
             var element = sender as FrameworkElement;
             var filter = ChatFilters?.ItemFromContainer(sender) as ChatFilterViewModel;
-            var left = false;
 
             if (filter == null)
             {
                 filter = ChatFiltersSide.ItemFromContainer(sender) as ChatFilterViewModel;
-                left = true;
             }
 
             if (filter.ChatFilterId == Constants.ChatListMain)
@@ -2519,8 +2511,14 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.FilterDeleteCommand, filter, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
             }
 
-            //args.ShowAt(flyout, element);
-            flyout.ShowAt(element, new FlyoutShowOptions { Placement = left ? FlyoutPlacementMode.RightEdgeAlignedTop : FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
+            {
+                flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            }
+            else
+            {
+                flyout.ShowAt(element);
+            }
         }
 
         private void ArchivedChats_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -2983,22 +2981,6 @@ namespace Unigram.Views
             }
         }
 
-        private void ChatFiltersSide_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            if (args.Item is ChatFilterViewModel item && args.ItemContainer.ContentTemplateRoot is StackPanel panel)
-            {
-                if (panel.Children[0] is Grid grid && grid.Children[0] is BitmapIcon image)
-                {
-                    image.UriSource = new Uri($"ms-appx:///Assets/Filters/{item.Icon}.png");
-                }
-            }
-        }
-
         private void ChatFilter_ItemClick(object sender, ItemClickEventArgs e)
         {
             rpMasterTitlebar.SelectedIndex = 0;
@@ -3021,5 +3003,17 @@ namespace Unigram.Views
 
         public static readonly DependencyProperty HeaderProperty =
             DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
+    }
+
+    public class HostedUserControl : UserControl
+    {
+        public UIElement Header
+        {
+            get { return (UIElement)GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
+
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedUserControl), new PropertyMetadata(null));
     }
 }

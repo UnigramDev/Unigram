@@ -75,6 +75,11 @@ namespace Unigram.Services.Navigation
                             await NavigateFromAsync(page, dataContext, false).ConfigureAwait(false);
                         }
                     }
+
+                    if (page is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                    }
                 }
             };
             FrameFacadeInternal.Navigated += async (s, e) =>
@@ -158,9 +163,9 @@ namespace Unigram.Services.Navigation
             var page = frameContent as Page;
             if (page != null)
             {
-                if (page is IDisposable cleanup)
+                if (page is ICloneable cleanup)
                 {
-                    cleanup.Dispose();
+                    cleanup.Clone();
                 }
 
                 //if (mode == NavigationMode.New)

@@ -3,6 +3,7 @@ using Unigram.Common;
 using Unigram.Native;
 using Unigram.ViewModels.Payments;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Payments
 {
@@ -16,8 +17,16 @@ namespace Unigram.Views.Payments
             DataContext = TLContainer.Current.Resolve<PaymentFormStep3ViewModel>();
 
             Transitions = ApiInfo.CreateSlideTransition();
+        }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
             ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            ViewModel.PropertyChanged -= OnPropertyChanged;
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

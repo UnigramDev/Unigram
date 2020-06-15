@@ -81,7 +81,7 @@ namespace Unigram.ViewModels.BasicGroups
                     // TODO: photo
 
                     NavigationService.NavigateToChat(chat);
-                    NavigationService.ClearHistory();
+                    NavigationService.GoBackAt(0, false);
                 }
                 else if (response is Error error)
                 {

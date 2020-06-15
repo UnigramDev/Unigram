@@ -15,10 +15,23 @@ namespace Unigram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
+        private DispatcherTimer _timeoutTimer;
+
         public PollContent(MessageViewModel message)
         {
             InitializeComponent();
             UpdateMessage(message);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _timeoutTimer?.Stop();
+            _timeoutTimer = null;
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -32,6 +45,38 @@ namespace Unigram.Controls.Messages.Content
             }
 
             var results = poll.Poll.IsClosed || poll.Poll.Options.Any(x => x.IsChosen);
+
+            if (poll.Poll.Type is PollTypeQuiz && poll.Poll.CloseDate != 0 && !results)
+            {
+                var now = DateTime.Now.ToTimestamp();
+
+                var diff = poll.Poll.CloseDate - now;
+                if (diff > 0)
+                {
+                    TimeoutLabel.Visibility = Visibility.Visible;
+                    Timeout.Text = TimeSpan.FromSeconds(diff).ToString("m\\:ss");
+
+                    if (_timeoutTimer == null)
+                    {
+                        _timeoutTimer = new DispatcherTimer();
+                        _timeoutTimer.Interval = TimeSpan.FromSeconds(1);
+                        _timeoutTimer.Tick += TimeoutTimer_Tick;
+                    }
+
+                    _timeoutTimer.Stop();
+                    _timeoutTimer.Start();
+                }
+                else
+                {
+                    _timeoutTimer?.Stop();
+                    TimeoutLabel.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                _timeoutTimer?.Stop();
+                TimeoutLabel.Visibility = Visibility.Collapsed;
+            }
 
             Question.Text = poll.Poll.Question;
             Votes.Text = poll.Poll.TotalVoterCount > 0
@@ -141,6 +186,29 @@ namespace Unigram.Controls.Messages.Content
                 }
 
                 RecentVoters.Children.Add(picture);
+            }
+        }
+
+        private void TimeoutTimer_Tick(object sender, object e)
+        {
+            var poll = _message?.Content as MessagePoll;
+            if (poll == null)
+            {
+                _timeoutTimer.Stop();
+                return;
+            }
+
+            var now = DateTime.Now.ToTimestamp();
+
+            var diff = poll.Poll.CloseDate - now;
+            if (diff > 0)
+            {
+                Timeout.Text = TimeSpan.FromSeconds(diff).ToString("m\\:ss");
+            }
+            else
+            {
+                _timeoutTimer.Stop();
+                TimeoutLabel.Visibility = Visibility.Collapsed;
             }
         }
 

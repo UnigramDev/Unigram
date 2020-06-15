@@ -47,7 +47,7 @@ namespace Unigram.Views.Supergroups
             Subtitle.Text = LastSeenConverter.GetLabel(user, true);
         }
 
-        public void UpdateMember(Chat chat, Supergroup group, User user, ChatMember member)
+        public void UpdateMember(Chat chat, User user, ChatMember member)
         {
             if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator)
             {
@@ -70,15 +70,22 @@ namespace Unigram.Views.Supergroups
                 EditRankPanel.Footer = string.Format(Strings.Resources.EditAdminRankInfo, Strings.Resources.ChannelAdmin);
             }
 
-            PermissionsPanel.Visibility = Visibility.Visible;
+            if (chat.Type is ChatTypeSupergroup group)
+            {
+                PermissionsPanel.Visibility = Visibility.Visible;
 
-            ChangeInfo.Header = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
-            PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-            EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-            DeleteMessages.Header = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
-            BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-            PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-            AddUsers.Header = chat.Permissions.CanInviteUsers ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
+                ChangeInfo.Header = group.IsChannel ? Strings.Resources.EditAdminChangeChannelInfo : Strings.Resources.EditAdminChangeGroupInfo;
+                PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+                EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+                DeleteMessages.Header = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
+                BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                AddUsers.Header = chat.Permissions.CanInviteUsers ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
+            }
+            else
+            {
+                PermissionsPanel.Visibility = Visibility.Collapsed;
+            }
 
             //TransferOwnership.Content = group.IsChannel ? Strings.Resources.EditAdminChannelTransfer : Strings.Resources.EditAdminGroupTransfer;
         }

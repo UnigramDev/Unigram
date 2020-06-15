@@ -47,7 +47,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable
+    public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable, ICloneable
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -86,6 +86,7 @@ namespace Unigram.Views
 
         private Compositor _compositor;
 
+        private ZoomableListHandler _autocompleteZoomer;
         private AnimatedListHandler<Sticker> _autocompleteHandler;
 
         public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
@@ -104,11 +105,17 @@ namespace Unigram.Views
                 _viewModel?.ProtoService.DownloadFile(id, 1);
             };
 
+            _autocompleteZoomer = new ZoomableListHandler(ListAutocomplete);
+            _autocompleteZoomer.Opening = _autocompleteHandler.UnloadVisibleItems;
+            _autocompleteZoomer.Closing = _autocompleteHandler.ThrottleVisibleItems;
+            _autocompleteZoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _autocompleteZoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
+
             TextField.IsFormattingVisible = ViewModel.Settings.IsTextFormattingVisible;
 
             _getViewModel = getViewModel;
 
-            //NavigationCacheMode = NavigationCacheMode.Required;
+            NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Required;
 
             _typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
@@ -117,6 +124,14 @@ namespace Unigram.Views
             _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageUnreadTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
+
+            _typeToTemplateMapping.Add("UserMessageTemplate", Resources["UserMessageTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("ChatFriendMessageTemplate", Resources["ChatFriendMessageTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("FriendMessageTemplate", Resources["FriendMessageTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("ServiceMessageTemplate", Resources["ServiceMessageTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("ServiceMessagePhotoTemplate", Resources["ServiceMessagePhotoTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("ServiceMessageUnreadTemplate", Resources["ServiceMessageUnreadTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("EmptyMessageTemplate", Resources["EmptyMessageTemplate"] as DataTemplate);
 
             _windowContext = TLWindowContext.GetForCurrentView();
 
@@ -321,8 +336,9 @@ namespace Unigram.Views
             StickersPanel.AnimationContextRequested += Animation_ContextRequested;
 
             _stickersModeWide = SettingsService.Current.IsSidebarOpen
-                ? StickersPanelMode.Sidebar
-                : StickersPanelMode.Collapsed;
+                && SettingsService.Current.Stickers.IsSidebarEnabled
+                    ? StickersPanelMode.Sidebar
+                    : StickersPanelMode.Collapsed;
 
             _stickersPanel = ElementCompositionPreview.GetElementVisual(StickersPanel.Presenter);
 
@@ -473,16 +489,23 @@ namespace Unigram.Views
         {
             if (ViewModel != null)
             {
+                ViewModel.Items.Clear();
+
                 ViewModel.PropertyChanged -= OnPropertyChanged;
+                ViewModel.Items.AttachChanged = null;
                 //ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
                 ViewModel.ListField = null;
+                ViewModel.Sticker_Click = null;
 
                 ViewModel.Dispose();
             }
+        }
 
+        public object Clone()
+        { 
             DataContext = _getViewModel(this);
 
             ViewModel.TextField = TextField;
@@ -508,6 +531,8 @@ namespace Unigram.Views
             TextField.IsTextPredictionEnabled = SettingsService.Current.AutocorrectWords;
             TextField.IsSpellCheckEnabled = SettingsService.Current.HighlightWords;
             TextField.Focus(FocusState.Programmatic);
+
+            return null;
         }
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -788,8 +813,8 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Bindings.StopTracking();
-            Bindings.Update();
+            //Bindings.StopTracking();
+            //Bindings.Update();
 
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
@@ -810,7 +835,7 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Bindings.StopTracking();
+            //Bindings.StopTracking();
 
             UnloadVisibleMessages();
 
@@ -1523,8 +1548,9 @@ namespace Unigram.Views
             get
             {
                 return ActualWidth >= SIDEBAR_MIN_WIDTH
-                    ? StickersPanelMode.Sidebar
-                    : StickersPanelMode.Overlay;
+                    && SettingsService.Current.Stickers.IsSidebarEnabled
+                        ? StickersPanelMode.Sidebar
+                        : StickersPanelMode.Overlay;
             }
         }
 
@@ -2895,6 +2921,20 @@ namespace Unigram.Views
             ViewModel.MessageServiceCommand.Execute(message);
         }
 
+        private void Autocomplete_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+
+                _autocompleteZoomer.ElementPrepared(args.ItemContainer);
+            }
+
+            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            args.IsContainerPrepared = true;
+        }
+
         private void Autocomplete_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -2964,8 +3004,6 @@ namespace Unigram.Views
                     return;
                 }
 
-                args.ItemContainer.Tag = content.Tag = new ViewModels.Drawers.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
-
                 var file = sticker.Thumbnail.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
@@ -3028,13 +3066,12 @@ namespace Unigram.Views
             Call.Visibility = Visibility.Collapsed;
             CallPlaceholder.Visibility = Visibility.Collapsed;
 
-            StickersPanel.UpdateChatPermissions(chat);
-            ListInline.UpdateChatPermissions(chat);
+            UpdateChatPermissions(chat);
         }
 
         public void UpdateChatPermissions(Chat chat)
         {
-            StickersPanel.UpdateChatPermissions(chat);
+            StickersPanel.UpdateChatPermissions(ViewModel.CacheService, chat);
             ListInline.UpdateChatPermissions(chat);
         }
 
@@ -3286,12 +3323,18 @@ namespace Unigram.Views
                 var rights = ViewModel.VerifyRights(chat, x => x.CanSendMediaMessages, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string label);
                 var pollsRights = ViewModel.VerifyRights(chat, x => x.CanSendPolls, Strings.Resources.GlobalAttachMediaRestricted, Strings.Resources.AttachMediaRestrictedForever, Strings.Resources.AttachMediaRestricted, out string pollsLabel);
 
+                var pollsAllowed = chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup;
+                if (!pollsAllowed && ViewModel.CacheService.TryGetUser(chat, out User user))
+                {
+                    pollsAllowed = user.Type is UserTypeBot;
+                }
+
                 AttachRestriction.Tag = label ?? string.Empty;
                 AttachRestriction.Visibility = rights ? Visibility.Visible : Visibility.Collapsed;
                 AttachMedia.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                 AttachDocument.Visibility = rights ? Visibility.Collapsed : Visibility.Visible;
                 AttachLocation.Visibility = Visibility.Visible;
-                AttachPoll.Visibility = (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup) && !pollsRights ? Visibility.Visible : Visibility.Collapsed;
+                AttachPoll.Visibility = pollsAllowed && !pollsRights ? Visibility.Visible : Visibility.Collapsed;
                 AttachContact.Visibility = Visibility.Visible;
                 AttachCurrent.Visibility = Visibility.Collapsed;
 
@@ -3683,6 +3726,8 @@ namespace Unigram.Views
 
             Messages.Margin = new Thickness(0, 0, 0, -radius);
             Messages.Padding = new Thickness(0, 0, 0, radius + 6);
+
+            TextField.IsReplaceEmojiEnabled = ViewModel.Settings.IsReplaceEmojiEnabled;
         }
 
         public void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection)
@@ -4205,7 +4250,7 @@ namespace Unigram.Views
                         }
                         else if (file.Id == sticker.StickerValue.Id)
                         {
-                            _autocompleteHandler.LoadVisibleItems(false);
+                            _autocompleteHandler.ThrottleVisibleItems();
                         }
                     }
                 }

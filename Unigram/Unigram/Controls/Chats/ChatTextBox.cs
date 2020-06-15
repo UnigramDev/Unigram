@@ -161,20 +161,8 @@ namespace Unigram.Controls.Chats
                 var text = await package.GetTextAsync();
                 var start = Document.Selection.StartPosition;
 
-                var result = Emoticon.Pattern.Replace(text, (match) =>
-                {
-                    var emoticon = match.Groups[1].Value;
-                    var emoji = Emoticon.Replace(emoticon);
-                    if (match.Value.StartsWith(" "))
-                    {
-                        emoji = $" {emoji}";
-                    }
-
-                    return emoji;
-                });
-
-                Document.Selection.SetText(TextSetOptions.None, result);
-                Document.Selection.SetRange(start + result.Length, start + result.Length);
+                Document.Selection.SetText(TextSetOptions.None, text);
+                Document.Selection.SetRange(start + text.Length, start + text.Length);
             }
         }
 
@@ -183,15 +171,8 @@ namespace Unigram.Controls.Chats
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Space)
+            if (e.Key == VirtualKey.Space && Document.Selection.Length == 0)
             {
-                if (Document.Selection.Length > 0)
-                {
-                    return;
-                }
-
-                FormatText();
-
                 var clone = Document.Selection.GetClone();
                 var end = clone.EndOf(TextRangeUnit.CharacterFormat, true);
 
@@ -679,40 +660,6 @@ namespace Unigram.Controls.Chats
             Text = text;
         }
 
-        private void FormatText()
-        {
-            if (!ViewModel.Settings.IsReplaceEmojiEnabled)
-            {
-                return;
-            }
-
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            var caretPosition = Document.Selection.StartPosition;
-            var result = Emoticon.Pattern.Matches(text);
-
-            Document.BatchDisplayUpdates();
-
-            foreach (Match match in result)
-            {
-                var emoticon = match.Groups[1].Value;
-                var emoji = Emoticon.Replace(emoticon);
-                if (match.Index + match.Length < caretPosition)
-                {
-                    caretPosition += emoji.Length - emoticon.Length;
-                }
-                if (match.Value.StartsWith(" "))
-                {
-                    emoji = $" {emoji}";
-                }
-
-                Document.GetRange(match.Index, match.Index + match.Length).SetText(TextSetOptions.None, emoji);
-            }
-
-            Document.ApplyDisplayUpdates();
-            Document.Selection.SetRange(caretPosition, caretPosition);
-        }
-
         public async Task SendAsync(bool disableNotification = false)
         {
             Sending?.Invoke(this, EventArgs.Empty);
@@ -739,7 +686,6 @@ namespace Unigram.Controls.Chats
 
         protected override void OnGettingFormattedText()
         {
-            FormatText();
         }
 
         protected override void OnSettingText()

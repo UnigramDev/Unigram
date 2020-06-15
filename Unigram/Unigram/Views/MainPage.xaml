@@ -45,7 +45,6 @@
 
                             <!--<Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding Padding}" VerticalAlignment="Top"/>-->
 
-                            <ContentControl Content="{TemplateBinding Header}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             <ContentControl Content="{TemplateBinding MasterHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             <ContentControl Content="{TemplateBinding DetailHeader}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             <ContentControl Content="{TemplateBinding Banner}" IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalAlignment="Top"/>
@@ -84,23 +83,46 @@
     </Page.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+
+        <Grid x:Name="TitleBarrr" Height="32" Background="{ThemeResource PageTitleBackgroundBrush}" Grid.ColumnSpan="2">
+            <contract7Present:Grid.BackgroundTransition>
+                <contract7Present:BrushTransition/>
+            </contract7Present:Grid.BackgroundTransition>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <microsoft:ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
+            <TextBlock x:Name="StatusLabel"
+                               VerticalAlignment="Center"
+                               TextLineBounds="TrimToCapHeight"
+                               Margin="6,0,0,0"
+                               AutomationProperties.LiveSetting="Assertive"
+                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Grid.Column="1"/>
+        </Grid>
 
         <Border
             x:Load="False"
             x:Name="ChatTabsLeft"
             Background="{ThemeResource SystemControlAcrylicWindowMediumHighBrush}"
             BorderBrush="{ThemeResource PageHeaderBackgroundBrush}"
-            BorderThickness="0,0,0,0">
+            BorderThickness="0,0,0,0"
+            Grid.Row="1">
             <controls:TopNavView
                 x:Name="ChatFiltersSide"
                 ItemsSource="{x:Bind ViewModel.Filters}"
                 SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
                 IsItemClickEnabled="True"
-                ContainerContentChanging="ChatFiltersSide_ContainerContentChanging"
                 ItemClick="ChatFilter_ItemClick"
                 ItemContextRequested="ChatFilter_ContextRequested"
                 Orientation="Vertical"
@@ -113,14 +135,14 @@
                 ScrollViewer.HorizontalScrollMode="Disabled"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollMode="Auto"
-                Margin="0,32,0,0"
                 Height="Auto"
                 Width="72">
                 <controls:TopNavView.ItemTemplate>
                     <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
                         <StackPanel Orientation="Vertical">
-                            <Grid Margin="0,-4,0,0">
+                            <Grid>
                                 <BitmapIcon
+                                    UriSource="{x:Bind IconUri, Mode=OneWay}"
                                     HorizontalAlignment="Center"
                                     Width="36"
                                     Height="36"/>
@@ -129,7 +151,7 @@
                                     Background="{ThemeResource ChatUnreadBadgeBrush}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    Margin="0,-8,-4,0"
+                                    Margin="0,0,-4,0"
                                     MinWidth="20"
                                     Height="20"
                                     CornerRadius="10">
@@ -145,7 +167,7 @@
                                     Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    Margin="0,-8,-4,0"
+                                    Margin="0,0,-4,0"
                                     MinWidth="20"
                                     Height="20"
                                     CornerRadius="10">
@@ -185,7 +207,7 @@
                                         <ContentPresenter
                                             x:Name="ContentPresenter"
                                             Grid.Column="1"
-                                            Margin="8,12"
+                                            Margin="8,4,8,4"
                                             TextWrapping="NoWrap"
                                             Foreground="{TemplateBinding Foreground}"
                                             ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -197,7 +219,7 @@
                                             AutomationProperties.AccessibilityView="Raw"/>
                                         <Grid
                                             x:Name="SelectionIndicatorGrid"
-                                            Margin="4,12,0,12"
+                                            Margin="4,4,0,4"
                                             HorizontalAlignment="Left">
                                             <Rectangle
                                                 x:Name="SelectionIndicator"
@@ -216,27 +238,7 @@
             </controls:TopNavView>
         </Border>
         
-        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1">
-            <controls:MasterDetailView.Header>
-                <Grid x:Name="TitleBarrr" Height="32" Background="{ThemeResource PageTitleBackgroundBrush}">
-                    <contract7Present:Grid.BackgroundTransition>
-                        <contract7Present:BrushTransition/>
-                    </contract7Present:Grid.BackgroundTransition>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <microsoft:ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-                    <TextBlock x:Name="StatusLabel"
-                               VerticalAlignment="Center"
-                               TextLineBounds="TrimToCapHeight"
-                               Margin="6,0,0,0"
-                               AutomationProperties.LiveSetting="Assertive"
-                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Grid.Column="1"/>
-                </Grid>
-            </controls:MasterDetailView.Header>
+        <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1" Grid.Row="1">
             <controls:MasterDetailView.Banner>
                 <controls:PlaybackHeader x:Name="Playback"/>
             </controls:MasterDetailView.Banner>
@@ -767,36 +769,6 @@
                                 </Grid>
 
                                 <controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Grid.Row="1"/>
-
-                                <!--<StackPanel x:Name="Arrow" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                                     -->
-                                <!--Visibility="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"-->
-                                <!--
-                                     <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                             MinWidth="20"
-                                             Height="20"
-                                             CornerRadius="10"
-                                             HorizontalAlignment="Center"
-                                             Margin="0,6,0,-12"
-                                             Canvas.ZIndex="1">
-                                         <TextBlock x:Name="UnreadCount"
-                                                    Text="{x:Bind ViewModel.UnreadUnmutedCount, Mode=OneWay}"
-                                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                                    Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                    TextAlignment="Center"
-                                                    Margin="4,2,4,0"/>
-                                     </Border>
-                                     <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                             BorderBrush="{ThemeResource TelegramSeparatorBrush}"
-                                             BorderThickness="1"
-                                             CornerRadius="24"
-                                             Margin="12,6"
-                                             Height="38"
-                                             Width="38"
-                                             Grid.ColumnSpan="2">
-                                         <controls:GlyphButton FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
-                                     </Border>
-                                     </StackPanel>-->
                             </Grid>
                         </Grid>
                     </PivotItem>
@@ -999,6 +971,7 @@
             x:Load="False"
             Completed="Confetti_Completed"
             IsHitTestVisible="False"
-            Grid.ColumnSpan="2"/>
+            Grid.ColumnSpan="2"
+            Grid.Row="1"/>
     </Grid>
 </Page>

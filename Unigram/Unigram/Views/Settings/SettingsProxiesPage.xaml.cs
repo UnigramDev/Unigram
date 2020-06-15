@@ -30,7 +30,7 @@ namespace Unigram.Views.Settings
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var proxy = element.DataContext as ProxyViewModel;
+            var proxy = List.ItemFromContainer(element) as ProxyViewModel;
 
             if (proxy.Type is ProxyTypeMtproto || proxy.Type is ProxyTypeSocks5)
             {
@@ -41,6 +41,23 @@ namespace Unigram.Views.Settings
             flyout.CreateFlyoutItem(ViewModel.RemoveCommand, proxy, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
+        }
+
+        #endregion
+
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContextRequested += Proxy_ContextRequested;
+            }
+
+            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            args.IsContainerPrepared = true;
         }
 
         #endregion

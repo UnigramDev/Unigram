@@ -20,7 +20,7 @@ namespace Unigram.Views.Popups
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 
         private AnimatedListHandler<Sticker> _handler;
-        private DispatcherTimer _throttler;
+        private ZoomableListHandler _zoomer;
 
         private StickerSetPopup()
         {
@@ -33,13 +33,11 @@ namespace Unigram.Views.Popups
                 ViewModel.ProtoService.DownloadFile(id, 1);
             };
 
-            _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _throttler.Tick += (s, args) =>
-            {
-                _throttler.Stop();
-                _handler.LoadVisibleItems(false);
-            };
+            _zoomer = new ZoomableListHandler(List);
+            _zoomer.Opening = _handler.UnloadVisibleItems;
+            _zoomer.Closing = _handler.ThrottleVisibleItems;
+            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
             SecondaryButtonText = Strings.Resources.Close;
         }
@@ -57,6 +55,12 @@ namespace Unigram.Views.Popups
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             _handler.UnloadVisibleItems();
+            _handler.DownloadFile = null;
+
+            _zoomer.Opening = null;
+            _zoomer.Closing = null;
+            _zoomer.DownloadFile = null;
+            _zoomer.GetEmojisAsync = null;
         }
 
         #region Show
@@ -140,6 +144,20 @@ namespace Unigram.Views.Popups
 
         #region Recycle
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+
+                _zoomer.ElementPrepared(args.ItemContainer);
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -149,8 +167,6 @@ namespace Unigram.Views.Popups
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as Sticker;
-
-            content.Tag = args.ItemContainer.Tag = new ViewModels.Drawers.StickerViewModel(ViewModel.ProtoService, ViewModel.Aggregator, sticker);
 
             if (args.Phase == 0)
             {
@@ -251,11 +267,12 @@ namespace Unigram.Views.Popups
                     }
                     else if (file.Id == sticker.StickerValue.Id)
                     {
-                        _throttler.Stop();
-                        _throttler.Start();
+                        _handler.ThrottleVisibleItems();
                     }
                 }
             }
+
+            _zoomer.UpdateFile(file);
         }
 
         #endregion

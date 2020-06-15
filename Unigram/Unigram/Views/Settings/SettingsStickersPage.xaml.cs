@@ -50,6 +50,19 @@ namespace Unigram.Views.Settings
 
         #region Recycle
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new ListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += StickerSet_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -137,7 +150,7 @@ namespace Unigram.Views.Settings
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var stickerSet = element.Tag as StickerSetInfo;
+            var stickerSet = List.ItemFromContainer(element) as StickerSetInfo;
 
             if (stickerSet == null || stickerSet.Id == 0)
             {

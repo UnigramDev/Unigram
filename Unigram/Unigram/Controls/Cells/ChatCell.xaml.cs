@@ -134,7 +134,7 @@ namespace Unigram.Controls.Cells
             UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             UnreadLabel.Text = $"{unreadCount.UnreadChatCount.UnreadCount}";
 
-            var response = await protoService.SendAsync(new GetChats(chatList, long.MaxValue, 0, 20));
+            var response = await protoService.GetChatListAsync(chatList, 0, 20);
             if (response is Telegram.Td.Api.Chats chats)
             {
                 Visibility = chats.ChatIds.Count > 0 ? Visibility.Visible : Visibility.Collapsed;

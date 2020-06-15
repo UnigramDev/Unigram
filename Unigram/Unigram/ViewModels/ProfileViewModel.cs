@@ -61,8 +61,6 @@ namespace Unigram.ViewModels
             _supergroupMembersVieModel.IsEmbedded = true;
 
             SendMessageCommand = new RelayCommand(SendMessageExecute);
-            MediaCommand = new RelayCommand<int>(MediaExecute);
-            CommonChatsCommand = new RelayCommand(CommonChatsExecute);
             SystemCallCommand = new RelayCommand(SystemCallExecute);
             BlockCommand = new RelayCommand(BlockExecute);
             UnblockCommand = new RelayCommand(UnblockExecute);
@@ -359,37 +357,6 @@ namespace Unigram.ViewModels
             }
 
             NavigationService.NavigateToChat(chat);
-        }
-
-        public RelayCommand<int> MediaCommand { get; }
-        private void MediaExecute(int selectedIndex)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id, new Dictionary<string, object> { { "selectedIndex", selectedIndex } });
-        }
-
-        public RelayCommand CommonChatsCommand { get; }
-        private void CommonChatsExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                NavigationService.Navigate(typeof(UserCommonChatsPage), privata.UserId);
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                NavigationService.Navigate(typeof(UserCommonChatsPage), secret.UserId);
-            }
         }
 
         public RelayCommand StatisticsCommand { get; }
@@ -1381,7 +1348,7 @@ namespace Unigram.ViewModels
         {
             _protoService = protoService;
             _supergroupId = supergroupId;
-            _filter = _group ? new SupergroupMembersFilterContacts() : null;
+            _filter = group ? new SupergroupMembersFilterContacts() : null;
             _hasMore = true;
             _group = group;
         }
@@ -1438,6 +1405,9 @@ namespace Unigram.ViewModels
                                 case SupergroupMembersFilterBots bots:
                                     title = Strings.Resources.ChannelBots;
                                     break;
+                                case SupergroupMembersFilterAdministrators administrators:
+                                    title = Strings.Resources.ChannelAdministrators;
+                                    break;
                                 case SupergroupMembersFilterRecent recent:
                                     title = Strings.Resources.ChannelOtherMembers;
                                     break;
@@ -1457,6 +1427,10 @@ namespace Unigram.ViewModels
                                     _offset = 0;
                                     break;
                                 case SupergroupMembersFilterBots bots:
+                                    _filter = new SupergroupMembersFilterAdministrators();
+                                    _offset = 0;
+                                    break;
+                                case SupergroupMembersFilterAdministrators administrators:
                                     _filter = new SupergroupMembersFilterRecent();
                                     _offset = 0;
                                     break;

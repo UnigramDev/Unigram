@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Annuler la mise en place de la double authentification</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Annuler la configuration</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Annuler le téléchargement</value>
   </data>
@@ -1966,7 +1969,7 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
     <value>Inviter avec un lien</value>
   </data>
   <data name="ChannelJoin" xml:space="preserve">
-    <value>S'ABONNER</value>
+    <value>REJOINDRE</value>
   </data>
   <data name="ChannelJoined" xml:space="preserve">
     <value>Vous avez rejoint ce canal</value>
@@ -2378,7 +2381,7 @@ La longueur minimale est de 5 caractères.</value>
     <value/>
   </data>
   <data name="ChatsUnmute" xml:space="preserve">
-    <value>Enlever la sourdine</value>
+    <value>Retirer la sourdine</value>
   </data>
   <data name="ChatsZero" xml:space="preserve">
     <value/>
@@ -3000,6 +3003,9 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Attention ! Ceci **supprimera tous les messages** de cet échange pour **les deux** participants.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Attention ! Ceci **supprimera tous les messages** dans cet échange.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Supprimer et quitter</value>
   </data>
@@ -3572,6 +3578,9 @@ Plus d'informations sur telegram.org</value>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Nom du canal</value>
   </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Saisir le code</value>
+  </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Entrez votre code d'accès actuel</value>
   </data>
@@ -3953,6 +3962,9 @@ Durée : {1}</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Favoris</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>GIF tendances</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Autocollants en vogue</value>
   </data>
@@ -3998,6 +4010,15 @@ Durée : {1}</value>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Veuillez patienter quelques instants pendant que nous remplissons ce dossier pour vous...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Ajouter au dossier</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>Désolé, vous ne pouvez pas exclure plus de 100 échanges d'un dossier.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Limite atteinte</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>Tous</value>
   </data>
@@ -4022,11 +4043,26 @@ Durée : {1}</value>
   <data name="FilterChannels" xml:space="preserve">
     <value>Canaux</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{0}** a été ajouté à **{1}**</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{0}** a été retiré de **{1}**</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Échanges</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{0}** ont été ajoutés à **{1}**</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{0}** ont été retirés de **{1}**</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Types d’échange</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Choisir un dossier</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Contact</value>
@@ -4145,6 +4181,12 @@ Durée : {1}</value>
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>Voulez-vous vraiment retirer "{0}" de la liste toujours exclue ?</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Retirer du dossier</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>Désolé, vous ne pouvez pas ajouter plus de 100 échanges à un dossier.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Voulez-vous vraiment retirer "{0}" de la liste toujours incluse ?</value>
   </data>
@@ -4192,6 +4234,12 @@ Durée : {1}</value>
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>Non lus</value>
+  </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{0}** a été ajouté à **{1}**</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}** a été retiré de **{1}**</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Résultats finaux</value>
@@ -4759,6 +4807,9 @@ Veuillez noter qu'ils peuvent toujours rejoindre le groupe par un lien d'invitat
   </data>
   <data name="HoldToAudio" xml:space="preserve">
     <value>Maintenez pour enregistrer. Touchez pour changer.</value>
+  </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>Maintenir pour enregistrer l'audio.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Maintenez pour filmer. Touchez pour changer.</value>
@@ -6805,6 +6856,9 @@ messages depuis plusieurs appareils.</value>
   <data name="PaintEdit" xml:space="preserve">
     <value>Modifier</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>Encadré</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Encadré</value>
   </data>
@@ -7406,8 +7460,17 @@ Vous pouvez consulter notre *FAQ* pour plus d'informations.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Indice du mot de passe</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>Indice</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Créez un indice pour le mot de passe</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>Désactivée</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>Activée</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Récupération du mot de passe</value>
@@ -7812,6 +7875,9 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Entrez un mot de passe</value>
   </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Saisissez un nouveau mot de passe</value>
+  </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Entrez votre nouveau mot de passe</value>
   </data>
@@ -8065,7 +8131,7 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
     <value>Masquer</value>
   </data>
   <data name="PsaHideChatAlertText" xml:space="preserve">
-    <value>Voulez-vous vraiment masquer l'échange sélectionné ?</value>
+    <value>Voulez-vous vraiment masquer cet échange ?</value>
   </data>
   <data name="PsaHideChatAlertTitle" xml:space="preserve">
     <value>Masquer l'échange</value>
@@ -8089,7 +8155,7 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
     <value>Il s'agit d'une notification importante.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
-    <value>ASP</value>
+    <value>COVID-19</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>ASP</value>
@@ -8105,6 +8171,9 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Violet</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>Telegram a besoin d'accéder à votre caméra pour scanner des codes QR.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Question</value>
@@ -8218,6 +8287,9 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
     <value>enregistre un message vidéo…</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
+    <value>Courriel de récupération</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
     <value>Courriel de récupération</value>
   </data>
   <data name="Red" xml:space="preserve">
@@ -9175,6 +9247,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Désactivez ceci pour ne recevoir que les notifications du compte que vous utilisez actuellement.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Afficher les autocollants</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value/>
   </data>
@@ -9284,6 +9359,9 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Par défaut</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Son désactivé</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Démarrer</value>
@@ -9932,6 +10010,21 @@ Mais si les besoins modestes de Telegram ne vous conviennent pas, il nous est im
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Double authentification</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Retour au passeport</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Retour aux paramètres</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Mot de passe défini !</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>Ce mot de passe sera demandé lorsque vous vous connecterez sur un nouvel appareil en plus du code que vous recevrez par SMS.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Définir un mot de passe</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Double authentification</value>
   </data>
@@ -9999,7 +10092,7 @@ Mais si les besoins modestes de Telegram ne vous conviennent pas, il nous est im
     <value>Déverrouiller avec une empreinte digitale</value>
   </data>
   <data name="UnmuteNotifications" xml:space="preserve">
-    <value>Enlever la sourdine</value>
+    <value>Retirer la sourdine</value>
   </data>
   <data name="UnofficialApp" xml:space="preserve">
     <value>app non-officielle</value>
@@ -10357,6 +10450,9 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   </data>
   <data name="UserUnblocked" xml:space="preserve">
     <value>Utilisateur débloqué</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Code de vérification</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>avec</value>
@@ -10768,6 +10864,9 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
 
 Si vous oubliez votre mot de passe, vous perdrez l'accès à votre compte Telegram, il ne pourra pas être récupéré.</value>
   </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>Votre courriel de récupération pour la double authentification a été modifié.</value>
+  </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>Votre courriel de récupération pour la double authentification est activé.</value>
   </data>
@@ -10779,6 +10878,9 @@ Si vous oubliez votre mot de passe, vous perdrez l'accès à votre compte Telegr
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Votre mot de passe</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>Votre mot de passe de double authentification a été modifié.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Succès !</value>

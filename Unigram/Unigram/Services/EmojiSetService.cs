@@ -132,7 +132,7 @@ namespace Unigram.Services
 
         public async Task<IList<EmojiSet>> GetCloudSetsAsync()
         {
-            var chat = await _protoService.SendAsync(new SearchPublicChat("cGFnbGlhY2Npb19kaV9naGlhY2Npbw")) as Chat;
+            var chat = await _protoService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
             if (chat == null)
             {
                 return new EmojiSet[0];

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -14,6 +13,7 @@ using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.Services.Navigation;
+using Unigram.Services.Updates;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Drawers;
@@ -106,14 +106,6 @@ namespace Unigram.ViewModels
             _stickers = StickerDrawerViewModel.GetForCurrentView(protoService.SessionId);
             _animations = AnimationDrawerViewModel.GetForCurrentView(protoService.SessionId);
 
-            _informativeTimer = new DispatcherTimer();
-            _informativeTimer.Interval = TimeSpan.FromSeconds(5);
-            _informativeTimer.Tick += (s, args) =>
-            {
-                _informativeTimer.Stop();
-                InformativeMessage = null;
-            };
-
             NextMentionCommand = new RelayCommand(NextMentionExecute);
             PreviousSliceCommand = new RelayCommand(PreviousSliceExecute);
             ClearReplyCommand = new RelayCommand(ClearReplyExecute);
@@ -205,29 +197,29 @@ namespace Unigram.ViewModels
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
             Aggregator.Subscribe(this);
-            Window.Current.Activated += Window_Activated;
         }
 
-        //~DialogViewModel()
-        //{
-        //    Debug.WriteLine("Finalizing DialogViewModel");
-        //    GC.Collect();
-        //}
+        ~DialogViewModel()
+        {
+            System.Diagnostics.Debug.WriteLine("Finalizing DialogViewModel");
+        }
 
         public void Dispose()
         {
+            System.Diagnostics.Debug.WriteLine("Disposing DialogViewModel");
+
+            Aggregator.Unsubscribe(this);
+
             _groupedMessages.Clear();
             _filesMap.Clear();
             _photosMap.Clear();
-
-            Window.Current.Activated -= Window_Activated;
         }
 
-        private void Window_Activated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
+        public void Handle(UpdateWindowActivated update)
         {
-            if (e.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated)
+            if (!update.IsActive)
             {
-                SaveDraft();
+                BeginOnUIThread(SaveDraft);
             }
         }
 
@@ -384,6 +376,17 @@ namespace Unigram.ViewModels
             {
                 if (value != null)
                 {
+                    if (_informativeTimer == null)
+                    {
+                        _informativeTimer = new DispatcherTimer();
+                        _informativeTimer.Interval = TimeSpan.FromSeconds(5);
+                        _informativeTimer.Tick += (s, args) =>
+                        {
+                            _informativeTimer.Stop();
+                            InformativeMessage = null;
+                        };
+                    }
+
                     _informativeTimer.Stop();
                     _informativeTimer.Start();
                 }
@@ -625,7 +628,7 @@ namespace Unigram.ViewModels
                 _isLoadingNextSlice = true;
                 IsLoading = true;
 
-                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
                 //var first = Items.FirstOrDefault(x => x.Id != 0);
                 //if (first is TLMessage firstMessage && firstMessage.Media is TLMessageMediaGroup groupMedia)
@@ -653,7 +656,7 @@ namespace Unigram.ViewModels
                 //    }
                 //}
 
-                Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
+                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
 
                 //return;
 
@@ -738,7 +741,7 @@ namespace Unigram.ViewModels
                 //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
                 //}
 
-                Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
+                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
                 var maxId = Items.LastOrDefault(x => x != null && x.Id != 0)?.Id;
                 if (maxId == null)
@@ -1074,7 +1077,7 @@ namespace Unigram.ViewModels
                 IsFirstSliceLoaded = null;
                 IsLoading = true;
 
-                Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
+                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
                 if (previousId.HasValue)
                 {
@@ -1200,7 +1203,7 @@ namespace Unigram.ViewModels
                 IsFirstSliceLoaded = null;
                 IsLoading = true;
 
-                Debug.WriteLine("DialogViewModel: LoadScheduledSliceAsync");
+                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadScheduledSliceAsync");
 
                 var response = await ProtoService.SendAsync(new GetChatScheduledMessages(chat.Id));
                 if (response is Messages messages)
@@ -1755,7 +1758,16 @@ namespace Unigram.ViewModels
             }
             else
             {
-                if (Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out long start) && start < chat.LastReadInboxMessageId)
+                bool TryRemove(long chatId, out long v1, out long v2)
+                {
+                    var a = Settings.Chats.TryRemove(chat.Id, ChatSetting.ReadInboxMaxId, out v1);
+                    var b = Settings.Chats.TryRemove(chat.Id, ChatSetting.Index, out v2);
+                    return a && b;
+                }
+
+                if (TryRemove(chat.Id, out long readIndboxMaxId, out long start) &&
+                    readIndboxMaxId == chat.LastReadInboxMessageId &&
+                    start < chat.LastReadInboxMessageId)
                 {
                     if (Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel))
                     {
@@ -1941,7 +1953,6 @@ namespace Unigram.ViewModels
         public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
         {
             Aggregator.Unsubscribe(this);
-            Window.Current.Activated -= Window_Activated;
 
             var chat = _chat;
             if (chat == null)
@@ -1983,6 +1994,7 @@ namespace Unigram.ViewModels
                             var transform = container.TransformToVisual(field);
                             var position = transform.TransformPoint(new Point());
 
+                            Settings.Chats[chat.Id, ChatSetting.ReadInboxMaxId] = chat.LastReadInboxMessageId;
                             Settings.Chats[chat.Id, ChatSetting.Index] = start;
                             Settings.Chats[chat.Id, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
 
@@ -1990,6 +2002,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
+                            Settings.Chats[chat.Id, ChatSetting.ReadInboxMaxId] = chat.LastReadInboxMessageId;
                             Settings.Chats[chat.Id, ChatSetting.Index] = start;
                             Settings.Chats.TryRemove(chat.Id, ChatSetting.Pixel, out double pixel);
 

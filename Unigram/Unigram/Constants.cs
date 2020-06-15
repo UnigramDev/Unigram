@@ -5,10 +5,13 @@
         public static readonly int ApiId;
         public static readonly string ApiHash;
 
+        public static readonly string AppChannel;
+
         public static readonly string AppCenterId;
 
 
         public const int TypingTimeout = 300;
+        public const int HoldingThrottle = 500;
         public const int AnimatedThrottle = 200;
 
         public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };

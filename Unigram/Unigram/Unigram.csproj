@@ -19,7 +19,7 @@
     <PackageCertificateKeyFile>
     </PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>602F1A7B283C48CF3345BD23DAEA58A1E444B2AD</PackageCertificateThumbprint>
@@ -164,6 +164,7 @@
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Common\Chats\InputChatActionManager.cs" />
     <Compile Include="Common\Chats\OutputChatActionManager.cs" />
+    <Compile Include="Common\Colors.cs" />
     <Compile Include="Common\ColorsHelper.cs" />
     <Compile Include="Common\ConcurrentQueueWorker.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="Common\SoundEffects.cs" />
     <Compile Include="Common\SunDate.cs" />
     <Compile Include="Common\TextStyleRun.cs" />
+    <Compile Include="Common\ThemeColorizer.cs" />
     <Compile Include="Common\TitleBar.cs" />
     <Compile Include="Common\TLContainer.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
@@ -236,6 +238,8 @@
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Common\XamlUtils.cs" />
+    <Compile Include="Common\ZoomableListHandler.cs" />
+    <Compile Include="Common\ZoomableRepeaterHandler.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedBitmapButton.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
@@ -470,10 +474,19 @@
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
-    <Compile Include="Controls\ZoomableGridView.cs" />
-    <Compile Include="Controls\ZoomableGridViewItem.cs" />
-    <Compile Include="Controls\ZoomableGridViewPopup.xaml.cs">
-      <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
+    <Compile Include="Services\ProtoService.ChatList.cs" />
+    <Compile Include="Services\ThemeService.Defaults.cs" />
+    <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
+      <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatSharedMediaView.xaml.cs">
+      <DependentUpon>ChatSharedMediaView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
+      <DependentUpon>SelectColorPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ZoomableMediaPopup.xaml.cs">
+      <DependentUpon>ZoomableMediaPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
@@ -602,7 +615,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
-    <Compile Include="Themes\Fluent.cs" />
     <Compile Include="Triggers\CompactTrigger.cs" />
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\EnumTrigger.cs" />
@@ -763,9 +775,6 @@
     </Compile>
     <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
       <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
-      <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatStatisticsPage.xaml.cs">
       <DependentUpon>ChatStatisticsPage.xaml</DependentUpon>
@@ -1076,8 +1085,14 @@
     <Compile Include="Views\Supergroups\SupergroupMembersPage.xaml.cs">
       <DependentUpon>SupergroupMembersPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Supergroups\SupergroupMembersView.xaml.cs">
+      <DependentUpon>SupergroupMembersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Users\UserCommonChatsView.xaml.cs">
+      <DependentUpon>UserCommonChatsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
@@ -1544,9 +1559,6 @@
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
-      <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Users\UserCreatePage.xaml.cs">
       <DependentUpon>UserCreatePage.xaml</DependentUpon>
     </Compile>
@@ -1697,12 +1709,12 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <Content Include="Assets\Fonts\Telegram.ttf" />
+    <Content Include="Assets\Images\BoxArt.png" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
     <Content Include="Assets\Images\Reply.scale-150.png" />
     <Content Include="Assets\Images\Reply.scale-200.png" />
     <Content Include="Assets\Images\Reply.scale-400.png" />
-    <Content Include="Assets\Images\WalletGem.png" />
     <Content Include="Assets\Logos\SplashScreen.scale-100.png" />
     <Content Include="Assets\Logos\SplashScreen.scale-125.png" />
     <Content Include="Assets\Logos\SplashScreen.scale-150.png" />
@@ -1752,7 +1764,6 @@
     <Content Include="Assets\secureid_ocr_nn.bin" />
     <PRIResource Include="Strings\tr\Resources.resw" />
     <PRIResource Include="Strings\ca\Resources.resw" />
-    <Content Include="Assets\Themes\DarkBlue.unigram-theme" />
     <PRIResource Include="Strings\pl\Resources.resw" />
     <PRIResource Include="Strings\uz\Resources.resw" />
     <Content Include="Assets\Animations\ChatListNewFolder.tgs" />
@@ -2020,15 +2031,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ZoomableGridViewPopup.xaml">
+    <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedMediaView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\SelectColorPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\ZoomableMediaPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Accent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Fluent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2044,10 +2063,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Plain.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Themes\TeachingTip.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2055,10 +2070,6 @@
     <Page Include="Themes\ThemeGreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\ThemeSystem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\ThemeTemplates.xaml">
       <SubType>Designer</SubType>
@@ -2093,10 +2104,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\ChatInviteLinkPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2565,6 +2572,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Supergroups\SupergroupMembersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Supergroups\SupergroupMembersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2572,7 +2583,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Users\UserCommonChatsPage.xaml">
+    <Page Include="Views\Users\UserCommonChatsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

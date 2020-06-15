@@ -89,7 +89,13 @@ namespace Unigram.Controls
             }
 
             var visual = ElementCompositionPreview.GetElementVisual(root);
+
             var clip = visual.Clip as CompositionGeometricClip;
+            if (clip == null)
+            {
+                return;
+            }
+
             var rect = clip.Geometry as CompositionRoundedRectangleGeometry;
 
             var radius = ((TableListView)d).ItemsPanelCornerRadius;

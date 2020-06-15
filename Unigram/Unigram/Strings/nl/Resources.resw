@@ -67,6 +67,9 @@
   <data name="AbortPassword" xml:space="preserve">
     <value>Twee-staps-verificatie annuleren</value>
   </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Installatie annuleren</value>
+  </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Download annuleren</value>
   </data>
@@ -3001,6 +3004,9 @@ Je kunt hier altijd het standaardthema weer instellen.</value>
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Let op! Hiermee verwijder je **alle berichten** in deze chat voor **beide** deelnemers.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Let op! Hiermee **verwijder je alle berichten** uit deze chat.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Groep verwijderen en verlaten</value>
   </data>
@@ -3574,6 +3580,9 @@ Lees meer op telegram.org</value>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Kanaalnaam</value>
   </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Code invoeren</value>
+  </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Huidige toegangscode invoeren</value>
   </data>
@@ -4009,6 +4018,9 @@ voor je zoekopdracht.</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Favorieten</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>Populaire GIF's</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Populaire stickers</value>
   </data>
@@ -4054,6 +4066,15 @@ voor je zoekopdracht.</value>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Wacht even terwijl we deze map voor je vullen...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Toevoegen aan map</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>Sorry, je kunt niet meer dan 100 chats uitsluiten van een map</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Limiet bereikt</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>Alle chats</value>
   </data>
@@ -4078,11 +4099,26 @@ voor je zoekopdracht.</value>
   <data name="FilterChannels" xml:space="preserve">
     <value>Kanalen</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{0}** toegevoegd aan **{1}**</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{0}** verwijderd van **{1}**</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Chats</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{0}** toegevoegd aan **{1}**</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{0}** verwijderd van **{1}**</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Chattypes</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Kies een map</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Contact</value>
@@ -4201,6 +4237,12 @@ voor je zoekopdracht.</value>
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>"{0}" echt verwijderen uit de "nooit inbegrepen"-lijst?</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Verwijderen van map</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>Sorry, je kunt niet meer dan 100 chats aan een map toevoegen.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>"{0}" echt verwijderen uit de "altijd inbegrepen"-lijst?</value>
   </data>
@@ -4248,6 +4290,12 @@ voor je zoekopdracht.</value>
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>Ongelezen</value>
+  </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{0}** toegevoegd aan **{1}**</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}** verwijderd van **{1}**</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Eindresultaat</value>
@@ -6862,6 +6910,9 @@ vanaf meerdere apparaten.</value>
   <data name="PaintEdit" xml:space="preserve">
     <value>Bewerk</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>Omlijst</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Omlijnd</value>
   </data>
@@ -7464,8 +7515,17 @@ Je kunt onze *Veelgestelde vragen* bekijken voor meer informatie.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Wachtwoordhint</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>Hint</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Stel een hint voor je wachtwoord in</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>Uit</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>Aan</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Wachtwoordherstel</value>
@@ -7741,7 +7801,7 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
     <value>Mobiel</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
-    <value>Gebruikers zien je nieuwe nummer als ze deze in hun adresboek hebben of als je privacy-instellingen dat toestaat. Je kunt dit aanpassen via Instellingen > Privacy en Veiligheid > Telefoonnummer.</value>
+    <value>Gebruikers zien je nieuwe nummer als ze deze in hun adresboek hebben of als je privacy-instellingen dat toestaat. Je kunt dit aanpassen via Instellingen > Privacy en veiligheid > Telefoonnummer.</value>
   </data>
   <data name="PhoneNumberChange" xml:space="preserve">
     <value>NUMMER WIJZIGEN</value>
@@ -7869,6 +7929,9 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Wachtwoord invoeren</value>
   </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Nieuw wachtwoord invoeren</value>
+  </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Nieuw wachtwoord invoeren</value>
   </data>
@@ -7927,7 +7990,7 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
     <value>Quiz-modus</value>
   </data>
   <data name="PollResults" xml:space="preserve">
-    <value>Poll resultaten</value>
+    <value>Pollresultaten</value>
   </data>
   <data name="PollSelectOption" xml:space="preserve">
     <value>Kies eerst een optie</value>
@@ -8017,7 +8080,7 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
     <value>Wie voegt een link naar mijn account toe bij het doorsturen van mijn berichten</value>
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
-    <value>Laatst gezien &amp; online</value>
+    <value>Laatst gezien en online</value>
   </data>
   <data name="PrivacyP2P" xml:space="preserve">
     <value>Peer-to-Peer in oproepen</value>
@@ -8122,7 +8185,7 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
     <value>Verbergen</value>
   </data>
   <data name="PsaHideChatAlertText" xml:space="preserve">
-    <value>Weet je zeker dat je de geselecteerde chat wilt verbergen?</value>
+    <value>Weet je zeker dat je deze chat wilt verbergen?</value>
   </data>
   <data name="PsaHideChatAlertTitle" xml:space="preserve">
     <value>Chat verbergen</value>
@@ -8146,7 +8209,7 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
     <value>Dit is een belangrijke melding.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
-    <value>PSA</value>
+    <value>COVID-19</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -8162,6 +8225,9 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Paars</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>Telegram heeft toegang tot je camera nodig om QR-codes te scannen.</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Vraag</value>
@@ -8275,6 +8341,9 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
     <value>neemt een videobericht op...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
+    <value>Herstel-e-mailadres</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
     <value>Herstel-e-mailadres</value>
   </data>
   <data name="Red" xml:space="preserve">
@@ -9232,6 +9301,9 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Uitschakelen als je alleen meldingen wilt ontvangen van het account dat je momenteel gebruikt.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Stickers weergeven</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value/>
   </data>
@@ -9342,6 +9414,9 @@ Tempolimiet is ingeschakeld, je kunt niet meer dan 1 bericht tegelijkertijd stur
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Standaard</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Geluid gedempt</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
@@ -9992,6 +10067,21 @@ Helaas is het wel zo dat als je niet akkoord gaat met het beperkte gebruik van j
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Twee-staps-verificatie</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Terug naar Passport</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Terug naar instellingen</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Wachtwoord ingesteld!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>Dit wachtwoord heb je nodig wanneer je inlogt op Telegram vanaf een nieuw apparaat, naast de code die je ontvangt per SMS.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Wachtwoord instellen</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Twee-staps-verificatie</value>
   </data>
@@ -10418,6 +10508,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   <data name="UserUnblocked" xml:space="preserve">
     <value>Gebruiker gedeblokkeerd</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Verificatiecode</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
   </data>
@@ -10839,6 +10932,9 @@ Als je je wachtwoord vergeet verlies je toegang tot je Telegram-account. Er is g
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Je wachtwoord</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>Je tweestapsverificatiewachtwoord is aangepast.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Gelukt!</value>

@@ -727,9 +727,9 @@ namespace Unigram.ViewModels.Drawers
             return _sticker.UpdateFile(file);
         }
 
-        public Sticker Get()
+        public static implicit operator Sticker(StickerViewModel viewModel)
         {
-            return _sticker;
+            return viewModel._sticker;
         }
 
         public File StickerValue => _sticker?.StickerValue;

@@ -12,8 +12,8 @@ namespace Unigram.Common
 {
     public class AnimatedListHandler<T>
     {
-        private ListViewBase _listView;
-        private DispatcherTimer _throttler;
+        private readonly ListViewBase _listView;
+        private readonly DispatcherTimer _throttler;
 
         public AnimatedListHandler(ListViewBase listView)
         {
@@ -84,7 +84,7 @@ namespace Unigram.Common
             //LoadVisibleItems(/*e.IsIntermediate*/ false);
         }
 
-        public void LoadVisibleItemsThrottled()
+        public void ThrottleVisibleItems()
         {
             _throttler.Stop();
             _throttler.Start();

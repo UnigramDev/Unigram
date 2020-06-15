@@ -96,7 +96,7 @@ namespace Unigram.ViewModels.Settings
                 if (chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
                 {
                     IsLoading = false;
-                    IsAvailable = true;
+                    IsAvailable = false;
                     ErrorMessage = null;
                 }
                 else

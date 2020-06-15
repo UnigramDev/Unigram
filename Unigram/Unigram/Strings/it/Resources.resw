@@ -59,13 +59,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Abort" xml:space="preserve">
-    <value>Annulla</value>
+    <value>Interrompi</value>
   </data>
   <data name="AbortEmail" xml:space="preserve">
-    <value>Annulla impostazione email di recupero</value>
+    <value>Interrompi configurazione email di recupero</value>
   </data>
   <data name="AbortPassword" xml:space="preserve">
-    <value>Annulla configurazione verifica in due passaggi</value>
+    <value>Interrompi configurazione verifica in due passaggi</value>
+  </data>
+  <data name="AbortPasswordMenu" xml:space="preserve">
+    <value>Interrompi configurazione</value>
   </data>
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Annulla download</value>
@@ -1766,10 +1769,10 @@ Alba: {1}</value>
 Se non sei stato tu, per favore inserisci il codice che abbiamo appena inviato tramite SMS al tuo numero.</value>
   </data>
   <data name="CancelEmailQuestion" xml:space="preserve">
-    <value>Sei sicuro di voler annullare la configurazione dell'email di recupero?</value>
+    <value>Sei sicuro di voler interrompere la configurazione dell'email di recupero?</value>
   </data>
   <data name="CancelEmailQuestionTitle" xml:space="preserve">
-    <value>Annulla configurazione</value>
+    <value>Interrompi configurazione</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Link non valido o scaduto.</value>
@@ -1778,7 +1781,7 @@ Se non sei stato tu, per favore inserisci il codice che abbiamo appena inviato t
     <value>Il processo di eliminazione per il tuo account {0} è stato annullato. Puoi chiudere questa finestra ora.</value>
   </data>
   <data name="CancelPasswordQuestion" xml:space="preserve">
-    <value>Sei sicuro di voler annullare la configurazione della verifica in due passaggi?</value>
+    <value>Sei sicuro di voler interrompere la configurazione della verifica in due passaggi?</value>
   </data>
   <data name="CancelPollAlertText" xml:space="preserve">
     <value>Sei sicuro di voler scartare questo sondaggio?</value>
@@ -2414,7 +2417,7 @@ La lunghezza minima è 5 caratteri.</value>
     <value>Controllo...</value>
   </data>
   <data name="ChooseCountry" xml:space="preserve">
-    <value>Scegli un paese</value>
+    <value>Scegli un Paese</value>
   </data>
   <data name="ChooseFromGallery" xml:space="preserve">
     <value>Carica dalla galleria</value>
@@ -3004,6 +3007,9 @@ Cancella i log</value>
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>Attenzione! Questo **eliminerà tutti i messaggi** in questa chat per **entrambi** i partecipanti.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>Attenzione! Questo **eliminerà tutti i messaggi** in questa chat.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Elimina e lascia il gruppo</value>
   </data>
@@ -3134,7 +3140,7 @@ Cancella i log</value>
     <value>Elimina questa chat</value>
   </data>
   <data name="DeleteThisChatBothSides" xml:space="preserve">
-    <value>Elimina questa chat</value>
+    <value>Elimina questa chat per entrambi</value>
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
     <value>Elimina questo gruppo</value>
@@ -3224,7 +3230,7 @@ Cancella i log</value>
     <value>Discussione</value>
   </data>
   <data name="DiscussionChannelGroupSetHelp" xml:space="preserve">
-    <value>A tutti gli iscritti viene mostrato un collegamento a **{0}** nel pannello inferiore.</value>
+    <value>A tutti gli iscritti viene mostrato un link a **{0}** nel pannello inferiore.</value>
   </data>
   <data name="DiscussionChannelHelp" xml:space="preserve">
     <value>Seleziona una chat di gruppo per la discussione che sarà mostrata nel tuo canale.</value>
@@ -3333,10 +3339,10 @@ Chiunque dal canale potrà vedere i messaggi in questo gruppo.</value>
     <value>Trasferisci proprietà canale</value>
   </data>
   <data name="EditAdminDeleteMessages" xml:space="preserve">
-    <value>Eliminare messaggi di altri</value>
+    <value>Eliminare messaggi altrui</value>
   </data>
   <data name="EditAdminEditMessages" xml:space="preserve">
-    <value>Modificare messaggi di altri</value>
+    <value>Modificare messaggi altrui</value>
   </data>
   <data name="EditAdminGroupDeleteMessages" xml:space="preserve">
     <value>Eliminare messaggi</value>
@@ -3575,6 +3581,9 @@ Ulteriori informazioni su telegram.org</value>
   </data>
   <data name="EnterChannelName" xml:space="preserve">
     <value>Nome del canale</value>
+  </data>
+  <data name="EnterCode" xml:space="preserve">
+    <value>Inserisci codice</value>
   </data>
   <data name="EnterCurrentPasscode" xml:space="preserve">
     <value>Inserisci il tuo codice attuale</value>
@@ -4011,6 +4020,9 @@ Durata: {1}</value>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Preferiti</value>
   </data>
+  <data name="FeaturedGifs" xml:space="preserve">
+    <value>GIF in primo piano</value>
+  </data>
   <data name="FeaturedStickers" xml:space="preserve">
     <value>Sticker in primo piano</value>
   </data>
@@ -4056,6 +4068,15 @@ Durata: {1}</value>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>Per favore attendi qualche momento mentre riempiamo questa cartella per te...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>Aggiungi a una cartella</value>
+  </data>
+  <data name="FilterAddToAlertFullText" xml:space="preserve">
+    <value>Spiacenti, non puoi escludere più di 100 chat da una cartella.</value>
+  </data>
+  <data name="FilterAddToAlertFullTitle" xml:space="preserve">
+    <value>Limite raggiunto</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>Tutte le chat</value>
   </data>
@@ -4080,11 +4101,26 @@ Durata: {1}</value>
   <data name="FilterChannels" xml:space="preserve">
     <value>Canali</value>
   </data>
+  <data name="FilterChatAddedToExisting" xml:space="preserve">
+    <value>**{0}** aggiunta a **{1}**</value>
+  </data>
+  <data name="FilterChatRemovedFrom" xml:space="preserve">
+    <value>**{0}** rimossa da **{1}**</value>
+  </data>
   <data name="FilterChats" xml:space="preserve">
     <value>Chat</value>
   </data>
+  <data name="FilterChatsAddedToExisting" xml:space="preserve">
+    <value>**{0}** aggiunte a **{1}**</value>
+  </data>
+  <data name="FilterChatsRemovedFrom" xml:space="preserve">
+    <value>**{0}** rimosse da **{1}**</value>
+  </data>
   <data name="FilterChatTypes" xml:space="preserve">
     <value>Tipi di chat</value>
+  </data>
+  <data name="FilterChoose" xml:space="preserve">
+    <value>Scegli una cartella</value>
   </data>
   <data name="FilterContact" xml:space="preserve">
     <value>Contatti</value>
@@ -4203,6 +4239,12 @@ Durata: {1}</value>
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>Sei sicuro di voler rimuovere "{0}" dalla lista sempre escluse?</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>Rimuovi dalla cartella</value>
+  </data>
+  <data name="FilterRemoveFromAlertFullText" xml:space="preserve">
+    <value>Spiacenti, non puoi aggiungere più di 100 chat a una cartella.</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>Sei sicuro di voler rimuovere "{0}" dalla lista sempre incluse?</value>
   </data>
@@ -4251,6 +4293,12 @@ Durata: {1}</value>
   <data name="FilterUnread" xml:space="preserve">
     <value>Non lette</value>
   </data>
+  <data name="FilterUserAddedToExisting" xml:space="preserve">
+    <value>**{0}** aggiunto a **{1}**</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}** rimosso da **{1}**</value>
+  </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Risultati finali</value>
   </data>
@@ -4267,7 +4315,7 @@ Durata: {1}</value>
     <value>Nome (obbligatorio)</value>
   </data>
   <data name="FloodWait" xml:space="preserve">
-    <value>Troppi tentativi, riprova più tardi</value>
+    <value>Troppi tentativi, per favore riprova più tardi</value>
   </data>
   <data name="FloodWaitTime" xml:space="preserve">
     <value>Troppi tentativi, per favore riprova tra {0}</value>
@@ -4817,6 +4865,9 @@ Tieni presente che può comunque partecipare tramite link di invito del gruppo p
   </data>
   <data name="HoldToAudio" xml:space="preserve">
     <value>Tieni premuto per l'audio. Tocca per il video.</value>
+  </data>
+  <data name="HoldToAudioOnly" xml:space="preserve">
+    <value>Tieni premuto per l'audio.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
     <value>Tieni premuto per il video. Tocca per l'audio.</value>
@@ -6864,6 +6915,9 @@ ai tuoi messaggi da più dispositivi.</value>
   <data name="PaintEdit" xml:space="preserve">
     <value>Modifica</value>
   </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>Incorniciato</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Contornato</value>
   </data>
@@ -7313,7 +7367,7 @@ Puoi visitare le nostre *FAQ* per saperne di più.</value>
     <value>Inserisci i tuoi dettagli personali</value>
   </data>
   <data name="PassportPersonalUploadInfo" xml:space="preserve">
-    <value>Il documento deve contenere la tua foto, il nome, il cognome, la data di nascita, il numero del documento, il paese di emissione e la data di scadenza.</value>
+    <value>Il documento deve contenere la tua foto, il nome, il cognome, la data di nascita, il numero del documento, il Paese di emissione e la data di scadenza.</value>
   </data>
   <data name="PassportPhone" xml:space="preserve">
     <value>Numero di telefono</value>
@@ -7353,7 +7407,7 @@ Puoi visitare le nostre *FAQ* per saperne di più.</value>
     <value>Informazioni richieste</value>
   </data>
   <data name="PassportRequestPasswordInfo" xml:space="preserve">
-    <value>Per favore inserisci la tua password di Telegram per decriptare i tuoi dati.</value>
+    <value>Per favore inserisci la tua password di Telegram per decifrare i tuoi dati.</value>
   </data>
   <data name="PassportRequiredDocuments" xml:space="preserve">
     <value>Documenti richiesti</value>
@@ -7466,8 +7520,17 @@ Puoi visitare le nostre *FAQ* per saperne di più.</value>
   <data name="PasswordHint" xml:space="preserve">
     <value>Suggerimento password</value>
   </data>
+  <data name="PasswordHintPlaceholder" xml:space="preserve">
+    <value>Suggerimento</value>
+  </data>
   <data name="PasswordHintText" xml:space="preserve">
     <value>Crea un suggerimento per la tua password</value>
+  </data>
+  <data name="PasswordOff" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="PasswordOn" xml:space="preserve">
+    <value>Sì</value>
   </data>
   <data name="PasswordRecovery" xml:space="preserve">
     <value>Recupero password</value>
@@ -7743,7 +7806,7 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
     <value>Cellulare</value>
   </data>
   <data name="PhoneNumberAlert" xml:space="preserve">
-    <value>Gli utenti vedranno il tuo nuovo numero se lo hanno nella loro rubrica o se le tue impostazioni sulla privacy lo consentono. Puoi modificarle in Impostazioni > Privacy e sicurezza > Numero di telefono.</value>
+    <value>Gli utenti vedranno il tuo nuovo numero se lo hanno in rubrica o se le tue impostazioni sulla privacy lo consentono. Puoi modificarle in Impostazioni > Privacy e sicurezza > Numero di telefono.</value>
   </data>
   <data name="PhoneNumberChange" xml:space="preserve">
     <value>CAMBIA NUMERO</value>
@@ -7870,6 +7933,9 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   </data>
   <data name="PleaseEnterFirstPassword" xml:space="preserve">
     <value>Inserisci una password</value>
+  </data>
+  <data name="PleaseEnterNewFirstPassword" xml:space="preserve">
+    <value>Inserisci una nuova password</value>
   </data>
   <data name="PleaseEnterPassword" xml:space="preserve">
     <value>Inserisci la tua nuova password</value>
@@ -7998,13 +8064,13 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
     <value>Messaggi inoltrati</value>
   </data>
   <data name="PrivacyForwardsContacts" xml:space="preserve">
-    <value>Collegato se permesso dalle impostazioni</value>
+    <value>Collega se permesso dalle impostazioni</value>
   </data>
   <data name="PrivacyForwardsEverybody" xml:space="preserve">
-    <value>Collegato al tuo account</value>
+    <value>Collega al tuo account</value>
   </data>
   <data name="PrivacyForwardsInfo" xml:space="preserve">
-    <value>I messaggi che invii non saranno ricollegati al tuo account quando inoltrati da altri utenti.</value>
+    <value>I messaggi che invii non rimanderanno al tuo account quando inoltrati da altri utenti.</value>
   </data>
   <data name="PrivacyForwardsInfo2" xml:space="preserve">
     <value>Puoi aggiungere utenti o interi gruppi come eccezioni che annulleranno le impostazioni precedenti.</value>
@@ -8013,10 +8079,10 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
     <value>Reinhardt, dobbiamo trovarti qualche nuova canzone 🎶.</value>
   </data>
   <data name="PrivacyForwardsNobody" xml:space="preserve">
-    <value>Non collegato al tuo account</value>
+    <value>Non collega al tuo account</value>
   </data>
   <data name="PrivacyForwardsTitle" xml:space="preserve">
-    <value>Chi può aggiungere un collegamento al mio account quando inoltra i miei messaggi?</value>
+    <value>Chi può aggiungere un link al mio account quando inoltra i miei messaggi?</value>
   </data>
   <data name="PrivacyLastSeen" xml:space="preserve">
     <value>Ultimo accesso e in linea</value>
@@ -8124,13 +8190,16 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
     <value>Nascondi</value>
   </data>
   <data name="PsaHideChatAlertText" xml:space="preserve">
-    <value>Sei sicuro di voler nascondere la chat selezionata?</value>
+    <value>Sei sicuro di voler nascondere questa chat?</value>
   </data>
   <data name="PsaHideChatAlertTitle" xml:space="preserve">
     <value>Nascondi chat</value>
   </data>
   <data name="PsaInfo_covid" xml:space="preserve">
-    <value>Questo messaggio fornisce un annuncio di servizio pubblico in relazione alla pandemia COVID-19 in corso. Scopri di più su questa iniziativa su https://telegram.org/blog/coronavirus</value>
+    <value>Questo messaggio ti fornisce un annuncio di servizio pubblico in relazione alla pandemia COVID-19 in corso. Scopri di più su questa iniziativa su https://telegram.org/blog/coronavirus</value>
+  </data>
+  <data name="PsaInfoDefault" xml:space="preserve">
+    <value>Test info PSA</value>
   </data>
   <data name="PsaMessage_covid" xml:space="preserve">
     <value>Notifica COVID-19</value>
@@ -8139,13 +8208,13 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
     <value>Notifica importante</value>
   </data>
   <data name="PsaMessageInfo_covid" xml:space="preserve">
-    <value>Questo messaggio fornisce un annuncio di servizio pubblico in relazione alla pandemia COVID-19 in corso. Scopri di più su questa iniziativa su https://telegram.org/blog/coronavirus</value>
+    <value>Questo messaggio ti fornisce un annuncio di servizio pubblico in relazione alla pandemia COVID-19 in corso. Scopri di più su questa iniziativa su https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
     <value>Questa è una notifica importante.</value>
   </data>
   <data name="PsaType_covid" xml:space="preserve">
-    <value>PSA</value>
+    <value>COVID-19</value>
   </data>
   <data name="PsaTypeDefault" xml:space="preserve">
     <value>PSA</value>
@@ -8161,6 +8230,9 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Viola</value>
+  </data>
+  <data name="QRCodePermissionNoCamera" xml:space="preserve">
+    <value>Telegram deve accedere alla tua fotocamera affinché tu possa scansionare i codici QR .</value>
   </data>
   <data name="Question" xml:space="preserve">
     <value>Domanda</value>
@@ -8268,12 +8340,15 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
     <value/>
   </data>
   <data name="RecordingAudio" xml:space="preserve">
-    <value>sta registrando un audio...</value>
+    <value>sta registrando un vocale...</value>
   </data>
   <data name="RecordingRound" xml:space="preserve">
     <value>sta registrando un videomessaggio...</value>
   </data>
   <data name="RecoveryEmail" xml:space="preserve">
+    <value>Email di recupero</value>
+  </data>
+  <data name="RecoveryEmailTitle" xml:space="preserve">
     <value>Email di recupero</value>
   </data>
   <data name="Red" xml:space="preserve">
@@ -8735,7 +8810,7 @@ Potrebbe essere necessario riavviare l'applicazione affinché questo abbia effet
     <value>Telegram</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
-    <value>Vuoi attivare le anteprime estese per i link nelle Chat Segrete? Nota che le anteprime dei link sono generate sui server di Telegram.</value>
+    <value>Vuoi attivare le anteprime estese per i link nelle Chat segrete? Ricorda che le anteprime dei link sono generate sui server di Telegram.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Anteprime link</value>
@@ -8956,7 +9031,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>Imposta password aggiuntiva</value>
   </data>
   <data name="SetAdditionalPasswordInfo" xml:space="preserve">
-    <value>Puoi impostare una password che ti verrà richiesta quando ti connetti da un nuovo dispositivo in aggiunta al codice che riceverai via SMS.</value>
+    <value>Puoi impostare una password che sarà richiesta quando accedi su un nuovo dispositivo oltre al codice che ricevi via SMS.</value>
   </data>
   <data name="SetAdmins" xml:space="preserve">
     <value>Imposta amministratori</value>
@@ -9115,7 +9190,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>Luogo</value>
   </data>
   <data name="SharedVoiceTab" xml:space="preserve">
-    <value>MESSAGGI VOCALI</value>
+    <value>VOCALI</value>
   </data>
   <data name="SharedVoiceTab2" xml:space="preserve">
     <value>Messaggi vocali</value>
@@ -9231,6 +9306,9 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Disattiva se vuoi ricevere notifiche solo dall'account in uso al momento.</value>
   </data>
+  <data name="ShowStickers" xml:space="preserve">
+    <value>Mostra sticker</value>
+  </data>
   <data name="ShowVotesFew" xml:space="preserve">
     <value/>
   </data>
@@ -9259,7 +9337,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>Mostra i media come messaggi separati</value>
   </data>
   <data name="SlideToCancel" xml:space="preserve">
-    <value>ANNULLA</value>
+    <value>SCORRI PER ANNULLARE</value>
   </data>
   <data name="SlideUpToLock" xml:space="preserve">
     <value>Scorri in alto per continuare a registrare</value>
@@ -9341,6 +9419,9 @@ La modalità lenta è attiva. Non puoi inviare più di un messaggio alla volta.<
   </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Default</value>
+  </data>
+  <data name="SoundMuted" xml:space="preserve">
+    <value>Suono silenziato</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Avvia</value>
@@ -9989,6 +10070,21 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
   <data name="TwoStepVerification" xml:space="preserve">
     <value>Verifica in due passaggi</value>
   </data>
+  <data name="TwoStepVerificationPasswordReturnPassport" xml:space="preserve">
+    <value>Ritorna al Passport</value>
+  </data>
+  <data name="TwoStepVerificationPasswordReturnSettings" xml:space="preserve">
+    <value>Ritorna alle Impostazioni</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSet" xml:space="preserve">
+    <value>Password impostata!</value>
+  </data>
+  <data name="TwoStepVerificationPasswordSetInfo" xml:space="preserve">
+    <value>Questa password sarà richiesta quando accedi su un nuovo dispositivo in aggiunta al codice che ricevi via SMS.</value>
+  </data>
+  <data name="TwoStepVerificationSetPassword" xml:space="preserve">
+    <value>Imposta password</value>
+  </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Verifica in due passaggi</value>
   </data>
@@ -10416,6 +10512,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   <data name="UserUnblocked" xml:space="preserve">
     <value>Utente sbloccato</value>
   </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Codice di verifica</value>
+  </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
   </data>
@@ -10645,7 +10744,7 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
     <value>Suoneria</value>
   </data>
   <data name="VoipUseLessData" xml:space="preserve">
-    <value>Utilizza meno dati per le chiamate</value>
+    <value>Usa meno dati per le chiamate</value>
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Attendo</value>
@@ -10826,6 +10925,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
 
 Se dimentichi la tua password, perderai l'accesso al tuo account Telegram. Non ci sarà modo di recuperarlo.</value>
   </data>
+  <data name="YourEmailSuccessChangedText" xml:space="preserve">
+    <value>La tua email di recupero per la verifica in due passaggi è cambiata.</value>
+  </data>
   <data name="YourEmailSuccessText" xml:space="preserve">
     <value>La tua email di recupero per la verifica in due passaggi è ora attiva.</value>
   </data>
@@ -10837,6 +10939,9 @@ Se dimentichi la tua password, perderai l'accesso al tuo account Telegram. Non c
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>La tua password</value>
+  </data>
+  <data name="YourPasswordChangedSuccessText" xml:space="preserve">
+    <value>La tua password per la verifica in due passaggi è stata cambiata.</value>
   </data>
   <data name="YourPasswordSuccess" xml:space="preserve">
     <value>Fatto!</value>
@@ -10851,6 +10956,6 @@ Se dimentichi la tua password, perderai l'accesso al tuo account Telegram. Non c
     <value>sei stato rimosso</value>
   </data>
   <data name="ZoomOut" xml:space="preserve">
-    <value>Rimpicciolisci</value>
+    <value>Riduci</value>
   </data>
 </root>

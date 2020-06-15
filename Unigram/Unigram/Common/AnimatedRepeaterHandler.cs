@@ -12,9 +12,9 @@ namespace Unigram.Common
 {
     public class AnimatedRepeaterHandler<T>
     {
-        private ItemsRepeater _listView;
-        private ScrollViewer _scrollingHost;
-        private DispatcherTimer _throttler;
+        private readonly ItemsRepeater _listView;
+        private readonly ScrollViewer _scrollingHost;
+        private readonly DispatcherTimer _throttler;
 
         public AnimatedRepeaterHandler(ItemsRepeater listView, ScrollViewer scrollingHost)
         {
@@ -73,7 +73,7 @@ namespace Unigram.Common
             //LoadVisibleItems(/*e.IsIntermediate*/ false);
         }
 
-        public void LoadVisibleItemsThrottled()
+        public void ThrottleVisibleItems()
         {
             _throttler.Stop();
             _throttler.Start();

@@ -37,10 +37,17 @@ namespace Unigram.ViewModels.Folders
         {
             Items.ReplaceWith(CacheService.ChatFilters);
 
-            var response = await ProtoService.SendAsync(new GetRecommendedChatFilters());
-            if (response is RecommendedChatFilters filters)
+            if (Items.Count < 10)
             {
-                Recommended.ReplaceWith(filters.ChatFilters);
+                var response = await ProtoService.SendAsync(new GetRecommendedChatFilters());
+                if (response is RecommendedChatFilters filters)
+                {
+                    Recommended.ReplaceWith(filters.ChatFilters);
+                }
+            }
+            else
+            {
+                Recommended.Clear();
             }
 
             Aggregator.Subscribe(this);
@@ -83,10 +90,17 @@ namespace Unigram.ViewModels.Folders
             {
                 Items.ReplaceWith(update.ChatFilters);
 
-                var response = await ProtoService.SendAsync(new GetRecommendedChatFilters());
-                if (response is RecommendedChatFilters recommended)
+                if (Items.Count < 10)
                 {
-                    Recommended.ReplaceWith(recommended.ChatFilters);
+                    var response = await ProtoService.SendAsync(new GetRecommendedChatFilters());
+                    if (response is RecommendedChatFilters recommended)
+                    {
+                        Recommended.ReplaceWith(recommended.ChatFilters);
+                    }
+                }
+                else
+                {
+                    Recommended.Clear();
                 }
             });
         }

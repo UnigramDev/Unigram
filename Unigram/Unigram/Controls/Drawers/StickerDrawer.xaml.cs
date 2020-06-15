@@ -31,7 +31,7 @@ namespace Unigram.Controls.Drawers
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
         private readonly AnimatedListHandler<StickerViewModel> _handler;
-        private readonly DispatcherTimer _throttler;
+        private readonly ZoomableListHandler _zoomer;
 
         private readonly AnimatedListHandler<StickerSetViewModel> _toolbarHandler;
 
@@ -52,13 +52,11 @@ namespace Unigram.Controls.Drawers
                 DownloadFile(_stickers, id, sticker);
             };
 
-            _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _throttler.Tick += (s, args) =>
-            {
-                _throttler.Stop();
-                _handler.LoadVisibleItems(false);
-            };
+            _zoomer = new ZoomableListHandler(Stickers);
+            _zoomer.Opening = _handler.UnloadVisibleItems;
+            _zoomer.Closing = _handler.ThrottleVisibleItems;
+            _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
+            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
             //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
 
@@ -85,7 +83,7 @@ namespace Unigram.Controls.Drawers
         public void Activate()
         {
             _isActive = true;
-            _handler.LoadVisibleItemsThrottled();
+            _handler.ThrottleVisibleItems();
         }
 
         public void Deactivate()
@@ -111,21 +109,6 @@ namespace Unigram.Controls.Drawers
         {
         }
 
-        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            if (ViewModel != null) Bindings.Update();
-            if (ViewModel == null) Bindings.StopTracking();
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Bindings.StopTracking();
-        }
-
         public void UpdateFile(File file)
         {
             if (_stickers.TryGetValue(file.Id, out List<StickerViewModel> items) && items.Count > 0)
@@ -149,8 +132,7 @@ namespace Unigram.Controls.Drawers
                     }
                     else if (item.StickerValue.Id == file.Id)
                     {
-                        _throttler.Stop();
-                        _throttler.Start();
+                        _handler.ThrottleVisibleItems();
                     }
                 }
             }
@@ -191,13 +173,15 @@ namespace Unigram.Controls.Drawers
                     }
                 }
             }
+
+            _zoomer.UpdateFile(file);
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is StickerViewModel sticker && sticker.StickerValue != null)
             {
-                ItemClick?.Invoke(sticker.Get());
+                ItemClick?.Invoke(sticker);
             }
         }
 
@@ -300,9 +284,11 @@ namespace Unigram.Controls.Drawers
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new GridViewItem();
-                args.ItemContainer.Style = Stickers.ItemContainerStyle;
-                args.ItemContainer.ContentTemplate = Stickers.ItemTemplate;
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Sticker_ContextRequested;
+
+                _zoomer.ElementPrepared(args.ItemContainer);
             }
 
             args.IsContainerPrepared = true;

@@ -63,7 +63,7 @@ namespace Unigram.Converters
                 return null;
             }
 
-            if (user.Id == 777000)
+            if (IsServiceUser(user))
             {
                 return Strings.Resources.ServiceNotifications;
             }
@@ -159,6 +159,11 @@ namespace Unigram.Converters
             }
 
             return "LOC_ERR";
+        }
+
+        public static bool IsServiceUser(User user)
+        {
+            return user.Id == 777000;
         }
 
         public static bool IsSupportUser(User user)
