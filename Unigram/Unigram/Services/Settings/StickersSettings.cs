@@ -92,5 +92,39 @@ namespace Unigram.Services.Settings
                 AddOrUpdateValue("SkinTone", (int)value);
             }
         }
+
+        private bool? _isSidebarEnabled;
+        public bool IsSidebarEnabled
+        {
+            get
+            {
+                if (_isSidebarEnabled == null)
+                    _isSidebarEnabled = GetValueOrDefault("IsSidebarEnabled", true);
+
+                return _isSidebarEnabled ?? true;
+            }
+            set
+            {
+                _isSidebarEnabled = value;
+                AddOrUpdateValue("IsSidebarEnabled", value);
+            }
+        }
+
+        private bool? _isPointerOverEnabled;
+        public bool IsPointerOverEnabled
+        {
+            get
+            {
+                if (_isPointerOverEnabled == null)
+                    _isPointerOverEnabled = GetValueOrDefault("IsPointerOverEnabled", true);
+
+                return _isPointerOverEnabled ?? true;
+            }
+            set
+            {
+                _isPointerOverEnabled = value;
+                AddOrUpdateValue("IsPointerOverEnabled", value);
+            }
+        }
     }
 }
