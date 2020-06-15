@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views.Popups;
+using Windows.Devices.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -120,6 +121,11 @@ namespace Unigram.Common
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
             _element = sender as Control;
             _pointer = e.Pointer;
 
