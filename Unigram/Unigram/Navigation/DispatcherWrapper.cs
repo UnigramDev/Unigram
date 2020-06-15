@@ -25,10 +25,11 @@ namespace Unigram.Navigation
             this.dispatcher = dispatcher;
         }
 
-        public bool HasThreadAccess() => dispatcher.HasThreadAccess;
+        public bool HasThreadAccess => dispatcher.HasThreadAccess;
 
         private readonly CoreDispatcher dispatcher;
 
+        [DebuggerNonUserCode]
         public async Task DispatchAsync(Action action, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
             if (delayms > 0)
@@ -57,6 +58,7 @@ namespace Unigram.Navigation
             }
         }
 
+        [DebuggerNonUserCode]
         public async Task DispatchAsync(Func<Task> func, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
             if (delayms > 0)
@@ -85,6 +87,7 @@ namespace Unigram.Navigation
             }
         }
 
+        [DebuggerNonUserCode]
         public async Task<T> DispatchAsync<T>(Func<T> func, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
             if (delayms > 0)
@@ -112,6 +115,7 @@ namespace Unigram.Navigation
             }
         }
 
+        [DebuggerNonUserCode]
         public async void Dispatch(Action action, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
             if (delayms > 0)
@@ -127,6 +131,7 @@ namespace Unigram.Navigation
             }
         }
 
+        [DebuggerNonUserCode]
         public T Dispatch<T>(Func<T> action, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
             if (delayms > 0)
@@ -154,6 +159,7 @@ namespace Unigram.Navigation
             }
         }
 
+        [DebuggerNonUserCode]
         public async Task DispatchIdleAsync(Action action, int delayms = 0)
         {
             if (delayms > 0)
@@ -175,6 +181,7 @@ namespace Unigram.Navigation
             await tcs.Task.ConfigureAwait(false);
         }
 
+        [DebuggerNonUserCode]
         public async Task DispatchIdleAsync(Func<Task> func, int delayms = 0)
         {
             if (delayms > 0)
@@ -196,6 +203,7 @@ namespace Unigram.Navigation
             await tcs.Task.ConfigureAwait(false);
         }
 
+        [DebuggerNonUserCode]
         public async Task<T> DispatchIdleAsync<T>(Func<T> func, int delayms = 0)
         {
             if (delayms > 0)
@@ -216,6 +224,7 @@ namespace Unigram.Navigation
             return await tcs.Task.ConfigureAwait(false);
         }
 
+        [DebuggerNonUserCode]
         public async void DispatchIdle(Action action, int delayms = 0)
         {
             if (delayms > 0)
@@ -224,6 +233,7 @@ namespace Unigram.Navigation
             dispatcher.RunIdleAsync(args => action()).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
+        [DebuggerNonUserCode]
         public T DispatchIdle<T>(Func<T> action, int delayms = 0) where T : class
         {
             if (delayms > 0)
