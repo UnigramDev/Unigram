@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
@@ -94,7 +93,7 @@ namespace Unigram.Views
             ViewModel.ArchivedChats.Delegate = this;
             ViewModel.ArchivedChats.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
-            NavigationCacheMode = NavigationCacheMode.Enabled;
+            NavigationCacheMode = NavigationCacheMode.Disabled;
 
             InitializeTitleBar();
             InitializeLocalization();
@@ -145,13 +144,20 @@ namespace Unigram.Views
             //}
         }
 
-        ~MainPage()
-        {
-            Debug.WriteLine("Released mainpage");
-        }
-
         public void Dispose()
         {
+            ViewModel.Settings.Delegate = null;
+            ViewModel.Chats.Delegate = null;
+            ViewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+            ViewModel.ArchivedChats.Delegate = null;
+            ViewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+
+            ViewModel.Aggregator.Unsubscribe(this);
+            ViewModel.Dispose();
+
+            MasterDetail.NavigationService.Frame.Navigating -= OnNavigating;
+            MasterDetail.NavigationService.Frame.Navigated -= OnNavigated;
+
             MasterDetail.Dispose();
             SettingsView.Dispose();
             //DataContext = null;
@@ -1690,13 +1696,7 @@ namespace Unigram.Views
             }
             catch { }
 
-            //if (rpMasterTitlebar.SelectedIndex > 0)
-            {
-                //if (Window.Current.Bounds.Width >= 501 && Window.Current.Bounds.Width < 820)
-                {
-                    MasterDetail.NavigationService.GoBackAt(0);
-                }
-            }
+            MasterDetail.NavigationService.GoBackAt(0);
 
             for (int i = 0; i < ViewModel.Children.Count; i++)
             {

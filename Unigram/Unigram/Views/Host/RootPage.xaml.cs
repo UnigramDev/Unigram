@@ -11,9 +11,7 @@ using Unigram.Services;
 using Unigram.Services.Navigation;
 using Unigram.ViewModels;
 using Unigram.Views.SignIn;
-using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.System.Profile;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -169,15 +167,16 @@ namespace Unigram.Views.Host
                 content.Dispose();
             }
 
-            master.Frame.Navigating -= OnNavigating;
-            master.Frame.Navigated -= OnNavigated;
-            master.Frame.Navigate(typeof(BlankPage));
-
             var detail = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
             if (detail != null)
             {
                 detail.Navigate(typeof(BlankPage));
+                detail.ClearCache();
             }
+
+            master.Frame.Navigating -= OnNavigating;
+            master.Frame.Navigated -= OnNavigated;
+            master.Frame.Navigate(typeof(BlankPage));
 
             WindowContext.GetForCurrentView().NavigationServices.Remove(master);
             WindowContext.GetForCurrentView().NavigationServices.Remove(detail);
