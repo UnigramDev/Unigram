@@ -650,21 +650,18 @@ namespace Unigram.Controls.Messages
                 var right = -10;
                 var bottom = -6;
 
-                if (!(content is MessageVenue))
+                var chat = message.GetChat();
+                if (message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
                 {
-                    var chat = message.GetChat();
-                    if (message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
-                    {
-                        top = 4;
-                    }
-                    if (message.IsFirst && message.IsSaved())
-                    {
-                        top = 4;
-                    }
-                    if ((message.ForwardInfo != null && !message.IsSaved()) || message.ViaBotUserId != 0 || message.ReplyToMessageId != 0 || message.IsChannelPost)
-                    {
-                        top = 4;
-                    }
+                    top = 4;
+                }
+                if (message.IsFirst && message.IsSaved())
+                {
+                    top = 4;
+                }
+                if ((message.ForwardInfo != null && !message.IsSaved()) || message.ViaBotUserId != 0 || message.ReplyToMessageId != 0 || message.IsChannelPost)
+                {
+                    top = 4;
                 }
 
                 var caption = content is MessageVenue || content.HasCaption();
