@@ -9,7 +9,9 @@
     mc:Ignorable="d"
     MinWidth="200"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -28,7 +30,7 @@
                 <TextBlock
                     x:Name="Type"
                     Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Style="{StaticResource BodyTextBlockStyle}"
                     VerticalAlignment="Top"
                     Margin="0,0,4,4"/>
 
@@ -37,14 +39,35 @@
                     x:Name="RecentVoters"/>
             </StackPanel>
         </StackPanel>
+
+        <StackPanel
+            x:Name="TimeoutLabel"
+            Orientation="Horizontal"
+            VerticalAlignment="Bottom"
+            Margin="0,0,0,4"
+            Grid.Column="1">
+            <TextBlock
+                x:Name="Timeout"
+                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                Style="{StaticResource BodyTextBlockStyle}"/>
+
+            <TextBlock
+                Text="&#xE916;"
+                FontSize="16"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                TextLineBounds="Tight"
+                VerticalAlignment="Bottom"
+                Margin="4,0,0,2"/>
+        </StackPanel>
+        
         <controls:GlyphButton
             x:Name="Explanation"
             Click="Explanation_Click"
             Glyph="&#xEA80;"
             Foreground="{ThemeResource MessageSubtleForegroundBrush}"
             Margin="0,-4,-10,-5"
-            Grid.Column="1"
-            Grid.RowSpan="2"/>
+            Grid.Column="1"/>
     </Grid>
 
     <StackPanel
