@@ -44,7 +44,9 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (poll.Poll.Type is PollTypeQuiz && poll.Poll.CloseDate != 0)
+            var results = poll.Poll.IsClosed || poll.Poll.Options.Any(x => x.IsChosen);
+
+            if (poll.Poll.Type is PollTypeQuiz && poll.Poll.CloseDate != 0 && !results)
             {
                 var now = DateTime.Now.ToTimestamp();
 
@@ -75,8 +77,6 @@ namespace Unigram.Controls.Messages.Content
                 _timeoutTimer?.Stop();
                 TimeoutLabel.Visibility = Visibility.Collapsed;
             }
-
-            var results = poll.Poll.IsClosed || poll.Poll.Options.Any(x => x.IsChosen);
 
             Question.Text = poll.Poll.Question;
             Votes.Text = poll.Poll.TotalVoterCount > 0
