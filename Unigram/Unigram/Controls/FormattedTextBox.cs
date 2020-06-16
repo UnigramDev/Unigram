@@ -224,6 +224,38 @@ namespace Unigram.Controls
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
+
+            //if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout"))
+            //{
+            //    var proofingMenu = ProofingMenuFlyout as MenuFlyout;
+            //    if (proofingMenu == null || proofingMenu.Items.IsEmpty())
+            //    {
+            //        return;
+            //    }
+
+            //    RoutedEventHandler handler = (s, args) =>
+            //    {
+            //        flyout.Hide();
+            //    };
+
+            //    foreach (var itemBase in proofingMenu.Items)
+            //    {
+            //        if (itemBase is MenuFlyoutItem item)
+            //        {
+            //            item.Click += handler;
+            //        }
+            //        else if (itemBase is ToggleMenuFlyoutItem toggle)
+            //        {
+            //            toggle.Click += handler;
+            //        }
+            //    }
+
+            //    var proofing = new MenuFlyoutSubItem();
+            //    proofing.Text = "Proofing";
+            //    proofing.Items.AddRange(proofingMenu.Items);
+
+            //    flyout.Items.Add(proofing);
+            //}
         }
 
         public void ToggleBold()
@@ -723,6 +755,7 @@ namespace Unigram.Controls
         {
             OnSettingText();
 
+            Document.BeginUndoGroup();
             Document.BatchDisplayUpdates();
             Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
 
@@ -775,10 +808,12 @@ namespace Unigram.Controls
             }
 
             Document.ApplyDisplayUpdates();
+            Document.EndUndoGroup();
         }
 
         public void InsertText(string text, IList<TextEntity> entities)
         {
+            Document.BeginUndoGroup();
             Document.BatchDisplayUpdates();
 
             if (!string.IsNullOrEmpty(text))
@@ -822,6 +857,7 @@ namespace Unigram.Controls
             }
 
             Document.ApplyDisplayUpdates();
+            Document.EndUndoGroup();
         }
 
         public void InsertText(string text, bool allowPreceding = false, bool allowTrailing = false)
