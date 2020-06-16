@@ -28,7 +28,7 @@ namespace Unigram
 		public:
 			static PlaceholderImageHelper^ GetForCurrentView();
 
-			Windows::Foundation::Size DrawSvg(_In_ String^ path, IRandomAccessStream^ randomAccessStream);
+			Windows::Foundation::Size DrawSvg(_In_ String^ path, _In_ Color foreground, IRandomAccessStream^ randomAccessStream);
 			void DrawQr(_In_ String^ data, _In_ Color foreground, _In_ Color background, IRandomAccessStream^ randomAccessStream);
 			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
 			void DrawGlyph(_In_ String^ glyph, _In_ Color clear, IRandomAccessStream^ randomAccessStream);
@@ -41,7 +41,7 @@ namespace Unigram
 			PlaceholderImageHelper();
 
 		private:
-			HRESULT InternalDrawSvg(_In_ String^ data, _In_ IRandomAccessStream^ randomAccessStream, _Out_ Windows::Foundation::Size& size);
+			HRESULT InternalDrawSvg(_In_ String^ data, _In_ Color foreground, _In_ IRandomAccessStream^ randomAccessStream, _Out_ Windows::Foundation::Size& size);
 			HRESULT InternalDrawQr(_In_ String^ data, _In_ Color foreground, _In_ Color background, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
 			HRESULT InternalDrawGlyph(String^ glyph, Color clear, IRandomAccessStream^ randomAccessStream);

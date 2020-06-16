@@ -5,7 +5,7 @@ using Unigram.ViewModels.Supergroups;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersPage : HostedPage, INavigablePage
+    public sealed partial class SupergroupMembersPage : HostedPage, INavigablePage, ISearchablePage
     {
         public SupergroupMembersPage()
         {
@@ -18,6 +18,11 @@ namespace Unigram.Views.Supergroups
         public void OnBackRequested(HandledEventArgs args)
         {
             View.OnBackRequested(args);
+        }
+
+        public void Search()
+        {
+            View.Search();
         }
     }
 }

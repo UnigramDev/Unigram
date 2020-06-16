@@ -113,6 +113,12 @@ namespace Unigram.Controls
         public static readonly DependencyProperty TopPaddingProperty =
             DependencyProperty.Register("TopPadding", typeof(Thickness), typeof(NavigationView), new PropertyMetadata(null));
 
+        public void SetTopPadding(Thickness thickness)
+        {
+            _previousTopPadding = thickness;
+            TopPadding = thickness;
+        }
+
         #endregion
     }
 }

@@ -440,8 +440,8 @@ namespace Unigram.Services.Settings
                 if (IsLocationBased && Location.Latitude != 0 && Location.Longitude != 0)
                 {
                     var t = SunDate.CalculateSunriseSunset(Location.Latitude, Location.Longitude);
-                    start = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
-                    end = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
+                    start = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
+                    end = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
                 }
                 else
                 {

@@ -105,11 +105,19 @@ namespace Unigram.Views.Settings
                 return null;
             }
 
-            var t = SunDate.CalculateSunriseSunset(location.Latitude, location.Longitude);
-            var sunrise = new DateTime(1, 1, 1, t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
-            var sunset = new DateTime(1, 1, 1, t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
+            var start = DateTime.Today;
+            var end = DateTime.Today;
 
-            return string.Format(Strings.Resources.AutoNightUpdateLocationInfo, BindConvert.Current.ShortTime.Format(sunset), BindConvert.Current.ShortTime.Format(sunrise));
+            var t = SunDate.CalculateSunriseSunset(location.Latitude, location.Longitude);
+            var sunrise = new TimeSpan(t[0] / 60, t[0] - (t[0] / 60) * 60, 0);
+            var sunset = new TimeSpan(t[1] / 60, t[1] - (t[1] / 60) * 60, 0);
+
+            start = start.Add(sunset);
+            end = end.Add(sunrise);
+
+            return string.Format(Strings.Resources.AutoNightUpdateLocationInfo,
+                BindConvert.Current.ShortTime.Format(start),
+                BindConvert.Current.ShortTime.Format(end));
         }
 
         private string ConvertBrightness(float value)

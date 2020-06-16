@@ -80,16 +80,19 @@ namespace Unigram
 
             InactivityHelper.Detected += Inactivity_Detected;
 
-            //UnhandledException += async (s, args) =>
-            //{
-            //    args.Handled = true;
+            UnhandledException += (s, args) =>
+            {
+                if (args.Exception is NotSupportedException)
+                {
+                    args.Handled = true;
+                }
 
-            //    try
-            //    {
-            //        await new MessagePopup(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
-            //    }
-            //    catch { }
-            //};
+                //try
+                //{
+                //    await new MessagePopup(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
+                //}
+                //catch { }
+            };
 
 #if !DEBUG
             Microsoft.AppCenter.AppCenter.Start(Constants.AppCenterId,

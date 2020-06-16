@@ -135,34 +135,34 @@ namespace Unigram.Views
 
             ArchivedChatsPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
             ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
-
-            //if (true)
-            //{
-            //    _tabsTopCollapsed = false;
-            //    FindName(nameof(ChatTabs));
-            //    ChatTabs.Visibility = Visibility.Visible;
-            //}
         }
 
         public void Dispose()
         {
-            ViewModel.Settings.Delegate = null;
-            ViewModel.Chats.Delegate = null;
-            ViewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
-            ViewModel.ArchivedChats.Delegate = null;
-            ViewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+            try
+            {
+                Bindings.StopTracking();
 
-            ViewModel.Aggregator.Unsubscribe(this);
-            ViewModel.Dispose();
+                var viewModel = ViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.Settings.Delegate = null;
+                    viewModel.Chats.Delegate = null;
+                    viewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+                    viewModel.ArchivedChats.Delegate = null;
+                    viewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
 
-            MasterDetail.NavigationService.Frame.Navigating -= OnNavigating;
-            MasterDetail.NavigationService.Frame.Navigated -= OnNavigated;
+                    viewModel.Aggregator.Unsubscribe(this);
+                    viewModel.Dispose();
+                }
 
-            MasterDetail.Dispose();
-            SettingsView.Dispose();
-            //DataContext = null;
-            //Bindings?.Update();
-            Bindings?.StopTracking();
+                MasterDetail.NavigationService.Frame.Navigating -= OnNavigating;
+                MasterDetail.NavigationService.Frame.Navigated -= OnNavigated;
+
+                MasterDetail.Dispose();
+                SettingsView.Dispose();
+            }
+            catch { }
         }
 
         private void InitializeTitleBar()
@@ -557,6 +557,11 @@ namespace Unigram.Views
                 _tabsTopCollapsed = false;
             }
 
+            if (Window.Current.Content is RootPage root && show)
+            {
+                root.SetTopPadding(new Thickness());
+            }
+
             if (ChatTabs == null)
                 FindName(nameof(ChatTabs));
 
@@ -641,7 +646,7 @@ namespace Unigram.Views
 
             if (Window.Current.Content is RootPage root)
             {
-                root.TopPadding = new Thickness(show ? 72 : 0, 0, 0, 0);
+                root.SetTopPadding(new Thickness(show ? 72 : 0, 0, 0, 0));
             }
 
             if (ChatTabsLeft == null)

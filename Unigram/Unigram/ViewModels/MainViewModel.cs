@@ -103,11 +103,6 @@ namespace Unigram.ViewModels
             Chats.Items.Clear();
 
             Children.Clear();
-            Chats = null;
-            ArchivedChats = null;
-            Contacts = null;
-            Calls = null;
-            Settings = null;
         }
 
         public ILifetimeService Lifetime => _lifetimeService;
@@ -344,16 +339,12 @@ namespace Unigram.ViewModels
         {
             get
             {
-                if (Chats.Items.ChatList is ChatListFilter filter)
+                if (Chats.Items.ChatList is ChatListFilter filter && _filters != null)
                 {
                     return _filters.FirstOrDefault(x => x.ChatFilterId == filter.ChatFilterId);
                 }
-                else if (Chats.Items.ChatList is ChatListArchive)
-                {
-                    return _filters[1];
-                }
 
-                return _filters.FirstOrDefault();
+                return _filters?.FirstOrDefault();
             }
             set
             {

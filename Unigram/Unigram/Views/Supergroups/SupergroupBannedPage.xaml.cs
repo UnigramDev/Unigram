@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupBannedPage : HostedPage, ISupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupBannedPage : HostedPage, ISupergroupDelegate, INavigablePage, ISearchablePage
     {
         public SupergroupBannedViewModel ViewModel => DataContext as SupergroupBannedViewModel;
 
@@ -36,6 +36,11 @@ namespace Unigram.Views.Supergroups
                     ViewModel.Find(SearchField.Text);
                 }
             });
+        }
+
+        public void Search()
+        {
+            Search_Click(null, null);
         }
 
         public void OnBackRequested(HandledEventArgs args)

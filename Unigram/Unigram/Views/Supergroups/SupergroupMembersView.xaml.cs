@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupMembersView : HostedUserControl, IProfileTab, IBasicAndSupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupMembersView : HostedUserControl, IProfileTab, IBasicAndSupergroupDelegate, INavigablePage, ISearchablePage
     {
         public SupergroupMembersViewModel ViewModel => DataContext as SupergroupMembersViewModel;
 
@@ -35,6 +35,11 @@ namespace Unigram.Views.Supergroups
                     ViewModel.Find(SearchField.Text);
                 }
             });
+        }
+
+        public void Search()
+        {
+            Search_Click(null, null);
         }
 
         public int Index { get => 0; }

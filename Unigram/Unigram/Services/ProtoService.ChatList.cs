@@ -76,7 +76,6 @@ namespace Unigram.Services
                     return await GetChatListAsync(chatList, offset, limit);
                 }
 
-                Monitor.Exit(_chatList);
                 return null;
             }
 

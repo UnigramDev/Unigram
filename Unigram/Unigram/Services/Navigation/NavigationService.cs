@@ -163,9 +163,9 @@ namespace Unigram.Services.Navigation
             var page = frameContent as Page;
             if (page != null)
             {
-                if (page is ICloneable cleanup)
+                if (page is IActivablePage cleanup)
                 {
-                    cleanup.Clone();
+                    cleanup.Activate();
                 }
 
                 //if (mode == NavigationMode.New)

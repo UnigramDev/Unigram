@@ -282,6 +282,20 @@ namespace Unigram.Common
             return false;
         }
 
+        public static Color GetForeground(this BackgroundTypePattern pattern)
+        {
+            if (pattern.Fill is BackgroundFillSolid solid)
+            {
+                return ColorEx.GetPatternColor(solid.Color.ToColor());
+            }
+            else if (pattern.Fill is BackgroundFillGradient gradient)
+            {
+                return ColorEx.GetPatternColor(ColorEx.GetAverageColor(gradient.TopColor.ToColor(), gradient.BottomColor.ToColor()));
+            }
+
+            return Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF);
+        }
+
         public static Brush ToBrush(this BackgroundTypeFill fill)
         {
             return fill.Fill.ToBrush();
