@@ -896,7 +896,7 @@ namespace Unigram.Views
 
         private void SharedMedia_ViewChanged(object sender, ScrollViewerViewChangedEventArgs args)
         {
-            var scrollViewer2 = SharedMedia.GetScrollViewer();
+            var scrollViewer2 = sender as ScrollViewer;
             if (_sharedMediaDisabled)
             {
                 if (!args.IsIntermediate)
