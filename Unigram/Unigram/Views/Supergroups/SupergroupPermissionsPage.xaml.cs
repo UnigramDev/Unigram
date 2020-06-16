@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupPermissionsPage : HostedPage, ISupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupPermissionsPage : HostedPage, ISupergroupDelegate, INavigablePage, ISearchablePage
     {
         public SupergroupPermissionsViewModel ViewModel => DataContext as SupergroupPermissionsViewModel;
 
@@ -60,6 +60,11 @@ namespace Unigram.Views.Supergroups
             }
 
             Grid.SetColumnSpan(Slowmode, SlowmodeTicks.ColumnDefinitions.Count);
+        }
+
+        public void Search()
+        {
+            Search_Click(null, null);
         }
 
         public void OnBackRequested(HandledEventArgs args)

@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatPage : HostedPage, INavigablePage, ISearchablePage, IDisposable, ICloneable
+    public sealed partial class ChatPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
         public ChatView View => Content as ChatView;
@@ -36,9 +36,9 @@ namespace Unigram.Views
             View.Dispose();
         }
 
-        public object Clone()
+        public void Activate()
         {
-            return View.Clone();
+            View.Activate();
         }
     }
 }

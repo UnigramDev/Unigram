@@ -47,7 +47,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IDisposable, ICloneable
+    public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IActivablePage
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -504,7 +504,7 @@ namespace Unigram.Views
             }
         }
 
-        public object Clone()
+        public void Activate()
         { 
             DataContext = _getViewModel(this);
 
@@ -531,8 +531,6 @@ namespace Unigram.Views
             TextField.IsTextPredictionEnabled = SettingsService.Current.AutocorrectWords;
             TextField.IsSpellCheckEnabled = SettingsService.Current.HighlightWords;
             TextField.Focus(FocusState.Programmatic);
-
-            return null;
         }
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
