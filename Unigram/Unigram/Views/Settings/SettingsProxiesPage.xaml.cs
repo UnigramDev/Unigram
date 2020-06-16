@@ -28,9 +28,13 @@ namespace Unigram.Views.Settings
         private void Proxy_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
-
             var element = sender as FrameworkElement;
+
             var proxy = List.ItemFromContainer(element) as ProxyViewModel;
+            if (proxy == null)
+            {
+                return;
+            }
 
             if (proxy.Type is ProxyTypeMtproto || proxy.Type is ProxyTypeSocks5)
             {
