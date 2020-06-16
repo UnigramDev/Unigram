@@ -146,23 +146,31 @@ namespace Unigram.Views
 
         public void Dispose()
         {
-            ViewModel.Settings.Delegate = null;
-            ViewModel.Chats.Delegate = null;
-            ViewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
-            ViewModel.ArchivedChats.Delegate = null;
-            ViewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+            try
+            {
+                var viewModel = ViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.Settings.Delegate = null;
+                    viewModel.Chats.Delegate = null;
+                    viewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+                    viewModel.ArchivedChats.Delegate = null;
+                    viewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
 
-            ViewModel.Aggregator.Unsubscribe(this);
-            ViewModel.Dispose();
+                    viewModel.Aggregator.Unsubscribe(this);
+                    viewModel.Dispose();
+                }
 
-            MasterDetail.NavigationService.Frame.Navigating -= OnNavigating;
-            MasterDetail.NavigationService.Frame.Navigated -= OnNavigated;
+                MasterDetail.NavigationService.Frame.Navigating -= OnNavigating;
+                MasterDetail.NavigationService.Frame.Navigated -= OnNavigated;
 
-            MasterDetail.Dispose();
-            SettingsView.Dispose();
-            //DataContext = null;
-            //Bindings?.Update();
-            Bindings?.StopTracking();
+                MasterDetail.Dispose();
+                SettingsView.Dispose();
+                //DataContext = null;
+                //Bindings?.Update();
+                Bindings?.StopTracking();
+            }
+            catch { }
         }
 
         private void InitializeTitleBar()
