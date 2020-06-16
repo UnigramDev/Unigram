@@ -165,7 +165,7 @@ namespace Unigram.Controls.Chats
                 {
                     if (string.Equals(background.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        _colorBackground.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, document) };
+                        _colorBackground.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, document, typePattern.GetForeground()) };
                     }
                     else
                     {

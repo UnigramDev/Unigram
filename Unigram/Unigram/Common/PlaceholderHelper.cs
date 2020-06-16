@@ -315,7 +315,7 @@ namespace Unigram.Common
             return null;
         }
 
-        public static ImageSource GetVector(IProtoService protoService, File file)
+        public static ImageSource GetVector(IProtoService protoService, File file, Color foreground)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -326,7 +326,7 @@ namespace Unigram.Common
                 {
                     try
                     {
-                        PlaceholderImageHelper.GetForCurrentView().DrawSvg(text, stream);
+                        PlaceholderImageHelper.GetForCurrentView().DrawSvg(text, foreground, stream);
 
                         bitmap.SetSource(stream);
                     }
@@ -343,7 +343,7 @@ namespace Unigram.Common
             return null;
         }
 
-        public static LoadedImageSurface GetVectorSurface(IProtoService protoService, File file)
+        public static LoadedImageSurface GetVectorSurface(IProtoService protoService, File file, Color foreground)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -354,7 +354,7 @@ namespace Unigram.Common
                 {
                     try
                     {
-                        var size = PlaceholderImageHelper.GetForCurrentView().DrawSvg(text, stream);
+                        var size = PlaceholderImageHelper.GetForCurrentView().DrawSvg(text, foreground, stream);
                         bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Windows.Foundation.Size(size.Width / 3, size.Height / 3));
                     }
                     catch { }
@@ -477,6 +477,8 @@ namespace Unigram.Common
 
         public static ImageSource GetWebPFrame(string path)
         {
+            //return null;
+            //return new BitmapImage(new Uri("file:///" + path));
             return WebPImage.DecodeFromPath(path);
         }
 

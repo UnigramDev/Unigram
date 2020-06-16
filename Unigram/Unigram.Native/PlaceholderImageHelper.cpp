@@ -98,10 +98,10 @@ PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 	return instance;
 }
 
-Windows::Foundation::Size PlaceholderImageHelper::DrawSvg(String^ path, IRandomAccessStream^ randomAccessStream)
+Windows::Foundation::Size PlaceholderImageHelper::DrawSvg(String^ path, _In_ Color foreground, IRandomAccessStream^ randomAccessStream)
 {
 	Windows::Foundation::Size size;
-	ThrowIfFailed(InternalDrawSvg(path, randomAccessStream, size));
+	ThrowIfFailed(InternalDrawSvg(path, foreground, randomAccessStream, size));
 	return size;
 }
 
@@ -140,7 +140,7 @@ void PlaceholderImageHelper::DrawThumbnailPlaceholder(Platform::String^ fileName
 	ThrowIfFailed(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
 }
 
-HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStream^ randomAccessStream, Windows::Foundation::Size& size)
+HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, _In_ Color foreground, IRandomAccessStream^ randomAccessStream, Windows::Foundation::Size& size)
 {
 	auto lock = m_criticalSection.Lock();
 
@@ -159,6 +159,10 @@ HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStrea
 
 	m_d2dContext->SetTarget(targetBitmap.Get());
 	m_d2dContext->BeginDraw();
+
+	ComPtr<ID2D1SolidColorBrush> blackBrush;
+	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
+		D2D1::ColorF(foreground.R / 255.0f, foreground.G / 255.0f, foreground.B / 255.0f, foreground.A / 255.0f), &blackBrush));
 
 	for (auto shape = image->shapes; shape != NULL; shape = shape->next) {
 		if (!(shape->flags & NSVG_FLAGS_VISIBLE)) {
@@ -296,7 +300,7 @@ HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStrea
 			}
 
 			ReturnIfFailed(result, sink->Close());
-			m_d2dContext->DrawGeometry(geometry.Get(), m_black.Get(), shape->strokeWidth);
+			m_d2dContext->DrawGeometry(geometry.Get(), blackBrush.Get(), shape->strokeWidth);
 		}
 	}
 
@@ -305,7 +309,7 @@ HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, IRandomAccessStrea
 	if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 	{
 		ReturnIfFailed(result, CreateDeviceResources());
-		return InternalDrawSvg(path, randomAccessStream, size);
+		return InternalDrawSvg(path, foreground, randomAccessStream, size);
 	}
 
 	return SaveImageToStream(targetBitmap.Get(), GUID_ContainerFormatPng, randomAccessStream);
