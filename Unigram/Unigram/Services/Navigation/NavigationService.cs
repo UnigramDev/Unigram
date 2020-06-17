@@ -163,8 +163,10 @@ namespace Unigram.Services.Navigation
             var page = frameContent as Page;
             if (page != null)
             {
+                var cleaned = false;
                 if (page is IActivablePage cleanup)
                 {
+                    cleaned = true;
                     cleanup.Activate();
                 }
 
@@ -186,7 +188,7 @@ namespace Unigram.Services.Navigation
 
                     // update bindings after NavTo initializes data
                     //XamlUtils.InitializeBindings(page);
-                    if (page.Content is UserControl pageWith)
+                    if (page.Content is UserControl pageWith && !cleaned)
                     {
                         XamlUtils.UpdateBindings(pageWith);
                     }
