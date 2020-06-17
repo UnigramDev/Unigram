@@ -164,140 +164,88 @@ HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, _In_ Color foregro
 	ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
 		D2D1::ColorF(foreground.R / 255.0f, foreground.G / 255.0f, foreground.B / 255.0f, foreground.A / 255.0f), &blackBrush));
 
-	for (auto shape = image->shapes; shape != NULL; shape = shape->next) {
-		if (!(shape->flags & NSVG_FLAGS_VISIBLE)) {
+	for (auto shape = image->shapes; shape != NULL; shape = shape->next)
+	{
+		if (!(shape->flags & NSVG_FLAGS_VISIBLE) || (shape->fill.type == NSVG_PAINT_NONE && shape->stroke.type == NSVG_PAINT_NONE))
+		{
 			continue;
 		}
 
-		if (shape->fill.type != NSVG_PAINT_NONE) {
+		blackBrush->SetOpacity(shape->opacity);
 
-			ComPtr<ID2D1PathGeometry1> geometry;
-			ReturnIfFailed(result, m_d2dFactory->CreatePathGeometry(&geometry));
+		ComPtr<ID2D1PathGeometry1> geometry;
+		ReturnIfFailed(result, m_d2dFactory->CreatePathGeometry(&geometry));
 
-			ComPtr<ID2D1GeometrySink> sink;
-			ReturnIfFailed(result, geometry->Open(&sink));
-			////CGContextSetFillColorWithColor(context, UIColorRGBA(shape->fill.color, shape->opacity).CGColor);
-			//CGContextSetFillColorWithColor(context, [foregroundColor colorWithAlphaComponent : shape->opacity].CGColor);
+		ComPtr<ID2D1GeometrySink> sink;
+		ReturnIfFailed(result, geometry->Open(&sink));
 
-			bool isFirst = true;
-			bool hasStartPoint = false;
-			D2D1_POINT_2F startPoint;
-			for (NSVGpath* path = shape->paths; path != NULL; path = path->next) {
-				if (isFirst) {
-					//CGContextBeginPath(context);
-					sink->BeginFigure(D2D1::Point2F(path->pts[0], path->pts[1]), D2D1_FIGURE_BEGIN_FILLED);
-					isFirst = false;
-					hasStartPoint = true;
-					startPoint.x = path->pts[0];
-					startPoint.y = path->pts[1];
-				}
-				//CGContextMoveToPoint(context, path->pts[0], path->pts[1]);
-				else {
-					sink->AddLine(D2D1::Point2F(path->pts[0], path->pts[1]));
-				}
-				for (int i = 0; i < path->npts - 1; i += 3) {
-					float* p = &path->pts[i * 2];
-					//CGContextAddCurveToPoint(context, p[2], p[3], p[4], p[5], p[6], p[7]);
-					sink->AddBezier(D2D1::BezierSegment(D2D1::Point2F(p[2], p[3]), D2D1::Point2F(p[4], p[5]), D2D1::Point2F(p[6], p[7])));
-				}
+		for (NSVGpath* path = shape->paths; path != NULL; path = path->next)
+		{
+			sink->BeginFigure({ path->pts[0], path->pts[1] }, D2D1_FIGURE_BEGIN_FILLED);
 
-				if (path->closed) {
-					if (hasStartPoint) {
-						hasStartPoint = false;
-						//CGContextAddLineToPoint(context, startPoint.x, startPoint.y);
-						sink->AddLine(startPoint);
-					}
-				}
-
-				if (path->next != NULL) {
-					int a = 1 + 2;
-				}
+			for (int i = 0; i < path->npts - 1; i += 3)
+			{
+				float* p = &path->pts[i * 2];
+				sink->AddBezier({ { p[2], p[3] }, { p[4], p[5] }, { p[6], p[7] }});
 			}
-			sink->EndFigure(D2D1_FIGURE_END_OPEN);
-			switch (shape->fillRule) {
-			case NSVG_FILLRULE_EVENODD:
-				//CGContextEOFillPath(context);
-				sink->SetFillMode(D2D1_FILL_MODE_ALTERNATE);
-				break;
-			default:
-				//CGContextFillPath(context);
-				sink->SetFillMode(D2D1_FILL_MODE_WINDING);
-				break;
+
+			sink->EndFigure(path->closed ? D2D1_FIGURE_END_CLOSED : D2D1_FIGURE_END_OPEN);
+		}
+
+		if (shape->fill.type != NSVG_PAINT_NONE)
+		{
+			switch (shape->fillRule)
+			{
+				case NSVG_FILLRULE_EVENODD:
+					sink->SetFillMode(D2D1_FILL_MODE_ALTERNATE);
+					break;
+				default:
+					sink->SetFillMode(D2D1_FILL_MODE_WINDING);
+					break;
 			}
 
 			ReturnIfFailed(result, sink->Close());
-			m_d2dContext->FillGeometry(geometry.Get(), m_black.Get());
+			m_d2dContext->FillGeometry(geometry.Get(), blackBrush.Get());
 		}
 
-		if (shape->stroke.type != NSVG_PAINT_NONE) {
-			ComPtr<ID2D1PathGeometry1> geometry;
-			ReturnIfFailed(result, m_d2dFactory->CreatePathGeometry(&geometry));
-
-			ComPtr<ID2D1GeometrySink> sink;
-			ReturnIfFailed(result, geometry->Open(&sink));
-
-			////CGContextSetStrokeColorWithColor(context, UIColorRGBA(shape->fill.color, shape->opacity).CGColor);
-			//CGContextSetStrokeColorWithColor(context, [foregroundColor colorWithAlphaComponent : shape->opacity].CGColor);
-			//CGContextSetMiterLimit(context, shape->miterLimit);
-
-
+		if (shape->stroke.type != NSVG_PAINT_NONE)
+		{
 			D2D1_STROKE_STYLE_PROPERTIES1 strokeProperties{};
 			strokeProperties.miterLimit = shape->miterLimit;
 
-			//CGContextSetLineWidth(context, shape->strokeWidth);
-			switch (shape->strokeLineCap) {
-			case NSVG_CAP_BUTT:
-				//CGContextSetLineCap(context, kCGLineCapButt);
-				strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_FLAT;
-				break;
-			case NSVG_CAP_ROUND:
-				//CGContextSetLineCap(context, kCGLineCapRound);
-				strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_ROUND;
-				break;
-			case NSVG_CAP_SQUARE:
-				//CGContextSetLineCap(context, kCGLineCapSquare);
-				strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_SQUARE;
-				break;
-			default:
-				break;
+			switch (shape->strokeLineCap)
+			{
+				case NSVG_CAP_BUTT:
+					strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_FLAT;
+					break;
+				case NSVG_CAP_ROUND:
+					strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_ROUND;
+					break;
+				case NSVG_CAP_SQUARE:
+					strokeProperties.startCap = strokeProperties.endCap = D2D1_CAP_STYLE_SQUARE;
+					break;
+				default:
+					break;
 			}
-			switch (shape->strokeLineJoin) {
-			case NSVG_JOIN_BEVEL:
-				//CGContextSetLineJoin(context, kCGLineJoinBevel);
-				strokeProperties.lineJoin = D2D1_LINE_JOIN_BEVEL;
-				break;
-			case NSVG_JOIN_MITER:
-				//CGContextSetLineCap(context, kCGLineJoinMiter);
-				strokeProperties.lineJoin = D2D1_LINE_JOIN_MITER;
-				break;
-			case NSVG_JOIN_ROUND:
-				//CGContextSetLineCap(context, kCGLineJoinRound);
-				strokeProperties.lineJoin = D2D1_LINE_JOIN_ROUND;
-				break;
-			default:
-				break;
+
+			switch (shape->strokeLineJoin)
+			{
+				case NSVG_JOIN_BEVEL:
+					strokeProperties.lineJoin = D2D1_LINE_JOIN_BEVEL;
+					break;
+				case NSVG_JOIN_MITER:
+					strokeProperties.lineJoin = D2D1_LINE_JOIN_MITER;
+					break;
+				case NSVG_JOIN_ROUND:
+					strokeProperties.lineJoin = D2D1_LINE_JOIN_ROUND;
+					break;
+				default:
+					break;
 			}
 
 			ComPtr<ID2D1StrokeStyle1> strokeStyle;
 			ReturnIfFailed(result, m_d2dFactory->CreateStrokeStyle(strokeProperties, NULL, 0, &strokeStyle));
 
-			for (NSVGpath* path = shape->paths; path != NULL; path = path->next) {
-				//CGContextBeginPath(context);
-				//CGContextMoveToPoint(context, path->pts[0], path->pts[1]);
-				sink->BeginFigure(D2D1::Point2F(path->pts[0], path->pts[1]), D2D1_FIGURE_BEGIN_HOLLOW);
-				for (int i = 0; i < path->npts - 1; i += 3) {
-					float* p = &path->pts[i * 2];
-					//CGContextAddCurveToPoint(context, p[2], p[3], p[4], p[5], p[6], p[7]);
-					sink->AddBezier(D2D1::BezierSegment(D2D1::Point2F(p[2], p[3]), D2D1::Point2F(p[4], p[5]), D2D1::Point2F(p[6], p[7])));
-				}
-
-				//if (path->closed) {
-				//	CGContextClosePath(context);
-				//}
-				sink->EndFigure(path->closed ? D2D1_FIGURE_END_CLOSED : D2D1_FIGURE_END_OPEN);
-
-				//CGContextStrokePath(context);
-			}
 
 			ReturnIfFailed(result, sink->Close());
 			m_d2dContext->DrawGeometry(geometry.Get(), blackBrush.Get(), shape->strokeWidth);

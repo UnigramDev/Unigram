@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -165,14 +166,24 @@ namespace Unigram.ViewModels
         public BackgroundColor Color1
         {
             get => _color1;
-            set => Set(ref _color1, value);
+            set => SetColor(ref _color1, value);
         }
 
         private BackgroundColor _color2;
         public BackgroundColor Color2
         {
             get => _color2;
-            set => Set(ref _color2, value);
+            set => SetColor(ref _color2, value);
+        }
+
+        private void SetColor(ref BackgroundColor storage, BackgroundColor value, [CallerMemberName] string propertyName = null)
+        {
+            Set(ref storage, value, propertyName);
+
+            if (_item?.Type is BackgroundTypePattern)
+            {
+                //RaisePropertyChanged(() => Item);
+            }
         }
 
         public BackgroundFill GetFill()
@@ -191,6 +202,24 @@ namespace Unigram.ViewModels
             }
 
             return null;
+        }
+
+        public Color GetPatternForeground()
+        {
+            if (!_color1.IsEmpty && !_color2.IsEmpty)
+            {
+                return ColorEx.GetPatternColor(ColorEx.GetAverageColor(_color1, _color2));
+            }
+            else if (!_color1.IsEmpty)
+            {
+                return ColorEx.GetPatternColor(_color1);
+            }
+            else if (!_color2.IsEmpty)
+            {
+                return ColorEx.GetPatternColor(_color2);
+            }
+
+            return Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF);
         }
 
         private bool _isColor1Checked = true;
