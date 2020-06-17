@@ -1252,6 +1252,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var cached = await ProtoService.GetFileAsync(file);
+            if (cached == null)
+            {
+                return;
+            }
+
             var fileName = result.FileName;
             if (string.IsNullOrEmpty(fileName))
             {
@@ -1280,7 +1286,6 @@ namespace Unigram.ViewModels
             {
                 try
                 {
-                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
                     await cached.CopyAndReplaceAsync(picked);
                 }
                 catch { }
@@ -1363,12 +1368,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+            var item = await ProtoService.GetFileAsync(file);
+            if (item != null)
+            {
+                var options = new LauncherOptions();
+                options.DisplayApplicationPicker = true;
 
-            var options = new LauncherOptions();
-            options.DisplayApplicationPicker = true;
-
-            await Launcher.LaunchFileAsync(item, options);
+                await Launcher.LaunchFileAsync(item, options);
+            }
         }
 
         #endregion
@@ -1386,13 +1393,16 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-            var folder = await item.GetParentAsync();
+            var item = await ProtoService.GetFileAsync(file);
+            if (item != null)
+            {
+                var folder = await item.GetParentAsync();
 
-            var options = new FolderLauncherOptions();
-            options.ItemsToSelect.Add(item);
+                var options = new FolderLauncherOptions();
+                options.ItemsToSelect.Add(item);
 
-            await Launcher.LaunchFolderAsync(folder, options);
+                await Launcher.LaunchFolderAsync(folder, options);
+            }
         }
 
         #endregion

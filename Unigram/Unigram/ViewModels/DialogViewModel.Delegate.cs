@@ -241,17 +241,11 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                try
+                var temp = await ProtoService.GetFileAsync(file);
+                if (temp != null)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var result = await Windows.System.Launcher.LaunchFileAsync(temp);
-                    //var folder = await temp.GetParentAsync();
-                    //var options = new Windows.System.FolderLauncherOptions();
-                    //options.ItemsToSelect.Add(temp);
-
-                    //var result = await Windows.System.Launcher.LaunchFolderAsync(folder, options);
+                    await Windows.System.Launcher.LaunchFileAsync(temp);
                 }
-                catch { }
             }
         }
 
