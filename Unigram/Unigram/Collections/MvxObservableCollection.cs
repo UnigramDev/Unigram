@@ -66,6 +66,11 @@ namespace Unigram.Collections
             get { return this._suppressEvents > 0; }
         }
 
+        public void Dispose()
+        {
+            _suppressEvents = int.MaxValue;
+        }
+
         /// <summary>
         /// Raises the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.CollectionChanged"/> event with the provided event data.
         /// </summary>
@@ -74,7 +79,7 @@ namespace Unigram.Collections
         {
             if (!EventsAreSuppressed)
             {
-                InvokeOnMainThread(() => base.OnCollectionChanged(e));
+                base.OnCollectionChanged(e);
             }
         }
 
@@ -288,17 +293,6 @@ namespace Unigram.Collections
         public void Reset()
         {
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        protected void InvokeOnMainThread(Action action)
-        {
-            action();
-            //Execute.BeginOnUIThread(action);
-        }
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            InvokeOnMainThread(() => base.OnPropertyChanged(e));
         }
 
         public virtual bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
