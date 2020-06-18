@@ -3330,8 +3330,7 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : MvxObservableCollection<MessageViewModel>
     {
-        private readonly Dictionary<long, long> _messages = new Dictionary<long, long>();
-        private readonly HashSet<DateTime> _dates = new HashSet<DateTime>();
+        private readonly HashSet<long> _messages = new HashSet<long>();
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
 
@@ -3343,12 +3342,12 @@ namespace Unigram.ViewModels
 
         public bool ContainsKey(long id)
         {
-            return _messages.ContainsKey(id);
+            return _messages.Contains(id);
         }
 
         protected override void InsertItem(int index, MessageViewModel item)
         {
-            _messages[item.Id] = item.Id;
+            _messages.Add(item.Id);
 
             item.IsFirst = true;
             item.IsLast = true;
