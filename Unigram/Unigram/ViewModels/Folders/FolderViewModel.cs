@@ -129,7 +129,7 @@ namespace Unigram.ViewModels.Folders
             set => Set(ref _filter, value);
         }
 
-        private string _title;
+        private string _title = string.Empty;
         public string Title
         {
             get => _title;
@@ -281,7 +281,7 @@ namespace Unigram.ViewModels.Folders
         private ChatFilter GetFilter()
         {
             var filter = new ChatFilter();
-            filter.Title = Title;
+            filter.Title = Title ?? string.Empty;
             filter.IconName = _iconPicked ? Enum.GetName(typeof(ChatFilterIcon), Icon) : string.Empty;
             filter.PinnedChatIds = new List<long>();
             filter.IncludedChatIds = new List<long>();
