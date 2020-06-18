@@ -28,7 +28,7 @@
     <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <LangVersion>7.3</LangVersion>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
   </PropertyGroup>
@@ -474,6 +474,14 @@
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Navigation\Services\FrameFacade.cs" />
+    <Compile Include="Navigation\Services\INavigable.cs" />
+    <Compile Include="Navigation\Services\INavigationService.cs" />
+    <Compile Include="Navigation\Services\JournalEntry.cs" />
+    <Compile Include="Navigation\Services\NavigatedEventArgs.cs" />
+    <Compile Include="Navigation\Services\NavigatingEventArgs.cs" />
+    <Compile Include="Navigation\Services\NavigationService.cs" />
+    <Compile Include="Navigation\Services\NavigationServiceList.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
@@ -538,13 +546,6 @@
     <Compile Include="Services\Keyboard\KeyboardHelper.cs" />
     <Compile Include="Services\Keyboard\KeyboardService.cs" />
     <Compile Include="Services\Logging\LoggingService.cs" />
-    <Compile Include="Services\Navigation\FrameFacade.cs" />
-    <Compile Include="Services\Navigation\INavigable.cs" />
-    <Compile Include="Services\Navigation\INavigationService.cs" />
-    <Compile Include="Services\Navigation\NavigatedEventArgs.cs" />
-    <Compile Include="Services\Navigation\NavigatingEventArgs.cs" />
-    <Compile Include="Services\Navigation\NavigationService.cs" />
-    <Compile Include="Services\Navigation\NavigationServiceList.cs" />
     <Compile Include="Services\Serialization\ISerializationService.cs" />
     <Compile Include="Services\Serialization\JsonSerializationService.cs" />
     <Compile Include="Services\Serialization\SerializationService.cs" />
