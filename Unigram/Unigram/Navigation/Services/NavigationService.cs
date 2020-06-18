@@ -209,7 +209,7 @@ namespace Unigram.Navigation.Services
             return viewService.OpenAsync(content, parameter);
         }
 
-        public async Task<bool> NavigateAsync(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
+        public bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
             DebugWrite($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
 
@@ -254,13 +254,6 @@ namespace Unigram.Navigation.Services
             return FrameFacadeInternal.Navigate(page, parameter, infoOverride);
         }
 
-        public void Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
-        {
-            DebugWrite($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
-
-            NavigateAsync(page, parameter, state, infoOverride).ConfigureAwait(false).GetAwaiter().GetResult();
-        }
-
         /// <summary>
         /// Navigate<T> allows developers to navigate using a
         /// page key instead of the view type.This is accomplished by
@@ -283,7 +276,7 @@ namespace Unigram.Navigation.Services
         /// NavigationService.Navigate(Pages.MainPage);
         /// </remarks>
         /// <typeparam name="T">T must be the same custom Enum used with BootStrapper.PageKeys()</typeparam>
-        public async Task<bool> NavigateAsync<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
+        public bool Navigate<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
             where T : struct, IConvertible
         {
             DebugWrite($"Key: {key}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
@@ -295,15 +288,7 @@ namespace Unigram.Navigation.Services
 
             var page = keys[key];
 
-            return await NavigateAsync(page, parameter, state, infoOverride).ConfigureAwait(false);
-        }
-
-        public void Navigate<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
-            where T : struct, IConvertible
-        {
-            DebugWrite($"Key: {key}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
-
-            NavigateAsync(key, parameter, state, infoOverride).ConfigureAwait(false).GetAwaiter().GetResult();
+            return Navigate(page, parameter, state, infoOverride);
         }
 
         public ISerializationService SerializationService { get; set; }
