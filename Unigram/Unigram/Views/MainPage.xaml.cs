@@ -439,16 +439,16 @@ namespace Unigram.Views
                 switch (update.State)
                 {
                     case ConnectionStateWaitingForNetwork waitingForNetwork:
-                        ShowStatus(Strings.Resources.WaitingForNetwork);
+                        ShowState(Strings.Resources.WaitingForNetwork);
                         break;
                     case ConnectionStateConnecting connecting:
-                        ShowStatus(Strings.Resources.Connecting);
+                        ShowState(Strings.Resources.Connecting);
                         break;
                     case ConnectionStateConnectingToProxy connectingToProxy:
-                        ShowStatus(Strings.Resources.ConnectingToProxy);
+                        ShowState(Strings.Resources.ConnectingToProxy);
                         break;
                     case ConnectionStateUpdating updating:
-                        ShowStatus(Strings.Resources.Updating);
+                        ShowState(Strings.Resources.Updating);
                         break;
                     case ConnectionStateReady ready:
                         //ShowStatus(Strings.Resources.Connected);
@@ -490,7 +490,7 @@ namespace Unigram.Views
             Proxy.Glyph = connectionState is ConnectionStateReady && proxyId != 0 ? "\uE916" : "\uE915";
         }
 
-        private void ShowStatus(string text)
+        private void ShowState(string text)
         {
             Status.IsIndeterminate = true;
             StatusLabel.Text = text;
