@@ -108,7 +108,7 @@ namespace Unigram.Controls.Chats
             //if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
             using (await _loadMoreLock.WaitAsync())
             {
-                if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
+                if (ItemsStack.FirstCacheIndex == 0 && ViewModel.IsLastSliceLoaded != true && !e.IsIntermediate)
                 {
                     await ViewModel.LoadNextSliceAsync(true);
                 }
