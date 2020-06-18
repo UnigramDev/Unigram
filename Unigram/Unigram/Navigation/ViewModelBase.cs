@@ -19,9 +19,9 @@ namespace Unigram.Navigation
             return Task.CompletedTask;
         }
 
-        public virtual Task OnNavigatingFromAsync(NavigatingEventArgs args)
+        public virtual void OnNavigatingFrom(NavigatingEventArgs args)
         {
-            return Task.CompletedTask;
+
         }
 
         [JsonIgnore]

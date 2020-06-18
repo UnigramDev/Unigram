@@ -296,7 +296,7 @@ namespace Unigram.Navigation.Services
             add { if (!_navigatingEventHandlers.Contains(value)) _navigatingEventHandlers.Add(value); }
             remove { if (_navigatingEventHandlers.Contains(value)) _navigatingEventHandlers.Remove(value); }
         }
-        private async void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
+        private void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
         {
             DebugWrite();
 
@@ -309,13 +309,11 @@ namespace Unigram.Navigation.Services
             {
                 throw new Exception("Your parameter must be serializable. If it isn't, then use SessionState.", ex);
             }
-            var deferral = new DeferralManager();
-            var args = new NavigatingEventArgs(deferral, e, Content as Page, e.SourcePageType, parameter, e.Parameter);
+            var args = new NavigatingEventArgs(e, Content as Page, e.SourcePageType, parameter, e.Parameter);
             if (NavigationModeHint != NavigationMode.New)
                 args.NavigationMode = NavigationModeHint;
             NavigationModeHint = NavigationMode.New;
             _navigatingEventHandlers.ForEach(x => x(this, args));
-            await deferral.WaitForDeferralsAsync().ConfigureAwait(false);
             e.Cancel = args.Cancel;
         }
     }

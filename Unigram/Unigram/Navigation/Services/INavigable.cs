@@ -9,7 +9,7 @@ namespace Unigram.Navigation.Services
     {
         Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state);
         Task OnNavigatedFromAsync(IDictionary<string, object> suspensionState, bool suspending);
-        Task OnNavigatingFromAsync(NavigatingEventArgs args);
+        void OnNavigatingFrom(NavigatingEventArgs args);
         INavigationService NavigationService { get; set; }
         IDispatcherWrapper Dispatcher { get; set; }
         IDictionary<string, object> SessionState { get; set; }

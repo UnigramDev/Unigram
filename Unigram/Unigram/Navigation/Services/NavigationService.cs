@@ -68,7 +68,7 @@ namespace Unigram.Navigation.Services
                     if (dataContext != null)
                     {
                         // allow the viewmodel to cancel navigation
-                        e.Cancel = !(await NavigatingFromAsync(page, e.PageType, e.Parameter, dataContext, false, e.NavigationMode));
+                        e.Cancel = !NavigatingFrom(page, e.PageType, e.Parameter, dataContext, false, e.NavigationMode);
                         if (!e.Cancel)
                         {
                             await NavigateFromAsync(page, dataContext, false).ConfigureAwait(false);
@@ -117,7 +117,7 @@ namespace Unigram.Navigation.Services
         }
 
         // before navigate (cancellable)
-        async Task<bool> NavigatingFromAsync(Page page, Type targetPageType, object targetPageParameter, INavigable dataContext, bool suspending, NavigationMode mode)
+        bool NavigatingFrom(Page page, Type targetPageType, object targetPageParameter, INavigable dataContext, bool suspending, NavigationMode mode)
         {
             DebugWrite($"Suspending: {suspending}");
 
@@ -125,8 +125,7 @@ namespace Unigram.Navigation.Services
             dataContext.Dispatcher = this.GetDispatcherWrapper();
             dataContext.SessionState = BootStrapper.Current.SessionState;
 
-            var deferral = new DeferralManager();
-            var args = new NavigatingEventArgs(deferral)
+            var args = new NavigatingEventArgs
             {
                 NavigationMode = mode,
                 PageType = FrameFacadeInternal.CurrentPageType,
@@ -135,8 +134,7 @@ namespace Unigram.Navigation.Services
                 TargetPageType = targetPageType,
                 TargetPageParameter = targetPageParameter
             };
-            await deferral.WaitForDeferralsAsync();
-            await dataContext.OnNavigatingFromAsync(args).ConfigureAwait(false);
+            dataContext.OnNavigatingFrom(args);
             return !args.Cancel;
         }
 
