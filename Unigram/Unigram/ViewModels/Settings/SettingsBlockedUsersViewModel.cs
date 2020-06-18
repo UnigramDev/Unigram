@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
