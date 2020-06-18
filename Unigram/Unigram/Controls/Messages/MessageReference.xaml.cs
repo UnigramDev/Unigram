@@ -827,19 +827,6 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetUnsupportedTemplate(MessageViewModel message, string title)
-        {
-            Visibility = Visibility.Collapsed;
-
-            if (ThumbRoot != null)
-                ThumbRoot.Visibility = Visibility.Collapsed;
-
-            TitleLabel.Text = string.Empty;
-            ServiceLabel.Text = string.Empty;
-            MessageLabel.Text = string.Empty;
-            return false;
-        }
-
         #endregion
 
         private string GetFromLabel(MessageViewModel message, string title)
