@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unigram.Services.Navigation;
+using Unigram.Navigation.Services;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Navigation

@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels

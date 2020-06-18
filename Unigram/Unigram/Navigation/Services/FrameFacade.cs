@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Unigram.Navigation;
 using Unigram.Services.Serialization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Services.Navigation
+namespace Unigram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public class FrameFacade
@@ -18,8 +17,8 @@ namespace Unigram.Services.Navigation
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Logging.LoggingService.WriteLine(text, severity, caller: $"{nameof(FrameFacade)}.{caller}");
+        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
+            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"{nameof(FrameFacade)}.{caller}");
 
         #endregion
 
@@ -67,9 +66,9 @@ namespace Unigram.Services.Navigation
 
         private string GetFrameStateKey() => string.Format("{0}-PageState", FrameId);
 
-        private SettingsLegacy.ISettingsService FrameStateSettingsService()
+        private Unigram.Services.SettingsLegacy.ISettingsService FrameStateSettingsService()
         {
-            return SettingsLegacy.SettingsService.Create(GetFrameStateKey(), true);
+            return Unigram.Services.SettingsLegacy.SettingsService.Create(GetFrameStateKey(), true);
         }
 
         public void SetFrameState(string key, string value)
@@ -97,13 +96,13 @@ namespace Unigram.Services.Navigation
             return $"{frameId}-{type}-{backStackDepth}";
         }
 
-        public SettingsLegacy.ISettingsService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
+        public Unigram.Services.SettingsLegacy.ISettingsService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
         {
             var key = GetPageStateKey(FrameId, type, BackStackDepth + depth, parameter);
             return FrameStateSettingsService().Open(key, true);
         }
 
-        public SettingsLegacy.ISettingsService PageStateSettingsService(string key)
+        public Unigram.Services.SettingsLegacy.ISettingsService PageStateSettingsService(string key)
         {
             return FrameStateSettingsService().Open(key, true);
         }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Navigation;
 using Unigram.Services.Serialization;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
@@ -16,12 +15,12 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Services.Navigation
+namespace Unigram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public partial class NavigationService : INavigationService
     {
-        private readonly IViewService viewService = new ViewService.ViewService();
+        private readonly IViewService viewService = new ViewService();
         FrameFacade FrameFacadeInternal { get; }
         public FrameFacade FrameFacade => FrameFacadeInternal;
         public bool IsInMainView { get; }
@@ -42,8 +41,8 @@ namespace Unigram.Services.Navigation
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Services.Logging.LoggingService.WriteLine(text, severity, caller: $"NavigationService.{caller}");
+        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
+            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"NavigationService.{caller}");
 
         #endregion
 
@@ -52,7 +51,7 @@ namespace Unigram.Services.Navigation
 
         public NavigationService(Frame frame, int session, string id)
         {
-            SerializationService = Services.Serialization.SerializationService.Json;
+            SerializationService = Unigram.Services.Serialization.SerializationService.Json;
             IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
             SessionId = session;
             FrameFacadeInternal = new FrameFacade(this, frame, id);

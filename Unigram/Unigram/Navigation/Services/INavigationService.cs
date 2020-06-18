@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unigram.Navigation;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -9,7 +8,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Unigram.Services.Navigation
+namespace Unigram.Navigation.Services
 {
     public interface INavigationService
     {

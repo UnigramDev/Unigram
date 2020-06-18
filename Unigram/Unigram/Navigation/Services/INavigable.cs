@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unigram.Navigation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Services.Navigation
+namespace Unigram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public interface INavigable

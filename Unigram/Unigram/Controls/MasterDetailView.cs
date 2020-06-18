@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

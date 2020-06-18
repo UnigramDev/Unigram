@@ -5,7 +5,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
-using Unigram.Services.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;

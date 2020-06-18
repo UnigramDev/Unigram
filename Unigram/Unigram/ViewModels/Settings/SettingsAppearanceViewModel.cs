@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Unigram.Services.Updates;
 using Unigram.Views.Popups;
 using Windows.Foundation.Metadata;

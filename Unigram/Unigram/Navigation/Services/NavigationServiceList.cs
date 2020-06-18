@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Unigram.Services.Navigation
+namespace Unigram.Navigation.Services
 {
     public class NavigationServiceList : List<INavigationService>
     {
