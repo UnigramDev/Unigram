@@ -109,16 +109,8 @@ namespace Unigram.Controls
                 _angleStoryboard.Children.Add(angleAnimation);
                 _angleStoryboard.Completed += OnAngleStoryboardCompleted;
 
-                Loaded += (s, args) =>
-                {
-                    _foreverStoryboard.RepeatBehavior = RepeatBehavior.Forever;
-                    _foreverStoryboard.Begin();
-                };
-                Unloaded += (s, args) =>
-                {
-                    _foreverStoryboard.RepeatBehavior = new RepeatBehavior(1);
-                    _foreverStoryboard.Stop();
-                };
+                Loaded += OnLoaded;
+                Unloaded += OnUnloaded;
             }
             else
             {
@@ -126,6 +118,18 @@ namespace Unigram.Controls
             }
 
             OnValueChanged(0, Value);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            _foreverStoryboard.RepeatBehavior = RepeatBehavior.Forever;
+            _foreverStoryboard.Begin();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _foreverStoryboard.RepeatBehavior = new RepeatBehavior(1);
+            _foreverStoryboard.Stop();
         }
 
         private void OnForeverStoryboardCompleted(object sender, object e)
