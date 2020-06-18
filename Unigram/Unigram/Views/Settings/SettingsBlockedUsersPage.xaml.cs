@@ -87,7 +87,7 @@ namespace Unigram.Views.Settings
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var user = element.Tag as User;
+            var user = ScrollingHost.ItemFromContainer(element) as User;
 
             flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Resources.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = user });
 
