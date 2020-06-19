@@ -42,7 +42,6 @@ namespace Unigram.Controls
             if (service == null)
             {
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, key + session, false) as NavigationService;
-                service.SerializationService = TLSerializationService.Current;
                 service.Frame.DataContext = new object();
                 service.FrameFacade.BackRequested += OnBackRequested;
             }

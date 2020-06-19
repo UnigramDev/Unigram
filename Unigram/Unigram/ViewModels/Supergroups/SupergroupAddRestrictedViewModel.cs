@@ -1,6 +1,7 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Supergroups;
 
@@ -50,7 +51,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else
             {
-                NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), new ChatMemberNavigation(chat.Id, userId));
+                NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, userId));
             }
         }
     }

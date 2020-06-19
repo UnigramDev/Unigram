@@ -55,13 +55,10 @@ namespace Unigram.ViewModels.Supergroups
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var bundle = parameter as ChatMemberNavigation;
-            if (bundle == null)
-            {
-                return;
-            }
+            state.TryGet("chatId", out long chatId);
+            state.TryGet("userId", out int userId);
 
-            Chat = ProtoService.GetChat(bundle.ChatId);
+            Chat = ProtoService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -69,7 +66,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, bundle.UserId));
+            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, userId));
             if (response is ChatMember member)
             {
                 var item = ProtoService.GetUser(member.UserId);

@@ -15,8 +15,8 @@ namespace Unigram.Navigation.Services
         public NavigatingEventArgs(NavigatingCancelEventArgs e, Page page, Type targetPageType, object parameter, object targetPageParameter)
         {
             NavigationMode = e.NavigationMode;
-            PageType = e.SourcePageType;
-            Page = page;
+            SourcePageType = e.SourcePageType;
+            Content = page;
             Parameter = parameter;
             TargetPageType = targetPageType;
             TargetPageParameter = targetPageParameter;

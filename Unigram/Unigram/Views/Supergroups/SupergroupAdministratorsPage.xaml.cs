@@ -2,7 +2,7 @@
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Services;
+using Unigram.Navigation.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
@@ -35,7 +35,7 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
-            ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), new ChatMemberNavigation(chat.Id, member.UserId));
+            ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
         }
 
         #region Context menu

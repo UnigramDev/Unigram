@@ -19,9 +19,9 @@ namespace Unigram.Views.Users
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var service = TLContainer.Current.Resolve<IProtoService>();
-            var data = TLSerializationService.Current.Deserialize<long>((string)e.Parameter);
+            var chatId = (long)e.Parameter;
 
-            var chat = service.GetChat(data);
+            var chat = service.GetChat(chatId);
             if (chat.Type is ChatTypeSecret secret)
             {
                 var secretChat = service.GetSecretChat(secret.SecretChatId);

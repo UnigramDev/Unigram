@@ -229,19 +229,6 @@ namespace Unigram.Common
             }
         }
 
-        public static bool IsPeerActive(this INavigationService service, long chat)
-        {
-            if (service.CurrentPageType == typeof(ChatPage))
-            {
-                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out long chatId))
-                {
-                    return chat == chatId;
-                }
-            }
-
-            return false;
-        }
-
         public static long GetPeerFromBackStack(this INavigationService service)
         {
             if (service.CurrentPageType == typeof(ChatPage))
@@ -269,14 +256,14 @@ namespace Unigram.Common
 
         public static bool TryGetPeerFromParameter(this INavigationService service, object parameter, out long chatId)
         {
-            if (parameter is string)
-            {
-                parameter = TLSerializationService.Current.Deserialize((string)parameter);
-            }
-
             if (parameter is long)
             {
                 chatId = (long)parameter;
+                return true;
+            }
+            else if (parameter is string cacheKey && service.CacheKeyToChatId.TryGetValue(cacheKey, out long value))
+            {
+                chatId = value;
                 return true;
             }
 

@@ -545,9 +545,6 @@
     <Compile Include="Services\Keyboard\KeyboardHelper.cs" />
     <Compile Include="Services\Keyboard\KeyboardService.cs" />
     <Compile Include="Services\Logging\LoggingService.cs" />
-    <Compile Include="Services\Serialization\ISerializationService.cs" />
-    <Compile Include="Services\Serialization\JsonSerializationService.cs" />
-    <Compile Include="Services\Serialization\SerializationService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacy\IPropertyMapping.cs" />
     <Compile Include="Services\SettingsLegacy\ISettingsService.cs" />
@@ -591,7 +588,7 @@
     <Compile Include="Services\Stripe\StripeTextUtils.cs" />
     <Compile Include="Services\Stripe\StripeToken.cs" />
     <Compile Include="Services\ThemeService.cs" />
-    <Compile Include="Services\TLSerializationService.cs" />
+    <Compile Include="Navigation\Services\NavigationState.cs" />
     <Compile Include="Services\Updates\UpdateAppVersion.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
     <Compile Include="Services\Updates\UpdateChatFiltersLayout.cs" />

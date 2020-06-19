@@ -18,12 +18,13 @@ namespace Unigram.Navigation.Services
         object Content { get; }
 
         bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null);
-        bool Navigate<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible;
 
         bool CanGoBack { get; }
         bool CanGoForward { get; }
 
         string NavigationState { get; set; }
+
+        IDictionary<string, long> CacheKeyToChatId { get; }
 
         void Refresh();
 

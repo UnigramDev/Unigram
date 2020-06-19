@@ -1118,7 +1118,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadGame(game.Game.ShortName)));
                     if (response is CallbackQueryAnswer answer && !string.IsNullOrEmpty(answer.Url))
                     {
-                        var bundle = new TdBundle();
+                        var bundle = new Dictionary<string, object>();
                         bundle.Add("title", game.Game.Title);
                         bundle.Add("url", answer.Url);
                         bundle.Add("message", message.Id);

@@ -388,7 +388,6 @@ namespace Unigram
             {
                 var navigationFrame = new Frame { FlowDirection = ApiInfo.FlowDirection };
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
-                navigationService.SerializationService = TLSerializationService.Current;
 
                 return navigationFrame;
             }
@@ -396,7 +395,6 @@ namespace Unigram
             {
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
-                navigationService.SerializationService = TLSerializationService.Current;
 
                 return new RootPage(navigationService) { FlowDirection = ApiInfo.FlowDirection };
             }

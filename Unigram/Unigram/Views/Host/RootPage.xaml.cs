@@ -123,7 +123,6 @@ namespace Unigram.Views.Host
             if (service == null)
             {
                 service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
-                service.SerializationService = TLSerializationService.Current;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
 

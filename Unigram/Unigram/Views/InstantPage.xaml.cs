@@ -155,7 +155,7 @@ namespace Unigram.Views
             ViewModel.Gallery.SelectedItem = null;
             _anchors.Clear();
 
-            var url = TLSerializationService.Current.Deserialize((string)e.Parameter) as string;
+            var url = e.Parameter as string;
             if (url == null)
             {
                 return;
@@ -180,108 +180,6 @@ namespace Unigram.Views
                 UpdateView(instantView);
                 ViewModel.IsLoading = false;
             }
-
-            //if (url.StartsWith("http") == false)
-            //{
-            //    url = "http://" + url;
-            //}
-
-            //if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
-            //{
-            //    ViewModel.ShareLink = uri;
-            //    ViewModel.ShareTitle = webpage.HasTitle ? webpage.Title : webpage.Url;
-            //}
-
-            //var webpageMedia = parameter as TLMessageMediaWebPage;
-            //if (webpageMedia != null)
-            //{
-            //    parameter = webpageMedia.WebPage as TLWebPage;
-            //}
-
-            //var webpage = parameter as TLWebPage;
-            //if (webpage != null && webpage.HasCachedPage)
-            //{
-            //    var url = webpage.Url;
-
-            //    _webpageId = webpage.Id;
-
-            //    var photos = new List<TLPhotoBase>(webpage.CachedPage.Photos);
-            //    var documents = new List<TLDocumentBase>(webpage.CachedPage.Documents);
-
-            //    if (webpage.HasPhoto)
-            //    {
-            //        photos.Insert(0, webpage.Photo);
-            //    }
-
-            //    var processed = 0;
-            //    TLPageBlockBase previousBlock = null;
-            //    FrameworkElement previousElement = null;
-            //    foreach (var block in webpage.CachedPage.Blocks)
-            //    {
-            //        var element = ProcessBlock(webpage.CachedPage, block, photos, documents);
-            //        var spacing = SpacingBetweenBlocks(previousBlock, block);
-            //        var padding = PaddingForBlock(block);
-
-            //        if (element != null)
-            //        {
-            //            if (block is TLPageBlockChannel && previousBlock is TLPageBlockCover)
-            //            {
-            //                if (previousElement is StackPanel stack && element is Button)
-            //                {
-            //                    element.Style = Resources["CoverChannelBlockStyle"] as Style;
-            //                    element.Margin = new Thickness(padding, -40, padding, 0);
-            //                    stack.Children.Insert(1, element);
-            //                }
-            //            }
-            //            else
-            //            {
-            //                element.Margin = new Thickness(padding, spacing, padding, 0);
-            //                ScrollingHost.Items.Add(element);
-            //            }
-            //        }
-
-            //        previousBlock = block;
-            //        previousElement = element;
-            //        processed++;
-            //    }
-
-            //    var part = webpage.CachedPage as TLPagePart;
-            //    if (part != null)
-            //    {
-            //        var response = await MTProtoService.Current.GetWebPageAsync(webpage.Url, webpage.Hash);
-            //        if (response.IsSucceeded)
-            //        {
-            //            var newpage = response.Result as TLWebPage;
-            //            if (newpage != null && newpage.HasCachedPage)
-            //            {
-            //                photos = new List<TLPhotoBase>(newpage.CachedPage.Photos);
-            //                documents = new List<TLDocumentBase>(newpage.CachedPage.Documents);
-
-            //                if (webpage.HasPhoto)
-            //                {
-            //                    photos.Insert(0, webpage.Photo);
-            //                }
-
-            //                for (int i = processed; i < newpage.CachedPage.Blocks.Count; i++)
-            //                {
-            //                    var block = newpage.CachedPage.Blocks[i];
-            //                    var element = ProcessBlock(newpage.CachedPage, block, photos, documents);
-            //                    var spacing = SpacingBetweenBlocks(previousBlock, block);
-            //                    var padding = PaddingForBlock(block);
-
-            //                    if (element != null)
-            //                    {
-            //                        element.Margin = new Thickness(padding, spacing, padding, 0);
-            //                        ScrollingHost.Items.Add(element);
-            //                    }
-
-            //                    previousBlock = newpage.CachedPage.Blocks[i];
-            //                    previousElement = element;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
 
             base.OnNavigatedTo(e);
         }

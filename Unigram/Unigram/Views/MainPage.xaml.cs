@@ -13,6 +13,7 @@ using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
@@ -156,8 +157,8 @@ namespace Unigram.Views
                     viewModel.Dispose();
                 }
 
-                MasterDetail.NavigationService.Frame.Navigating -= OnNavigating;
-                MasterDetail.NavigationService.Frame.Navigated -= OnNavigated;
+                MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
+                MasterDetail.NavigationService.FrameFacade.Navigated -= OnNavigated;
 
                 MasterDetail.Dispose();
                 SettingsView.Dispose();
@@ -1168,8 +1169,8 @@ namespace Unigram.Views
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Main", Frame, ViewModel.ProtoService.SessionId);
-                MasterDetail.NavigationService.Frame.Navigating += OnNavigating;
-                MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
+                MasterDetail.NavigationService.FrameFacade.Navigating += OnNavigating;
+                MasterDetail.NavigationService.FrameFacade.Navigated += OnNavigated;
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
@@ -1263,7 +1264,7 @@ namespace Unigram.Views
             }
         }
 
-        private void OnNavigating(object sender, NavigatingCancelEventArgs e)
+        private void OnNavigating(object sender, NavigatingEventArgs e)
         {
             var frame = sender as Frame;
 
@@ -1276,7 +1277,7 @@ namespace Unigram.Views
                 frame.CurrentSourcePageType == typeof(SupergroupEventLogPage) ? 1 : 0;
         }
 
-        private void OnNavigated(object sender, NavigationEventArgs e)
+        private void OnNavigated(object sender, NavigatedEventArgs e)
         {
             //if (e.SourcePageType == typeof(BlankPage))
             //{
@@ -1301,16 +1302,7 @@ namespace Unigram.Views
             }
 
             UpdatePaneToggleButtonVisibility();
-
-            if (e.SourcePageType == typeof(ChatPage))
-            {
-                var parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)e.Parameter);
-                UpdateListViewsSelectedItem((long)parameter);
-            }
-            else
-            {
-                UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
-            }
+            UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
         }
 
         private void OnStateChanged(object sender, EventArgs e)

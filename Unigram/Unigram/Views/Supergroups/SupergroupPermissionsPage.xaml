@@ -86,6 +86,7 @@
                   ItemTemplate="{StaticResource MemberTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
+                  ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None">
             <ListView.ItemContainerStyle>
@@ -110,6 +111,7 @@
                 ItemTemplate="{StaticResource MemberTemplate}"
                 ItemClick="ListView_ItemClick"
                 IsItemClickEnabled="True"
+                ChoosingItemContainer="OnChoosingItemContainer"
                 ContainerContentChanging="OnContainerContentChanging"
                 SelectionMode="None"
                 Grid.Row="1">

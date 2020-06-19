@@ -782,22 +782,6 @@ namespace Unigram.Navigation
             }
         }
 
-        private object _PageKeys;
-        // T must be a custom Enum
-        public Dictionary<T, Type> PageKeys<T>()
-            where T : struct, IConvertible
-        {
-            if (!typeof(T).GetTypeInfo().IsEnum)
-            {
-                throw new ArgumentException("T must be an enumerated type");
-            }
-            if (_PageKeys != null && _PageKeys is Dictionary<T, Type>)
-            {
-                return _PageKeys as Dictionary<T, Type>;
-            }
-            return (_PageKeys = new Dictionary<T, Type>()) as Dictionary<T, Type>;
-        }
-
         public class LifecycleLogic
         {
             public async Task<bool> AutoRestoreAsync(ILaunchActivatedEventArgs e, INavigationService nav)

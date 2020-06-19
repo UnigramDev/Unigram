@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Unigram.Services.Serialization;
+using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -26,8 +26,8 @@ namespace Unigram.Navigation.Services
         {
             NavigationService = navigationService;
             Frame = frame;
-            frame.Navigated += (s, e) => FacadeNavigatedEventHandler(s, e);
-            frame.Navigating += (s, e) => FacadeNavigatingCancelEventHandler(s, e);
+            frame.Navigated += FacadeNavigatedEventHandler;
+            frame.Navigating += FacadeNavigatingCancelEventHandler;
 
             // setup animations
             var t = new NavigationThemeTransition
@@ -38,6 +38,33 @@ namespace Unigram.Navigation.Services
             Frame.ContentTransitions.Add(t);
 
             FrameId = id;
+        }
+
+        public void RaiseNavigated(long chatId)
+        {
+            if (Content is ChatPage)
+            {
+                NavigationService.CacheKeyToChatId[CurrentPageCacheKey] = chatId;
+                CurrentPageParam = chatId;
+
+                var args = new NavigatedEventArgs
+                {
+                    NavigationMode = NavigationMode.Refresh,
+                    SourcePageType = CurrentPageType,
+                    Parameter = CurrentPageParam,
+                    Content = Frame.Content as Page
+                };
+
+                foreach (var handler in _navigatedEventHandlers)
+                {
+                    if (handler.Target is INavigationService)
+                    {
+                        continue;
+                    }
+
+                    handler(Frame, args);
+                }
+            }
         }
 
         public event EventHandler<HandledEventArgs> BackRequested;
@@ -136,24 +163,6 @@ namespace Unigram.Navigation.Services
             {
                 return false;
             }
-        }
-
-        internal ISerializationService SerializationService => NavigationService.SerializationService;
-
-        [Obsolete("Use NavigationService.NavigationState instead")]
-        public void SetNavigationState(string state)
-        {
-            DebugWrite($"State {state}");
-
-            Frame.SetNavigationState(state);
-        }
-
-        [Obsolete("Use NavigationService.NavigationState instead")]
-        public string GetNavigationState()
-        {
-            DebugWrite();
-
-            return Frame.GetNavigationState();
         }
 
         public int BackStackDepth => Frame.BackStackDepth;
@@ -260,11 +269,7 @@ namespace Unigram.Navigation.Services
 
         public object CurrentPageParam { get; internal set; }
 
-        public object GetValue(DependencyProperty dp) => Frame.GetValue(dp);
-
-        public void SetValue(DependencyProperty dp, object value) { Frame.SetValue(dp, value); }
-
-        public void ClearValue(DependencyProperty dp) { Frame.ClearValue(dp); }
+        public string CurrentPageCacheKey { get; private set; }
 
         #endregion
 
@@ -279,14 +284,25 @@ namespace Unigram.Navigation.Services
             DebugWrite();
 
             CurrentPageType = e.SourcePageType;
-            CurrentPageParam = SerializationService.Deserialize(e.Parameter?.ToString());
+            CurrentPageParam = e.Parameter;
+            CurrentPageCacheKey = null;
+
+            if (e.SourcePageType == typeof(ChatPage) && CurrentPageParam is string cacheKey)
+            {
+                CurrentPageParam = NavigationService.CacheKeyToChatId[cacheKey];
+                CurrentPageCacheKey = cacheKey;
+            }
+
             var args = new NavigatedEventArgs(e, Content as Page);
+
             if (NavigationModeHint != NavigationMode.New)
                 args.NavigationMode = NavigationModeHint;
+
             NavigationModeHint = NavigationMode.New;
+
             foreach (var handler in _navigatedEventHandlers)
             {
-                handler(this, args);
+                handler(Frame, args);
             }
         }
 
@@ -300,22 +316,25 @@ namespace Unigram.Navigation.Services
         {
             DebugWrite();
 
-            object parameter = null;
-            try
+            var parameter = e.Parameter;
+            if (parameter is string cacheKey && e.SourcePageType == typeof(ChatPage))
             {
-                parameter = SerializationService.Deserialize(e.Parameter?.ToString());
+                parameter = NavigationService.CacheKeyToChatId[cacheKey];
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Your parameter must be serializable. If it isn't, then use SessionState.", ex);
-            }
+
             var args = new NavigatingEventArgs(e, Content as Page, e.SourcePageType, parameter, e.Parameter);
+
             if (NavigationModeHint != NavigationMode.New)
                 args.NavigationMode = NavigationModeHint;
+
             NavigationModeHint = NavigationMode.New;
-            _navigatingEventHandlers.ForEach(x => x(this, args));
+
+            foreach (var handler in _navigatingEventHandlers)
+            {
+                handler(Frame, args);
+            }
+
             e.Cancel = args.Cancel;
         }
     }
-
 }
