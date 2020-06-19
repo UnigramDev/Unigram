@@ -21,6 +21,7 @@ namespace Unigram.Controls.Chats
         public ItemsStackPanel ItemsStack { get; private set; }
 
         private DisposableMutex _loadMoreLock = new DisposableMutex();
+        private bool _loadingMore = false;
 
         public ChatListView()
         {
@@ -56,6 +57,8 @@ namespace Unigram.Controls.Chats
                 SetScrollMode();
             }
 
+            _loadingMore = true;
+
             using (await _loadMoreLock.WaitAsync())
             {
                 if (ScrollingHost.ScrollableHeight < 200 && Items.Count > 0)
@@ -68,6 +71,8 @@ namespace Unigram.Controls.Chats
                     await ViewModel.LoadNextSliceAsync(false, true);
                 }
             }
+
+            _loadingMore = false;
         }
 
         protected override void OnApplyTemplate()
@@ -80,6 +85,8 @@ namespace Unigram.Controls.Chats
 
         private async void Panel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            _loadingMore = true;
+
             using (await _loadMoreLock.WaitAsync())
             {
                 if (ScrollingHost.ScrollableHeight < 200)
@@ -95,24 +102,29 @@ namespace Unigram.Controls.Chats
                     }
                 }
             }
+
+            _loadingMore = false;
         }
 
         private async void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (ScrollingHost == null || ItemsStack == null || ViewModel == null)
+            if (ScrollingHost == null || ItemsStack == null || ViewModel == null || _loadingMore)
             {
                 return;
             }
+
+            _loadingMore = true;
 
             //if (ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
             //if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
             using (await _loadMoreLock.WaitAsync())
             {
-                if (ItemsStack.FirstCacheIndex == 0 && ViewModel.IsLastSliceLoaded != true && !e.IsIntermediate)
+                if (ItemsStack.FirstCacheIndex == 0 && ViewModel.IsLastSliceLoaded != true)
                 {
                     await ViewModel.LoadNextSliceAsync(true);
                 }
-                else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
+                //else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0)
+                else if (ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
                 {
                     if (ViewModel.IsFirstSliceLoaded != true)
                     {
@@ -125,6 +137,8 @@ namespace Unigram.Controls.Chats
                     }
                 }
             }
+
+            _loadingMore = false;
         }
 
         private ItemsUpdatingScrollMode? _pendingMode;
