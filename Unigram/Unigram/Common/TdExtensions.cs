@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
@@ -1097,14 +1098,18 @@ namespace Unigram.Common
                 return null;
             }
 
+            Monitor.Enter(chat);
+
             for (int i = 0; i < chat.Positions.Count; i++)
             {
                 if (chat.Positions[i].List.ListEquals(chatList))
                 {
+                    Monitor.Exit(chat);
                     return chat.Positions[i];
                 }
             }
 
+            Monitor.Exit(chat);
             return null;
         }
 
@@ -1115,14 +1120,18 @@ namespace Unigram.Common
                 return 0;
             }
 
+            Monitor.Enter(chat);
+
             for (int i = 0; i < chat.Positions.Count; i++)
             {
                 if (chat.Positions[i].List.ListEquals(chatList))
                 {
+                    Monitor.Exit(chat);
                     return chat.Positions[i].Order;
                 }
             }
 
+            Monitor.Exit(chat);
             return 0;
         }
 
