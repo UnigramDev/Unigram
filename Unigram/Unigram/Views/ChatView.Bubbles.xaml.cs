@@ -496,7 +496,7 @@ namespace Unigram.Views
                     presenter.AutoPlay = true;
                     presenter.IsLoopingEnabled = true;
                     presenter.IsHitTestVisible = false;
-                    presenter.Source = new Uri("file:///" + data.File.Local.Path);
+                    presenter.Source = UriEx.GetLocal(data.File.Local.Path);
 
                     //if (data.Clip && ApiInformation.IsTypePresent("Windows.UI.Composition.CompositionGeometricClip"))
                     //{

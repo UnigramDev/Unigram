@@ -921,4 +921,17 @@ namespace Unigram.Common
         public static IDispatcherWrapper GetDispatcherWrapper(this INavigationService service)
             => service.GetWindowWrapper()?.Dispatcher;
     }
+
+    public static class UriEx
+    {
+        public static Uri GetLocal(string path)
+        {
+            return new Uri("file:///" + Uri.EscapeUriString(path.Replace('\\', '/')));
+
+            var directory = Path.GetDirectoryName(path);
+            var file = Path.GetFileName(path);
+
+            return new Uri("file:///" + directory + "\\" + Uri.EscapeUriString(file));
+        }
+    }
 }
