@@ -173,6 +173,8 @@ namespace Unigram.Common
                 {
                     if (Frame.Content is ChatPage chatPage && !scheduled && !force)
                     {
+                        chatPage.ViewModel.OnNavigatingFrom(null);
+
                         chatPage.Dispose();
                         chatPage.Activate();
                         chatPage.ViewModel.NavigationService = this;

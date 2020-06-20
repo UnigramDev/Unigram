@@ -1987,10 +1987,7 @@ namespace Unigram.ViewModels
                 Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, exception", chat.Id));
             }
 
-            if (Dispatcher != null)
-            {
-                Dispatcher.Dispatch(SaveDraft);
-            }
+            SaveDraft();
         }
 
         private void ShowSwitchInline(IDictionary<string, object> state)
