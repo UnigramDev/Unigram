@@ -948,21 +948,6 @@ namespace Unigram.Common
                     return true;
                 // Local types:
                 case MessageChatEvent chatEvent:
-                    if (chatEvent.IsFull)
-                    {
-                        switch (chatEvent.Event.Action)
-                        {
-                            case ChatEventMessageDeleted messageDeleted:
-                                return messageDeleted.Message.IsService();
-                            case ChatEventMessageEdited messageEdited:
-                                return messageEdited.NewMessage.IsService();
-                            case ChatEventMessagePinned messagePinned:
-                                return messagePinned.Message.IsService();
-                            case ChatEventPollStopped pollStopped:
-                                return pollStopped.Message.IsService();
-                        }
-                    }
-                    return true;
                 case MessageHeaderDate headerDate:
                 case MessageHeaderUnread headerUnread:
                     return true;
@@ -1777,10 +1762,6 @@ namespace Unigram.Common
                     return voiceNote.UpdateFile(file);
                 case MessageChatChangePhoto chatChangePhoto:
                     return chatChangePhoto.UpdateFile(file);
-
-                case MessageChatEvent chatEvent:
-                    return chatEvent.UpdateFile(file);
-
                 default:
                     return false;
             }
@@ -2142,28 +2123,6 @@ namespace Unigram.Common
             return chatChangePhoto.Photo.UpdateFile(file);
         }
 
-        public static bool UpdateFile(this MessageChatEvent chatEvent, File file)
-        {
-            if (chatEvent.Event.Action is ChatEventMessageDeleted messageDeleted)
-            {
-                return messageDeleted.Message.UpdateFile(file);
-            }
-            else if (chatEvent.Event.Action is ChatEventMessageEdited messageEdited)
-            {
-                return messageEdited.NewMessage.UpdateFile(file);
-            }
-            else if (chatEvent.Event.Action is ChatEventMessagePinned messagePinned)
-            {
-                return messagePinned.Message.UpdateFile(file);
-            }
-            else if (chatEvent.Event.Action is ChatEventPollStopped pollStopped)
-            {
-                return pollStopped.Message.UpdateFile(file);
-            }
-
-            return false;
-        }
-
 
 
         public static void Update(this File file, File update)
@@ -2223,13 +2182,32 @@ namespace Telegram.Td.Api
 
     public class MessageChatEvent : MessageContent
     {
-        public ChatEvent Event { get; set; }
-        public bool IsFull { get; set; }
+        /// <summary>
+        /// Action performed by the user.
+        /// </summary>
+        public ChatEventAction Action { get; set; }
 
-        public MessageChatEvent(ChatEvent chatEvent, bool isFull)
+        /// <summary>
+        /// Identifier of the user who performed the action that triggered the event.
+        /// </summary>
+        public int UserId { get; set; }
+
+        /// <summary>
+        /// Point in time (Unix timestamp) when the event happened.
+        /// </summary>
+        public int Date { get; set; }
+
+        /// <summary>
+        /// Chat event identifier.
+        /// </summary>
+        public long Id { get; set; }
+
+        public MessageChatEvent(ChatEvent chatEvent)
         {
-            Event = chatEvent;
-            IsFull = isFull;
+            Action = chatEvent.Action;
+            UserId = chatEvent.UserId;
+            Date = chatEvent.Date;
+            Id = chatEvent.Id;
         }
 
         public NativeObject ToUnmanaged()

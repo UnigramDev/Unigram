@@ -3247,7 +3247,7 @@ namespace Unigram.Views
 
         public void UpdateChatUnreadMentionCount(Chat chat, int count)
         {
-            if (count > 0)
+            if (ViewModel.Type == DialogType.Normal && count > 0)
             {
                 MentionsPanel.Visibility = Visibility.Visible;
                 Mentions.Text = count.ToString();

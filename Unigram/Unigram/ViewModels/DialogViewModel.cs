@@ -600,7 +600,7 @@ namespace Unigram.ViewModels
 
         protected Stack<long> _goBackStack = new Stack<long>();
 
-        public async Task LoadNextSliceAsync(bool force = false, bool init = false)
+        public async virtual Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
@@ -800,7 +800,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task AddHeaderAsync()
+        protected async Task AddHeaderAsync()
         {
             var previous = Items.FirstOrDefault();
             if (previous != null && (previous.Content is MessageHeaderDate || previous.Id == 0))
@@ -809,7 +809,7 @@ namespace Unigram.ViewModels
             }
 
             var chat = _chat;
-            if (chat == null)
+            if (chat == null || _type != DialogType.Normal)
             {
                 goto AddDate;
             }
@@ -949,7 +949,19 @@ namespace Unigram.ViewModels
         public RelayCommand PreviousSliceCommand { get; }
         private async void PreviousSliceExecute()
         {
-            if (_goBackStack.Count > 0)
+            if (_type == DialogType.ScheduledMessages || _type == DialogType.EventLog)
+            {
+                var already = Items.LastOrDefault();
+                if (already != null)
+                {
+                    var field = ListField;
+                    if (field != null)
+                    {
+                        await field.ScrollToItem(already, VerticalAlignment.Bottom, false, int.MaxValue, ScrollIntoViewAlignment.Leading, false);
+                    }
+                }
+            }
+            else if (_goBackStack.Count > 0)
             {
                 await LoadMessageSliceAsync(null, _goBackStack.Pop());
             }
@@ -1320,25 +1332,6 @@ namespace Unigram.ViewModels
                 {
                     ProcessFiles(chat, albumMessage.Layout.Messages, message);
                     continue;
-                }
-                else if (content is MessageChatEvent chatEvent)
-                {
-                    if (chatEvent.Event.Action is ChatEventMessageDeleted messageDeleted)
-                    {
-                        content = messageDeleted.Message.Content;
-                    }
-                    else if (chatEvent.Event.Action is ChatEventMessageEdited messageEdited)
-                    {
-                        content = messageEdited.NewMessage.Content;
-                    }
-                    else if (chatEvent.Event.Action is ChatEventMessagePinned messagePinned)
-                    {
-                        content = messagePinned.Message.Content;
-                    }
-                    else if (chatEvent.Event.Action is ChatEventPollStopped pollStopped)
-                    {
-                        content = pollStopped.Message.Content;
-                    }
                 }
 
                 if (content is MessageAnimation animationMessage)

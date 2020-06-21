@@ -68,6 +68,11 @@ namespace Unigram.Common
             return _inner.ContainsKey(key);
         }
 
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            return _inner.TryGetValue(key, out value);
+        }
+
         public void CopyTo(TValue[] array, int arrayIndex)
         {
             throw new NotImplementedException();

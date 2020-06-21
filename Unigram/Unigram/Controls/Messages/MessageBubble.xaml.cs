@@ -280,42 +280,8 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void MaybeUseInner(ref MessageViewModel message)
-        {
-            if (message.Content is MessageChatEvent chatEvent)
-            {
-                if (chatEvent.Event.Action is ChatEventMessageDeleted messageDeleted)
-                {
-                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageDeleted.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
-                }
-                else if (chatEvent.Event.Action is ChatEventMessageEdited messageEdited)
-                {
-                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageEdited.NewMessage) { IsFirst = true, IsLast = true, IsOutgoing = false };
-                    
-                    if (message.Content is MessageText editedText && messageEdited.OldMessage.Content is MessageText oldText)
-                    {
-                        editedText.WebPage = new WebPage
-                        {
-                            SiteName = Strings.Resources.EventLogOriginalMessages,
-                            Description = oldText.Text
-                        };
-                    }
-                }
-                else if (chatEvent.Event.Action is ChatEventMessagePinned messagePinned)
-                {
-                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
-                }
-                else if (chatEvent.Event.Action is ChatEventPollStopped pollStopped)
-                {
-                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, pollStopped.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
-                }
-            }
-        }
-
         public void UpdateMessageHeader(MessageViewModel message)
         {
-            MaybeUseInner(ref message);
-
             var paragraph = HeaderLabel;
             var admin = AdminLabel;
             var parent = Header;
@@ -636,8 +602,6 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageContent(MessageViewModel message, bool padding = false)
         {
-            MaybeUseInner(ref message);
-
             string display = null;
 
             //if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
@@ -877,8 +841,6 @@ namespace Unigram.Controls.Messages
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            MaybeUseInner(ref message);
-
             if (Media.Child is IContentWithFile content)
             {
                 content.UpdateFile(message, file);

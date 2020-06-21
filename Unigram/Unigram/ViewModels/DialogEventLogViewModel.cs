@@ -25,6 +25,8 @@ namespace Unigram.ViewModels
 
         public override DialogType Type => DialogType.EventLog;
 
+        private long _minEventId = long.MaxValue;
+
         private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true);
         public ChatEventLogFilters Filters
         {
@@ -147,7 +149,7 @@ namespace Unigram.ViewModels
 
                     Items.ReplaceWith(replied);
 
-                    IsLastSliceLoaded = true;
+                    IsLastSliceLoaded = false;
                     IsFirstSliceLoaded = true;
                 }
 
@@ -167,9 +169,89 @@ namespace Unigram.ViewModels
             }
         }
 
+        public async override Task LoadNextSliceAsync(bool force = false, bool init = false)
+        {
+            using (await _loadMoreLock.WaitAsync())
+            {
+                try
+                {
+                    // We don't want to flood with requests when the chat gets initialized
+                    if (init && ListField?.ScrollingHost?.ScrollableHeight >= 200)
+                    {
+                        return;
+                    }
+                }
+                catch { }
+
+                var chat = _migratedChat ?? _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
+                {
+                    return;
+                }
+
+                _isLoadingNextSlice = true;
+                IsLoading = true;
+
+                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
+                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
+
+                var response = await ProtoService.SendAsync(new GetChatEventLog(chat.Id, string.Empty, _minEventId, 50, _filters, _userIds));
+                if (response is ChatEvents events)
+                {
+                    if (events.Events.Count > 0)
+                    {
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
+                    }
+
+                    var replied = ProcessEvents(events);
+                    await ProcessMessagesAsync(chat, replied);
+
+                    foreach (var message in replied)
+                    {
+                        Items.Insert(0, message);
+                    }
+
+                    IsLastSliceLoaded = replied.IsEmpty();
+
+                    if (replied.IsEmpty())
+                    {
+                        await AddHeaderAsync();
+                    }
+                }
+
+                _isLoadingNextSlice = false;
+                IsLoading = false;
+            }
+        }
+
         private Message CreateMessage(long chatId, bool isChannel, ChatEvent chatEvent)
         {
-            return new Message(chatEvent.Id, chatEvent.UserId, chatId, null, null, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, 0, 0, 0.0d, 0, string.Empty, 0, 0, string.Empty, null, null);
+            var userId = chatEvent.UserId;
+
+            if (chatEvent.Action is ChatEventMessageDeleted messageDeleted)
+            {
+                userId = messageDeleted.Message.SenderUserId;
+            }
+            else if (chatEvent.Action is ChatEventMessageEdited messageEdited)
+            {
+                userId = messageEdited.NewMessage.SenderUserId;
+            }
+            else if (chatEvent.Action is ChatEventMessagePinned messagePinned)
+            {
+                userId = messagePinned.Message.SenderUserId;
+            }
+            else if (chatEvent.Action is ChatEventPollStopped pollStopped)
+            {
+                userId = pollStopped.Message.SenderUserId;
+            }
+
+            return new Message(chatEvent.Id, userId, chatId, null, null, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, 0, 0, 0.0d, 0, string.Empty, 0, 0, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent)
@@ -188,7 +270,7 @@ namespace Unigram.ViewModels
 
             foreach (var item in events.Events)
             {
-                //_minEventId = Math.Min(_minEventId, item.Id);
+                _minEventId = Math.Min(_minEventId, item.Id);
 
                 MessageViewModel message = null;
                 switch (item.Action)
@@ -213,7 +295,7 @@ namespace Unigram.ViewModels
                     case ChatEventLinkedChatChanged linkedChatChanged:
                     case ChatEventLocationChanged locationChanged:
                         message = GetMessage(_chat.Id, channel, item);
-                        message.Content = new MessageChatEvent(item, false);
+                        message.Content = new MessageChatEvent(item);
                         break;
                     case ChatEventMemberLeft memberLeft:
                         message = GetMessage(_chat.Id, channel, item);
@@ -230,7 +312,7 @@ namespace Unigram.ViewModels
                         message.Content = GetMessageContent(item, channel);
                         result.Add(message);
                         message = GetMessage(_chat.Id, channel, item);
-                        message.Content = new MessageChatEvent(item, false);
+                        message.Content = new MessageChatEvent(item);
                         break;
                     case ChatEventPhotoChanged photoChanged:
                         message = GetMessage(_chat.Id, channel, item);
@@ -251,7 +333,6 @@ namespace Unigram.ViewModels
                         message.Content = new MessageChatChangeTitle(titleChanged.NewTitle);
                         break;
                 }
-
 
                 if (message != null)
                 {
@@ -538,11 +619,18 @@ namespace Unigram.ViewModels
             {
                 var entities = new List<TextEntity>();
 
-                var whoUser = CacheService.GetUser(memberPromoted.UserId);
-                var str = Strings.Resources.EventLogPromoted;
+                var whoUser =  CacheService.GetUser(memberPromoted.UserId);
+                var str = memberPromoted.NewStatus is ChatMemberStatusCreator
+                    ? Strings.Resources.EventLogChangedOwnership
+                    : Strings.Resources.EventLogPromoted;
                 var userName = GetUserName(whoUser, entities, str.IndexOf("{0}"));
                 var builder = new StringBuilder(string.Format(str, userName));
                 var added = false;
+
+                if (memberPromoted.NewStatus is ChatMemberStatusCreator)
+                {
+                    return new MessageText(new FormattedText(builder.ToString(), entities), null);
+                }
 
                 ChatMemberStatusAdministrator o = null;
                 ChatMemberStatusAdministrator n = null;
@@ -563,6 +651,26 @@ namespace Unigram.ViewModels
                 if (n == null)
                 {
                     n = new ChatMemberStatusAdministrator();
+                }
+
+                if (!string.Equals(o.CustomTitle, n.CustomTitle))
+                {
+                    if (!added)
+                    {
+                        builder.Append('\n');
+                        added = true;
+                    }
+
+                    if (string.IsNullOrEmpty(n.CustomTitle))
+                    {
+                        builder.Append('\n').Append('-').Append(' ');
+                        builder.Append(Strings.Resources.EventLogPromotedRemovedTitle);
+                    }
+                    else
+                    {
+                        builder.Append('\n').Append('+').Append(' ');
+                        builder.AppendFormat(Strings.Resources.EventLogPromotedTitle, n.CustomTitle);
+                    }
                 }
 
                 void AppendChange(bool value, string label)
@@ -622,8 +730,33 @@ namespace Unigram.ViewModels
 
                 return new MessageText(new FormattedText(builder.ToString(), entities), null);
             }
+            else if (item.Action is ChatEventMessageDeleted messageDeleted)
+            {
+                return messageDeleted.Message.Content;
+            }
+            else if (item.Action is ChatEventMessageEdited messageEdited)
+            {
+                if (messageEdited.NewMessage.Content is MessageText editedText && messageEdited.OldMessage.Content is MessageText oldText)
+                {
+                    editedText.WebPage = new WebPage
+                    {
+                        SiteName = Strings.Resources.EventLogOriginalMessages,
+                        Description = oldText.Text
+                    };
+                }
 
-            return new MessageChatEvent(item, true);
+                return messageEdited.NewMessage.Content;
+            }
+            else if (item.Action is ChatEventMessagePinned messagePinned)
+            {
+                return messagePinned.Message.Content;
+            }
+            else if (item.Action is ChatEventPollStopped pollStopped)
+            {
+                return pollStopped.Message.Content;
+            }
+
+            return new MessageChatEvent(item);
         }
 
         private string GetUserName(User user, List<TextEntity> entities, int offset)

@@ -383,7 +383,7 @@ namespace Unigram.ViewModels
                 return message.SchedulingState != null;
             }
 
-            return message.SchedulingState == null;
+            return message.SchedulingState == null && _type == DialogType.Normal;
         }
 
         public void Handle(UpdateNewMessage update)
@@ -557,7 +557,7 @@ namespace Unigram.ViewModels
                 Handle(update.MessageId, message =>
                 {
                     message.ContainsUnreadMention = false;
-                }, (bubble, message) => { });
+                });
 
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadMentionCount(_chat, update.UnreadMentionCount));
             }
@@ -645,40 +645,15 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action)
+        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action = null)
         {
             BeginOnUIThread(async () =>
             {
-                //var message = Items.FirstOrDefault(x => x.Id == messageId);
-                //if (message == null)
-                //{
-                //    return;
-                //}
-
-                //update(message);
-
                 var field = ListField;
                 if (field == null)
                 {
                     return;
                 }
-
-                //var container = field.ContainerFromItem(message) as ListViewItem;
-                //if (container == null)
-                //{
-                //    return;
-                //}
-
-                //var content = container.ContentTemplateRoot as FrameworkElement;
-                //if (content is Grid grid)
-                //{
-                //    content = grid.FindName("Bubble") as FrameworkElement;
-                //}
-
-                //if (content is MessageBubble bubble)
-                //{
-                //    action(bubble, message);
-                //}
 
                 using (await _insertLock.WaitAsync())
                 {
@@ -689,34 +664,34 @@ namespace Unigram.ViewModels
                         {
                             var found = false;
 
-                            foreach (var child in album.Layout.Messages)
+                            if (album.Layout.Messages.TryGetValue(messageId, out MessageViewModel child))
                             {
-                                if (child.Id == messageId)
+                                update(child);
+                                found = true;
+
+                                message.UpdateWith(album.Layout.Messages[0]);
+                                album.Layout.Calculate();
+
+                                if (action == null)
                                 {
-                                    update(child);
-                                    found = true;
-
-                                    message.UpdateWith(album.Layout.Messages[0]);
-                                    album.Layout.Calculate();
-
-                                    var container = field.ContainerFromItem(message) as ListViewItem;
-                                    if (container == null)
-                                    {
-                                        break;
-                                    }
-
-                                    var content = container.ContentTemplateRoot as FrameworkElement;
-                                    if (content is MessageBubble == false)
-                                    {
-                                        content = content.FindName("Bubble") as FrameworkElement;
-                                    }
-
-                                    if (content is MessageBubble bubble)
-                                    {
-                                        action(bubble, message);
-                                    }
-
                                     break;
+                                }
+
+                                var container = field.ContainerFromItem(message) as ListViewItem;
+                                if (container == null)
+                                {
+                                    break;
+                                }
+
+                                var content = container.ContentTemplateRoot as FrameworkElement;
+                                if (content is MessageBubble == false)
+                                {
+                                    content = content.FindName("Bubble") as FrameworkElement;
+                                }
+
+                                if (content is MessageBubble bubble)
+                                {
+                                    action(bubble, message);
                                 }
                             }
 
@@ -729,6 +704,11 @@ namespace Unigram.ViewModels
                         if (message.Id == messageId)
                         {
                             update(message);
+
+                            if (action == null)
+                            {
+                                return;
+                            }
 
                             var container = field.ContainerFromItem(message) as ListViewItem;
                             if (container == null)
