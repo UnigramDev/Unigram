@@ -66,6 +66,7 @@ namespace Unigram.Views.Popups
                 var headered = args.Element as HeaderedControl;
                 headered.Header = $"{option.Text} — {option.VotePercentage}%";
                 headered.Footer = Locale.Declension(option.Type is PollTypeQuiz ? "Answer" : "Vote", option.VoterCount);
+                headered.Visibility = option.VoterCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
