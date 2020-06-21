@@ -31,6 +31,7 @@
             SelectionMode="None">
             <ListView.Header>
                 <controls:HeaderedControl
+                    x:Name="HeaderPanel"
                     Margin="0,0,0,16">
                     <controls:BadgeButton
                         x:Name="EventLog"
