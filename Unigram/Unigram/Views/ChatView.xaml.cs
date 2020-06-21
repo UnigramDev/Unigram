@@ -534,6 +534,10 @@ namespace Unigram.Views
             TextField.IsTextPredictionEnabled = SettingsService.Current.AutocorrectWords;
             TextField.IsSpellCheckEnabled = SettingsService.Current.HighlightWords;
             TextField.Focus(FocusState.Programmatic);
+
+            Options.Visibility = ViewModel.Type == DialogType.Normal
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -3065,7 +3069,6 @@ namespace Unigram.Views
             ButtonSilent.IsChecked = chat.DefaultDisableNotification;
 
             Call.Visibility = Visibility.Collapsed;
-            CallPlaceholder.Visibility = Visibility.Collapsed;
 
             UpdateChatPermissions(chat);
         }
@@ -3799,7 +3802,6 @@ namespace Unigram.Views
             }
 
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
-            CallPlaceholder.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateUserStatus(Chat chat, User user)
