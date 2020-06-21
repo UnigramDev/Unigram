@@ -10,6 +10,7 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.Views.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
@@ -38,6 +39,29 @@ namespace Unigram.ViewModels
             set => Set(ref _userIds, value);
         }
 
+        public override string Subtitle
+        {
+            get
+            {
+                if (_filters.InfoChanges &&
+                    _filters.MemberInvites &&
+                    _filters.MemberJoins &&
+                    _filters.MemberLeaves &&
+                    _filters.MemberPromotions &&
+                    _filters.MemberRestrictions &&
+                    _filters.MessageDeletions &&
+                    _filters.MessageEdits &&
+                    _filters.MessagePins &&
+                    _filters.SettingChanges &&
+                    _userIds.IsEmpty())
+                {
+                    return Strings.Resources.EventLogAllEvents;
+                }
+
+                return Strings.Resources.EventLogSelectedEvents;
+            }
+        }
+
         protected override async void FilterExecute()
         {
             var chat = _chat;
@@ -60,6 +84,8 @@ namespace Unigram.ViewModels
                 Filters = dialog.Filters;
                 UserIds = dialog.UserIds;
 
+                RaisePropertyChanged(() => Subtitle);
+
                 await LoadEventLogSliceAsync();
             }
         }
@@ -76,7 +102,7 @@ namespace Unigram.ViewModels
             await MessagePopup.ShowAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.Resources.EventLogInfoDetailChannel : Strings.Resources.EventLogInfoDetail, Strings.Resources.EventLogInfoTitle, Strings.Resources.OK);
         }
 
-        public override async Task LoadEventLogSliceAsync()
+        public override async Task LoadEventLogSliceAsync(string query = "")
         {
             using (await _loadMoreLock.WaitAsync())
             {
@@ -99,7 +125,7 @@ namespace Unigram.ViewModels
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadScheduledSliceAsync");
 
-                var response = await ProtoService.SendAsync(new GetChatEventLog(chat.Id, string.Empty, 0, 50, _filters, _userIds));
+                var response = await ProtoService.SendAsync(new GetChatEventLog(chat.Id, query, 0, 50, _filters, _userIds));
                 if (response is ChatEvents events)
                 {
                     _groupedMessages.Clear();
@@ -128,6 +154,16 @@ namespace Unigram.ViewModels
                 _isLoadingNextSlice = false;
                 _isLoadingPreviousSlice = false;
                 IsLoading = false;
+            }
+
+            var already = Items.LastOrDefault();
+            if (already != null)
+            {
+                var field = ListField;
+                if (field != null)
+                {
+                    await field.ScrollToItem(already, VerticalAlignment.Bottom, false, int.MaxValue, ScrollIntoViewAlignment.Leading, true);
+                }
             }
         }
 

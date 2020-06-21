@@ -2,6 +2,7 @@
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Windows.Foundation.Metadata;
 using Windows.UI.Core;
@@ -41,6 +42,13 @@ namespace Unigram.Controls.Chats
             Field.From = null;
             Field.Filter = null;
             Field.State = ChatSearchState.Text;
+
+            if (viewModel != null)
+            {
+                SearchPrevious.Visibility = viewModel.Dialog.Type != DialogType.Normal ? Visibility.Collapsed : Visibility.Visible;
+                SearchNext.Visibility = viewModel.Dialog.Type != DialogType.Normal ? Visibility.Collapsed : Visibility.Visible;
+                ToolsPanel.Visibility = viewModel.Dialog.Type != DialogType.Normal ? Visibility.Collapsed : Visibility.Visible;
+            }
 
             ShowHide(viewModel != null);
         }
@@ -271,7 +279,7 @@ namespace Unigram.Controls.Chats
                     ViewModel.Autocomplete = null;
                     break;
                 default:
-                    ToolsPanel.Visibility = Visibility.Visible;
+                    ToolsPanel.Visibility = ViewModel.Dialog.Type != DialogType.Normal ? Visibility.Collapsed : Visibility.Visible;
                     ViewModel.Autocomplete = null;
                     break;
             }

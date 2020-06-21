@@ -174,7 +174,11 @@ namespace Unigram.ViewModels.Chats
 
         public async void Search(string query, User from, SearchMessagesFilter filter)
         {
-            if (string.Equals(_query, query) && _from?.Id == from?.Id && _filter?.GetType() == filter?.GetType() && PreviousCanExecute())
+            if (Dialog.Type == DialogType.EventLog)
+            {
+                await Dialog.LoadEventLogSliceAsync(query);
+            }
+            else if (string.Equals(_query, query) && _from?.Id == from?.Id && _filter?.GetType() == filter?.GetType() && PreviousCanExecute())
             {
                 PreviousExecute();
             }
