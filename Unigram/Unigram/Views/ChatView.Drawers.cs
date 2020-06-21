@@ -27,7 +27,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, (Sticker)sticker, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Favorite });
             }
 
-            if (!ViewModel.IsSchedule)
+            if (ViewModel.Type == ViewModels.DialogType.Normal)
             {
                 var chat = ViewModel.Chat;
                 if (chat == null)
@@ -61,7 +61,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.AnimationSaveCommand, animation, Strings.Resources.SaveToGIFs, new FontIcon { Glyph = Icons.Animations });
             }
 
-            if (!ViewModel.IsSchedule)
+            if (ViewModel.Type == ViewModels.DialogType.Normal)
             {
                 var chat = ViewModel.Chat;
                 if (chat == null)

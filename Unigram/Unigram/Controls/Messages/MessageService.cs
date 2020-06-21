@@ -118,7 +118,7 @@ namespace Unigram.Controls.Messages
                         case ChatEventUsernameChanged usernameChanged:
                             return UpdateUsernameChanged(message, usernameChanged, active);
                         case ChatEventPollStopped pollStopped:
-                            return UpdatePollStopped(message, pollStopped, active);
+                            return UpdatePollStopped(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, pollStopped.Message), pollStopped, active);
                         case ChatEventSlowModeDelayChanged slowModeDelayChanged:
                             return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
                         default:

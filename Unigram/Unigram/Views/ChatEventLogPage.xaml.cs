@@ -6,16 +6,16 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatScheduledPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
+    public sealed partial class ChatEventLogPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
     {
-        public DialogScheduledViewModel ViewModel => DataContext as DialogScheduledViewModel;
+        public DialogEventLogViewModel ViewModel => DataContext as DialogEventLogViewModel;
         public ChatView View => Content as ChatView;
 
-        public ChatScheduledPage()
+        public ChatEventLogPage()
         {
             InitializeComponent();
 
-            Content = new ChatView(deleg => (DataContext = TLContainer.Current.Resolve<DialogScheduledViewModel, IDialogDelegate>(deleg)) as DialogScheduledViewModel);
+            Content = new ChatView(deleg => (DataContext = TLContainer.Current.Resolve<DialogEventLogViewModel, IDialogDelegate>(deleg)) as DialogEventLogViewModel);
             Header = View.Header;
             NavigationCacheMode = NavigationCacheMode.Required;
         }

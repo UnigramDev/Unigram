@@ -172,7 +172,7 @@ namespace Unigram.ViewModels
             //    return true;
             //}
             //else 
-            if (message.Content is MessageSticker)
+            if (message.Content is MessageSticker || message.Content is MessageChatEvent)
             {
                 return false;
             }

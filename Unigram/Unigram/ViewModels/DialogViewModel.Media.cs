@@ -264,7 +264,7 @@ namespace Unigram.ViewModels
 
             var self = CacheService.IsSavedMessages(_chat);
 
-            var dialog = new SendFilesPopup(items, media, _chat.Type is ChatTypePrivate && !self, !_isSchedule, self);
+            var dialog = new SendFilesPopup(items, media, _chat.Type is ChatTypePrivate && !self, _type == DialogType.Normal, self);
             dialog.ViewModel = this;
             dialog.Caption = caption;
 
@@ -560,7 +560,7 @@ namespace Unigram.ViewModels
                 return null;
             }
 
-            if (schedule == true || (_isSchedule && schedule == null))
+            if (schedule == true || (_type == DialogType.ScheduledMessages && schedule == null))
             {
                 var user = CacheService.GetUser(chat);
 

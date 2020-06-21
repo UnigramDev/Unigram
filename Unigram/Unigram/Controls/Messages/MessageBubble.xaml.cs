@@ -291,6 +291,15 @@ namespace Unigram.Controls.Messages
                 else if (chatEvent.Event.Action is ChatEventMessageEdited messageEdited)
                 {
                     message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageEdited.NewMessage) { IsFirst = true, IsLast = true, IsOutgoing = false };
+                    
+                    if (message.Content is MessageText editedText && messageEdited.OldMessage.Content is MessageText oldText)
+                    {
+                        editedText.WebPage = new WebPage
+                        {
+                            SiteName = Strings.Resources.EventLogOriginalMessages,
+                            Description = oldText.Text
+                        };
+                    }
                 }
                 else if (chatEvent.Event.Action is ChatEventMessagePinned messagePinned)
                 {
@@ -868,6 +877,8 @@ namespace Unigram.Controls.Messages
 
         public void UpdateFile(MessageViewModel message, File file)
         {
+            MaybeUseInner(ref message);
+
             if (Media.Child is IContentWithFile content)
             {
                 content.UpdateFile(message, file);
@@ -935,10 +946,10 @@ namespace Unigram.Controls.Messages
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
 
             _placeholderVertical = adjust;
-            //if (adjust)
-            //{
-            //    Span.Inlines.Add(new LineBreak());
-            //}
+            if (adjust)
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
         }
 
         private bool GetEntities(MessageViewModel message, Span span, string text, out bool adjust)
@@ -1282,9 +1293,9 @@ namespace Unigram.Controls.Messages
                 var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
 
                 var diff = width - rect.Right;
-                if (diff < footerWidth || _placeholderVertical)
+                if (diff < footerWidth /*|| _placeholderVertical*/)
                 {
-                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right && !_placeholderVertical)
+                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right /*&& !_placeholderVertical*/)
                     {
                         Message.Margin = new Thickness(0, 0, footerWidth, 0);
                     }

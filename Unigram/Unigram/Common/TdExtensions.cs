@@ -885,12 +885,12 @@ namespace Unigram.Common
                 }
             }
 
-            return false;
+            return webPage.Photo != null;
         }
 
         public static bool IsSmallPhoto(this WebPage webPage)
         {
-            if (webPage.Photo != null)
+            if (webPage.Photo != null && (webPage.SiteName.Length > 0 || webPage.Title.Length > 0 || webPage.Author.Length > 0 || webPage.Description?.Text.Length > 0))
             {
                 return !webPage.IsMedia();
             }
@@ -1777,6 +1777,10 @@ namespace Unigram.Common
                     return voiceNote.UpdateFile(file);
                 case MessageChatChangePhoto chatChangePhoto:
                     return chatChangePhoto.UpdateFile(file);
+
+                case MessageChatEvent chatEvent:
+                    return chatEvent.UpdateFile(file);
+
                 default:
                     return false;
             }
@@ -2136,6 +2140,28 @@ namespace Unigram.Common
         public static bool UpdateFile(this MessageChatChangePhoto chatChangePhoto, File file)
         {
             return chatChangePhoto.Photo.UpdateFile(file);
+        }
+
+        public static bool UpdateFile(this MessageChatEvent chatEvent, File file)
+        {
+            if (chatEvent.Event.Action is ChatEventMessageDeleted messageDeleted)
+            {
+                return messageDeleted.Message.UpdateFile(file);
+            }
+            else if (chatEvent.Event.Action is ChatEventMessageEdited messageEdited)
+            {
+                return messageEdited.NewMessage.UpdateFile(file);
+            }
+            else if (chatEvent.Event.Action is ChatEventMessagePinned messagePinned)
+            {
+                return messagePinned.Message.UpdateFile(file);
+            }
+            else if (chatEvent.Event.Action is ChatEventPollStopped pollStopped)
+            {
+                return pollStopped.Message.UpdateFile(file);
+            }
+
+            return false;
         }
 
 

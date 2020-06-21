@@ -378,7 +378,7 @@ namespace Unigram.ViewModels
 
         private bool CheckSchedulingState(Message message)
         {
-            if (_isSchedule)
+            if (_type == DialogType.ScheduledMessages)
             {
                 return message.SchedulingState != null;
             }
@@ -451,8 +451,6 @@ namespace Unigram.ViewModels
                             {
                                 Items.RemoveAt(i);
                                 i--;
-
-                                break;
                             }
                             else if (table.Contains(message.ReplyToMessageId))
                             {
@@ -885,7 +883,7 @@ namespace Unigram.ViewModels
 
                 //if (IsEndReached())
                 //if (endReached || IsEndReached())
-                if (IsFirstSliceLoaded == true || IsSchedule)
+                if (IsFirstSliceLoaded == true || Type == DialogType.ScheduledMessages)
                 {
                     var messageCommon = _messageFactory.Create(this, message);
                     messageCommon.GeneratedContentUnread = true;

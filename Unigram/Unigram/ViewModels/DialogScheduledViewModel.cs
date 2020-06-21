@@ -10,6 +10,6 @@ namespace Unigram.ViewModels
         {
         }
 
-        public override bool IsSchedule => true;
+        public override DialogType Type => DialogType.ScheduledMessages;
     }
 }

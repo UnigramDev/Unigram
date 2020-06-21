@@ -69,22 +69,22 @@ namespace Unigram.ViewModels
             SelectedItems = messages;
         }
 
-        private readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
+        protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
-        private static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
+        protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
 
-        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        private readonly DisposableMutex _insertLock = new DisposableMutex();
+        protected readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+        protected readonly DisposableMutex _insertLock = new DisposableMutex();
 
-        private readonly StickerDrawerViewModel _stickers;
-        private readonly AnimationDrawerViewModel _animations;
+        protected readonly StickerDrawerViewModel _stickers;
+        protected readonly AnimationDrawerViewModel _animations;
 
-        private readonly ILocationService _locationService;
-        private readonly INotificationsService _pushService;
-        private readonly IPlaybackService _playbackService;
-        private readonly IVoIPService _voipService;
-        private readonly INetworkService _networkService;
-        private readonly IMessageFactory _messageFactory;
+        protected readonly ILocationService _locationService;
+        protected readonly INotificationsService _pushService;
+        protected readonly IPlaybackService _playbackService;
+        protected readonly IVoIPService _voipService;
+        protected readonly INetworkService _networkService;
+        protected readonly IMessageFactory _messageFactory;
 
         public IPlaybackService PlaybackService => _playbackService;
 
@@ -237,7 +237,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private Chat _migratedChat;
+        protected Chat _migratedChat;
         public Chat MigratedChat
         {
             get
@@ -250,14 +250,14 @@ namespace Unigram.ViewModels
             }
         }
 
-        private Chat _linkedChat;
+        protected Chat _linkedChat;
         public Chat LinkedChat
         {
             get => _linkedChat;
             set => Set(ref _linkedChat, value);
         }
 
-        private Chat _chat;
+        protected Chat _chat;
         public Chat Chat
         {
             get
@@ -276,8 +276,8 @@ namespace Unigram.ViewModels
         //    get => _isSchedule;
         //    set => Set(ref _isSchedule, value);
         //}
-        private bool _isSchedule => IsSchedule;
-        public virtual bool IsSchedule => false;
+        private DialogType _type => Type;
+        public virtual DialogType Type => DialogType.Normal;
 
         private string _lastSeen;
         public string LastSeen
@@ -595,10 +595,10 @@ namespace Unigram.ViewModels
             }
         }
 
-        private bool _isLoadingNextSlice;
-        private bool _isLoadingPreviousSlice;
+        protected bool _isLoadingNextSlice;
+        protected bool _isLoadingPreviousSlice;
 
-        private Stack<long> _goBackStack = new Stack<long>();
+        protected Stack<long> _goBackStack = new Stack<long>();
 
         public async Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
@@ -620,7 +620,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (_isSchedule || _isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_type != DialogType.Normal || _isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
@@ -723,7 +723,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (_isSchedule || _isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
+                if (_type != DialogType.Normal || _isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
                 {
                     return;
                 }
@@ -969,6 +969,11 @@ namespace Unigram.ViewModels
 
         public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, bool second = false)
         {
+            if (_type != DialogType.Normal)
+            {
+                return;
+            }
+
             if (direction == null)
             {
                 var field = ListField;
@@ -1190,6 +1195,11 @@ namespace Unigram.ViewModels
             }
         }
 
+        public virtual Task LoadEventLogSliceAsync()
+        {
+            return Task.CompletedTask;
+        }
+
         public async Task LoadDateSliceAsync(int dateOffset)
         {
             var chat = _chat;
@@ -1238,7 +1248,7 @@ namespace Unigram.ViewModels
 
         public MessageCollection Items { get; } = new MessageCollection();
 
-        private async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
+        protected async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
         {
             if (Settings.IsLargeEmojiEnabled)
             {
@@ -1305,11 +1315,32 @@ namespace Unigram.ViewModels
 
                 var target = parent ?? message;
                 var content = message.GeneratedContent ?? message.Content as object;
+
                 if (content is MessageAlbum albumMessage)
                 {
                     ProcessFiles(chat, albumMessage.Layout.Messages, message);
                     continue;
                 }
+                else if (content is MessageChatEvent chatEvent)
+                {
+                    if (chatEvent.Event.Action is ChatEventMessageDeleted messageDeleted)
+                    {
+                        content = messageDeleted.Message.Content;
+                    }
+                    else if (chatEvent.Event.Action is ChatEventMessageEdited messageEdited)
+                    {
+                        content = messageEdited.NewMessage.Content;
+                    }
+                    else if (chatEvent.Event.Action is ChatEventMessagePinned messagePinned)
+                    {
+                        content = messagePinned.Message.Content;
+                    }
+                    else if (chatEvent.Event.Action is ChatEventPollStopped pollStopped)
+                    {
+                        content = pollStopped.Message.Content;
+                    }
+                }
+
                 if (content is MessageAnimation animationMessage)
                 {
                     content = animationMessage.Animation;
@@ -1696,11 +1727,17 @@ namespace Unigram.ViewModels
             }
 
 #pragma warning disable CS4014
-            if (_isSchedule)
+            if (_type == DialogType.ScheduledMessages)
             {
                 Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loadings scheduled messages", chat.Id));
 
                 LoadScheduledSliceAsync();
+            }
+            else if (_type == DialogType.EventLog)
+            {
+                Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loadings event log", chat.Id));
+
+                LoadEventLogSliceAsync();
             }
             else if (state.TryGet("message_id", out long navigation))
             {
@@ -3144,6 +3181,11 @@ namespace Unigram.ViewModels
 
         #region Action
 
+        protected virtual void FilterExecute()
+        {
+
+        }
+
         public RelayCommand ActionCommand { get; }
         private void ActionExecute()
         {
@@ -3153,7 +3195,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate privata)
+            if (_type == DialogType.EventLog)
+            {
+                FilterExecute();
+            }
+            else if (chat.Type is ChatTypePrivate privata)
             {
                 var fullInfo = ProtoService.GetUserFull(privata.UserId);
                 if (fullInfo == null)
@@ -3557,5 +3603,12 @@ namespace Unigram.ViewModels
         None,
         Loading,
         Deleted
+    }
+
+    public enum DialogType
+    {
+        Normal,
+        ScheduledMessages,
+        EventLog
     }
 }
