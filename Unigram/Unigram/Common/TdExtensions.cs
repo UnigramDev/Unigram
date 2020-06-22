@@ -1601,6 +1601,16 @@ namespace Unigram.Common
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPromoteMembers;
         }
 
+        public static bool CanPromoteMembers(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
+
+            return basicGroup.Status is ChatMemberStatusCreator;
+        }
+
         public static bool CanInviteUsers(this Supergroup supergroup)
         {
             if (supergroup.Status == null)
