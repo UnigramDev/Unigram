@@ -114,7 +114,7 @@ namespace Unigram.Views
                                 presenter.AutoPlay = true;
                                 presenter.IsLoopingEnabled = true;
                                 presenter.IsHitTestVisible = false;
-                                presenter.Source = new Uri("file:///" + update.File.Local.Path);
+                                presenter.Source = UriEx.GetLocal(update.File.Local.Path);
 
                                 content.Children.Add(presenter);
 
@@ -946,7 +946,7 @@ namespace Unigram.Views
                 presenter.AutoPlay = true;
                 presenter.IsLoopingEnabled = true;
                 presenter.IsHitTestVisible = false;
-                presenter.Source = new Uri("file:///" + block.Animation.AnimationValue.Local.Path);
+                presenter.Source = UriEx.GetLocal(block.Animation.AnimationValue.Local.Path);
 
                 content.Children.Add(presenter);
 
