@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unigram.Services.Navigation;
+using Unigram.Navigation.Services;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Navigation
@@ -19,9 +19,9 @@ namespace Unigram.Navigation
             return Task.CompletedTask;
         }
 
-        public virtual Task OnNavigatingFromAsync(NavigatingEventArgs args)
+        public virtual void OnNavigatingFrom(NavigatingEventArgs args)
         {
-            return Task.CompletedTask;
+
         }
 
         [JsonIgnore]

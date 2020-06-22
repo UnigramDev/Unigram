@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -72,19 +72,19 @@ namespace Unigram.ViewModels
         public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
             await base.OnNavigatedFromAsync(pageState, suspending);
-            await Task.WhenAll(Children.ToList().Select(x => x.OnNavigatedFromAsync(pageState, suspending)));
+            await Task.WhenAll(Children.Select(x => x.OnNavigatedFromAsync(pageState, suspending)));
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
-            await Task.WhenAll(Children.ToList().Select(x => x.OnNavigatedToAsync(parameter, mode, state)));
+            await Task.WhenAll(Children.Select(x => x.OnNavigatedToAsync(parameter, mode, state)));
         }
 
-        public override async Task OnNavigatingFromAsync(NavigatingEventArgs args)
+        public override void OnNavigatingFrom(NavigatingEventArgs args)
         {
-            await base.OnNavigatingFromAsync(args);
-            await Task.WhenAll(Children.ToList().Select(x => x.OnNavigatingFromAsync(args)));
+            base.OnNavigatingFrom(args);
+            Children.ForEach(x => x.OnNavigatingFrom(args));
         }
     }
 

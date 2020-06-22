@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
@@ -884,12 +885,12 @@ namespace Unigram.Common
                 }
             }
 
-            return false;
+            return webPage.Photo != null;
         }
 
         public static bool IsSmallPhoto(this WebPage webPage)
         {
-            if (webPage.Photo != null)
+            if (webPage.Photo != null && (webPage.SiteName.Length > 0 || webPage.Title.Length > 0 || webPage.Author.Length > 0 || webPage.Description?.Text.Length > 0))
             {
                 return !webPage.IsMedia();
             }
@@ -947,21 +948,6 @@ namespace Unigram.Common
                     return true;
                 // Local types:
                 case MessageChatEvent chatEvent:
-                    if (chatEvent.IsFull)
-                    {
-                        switch (chatEvent.Event.Action)
-                        {
-                            case ChatEventMessageDeleted messageDeleted:
-                                return messageDeleted.Message.IsService();
-                            case ChatEventMessageEdited messageEdited:
-                                return messageEdited.NewMessage.IsService();
-                            case ChatEventMessagePinned messagePinned:
-                                return messagePinned.Message.IsService();
-                            case ChatEventPollStopped pollStopped:
-                                return pollStopped.Message.IsService();
-                        }
-                    }
-                    return true;
                 case MessageHeaderDate headerDate:
                 case MessageHeaderUnread headerUnread:
                     return true;
@@ -1097,14 +1083,18 @@ namespace Unigram.Common
                 return null;
             }
 
+            Monitor.Enter(chat);
+
             for (int i = 0; i < chat.Positions.Count; i++)
             {
                 if (chat.Positions[i].List.ListEquals(chatList))
                 {
+                    Monitor.Exit(chat);
                     return chat.Positions[i];
                 }
             }
 
+            Monitor.Exit(chat);
             return null;
         }
 
@@ -1115,14 +1105,18 @@ namespace Unigram.Common
                 return 0;
             }
 
+            Monitor.Enter(chat);
+
             for (int i = 0; i < chat.Positions.Count; i++)
             {
                 if (chat.Positions[i].List.ListEquals(chatList))
                 {
+                    Monitor.Exit(chat);
                     return chat.Positions[i].Order;
                 }
             }
 
+            Monitor.Exit(chat);
             return 0;
         }
 
@@ -1605,6 +1599,16 @@ namespace Unigram.Common
             }
 
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanPromoteMembers;
+        }
+
+        public static bool CanPromoteMembers(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
+
+            return basicGroup.Status is ChatMemberStatusCreator;
         }
 
         public static bool CanInviteUsers(this Supergroup supergroup)
@@ -2188,13 +2192,32 @@ namespace Telegram.Td.Api
 
     public class MessageChatEvent : MessageContent
     {
-        public ChatEvent Event { get; set; }
-        public bool IsFull { get; set; }
+        /// <summary>
+        /// Action performed by the user.
+        /// </summary>
+        public ChatEventAction Action { get; set; }
 
-        public MessageChatEvent(ChatEvent chatEvent, bool isFull)
+        /// <summary>
+        /// Identifier of the user who performed the action that triggered the event.
+        /// </summary>
+        public int UserId { get; set; }
+
+        /// <summary>
+        /// Point in time (Unix timestamp) when the event happened.
+        /// </summary>
+        public int Date { get; set; }
+
+        /// <summary>
+        /// Chat event identifier.
+        /// </summary>
+        public long Id { get; set; }
+
+        public MessageChatEvent(ChatEvent chatEvent)
         {
-            Event = chatEvent;
-            IsFull = isFull;
+            Action = chatEvent.Action;
+            UserId = chatEvent.UserId;
+            Date = chatEvent.Date;
+            Id = chatEvent.Id;
         }
 
         public NativeObject ToUnmanaged()

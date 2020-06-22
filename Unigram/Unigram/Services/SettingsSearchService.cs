@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Views;
+using Unigram.Views.Folders;
 using Unigram.Views.Settings;
 using Unigram.Views.Settings.Privacy;
 
@@ -51,7 +52,7 @@ namespace Unigram.Services
             var results = new List<SettingsSearchEntry>();
 
             //var sane = "\\b" + Regex.Escape(query).Replace(' ', '.');
-            var sane = "\\b" + query.Replace(' ', '.');
+            var sane = "\\b" + query.Replace(' ', '.').Replace("\\", "\\\\");
             if (entry.IsValid && Regex.IsMatch(entry.Text, sane, RegexOptions.IgnoreCase))
             {
                 var clone = entry.Clone();
@@ -89,8 +90,7 @@ namespace Unigram.Services
                 BuildAppearance(),
                 new SettingsSearchPage(null, Strings.Resources.Language, "\uE164"),
                 new SettingsSearchPage(null, Strings.Resources.AskAQuestion, "\uED15"),
-
-                //new SettingsSearchPage(typeof(WalletPage), Strings.Resources.Wallet, "\uD83D\uDC8E")
+                new SettingsSearchPage(typeof(FoldersPage), Strings.Resources.Filters, "\uF12B")
             };
 
             // FAQ indexing is done asyncronously

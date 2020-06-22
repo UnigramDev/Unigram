@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Unigram.Services.Updates;
 using Unigram.Views.Popups;
 using Windows.Foundation.Metadata;
@@ -50,7 +50,7 @@ namespace Unigram.ViewModels.Settings
             await base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
             if (UseThreeLinesLayout != Settings.UseThreeLinesLayout)
             {
@@ -58,7 +58,7 @@ namespace Unigram.ViewModels.Settings
                 Aggregator.Publish(new UpdateChatListLayout(UseThreeLinesLayout));
             }
 
-            return base.OnNavigatingFromAsync(args);
+            return base.OnNavigatedFromAsync(pageState, suspending);
         }
 
         private string _emojiSet;

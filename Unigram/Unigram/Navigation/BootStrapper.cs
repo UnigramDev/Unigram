@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Services.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -59,8 +59,8 @@ namespace Unigram.Navigation
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Services.Logging.LoggingService.WriteLine(text, severity, caller: $"BootStrapper.{caller}");
+        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
+            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"BootStrapper.{caller}");
 
         #endregion
 
@@ -78,7 +78,7 @@ namespace Unigram.Navigation
             DebugWrite();
 
             // Hook up keyboard and mouse Back handler
-            var keyboard = Services.Keyboard.KeyboardService.GetForCurrentView();
+            var keyboard = Unigram.Services.Keyboard.KeyboardService.GetForCurrentView();
             keyboard.AfterBackGesture = (key) =>
             {
                 DebugWrite(caller: nameof(keyboard.AfterBackGesture));
@@ -780,22 +780,6 @@ namespace Unigram.Navigation
             {
                 return AdditionalKinds.Other;
             }
-        }
-
-        private object _PageKeys;
-        // T must be a custom Enum
-        public Dictionary<T, Type> PageKeys<T>()
-            where T : struct, IConvertible
-        {
-            if (!typeof(T).GetTypeInfo().IsEnum)
-            {
-                throw new ArgumentException("T must be an enumerated type");
-            }
-            if (_PageKeys != null && _PageKeys is Dictionary<T, Type>)
-            {
-                return _PageKeys as Dictionary<T, Type>;
-            }
-            return (_PageKeys = new Dictionary<T, Type>()) as Dictionary<T, Type>;
         }
 
         public class LifecycleLogic

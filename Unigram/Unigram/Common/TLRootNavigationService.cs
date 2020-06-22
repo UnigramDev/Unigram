@@ -1,7 +1,7 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Unigram.ViewModels.SignIn;
 using Unigram.Views;
 using Unigram.Views.SignIn;

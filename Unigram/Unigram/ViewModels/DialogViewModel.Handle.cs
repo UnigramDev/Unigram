@@ -378,12 +378,12 @@ namespace Unigram.ViewModels
 
         private bool CheckSchedulingState(Message message)
         {
-            if (_isSchedule)
+            if (_type == DialogType.ScheduledMessages)
             {
                 return message.SchedulingState != null;
             }
 
-            return message.SchedulingState == null;
+            return message.SchedulingState == null && _type == DialogType.Normal;
         }
 
         public void Handle(UpdateNewMessage update)
@@ -408,59 +408,56 @@ namespace Unigram.ViewModels
                 {
                     using (await _insertLock.WaitAsync())
                     {
+                        var table = new HashSet<long>(update.MessageIds);
+
                         for (int i = 0; i < Items.Count; i++)
                         {
-                            for (int j = 0; j < update.MessageIds.Count; j++)
+                            var message = Items[i];
+                            if (message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
                             {
-                                var message = Items[i];
-                                if (message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
-                                {
-                                    var found = false;
+                                var found = false;
 
-                                    for (int k = 0; k < album.Layout.Messages.Count; k++)
+                                for (int k = 0; k < album.Layout.Messages.Count; k++)
+                                {
+                                    if (table.Contains(album.Layout.Messages[k].Id))
                                     {
-                                        if (album.Layout.Messages[k].Id == update.MessageIds[j])
+                                        album.Layout.Messages.RemoveAt(k);
+
+                                        if (album.Layout.Messages.Count > 0)
                                         {
-                                            album.Layout.Messages.RemoveAt(k);
+                                            message.UpdateWith(album.Layout.Messages[0]);
+                                            album.Layout.Calculate();
 
-                                            if (album.Layout.Messages.Count > 0)
-                                            {
-                                                message.UpdateWith(album.Layout.Messages[0]);
-                                                album.Layout.Calculate();
-
-                                                Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
-                                            }
-                                            else
-                                            {
-                                                Items.RemoveAt(i);
-                                                i--;
-                                            }
-
-                                            found = true;
-                                            break;
+                                            Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
                                         }
+                                        else
+                                        {
+                                            Items.RemoveAt(i);
+                                            i--;
+                                        }
+
+                                        found = true;
+                                        break;
                                     }
-
-                                    if (found)
-                                    {
-                                        continue;
-                                    }
                                 }
 
-                                if (message.Id == update.MessageIds[j])
+                                if (found)
                                 {
-                                    Items.RemoveAt(i);
-                                    i--;
-
-                                    break;
+                                    continue;
                                 }
-                                else if (message.ReplyToMessageId == update.MessageIds[j])
-                                {
-                                    message.ReplyToMessage = null;
-                                    message.ReplyToMessageState = ReplyToMessageState.Deleted;
+                            }
 
-                                    Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
-                                }
+                            if (table.Contains(message.Id))
+                            {
+                                Items.RemoveAt(i);
+                                i--;
+                            }
+                            else if (table.Contains(message.ReplyToMessageId))
+                            {
+                                message.ReplyToMessage = null;
+                                message.ReplyToMessageState = ReplyToMessageState.Deleted;
+
+                                Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
                             }
 
                             if (i >= 0 && i == Items.Count - 1 && Items[i].Content is MessageHeaderUnread)
@@ -560,7 +557,7 @@ namespace Unigram.ViewModels
                 Handle(update.MessageId, message =>
                 {
                     message.ContainsUnreadMention = false;
-                }, (bubble, message) => { });
+                });
 
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadMentionCount(_chat, update.UnreadMentionCount));
             }
@@ -648,40 +645,15 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action)
+        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action = null)
         {
             BeginOnUIThread(async () =>
             {
-                //var message = Items.FirstOrDefault(x => x.Id == messageId);
-                //if (message == null)
-                //{
-                //    return;
-                //}
-
-                //update(message);
-
                 var field = ListField;
                 if (field == null)
                 {
                     return;
                 }
-
-                //var container = field.ContainerFromItem(message) as ListViewItem;
-                //if (container == null)
-                //{
-                //    return;
-                //}
-
-                //var content = container.ContentTemplateRoot as FrameworkElement;
-                //if (content is Grid grid)
-                //{
-                //    content = grid.FindName("Bubble") as FrameworkElement;
-                //}
-
-                //if (content is MessageBubble bubble)
-                //{
-                //    action(bubble, message);
-                //}
 
                 using (await _insertLock.WaitAsync())
                 {
@@ -692,34 +664,34 @@ namespace Unigram.ViewModels
                         {
                             var found = false;
 
-                            foreach (var child in album.Layout.Messages)
+                            if (album.Layout.Messages.TryGetValue(messageId, out MessageViewModel child))
                             {
-                                if (child.Id == messageId)
+                                update(child);
+                                found = true;
+
+                                message.UpdateWith(album.Layout.Messages[0]);
+                                album.Layout.Calculate();
+
+                                if (action == null)
                                 {
-                                    update(child);
-                                    found = true;
-
-                                    message.UpdateWith(album.Layout.Messages[0]);
-                                    album.Layout.Calculate();
-
-                                    var container = field.ContainerFromItem(message) as ListViewItem;
-                                    if (container == null)
-                                    {
-                                        break;
-                                    }
-
-                                    var content = container.ContentTemplateRoot as FrameworkElement;
-                                    if (content is MessageBubble == false)
-                                    {
-                                        content = content.FindName("Bubble") as FrameworkElement;
-                                    }
-
-                                    if (content is MessageBubble bubble)
-                                    {
-                                        action(bubble, message);
-                                    }
-
                                     break;
+                                }
+
+                                var container = field.ContainerFromItem(message) as ListViewItem;
+                                if (container == null)
+                                {
+                                    break;
+                                }
+
+                                var content = container.ContentTemplateRoot as FrameworkElement;
+                                if (content is MessageBubble == false)
+                                {
+                                    content = content.FindName("Bubble") as FrameworkElement;
+                                }
+
+                                if (content is MessageBubble bubble)
+                                {
+                                    action(bubble, message);
                                 }
                             }
 
@@ -732,6 +704,11 @@ namespace Unigram.ViewModels
                         if (message.Id == messageId)
                         {
                             update(message);
+
+                            if (action == null)
+                            {
+                                return;
+                            }
 
                             var container = field.ContainerFromItem(message) as ListViewItem;
                             if (container == null)
@@ -886,7 +863,7 @@ namespace Unigram.ViewModels
 
                 //if (IsEndReached())
                 //if (endReached || IsEndReached())
-                if (IsFirstSliceLoaded == true || IsSchedule)
+                if (IsFirstSliceLoaded == true || Type == DialogType.ScheduledMessages)
                 {
                     var messageCommon = _messageFactory.Create(this, message);
                     messageCommon.GeneratedContentUnread = true;

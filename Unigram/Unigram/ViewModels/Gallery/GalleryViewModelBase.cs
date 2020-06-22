@@ -260,6 +260,12 @@ namespace Unigram.ViewModels.Gallery
                 return;
             }
 
+            var cached = await ProtoService.GetFileAsync(file);
+            if (cached == null)
+            {
+                return;
+            }
+
             var fileName = result.FileName;
             if (string.IsNullOrEmpty(fileName))
             {
@@ -282,7 +288,6 @@ namespace Unigram.ViewModels.Gallery
             {
                 try
                 {
-                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
                     await cached.CopyAndReplaceAsync(picked);
                 }
                 catch { }
@@ -301,17 +306,14 @@ namespace Unigram.ViewModels.Gallery
             var file = item.GetFile();
             if (file != null && file.Local.IsDownloadingCompleted)
             {
-                try
+                var temp = await ProtoService.GetFileAsync(file);
+                if (temp != null)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-
                     var options = new LauncherOptions();
                     options.DisplayApplicationPicker = true;
 
                     await Launcher.LaunchFileAsync(temp, options);
-
                 }
-                catch { }
             }
         }
 

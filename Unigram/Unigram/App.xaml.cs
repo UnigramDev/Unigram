@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Unigram.Services.Updates;
 using Unigram.Views;
 using Unigram.Views.Host;
@@ -389,7 +388,6 @@ namespace Unigram
             {
                 var navigationFrame = new Frame { FlowDirection = ApiInfo.FlowDirection };
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
-                navigationService.SerializationService = TLSerializationService.Current;
 
                 return navigationFrame;
             }
@@ -397,7 +395,6 @@ namespace Unigram
             {
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
-                navigationService.SerializationService = TLSerializationService.Current;
 
                 return new RootPage(navigationService) { FlowDirection = ApiInfo.FlowDirection };
             }

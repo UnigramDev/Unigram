@@ -91,7 +91,7 @@ namespace Unigram.Controls.Messages
                     return UpdateExpiredVideo(message, expiredVideo, active);
                 // Local types:
                 case MessageChatEvent chatEvent:
-                    switch (chatEvent.Event.Action)
+                    switch (chatEvent.Action)
                     {
                         case ChatEventSignMessagesToggled signMessagesToggled:
                             return UpdateSignMessagesToggled(message, signMessagesToggled, active);
@@ -108,13 +108,13 @@ namespace Unigram.Controls.Messages
                         case ChatEventMessageUnpinned messageUnpinned:
                             return UpdateMessageUnpinned(message, messageUnpinned, active);
                         case ChatEventMessageDeleted messageDeleted:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageDeleted.Message), active) : UpdateMessageDeleted(message, messageDeleted, active);
+                            return UpdateMessageDeleted(message, messageDeleted, active);
                         case ChatEventMessageEdited messageEdited:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageEdited.NewMessage), active) : UpdateMessageEdited(message, messageEdited, active);
+                            return UpdateMessageEdited(message, messageEdited, active);
                         case ChatEventDescriptionChanged descriptionChanged:
                             return UpdateDescriptionChanged(message, descriptionChanged, active);
                         case ChatEventMessagePinned messagePinned:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message), active) : UpdateMessagePinned(message, messagePinned, active);
+                            return UpdateMessagePinned(message, messagePinned, active);
                         case ChatEventUsernameChanged usernameChanged:
                             return UpdateUsernameChanged(message, usernameChanged, active);
                         case ChatEventPollStopped pollStopped:
@@ -413,7 +413,7 @@ namespace Unigram.Controls.Messages
 
             var fromUser = message.GetSenderUser();
 
-            var poll = message.Content as MessagePoll;
+            var poll = pollStopped.Message.Content as MessagePoll;
             if (poll.Poll.Type is PollTypeRegular)
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogStopPoll, "un1", fromUser, ref entities);

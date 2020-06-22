@@ -28,7 +28,7 @@
     <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <LangVersion>7.3</LangVersion>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
   </PropertyGroup>
@@ -474,8 +474,20 @@
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Navigation\Services\FrameFacade.cs" />
+    <Compile Include="Navigation\Services\INavigable.cs" />
+    <Compile Include="Navigation\Services\INavigationService.cs" />
+    <Compile Include="Navigation\Services\JournalEntry.cs" />
+    <Compile Include="Navigation\Services\NavigatedEventArgs.cs" />
+    <Compile Include="Navigation\Services\NavigatingEventArgs.cs" />
+    <Compile Include="Navigation\Services\NavigationService.cs" />
+    <Compile Include="Navigation\Services\NavigationServiceList.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
+    <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
+    <Compile Include="Views\ChatEventLogPage.xaml.cs">
+      <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
       <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
     </Compile>
@@ -515,7 +527,6 @@
     <Compile Include="Logs\LogLevel.cs" />
     <Compile Include="Navigation\BindableBase.cs" />
     <Compile Include="Navigation\BootStrapper.cs" />
-    <Compile Include="Navigation\Deferral.cs" />
     <Compile Include="Navigation\DispatcherWrapper.cs" />
     <Compile Include="Navigation\IDispatcherWrapper.cs" />
     <Compile Include="Navigation\TypedEventHandler.cs" />
@@ -538,16 +549,6 @@
     <Compile Include="Services\Keyboard\KeyboardHelper.cs" />
     <Compile Include="Services\Keyboard\KeyboardService.cs" />
     <Compile Include="Services\Logging\LoggingService.cs" />
-    <Compile Include="Services\Navigation\FrameFacade.cs" />
-    <Compile Include="Services\Navigation\INavigable.cs" />
-    <Compile Include="Services\Navigation\INavigationService.cs" />
-    <Compile Include="Services\Navigation\NavigatedEventArgs.cs" />
-    <Compile Include="Services\Navigation\NavigatingEventArgs.cs" />
-    <Compile Include="Services\Navigation\NavigationService.cs" />
-    <Compile Include="Services\Navigation\NavigationServiceList.cs" />
-    <Compile Include="Services\Serialization\ISerializationService.cs" />
-    <Compile Include="Services\Serialization\JsonSerializationService.cs" />
-    <Compile Include="Services\Serialization\SerializationService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacy\IPropertyMapping.cs" />
     <Compile Include="Services\SettingsLegacy\ISettingsService.cs" />
@@ -591,7 +592,7 @@
     <Compile Include="Services\Stripe\StripeTextUtils.cs" />
     <Compile Include="Services\Stripe\StripeToken.cs" />
     <Compile Include="Services\ThemeService.cs" />
-    <Compile Include="Services\TLSerializationService.cs" />
+    <Compile Include="Navigation\Services\NavigationState.cs" />
     <Compile Include="Services\Updates\UpdateAppVersion.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
     <Compile Include="Services\Updates\UpdateChatFiltersLayout.cs" />
@@ -744,7 +745,6 @@
     <Compile Include="ViewModels\Supergroups\SupergroupEditTypeViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditViewModelBase.cs" />
-    <Compile Include="ViewModels\Supergroups\SupergroupEventLogViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupPermissionsViewModel.cs" />
@@ -1075,12 +1075,6 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditTypePage.xaml.cs">
       <DependentUpon>SupergroupEditTypePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Supergroups\SupergroupEventLogPage.Bubbles.cs">
-      <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Supergroups\SupergroupEventLogPage.xaml.cs">
-      <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupMembersPage.xaml.cs">
       <DependentUpon>SupergroupMembersPage.xaml</DependentUpon>
@@ -2031,6 +2025,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ChatEventLogPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2566,10 +2564,6 @@
     <Page Include="Views\Supergroups\SupergroupEditTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Supergroups\SupergroupEventLogPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Supergroups\SupergroupMembersPage.xaml">
       <SubType>Designer</SubType>

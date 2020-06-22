@@ -5,7 +5,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
-using Unigram.Services.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -371,6 +371,8 @@ namespace Unigram.Controls
 
         public int SessionId => throw new NotImplementedException();
 
+        public IDictionary<string, long> CacheKeyToChatId => throw new NotImplementedException();
+
         public event TypedEventHandler<INavigationService, Type> AfterRestoreSavedNavigation;
 
         public void ClearCache(bool removeCachedPagesInBackStack = false)
@@ -393,22 +395,7 @@ namespace Unigram.Controls
             throw new NotImplementedException();
         }
 
-        public void Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Navigate<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> NavigateAsync(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> NavigateAsync<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible
+        public bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
             throw new NotImplementedException();
         }

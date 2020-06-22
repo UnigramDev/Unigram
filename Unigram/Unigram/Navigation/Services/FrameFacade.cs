@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using Unigram.Navigation;
-using Unigram.Services.Serialization;
+using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Services.Navigation
+namespace Unigram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public class FrameFacade
@@ -18,8 +17,8 @@ namespace Unigram.Services.Navigation
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Logging.LoggingService.WriteLine(text, severity, caller: $"{nameof(FrameFacade)}.{caller}");
+        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
+            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"{nameof(FrameFacade)}.{caller}");
 
         #endregion
 
@@ -27,8 +26,8 @@ namespace Unigram.Services.Navigation
         {
             NavigationService = navigationService;
             Frame = frame;
-            frame.Navigated += (s, e) => FacadeNavigatedEventHandler(s, e);
-            frame.Navigating += (s, e) => FacadeNavigatingCancelEventHandler(s, e);
+            frame.Navigated += FacadeNavigatedEventHandler;
+            frame.Navigating += FacadeNavigatingCancelEventHandler;
 
             // setup animations
             var t = new NavigationThemeTransition
@@ -39,6 +38,33 @@ namespace Unigram.Services.Navigation
             Frame.ContentTransitions.Add(t);
 
             FrameId = id;
+        }
+
+        public void RaiseNavigated(long chatId)
+        {
+            if (Content is ChatPage)
+            {
+                NavigationService.CacheKeyToChatId[CurrentPageCacheKey] = chatId;
+                CurrentPageParam = chatId;
+
+                var args = new NavigatedEventArgs
+                {
+                    NavigationMode = NavigationMode.Refresh,
+                    SourcePageType = CurrentPageType,
+                    Parameter = CurrentPageParam,
+                    Content = Frame.Content as Page
+                };
+
+                foreach (var handler in _navigatedEventHandlers)
+                {
+                    if (handler.Target is INavigationService)
+                    {
+                        continue;
+                    }
+
+                    handler(Frame, args);
+                }
+            }
         }
 
         public event EventHandler<HandledEventArgs> BackRequested;
@@ -67,9 +93,9 @@ namespace Unigram.Services.Navigation
 
         private string GetFrameStateKey() => string.Format("{0}-PageState", FrameId);
 
-        private SettingsLegacy.ISettingsService FrameStateSettingsService()
+        private Unigram.Services.SettingsLegacy.ISettingsService FrameStateSettingsService()
         {
-            return SettingsLegacy.SettingsService.Create(GetFrameStateKey(), true);
+            return Unigram.Services.SettingsLegacy.SettingsService.Create(GetFrameStateKey(), true);
         }
 
         public void SetFrameState(string key, string value)
@@ -97,13 +123,13 @@ namespace Unigram.Services.Navigation
             return $"{frameId}-{type}-{backStackDepth}";
         }
 
-        public SettingsLegacy.ISettingsService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
+        public Unigram.Services.SettingsLegacy.ISettingsService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
         {
             var key = GetPageStateKey(FrameId, type, BackStackDepth + depth, parameter);
             return FrameStateSettingsService().Open(key, true);
         }
 
-        public SettingsLegacy.ISettingsService PageStateSettingsService(string key)
+        public Unigram.Services.SettingsLegacy.ISettingsService PageStateSettingsService(string key)
         {
             return FrameStateSettingsService().Open(key, true);
         }
@@ -137,24 +163,6 @@ namespace Unigram.Services.Navigation
             {
                 return false;
             }
-        }
-
-        internal ISerializationService SerializationService => NavigationService.SerializationService;
-
-        [Obsolete("Use NavigationService.NavigationState instead")]
-        public void SetNavigationState(string state)
-        {
-            DebugWrite($"State {state}");
-
-            Frame.SetNavigationState(state);
-        }
-
-        [Obsolete("Use NavigationService.NavigationState instead")]
-        public string GetNavigationState()
-        {
-            DebugWrite();
-
-            return Frame.GetNavigationState();
         }
 
         public int BackStackDepth => Frame.BackStackDepth;
@@ -261,11 +269,7 @@ namespace Unigram.Services.Navigation
 
         public object CurrentPageParam { get; internal set; }
 
-        public object GetValue(DependencyProperty dp) => Frame.GetValue(dp);
-
-        public void SetValue(DependencyProperty dp, object value) { Frame.SetValue(dp, value); }
-
-        public void ClearValue(DependencyProperty dp) { Frame.ClearValue(dp); }
+        public string CurrentPageCacheKey { get; private set; }
 
         #endregion
 
@@ -280,14 +284,25 @@ namespace Unigram.Services.Navigation
             DebugWrite();
 
             CurrentPageType = e.SourcePageType;
-            CurrentPageParam = SerializationService.Deserialize(e.Parameter?.ToString());
+            CurrentPageParam = e.Parameter;
+            CurrentPageCacheKey = null;
+
+            if (e.SourcePageType == typeof(ChatPage) && CurrentPageParam is string cacheKey)
+            {
+                CurrentPageParam = NavigationService.CacheKeyToChatId[cacheKey];
+                CurrentPageCacheKey = cacheKey;
+            }
+
             var args = new NavigatedEventArgs(e, Content as Page);
+
             if (NavigationModeHint != NavigationMode.New)
                 args.NavigationMode = NavigationModeHint;
+
             NavigationModeHint = NavigationMode.New;
+
             foreach (var handler in _navigatedEventHandlers)
             {
-                handler(this, args);
+                handler(Frame, args);
             }
         }
 
@@ -297,28 +312,29 @@ namespace Unigram.Services.Navigation
             add { if (!_navigatingEventHandlers.Contains(value)) _navigatingEventHandlers.Add(value); }
             remove { if (_navigatingEventHandlers.Contains(value)) _navigatingEventHandlers.Remove(value); }
         }
-        private async void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
+        private void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
         {
             DebugWrite();
 
-            object parameter = null;
-            try
+            var parameter = e.Parameter;
+            if (parameter is string cacheKey && e.SourcePageType == typeof(ChatPage))
             {
-                parameter = SerializationService.Deserialize(e.Parameter?.ToString());
+                parameter = NavigationService.CacheKeyToChatId[cacheKey];
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Your parameter must be serializable. If it isn't, then use SessionState.", ex);
-            }
-            var deferral = new DeferralManager();
-            var args = new NavigatingEventArgs(deferral, e, Content as Page, e.SourcePageType, parameter, e.Parameter);
+
+            var args = new NavigatingEventArgs(e, Content as Page, e.SourcePageType, parameter, e.Parameter);
+
             if (NavigationModeHint != NavigationMode.New)
                 args.NavigationMode = NavigationModeHint;
+
             NavigationModeHint = NavigationMode.New;
-            _navigatingEventHandlers.ForEach(x => x(this, args));
-            await deferral.WaitForDeferralsAsync().ConfigureAwait(false);
+
+            foreach (var handler in _navigatingEventHandlers)
+            {
+                handler(Frame, args);
+            }
+
             e.Cancel = args.Cancel;
         }
     }
-
 }

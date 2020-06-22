@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Folders;
@@ -635,7 +636,7 @@ namespace Unigram.ViewModels
         public RelayCommand<Chat> FolderCreateCommand { get; }
         private void FolderCreateExecute(Chat chat)
         {
-            NavigationService.Navigate(typeof(FolderPage), state: new Dictionary<string, object> { { "included_chat_id", chat.Id } });
+            NavigationService.Navigate(typeof(FolderPage), state: new NavigationState { { "included_chat_id", chat.Id } });
         }
 
         #endregion

@@ -18,8 +18,6 @@ namespace Unigram.Views.Popups
         public ChatEventLogFilters Filters { get; private set; }
         public IList<int> UserIds { get; private set; }
 
-        public bool AreAllAdministratorsSelected { get; private set; }
-
         public SupergroupEventLogFiltersPopup()
         {
             InitializeComponent();
@@ -160,8 +158,8 @@ namespace Unigram.Views.Popups
                 MemberLeaves = MemberLeaves.IsChecked == true,
             };
 
-            AreAllAdministratorsSelected = List.Items.All(x => List.SelectedItems.Contains(x));
-            UserIds = List.SelectedItems.OfType<ChatMember>().Select(x => x.UserId).ToList();
+            var areAllAdministratorsSelected = List.Items.All(x => List.SelectedItems.Contains(x));
+            UserIds = areAllAdministratorsSelected ? new int[0] : List.SelectedItems.OfType<ChatMember>().Select(x => x.UserId).ToArray();
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

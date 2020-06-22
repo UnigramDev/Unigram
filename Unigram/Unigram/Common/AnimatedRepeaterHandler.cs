@@ -270,7 +270,7 @@ namespace Unigram.Common
                     var presenter = new AnimationView();
                     presenter.AutoPlay = true;
                     presenter.IsLoopingEnabled = true;
-                    presenter.Source = new Uri("file:///" + data.File.Local.Path);
+                    presenter.Source = UriEx.GetLocal(data.File.Local.Path);
 
                     data.Presenter = presenter;
                     data.Container.Children.Insert(1, presenter);

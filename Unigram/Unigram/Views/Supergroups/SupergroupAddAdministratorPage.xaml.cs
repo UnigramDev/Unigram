@@ -6,6 +6,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
@@ -61,17 +62,17 @@ namespace Unigram.Views.Supergroups
 
             if (e.ClickedItem is ChatMember member)
             {
-                ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), new ChatMemberNavigation(chat.Id, member.UserId));
+                ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
             }
             else if (e.ClickedItem is SearchResult result)
             {
                 if (result.User is User user)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), new ChatMemberNavigation(chat.Id, user.Id));
+                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, user.Id));
                 }
                 else if (result.Chat is Chat temp && temp.Type is ChatTypePrivate privata)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), new ChatMemberNavigation(chat.Id, privata.UserId));
+                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, privata.UserId));
                 }
             }
         }

@@ -14,8 +14,6 @@ namespace Unigram.ViewModels
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        private readonly IDispatcherWrapper _dispatcher;
-
         public TLViewModelBase(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;

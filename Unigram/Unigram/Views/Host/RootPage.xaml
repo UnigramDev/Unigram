@@ -78,15 +78,21 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePicture IsEnabled="False" Width="28" Height="28" Margin="10,0,10,0"/>
-                <Rectangle Width="2"
-                           Height="24"
-                           Margin="4,0,0,0"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Center"
-                           Visibility="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                           Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" />
+                <Rectangle
+                    Width="2"
+                    Height="24"
+                    Margin="4,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Visibility="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" />
 
-                <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Grid.Column="1"/>
+                <TextBlock
+                    TextWrapping="NoWrap"
+                    TextTrimming="CharacterEllipsis"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                    VerticalAlignment="Center"
+                    Grid.Column="1"/>
 
                 <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                         Visibility="{x:Bind UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"

@@ -13,6 +13,7 @@ using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
 using Unigram.Converters;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
@@ -156,8 +157,8 @@ namespace Unigram.Views
                     viewModel.Dispose();
                 }
 
-                MasterDetail.NavigationService.Frame.Navigating -= OnNavigating;
-                MasterDetail.NavigationService.Frame.Navigated -= OnNavigated;
+                MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
+                MasterDetail.NavigationService.FrameFacade.Navigated -= OnNavigated;
 
                 MasterDetail.Dispose();
                 SettingsView.Dispose();
@@ -439,16 +440,16 @@ namespace Unigram.Views
                 switch (update.State)
                 {
                     case ConnectionStateWaitingForNetwork waitingForNetwork:
-                        ShowStatus(Strings.Resources.WaitingForNetwork);
+                        ShowState(Strings.Resources.WaitingForNetwork);
                         break;
                     case ConnectionStateConnecting connecting:
-                        ShowStatus(Strings.Resources.Connecting);
+                        ShowState(Strings.Resources.Connecting);
                         break;
                     case ConnectionStateConnectingToProxy connectingToProxy:
-                        ShowStatus(Strings.Resources.ConnectingToProxy);
+                        ShowState(Strings.Resources.ConnectingToProxy);
                         break;
                     case ConnectionStateUpdating updating:
-                        ShowStatus(Strings.Resources.Updating);
+                        ShowState(Strings.Resources.Updating);
                         break;
                     case ConnectionStateReady ready:
                         //ShowStatus(Strings.Resources.Connected);
@@ -490,7 +491,7 @@ namespace Unigram.Views
             Proxy.Glyph = connectionState is ConnectionStateReady && proxyId != 0 ? "\uE916" : "\uE915";
         }
 
-        private void ShowStatus(string text)
+        private void ShowState(string text)
         {
             Status.IsIndeterminate = true;
             StatusLabel.Text = text;
@@ -1047,7 +1048,7 @@ namespace Unigram.Views
                 var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));
                 if (response is Chat chat)
                 {
-                    MasterDetail.NavigationService.NavigateToChat(chat);
+                    MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                     MasterDetail.NavigationService.GoBackAt(0, false);
                 }
             }
@@ -1168,8 +1169,8 @@ namespace Unigram.Views
             if (MasterDetail.NavigationService == null)
             {
                 MasterDetail.Initialize("Main", Frame, ViewModel.ProtoService.SessionId);
-                MasterDetail.NavigationService.Frame.Navigating += OnNavigating;
-                MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
+                MasterDetail.NavigationService.FrameFacade.Navigating += OnNavigating;
+                MasterDetail.NavigationService.FrameFacade.Navigated += OnNavigated;
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
@@ -1216,7 +1217,7 @@ namespace Unigram.Views
                     var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(from_id, false));
                     if (response is Chat chat)
                     {
-                        MasterDetail.NavigationService.NavigateToChat(chat);
+                        MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                     }
                 }
                 else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
@@ -1224,7 +1225,7 @@ namespace Unigram.Views
                     var response = await ViewModel.ProtoService.SendAsync(new CreateBasicGroupChat(chat_id, false));
                     if (response is Chat chat)
                     {
-                        MasterDetail.NavigationService.NavigateToChat(chat);
+                        MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                     }
                 }
                 else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
@@ -1232,7 +1233,7 @@ namespace Unigram.Views
                     var response = await ViewModel.ProtoService.SendAsync(new CreateSupergroupChat(channel_id, false));
                     if (response is Chat chat)
                     {
-                        MasterDetail.NavigationService.NavigateToChat(chat);
+                        MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                     }
                 }
             }
@@ -1257,26 +1258,28 @@ namespace Unigram.Views
                     var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(from_id, false));
                     if (response is Chat chat)
                     {
-                        MasterDetail.NavigationService.NavigateToChat(chat);
+                        MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                     }
                 }
             }
         }
 
-        private void OnNavigating(object sender, NavigatingCancelEventArgs e)
+        private void OnNavigating(object sender, NavigatingEventArgs e)
         {
             var frame = sender as Frame;
 
             MasterDetail.BackgroundOpacity =
                 e.SourcePageType == typeof(ChatPage) ||
+                e.SourcePageType == typeof(ChatScheduledPage) ||
+                e.SourcePageType == typeof(ChatEventLogPage) ||
                 e.SourcePageType == typeof(BlankPage) ||
-                e.SourcePageType == typeof(SupergroupEventLogPage) ||
                 frame.CurrentSourcePageType == typeof(ChatPage) ||
-                frame.CurrentSourcePageType == typeof(BlankPage) ||
-                frame.CurrentSourcePageType == typeof(SupergroupEventLogPage) ? 1 : 0;
+                frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
+                frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
+                frame.CurrentSourcePageType == typeof(BlankPage) ? 1 : 0;
         }
 
-        private void OnNavigated(object sender, NavigationEventArgs e)
+        private void OnNavigated(object sender, NavigatedEventArgs e)
         {
             //if (e.SourcePageType == typeof(BlankPage))
             //{
@@ -1301,16 +1304,7 @@ namespace Unigram.Views
             }
 
             UpdatePaneToggleButtonVisibility();
-
-            if (e.SourcePageType == typeof(ChatPage))
-            {
-                var parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)e.Parameter);
-                UpdateListViewsSelectedItem((long)parameter);
-            }
-            else
-            {
-                UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
-            }
+            UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
         }
 
         private void OnStateChanged(object sender, EventArgs e)
@@ -1482,7 +1476,7 @@ namespace Unigram.Views
             {
                 ViewModel.Chats.SelectedItem = message.ChatId;
 
-                MasterDetail.NavigationService.NavigateToChat(message.ChatId, message: message.Id);
+                MasterDetail.NavigationService.NavigateToChat(message.ChatId, message: message.Id, force: false);
             }
             else
             {
@@ -1538,7 +1532,7 @@ namespace Unigram.Views
                     folder.SelectedItem = chat.Id;
                 }
 
-                MasterDetail.NavigationService.NavigateToChat(chat);
+                MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                 MasterDetail.NavigationService.GoBackAt(0, false);
             }
         }
@@ -2352,7 +2346,7 @@ namespace Unigram.Views
                 var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(ViewModel.CacheService.Options.MyId, false));
                 if (response is Chat chat)
                 {
-                    MasterDetail.NavigationService.NavigateToChat(chat);
+                    MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                 }
             }
             else if (destination == RootDestination.News)

@@ -36,7 +36,7 @@ namespace Unigram.Views.Settings
         {
             base.OnNavigatedTo(e);
 
-            var path = TLSerializationService.Current.Deserialize((string)e.Parameter) as string;
+            var path = e.Parameter as string;
             var file = await StorageFile.GetFileFromPathAsync(path);
 
             var theme = _theme = await TLContainer.Current.Resolve<IThemeService>().DeserializeAsync(file);

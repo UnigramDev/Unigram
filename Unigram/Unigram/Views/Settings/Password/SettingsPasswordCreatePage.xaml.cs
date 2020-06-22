@@ -30,7 +30,6 @@ namespace Unigram.Views.Settings.Password
 
         private void Reveal_Click(object sender, RoutedEventArgs e)
         {
-            Reveal.Content = Reveal.IsChecked == true ? "<(.)>" : "<(/)>";
             Field1.PasswordRevealMode = Reveal.IsChecked == true ? PasswordRevealMode.Visible : PasswordRevealMode.Hidden;
             Field2.PasswordRevealMode = Reveal.IsChecked == true ? PasswordRevealMode.Visible : PasswordRevealMode.Hidden;
 

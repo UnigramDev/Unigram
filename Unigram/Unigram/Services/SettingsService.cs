@@ -194,8 +194,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (4UL << 48) | (1UL << 32) | (5204UL << 16);
-        public const string CurrentChangelog = "• New built-in themes: Classic, Day, Dark and Night.\r\n• Preview stickers and GIFs by click and hold them.\r\n• Improved app memory management.\r\n• More than a hundred between bug fixes and improvements.";
+        public const ulong CurrentVersion = (4UL << 48) | (2UL << 32) | (5263UL << 16);
+        public const string CurrentChangelog = "• Groups and channels Recent actions section is now feature complete.";
 
         public int Session => _session;
 

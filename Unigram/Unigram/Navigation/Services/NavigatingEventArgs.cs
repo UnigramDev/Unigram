@@ -1,26 +1,22 @@
 ﻿using System;
-using Unigram.Navigation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Services.Navigation
+namespace Unigram.Navigation.Services
 {
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public class NavigatingEventArgs : NavigatedEventArgs
     {
-        DeferralManager Manager;
-        public Deferral GetDeferral() => Manager.GetDeferral();
-
-        public NavigatingEventArgs(DeferralManager manager) : base()
+        public NavigatingEventArgs()
         {
-            Manager = manager;
+
         }
 
-        public NavigatingEventArgs(DeferralManager manager, NavigatingCancelEventArgs e, Page page, Type targetPageType, object parameter, object targetPageParameter) : this(manager)
+        public NavigatingEventArgs(NavigatingCancelEventArgs e, Page page, Type targetPageType, object parameter, object targetPageParameter)
         {
             NavigationMode = e.NavigationMode;
-            PageType = e.SourcePageType;
-            Page = page;
+            SourcePageType = e.SourcePageType;
+            Content = page;
             Parameter = parameter;
             TargetPageType = targetPageType;
             TargetPageParameter = targetPageParameter;

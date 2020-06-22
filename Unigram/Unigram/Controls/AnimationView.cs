@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Native;
 using Windows.Foundation;
+using Windows.Graphics.DirectX;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -91,10 +92,13 @@ namespace Unigram.Controls
 
             Dispose();
 
-            //_animation?.Dispose();
+            _device = null;
+
+            _animation?.Dispose();
             _animation = null;
 
             //_bitmap?.Dispose();
+            _bitmap?.Dispose();
             _bitmap = null;
         }
 
@@ -115,6 +119,9 @@ namespace Unigram.Controls
             _canvas?.Invalidate();
         }
 
+        private static object _reusableLock = new object();
+        private static byte[] _reusableBuffer;
+
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
             args.TrackAsyncAction(Task.Run(() =>
@@ -127,9 +134,15 @@ namespace Unigram.Controls
 
                 _animation = animation;
 
-                var colors = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
+                lock (_reusableLock)
+                {
+                    if (_reusableBuffer == null || _reusableBuffer.Length < _animation.PixelWidth * _animation.PixelHeight * 4)
+                    {
+                        _reusableBuffer = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
+                    }
+                }
 
-                _bitmap = CanvasBitmap.CreateFromBytes(sender, colors, _animation.PixelWidth, _animation.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
                 _device = sender;
 
             }).AsAsyncAction());

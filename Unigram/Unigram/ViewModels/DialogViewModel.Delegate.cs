@@ -241,17 +241,11 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                try
+                var temp = await ProtoService.GetFileAsync(file);
+                if (temp != null)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var result = await Windows.System.Launcher.LaunchFileAsync(temp);
-                    //var folder = await temp.GetParentAsync();
-                    //var options = new Windows.System.FolderLauncherOptions();
-                    //options.ItemsToSelect.Add(temp);
-
-                    //var result = await Windows.System.Launcher.LaunchFolderAsync(folder, options);
+                    await Windows.System.Launcher.LaunchFileAsync(temp);
                 }
-                catch { }
             }
         }
 
@@ -504,6 +498,18 @@ namespace Unigram.ViewModels
                 await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
                 return;
             }
+            else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
+            {
+                foreach (var row in inline.Rows)
+                foreach (var button in row)
+                {
+                    if (button.Type is InlineKeyboardButtonTypeCallbackGame)
+                    {
+                        KeyboardButtonExecute(message, button);
+                        return;
+                    }
+                }
+            }
 
             GalleryViewModelBase viewModel = null;
 
@@ -518,7 +524,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            if (viewModel == null && (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
+            if (viewModel == null && (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null)))
             {
                 Delegate?.PlayMessage(message, target);
             }

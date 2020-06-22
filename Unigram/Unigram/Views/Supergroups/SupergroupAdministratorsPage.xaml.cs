@@ -2,7 +2,7 @@
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Services;
+using Unigram.Navigation.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupAdministratorsPage : HostedPage, ISupergroupDelegate
+    public sealed partial class SupergroupAdministratorsPage : HostedPage, IBasicAndSupergroupDelegate
     {
         public SupergroupAdministratorsViewModel ViewModel => DataContext as SupergroupAdministratorsViewModel;
 
@@ -35,7 +35,7 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
-            ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), new ChatMemberNavigation(chat.Id, member.UserId));
+            ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
         }
 
         #region Context menu
@@ -109,18 +109,37 @@ namespace Unigram.Views.Supergroups
 
         #region Binding
 
-        public void UpdateSupergroup(Chat chat, Supergroup group)
-        {
-            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Text = group.IsChannel ? Strings.Resources.ChannelAdminsInfo : Strings.Resources.MegaAdminsInfo;
-        }
-
-        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }
         public void UpdateChat(Chat chat) { }
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
 
+        public void UpdateSupergroup(Chat chat, Supergroup group)
+        {
+            EventLog.Visibility = Visibility.Visible;
+            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Text = group.IsChannel ? Strings.Resources.ChannelAdminsInfo : Strings.Resources.MegaAdminsInfo;
+
+            HeaderPanel.Visibility = Visibility.Visible;
+        }
+
+        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo) { }
+
+        public void UpdateBasicGroup(Chat chat, BasicGroup group)
+        {
+            EventLog.Visibility = Visibility.Collapsed;
+            AddNew.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Visibility = group.CanPromoteMembers() ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Text = Strings.Resources.MegaAdminsInfo;
+
+            HeaderPanel.Visibility = EventLog.Visibility == Visibility.Visible || AddNew.Visibility == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo) { }
+
         #endregion
+
     }
 }

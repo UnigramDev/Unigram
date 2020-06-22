@@ -3467,13 +3467,10 @@
                             <TextBlock
                                 x:Name="UncheckedContentPresenter"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding UncheckedGlyph}"
-                                Width="20"
-                                Height="20"
-                                Margin="10"/>
+                                Text="{TemplateBinding UncheckedGlyph}"/>
                         </Grid>
 
                         <TextBlock

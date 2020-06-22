@@ -280,33 +280,8 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void MaybeUseInner(ref MessageViewModel message)
-        {
-            if (message.Content is MessageChatEvent chatEvent)
-            {
-                if (chatEvent.Event.Action is ChatEventMessageDeleted messageDeleted)
-                {
-                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageDeleted.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
-                }
-                else if (chatEvent.Event.Action is ChatEventMessageEdited messageEdited)
-                {
-                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageEdited.NewMessage) { IsFirst = true, IsLast = true, IsOutgoing = false };
-                }
-                else if (chatEvent.Event.Action is ChatEventMessagePinned messagePinned)
-                {
-                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
-                }
-                else if (chatEvent.Event.Action is ChatEventPollStopped pollStopped)
-                {
-                    message = new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, pollStopped.Message) { IsFirst = true, IsLast = true, IsOutgoing = false };
-                }
-            }
-        }
-
         public void UpdateMessageHeader(MessageViewModel message)
         {
-            MaybeUseInner(ref message);
-
             var paragraph = HeaderLabel;
             var admin = AdminLabel;
             var parent = Header;
@@ -627,8 +602,6 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageContent(MessageViewModel message, bool padding = false)
         {
-            MaybeUseInner(ref message);
-
             string display = null;
 
             //if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
@@ -935,10 +908,10 @@ namespace Unigram.Controls.Messages
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
 
             _placeholderVertical = adjust;
-            //if (adjust)
-            //{
-            //    Span.Inlines.Add(new LineBreak());
-            //}
+            if (adjust)
+            {
+                Span.Inlines.Add(new LineBreak());
+            }
         }
 
         private bool GetEntities(MessageViewModel message, Span span, string text, out bool adjust)
@@ -1282,9 +1255,9 @@ namespace Unigram.Controls.Messages
                 var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
 
                 var diff = width - rect.Right;
-                if (diff < footerWidth || _placeholderVertical)
+                if (diff < footerWidth /*|| _placeholderVertical*/)
                 {
-                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right && !_placeholderVertical)
+                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right /*&& !_placeholderVertical*/)
                     {
                         Message.Margin = new Thickness(0, 0, footerWidth, 0);
                     }

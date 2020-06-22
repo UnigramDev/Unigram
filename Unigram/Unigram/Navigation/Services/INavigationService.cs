@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unigram.Navigation;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -9,7 +8,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Unigram.Services.Navigation
+namespace Unigram.Navigation.Services
 {
     public interface INavigationService
     {
@@ -18,16 +17,14 @@ namespace Unigram.Services.Navigation
 
         object Content { get; }
 
-        void Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null);
-        void Navigate<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible;
-
-        Task<bool> NavigateAsync(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null);
-        Task<bool> NavigateAsync<T>(T key, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null) where T : struct, IConvertible;
+        bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null);
 
         bool CanGoBack { get; }
         bool CanGoForward { get; }
 
         string NavigationState { get; set; }
+
+        IDictionary<string, long> CacheKeyToChatId { get; }
 
         void Refresh();
 

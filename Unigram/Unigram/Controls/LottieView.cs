@@ -144,10 +144,21 @@ namespace Unigram.Controls
             _canvas?.Invalidate();
         }
 
+        private static object _reusableLock = new object();
+        private static byte[] _reusableBuffer;
+
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
+            lock (_reusableLock)
+            {
+                if (_reusableBuffer == null)
+                {
+                    _reusableBuffer = new byte[256 * 256 * 4];
+                }
+            }
+
             _device = sender;
-            _bitmap = CanvasBitmap.CreateFromBytes(sender, new byte[256 * 256 * 4], 256, 256, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+            _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, 256, 256, DirectXPixelFormat.B8G8R8A8UIntNormalized);
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
@@ -323,12 +334,6 @@ namespace Unigram.Controls
             _animationTotalFrame = animation.TotalFrame;
 
             _index = _isCachingEnabled ? 0 : _animationTotalFrame - 1;
-
-            var update = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
-            if (_limitFps && _animation.FrameRate >= 60)
-            {
-                update = TimeSpan.FromSeconds(update.TotalSeconds * 2);
-            }
 
             //canvas.Paused = true;
             //canvas.ResetElapsedTime();

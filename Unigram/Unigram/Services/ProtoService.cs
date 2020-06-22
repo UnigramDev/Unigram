@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +22,8 @@ namespace Unigram.Services
         //void Send(Function function, ClientResultHandler handler);
         void Send(Function function, Action<BaseObject> handler = null);
         Task<BaseObject> SendAsync(Function function);
+
+        Task<StorageFile> GetFileAsync(File file);
 
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
         void CancelDownloadFile(int fileId, bool onlyIfPending = false);
@@ -195,7 +196,7 @@ namespace Unigram.Services
 
             var parameters = new TdlibParameters
             {
-                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
+                DatabaseDirectory = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
                 UseSecretChats = true,
                 UseMessageDatabase = true,
                 ApiId = Constants.ApiId,
@@ -311,7 +312,7 @@ namespace Unigram.Services
             {
                 InitializeDiagnostics();
 
-                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
+                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
                 _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
                 //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
@@ -326,7 +327,7 @@ namespace Unigram.Services
 
         private void InitializeDiagnostics()
         {
-            Client.Execute(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024)));
+            Client.Execute(new SetLogStream(new LogStreamFile(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024)));
             Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
 
             var tags = Client.Execute(new GetLogTags()) as LogTags;
@@ -471,6 +472,26 @@ namespace Unigram.Services
 
 
         private ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
+
+        public async Task<StorageFile> GetFileAsync(File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var path = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path);
+
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(path) as StorageFile;
+                if (item != null)
+                {
+                    return item;
+                }
+                else
+                {
+                    Send(new DeleteFileW(file.Id));
+                }
+            }
+
+            return null;
+        }
 
         public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
         {

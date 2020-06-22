@@ -489,11 +489,12 @@ namespace Unigram.Views
         {
             if (ViewModel != null)
             {
-                ViewModel.Items.Clear();
-
                 ViewModel.PropertyChanged -= OnPropertyChanged;
                 ViewModel.Items.AttachChanged = null;
                 //ViewModel.Items.CollectionChanged -= OnCollectionChanged;
+
+                //ViewModel.Items.Dispose();
+                //ViewModel.Items.Clear();
 
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
@@ -507,6 +508,7 @@ namespace Unigram.Views
         public void Activate()
         { 
             DataContext = _getViewModel(this);
+            Bindings.Update();
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -528,9 +530,14 @@ namespace Unigram.Views
 
             UpdateTextAreaRadius();
 
+            TextField.IsReplaceEmojiEnabled = ViewModel.Settings.IsReplaceEmojiEnabled;
             TextField.IsTextPredictionEnabled = SettingsService.Current.AutocorrectWords;
             TextField.IsSpellCheckEnabled = SettingsService.Current.HighlightWords;
             TextField.Focus(FocusState.Programmatic);
+
+            Options.Visibility = ViewModel.Type == DialogType.Normal
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -1871,7 +1878,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (ViewModel.IsSchedule)
+            if (ViewModel.Type != DialogType.Normal)
             {
                 return;
             }
@@ -2062,7 +2069,7 @@ namespace Unigram.Views
 
         private bool MessageReply_Loaded(MessageViewModel message)
         {
-            if (message.SchedulingState != null)
+            if (message.SchedulingState != null || ViewModel.Type != DialogType.Normal)
             {
                 return false;
             }
@@ -2086,7 +2093,7 @@ namespace Unigram.Views
 
         private bool MessagePin_Loaded(MessageViewModel message)
         {
-            if (message.SchedulingState != null && message.IsService())
+            if (message.SchedulingState != null || ViewModel.Type != DialogType.Normal || message.IsService())
             {
                 return false;
             }
@@ -2142,7 +2149,7 @@ namespace Unigram.Views
 
         private bool MessageUnvotePoll_Loaded(MessageViewModel message)
         {
-            if (message.Content is MessagePoll poll && poll.Poll.Type is PollTypeRegular)
+            if (ViewModel.Type == DialogType.Normal && message.Content is MessagePoll poll && poll.Poll.Type is PollTypeRegular)
             {
                 return poll.Poll.Options.Any(x => x.IsChosen) && !poll.Poll.IsClosed;
             }
@@ -2231,7 +2238,7 @@ namespace Unigram.Views
             {
                 //var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                 //return !string.IsNullOrEmpty(supergroup.Username);
-                return true;
+                return ViewModel.Type == DialogType.Normal;
             }
 
             return false;
@@ -2239,7 +2246,7 @@ namespace Unigram.Views
 
         private bool MessageSelect_Loaded(MessageViewModel message)
         {
-            if (_myPeople || message.IsService())
+            if (_myPeople || ViewModel.Type == DialogType.EventLog || message.IsService())
             {
                 return false;
             }
@@ -3056,13 +3063,12 @@ namespace Unigram.Views
 
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
 
-            ButtonScheduled.Visibility = chat.HasScheduledMessages && !ViewModel.IsSchedule ? Visibility.Visible : Visibility.Collapsed;
+            ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.Normal ? Visibility.Visible : Visibility.Collapsed;
             ButtonTimer.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.IsChecked = chat.DefaultDisableNotification;
 
             Call.Visibility = Visibility.Collapsed;
-            CallPlaceholder.Visibility = Visibility.Collapsed;
 
             UpdateChatPermissions(chat);
         }
@@ -3075,7 +3081,7 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            if (ViewModel.IsSchedule)
+            if (ViewModel.Type == DialogType.ScheduledMessages)
             {
                 Title.Text = ViewModel.CacheService.IsSavedMessages(chat) ? Strings.Resources.Reminders : Strings.Resources.ScheduledMessages;
             }
@@ -3092,7 +3098,7 @@ namespace Unigram.Views
 
         public void UpdateChatHasScheduledMessages(Chat chat)
         {
-            ButtonScheduled.Visibility = chat.HasScheduledMessages && !ViewModel.IsSchedule ? Visibility.Visible : Visibility.Collapsed;
+            ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.Normal ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateChatActionBar(Chat chat)
@@ -3244,7 +3250,7 @@ namespace Unigram.Views
 
         public void UpdateChatUnreadMentionCount(Chat chat, int count)
         {
-            if (count > 0)
+            if (ViewModel.Type == DialogType.Normal && count > 0)
             {
                 MentionsPanel.Visibility = Visibility.Visible;
                 Mentions.Text = count.ToString();
@@ -3724,8 +3730,6 @@ namespace Unigram.Views
 
             Messages.Margin = new Thickness(0, 0, 0, -radius);
             Messages.Padding = new Thickness(0, 0, 0, radius + 6);
-
-            TextField.IsReplaceEmojiEnabled = ViewModel.Settings.IsReplaceEmojiEnabled;
         }
 
         public void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection)
@@ -3798,7 +3802,6 @@ namespace Unigram.Views
             }
 
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
-            CallPlaceholder.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -3807,7 +3810,7 @@ namespace Unigram.Views
             {
                 ViewModel.LastSeen = null;
             }
-            else if (ViewModel.IsSchedule)
+            else if (ViewModel.Type == DialogType.ScheduledMessages)
             {
                 ViewModel.LastSeen = null;
             }
@@ -3890,6 +3893,15 @@ namespace Unigram.Views
 
         public async void UpdateSupergroup(Chat chat, Supergroup group)
         {
+            if (ViewModel.Type == DialogType.EventLog)
+            {
+                ShowAction(Strings.Resources.Settings, true);
+
+                DiscussColumn.Width = new GridLength(0, GridUnitType.Auto);
+                DiscussButton.Visibility = Visibility.Collapsed;
+                return;
+            }
+            
             if (group.IsChannel)
             {
                 if ((group.Status is ChatMemberStatusLeft && group.Username.Length > 0) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
@@ -3958,7 +3970,7 @@ namespace Unigram.Views
                 }
                 else if (!chat.Permissions.CanSendMessages)
                 {
-                    ShowAction(Strings.Resources.GlobalSendMessageRestricted, true);
+                    ShowAction(Strings.Resources.GlobalSendMessageRestricted, false);
                 }
                 else
                 {
@@ -4007,6 +4019,11 @@ namespace Unigram.Views
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
+            if (ViewModel.Type == DialogType.EventLog)
+            {
+                return;
+            }
+
             ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
 
             btnSendMessage.SlowModeDelay = fullInfo.SlowModeDelay;
@@ -4050,7 +4067,7 @@ namespace Unigram.Views
 
 
 
-        public void UpdateFile(Telegram.Td.Api.File file)
+        public void UpdateFile(File file)
         {
             if (_viewModel.TryGetMessagesForFileId(file.Id, out IList<MessageViewModel> messages))
             {

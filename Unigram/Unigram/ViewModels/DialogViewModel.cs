@@ -10,9 +10,9 @@ using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Factories;
-using Unigram.Services.Navigation;
 using Unigram.Services.Updates;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
@@ -69,22 +69,22 @@ namespace Unigram.ViewModels
             SelectedItems = messages;
         }
 
-        private readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
+        protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new ConcurrentDictionary<long, MessageViewModel>();
 
-        private static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
+        protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
 
-        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        private readonly DisposableMutex _insertLock = new DisposableMutex();
+        protected readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+        protected readonly DisposableMutex _insertLock = new DisposableMutex();
 
-        private readonly StickerDrawerViewModel _stickers;
-        private readonly AnimationDrawerViewModel _animations;
+        protected readonly StickerDrawerViewModel _stickers;
+        protected readonly AnimationDrawerViewModel _animations;
 
-        private readonly ILocationService _locationService;
-        private readonly INotificationsService _pushService;
-        private readonly IPlaybackService _playbackService;
-        private readonly IVoIPService _voipService;
-        private readonly INetworkService _networkService;
-        private readonly IMessageFactory _messageFactory;
+        protected readonly ILocationService _locationService;
+        protected readonly INotificationsService _pushService;
+        protected readonly IPlaybackService _playbackService;
+        protected readonly IVoIPService _voipService;
+        protected readonly INetworkService _networkService;
+        protected readonly IMessageFactory _messageFactory;
 
         public IPlaybackService PlaybackService => _playbackService;
 
@@ -237,7 +237,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private Chat _migratedChat;
+        protected Chat _migratedChat;
         public Chat MigratedChat
         {
             get
@@ -250,14 +250,14 @@ namespace Unigram.ViewModels
             }
         }
 
-        private Chat _linkedChat;
+        protected Chat _linkedChat;
         public Chat LinkedChat
         {
             get => _linkedChat;
             set => Set(ref _linkedChat, value);
         }
 
-        private Chat _chat;
+        protected Chat _chat;
         public Chat Chat
         {
             get
@@ -276,13 +276,13 @@ namespace Unigram.ViewModels
         //    get => _isSchedule;
         //    set => Set(ref _isSchedule, value);
         //}
-        private bool _isSchedule => IsSchedule;
-        public virtual bool IsSchedule => false;
+        private DialogType _type => Type;
+        public virtual DialogType Type => DialogType.Normal;
 
         private string _lastSeen;
         public string LastSeen
         {
-            get { return _lastSeen; }
+            get { return _type == DialogType.EventLog ? Strings.Resources.EventLog : _lastSeen; }
             set { Set(ref _lastSeen, value); RaisePropertyChanged(() => Subtitle); }
         }
 
@@ -293,7 +293,7 @@ namespace Unigram.ViewModels
             set { Set(ref _onlineCount, value); RaisePropertyChanged(() => Subtitle); }
         }
 
-        public string Subtitle
+        public virtual string Subtitle
         {
             get
             {
@@ -595,12 +595,12 @@ namespace Unigram.ViewModels
             }
         }
 
-        private bool _isLoadingNextSlice;
-        private bool _isLoadingPreviousSlice;
+        protected bool _isLoadingNextSlice;
+        protected bool _isLoadingPreviousSlice;
 
-        private Stack<long> _goBackStack = new Stack<long>();
+        protected Stack<long> _goBackStack = new Stack<long>();
 
-        public async Task LoadNextSliceAsync(bool force = false, bool init = false)
+        public async virtual Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
             using (await _loadMoreLock.WaitAsync())
             {
@@ -620,7 +620,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (_isSchedule || _isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_type != DialogType.Normal || _isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
@@ -723,7 +723,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (_isSchedule || _isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
+                if (_type != DialogType.Normal || _isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
                 {
                     return;
                 }
@@ -800,7 +800,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task AddHeaderAsync()
+        protected async Task AddHeaderAsync()
         {
             var previous = Items.FirstOrDefault();
             if (previous != null && (previous.Content is MessageHeaderDate || previous.Id == 0))
@@ -809,7 +809,7 @@ namespace Unigram.ViewModels
             }
 
             var chat = _chat;
-            if (chat == null)
+            if (chat == null || _type != DialogType.Normal)
             {
                 goto AddDate;
             }
@@ -944,59 +944,24 @@ namespace Unigram.ViewModels
                     }
                 }
             }
-
-            //var dialog = _dialog;
-            //if (dialog == null)
-            //{
-            //    return;
-            //}
-
-            //var responsez = await LegacyService.GetUnreadMentionsAsync(_peer, 0, dialog.UnreadMentionsCount - 1, 1, 0, 0);
-            //if (responsez.IsSucceeded && responsez.Result is ITLMessages result)
-            //{
-            //    var count = 0;
-            //    if (responsez.Result is TLMessagesChannelMessages channelMessages)
-            //    {
-            //        count = channelMessages.Count;
-            //    }
-
-            //    dialog.UnreadMentionsCount = count;
-            //    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
-
-            //    //if (response.Result.Messages.IsEmpty())
-            //    //{
-            //    //    dialog.UnreadMentionsCount = 0;
-            //    //    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
-            //    //    return;
-            //    //}
-
-            //    var commonMessage = result.Messages.FirstOrDefault() as TLMessageCommonBase;
-            //    if (commonMessage == null)
-            //    {
-            //        return;
-            //    }
-
-            //    commonMessage.IsMediaUnread = false;
-            //    commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
-
-            //    // DO NOT AWAIT
-            //    LoadMessageSliceAsync(null, commonMessage.Id);
-
-            //    if (With is TLChannel channel)
-            //    {
-            //        await LegacyService.ReadMessageContentsAsync(channel.ToInputChannel(), new TLVector<int> { commonMessage.Id });
-            //    }
-            //    else
-            //    {
-            //        await LegacyService.ReadMessageContentsAsync(new TLVector<int> { commonMessage.Id });
-            //    }
-            //}
         }
 
         public RelayCommand PreviousSliceCommand { get; }
         private async void PreviousSliceExecute()
         {
-            if (_goBackStack.Count > 0)
+            if (_type == DialogType.ScheduledMessages || _type == DialogType.EventLog)
+            {
+                var already = Items.LastOrDefault();
+                if (already != null)
+                {
+                    var field = ListField;
+                    if (field != null)
+                    {
+                        await field.ScrollToItem(already, VerticalAlignment.Bottom, false, int.MaxValue, ScrollIntoViewAlignment.Leading, false);
+                    }
+                }
+            }
+            else if (_goBackStack.Count > 0)
             {
                 await LoadMessageSliceAsync(null, _goBackStack.Pop());
             }
@@ -1016,6 +981,11 @@ namespace Unigram.ViewModels
 
         public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, bool second = false)
         {
+            if (_type != DialogType.Normal)
+            {
+                return;
+            }
+
             if (direction == null)
             {
                 var field = ListField;
@@ -1237,6 +1207,11 @@ namespace Unigram.ViewModels
             }
         }
 
+        public virtual Task LoadEventLogSliceAsync(string query = "")
+        {
+            return Task.CompletedTask;
+        }
+
         public async Task LoadDateSliceAsync(int dateOffset)
         {
             var chat = _chat;
@@ -1285,7 +1260,7 @@ namespace Unigram.ViewModels
 
         public MessageCollection Items { get; } = new MessageCollection();
 
-        private async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
+        protected async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
         {
             if (Settings.IsLargeEmojiEnabled)
             {
@@ -1352,11 +1327,13 @@ namespace Unigram.ViewModels
 
                 var target = parent ?? message;
                 var content = message.GeneratedContent ?? message.Content as object;
+
                 if (content is MessageAlbum albumMessage)
                 {
                     ProcessFiles(chat, albumMessage.Layout.Messages, message);
                     continue;
                 }
+
                 if (content is MessageAnimation animationMessage)
                 {
                     content = animationMessage.Animation;
@@ -1743,11 +1720,17 @@ namespace Unigram.ViewModels
             }
 
 #pragma warning disable CS4014
-            if (_isSchedule)
+            if (_type == DialogType.ScheduledMessages)
             {
                 Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loadings scheduled messages", chat.Id));
 
                 LoadScheduledSliceAsync();
+            }
+            else if (_type == DialogType.EventLog)
+            {
+                Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loadings event log", chat.Id));
+
+                LoadEventLogSliceAsync();
             }
             else if (state.TryGet("message_id", out long navigation))
             {
@@ -1898,7 +1881,7 @@ namespace Unigram.ViewModels
 
                 ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
                 {
-                    if (result is Telegram.Td.Api.ChatAdministrators users)
+                    if (result is ChatAdministrators users)
                     {
                         _admins[chat.Id] = users.Administrators;
                     }
@@ -1923,7 +1906,7 @@ namespace Unigram.ViewModels
 
                 ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
                 {
-                    if (result is Telegram.Td.Api.ChatAdministrators users)
+                    if (result is ChatAdministrators users)
                     {
                         _admins[chat.Id] = users.Administrators;
                     }
@@ -1935,7 +1918,7 @@ namespace Unigram.ViewModels
             ShowPinnedMessage(chat);
             ShowSwitchInline(state);
 
-            if (App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
+            if (_type == DialogType.Normal && App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
             {
                 await HandlePackageAsync(package);
             }
@@ -1950,14 +1933,14 @@ namespace Unigram.ViewModels
         //    }
         //}
 
-        public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
+        public override void OnNavigatingFrom(NavigatingEventArgs args)
         {
             Aggregator.Unsubscribe(this);
 
             var chat = _chat;
             if (chat == null)
             {
-                return Task.CompletedTask;
+                return;
             }
 
 #if !DEBUG
@@ -1979,7 +1962,7 @@ namespace Unigram.ViewModels
 
                     Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
 
-                    return Task.CompletedTask;
+                    return;
                 }
 
                 var panel = field.ItemsPanelRoot as ItemsStackPanel;
@@ -2034,17 +2017,12 @@ namespace Unigram.ViewModels
                 Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Removing scrolling position, exception", chat.Id));
             }
 
-            if (Dispatcher != null)
-            {
-                Dispatcher.Dispatch(SaveDraft);
-            }
-
-            return Task.CompletedTask;
+            SaveDraft();
         }
 
         private void ShowSwitchInline(IDictionary<string, object> state)
         {
-            if (state.TryGet("switch_query", out string query) && state.TryGet("switch_bot", out int userId))
+            if (_type == DialogType.Normal && state.TryGet("switch_query", out string query) && state.TryGet("switch_bot", out int userId))
             {
                 state.Remove("switch_query");
                 state.Remove("switch_bot");
@@ -2062,7 +2040,7 @@ namespace Unigram.ViewModels
 
         private async void ShowReplyMarkup(Chat chat)
         {
-            if (chat.ReplyMarkupMessageId == 0)
+            if (chat.ReplyMarkupMessageId == 0 || _type != DialogType.Normal)
             {
                 Delegate?.UpdateChatReplyMarkup(chat, null);
             }
@@ -2082,7 +2060,7 @@ namespace Unigram.ViewModels
 
         public async void ShowPinnedMessage(Chat chat)
         {
-            if (chat == null || chat.PinnedMessageId == 0)
+            if (chat == null || chat.PinnedMessageId == 0 || _type != DialogType.Normal)
             {
                 Delegate?.UpdatePinnedMessage(chat, null, false);
             }
@@ -2112,7 +2090,7 @@ namespace Unigram.ViewModels
         private async void ShowDraftMessage(Chat chat)
         {
             var draft = chat.DraftMessage;
-            if (draft == null)
+            if (draft == null || _type != DialogType.Normal)
             {
                 SetText(null as string);
                 ComposerHeader = null;
@@ -3196,6 +3174,11 @@ namespace Unigram.ViewModels
 
         #region Action
 
+        protected virtual void FilterExecute()
+        {
+
+        }
+
         public RelayCommand ActionCommand { get; }
         private void ActionExecute()
         {
@@ -3205,7 +3188,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate privata)
+            if (_type == DialogType.EventLog)
+            {
+                FilterExecute();
+            }
+            else if (chat.Type is ChatTypePrivate privata)
             {
                 var fullInfo = ProtoService.GetUserFull(privata.UserId);
                 if (fullInfo == null)
@@ -3330,8 +3317,7 @@ namespace Unigram.ViewModels
 
     public class MessageCollection : MvxObservableCollection<MessageViewModel>
     {
-        private readonly Dictionary<long, long> _messages = new Dictionary<long, long>();
-        private readonly HashSet<DateTime> _dates = new HashSet<DateTime>();
+        private readonly HashSet<long> _messages = new HashSet<long>();
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
 
@@ -3343,12 +3329,12 @@ namespace Unigram.ViewModels
 
         public bool ContainsKey(long id)
         {
-            return _messages.ContainsKey(id);
+            return _messages.Contains(id);
         }
 
         protected override void InsertItem(int index, MessageViewModel item)
         {
-            _messages[item.Id] = item.Id;
+            _messages.Add(item.Id);
 
             item.IsFirst = true;
             item.IsLast = true;
@@ -3610,5 +3596,12 @@ namespace Unigram.ViewModels
         None,
         Loading,
         Deleted
+    }
+
+    public enum DialogType
+    {
+        Normal,
+        ScheduledMessages,
+        EventLog
     }
 }

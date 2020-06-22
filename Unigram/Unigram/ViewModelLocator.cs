@@ -172,12 +172,12 @@ namespace Unigram
                 builder.RegisterType<ChatsViewModel>();
                 builder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
                 builder.RegisterType<DialogScheduledViewModel>();
+                builder.RegisterType<DialogEventLogViewModel>();
                 builder.RegisterType<AnimationDrawerViewModel>();
                 builder.RegisterType<StickerDrawerViewModel>();
                 builder.RegisterType<ProfileViewModel>();
                 builder.RegisterType<UserCommonChatsViewModel>();
                 builder.RegisterType<UserCreateViewModel>();
-                builder.RegisterType<SupergroupEventLogViewModel>();
                 builder.RegisterType<SupergroupEditViewModel>();
                 builder.RegisterType<SupergroupEditTypeViewModel>();
                 builder.RegisterType<SupergroupEditStickerSetViewModel>();

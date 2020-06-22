@@ -452,7 +452,7 @@ int VideoAnimation::RenderSync(CanvasBitmap^ bitmap, bool preview)
                     unknown->QueryInterface(IID_PPV_ARGS(&bitmapAbi));
 
                     bitmapAbi->SetPixelBytes(pixelWidth * pixelHeight * 4, (BYTE*)pixels);
-                    delete[] pixels;
+                    free(pixels);
 
                     info->prevFrame = timestamp;
                     info->prevDuration = (1000 * info->frame->pkt_duration * av_q2d(info->video_stream->time_base));
