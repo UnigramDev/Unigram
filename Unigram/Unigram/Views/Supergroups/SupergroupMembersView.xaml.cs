@@ -74,8 +74,8 @@ namespace Unigram.Views.Supergroups
 
             Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
             ListHeader.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
-            ScrollingHost.Padding = new Thickness(0, embedded && !locked ? 12 : embedded ? 12 + 16 : 16, 0, 0);
-            ScrollingHost.ItemsPanelCornerRadius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
+            ScrollingHost.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 0);
+            ScrollingHost.ItemsPanelCornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
             //ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
 
             if (embedded)

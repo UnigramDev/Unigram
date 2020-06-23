@@ -49,8 +49,8 @@ namespace Unigram.Views.Users
             _isLocked = locked;
 
             //Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
-            ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;
-            List.ItemsPanelCornerRadius = new CornerRadius(embedded && !locked ? 0 : 8, embedded && !locked ? 0 : 8, 8, 8);
+            ListHeader.Height = embedded ? 12 : embedded ? 12 + 16 : 16;
+            List.ItemsPanelCornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
