@@ -230,33 +230,36 @@ namespace Unigram.ViewModels
             }
         }
 
-        private Message CreateMessage(long chatId, bool isChannel, ChatEvent chatEvent)
+        private Message CreateMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
         {
             var userId = chatEvent.UserId;
 
-            if (chatEvent.Action is ChatEventMessageDeleted messageDeleted)
+            if (child)
             {
-                userId = messageDeleted.Message.SenderUserId;
-            }
-            else if (chatEvent.Action is ChatEventMessageEdited messageEdited)
-            {
-                userId = messageEdited.NewMessage.SenderUserId;
-            }
-            else if (chatEvent.Action is ChatEventMessagePinned messagePinned)
-            {
-                userId = messagePinned.Message.SenderUserId;
-            }
-            else if (chatEvent.Action is ChatEventPollStopped pollStopped)
-            {
-                userId = pollStopped.Message.SenderUserId;
+                if (chatEvent.Action is ChatEventMessageDeleted messageDeleted)
+                {
+                    userId = messageDeleted.Message.SenderUserId;
+                }
+                else if (chatEvent.Action is ChatEventMessageEdited messageEdited)
+                {
+                    userId = messageEdited.NewMessage.SenderUserId;
+                }
+                else if (chatEvent.Action is ChatEventMessagePinned messagePinned)
+                {
+                    userId = messagePinned.Message.SenderUserId;
+                }
+                else if (chatEvent.Action is ChatEventPollStopped pollStopped)
+                {
+                    userId = pollStopped.Message.SenderUserId;
+                }
             }
 
             return new Message(chatEvent.Id, userId, chatId, null, null, false, false, false, false, false, isChannel, false, chatEvent.Date, 0, null, 0, 0, 0.0d, 0, string.Empty, 0, 0, string.Empty, null, null);
         }
 
-        private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent)
+        private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
         {
-            var message = _messageFactory.Create(this, CreateMessage(chatId, isChannel, chatEvent));
+            var message = _messageFactory.Create(this, CreateMessage(chatId, isChannel, chatEvent, child));
             message.IsFirst = true;
             message.IsLast = true;
 
@@ -301,13 +304,13 @@ namespace Unigram.ViewModels
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatDeleteMember(item.UserId);
                         break;
+                    case ChatEventDescriptionChanged descriptionChanged:
+                    case ChatEventUsernameChanged usernameChanged:
                     case ChatEventMessageDeleted messageDeleted:
                     case ChatEventMessageEdited messageEdited:
-                    case ChatEventDescriptionChanged descriptionChanged:
                     case ChatEventMessagePinned messagePinned:
-                    case ChatEventUsernameChanged usernameChanged:
                     case ChatEventPollStopped pollStopped:
-                        message = GetMessage(_chat.Id, channel, item);
+                        message = GetMessage(_chat.Id, channel, item, true);
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
                         result.Add(message);
