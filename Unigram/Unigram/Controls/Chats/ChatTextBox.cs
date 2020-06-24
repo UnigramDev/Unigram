@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -862,7 +861,7 @@ namespace Unigram.Controls.Chats
                 }
                 else
                 {
-                    if (!MessageHelper.IsValidCommandSymbol(text[i]))
+                    if (!char.IsLetter(text[i]))
                     {
                         flag = false;
                         break;
