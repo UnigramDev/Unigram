@@ -93,7 +93,7 @@ namespace Unigram.Views
 
                 if (message.Content is MessageAlbum album)
                 {
-                    messages.AddRange(album.Layout.Messages.Keys);
+                    messages.AddRange(album.Messages.Keys);
                 }
                 else if (message.SendingState is MessageSendingStatePending == false)
                 {

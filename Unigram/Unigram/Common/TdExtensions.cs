@@ -1925,7 +1925,7 @@ namespace Unigram.Common
         public static bool UpdateFile(this MessageAlbum album, File file)
         {
             var any = false;
-            foreach (var message in album.Layout.Messages)
+            foreach (var message in album.Messages)
             {
                 if (message.UpdateFile(file))
                 {
@@ -2177,16 +2177,114 @@ namespace Telegram.Td.Api
     {
         public FormattedText Caption { get; set; }
 
-        public GroupedMessages Layout { get; private set; }
+        public UniqueList<long, MessageViewModel> Messages { get; } = new UniqueList<long, MessageViewModel>(x => x.Id);
 
         public MessageAlbum()
         {
-            Layout = new GroupedMessages();
         }
 
         public NativeObject ToUnmanaged()
         {
             throw new NotImplementedException();
+        }
+
+        public const double ITEM_MARGIN = 2;
+        public const double MAX_WIDTH = 320 + ITEM_MARGIN;
+        public const double MAX_HEIGHT = 420 + ITEM_MARGIN;
+
+        private ((Rect, MosaicItemPosition)[], Size)? _positions;
+
+        public void Invalidate()
+        {
+            _positions = null;
+        }
+
+        public (Rect[], Size) GetPositionsForWidth(double w)
+        {
+            var positions = _positions ??= MosaicAlbumLayout.chatMessageBubbleMosaicLayout(new Size(MAX_WIDTH, MAX_HEIGHT), GetSizes());
+
+            var ratio = w / positions.Item2.Width;
+            var rects = new Rect[positions.Item1.Length];
+
+            for (int i = 0; i < rects.Length; i++)
+            {
+                var rect = positions.Item1[i].Item1;
+                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, rect.Width * ratio, rect.Height * ratio);
+            }
+
+            return (rects, new Size(positions.Item2.Width * ratio, positions.Item2.Height * ratio));
+        }
+
+        private IEnumerable<Size> GetSizes()
+        {
+            foreach (var message in Messages)
+            {
+                if (message.Content is MessagePhoto photoMedia)
+                {
+                    yield return GetClosestPhotoSizeWithSize(photoMedia.Photo.Sizes, 1280, false);
+                }
+                else if (message.Content is MessageVideo videoMedia)
+                {
+                    if (videoMedia.Video.Width != 0 && videoMedia.Video.Height != 0)
+                    {
+                        yield return new Size(videoMedia.Video.Width, videoMedia.Video.Height);
+                    }
+                    else if (videoMedia.Video.Thumbnail != null)
+                    {
+                        yield return new Size(videoMedia.Video.Thumbnail.Width, videoMedia.Video.Thumbnail.Height);
+                    }
+                    else
+                    {
+                        yield return Size.Empty;
+                    }
+                }
+            }
+        }
+
+        public static Size GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side)
+        {
+            return GetClosestPhotoSizeWithSize(sizes, side, false);
+        }
+
+        public static Size GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side, bool byMinSide)
+        {
+            if (sizes == null || sizes.IsEmpty())
+            {
+                return Size.Empty;
+            }
+            int lastSide = 0;
+            PhotoSize closestObject = null;
+            for (int a = 0; a < sizes.Count; a++)
+            {
+                PhotoSize obj = sizes[a];
+                if (obj == null)
+                {
+                    continue;
+                }
+
+                int w = obj.Width;
+                int h = obj.Height;
+
+                if (byMinSide)
+                {
+                    int currentSide = h >= w ? w : h;
+                    if (closestObject == null || side > 100 && side > lastSide && lastSide < currentSide)
+                    {
+                        closestObject = obj;
+                        lastSide = currentSide;
+                    }
+                }
+                else
+                {
+                    int currentSide = w >= h ? w : h;
+                    if (closestObject == null || side > 100 && currentSide <= side && lastSide < currentSide)
+                    {
+                        closestObject = obj;
+                        lastSide = currentSide;
+                    }
+                }
+            }
+            return new Size(closestObject.Width, closestObject.Height);
         }
     }
 

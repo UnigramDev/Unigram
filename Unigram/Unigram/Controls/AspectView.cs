@@ -50,7 +50,7 @@ namespace Unigram.Controls
                 ttl = viewModel.Ttl > 0;
                 constraint = viewModel.Content;
 
-                if (viewModel.MediaAlbumId != 0 && Tag is GroupedMessagePosition)
+                if (viewModel.MediaAlbumId != 0 && Tag is true)
                 {
                     return base.MeasureOverride(availableSize);
                 }
@@ -60,7 +60,7 @@ namespace Unigram.Controls
                 ttl = message.Ttl > 0;
                 constraint = message.Content;
 
-                if (message.MediaAlbumId != 0 && Tag is GroupedMessagePosition)
+                if (message.MediaAlbumId != 0 && Tag is true)
                 {
                     return base.MeasureOverride(availableSize);
                 }

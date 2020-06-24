@@ -270,7 +270,7 @@ namespace Unigram.ViewModels
             {
                 FormattedText caption = null;
 
-                foreach (var child in album.Layout.Messages)
+                foreach (var child in album.Messages)
                 {
                     var childCaption = child.Content?.GetCaption();
                     if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))

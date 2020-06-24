@@ -83,7 +83,7 @@ namespace Unigram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                message = album.Layout.Messages.FirstOrDefault();
+                message = album.Messages.FirstOrDefault();
             }
 
             ComposerHeader = new MessageComposerHeader { ReplyToMessage = message };
@@ -209,7 +209,7 @@ namespace Unigram.ViewModels
         {
             if (message.Content is MessageAlbum album)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(album.Layout.Messages.Select(x => x.Get()).ToList());
+                await SharePopup.GetForCurrentView().ShowAsync(album.Messages.Select(x => x.Get()).ToList());
             }
             else
             {

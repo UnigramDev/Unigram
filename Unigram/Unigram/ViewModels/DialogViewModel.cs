@@ -56,9 +56,9 @@ namespace Unigram.ViewModels
                 {
                     messages.RemoveAt(i);
 
-                    for (int j = 0; j < album.Layout.Messages.Count; j++)
+                    for (int j = 0; j < album.Messages.Count; j++)
                     {
-                        messages.Insert(i, album.Layout.Messages[j]);
+                        messages.Insert(i, album.Messages[j]);
                         i++;
                     }
 
@@ -541,7 +541,7 @@ namespace Unigram.ViewModels
             var last = Items.LastOrDefault();
             if (last?.Content is MessageAlbum album)
             {
-                last = album.Layout.Messages.LastOrDefault();
+                last = album.Messages.LastOrDefault();
             }
 
             if (last == null || last.Id == 0)
@@ -1004,7 +1004,7 @@ namespace Unigram.ViewModels
                 pixel = int.MaxValue;
             }
 
-            var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Layout.Messages.ContainsKey(maxId));
+            var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Messages.ContainsKey(maxId));
             if (already != null)
             {
                 var field = ListField;
@@ -1330,7 +1330,7 @@ namespace Unigram.ViewModels
 
                 if (content is MessageAlbum albumMessage)
                 {
-                    ProcessFiles(chat, albumMessage.Layout.Messages, message);
+                    ProcessFiles(chat, albumMessage.Messages, message);
                     continue;
                 }
 
@@ -1527,7 +1527,7 @@ namespace Unigram.ViewModels
 
         private void ProcessAlbums(Chat chat, IList<MessageViewModel> slice)
         {
-            var groups = new Dictionary<long, Tuple<MessageViewModel, GroupedMessages>>();
+            var groups = new Dictionary<long, Tuple<MessageViewModel, MessageAlbum>>();
             var newGroups = new Dictionary<long, long>();
 
             for (int i = 0; i < slice.Count; i++)
@@ -1565,12 +1565,11 @@ namespace Unigram.ViewModels
 
                 if (group.Content is MessageAlbum album)
                 {
-                    groups[groupedId] = Tuple.Create(group, album.Layout);
+                    groups[groupedId] = Tuple.Create(group, album);
 
-                    album.Layout.GroupedId = groupedId;
-                    album.Layout.Messages.Add(message);
+                    album.Messages.Add(message);
 
-                    var first = album.Layout.Messages.FirstOrDefault();
+                    var first = album.Messages.FirstOrDefault();
                     if (first != null)
                     {
                         group.UpdateWith(first);
@@ -1580,7 +1579,7 @@ namespace Unigram.ViewModels
 
             foreach (var group in groups.Values)
             {
-                group.Item2.Calculate();
+                group.Item2.Invalidate();
 
                 if (newGroups.ContainsKey(group.Item1.MediaAlbumId))
                 {

@@ -416,33 +416,40 @@ namespace Unigram.ViewModels
                             if (message.MediaAlbumId != 0 && message.Content is MessageAlbum album)
                             {
                                 var found = false;
+                                var invalidated = true;
 
-                                for (int k = 0; k < album.Layout.Messages.Count; k++)
+                                for (int k = 0; k < album.Messages.Count; k++)
                                 {
-                                    if (table.Contains(album.Layout.Messages[k].Id))
+                                    if (table.Contains(album.Messages[k].Id))
                                     {
-                                        album.Layout.Messages.RemoveAt(k);
+                                        album.Messages.RemoveAt(k);
+                                        k--;
 
-                                        if (album.Layout.Messages.Count > 0)
+                                        if (album.Messages.Count > 0)
                                         {
-                                            message.UpdateWith(album.Layout.Messages[0]);
-                                            album.Layout.Calculate();
-
-                                            Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
+                                            message.UpdateWith(album.Messages[0]);
+                                            album.Invalidate();
                                         }
                                         else
                                         {
+                                            invalidated = false;
+
                                             Items.RemoveAt(i);
                                             i--;
                                         }
 
                                         found = true;
-                                        break;
+                                        //break;
                                     }
                                 }
 
                                 if (found)
                                 {
+                                    if (invalidated)
+                                    {
+                                        Handle(new UpdateMessageContent(message.ChatId, message.Id, album));
+                                    }
+
                                     continue;
                                 }
                             }
@@ -664,13 +671,13 @@ namespace Unigram.ViewModels
                         {
                             var found = false;
 
-                            if (album.Layout.Messages.TryGetValue(messageId, out MessageViewModel child))
+                            if (album.Messages.TryGetValue(messageId, out MessageViewModel child))
                             {
                                 update(child);
                                 found = true;
 
-                                message.UpdateWith(album.Layout.Messages[0]);
-                                album.Layout.Calculate();
+                                message.UpdateWith(album.Messages[0]);
+                                album.Invalidate();
 
                                 if (action == null)
                                 {
@@ -751,15 +758,15 @@ namespace Unigram.ViewModels
                         {
                             var found = false;
 
-                            foreach (var child in album.Layout.Messages)
+                            foreach (var child in album.Messages)
                             {
                                 if (child.Id == messageId)
                                 {
                                     update(child);
                                     found = true;
 
-                                    message.UpdateWith(album.Layout.Messages[0]);
-                                    album.Layout.Calculate();
+                                    message.UpdateWith(album.Messages[0]);
+                                    album.Invalidate();
 
                                     var container = field.ContainerFromItem(message) as ListViewItem;
                                     if (container == null)

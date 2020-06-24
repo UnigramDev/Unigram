@@ -1688,24 +1688,22 @@ namespace Unigram.Controls.Messages
             }
             else if (constraint is MessageAlbum album)
             {
-                var groupedMessages = album.Layout;
-                if (groupedMessages.Messages.Count == 1)
+                if (album.Messages.Count == 1)
                 {
-                    if (groupedMessages.Messages[0].Content is MessagePhoto photoContent)
+                    if (album.Messages[0].Content is MessagePhoto photoContent)
                     {
                         constraint = photoContent.Photo;
                     }
-                    else if (groupedMessages.Messages[0].Content is MessageVideo videoContent)
+                    else if (album.Messages[0].Content is MessageVideo videoContent)
                     {
                         constraint = videoContent.Video;
                     }
                 }
                 else
                 {
-
-                    width = groupedMessages.Width / 800d * Math.Min(availableSize.Width, AlbumContent.MAX_WIDTH - AlbumContent.ITEM_MARGIN);
-                    height = width / (AlbumContent.MAX_WIDTH - AlbumContent.ITEM_MARGIN) * (AlbumContent.MAX_HEIGHT - AlbumContent.ITEM_MARGIN);
-                    height = groupedMessages.Height * height;
+                    var positions = album.GetPositionsForWidth(availableWidth + MessageAlbum.ITEM_MARGIN);
+                    width = positions.Item2.Width - MessageAlbum.ITEM_MARGIN;
+                    height = positions.Item2.Height;
 
                     goto Calculate;
                 }
