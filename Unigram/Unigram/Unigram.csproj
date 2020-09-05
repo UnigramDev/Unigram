@@ -482,6 +482,7 @@
     <Compile Include="Navigation\Services\NavigatingEventArgs.cs" />
     <Compile Include="Navigation\Services\NavigationService.cs" />
     <Compile Include="Navigation\Services\NavigationServiceList.cs" />
+    <Compile Include="Services\CallsService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
@@ -605,7 +606,6 @@
     <Compile Include="Services\ViewService\SecondaryViewSynchronizationContextDecorator.cs" />
     <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />
     <Compile Include="Services\ViewService\ViewService.cs" />
-    <Compile Include="Services\VoIPService.cs" />
     <Compile Include="Strings\en\Additional.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
