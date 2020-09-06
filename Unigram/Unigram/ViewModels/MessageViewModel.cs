@@ -158,6 +158,10 @@ namespace Unigram.ViewModels
         public bool IsShareable()
         {
             var message = this;
+            if (message.SchedulingState != null)
+            {
+                return false;
+            }
             //if (currentPosition != null && !currentPosition.last)
             //{
             //    return false;
