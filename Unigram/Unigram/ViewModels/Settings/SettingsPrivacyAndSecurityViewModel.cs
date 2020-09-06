@@ -166,6 +166,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsArchiveAndMuteEnabled
+        {
+            get
+            {
+                return ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
+            }
+            set
+            {
+                ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool IsSecretPreviewsEnabled
         {
             get

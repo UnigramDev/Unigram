@@ -44,6 +44,7 @@ namespace Unigram.Services
         IHandle<UpdateUnreadMessageCount>,
         IHandle<UpdateUnreadChatCount>,
         IHandle<UpdateChatReadInbox>,
+        IHandle<UpdateSuggestedActions>,
         IHandle<UpdateServiceNotification>,
         IHandle<UpdateTermsOfService>,
         IHandle<UpdateAuthorizationState>,
@@ -144,6 +145,23 @@ namespace Unigram.Services
 
                     _protoService.Send(new AcceptTermsOfService(update.TermsOfServiceId));
                 });
+            }
+        }
+
+        public async void Handle(UpdateSuggestedActions update)
+        {
+            foreach (var action in update.AddedActions)
+            {
+                if (action is SuggestedActionEnableArchiveAndMuteNewChats)
+                {
+                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.HideNewChatsAlertText, Strings.Resources.HideNewChatsAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        _protoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = true;
+                    }
+
+                    _protoService.Send(new HideSuggestedAction(action));
+                }
             }
         }
 
