@@ -51,7 +51,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var options = await PickSendMessageOptionsAsync(schedule, silent);
+            var options = await PickMessageSendOptionsAsync(schedule, silent);
             if (options == null)
             {
                 return;
@@ -109,7 +109,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var options = await PickSendMessageOptionsAsync(schedule, silent);
+            var options = await PickMessageSendOptionsAsync(schedule, silent);
             if (options == null)
             {
                 return;
@@ -279,7 +279,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var options = await PickSendMessageOptionsAsync(dialog.Schedule, dialog.Silent);
+            var options = await PickMessageSendOptionsAsync(dialog.Schedule, dialog.Silent);
             if (options == null)
             {
                 return;
@@ -323,7 +323,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendStorageMediaAsync(StorageMedia storage, FormattedText caption, bool asFile, SendMessageOptions options)
+        private async Task SendStorageMediaAsync(StorageMedia storage, FormattedText caption, bool asFile, MessageSendOptions options)
         {
             if (storage is StorageDocument)
             {
@@ -339,7 +339,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendDocumentAsync(StorageFile file, FormattedText caption = null, SendMessageOptions options = null)
+        private async Task SendDocumentAsync(StorageFile file, FormattedText caption = null, MessageSendOptions options = null)
         {
             var factory = await _messageFactory.CreateDocumentAsync(file);
             if (factory != null)
@@ -351,7 +351,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int ttl = 0, BitmapEditState editState = null, SendMessageOptions options = null)
+        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int ttl = 0, BitmapEditState editState = null, MessageSendOptions options = null)
         {
             var factory = await _messageFactory.CreatePhotoAsync(file, asFile, ttl, editState);
             if (factory != null)
@@ -363,7 +363,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task SendVideoAsync(StorageFile file, FormattedText caption, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, SendMessageOptions options = null)
+        public async Task SendVideoAsync(StorageFile file, FormattedText caption, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
         {
             var factory = await _messageFactory.CreateVideoAsync(file, animated, asFile, ttl, profile, transform);
             if (factory != null)
@@ -377,7 +377,7 @@ namespace Unigram.ViewModels
 
         public async Task SendVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
-            var options = await PickSendMessageOptionsAsync();
+            var options = await PickMessageSendOptionsAsync();
             if (options == null)
             {
                 return;
@@ -401,7 +401,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var options = await PickSendMessageOptionsAsync();
+            var options = await PickMessageSendOptionsAsync();
             if (options == null)
             {
                 return;
@@ -519,7 +519,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var options = await PickSendMessageOptionsAsync();
+                var options = await PickMessageSendOptionsAsync();
                 if (options == null)
                 {
                     return;
@@ -529,14 +529,14 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async Task<BaseObject> SendContactAsync(Telegram.Td.Api.Contact contact, SendMessageOptions options)
+        public async Task<BaseObject> SendContactAsync(Telegram.Td.Api.Contact contact, MessageSendOptions options)
         {
             return await SendMessageAsync(0, new InputMessageContact(contact), options);
         }
 
         //private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent)
         //{
-        //    var options = new SendMessageOptions(false, false, null);
+        //    var options = new MessageSendOptions(false, false, null);
         //    if (_isSchedule)
         //    {
         //        var dialog = new SupergroupEditRestrictedUntilView(DateTime.Now.ToTimestamp());
@@ -552,7 +552,7 @@ namespace Unigram.ViewModels
         //    return await SendMessageAsync(replyToMessageId, inputMessageContent, options);
         //}
 
-        public async Task<SendMessageOptions> PickSendMessageOptionsAsync(bool? schedule = null, bool? silent = null)
+        public async Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null)
         {
             var chat = _chat;
             if (chat == null)
@@ -574,20 +574,20 @@ namespace Unigram.ViewModels
 
                 if (dialog.IsUntilOnline)
                 {
-                    return new SendMessageOptions(false, false, new MessageSchedulingStateSendWhenOnline());
+                    return new MessageSendOptions(false, false, new MessageSchedulingStateSendWhenOnline());
                 }
                 else
                 {
-                    return new SendMessageOptions(false, false, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()));
+                    return new MessageSendOptions(false, false, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()));
                 }
             }
             else
             {
-                return new SendMessageOptions(silent ?? false, false, null);
+                return new MessageSendOptions(silent ?? false, false, null);
             }
         }
 
-        private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent, SendMessageOptions options)
+        private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent, MessageSendOptions options)
         {
             var chat = _chat;
             if (chat == null)
@@ -597,7 +597,7 @@ namespace Unigram.ViewModels
 
             if (options == null)
             {
-                options = new SendMessageOptions(false, false, null);
+                options = new MessageSendOptions(false, false, null);
             }
 
             var response = await ProtoService.SendAsync(new SendMessage(chat.Id, replyToMessageId, options, null, inputMessageContent));
@@ -640,7 +640,7 @@ namespace Unigram.ViewModels
             var confirm = await dialog.OpenAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                var options = await PickSendMessageOptionsAsync();
+                var options = await PickMessageSendOptionsAsync();
                 if (options == null)
                 {
                     return;
@@ -691,7 +691,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var options = await PickSendMessageOptionsAsync();
+            var options = await PickMessageSendOptionsAsync();
             if (options == null)
             {
                 return;
@@ -730,7 +730,7 @@ namespace Unigram.ViewModels
         //    return tsc.Task;
         //}
 
-        private async Task<BaseObject> SendGroupedAsync(ICollection<StorageMedia> items, FormattedText caption, SendMessageOptions options)
+        private async Task<BaseObject> SendGroupedAsync(ICollection<StorageMedia> items, FormattedText caption, MessageSendOptions options)
         {
             var chat = _chat;
             if (chat == null)

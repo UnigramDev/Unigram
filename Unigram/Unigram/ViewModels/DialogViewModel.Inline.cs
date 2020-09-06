@@ -179,7 +179,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var options = await PickSendMessageOptionsAsync();
+            var options = await PickMessageSendOptionsAsync();
             if (options == null)
             {
                 return;

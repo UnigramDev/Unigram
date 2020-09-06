@@ -901,7 +901,7 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageRescheduleCommand { get; }
         private async void MessageRescheduleExecute(MessageViewModel message)
         {
-            var options = await PickSendMessageOptionsAsync(true);
+            var options = await PickMessageSendOptionsAsync(true);
             if (options?.SchedulingState == null)
             {
                 return;
