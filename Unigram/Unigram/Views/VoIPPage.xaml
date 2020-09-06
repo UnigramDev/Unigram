@@ -170,7 +170,8 @@
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding CheckedGlyph}"/>
+                                Text="{TemplateBinding CheckedGlyph}"
+                                FontSize="20"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -181,6 +182,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
         <!--<Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
         <Image x:Name="Image" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Canvas x:Name="Camera"/>
         <Border x:Name="BackgroundPanel" Background="Transparent"/>
 
         <Grid Padding="12,0">
@@ -258,60 +260,126 @@
             </Grid>
         </Grid>
 
-        <Grid VerticalAlignment="Bottom" Margin="0,12">
-            <Grid.ChildrenTransitions>
+        <StackPanel VerticalAlignment="Bottom" Margin="0,12">
+            <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition/>
                     <AddDeleteThemeTransition/>
                 </TransitionCollection>
-            </Grid.ChildrenTransitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <controls:GlyphToggleButton
-                x:Name="Mute"
-                IsChecked="{x:Bind IsMuted, Mode=TwoWay}"
-                IsOneWay="False"
-                CheckedGlyph="&#xE610;"
-                FontFamily="{StaticResource TelegramThemeFontFamily}"
-                HorizontalAlignment="Right"
-                Margin="0,0,12,0"
-                AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
-                ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"/>
+            </StackPanel.ChildrenTransitions>
 
-            <Border x:Name="Close" Visibility="Collapsed" Background="#FFFFFF" CornerRadius="24" Grid.Column="1">
-                <controls:GlyphButton
-                    Click="Close_Click"
-                    Glyph="&#xE10A;"
-                    Foreground="#777777"
-                    RequestedTheme="Light"
-                    Radius="24"
-                    AutomationProperties.Name="{CustomResource Close}"
-                    ToolTipService.ToolTip="{CustomResource Close}"/>
-            </Border>
-            <Border x:Name="Accept" Visibility="Collapsed" Background="#64BA57" CornerRadius="24" Grid.Column="2">
-                <controls:GlyphButton
-                    Click="Accept_Click"
-                    Glyph="&#xE13A;"
-                    Radius="24"
-                    AutomationProperties.Name="{CustomResource VoipAnswerCall}"
-                    ToolTipService.ToolTip="{CustomResource VoipAnswerCall}"/>
-            </Border>
-            <Border x:Name="Discard" Background="#E33A32" CornerRadius="24" Grid.Column="3">
-                <controls:GlyphButton
-                    Click="Hangup_Click"
-                    Glyph="&#xE60F;"
+            <Grid
+                x:Name="AudioOff"
+                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                CornerRadius="{ThemeResource MessageServiceCornerRadius}"
+                Padding="12,2,12,4"
+                Margin="0,0,0,12"
+                HorizontalAlignment="Center"
+                Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Text="&#xE610;"
+                    FontSize="16"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
-                    FontSize="24"
-                    Padding="0,0,0,2"
-                    Radius="24"
-                    AutomationProperties.Name="{CustomResource VoipEndCall}"
-                    ToolTipService.ToolTip="{CustomResource VoipEndCall}"/>
-            </Border>
-        </Grid>
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,8,0"/>
+                <TextBlock
+                    x:Name="AudioOffText"
+                    Grid.Column="1"/>
+            </Grid>
+
+            <Grid
+                x:Name="VideoOff"
+                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                CornerRadius="{ThemeResource MessageServiceCornerRadius}"
+                Padding="12,2,12,4"
+                Margin="0,0,0,12"
+                HorizontalAlignment="Center"
+                Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Text="&#xE714;"
+                    FontSize="20"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    VerticalAlignment="Bottom"
+                    Margin="0,-2,8,-2"/>
+                <TextBlock
+                    x:Name="VideoOffText"
+                    Grid.Column="1"/>
+            </Grid>
+
+            <Grid>
+                <Grid.ChildrenTransitions>
+                    <TransitionCollection>
+                        <RepositionThemeTransition/>
+                        <AddDeleteThemeTransition/>
+                    </TransitionCollection>
+                </Grid.ChildrenTransitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <controls:GlyphToggleButton
+                    x:Name="Video"
+                    IsChecked="{x:Bind IsVideo, Mode=TwoWay}"
+                    IsOneWay="False"
+                    CheckedGlyph="&#xE714;"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,12,0"
+                    AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
+                    ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"/>
+                <controls:GlyphToggleButton
+                    x:Name="Mute"
+                    IsChecked="{x:Bind IsMuted, Mode=TwoWay}"
+                    IsOneWay="False"
+                    CheckedGlyph="&#xE610;"
+                    FontFamily="{StaticResource TelegramThemeFontFamily}"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,12,0"
+                    AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
+                    ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"
+                    Grid.Column="1"/>
+
+                <Border x:Name="Close" Visibility="Collapsed" Background="#FFFFFF" CornerRadius="24" Grid.Column="2">
+                    <controls:GlyphButton
+                        Click="Close_Click"
+                        Glyph="&#xE10A;"
+                        Foreground="#777777"
+                        RequestedTheme="Light"
+                        Radius="24"
+                        AutomationProperties.Name="{CustomResource Close}"
+                        ToolTipService.ToolTip="{CustomResource Close}"/>
+                </Border>
+                <Border x:Name="Accept" Visibility="Collapsed" Background="#64BA57" CornerRadius="24" Grid.Column="3">
+                    <controls:GlyphButton
+                        Click="Accept_Click"
+                        Glyph="&#xE13A;"
+                        Radius="24"
+                        AutomationProperties.Name="{CustomResource VoipAnswerCall}"
+                        ToolTipService.ToolTip="{CustomResource VoipAnswerCall}"/>
+                </Border>
+                <Border x:Name="Discard" Background="#E33A32" CornerRadius="24" Grid.Column="4">
+                    <controls:GlyphButton
+                        Click="Hangup_Click"
+                        Glyph="&#xE60F;"
+                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                        FontSize="24"
+                        Padding="0,0,0,2"
+                        Radius="24"
+                        AutomationProperties.Name="{CustomResource VoipEndCall}"
+                        ToolTipService.ToolTip="{CustomResource VoipEndCall}"/>
+                </Border>
+            </Grid>
+        </StackPanel>
     </Grid>
 </Page>

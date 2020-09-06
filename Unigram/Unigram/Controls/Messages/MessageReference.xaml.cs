@@ -458,7 +458,7 @@ namespace Unigram.Controls.Messages
             var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming);
+            ServiceLabel.Text = call.ToOutcomeText(message.IsOutgoing);
             MessageLabel.Text = string.Empty;
 
             return true;
@@ -963,10 +963,7 @@ namespace Unigram.Controls.Messages
             }
             else if (message.Content is MessageCall call)
             {
-                var outgoing = message.IsOutgoing;
-                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
-
-                return (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
+                return call.ToOutcomeText(message.IsOutgoing);
             }
             else if (message.Content is MessageUnsupported)
             {

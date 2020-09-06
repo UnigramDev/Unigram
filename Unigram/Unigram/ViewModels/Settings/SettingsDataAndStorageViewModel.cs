@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Native.Calls;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
@@ -37,7 +38,7 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        public libtgvoip.DataSavingMode UseLessData
+        public VoipDataSaving UseLessData
         {
             get
             {
@@ -123,9 +124,9 @@ namespace Unigram.ViewModels.Settings
         {
             var items = new[]
             {
-                new SelectRadioItem(libtgvoip.DataSavingMode.Never, Strings.Resources.UseLessDataNever, UseLessData == libtgvoip.DataSavingMode.Never),
-                new SelectRadioItem(libtgvoip.DataSavingMode.MobileOnly, Strings.Resources.UseLessDataOnMobile, UseLessData == libtgvoip.DataSavingMode.MobileOnly),
-                new SelectRadioItem(libtgvoip.DataSavingMode.Always, Strings.Resources.UseLessDataAlways, UseLessData == libtgvoip.DataSavingMode.Always),
+                new SelectRadioItem(VoipDataSaving.Never, Strings.Resources.UseLessDataNever, UseLessData == VoipDataSaving.Never),
+                new SelectRadioItem(VoipDataSaving.Mobile, Strings.Resources.UseLessDataOnMobile, UseLessData == VoipDataSaving.Mobile),
+                new SelectRadioItem(VoipDataSaving.Always, Strings.Resources.UseLessDataAlways, UseLessData == VoipDataSaving.Always),
             };
 
             var dialog = new SelectRadioPopup(items);
@@ -134,7 +135,7 @@ namespace Unigram.ViewModels.Settings
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
             var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is libtgvoip.DataSavingMode index)
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VoipDataSaving index)
             {
                 UseLessData = index;
             }

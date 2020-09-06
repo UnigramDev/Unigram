@@ -43,14 +43,14 @@ namespace Unigram.ViewModels
 
         public IProfileDelegate Delegate { get; set; }
 
-        private readonly IVoIPService _voipService;
+        private readonly IVoipService _voipService;
         private readonly INotificationsService _notificationsService;
 
         private readonly ChatSharedMediaViewModel _chatSharedMediaViewModel;
         private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
         private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _voipService = voipService;
@@ -66,7 +66,7 @@ namespace Unigram.ViewModels
             BlockCommand = new RelayCommand(BlockExecute);
             UnblockCommand = new RelayCommand(UnblockExecute);
             ReportCommand = new RelayCommand(ReportExecute);
-            CallCommand = new RelayCommand(CallExecute);
+            CallCommand = new RelayCommand<bool>(CallExecute);
             CopyPhoneCommand = new RelayCommand(CopyPhoneExecute);
             CopyDescriptionCommand = new RelayCommand(CopyDescriptionExecute);
             CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
@@ -784,8 +784,8 @@ namespace Unigram.ViewModels
 
         #region Call
 
-        public RelayCommand CallCommand { get; }
-        private async void CallExecute()
+        public RelayCommand<bool> CallCommand { get; }
+        private void CallExecute(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -793,57 +793,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var user = CacheService.GetUser(chat);
-            if (user == null)
-            {
-                return;
-            }
-
-            var full = CacheService.GetUserFull(chat);
-            if (full == null || !full.CanBeCalled)
-            {
-                return;
-            }
-
-            var call = _voipService.ActiveCall;
-            if (call != null)
-            {
-                var callUser = CacheService.GetUser(call.UserId);
-                if (callUser != null && callUser.Id != user.Id)
-                {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-
-                    }
-                }
-                else
-                {
-                    _voipService.Show();
-                }
-
-                return;
-            }
-
-            var fullInfo = CacheService.GetUserFull(user.Id);
-            if (fullInfo != null && fullInfo.HasPrivateCalls)
-            {
-                await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
-                return;
-            }
-
-            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 74, new string[0])));
-            if (response is Error error)
-            {
-                if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
-                {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
-                }
-                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
-                {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
-                }
-            }
+            _voipService.Start(chat.Id, video);
         }
 
         #endregion

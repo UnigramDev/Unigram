@@ -169,7 +169,7 @@
                         Header="{CustomResource EnableStreaming}"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
-                
+
                 <controls:HeaderedControl
                     Header="{CustomResource Calls}">
                     <controls:BadgeButton
@@ -177,7 +177,7 @@
                         Command="{x:Bind ViewModel.UseLessDataCommand}"
                         Content="{CustomResource VoipUseLessData}"/>
                 </controls:HeaderedControl>
-                
+
                 <controls:HeaderedControl
                     Header="{CustomResource Proxy}">
                     <controls:BadgeButton

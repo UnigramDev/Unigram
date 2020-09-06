@@ -1,11 +1,11 @@
-﻿using libtgvoip;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Native.Calls;
 using Unigram.Services.Updates;
 using Unigram.Services.ViewService;
 using Unigram.ViewModels;
@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
-    public interface IVoIPService : IHandle<UpdateCall>
+    public interface IVoipService : IHandle<UpdateCall>, IHandle<UpdateNewCallSignalingData>
     {
         string CurrentAudioInput { get; set; }
         float CurrentVolumeInput { get; set; }
@@ -31,9 +31,11 @@ namespace Unigram.Services
         Call ActiveCall { get; }
 
         void Show();
+
+        void Start(long chatId, bool video);
     }
 
-    public class VoIPService : TLViewModelBase, IVoIPService
+    public class VoipService : TLViewModelBase, IVoipService
     {
         private readonly IViewService _viewService;
 
@@ -41,13 +43,13 @@ namespace Unigram.Services
 
         private Call _call;
         private DateTime _callStarted;
-        private VoIPControllerWrapper _controller;
+        private VoipManager _controller;
 
         private VoIPPage _callPage;
         private OverlayPage _callDialog;
         private ViewLifetimeControl _callLifetime;
 
-        public VoIPService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
+        public VoipService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _viewService = viewService;
@@ -63,11 +65,66 @@ namespace Unigram.Services
             aggregator.Subscribe(this);
         }
 
+        public async void Start(long chatId, bool video)
+        {
+            var chat = CacheService.GetChat(chatId);
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = CacheService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            var call = ActiveCall;
+            if (call != null)
+            {
+                var callUser = CacheService.GetUser(call.UserId);
+                if (callUser != null && callUser.Id != user.Id)
+                {
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+
+                    }
+                }
+                else
+                {
+                    Show();
+                }
+
+                return;
+            }
+
+            var fullInfo = CacheService.GetUserFull(user.Id);
+            if (fullInfo != null && fullInfo.HasPrivateCalls)
+            {
+                await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 92, 92, new[] { "3.0.0" }), video));
+            if (response is Error error)
+            {
+                if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
+                {
+                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                }
+                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
+                {
+                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                }
+            }
+        }
+
         public string CurrentAudioInput
         {
             get
             {
-                return _controller?.CurrentAudioInput ?? SettingsService.Current.VoIP.InputDevice;
+                return SettingsService.Current.VoIP.InputDevice;
             }
             set
             {
@@ -75,7 +132,7 @@ namespace Unigram.Services
 
                 if (_controller != null)
                 {
-                    _controller.CurrentAudioInput = value;
+                    _controller.SetAudioInputDevice(value);
                 }
             }
         }
@@ -101,7 +158,7 @@ namespace Unigram.Services
         {
             get
             {
-                return _controller?.CurrentAudioOutput ?? SettingsService.Current.VoIP.OutputDevice;
+                return SettingsService.Current.VoIP.OutputDevice;
             }
             set
             {
@@ -109,7 +166,7 @@ namespace Unigram.Services
 
                 if (_controller != null)
                 {
-                    _controller.CurrentAudioOutput = value;
+                    _controller.SetAudioOutputDevice(value);
                 }
             }
         }
@@ -128,6 +185,14 @@ namespace Unigram.Services
                 {
                     _controller.SetOutputVolume(value);
                 }
+            }
+        }
+
+        public void Handle(UpdateNewCallSignalingData update)
+        {
+            if (_controller != null)
+            {
+                _controller.ReceiveSignalingData(update.Data);
             }
         }
 
@@ -155,7 +220,7 @@ namespace Unigram.Services
                     return;
                 }
 
-                VoIPControllerWrapper.UpdateServerConfig(ready.Config);
+                //VoIPControllerWrapper.UpdateServerConfig(ready.Config);
 
                 var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", $"voip{update.Call.Id}.txt");
                 var statsDumpFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.statsDump.txt");
@@ -165,72 +230,72 @@ namespace Unigram.Services
 
                 if (_controller != null)
                 {
-                    _controller.Dispose();
+                    //_controller.Dispose();
                     _controller = null;
                 }
 
-                var config = new VoIPConfig
+                //var config = new VoIPConfig
+                //{
+                //    initTimeout = call_packet_timeout_ms / 1000.0,
+                //    recvTimeout = call_connect_timeout_ms / 1000.0,
+                //    dataSaving = base.Settings.UseLessData,
+                //    enableAEC = true,
+                //    enableNS = true,
+                //    enableAGC = true,
+
+                //    enableVolumeControl = true,
+
+                //    logFilePath = logFile,
+                //    statsDumpFilePath = statsDumpFile
+                //};
+
+                var servers = new List<VoipServer>();
+
+                foreach (var server in ready.Servers)
                 {
-                    initTimeout = call_packet_timeout_ms / 1000.0,
-                    recvTimeout = call_connect_timeout_ms / 1000.0,
-                    dataSaving = base.Settings.UseLessData,
-                    enableAEC = true,
-                    enableNS = true,
-                    enableAGC = true,
-
-                    enableVolumeControl = true,
-
-                    logFilePath = logFile,
-                    statsDumpFilePath = statsDumpFile
-                };
-
-                _controller = new VoIPControllerWrapper();
-                _controller.SetConfig(config);
-                _controller.CurrentAudioInput = SettingsService.Current.VoIP.InputDevice;
-                _controller.CurrentAudioOutput = SettingsService.Current.VoIP.OutputDevice;
-                _controller.SetInputVolume(SettingsService.Current.VoIP.InputVolume);
-                _controller.SetOutputVolume(SettingsService.Current.VoIP.OutputVolume);
-
-                _controller.CallStateChanged += (s, args) =>
-                {
-                    BeginOnUIThread(() =>
+                    if (server.Type is CallServerTypeWebrtc webRtc)
                     {
-                        if (args == libtgvoip.CallState.WaitInit || args == libtgvoip.CallState.WaitInitAck)
+                        servers.Add(new VoipServer
                         {
-                            _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3"));
-                            _mediaPlayer.IsLoopingEnabled = false;
-                            _mediaPlayer.Play();
-                        }
-                        else if (args == libtgvoip.CallState.Established)
-                        {
-                            _callStarted = DateTime.Now;
-                            _mediaPlayer.Source = null;
-                        }
-                    });
+                            Host = server.IpAddress,
+                            Port = (ushort)server.Port,
+                            Login = webRtc.Username,
+                            Password = webRtc.Password,
+                            IsTurn = webRtc.SupportsTurn
+                        });
+                    }
+                }
+
+                var descriptor = new VoipDescriptor
+                {
+                    InitializationTimeout = call_packet_timeout_ms / 1000.0,
+                    ReceiveTimeout = call_connect_timeout_ms / 1000.0,
+                    Servers = servers,
+                    EncryptionKey = ready.EncryptionKey,
+                    IsOutgoing = update.Call.IsOutgoing,
+                    VideoCapture = update.Call.IsVideo,
+                    AudioInputId = SettingsService.Current.VoIP.InputDevice,
+                    AudioOutputId = SettingsService.Current.VoIP.OutputDevice,
+                    InputVolume = SettingsService.Current.VoIP.InputVolume,
+                    OutputVolume = SettingsService.Current.VoIP.OutputVolume
                 };
+
+                _controller = new VoipManager(descriptor);
+                _controller.StateUpdated += OnStateUpdated;
+                _controller.SignalingDataEmitted += OnSignalingDataEmitted;
 
                 BeginOnUIThread(() =>
                 {
                     Show(update.Call, _controller, _callStarted);
                 });
 
-                var endpoints = new Endpoint[ready.Connections.Count];
-
-                for (int i = 0; i < endpoints.Length; i++)
-                {
-                    endpoints[i] = ready.Connections[i].ToEndpoint();
-                }
-
-                _controller.SetEncryptionKey(ready.EncryptionKey.ToArray(), update.Call.IsOutgoing);
-                _controller.SetPublicEndpoints(endpoints, ready.Protocol.UdpP2p && ready.AllowP2p, ready.Protocol.MaxLayer);
                 _controller.Start();
-                _controller.Connect();
             }
             else if (update.Call.State is CallStateDiscarded discarded)
             {
                 if (discarded.NeedDebugInformation)
                 {
-                    ProtoService.Send(new SendCallDebugInformation(update.Call.Id, _controller.GetDebugLog()));
+                    //ProtoService.Send(new SendCallDebugInformation(update.Call.Id, _controller.GetDebugLog()));
                 }
 
                 if (discarded.NeedRating)
@@ -238,7 +303,7 @@ namespace Unigram.Services
                     BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
                 }
 
-                _controller?.Dispose();
+                //_controller?.Dispose();
                 _controller = null;
                 _call = null;
             }
@@ -273,6 +338,29 @@ namespace Unigram.Services
             });
         }
 
+        private void OnStateUpdated(VoipManager sender, VoipState args)
+        {
+            BeginOnUIThread(() =>
+            {
+                if (args == VoipState.WaitInit || args == VoipState.WaitInitAck)
+                {
+                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3"));
+                    _mediaPlayer.IsLoopingEnabled = false;
+                    _mediaPlayer.Play();
+                }
+                else if (args == VoipState.Established)
+                {
+                    _callStarted = DateTime.Now;
+                    _mediaPlayer.Source = null;
+                }
+            });
+        }
+
+        private void OnSignalingDataEmitted(VoipManager sender, SignalingDataEmittedEventArgs args)
+        {
+            ProtoService.Send(new SendCallSignalingData(_call.Id, args.Data));
+        }
+
         private async Task SendRatingAsync(int callId)
         {
             var dialog = new CallRatingPopup();
@@ -297,7 +385,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    ProtoService.Send(new SendMessage(chat.Id, 0, new SendMessageOptions(false, false, null), null, new InputMessageDocument(new InputFileLocal(file.Path), null, null)));
+                    ProtoService.Send(new SendMessage(chat.Id, 0, new MessageSendOptions(false, false, null), null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
                 }
             }
         }
@@ -333,11 +421,12 @@ namespace Unigram.Services
             Aggregator.Publish(new UpdateCallDialog(_call, true));
         }
 
-        private async void Show(Call call, VoIPControllerWrapper controller, DateTime started)
+        private async void Show(Call call, VoipManager controller, DateTime started)
         {
             if (_callPage == null)
             {
-                if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                //if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
+                if (false)
                 {
                     _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _callStarted), call.Id);
                     _callLifetime.WindowWrapper.ApplicationView().Consolidated -= ApplicationView_Consolidated;

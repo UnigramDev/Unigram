@@ -1,5 +1,4 @@
-﻿using libtgvoip;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -269,6 +268,20 @@ namespace Unigram.Common
 
         #endregion
 
+        public static string ToOutcomeText(this MessageCall call, bool outgoing)
+        {
+            var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
+
+            if (call.IsVideo)
+            {
+                return (missed ? (outgoing ? Strings.Resources.CallMessageVideoOutgoingMissed : Strings.Resources.CallMessageVideoIncomingMissed) : (outgoing ? Strings.Resources.CallMessageVideoOutgoing : Strings.Resources.CallMessageVideoIncoming)) + ", ";
+            }
+            else
+            {
+                return (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming)) + ", ";
+            }
+        }
+
         public static bool IsMoving(this Background background)
         {
             if (background?.Type is BackgroundTypePattern pattern)
@@ -337,18 +350,6 @@ namespace Unigram.Common
             }
 
             return false;
-        }
-
-        public static Endpoint ToEndpoint(this CallConnection connection)
-        {
-            return new Endpoint
-            {
-                id = connection.Id,
-                ipv4 = connection.Ip,
-                ipv6 = connection.Ipv6,
-                peerTag = connection.PeerTag.ToArray(),
-                port = (ushort)connection.Port
-            };
         }
 
         public static bool IsInstantGallery(this WebPage webPage)

@@ -15,7 +15,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Unigram.Views;
 using Unigram.Views.Popups;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -306,9 +305,9 @@ namespace Unigram.ViewModels
             KeyboardButtonExecute(message, button);
         }
 
-        public void Call(MessageViewModel message)
+        public void Call(MessageViewModel message, bool video)
         {
-            CallCommand.Execute();
+            CallCommand.Execute(video);
         }
 
         public async void VotePoll(MessageViewModel message, IList<PollOption> options)

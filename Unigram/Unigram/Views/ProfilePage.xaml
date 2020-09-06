@@ -26,6 +26,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Border x:Name="ScrollingInfo">
                     <TextBlock
@@ -67,6 +68,20 @@
                 </Grid>
 
                 <controls:GlyphButton
+                    x:Name="VideoCall"
+                    Glyph="&#xE714;"
+                    AutomationProperties.Name="{CustomResource VideoCall}"
+                    ToolTipService.ToolTip="{CustomResource VideoCall}"
+                    Visibility="Collapsed"
+                    Command="{x:Bind ViewModel.CallCommand}"
+                    Style="{StaticResource HeaderGlyphButtonStyle}"
+                    Grid.Column="1">
+                    <Button.CommandParameter>
+                        <x:Boolean>True</x:Boolean>
+                    </Button.CommandParameter>
+                </controls:GlyphButton>
+
+                <controls:GlyphButton
                     x:Name="Call"
                     Glyph="&#xE13A;"
                     AutomationProperties.Name="{CustomResource Call}"
@@ -74,7 +89,11 @@
                     Visibility="Collapsed"
                     Command="{x:Bind ViewModel.CallCommand}"
                     Style="{StaticResource HeaderGlyphButtonStyle}"
-                    Grid.Column="1"/>
+                    Grid.Column="2">
+                    <Button.CommandParameter>
+                        <x:Boolean>False</x:Boolean>
+                    </Button.CommandParameter>
+                </controls:GlyphButton>
 
                 <controls:GlyphButton
                     x:Name="GroupInvite"
@@ -92,7 +111,7 @@
                     Visibility="Collapsed"
                     Command="{x:Bind ViewModel.EditCommand}"
                     Style="{StaticResource HeaderGlyphButtonStyle}"
-                    Grid.Column="2"/>
+                    Grid.Column="3"/>
 
                 <Button Click="Menu_ContextRequested"
                         Foreground="{ThemeResource PageHeaderForegroundBrush}"
@@ -100,7 +119,7 @@
                         Style="{StaticResource EllipsisButton}"
                         AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
                         ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                        Grid.Column="3">
+                        Grid.Column="4">
                     <FontIcon
                         x:Name="EllipsisIcon"
                         VerticalAlignment="Center"

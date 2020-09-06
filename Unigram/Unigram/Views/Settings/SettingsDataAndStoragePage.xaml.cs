@@ -1,6 +1,6 @@
-﻿using libtgvoip;
-using System.Text;
+﻿using System.Text;
 using Unigram.Converters;
+using Unigram.Native.Calls;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -117,16 +117,16 @@ namespace Unigram.Views.Settings
             return builder.ToString();
         }
 
-        private string ConvertUseLessData(DataSavingMode value)
+        private string ConvertUseLessData(VoipDataSaving value)
         {
             switch (value)
             {
                 default:
-                case DataSavingMode.Never:
+                case VoipDataSaving.Never:
                     return Strings.Resources.UseLessDataNever;
-                case DataSavingMode.MobileOnly:
+                case VoipDataSaving.Mobile:
                     return Strings.Resources.UseLessDataOnMobile;
-                case DataSavingMode.Always:
+                case VoipDataSaving.Always:
                     return Strings.Resources.UseLessDataAlways;
             }
         }

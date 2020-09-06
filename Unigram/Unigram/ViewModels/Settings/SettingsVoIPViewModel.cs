@@ -14,9 +14,9 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsVoIPViewModel : TLViewModelBase
     {
-        private readonly IVoIPService _voipService;
+        private readonly IVoipService _voipService;
 
-        public SettingsVoIPViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService)
+        public SettingsVoIPViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _voipService = voipService;

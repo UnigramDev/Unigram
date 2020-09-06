@@ -30,7 +30,7 @@ namespace Unigram.Controls.Messages.Content
             var outgoing = message.IsOutgoing;
             var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
 
-            TitleLabel.Text = missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming);
+            TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
             ReasonGlyph.Text = outgoing ? "\uE60B\u00A0" : "\uE60C\u00A0";
             DateLabel.Text = BindConvert.Current.Date(message.Date);
 
@@ -65,7 +65,13 @@ namespace Unigram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            _message.Delegate.Call(_message);
+            var call = _message?.Content as MessageCall;
+            if (call == null)
+            {
+                return;
+            }
+
+            _message.Delegate.Call(_message, call.IsVideo);
         }
     }
 }

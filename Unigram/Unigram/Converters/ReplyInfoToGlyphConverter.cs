@@ -107,6 +107,9 @@ namespace Unigram.Converters
         public const string Search = "\uE721";
         public const string Settings = "\uE713";
 
+        public const string Call = "\uE13A";
+        public const string VideoCall = "\uE714";
+
         public const string Camera = "\uE722";
         public const string Photo = "\uEB9F";
 

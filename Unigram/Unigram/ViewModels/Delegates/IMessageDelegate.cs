@@ -25,7 +25,7 @@ namespace Unigram.ViewModels.Delegates
         void OpenMedia(MessageViewModel message, FrameworkElement target);
         void PlayMessage(MessageViewModel message);
 
-        void Call(MessageViewModel message);
+        void Call(MessageViewModel message, bool video);
 
         void VotePoll(MessageViewModel message, IList<PollOption> option);
 

@@ -3075,6 +3075,7 @@ namespace Unigram.Views
             ButtonSilent.IsChecked = chat.DefaultDisableNotification;
 
             Call.Visibility = Visibility.Collapsed;
+            VideoCall.Visibility = Visibility.Collapsed;
 
             UpdateChatPermissions(chat);
         }
@@ -3808,6 +3809,7 @@ namespace Unigram.Views
             }
 
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
+            VideoCall.Visibility = /*!secret &&*/ fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateUserStatus(Chat chat, User user)

@@ -1704,7 +1704,7 @@ namespace Unigram.Views
             return false;
         }
 
-        public void Call(MessageViewModel message)
+        public void Call(MessageViewModel message, bool video)
         {
             throw new NotImplementedException();
         }
