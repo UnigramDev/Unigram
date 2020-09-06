@@ -44,7 +44,7 @@ namespace Unigram.Common
         private static FlowDirection LoadFlowDirection()
         {
 #if DEBUG
-            var flowDirectionSetting = ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
+            var flowDirectionSetting = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues["LayoutDirection"];
             return flowDirectionSetting == "RTL" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 #else
             return FlowDirection.LeftToRight;
