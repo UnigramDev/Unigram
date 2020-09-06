@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Navigation.Services;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Payments;

@@ -503,14 +503,14 @@ namespace Unigram.ViewModels
             else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
             {
                 foreach (var row in inline.Rows)
-                foreach (var button in row)
-                {
-                    if (button.Type is InlineKeyboardButtonTypeCallbackGame)
+                    foreach (var button in row)
                     {
-                        KeyboardButtonExecute(message, button);
-                        return;
+                        if (button.Type is InlineKeyboardButtonTypeCallbackGame)
+                        {
+                            KeyboardButtonExecute(message, button);
+                            return;
+                        }
                     }
-                }
             }
 
             GalleryViewModelBase viewModel = null;

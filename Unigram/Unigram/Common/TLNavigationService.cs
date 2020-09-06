@@ -180,7 +180,7 @@ namespace Unigram.Common
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
                         await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, new Dictionary<string, object>());
-                        
+
                         FrameFacade.RaiseNavigated(chat.Id);
                     }
                     else

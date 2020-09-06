@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Logs;
 using Unigram.Native.Media;
 using Unigram.ViewModels;
-using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Media;

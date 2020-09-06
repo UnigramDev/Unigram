@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.ViewModels;
-using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;

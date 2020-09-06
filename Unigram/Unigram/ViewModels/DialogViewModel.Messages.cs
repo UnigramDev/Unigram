@@ -9,7 +9,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Payments;
 using Unigram.Views.Popups;

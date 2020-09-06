@@ -1230,7 +1230,7 @@ namespace Unigram.Services
 
                     value.DraftMessage = updateChatDraftMessage.DraftMessage;
                     SetChatPositions(value, updateChatDraftMessage.Positions);
-                    
+
                     Monitor.Exit(value);
                 }
             }
@@ -1260,7 +1260,7 @@ namespace Unigram.Services
 
                     value.LastMessage = updateChatLastMessage.LastMessage;
                     SetChatPositions(value, updateChatLastMessage.Positions);
-                    
+
                     Monitor.Exit(value);
                 }
             }
@@ -1307,7 +1307,7 @@ namespace Unigram.Services
                     int i;
                     for (i = 0; i < value.Positions.Count; i++)
                     {
-                        if (value.Positions[i].List.ToId()  == updateChatPosition.Position.List.ToId())
+                        if (value.Positions[i].List.ToId() == updateChatPosition.Position.List.ToId())
                         {
                             break;
                         }

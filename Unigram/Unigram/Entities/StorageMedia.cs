@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media;
@@ -80,8 +79,6 @@ namespace Unigram.Entities
 
         public virtual uint Width { get; }
         public virtual uint Height { get; }
-
-        protected Rect? _fullRectangle;
 
         protected BitmapEditState _editState;
         public BitmapEditState EditState

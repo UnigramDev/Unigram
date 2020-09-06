@@ -1,5 +1,4 @@
 ﻿using Unigram.Native;
-using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;

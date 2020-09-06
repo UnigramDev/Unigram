@@ -57,7 +57,7 @@ namespace Unigram.Navigation.Services
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += async (s, e) =>
             {
-               if (e.Suspending)
+                if (e.Suspending)
                     return;
 
                 var page = FrameFacade.Content as Page;

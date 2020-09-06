@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reactive.Linq;
 using Telegram.Td.Api;
@@ -8,7 +7,6 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
-using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Windows.UI.Xaml;

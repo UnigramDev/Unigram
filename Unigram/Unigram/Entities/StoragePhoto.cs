@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 
@@ -14,7 +13,6 @@ namespace Unigram.Entities
         public StoragePhoto(StorageFile file, BasicProperties basic, ImageProperties props)
             : base(file, basic)
         {
-            _fullRectangle = new Rect(0, 0, props.GetWidth(), props.GetHeight());
             _basic = basic;
 
             Properties = props;

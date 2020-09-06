@@ -227,7 +227,7 @@ namespace Unigram.Views
 
             Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
             VideoCall.Visibility = fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
-            
+
             Edit.Visibility = Visibility.Collapsed;
         }
 

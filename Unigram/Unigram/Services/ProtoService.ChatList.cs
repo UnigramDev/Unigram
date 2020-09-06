@@ -142,7 +142,7 @@ namespace Unigram.Services
         }
     }
 
-    class NewDictionary<TKey, TValue> : Dictionary<TKey, TValue> where TValue: new()
+    class NewDictionary<TKey, TValue> : Dictionary<TKey, TValue> where TValue : new()
     {
         public new TValue this[TKey key]
         {

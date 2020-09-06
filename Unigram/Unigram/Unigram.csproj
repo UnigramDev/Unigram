@@ -477,7 +477,6 @@
     <Compile Include="Navigation\Services\FrameFacade.cs" />
     <Compile Include="Navigation\Services\INavigable.cs" />
     <Compile Include="Navigation\Services\INavigationService.cs" />
-    <Compile Include="Navigation\Services\JournalEntry.cs" />
     <Compile Include="Navigation\Services\NavigatedEventArgs.cs" />
     <Compile Include="Navigation\Services\NavigatingEventArgs.cs" />
     <Compile Include="Navigation\Services\NavigationService.cs" />

@@ -111,7 +111,7 @@
         </Style>
 
         <DataTemplate x:Key="FileItemTemplate">
-            <Grid>
+            <Grid Padding="12,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -230,7 +230,7 @@
         </ItemsPanelTemplate>
 
         <ItemsPanelTemplate x:Key="AlbumPanelTemplate">
-            <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading"/>
+            <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading" Margin="0,0,-2,-2"/>
         </ItemsPanelTemplate>
 
     </ContentControl.Resources>
@@ -304,7 +304,7 @@
                     <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                     <Setter Property="MinWidth" Value="0"/>
                     <Setter Property="MinHeight" Value="0"/>
-                    <Setter Property="Padding" Value="12,6"/>
+                    <Setter Property="Padding" Value="0"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
@@ -317,8 +317,7 @@
                   SelectionMode="None"
                   DragEnter="ListView_DragEnter"
                   Drop="ListView_Drop"
-                  AllowDrop="True"
-                  Margin="11">
+                  AllowDrop="True">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -326,7 +325,7 @@
                     <Setter Property="MinWidth" Value="0"/>
                     <Setter Property="MinHeight" Value="0"/>
                     <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="1"/>
+                    <Setter Property="Margin" Value="0,0,2,2"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>

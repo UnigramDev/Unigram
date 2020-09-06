@@ -506,7 +506,7 @@ namespace Unigram.Views
         }
 
         public void Activate()
-        { 
+        {
             DataContext = _getViewModel(this);
             Bindings.Update();
 
@@ -3909,7 +3909,7 @@ namespace Unigram.Views
                 DiscussButton.Visibility = Visibility.Collapsed;
                 return;
             }
-            
+
             if (group.IsChannel)
             {
                 if ((group.Status is ChatMemberStatusLeft && group.Username.Length > 0) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))

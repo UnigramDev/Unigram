@@ -23,7 +23,6 @@ using Unigram.Views.Channels;
 using Unigram.Views.Host;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
-using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;

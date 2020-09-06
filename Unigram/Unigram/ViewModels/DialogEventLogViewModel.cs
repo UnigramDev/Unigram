@@ -622,7 +622,7 @@ namespace Unigram.ViewModels
             {
                 var entities = new List<TextEntity>();
 
-                var whoUser =  CacheService.GetUser(memberPromoted.UserId);
+                var whoUser = CacheService.GetUser(memberPromoted.UserId);
                 var str = memberPromoted.NewStatus is ChatMemberStatusCreator
                     ? Strings.Resources.EventLogChangedOwnership
                     : Strings.Resources.EventLogPromoted;

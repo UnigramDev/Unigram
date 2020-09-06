@@ -45,7 +45,7 @@ namespace Unigram.Controls
             {
                 TopPadding = _previousTopPadding.Value;
                 _previousTopPadding = null;
-            } 
+            }
 
             TogglePaneButton.RequestedTheme = ElementTheme.Default;
         }

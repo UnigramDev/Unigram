@@ -7,7 +7,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
 using Windows.Foundation.Metadata;
