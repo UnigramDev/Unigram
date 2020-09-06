@@ -36,17 +36,22 @@ namespace Unigram.ViewModels.Gallery
 
         public override File GetThumbnail()
         {
-            var file = _message.GetThumbnail();
-            if (file == null)
+            var thumbnail = _message.GetThumbnail();
+            if (thumbnail == null)
             {
                 var photo = _message.GetPhoto();
                 if (photo != null)
                 {
-                    file = photo.GetSmall()?.Photo;
+                    return photo.GetSmall()?.Photo;
                 }
             }
 
-            return file;
+            if (thumbnail?.Format is ThumbnailFormatJpeg)
+            {
+                return thumbnail.File;
+            }
+
+            return null;
         }
 
         public override (File File, string FileName) GetFileAndName()
