@@ -1355,7 +1355,7 @@
     <value>개인 대화</value>
   </data>
   <data name="AutodownloadSizeLimit" xml:space="preserve">
-    <value>용량 제한</value>
+    <value>크기 제한</value>
   </data>
   <data name="AutodownloadSizeLimitUpTo" xml:space="preserve">
     <value>최대 {0}</value>
@@ -3001,6 +3001,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   <data name="DeleteAllMessagesAlert" xml:space="preserve">
     <value>잠깐! **참가자 서로에게서** 이 대화방의 **모든 메시지가 삭제**됩니다.</value>
   </data>
+  <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
+    <value>경고! 이 대화방의 **모든 메시지**가 삭제됩니다.</value>
+  </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>그룹 삭제하고 나가기</value>
   </data>
@@ -4054,6 +4057,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="FilterAddingChatsInfo" xml:space="preserve">
     <value>이 폴더를 채우는 동안 잠시 기다려 주세요...</value>
   </data>
+  <data name="FilterAddTo" xml:space="preserve">
+    <value>폴더에 추가</value>
+  </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>모든 대화방</value>
   </data>
@@ -4201,6 +4207,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="FilterRemoveExclusionUserText" xml:space="preserve">
     <value>정말 "{0}"을(를) 항상 제외 목록에서 제거하시겠습니까??</value>
   </data>
+  <data name="FilterRemoveFrom" xml:space="preserve">
+    <value>폴더에서 제거</value>
+  </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
     <value>정말 "{0}"을(를) 항상 포함 목록에서 제거하시겠습니까?</value>
   </data>
@@ -4248,6 +4257,9 @@ telegram.org에서 자세히 알아보세요.</value>
   </data>
   <data name="FilterUnread" xml:space="preserve">
     <value>안 읽음</value>
+  </data>
+  <data name="FilterUserRemovedFrom" xml:space="preserve">
+    <value>**{0}**을(를) **{1}**에서 제거했습니다</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>최종 결과</value>
@@ -4801,6 +4813,9 @@ telegram.org에서 자세히 알아보세요.</value>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>목록 위로 숨기기</value>
   </data>
+  <data name="HideNewChatsAlertText" xml:space="preserve">
+    <value>연락처 목록에 없는 사용자에게서 새로운 메시지를 많이 받고 계십니다. 해당 대화방에 **자동 알림 끄기**와 **보관**을 적용하시겠습니까?</value>
+  </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>숨기기</value>
   </data>
@@ -5066,9 +5081,9 @@ telegram.org에서 자세히 알아보세요.</value>
     <value>무기한</value>
   </data>
   <data name="KeepMediaInfo" xml:space="preserve">
-    <value>이 기간 동안 회원님이 **접근하지 않으신** 클라우드 대화방의 사진, 동영상과 그 밖의 파일들이 디스크 공간을 절약하기 위해 이 기기에서 제거됩니다.
+    <value>이 기간 동안 회원님이 **접근하지 않으신** 클라우드 대화방의 사진, 동영상과 그 밖의 파일들이 디스크 공간 확보를 위해 이 기기에서 제거됩니다.
 
-모든 미디어는 텔레그램 클라우드에 남으며 언제든지 다시 다운로드하실 수 있습니다.</value>
+모든 미디어는 텔레그램 클라우드에 남으며 필요할 때 다시 다운로드하실 수 있습니다.</value>
   </data>
   <data name="KickFromBroadcast" xml:space="preserve">
     <value>알릴 목록에서 제거</value>
@@ -5208,7 +5223,7 @@ telegram.org에서 자세히 알아보세요.</value>
     <value>사용 안 함</value>
   </data>
   <data name="LimitReached" xml:space="preserve">
-    <value>한계에 이름</value>
+    <value>상한선에 다다름</value>
   </data>
   <data name="LinkAvailable" xml:space="preserve">
     <value>{0}을(를) 사용하실 수 있습니다.</value>
@@ -5352,7 +5367,7 @@ telegram.org에서 자세히 알아보세요.</value>
     <value>{0} 전 갱신됨</value>
   </data>
   <data name="LocationUpdatedJustNow" xml:space="preserve">
-    <value>방금 갱신됨</value>
+    <value>방금 업데이트됨</value>
   </data>
   <data name="LoginAttempts" xml:space="preserve">
     <value>완료되지 않은 로그인 시도</value>
@@ -6863,6 +6878,9 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
   </data>
   <data name="PaintEdit" xml:space="preserve">
     <value>수정</value>
+  </data>
+  <data name="PaintFramed" xml:space="preserve">
+    <value>프레임</value>
   </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>외곽선</value>
@@ -9711,7 +9729,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>텍스트를 클립보드에 복사했습니다</value>
   </data>
   <data name="TextSelectionHit" xml:space="preserve">
-    <value>**낱말**을 꾹 잡고선, 커서를 움직여 복사할 글을 늘리세요.</value>
+    <value>**낱말**을 꾹 잡고선, 커서를 움직여 복사할 글을 조정하세요.</value>
   </data>
   <data name="TextSize" xml:space="preserve">
     <value>메시지 글자 크기</value>

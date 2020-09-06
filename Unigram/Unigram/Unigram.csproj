@@ -1761,6 +1761,7 @@
     <PRIResource Include="Strings\pl\Resources.resw" />
     <PRIResource Include="Strings\uz\Resources.resw" />
     <Content Include="Assets\Animations\ChatListNewFolder.tgs" />
+    <PRIResource Include="Strings\be\Resources.resw" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

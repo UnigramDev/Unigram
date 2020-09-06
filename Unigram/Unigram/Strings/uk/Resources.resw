@@ -151,6 +151,9 @@
   <data name="AccDescrContactSorting" xml:space="preserve">
     <value>Змінити впорядкування</value>
   </data>
+  <data name="AccDescrDownloadProgress" xml:space="preserve">
+    <value>Отримано {0} з {1}</value>
+  </data>
   <data name="AccDescrEditing" xml:space="preserve">
     <value>Редагування</value>
   </data>
@@ -190,6 +193,9 @@
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Перейти до наступної згадки</value>
   </data>
+  <data name="AccDescrMirror" xml:space="preserve">
+    <value>Відзеркалити</value>
+  </data>
   <data name="AccDescrMoreOptions" xml:space="preserve">
     <value>Інші опції</value>
   </data>
@@ -198,6 +204,12 @@
   </data>
   <data name="AccDescrMsgRead" xml:space="preserve">
     <value>Прочитане</value>
+  </data>
+  <data name="AccDescrMsgSending" xml:space="preserve">
+    <value>Надсилання</value>
+  </data>
+  <data name="AccDescrMsgSendingError" xml:space="preserve">
+    <value>Помилка надсилання</value>
   </data>
   <data name="AccDescrMsgUnread" xml:space="preserve">
     <value>Непрочитане</value>
@@ -210,6 +222,24 @@
   </data>
   <data name="AccDescrMyLocation" xml:space="preserve">
     <value>Моє розташування</value>
+  </data>
+  <data name="AccDescrNumberOfViewsFew" xml:space="preserve">
+    <value>{0} перегляди</value>
+  </data>
+  <data name="AccDescrNumberOfViewsMany" xml:space="preserve">
+    <value>{0} переглядiв</value>
+  </data>
+  <data name="AccDescrNumberOfViewsOne" xml:space="preserve">
+    <value>{0} перегляд</value>
+  </data>
+  <data name="AccDescrNumberOfViewsOther" xml:space="preserve">
+    <value>{0} переглядів</value>
+  </data>
+  <data name="AccDescrNumberOfViewsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AccDescrNumberOfViewsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="AccDescrOpenChat" xml:space="preserve">
     <value>Відкрити чат</value>
@@ -235,6 +265,12 @@
   <data name="AccDescrPhotoViewer" xml:space="preserve">
     <value>Переглядач фото</value>
   </data>
+  <data name="AccDescrPipMode" xml:space="preserve">
+    <value>Режим відео у вікні</value>
+  </data>
+  <data name="AccDescrPlayerDuration" xml:space="preserve">
+    <value>{0} з {1}</value>
+  </data>
   <data name="AccDescrPlayerSpeed" xml:space="preserve">
     <value>Відтворення з пришвидшенням удвічі</value>
   </data>
@@ -243,6 +279,9 @@
   </data>
   <data name="AccDescrProfilePicture" xml:space="preserve">
     <value>Фото профілю</value>
+  </data>
+  <data name="AccDescrQuizCorrectAnswer" xml:space="preserve">
+    <value>Правильна відповідь</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Отримано {0}</value>
@@ -262,6 +301,9 @@
   <data name="AccDescrRotate" xml:space="preserve">
     <value>Повернути</value>
   </data>
+  <data name="AccDescrScheduledDate" xml:space="preserve">
+    <value>Заплановано на {0}</value>
+  </data>
   <data name="AccDescrSearchByUser" xml:space="preserve">
     <value>Фільтрувати за користувачем</value>
   </data>
@@ -274,8 +316,80 @@
   <data name="AccDescrSecretChat" xml:space="preserve">
     <value>Секретний чат</value>
   </data>
+  <data name="AccDescrSendAudioFew" xml:space="preserve">
+    <value>Надіслати {0} аудіофайли</value>
+  </data>
+  <data name="AccDescrSendAudioMany" xml:space="preserve">
+    <value>Надіслати {0} аудіофайлів</value>
+  </data>
+  <data name="AccDescrSendAudioOne" xml:space="preserve">
+    <value>Надіслати {0} аудіофайл</value>
+  </data>
+  <data name="AccDescrSendAudioOther" xml:space="preserve">
+    <value>Надіслати {0} аудіофайлів</value>
+  </data>
+  <data name="AccDescrSendAudioTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AccDescrSendAudioZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AccDescrSendFilesFew" xml:space="preserve">
+    <value>Надіслати {0} файли</value>
+  </data>
+  <data name="AccDescrSendFilesMany" xml:space="preserve">
+    <value>Надіслати {0} файлів</value>
+  </data>
+  <data name="AccDescrSendFilesOne" xml:space="preserve">
+    <value>Надіслати {0} файл</value>
+  </data>
+  <data name="AccDescrSendFilesOther" xml:space="preserve">
+    <value>Надіслати {0} файлів</value>
+  </data>
+  <data name="AccDescrSendFilesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AccDescrSendFilesZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AccDescrSendPhotosFew" xml:space="preserve">
+    <value>Надіслати {0} фото</value>
+  </data>
+  <data name="AccDescrSendPhotosMany" xml:space="preserve">
+    <value>Надіслати {0} фото</value>
+  </data>
+  <data name="AccDescrSendPhotosOne" xml:space="preserve">
+    <value>Надіслати {0} фото</value>
+  </data>
+  <data name="AccDescrSendPhotosOther" xml:space="preserve">
+    <value>Надіслати {0} фото</value>
+  </data>
+  <data name="AccDescrSendPhotosTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AccDescrSendPhotosZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="AccDescrSentDate" xml:space="preserve">
     <value>Надіслано {0}</value>
+  </data>
+  <data name="AccDescrShareInChatsFew" xml:space="preserve">
+    <value>Поділитися в {0} чатах</value>
+  </data>
+  <data name="AccDescrShareInChatsMany" xml:space="preserve">
+    <value>Поділитися в {0} чатах</value>
+  </data>
+  <data name="AccDescrShareInChatsOne" xml:space="preserve">
+    <value>Поділитися в {0} чаті</value>
+  </data>
+  <data name="AccDescrShareInChatsOther" xml:space="preserve">
+    <value>Поділитися в {0} чатах</value>
+  </data>
+  <data name="AccDescrShareInChatsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AccDescrShareInChatsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="AccDescrShowAccounts" xml:space="preserve">
     <value>Показати акаунти</value>
@@ -301,6 +415,9 @@
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Зробити ще одне фото</value>
   </data>
+  <data name="AccDescrUploadProgress" xml:space="preserve">
+    <value>Передано {0} з {1}</value>
+  </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Опції користувача</value>
   </data>
@@ -319,7 +436,28 @@
   <data name="AccDescrVoiceMessage" xml:space="preserve">
     <value>Записати голосове повідомлення</value>
   </data>
+  <data name="AccDescrVoipCamOff" xml:space="preserve">
+    <value>Камеру вимкнено</value>
+  </data>
+  <data name="AccDescrVoipCamOn" xml:space="preserve">
+    <value>Камеру увімкнено</value>
+  </data>
+  <data name="AccDescrVoipCamSwitchedToBack" xml:space="preserve">
+    <value>Перемикається на задню камеру</value>
+  </data>
+  <data name="AccDescrVoipCamSwitchedToFront" xml:space="preserve">
+    <value>Перемикається на передню камеру</value>
+  </data>
+  <data name="AccDescrVoipMicOff" xml:space="preserve">
+    <value>Мікрофон вимкнено</value>
+  </data>
+  <data name="AccDescrVoipMicOn" xml:space="preserve">
+    <value>Мікрофон увімкнено</value>
+  </data>
   <data name="Accept" xml:space="preserve">
+    <value>Прийняти</value>
+  </data>
+  <data name="AcceptCall" xml:space="preserve">
     <value>Прийняти</value>
   </data>
   <data name="AccessError" xml:space="preserve">
@@ -341,7 +479,7 @@
     <value>Відпустіть, щоб показати архів</value>
   </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
-    <value>Щоб побачити архів, проведіть вниз</value>
+    <value>Проведіть вниз для архіву</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>З точністю до {0}</value>
@@ -412,11 +550,17 @@
   <data name="ActionChangedTitle" xml:space="preserve">
     <value>un1 змінює назву групи на un2</value>
   </data>
+  <data name="ActionChangedVideo" xml:space="preserve">
+    <value>un1 змінює відео групи</value>
+  </data>
   <data name="ActionChannelChangedPhoto" xml:space="preserve">
     <value>Фото каналу змінено</value>
   </data>
   <data name="ActionChannelChangedTitle" xml:space="preserve">
     <value>Канал перейменовано на un2</value>
+  </data>
+  <data name="ActionChannelChangedVideo" xml:space="preserve">
+    <value>Відео каналу змінено</value>
   </data>
   <data name="ActionChannelRemovedPhoto" xml:space="preserve">
     <value>Фото каналу вилучено</value>
@@ -502,6 +646,9 @@
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 вилучає фото групи</value>
   </data>
+  <data name="ActionsChartTitle" xml:space="preserve">
+    <value>Дії</value>
+  </data>
   <data name="ActionTakeScreenshoot" xml:space="preserve">
     <value>un1 робить скріншот!</value>
   </data>
@@ -522,6 +669,9 @@
   </data>
   <data name="ActionYouChangedTitle" xml:space="preserve">
     <value>Ви змінили назву групи на un2</value>
+  </data>
+  <data name="ActionYouChangedVideo" xml:space="preserve">
+    <value>Ви змінили відео групи</value>
   </data>
   <data name="ActionYouCreateGroup" xml:space="preserve">
     <value>Ви створили групу</value>
@@ -642,6 +792,9 @@
   </data>
   <data name="AddPeopleNearby" xml:space="preserve">
     <value>Знайти людей поблизу</value>
+  </data>
+  <data name="AddPhoto" xml:space="preserve">
+    <value>Встановити нове фото</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>Додати проксі</value>
@@ -886,6 +1039,12 @@
   <data name="Archive" xml:space="preserve">
     <value>Архівувати</value>
   </data>
+  <data name="ArchiveAndMute" xml:space="preserve">
+    <value>Архівувати та вимикати сповіщення</value>
+  </data>
+  <data name="ArchiveAndMuteInfo" xml:space="preserve">
+    <value>Автоматично вимикати сповіщення про нові чати, групи та канали від неконтактів і архівувати їх.</value>
+  </data>
   <data name="ArchivedChats" xml:space="preserve">
     <value>Архів чатів</value>
   </data>
@@ -1025,6 +1184,9 @@
   <data name="AreYouSureDeleteGIF" xml:space="preserve">
     <value>Ви дійсно хочете видалити цю GIF?</value>
   </data>
+  <data name="AreYouSureDeleteGIFEveryone" xml:space="preserve">
+    <value>Ви дійсно хочете видалити цей GIF для всіх?</value>
+  </data>
   <data name="AreYouSureDeleteGIFTitle" xml:space="preserve">
     <value>Видалити GIF</value>
   </data>
@@ -1033,6 +1195,9 @@
   </data>
   <data name="AreYouSureDeletePhoto" xml:space="preserve">
     <value>Ви дійсно хочете видалити це фото?</value>
+  </data>
+  <data name="AreYouSureDeletePhotoEveryone" xml:space="preserve">
+    <value>Ви дійсно хочете видалити це фото для всіх?</value>
   </data>
   <data name="AreYouSureDeletePhotoTitle" xml:space="preserve">
     <value>Видалити фото</value>
@@ -1063,6 +1228,9 @@
   </data>
   <data name="AreYouSureDeleteVideo" xml:space="preserve">
     <value>Ви дійсно хочете видалити це відео?</value>
+  </data>
+  <data name="AreYouSureDeleteVideoEveryone" xml:space="preserve">
+    <value>Ви дійсно хочете видалити це відео для всіх?</value>
   </data>
   <data name="AreYouSureDeleteVideoTitle" xml:space="preserve">
     <value>Видалити відео</value>
@@ -1167,7 +1335,7 @@
     <value>{0} ділиться у {1}</value>
   </data>
   <data name="AttachLocation" xml:space="preserve">
-    <value>Розташування</value>
+    <value>Місце</value>
   </data>
   <data name="AttachMediaRestricted" xml:space="preserve">
     <value>Адміністратори цієї групи заборонили вам надсилати сюди медіа до {0}</value>
@@ -1540,6 +1708,24 @@
   <data name="BannedPhoneNumber" xml:space="preserve">
     <value>Цей номер телефону заблокований.</value>
   </data>
+  <data name="BansFew" xml:space="preserve">
+    <value>{0} блокування</value>
+  </data>
+  <data name="BansMany" xml:space="preserve">
+    <value>{0} блокувань</value>
+  </data>
+  <data name="BansOne" xml:space="preserve">
+    <value>{0} блокування</value>
+  </data>
+  <data name="BansOther" xml:space="preserve">
+    <value>{0} блокувань</value>
+  </data>
+  <data name="BansTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="BansZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Black" xml:space="preserve">
     <value>Чорний</value>
   </data>
@@ -1717,6 +1903,21 @@
   <data name="CallMessageReportProblem" xml:space="preserve">
     <value>Оцінити виклик</value>
   </data>
+  <data name="CallMessageVideoIncoming" xml:space="preserve">
+    <value>Вхідний виклик</value>
+  </data>
+  <data name="CallMessageVideoIncomingDeclined" xml:space="preserve">
+    <value>Відхилений виклик</value>
+  </data>
+  <data name="CallMessageVideoIncomingMissed" xml:space="preserve">
+    <value>Пропущений виклик</value>
+  </data>
+  <data name="CallMessageVideoOutgoing" xml:space="preserve">
+    <value>Вихідний виклик</value>
+  </data>
+  <data name="CallMessageVideoOutgoingMissed" xml:space="preserve">
+    <value>Скасований виклик</value>
+  </data>
   <data name="CallMessageWithDuration" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
@@ -1739,7 +1940,7 @@
     <value>Виклики</value>
   </data>
   <data name="CallsDataUsage" xml:space="preserve">
-    <value>Налаштування викликів</value>
+    <value>Виклики</value>
   </data>
   <data name="CallsTotalTime" xml:space="preserve">
     <value>Загальний час</value>
@@ -1760,9 +1961,14 @@
     <value>Скасувати скидання акаунта</value>
   </data>
   <data name="CancelAccountResetInfo" xml:space="preserve">
-    <value>Хтось із доступом до вашого номера телефону **{0}** зробив запит на видалення вашого акаунта Telegram і скидання пароля 2-етапної перевірки.
+    <value>Хтось із доступом до вашого номера телефону **{0}** зробив запит на видалення вашого акаунта Telegram і скидання паролю двоетапної перевірки.
 
-Якщо це були не ви, введіть код, щойно надісланий вам в SMS.</value>
+Якщо це були не ви, введіть код, щойно надісланий вам в SMS. Ви також можете це скасувати, **змінивши ваш номер телефону**.</value>
+  </data>
+  <data name="CancelAccountResetInfo2" xml:space="preserve">
+    <value>Хтось з доступом до **{0} ** запросив видалення вашого акаунта Telegram і скидання хмарного пароля.
+
+Якщо це були не ви, введіть код з SMS, надісланого на ваш номер. Ви також можете скасувати видалення, *змінивши номер телефону*.</value>
   </data>
   <data name="CancelEmailQuestion" xml:space="preserve">
     <value>Ви дійсно хочете скасувати додавання е-пошти для відновлення?</value>
@@ -2056,7 +2262,7 @@
     <value>{0} публікує відео</value>
   </data>
   <data name="ChannelMute" xml:space="preserve">
-    <value>ВИМКНУТИ СПОВІЩЕННЯ</value>
+    <value>НЕ СПОВІЩАТИ</value>
   </data>
   <data name="ChannelNotifyMembersInfoOff" xml:space="preserve">
     <value>Підписники отримають беззвучне сповіщення</value>
@@ -2066,6 +2272,9 @@
   </data>
   <data name="ChannelOtherMembers" xml:space="preserve">
     <value>Інші учасники</value>
+  </data>
+  <data name="ChannelOtherSubscriberJoined" xml:space="preserve">
+    <value>{0} приєднується</value>
   </data>
   <data name="ChannelOtherSubscribers" xml:space="preserve">
     <value>Інші підписники</value>
@@ -2169,7 +2378,7 @@
     <value>Тип каналу</value>
   </data>
   <data name="ChannelUnmute" xml:space="preserve">
-    <value>УВІМКНУТИ СПОВІЩЕННЯ</value>
+    <value>СПОВІЩАТИ</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
     <value>Ви можете додати до каналу лише перших 200 учасників, але за посиланням може приєднатися необмежена кількість людей.</value>
@@ -2200,6 +2409,30 @@
   <data name="ChannelVerifiedWarning" xml:space="preserve">
     <value>Попередження</value>
   </data>
+  <data name="ChannelVideoEditNotification" xml:space="preserve">
+    <value>Канал {0} змінює своє відео</value>
+  </data>
+  <data name="CharactersFew" xml:space="preserve">
+    <value>{0} символи</value>
+  </data>
+  <data name="CharactersMany" xml:space="preserve">
+    <value>{0} символів</value>
+  </data>
+  <data name="CharactersOne" xml:space="preserve">
+    <value>{0} символ</value>
+  </data>
+  <data name="CharactersOther" xml:space="preserve">
+    <value>{0} символів</value>
+  </data>
+  <data name="CharactersPerMessage" xml:space="preserve">
+    <value>{0} на повідомлення</value>
+  </data>
+  <data name="CharactersTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CharactersZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="ChatAdmin" xml:space="preserve">
     <value>адмін</value>
   </data>
@@ -2220,6 +2453,9 @@
   </data>
   <data name="ChatDeletedUndo" xml:space="preserve">
     <value>Чат видалено</value>
+  </data>
+  <data name="ChatDistanceToPeer" xml:space="preserve">
+    <value>{0} у {1}</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>Файл</value>
@@ -2280,6 +2516,12 @@
   </data>
   <data name="ChatSetLocationInfo" xml:space="preserve">
     <value>Вашу групу зможуть знайти в розділі «Люди поблизу».</value>
+  </data>
+  <data name="ChatSetNewPhoto" xml:space="preserve">
+    <value>Встановити нове фото</value>
+  </data>
+  <data name="ChatSetPhotoOrVideo" xml:space="preserve">
+    <value>Встановити фото або відео</value>
   </data>
   <data name="ChatSetThisLocation" xml:space="preserve">
     <value>Встановити це розташування</value>
@@ -2389,6 +2631,9 @@
   <data name="ChatVideo" xml:space="preserve">
     <value>Відео</value>
   </data>
+  <data name="ChatWasMovedToMainList" xml:space="preserve">
+    <value>Чат перенесено в основний список.</value>
+  </data>
   <data name="ChatYourSelf" xml:space="preserve">
     <value>перешліть сюди, щоб зберегти</value>
   </data>
@@ -2416,6 +2661,9 @@
   <data name="ChooseCountry" xml:space="preserve">
     <value>Виберіть країну</value>
   </data>
+  <data name="ChooseCover" xml:space="preserve">
+    <value>Виберіть обкладинку для відео профілю</value>
+  </data>
   <data name="ChooseFromGallery" xml:space="preserve">
     <value>Завантажити з галереї</value>
   </data>
@@ -2430,6 +2678,12 @@
   </data>
   <data name="ChoosePhoto" xml:space="preserve">
     <value>Вибрати фото</value>
+  </data>
+  <data name="ChoosePhotoOrVideo" xml:space="preserve">
+    <value>Виберіть фото або відео</value>
+  </data>
+  <data name="ChooseRecordVideo" xml:space="preserve">
+    <value>Записати відео</value>
   </data>
   <data name="ChooseStickerSet" xml:space="preserve">
     <value>ВИБЕРІТЬ ПАКУНОК НАЛІПОК</value>
@@ -2675,6 +2929,15 @@
   </data>
   <data name="ContactShare" xml:space="preserve">
     <value>ПОДІЛИТИСЯ КОНТАКТОМ</value>
+  </data>
+  <data name="ContactShortcutMessage" xml:space="preserve">
+    <value>Написати {0}</value>
+  </data>
+  <data name="ContactShortcutVideoCall" xml:space="preserve">
+    <value>Відеовиклик {0}</value>
+  </data>
+  <data name="ContactShortcutVoiceCall" xml:space="preserve">
+    <value>Відеовиклик {0}</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
     <value>**Telegram** потрібен доступ до ваших контактів, щоб ви могли звʼязатися з друзями з будь-якого пристрою. Контакти синхронізуватимуться із серверами Telegram і зберігатимуться на них надійно зашифрованими.</value>
@@ -2970,6 +3233,9 @@
   <data name="Decline" xml:space="preserve">
     <value>Відхилити</value>
   </data>
+  <data name="DeclineCall" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
   <data name="DeclineDeactivate" xml:space="preserve">
     <value>Відхилити та видалити</value>
   </data>
@@ -2990,6 +3256,9 @@
   </data>
   <data name="DeleteAccountIfAwayFor2" xml:space="preserve">
     <value>Видалити мій акаунт, якщо мене не буде</value>
+  </data>
+  <data name="DeleteAccountIfAwayFor3" xml:space="preserve">
+    <value>Якщо відсутній</value>
   </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>Самознищення акаунта</value>
@@ -3099,6 +3368,9 @@
   <data name="DeleteMessagesTitle" xml:space="preserve">
     <value>Видалити {0}</value>
   </data>
+  <data name="DeleteMyAccount" xml:space="preserve">
+    <value>Видалити мій акаунт</value>
+  </data>
   <data name="DeletePhoto" xml:space="preserve">
     <value>Видалити фото</value>
   </data>
@@ -3140,6 +3412,24 @@
   </data>
   <data name="DeleteThisGroup" xml:space="preserve">
     <value>Видалити цю групу</value>
+  </data>
+  <data name="DeletionsFew" xml:space="preserve">
+    <value>{0} видалення</value>
+  </data>
+  <data name="DeletionsMany" xml:space="preserve">
+    <value>{0} видалень</value>
+  </data>
+  <data name="DeletionsOne" xml:space="preserve">
+    <value>{0} видалення</value>
+  </data>
+  <data name="DeletionsOther" xml:space="preserve">
+    <value>{0} видалень</value>
+  </data>
+  <data name="DeletionsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DeletionsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="DescriptionInfo" xml:space="preserve">
     <value>Додайте опис для каналу за бажанням.</value>
@@ -3430,6 +3720,9 @@
   <data name="EditName" xml:space="preserve">
     <value>Редагувати імʼя</value>
   </data>
+  <data name="EditPhoto" xml:space="preserve">
+    <value>Відкрити в редакторі</value>
+  </data>
   <data name="EditThemeColors" xml:space="preserve">
     <value>Редагувати кольори</value>
   </data>
@@ -3688,6 +3981,9 @@
   <data name="EventLogEditedChannelTitle" xml:space="preserve">
     <value>un1 перейменовує канал "{0}"</value>
   </data>
+  <data name="EventLogEditedChannelVideo" xml:space="preserve">
+    <value>un1 встановлює нове відео каналу</value>
+  </data>
   <data name="EventLogEditedGroupDescription" xml:space="preserve">
     <value>un1 редагує опис групи:</value>
   </data>
@@ -3696,6 +3992,9 @@
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
     <value>un1 перейменовує групу "{0}"</value>
+  </data>
+  <data name="EventLogEditedGroupVideo" xml:space="preserve">
+    <value>un1 встановлює нове відео групи</value>
   </data>
   <data name="EventLogEditedMedia" xml:space="preserve">
     <value>un1 редагує медіа:</value>
@@ -4288,6 +4587,9 @@
   <data name="FootsAway" xml:space="preserve">
     <value>футів звідси: {0}</value>
   </data>
+  <data name="FootsFromYou" xml:space="preserve">
+    <value>{0} футів від вас</value>
+  </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Забули пароль?</value>
   </data>
@@ -4655,6 +4957,9 @@
     <value>Є питання
 щодо Telegram?</value>
   </data>
+  <data name="GoToSettings" xml:space="preserve">
+    <value>ВІДКРИТИ НАЛАШТУВАННЯ</value>
+  </data>
   <data name="GpsDisabledAlert" xml:space="preserve">
     <value>Ваш GPS вимкнений, увімкніть його для доступу до функцій на основі розташування.</value>
   </data>
@@ -4702,6 +5007,9 @@
   </data>
   <data name="GroupMembers" xml:space="preserve">
     <value>Учасники</value>
+  </data>
+  <data name="GroupMembersChartTitle" xml:space="preserve">
+    <value>Учасники групи</value>
   </data>
   <data name="GroupName" xml:space="preserve">
     <value>Назва групи</value>
@@ -4791,6 +5099,12 @@
   </data>
   <data name="HideAboveTheList" xml:space="preserve">
     <value>Приховати над списком</value>
+  </data>
+  <data name="HideNewChatsAlertText" xml:space="preserve">
+    <value>Вам часто пишуть користувачі не зі списку контактів. Бажаєте, щоб нові чати з ними **автоматично архівувалися**, а **сповіщення** про них були **вимкнені**?</value>
+  </data>
+  <data name="HideNewChatsAlertTitle" xml:space="preserve">
+    <value>Приховувати нові чати?</value>
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Приховати</value>
@@ -4933,6 +5247,24 @@
   <data name="Invisible" xml:space="preserve">
     <value>невидимий</value>
   </data>
+  <data name="InvitationsFew" xml:space="preserve">
+    <value>{0} запрошення</value>
+  </data>
+  <data name="InvitationsMany" xml:space="preserve">
+    <value>{0} запрошень</value>
+  </data>
+  <data name="InvitationsOne" xml:space="preserve">
+    <value>{0} запрошення</value>
+  </data>
+  <data name="InvitationsOther" xml:space="preserve">
+    <value>{0} запрошень</value>
+  </data>
+  <data name="InvitationsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="InvitationsZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Invite" xml:space="preserve">
     <value>Запросити</value>
   </data>
@@ -5035,6 +5367,21 @@
   <data name="January" xml:space="preserve">
     <value>Січень</value>
   </data>
+  <data name="JoinByPeekChannelText" xml:space="preserve">
+    <value>Це приватний канал. Щоб мати можливість переглядати канал у майбутньому, приєднайтеся до нього.</value>
+  </data>
+  <data name="JoinByPeekChannelTitle" xml:space="preserve">
+    <value>Приєднатися до каналу</value>
+  </data>
+  <data name="JoinByPeekGroupText" xml:space="preserve">
+    <value>Це приватна група. Щоб мати можливість переглядати групу в майбутньому, приєднайтеся до неї.</value>
+  </data>
+  <data name="JoinByPeekGroupTitle" xml:space="preserve">
+    <value>Приєднатися до групи</value>
+  </data>
+  <data name="JoinByPeekJoin" xml:space="preserve">
+    <value>ПРИЄДНАТИСЯ</value>
+  </data>
   <data name="JoinGroup" xml:space="preserve">
     <value>ПРИЄДНАТИСЯ ДО ГРУПИ</value>
   </data>
@@ -5078,6 +5425,9 @@
   </data>
   <data name="KMetersAway2" xml:space="preserve">
     <value>{0} км звідси</value>
+  </data>
+  <data name="KMetersFromYou2" xml:space="preserve">
+    <value>{0} км від вас</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Мова</value>
@@ -5387,6 +5737,24 @@
   <data name="LowDiskSpaceTitle2" xml:space="preserve">
     <value>Вилучати медіа за</value>
   </data>
+  <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
+    <value>Тепер це основне фото каналу.</value>
+  </data>
+  <data name="MainChannelProfileVideoSetHint" xml:space="preserve">
+    <value>Тепер це основне відео каналу.</value>
+  </data>
+  <data name="MainGroupProfilePhotoSetHint" xml:space="preserve">
+    <value>Тепер це основне фото групи.</value>
+  </data>
+  <data name="MainGroupProfileVideoSetHint" xml:space="preserve">
+    <value>Тепер це основне відео групи.</value>
+  </data>
+  <data name="MainProfilePhotoSetHint" xml:space="preserve">
+    <value>Тепер це ваше основне фото.</value>
+  </data>
+  <data name="MainProfileVideoSetHint" xml:space="preserve">
+    <value>Тепер це ваше основне відео.</value>
+  </data>
   <data name="MakeAdmin" xml:space="preserve">
     <value>ЗРОБИТИ АДМІНІСТРАТОРОМ</value>
   </data>
@@ -5441,7 +5809,7 @@
     <value>Позначити всі прочитаними</value>
   </data>
   <data name="MarkAsRead" xml:space="preserve">
-    <value>Прочитаний</value>
+    <value>Прочитано</value>
   </data>
   <data name="MarkAsUnread" xml:space="preserve">
     <value>Позначити як непрочитаний</value>
@@ -5591,6 +5959,9 @@
   <data name="MembersFew" xml:space="preserve">
     <value>{0} учасники</value>
   </data>
+  <data name="MembersLanguageChartTitle" xml:space="preserve">
+    <value>Основна мова учасників</value>
+  </data>
   <data name="MembersMany" xml:space="preserve">
     <value>{0} учасників</value>
   </data>
@@ -5599,6 +5970,9 @@
   </data>
   <data name="MembersOther" xml:space="preserve">
     <value>{0} учасників</value>
+  </data>
+  <data name="MembersOverviewTitle" xml:space="preserve">
+    <value>Учасники</value>
   </data>
   <data name="MembersTwo" xml:space="preserve">
     <value/>
@@ -5638,6 +6012,9 @@
   </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Показувати текст</value>
+  </data>
+  <data name="MessagesChartTitle" xml:space="preserve">
+    <value>Повідомлення</value>
   </data>
   <data name="MessageScheduledBotAction" xml:space="preserve">
     <value>Ця дія стане можливою лише після публікації повідомлення.</value>
@@ -5684,6 +6061,9 @@
   <data name="messagesOther" xml:space="preserve">
     <value>{0} повідомлень</value>
   </data>
+  <data name="MessagesOverview" xml:space="preserve">
+    <value>Повідомлення</value>
+  </data>
   <data name="MessagesSettings" xml:space="preserve">
     <value>Повідомлення</value>
   </data>
@@ -5702,6 +6082,9 @@
   <data name="MetersFew" xml:space="preserve">
     <value>{0} метрів</value>
   </data>
+  <data name="MetersFromYou2" xml:space="preserve">
+    <value>{0} м від вас</value>
+  </data>
   <data name="MetersMany" xml:space="preserve">
     <value>{0} метрів</value>
   </data>
@@ -5719,6 +6102,9 @@
   </data>
   <data name="MilesAway" xml:space="preserve">
     <value>миль звідси: {0}</value>
+  </data>
+  <data name="MilesFromYou" xml:space="preserve">
+    <value>{0} миль від вас</value>
   </data>
   <data name="MinutesBoldFew" xml:space="preserve">
     <value>**{0}** хвилини</value>
@@ -5831,6 +6217,12 @@
   <data name="NearbyCreateGroupInfo2" xml:space="preserve">
     <value>Якщо ваша група не стосуватиметься цього місця, ви ризикуєте втратити можливість створювати нові групи з розташуванням.</value>
   </data>
+  <data name="NearbyPeopleGreetingsDescription" xml:space="preserve">
+    <value>Надішліть повідомлення або натисніть на вітання нижче, щоб почати спілкування.</value>
+  </data>
+  <data name="NearbyPeopleGreetingsMessage" xml:space="preserve">
+    <value>{0} у {1}</value>
+  </data>
   <data name="NearbyPlaces" xml:space="preserve">
     <value>Чи виберіть місце</value>
   </data>
@@ -5885,6 +6277,9 @@
   <data name="NewChannel" xml:space="preserve">
     <value>Новий канал</value>
   </data>
+  <data name="NewChatsFromNonContacts" xml:space="preserve">
+    <value>Нові чати від невідомих користувачів</value>
+  </data>
   <data name="NewContact" xml:space="preserve">
     <value>Новий контакт</value>
   </data>
@@ -5896,6 +6291,9 @@
   </data>
   <data name="NewGroup" xml:space="preserve">
     <value>Нова група</value>
+  </data>
+  <data name="NewMembersBySourceChartTitle" xml:space="preserve">
+    <value>Джерела нових учасників</value>
   </data>
   <data name="NewMessagesFew" xml:space="preserve">
     <value>{0} нових повідомлення</value>
@@ -5968,6 +6366,9 @@
   </data>
   <data name="NoAudioFoundInfo" xml:space="preserve">
     <value>За запитом **{0}** у вашій музичній бібліотеці нічого не знайдено.</value>
+  </data>
+  <data name="NoAudioFoundPlayerInfo" xml:space="preserve">
+    <value>За запитом **{0}** нічого не знайдено.</value>
   </data>
   <data name="NoBlocked" xml:space="preserve">
     <value>Заблокованих користувачів ще немає</value>
@@ -6276,6 +6677,9 @@
   </data>
   <data name="NotificationEditedGroupPhoto" xml:space="preserve">
     <value>{0} змінює фото групи для {1}</value>
+  </data>
+  <data name="NotificationEditedGroupVideo" xml:space="preserve">
+    <value>{0} змінює відео групи {1}</value>
   </data>
   <data name="NotificationGroupAddMember" xml:space="preserve">
     <value>{0} запрошує користувача {2} до групи {1}</value>
@@ -6709,7 +7113,7 @@
     <value>ВІДКРИТИ У...</value>
   </data>
   <data name="OpenInEditor" xml:space="preserve">
-    <value>Відкрити у редакторі</value>
+    <value>Відкрити в редакторі</value>
   </data>
   <data name="OpenInExternalApp" xml:space="preserve">
     <value>Відкрити у...</value>
@@ -6845,6 +7249,9 @@
   <data name="Page6Title" xml:space="preserve">
     <value>Хмарний</value>
   </data>
+  <data name="PaintArrow" xml:space="preserve">
+    <value>Стрілка</value>
+  </data>
   <data name="PaintDelete" xml:space="preserve">
     <value>Видалити</value>
   </data>
@@ -6857,8 +7264,17 @@
   <data name="PaintFramed" xml:space="preserve">
     <value>З тлом</value>
   </data>
+  <data name="PaintMarker" xml:space="preserve">
+    <value>Маркер</value>
+  </data>
+  <data name="PaintNeon" xml:space="preserve">
+    <value>Неон</value>
+  </data>
   <data name="PaintOutlined" xml:space="preserve">
     <value>Обведений</value>
+  </data>
+  <data name="PaintPen" xml:space="preserve">
+    <value>Ручка</value>
   </data>
   <data name="PaintRegular" xml:space="preserve">
     <value>Звичайний</value>
@@ -7711,7 +8127,7 @@
     <value>Для знімання фото й відео Telegram потрібен доступ до камери. Надайте його в Налаштуваннях.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
-    <value>Telegram потребує доступу до розташування, щоб ви могли ділитися ним із друзями.</value>
+    <value>Telegram потрібен доступ до розташування, щоб ви могли ділитися ним із друзями.</value>
   </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>Telegram потрібен доступ до розташування.</value>
@@ -7720,7 +8136,7 @@
     <value>НАЛАШТУВАННЯ</value>
   </data>
   <data name="PermissionStorage" xml:space="preserve">
-    <value>Telegram потребує доступу до сховища, щоб ви могли надсилати і зберігати фото, відео, музику та інші медіа.</value>
+    <value>Telegram потрібен доступ до сховища, щоб ви могли надсилати і зберігати фото, відео, музику та інші медіа.</value>
   </data>
   <data name="PermissionXiaomiLockscreen" xml:space="preserve">
     <value>Для належної роботи викликів дозвольте Telegram відображатись на екрані блокування.</value>
@@ -7772,6 +8188,9 @@
   </data>
   <data name="PhotoCaption" xml:space="preserve">
     <value>Опис до фото</value>
+  </data>
+  <data name="PhotoEditorDiscardAlert" xml:space="preserve">
+    <value>Ви дійсно хочете відхилити всі зміни?</value>
   </data>
   <data name="PhotosFew" xml:space="preserve">
     <value>{0} фото</value>
@@ -7956,6 +8375,9 @@
   <data name="PopupNotification" xml:space="preserve">
     <value>Спливні сповіщення</value>
   </data>
+  <data name="PostingMembers" xml:space="preserve">
+    <value>Публікації учасників</value>
+  </data>
   <data name="PreviewFeedback" xml:space="preserve">
     <value>Повідомити про помилку в цьому перегляді</value>
   </data>
@@ -7978,7 +8400,7 @@
     <value>Сайти, на які ви входили через Telegram.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
-    <value>Якщо вимкнути peer-to-peer, усі виклики йтимуть через сервери Telegram. Співрозмовник не зможе дізнатись вашої IP-адреси, але якість звуку дещо погіршиться.</value>
+    <value>Якщо вимкнути peer-to-peer, усі виклики йтимуть через сервери Telegram. Співрозмовник не зможе дізнатись вашої IP-адреси, але якість звуку та відео може дещо погіршитися.</value>
   </data>
   <data name="PrivacyCallsP2PTitle" xml:space="preserve">
     <value>Peer-to-Peer</value>
@@ -8238,6 +8660,12 @@
   <data name="RateCallSilentRemote" xml:space="preserve">
     <value>Співрозмовник не чув мене</value>
   </data>
+  <data name="RateCallVideoDistorted" xml:space="preserve">
+    <value>Зображення було спотвореним</value>
+  </data>
+  <data name="RateCallVideoPixelated" xml:space="preserve">
+    <value>Зображення було піксельним</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Недавні</value>
   </data>
@@ -8349,11 +8777,17 @@
   <data name="RepeatDisabled" xml:space="preserve">
     <value>Вимкнено</value>
   </data>
+  <data name="RepeatList" xml:space="preserve">
+    <value>Зациклити список</value>
+  </data>
   <data name="RepeatNotifications" xml:space="preserve">
     <value>Повторювати сповіщення через</value>
   </data>
   <data name="RepeatNotificationsNever" xml:space="preserve">
     <value>Ніколи</value>
+  </data>
+  <data name="RepeatSong" xml:space="preserve">
+    <value>Зациклити пісню</value>
   </data>
   <data name="Reply" xml:space="preserve">
     <value>Відповісти</value>
@@ -8525,6 +8959,9 @@
   <data name="RestoreEmailTrouble" xml:space="preserve">
     <value>Маєте труднощі з доступом до своєї е-пошти {0}?</value>
   </data>
+  <data name="RestoreEmailTroubleNoEmail" xml:space="preserve">
+    <value>Не маєте доступу до е-пошти?</value>
+  </data>
   <data name="RestoreEmailTroubleText" xml:space="preserve">
     <value>Якщо ви не можете відновити доступ до своєї е-пошти, вам залишилось або згадати пароль, або скинути акаунт.</value>
   </data>
@@ -8537,7 +8974,28 @@
   <data name="RestorePasswordResetAccount" xml:space="preserve">
     <value>СКИНУТИ АКАУНТ</value>
   </data>
+  <data name="RestrictionsFew" xml:space="preserve">
+    <value>{0} обмеження</value>
+  </data>
+  <data name="RestrictionsMany" xml:space="preserve">
+    <value>{0} обмежень</value>
+  </data>
+  <data name="RestrictionsOne" xml:space="preserve">
+    <value>{0} обмеження</value>
+  </data>
+  <data name="RestrictionsOther" xml:space="preserve">
+    <value>{0} обмежень</value>
+  </data>
+  <data name="RestrictionsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RestrictionsZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Retry" xml:space="preserve">
+    <value>Повторити</value>
+  </data>
+  <data name="RetryCall" xml:space="preserve">
     <value>Повторити</value>
   </data>
   <data name="ReturnToCall" xml:space="preserve">
@@ -8746,6 +9204,21 @@
   </data>
   <data name="SecretChatName" xml:space="preserve">
     <value>Telegram</value>
+  </data>
+  <data name="SecretChatTimerDays" xml:space="preserve">
+    <value>д.</value>
+  </data>
+  <data name="SecretChatTimerHours" xml:space="preserve">
+    <value>год</value>
+  </data>
+  <data name="SecretChatTimerMinutes" xml:space="preserve">
+    <value>хв</value>
+  </data>
+  <data name="SecretChatTimerSeconds" xml:space="preserve">
+    <value>с</value>
+  </data>
+  <data name="SecretChatTimerWeeks" xml:space="preserve">
+    <value>тиж.</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
     <value>Увімкнути попередній перегляд посилань у секретних чатах? Зауважте, що попередній перегляд формується на серверах Telegram.</value>
@@ -8989,6 +9462,9 @@
   <data name="SetAsAdmin" xml:space="preserve">
     <value>Підвищити до адміністратора</value>
   </data>
+  <data name="SetAsMain" xml:space="preserve">
+    <value>Зробити основним</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>ВСТАНОВИТИ ФОН</value>
   </data>
@@ -9000,6 +9476,9 @@
   </data>
   <data name="SetPasscodeInfo" xml:space="preserve">
     <value>Встановіть на застосунок код блокування, щоб інші не змогли відкрити його.</value>
+  </data>
+  <data name="SetProfilePhoto" xml:space="preserve">
+    <value>Встановити фото</value>
   </data>
   <data name="SetRecoveryEmail" xml:space="preserve">
     <value>Встановити е-пошту для відновлення</value>
@@ -9128,7 +9607,7 @@
     <value>Місце</value>
   </data>
   <data name="SharedVoiceTab" xml:space="preserve">
-    <value>ГОЛОС</value>
+    <value>ГОЛОСОВІ</value>
   </data>
   <data name="SharedVoiceTab2" xml:space="preserve">
     <value>Голосові повідомлення</value>
@@ -9167,7 +9646,7 @@
     <value>{0} поширень</value>
   </data>
   <data name="SharesPerPost" xml:space="preserve">
-    <value>Поширення публікацій</value>
+    <value>Пересилання публікацій</value>
   </data>
   <data name="SharesTwo" xml:space="preserve">
     <value/>
@@ -9248,10 +9727,10 @@
     <value>Показати наліпки</value>
   </data>
   <data name="ShowVotesFew" xml:space="preserve">
-    <value/>
+    <value>Показати ще ({0})</value>
   </data>
   <data name="ShowVotesMany" xml:space="preserve">
-    <value/>
+    <value>Показати ще ({0})</value>
   </data>
   <data name="ShowVotesOne" xml:space="preserve">
     <value>Показати ще ({0})</value>
@@ -9267,6 +9746,9 @@
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>Перемішати</value>
+  </data>
+  <data name="ShuffleList" xml:space="preserve">
+    <value>Перемішати список</value>
   </data>
   <data name="SignUp" xml:space="preserve">
     <value>Реєстрація</value>
@@ -9334,6 +9816,9 @@
   <data name="SmsText" xml:space="preserve">
     <value>Ми надішлемо вам SMS за {0}:%2$02d</value>
   </data>
+  <data name="SoftenSkin" xml:space="preserve">
+    <value>Гладка шкіра</value>
+  </data>
   <data name="SoftUserLimitAlert" xml:space="preserve">
     <value>Ви зможете додати більше учасників після створення групи.</value>
   </data>
@@ -9373,11 +9858,17 @@
   <data name="StartText" xml:space="preserve">
     <value>Перевірте код країни і введіть свій номер телефону.</value>
   </data>
+  <data name="StatisticOpenProfile" xml:space="preserve">
+    <value>Відкрити профіль</value>
+  </data>
   <data name="StatisticOverview" xml:space="preserve">
     <value>Огляд</value>
   </data>
   <data name="Statistics" xml:space="preserve">
     <value>Статистика</value>
+  </data>
+  <data name="StatisticSearchUserHistory" xml:space="preserve">
+    <value>Переглянути повідомлення</value>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Наліпки та маски</value>
@@ -9624,6 +10115,9 @@
   </data>
   <data name="TapToSendLocation" xml:space="preserve">
     <value>Натисніть, щоб надіслати це розташування</value>
+  </data>
+  <data name="TapToTurnCamera" xml:space="preserve">
+    <value>Щоб увімкнути камеру, натисніть сюди</value>
   </data>
   <data name="TapToViewAsList" xml:space="preserve">
     <value>Натисніть, щоб переглянути списком.</value>
@@ -9960,8 +10454,20 @@
     <value>Забагато спроб.
 Повторіть спробу через {0}.</value>
   </data>
+  <data name="TopAdmins" xml:space="preserve">
+    <value>Топ адміністраторів</value>
+  </data>
+  <data name="TopDaysOfWeekChartTitle" xml:space="preserve">
+    <value>Топ днів тижня</value>
+  </data>
   <data name="TopHoursChartTitle" xml:space="preserve">
     <value>Перегляди погодинно (UTC)</value>
+  </data>
+  <data name="TopInviters" xml:space="preserve">
+    <value>Топ запрошувачів</value>
+  </data>
+  <data name="TopMembers" xml:space="preserve">
+    <value>Топ учасників</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
     <value>Натисніть «Погоджуюся», щоб підтвердити, що вам виповнилося {0} років.</value>
@@ -10467,6 +10973,12 @@ http://telegram.org/update</value>
   <data name="VibrationDisabled" xml:space="preserve">
     <value>Вимкнена</value>
   </data>
+  <data name="VideoCall" xml:space="preserve">
+    <value>Відеовиклик</value>
+  </data>
+  <data name="VideoCallViaTelegram" xml:space="preserve">
+    <value>Відеовиклик Telegram</value>
+  </data>
   <data name="VideoCaption" xml:space="preserve">
     <value>Опис до відео</value>
   </data>
@@ -10523,6 +11035,9 @@ http://telegram.org/update</value>
   </data>
   <data name="ViewExceptions" xml:space="preserve">
     <value>Переглянути винятки</value>
+  </data>
+  <data name="ViewingMembers" xml:space="preserve">
+    <value>Перегляди учасників</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Переглянути пакунок</value>
@@ -10584,6 +11099,9 @@ http://telegram.org/update</value>
   <data name="VoipAudioRoutingEarpiece" xml:space="preserve">
     <value>Динамік</value>
   </data>
+  <data name="VoipAudioRoutingHeadset" xml:space="preserve">
+    <value>Гарнітура</value>
+  </data>
   <data name="VoipAudioRoutingSpeaker" xml:space="preserve">
     <value>Гучномовець</value>
   </data>
@@ -10600,7 +11118,7 @@ http://telegram.org/update</value>
     <value>Відхилити</value>
   </data>
   <data name="VoipEndCall" xml:space="preserve">
-    <value>Завершити виклик</value>
+    <value>Завершити</value>
   </data>
   <data name="VoipErrorUnknown" xml:space="preserve">
     <value>Наразі неможливо зателефонувати через Telegram.</value>
@@ -10614,6 +11132,9 @@ http://telegram.org/update</value>
   <data name="VoipFeedbackCommentHint" xml:space="preserve">
     <value>Додати коментар (необовʼязково)</value>
   </data>
+  <data name="VoipFlip" xml:space="preserve">
+    <value>Обернути</value>
+  </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Кладемо слухавку</value>
   </data>
@@ -10626,11 +11147,23 @@ http://telegram.org/update</value>
   <data name="VoipIncoming" xml:space="preserve">
     <value>Вхідний виклик</value>
   </data>
+  <data name="VoipInVideoCallBranding" xml:space="preserve">
+    <value>Відеовиклик Telegram</value>
+  </data>
+  <data name="VoipInVideoCallBrandingWithName" xml:space="preserve">
+    <value>Відеовиклик Telegram до {0}</value>
+  </data>
+  <data name="VoipMute" xml:space="preserve">
+    <value>Вимк. звук</value>
+  </data>
+  <data name="VoipNeedMicCameraPermission" xml:space="preserve">
+    <value>Telegram потрібен доступ до мікрофона та камери, щоб робити відеовиклики.</value>
+  </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>Щоб телефонувати, Telegram потрібен доступ до мікрофона.</value>
   </data>
   <data name="VoipNotificationSettings" xml:space="preserve">
-    <value>Голосові виклики</value>
+    <value>Виклики</value>
   </data>
   <data name="VoipOffline" xml:space="preserve">
     <value>Зараз ви поза мережею. Щоб зателефонувати, підʼєднайтеся до інтернету.</value>
@@ -10654,13 +11187,22 @@ http://telegram.org/update</value>
     <value>Триває інший виклик</value>
   </data>
   <data name="VoipOutgoingCall" xml:space="preserve">
-    <value>Тримає виклик Telegram</value>
+    <value>Триває виклик Telegram</value>
+  </data>
+  <data name="VoipOutputDevices" xml:space="preserve">
+    <value>Вихідні пристрої</value>
   </data>
   <data name="VoipPeerIncompatible" xml:space="preserve">
     <value>Користувач **{0}** має спершу оновити Telegram, щоб ви змогли йому зателефонувати, оскільки він використовує несумісний протокол.</value>
   </data>
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>**{0}** має спершу оновити Telegram, щоб ви змогли йому зателефонувати, оскільки він не підтримує виклики.</value>
+  </data>
+  <data name="VoipPeerVideoOutdated" xml:space="preserve">
+    <value>**{0}** використовує стару версію Telegram, яка не підтримує відеовикликів.</value>
+  </data>
+  <data name="VoipPeerVideoOutdatedMakeVoice" xml:space="preserve">
+    <value>Здійснити голосовий виклик</value>
   </data>
   <data name="VoipQuickReplies" xml:space="preserve">
     <value>Текстові відповіді</value>
@@ -10670,6 +11212,9 @@ http://telegram.org/update</value>
   </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>Оцініть якість цього Telegram-виклику</value>
+  </data>
+  <data name="VoipReconnecting" xml:space="preserve">
+    <value>Перепідключення</value>
   </data>
   <data name="VoipRequesting" xml:space="preserve">
     <value>Запит</value>
@@ -10683,8 +11228,35 @@ http://telegram.org/update</value>
   <data name="VoipSettingsRingtone" xml:space="preserve">
     <value>Мелодія</value>
   </data>
+  <data name="VoipSpeaker" xml:space="preserve">
+    <value>Динамік</value>
+  </data>
+  <data name="VoipStartVideo" xml:space="preserve">
+    <value>Увімк. відео</value>
+  </data>
+  <data name="VoipStopVideo" xml:space="preserve">
+    <value>Вимк. відео</value>
+  </data>
+  <data name="VoipSwitch" xml:space="preserve">
+    <value>ПЕРЕМКНУТИСЯ</value>
+  </data>
+  <data name="VoipSwitchToVideoCall" xml:space="preserve">
+    <value>Перемкнутися на відеовиклик?</value>
+  </data>
+  <data name="VoipUnmute" xml:space="preserve">
+    <value>Увімк. звук</value>
+  </data>
   <data name="VoipUseLessData" xml:space="preserve">
     <value>Економія даних при викликах</value>
+  </data>
+  <data name="VoipUserCameraIsOff" xml:space="preserve">
+    <value>Камеру {0} вимкнено</value>
+  </data>
+  <data name="VoipUserMicrophoneIsOff" xml:space="preserve">
+    <value>Мікрофон {0} вимкнено</value>
+  </data>
+  <data name="VoipVideoUnavailable" xml:space="preserve">
+    <value>Відео</value>
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Очікуємо</value>
