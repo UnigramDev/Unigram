@@ -17,7 +17,7 @@
 
 <br>
 
-Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience. 
+Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/windows/uwp/get-started/whats-a-uwp), Unigram can run on any Windows 10 device (PC, Xbox One, Holo Lens and Surface Hub), integrated with almost all the new Windows features, it provides a seamless and consistent user experience.
 
 ## Table of contents
 - [Features](#features)
@@ -27,7 +27,7 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 - [Download without Microsoft Store](#alternativedownload)
 - [Windows 10 N](#windows10n)
 - [Translations](#translations)
-- [Wiki](#wiki)
+- [Privacy policy](#privacy)
 
 
 <a name="features"></a>
@@ -73,13 +73,13 @@ We release beta versions outside of the Microsoft Store. To install them just do
 
 <a name="windows10n"></a>
 ## Windows 10 N
-To work with Windows 10 N you will need Media Feature pack. To install it properly go to ```Settings > Apps and Features > Add a feature.``` At this point, select Media Feature pack, install it and reboot. 
+To work with Windows 10 N you will need Media Feature pack. To install it properly go to ```Settings > Apps and Features > Add a feature.``` At this point, select Media Feature pack, install it and reboot.
 
 <a name="translations"></a>
 ## Translations
 Unigram has 18 built-in languages, but has access to unlimited packs using Telegram translations platform.
 If you are wishing to translate it to your language, you can do that [here](https://translations.telegram.org/en/android/), since Unigram uses the same translations as the official Telegram app for Android.
 
-<a name="wiki"></a>
-## Wiki
-For additional information (keyboard shortcuts, other contact information, FAQ, missing features, build instructions and other stuff) you can check [Unigram wiki](https://github.com/UnigramDev/Unigram/wiki).
+<a name="privacy"></a>
+## Privacy policy
+Here's our [privacy policy](https://telegram.org/privacy)
