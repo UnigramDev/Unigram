@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.Services.ViewService;
@@ -131,7 +130,7 @@ namespace Unigram
                 //    .SingleInstance()
                 //    .AutoActivate();
 
-                builder.RegisterType<VoIPService>().As<IVoIPService>().SingleInstance();
+                builder.RegisterType<VoipService>().As<IVoipService>().SingleInstance();
 
                 //builder.RegisterType<MTProtoService>().WithParameter("account", account).As<IMTProtoService>().SingleInstance();
                 builder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();
@@ -192,7 +191,7 @@ namespace Unigram
                 builder.RegisterType<SupergroupBannedViewModel>();
                 builder.RegisterType<SupergroupPermissionsViewModel>();
                 builder.RegisterType<SupergroupMembersViewModel>();
-                builder.RegisterType<ChatSharedMediaViewModel>(); 
+                builder.RegisterType<ChatSharedMediaViewModel>();
                 builder.RegisterType<ChatStatisticsViewModel>();
                 builder.RegisterType<ChannelCreateStep1ViewModel>();
                 builder.RegisterType<ChannelCreateStep2ViewModel>();

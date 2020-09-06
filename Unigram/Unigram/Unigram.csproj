@@ -2659,14 +2659,14 @@
     <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="libtgvoip">
-      <HintPath>$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.winmd</HintPath>
-      <Implementation>libtgvoip.dll</Implementation>
+  <!--<ItemGroup>
+    <Reference Include="Unigram.Native.Calls">
+      <HintPath>$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.winmd</HintPath>
+      <Implementation>Unigram.Native.Calls.dll</Implementation>
     </Reference>
-    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.dll" />
-    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.pri" />
-  </ItemGroup>
+    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.dll" />
+    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.pri" />
+  </ItemGroup>-->
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
