@@ -234,7 +234,7 @@ namespace Unigram.Common
             }
             else if (message.Content is MessageCall call)
             {
-                return call.ToOutcomeText(message.IsOutgoing);
+                return call.ToOutcomeText(message.IsOutgoing) + ", ";
             }
             else if (message.Content is MessageUnsupported)
             {

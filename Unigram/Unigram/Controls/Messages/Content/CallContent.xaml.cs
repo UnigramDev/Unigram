@@ -30,6 +30,8 @@ namespace Unigram.Controls.Messages.Content
             var outgoing = message.IsOutgoing;
             var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
 
+            Button.Glyph = call.IsVideo ? Icons.VideoCall : Icons.Call;
+
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
             ReasonGlyph.Text = outgoing ? "\uE60B\u00A0" : "\uE60C\u00A0";
             DateLabel.Text = BindConvert.Current.Date(message.Date);
