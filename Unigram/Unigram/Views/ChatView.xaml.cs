@@ -801,7 +801,13 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user);
+                var userFull = ViewModel.ProtoService.GetUserFull(user.Id);
+                if (userFull == null)
+                {
+                    return;
+                }
+
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
             else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
@@ -4093,10 +4099,10 @@ namespace Unigram.Views
                     }
                     else if (message.Content is MessageChatChangePhoto && file.Local.IsDownloadingCompleted)
                     {
-                        var photo = element.FindName("Photo") as ProfilePicture;
+                        var photo = element.FindName("Photo") as Image;
                         if (photo != null)
                         {
-                            photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = 96, DecodePixelHeight = 96, DecodePixelType = DecodePixelType.Logical };
+                            photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = 120, DecodePixelHeight = 120, DecodePixelType = DecodePixelType.Logical };
                         }
                     }
 

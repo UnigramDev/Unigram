@@ -14,12 +14,12 @@ namespace Unigram.ViewModels.Users
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly User _user;
 
-        public UserPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, User user)
+        public UserPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, User user, UserFullInfo userFull)
             : base(protoService, aggregator)
         {
             _user = user;
 
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryProfilePhoto(protoService, user) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryUserProfilePhoto(protoService, user, userFull.Photo) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -31,21 +31,18 @@ namespace Unigram.ViewModels.Users
             using (await _loadMoreLock.WaitAsync())
             {
                 var response = await ProtoService.SendAsync(new GetUserProfilePhotos(_user.Id, 0, 20));
-                if (response is UserProfilePhotos photos)
+                if (response is ChatPhotos photos)
                 {
                     TotalItems = photos.TotalCount;
 
                     foreach (var item in photos.Photos)
                     {
-                        if (item.Id == user.ProfilePhoto.Id && Items[0] is GalleryProfilePhoto main)
+                        if (item.Id == user.ProfilePhoto.Id)
                         {
-                            main.SetDate(item.AddedDate);
-                            RaisePropertyChanged(() => SelectedItem);
+                            continue;
                         }
-                        else
-                        {
-                            Items.Add(new GalleryUserProfilePhoto(ProtoService, _user, item));
-                        }
+
+                        Items.Add(new GalleryUserProfilePhoto(ProtoService, _user, item));
                     }
                 }
             }
@@ -56,7 +53,7 @@ namespace Unigram.ViewModels.Users
             using (await _loadMoreLock.WaitAsync())
             {
                 var response = await ProtoService.SendAsync(new GetUserProfilePhotos(_user.Id, Items.Count, 20));
-                if (response is UserProfilePhotos photos)
+                if (response is ChatPhotos photos)
                 {
                     TotalItems = photos.TotalCount;
 
@@ -75,25 +72,7 @@ namespace Unigram.ViewModels.Users
         protected override async void DeleteExecute()
         {
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryProfilePhoto item)
-            {
-                var response = await ProtoService.SendAsync(new DeleteProfilePhoto(item.Id));
-                if (response is Ok)
-                {
-                    var index = Items.IndexOf(item);
-                    if (index < Items.Count - 1)
-                    {
-                        SelectedItem = Items[index > 0 ? index - 1 : index + 1];
-                        Items.Remove(item);
-                        TotalItems--;
-                    }
-                    else
-                    {
-                        NavigationService.GoBack();
-                    }
-                }
-            }
-            else if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryUserProfilePhoto profileItem)
+            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryUserProfilePhoto profileItem)
             {
                 var response = await ProtoService.SendAsync(new DeleteProfilePhoto(profileItem.Id));
                 if (response is Ok)

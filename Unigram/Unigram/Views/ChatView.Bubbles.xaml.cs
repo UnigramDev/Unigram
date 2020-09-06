@@ -11,6 +11,7 @@ using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Gallery;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -338,7 +339,16 @@ namespace Unigram.Views
             {
                 if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
                 {
-                    var viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
+                    GalleryViewModelBase viewModel;
+                    if (message.Content is MessageAnimation)
+                    {
+                        viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, message.Get());
+                    }
+                    else
+                    {
+                        viewModel = new SingleGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ProtoService, message.Get()));
+                    }
+
                     await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => target);
                 }
                 else
@@ -801,7 +811,7 @@ namespace Unigram.Views
 
                 if (message.Content is MessageChatChangePhoto chatChangePhoto)
                 {
-                    var photo = panel.FindName("Photo") as ProfilePicture;
+                    var photo = panel.FindName("Photo") as Image;
                     if (photo != null)
                     {
                         var file = chatChangePhoto.Photo.GetSmall();
@@ -809,7 +819,7 @@ namespace Unigram.Views
                         {
                             if (file.Photo.Local.IsDownloadingCompleted)
                             {
-                                photo.Source = new BitmapImage(new Uri("file:///" + file.Photo.Local.Path)) { DecodePixelWidth = 96, DecodePixelHeight = 96, DecodePixelType = DecodePixelType.Logical };
+                                photo.Source = new BitmapImage(new Uri("file:///" + file.Photo.Local.Path)) { DecodePixelWidth = 120, DecodePixelHeight = 120, DecodePixelType = DecodePixelType.Logical };
                             }
                             else if (file.Photo.Local.CanBeDownloaded && !file.Photo.Local.IsDownloadingActive)
                             {

@@ -815,14 +815,12 @@ namespace Unigram.Controls.Gallery
                 if (index == 0 && previous)
                 {
                     viewModel.SelectedItem = viewModel.Items[selected - 1];
-                    PrepareNext(-1);
-                    Dispose();
+                    PrepareNext(-1, dispose: true);
                 }
                 else if (index == 2 && next)
                 {
                     viewModel.SelectedItem = viewModel.Items[selected + 1];
-                    PrepareNext(+1);
-                    Dispose();
+                    PrepareNext(+1, dispose: true);
                 }
 
                 viewModel.LoadMore();
@@ -852,7 +850,7 @@ namespace Unigram.Controls.Gallery
             ScrollingHost.ChangeView(ActualWidth * index, null, null, disableAnimation);
         }
 
-        private void PrepareNext(int direction, bool initialize = false)
+        private void PrepareNext(int direction, bool initialize = false, bool dispose = false)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -921,6 +919,16 @@ namespace Unigram.Controls.Gallery
             {
                 Dispose();
                 viewModel.OpenMessage(viewModel.Items[index]);
+            }
+            else if (dispose)
+            {
+                Dispose();
+            }
+
+            var item = viewModel.Items[index];
+            if (item.IsVideo && item.IsLoop)
+            {
+                Play(target.Presenter, item, item.GetFile());
             }
         }
 

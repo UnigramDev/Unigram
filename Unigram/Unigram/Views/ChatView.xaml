@@ -228,8 +228,8 @@
                     <TextBlock Foreground="White" TextAlignment="Center" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
-                <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <controls:ProfilePicture x:Name="Photo" Width="96" Height="96"/>
+                <Border Width="120" Height="120" CornerRadius="12" Background="Black" Margin="0,6,0,0">
+                    <Image x:Name="Photo" Width="120" Height="120"/>
                 </Border>
             </StackPanel>
         </DataTemplate>

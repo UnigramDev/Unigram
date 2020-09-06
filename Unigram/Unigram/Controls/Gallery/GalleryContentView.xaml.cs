@@ -2,7 +2,6 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
-using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
@@ -77,21 +76,18 @@ namespace Unigram.Controls.Gallery
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
                 Button.Opacity = 1;
             }
             else if (file.Remote.IsUploadingActive)
             {
-                Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
                 Button.Opacity = 1;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
                 Button.Opacity = 1;
@@ -105,7 +101,6 @@ namespace Unigram.Controls.Gallery
             {
                 if (item.IsVideo)
                 {
-                    Button.Glyph = Icons.Play;
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 1;
                     Button.Opacity = 1;

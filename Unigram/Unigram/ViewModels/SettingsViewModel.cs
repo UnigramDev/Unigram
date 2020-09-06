@@ -138,7 +138,7 @@ namespace Unigram.ViewModels
         private async void EditPhotoExecute(StorageFile file)
         {
             var props = await file.GetBasicPropertiesAsync();
-            var response = await ProtoService.SendAsync(new SetProfilePhoto(await file.ToGeneratedAsync()));
+            var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(await file.ToGeneratedAsync())));
         }
 
         public RelayCommand AskCommand { get; }

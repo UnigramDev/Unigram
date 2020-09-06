@@ -7,10 +7,9 @@ namespace Unigram.ViewModels.Gallery
     public class GalleryUserProfilePhoto : GalleryContent
     {
         private readonly User _user;
-        private readonly UserProfilePhoto _photo;
-        private readonly string _caption;
+        private readonly ChatPhoto _photo;
 
-        public GalleryUserProfilePhoto(IProtoService protoService, User user, UserProfilePhoto photo)
+        public GalleryUserProfilePhoto(IProtoService protoService, User user, ChatPhoto photo)
             : base(protoService)
         {
             _user = user;
@@ -21,6 +20,11 @@ namespace Unigram.ViewModels.Gallery
 
         public override File GetFile()
         {
+            if (_photo?.Animation != null)
+            {
+                return _photo.Animation.File;
+            }
+
             return _photo?.GetBig()?.Photo;
         }
 
@@ -45,11 +49,16 @@ namespace Unigram.ViewModels.Gallery
             return _photo.UpdateFile(file);
         }
 
+        public override bool IsVideo => _photo.Animation != null;
+        public override bool IsLoop => _photo.Animation != null;
+
+        public override int Duration => 1;
+
+        public override string MimeType => "video/mp4";
+
         public override object From => _user;
 
         public override object Constraint => _photo;
-
-        public override string Caption => _caption;
 
         public override int Date => _photo.AddedDate;
 

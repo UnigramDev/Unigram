@@ -561,17 +561,23 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
-                content = Strings.Resources.ActionChannelChangedPhoto;
+                content = chatChangePhoto.Photo.Animation != null
+                    ? Strings.Resources.ActionChannelChangedVideo
+                    : Strings.Resources.ActionChannelChangedPhoto;
             }
             else
             {
                 if (message.IsOutgoing)
                 {
-                    content = Strings.Resources.ActionYouChangedPhoto;
+                    content = chatChangePhoto.Photo.Animation != null
+                        ? Strings.Resources.ActionYouChangedVideo
+                        : Strings.Resources.ActionYouChangedPhoto;
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionChangedPhoto, "un1", message.GetSenderUser(), ref entities);
+                    content = chatChangePhoto.Photo.Animation != null
+                        ? ReplaceWithLink(Strings.Resources.ActionChangedVideo, "un1", message.GetSenderUser(), ref entities)
+                        : ReplaceWithLink(Strings.Resources.ActionChangedPhoto, "un1", message.GetSenderUser(), ref entities);
                 }
             }
 

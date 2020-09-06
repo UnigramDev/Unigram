@@ -5,16 +5,16 @@ namespace Unigram.ViewModels.Gallery
 {
     public class GalleryChatPhoto : GalleryContent
     {
-        private readonly ChatPhoto _photo;
+        private readonly ChatPhotoInfo _photo;
         private readonly string _caption;
 
-        public GalleryChatPhoto(IProtoService protoService, ChatPhoto photo)
+        public GalleryChatPhoto(IProtoService protoService, ChatPhotoInfo photo)
             : base(protoService)
         {
             _photo = photo;
         }
 
-        public GalleryChatPhoto(IProtoService protoService, ChatPhoto photo, string caption)
+        public GalleryChatPhoto(IProtoService protoService, ChatPhotoInfo photo, string caption)
             : base(protoService)
         {
             _photo = photo;

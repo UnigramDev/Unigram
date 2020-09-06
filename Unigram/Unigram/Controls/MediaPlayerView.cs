@@ -185,9 +185,9 @@ namespace Unigram.Controls
                     constraint = photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
                 }
             }
-            else if (constraint is UserProfilePhoto userProfilePhoto)
+            else if (constraint is ChatPhoto chatPhoto)
             {
-                constraint = userProfilePhoto.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+                constraint = chatPhoto.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
             }
             else if (constraint is Sticker sticker)
             {
