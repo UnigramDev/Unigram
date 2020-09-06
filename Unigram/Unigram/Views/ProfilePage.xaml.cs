@@ -571,14 +571,12 @@ namespace Unigram.Views
 
                 var fullInfo = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
 
-                if (super.IsChannel)
+                if (fullInfo != null && fullInfo.CanViewStatistics)
                 {
-                    if (fullInfo != null && fullInfo.CanViewStatistics)
-                    {
-                        flyout.CreateFlyoutItem(ViewModel.StatisticsCommand, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.Statistics });
-                    }
+                    flyout.CreateFlyoutItem(ViewModel.StatisticsCommand, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.Statistics });
                 }
-                else
+
+                if (!super.IsChannel)
                 {
                     flyout.CreateFlyoutItem(ViewModel.MembersCommand, Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
 

@@ -482,6 +482,7 @@
     <Compile Include="Navigation\Services\NavigatingEventArgs.cs" />
     <Compile Include="Navigation\Services\NavigationService.cs" />
     <Compile Include="Navigation\Services\NavigationServiceList.cs" />
+    <Compile Include="Selectors\ChatStatisticsOverviewTemplateSelector.cs" />
     <Compile Include="Services\CallsService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />

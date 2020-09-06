@@ -4,13 +4,110 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:dataView="using:Unigram.Charts.DataView"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:td="using:Telegram.Td.Api"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Page.Resources>
+        <DataTemplate x:Key="UserTemplate">
+            <Button Style="{StaticResource EmptyButtonStyle}">
+                <Grid Margin="12,6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                    <TextBlock
+                        TextWrapping="NoWrap"
+                        TextTrimming="CharacterEllipsis"
+                        VerticalAlignment="Bottom"
+                        Grid.Column="1"/>
+                    <TextBlock
+                        VerticalAlignment="Top"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        MaxLines="1"/>
+                </Grid>
+            </Button>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ChannelOverviewTemplate" x:DataType="td:ChatStatisticsChannel">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <controls:ChatStatisticsOverview
+                    Title="{CustomResource FollowersChartTitle}"
+                    Value="{x:Bind MemberCount}"/>
+
+                <controls:ChatStatisticsOverview
+                    Title="{CustomResource EnabledNotifications}"
+                    Value="{x:Bind MemberCount}"
+                    Grid.Column="1"/>
+
+                <controls:ChatStatisticsOverview
+                    Title="{CustomResource ViewsPerPost}"
+                    Value="{x:Bind MeanViewCount}"
+                    Grid.Row="1"/>
+
+                <controls:ChatStatisticsOverview
+                    Title="{CustomResource SharesPerPost}"
+                    Value="{x:Bind MeanShareCount}"
+                    Grid.Column="1"
+                    Grid.Row="1"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SupergroupOverviewTemplate" x:DataType="td:ChatStatisticsSupergroup">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <controls:ChatStatisticsOverview
+                    Title="{CustomResource MembersOverviewTitle}"
+                    Value="{x:Bind MemberCount}"/>
+
+                <controls:ChatStatisticsOverview
+                    Title="{CustomResource MessagesOverview}"
+                    Value="{x:Bind MessageCount}"
+                    Grid.Column="1"/>
+
+                <controls:ChatStatisticsOverview
+                    Title="{CustomResource ViewingMembers}"
+                    Value="{x:Bind ViewerCount}"
+                    Grid.Row="1"/>
+
+                <controls:ChatStatisticsOverview
+                    Title="{CustomResource PostingMembers}"
+                    Value="{x:Bind SenderCount}"
+                    Grid.Column="1"
+                    Grid.Row="1"/>
+            </Grid>
+        </DataTemplate>
+
         <Style x:Key="LineCheckBoxStyle" TargetType="CheckBox">
             <Setter Property="Background" Value="{ThemeResource CheckBoxBackgroundUnchecked}" />
             <Setter Property="Foreground" Value="{ThemeResource CheckBoxForegroundUnchecked}" />
@@ -351,41 +448,25 @@
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ListView ItemsSource="{x:Bind ViewModel.Items}" ContainerContentChanging="OnContainerContentChanging" SelectionMode="None">
             <ListView.Header>
-                <controls:HeaderedControl Header="{CustomResource StatisticOverview}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <controls:ChatStatisticsOverview
-                            Title="{CustomResource FollowersChartTitle}"
-                            Value="{x:Bind ViewModel.Statistics.MemberCount}"/>
-                        
-                        <!--<controls:ChatStatisticsOverview
-                            Title="{CustomResource EnabledNotifications}"
-                            Value="{x:Bind ViewModel.Statistics.MemberCount}"
-                            Grid.Column="1"/>-->
-
-                        <controls:ChatStatisticsOverview
-                            Title="{CustomResource ViewsPerPost}"
-                            Value="{x:Bind ViewModel.Statistics.MeanViewCount}"
-                            Grid.Row="1"/>
-                        
-                        <controls:ChatStatisticsOverview
-                            Title="{CustomResource SharesPerPost}"
-                            Value="{x:Bind ViewModel.Statistics.MeanShareCount}"
-                            Grid.Column="1"
-                            Grid.Row="1"/>
-                    </Grid>
+                <controls:HeaderedControl
+                    Header="{CustomResource StatisticOverview}"
+                    Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
+                    Style="{StaticResource FooteredControlStyle}">
+                    <ContentControl
+                        Content="{x:Bind ViewModel.Statistics, Mode=OneWay}"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch">
+                        <ContentControl.ContentTemplateSelector>
+                            <selectors:ChatStatisticsOverviewTemplateSelector
+                                ChannelTemplate="{StaticResource ChannelOverviewTemplate}"
+                                SupergroupTemplate="{StaticResource SupergroupOverviewTemplate}"/>
+                        </ContentControl.ContentTemplateSelector>
+                    </ContentControl>
                 </controls:HeaderedControl>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <controls:HeaderedControl Header="xxx">
+                    <controls:HeaderedControl Header="xxx" Style="{StaticResource FooteredControlStyle}">
                         <controls:AspectView/>
                         <controls:WrapPanel
                             Orientation="Horizontal"/>
@@ -393,12 +474,67 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <controls:HeaderedControl Header="{CustomResource RecentPosts}">
-                    <ItemsControl ItemsSource="{x:Bind ViewModel.Interactions}">
-                        
-                    </ItemsControl>
-                </controls:HeaderedControl>
+                <StackPanel>
+                    <controls:HeaderedControl
+                        Header="{CustomResource RecentPosts}"
+                        Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.Interactions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource FooteredControlStyle}">
+                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.Interactions}">
+
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+                    
+                    <controls:HeaderedControl
+                        Header="{CustomResource TopMembers}"
+                        Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.TopSenders.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource FooteredControlStyle}">
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.TopSenders}"
+                            ItemTemplate="{StaticResource UserTemplate}"
+                            ElementPrepared="OnElementPrepared"/>
+
+                        <controls:BadgeButton
+                            Command="{x:Bind ViewModel.TopSendersCommand}"
+                            Content="{x:Bind ConvertShowMore(ViewModel.TopSendersLeft.Count), Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.TopSendersLeft.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl
+                        Header="{CustomResource TopAdmins}"
+                        Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.TopAdministrators.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource FooteredControlStyle}">
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.TopAdministrators}"
+                            ItemTemplate="{StaticResource UserTemplate}"
+                            ElementPrepared="OnElementPrepared"/>
+                    </controls:HeaderedControl>
+                    
+                    <controls:HeaderedControl
+                        Header="{CustomResource TopInviters}"
+                        Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.TopInviters.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource FooteredControlStyle}">
+                        <muxc:ItemsRepeater
+                            ItemsSource="{x:Bind ViewModel.TopInviters}"
+                            ItemTemplate="{StaticResource UserTemplate}"
+                            ElementPrepared="OnElementPrepared"/>
+                    </controls:HeaderedControl>
+                </StackPanel>
             </ListView.Footer>
         </ListView>
+
+        <Grid
+            Background="{ThemeResource PageBackgroundDarkBrush}"
+            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}">
+            <muxc:ProgressRing
+                IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                Width="48"
+                Height="48"/>
+        </Grid>
+            
     </Grid>
 </local:HostedPage>

@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using System.Text;
 using Telegram.Td.Api;
 using Unigram.Charts;
 using Unigram.Charts.DataView;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml;
@@ -45,6 +47,23 @@ namespace Unigram.Views.Chats
         public void UpdateChatPhoto(Chat chat)
         {
             Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+        }
+
+        #endregion
+
+        #region Binding
+
+        private string ConvertPeriod(int startDate, int endDate)
+        {
+            var start = Utils.UnixTimestampToDateTime(startDate);
+            var end = Utils.UnixTimestampToDateTime(endDate);
+
+            return string.Format("{0} - {1}", BindConvert.Current.ShortDate.Format(start), BindConvert.Current.ShortDate.Format(end));
+        }
+
+        private string ConvertShowMore(int count)
+        {
+            return Locale.Declension("ShowVotes", count);
         }
 
         #endregion
@@ -198,6 +217,111 @@ namespace Unigram.Views.Chats
                 //test.onCheckChanged();
             }
 
+        }
+
+        private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        {
+            var button = args.Element as Button;
+            var content = button.Content as Grid;
+
+            var title = content.Children[1] as TextBlock;
+            var subtitle = content.Children[2] as TextBlock;
+            var photo = content.Children[0] as ProfilePicture;
+
+            if (button.DataContext is ChatStatisticsMessageSenderInfo senderInfo)
+            {
+                var user = ViewModel.CacheService.GetUser(senderInfo.UserId);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var stringBuilder = new StringBuilder();
+                if (senderInfo.SentMessageCount > 0)
+                {
+                    stringBuilder.Append(Locale.Declension("messages", senderInfo.SentMessageCount));
+                }
+
+                if (senderInfo.AverageCharacterCount > 0)
+                {
+                    if (stringBuilder.Length > 0)
+                    {
+                        stringBuilder.Append(", ");
+                    }
+                    stringBuilder.AppendFormat(Strings.Resources.CharactersPerMessage, Locale.Declension("Characters", senderInfo.AverageCharacterCount));
+                }
+
+                title.Text = user.GetFullName();
+                subtitle.Text = stringBuilder.ToString();
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+
+                button.Command = ViewModel.OpenProfileCommand;
+                button.CommandParameter = senderInfo.UserId;
+            }
+            else if (button.DataContext is ChatStatisticsAdministratorActionsInfo adminInfo)
+            {
+                var user = ViewModel.CacheService.GetUser(adminInfo.UserId);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var stringBuilder = new StringBuilder();
+                if (adminInfo.DeletedMessageCount > 0)
+                {
+                    stringBuilder.Append(Locale.Declension("Deletions", adminInfo.DeletedMessageCount));
+                }
+
+                if (adminInfo.BannedUserCount > 0)
+                {
+                    if (stringBuilder.Length > 0)
+                    {
+                        stringBuilder.Append(", ");
+                    }
+
+                    stringBuilder.Append(Locale.Declension("Bans", adminInfo.BannedUserCount));
+                }
+
+                if (adminInfo.RestrictedUserCount > 0)
+                {
+                    if (stringBuilder.Length > 0)
+                    {
+                        stringBuilder.Append(", ");
+                    }
+
+                    stringBuilder.Append(Locale.Declension("Restrictions", adminInfo.RestrictedUserCount));
+                }
+
+                title.Text = user.GetFullName();
+                subtitle.Text = stringBuilder.ToString();
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+
+                button.Command = ViewModel.OpenProfileCommand;
+                button.CommandParameter = adminInfo.UserId;
+            }
+            else if (button.DataContext is ChatStatisticsInviterInfo inviterInfo)
+            {
+                var user = ViewModel.CacheService.GetUser(inviterInfo.UserId);
+                if (user == null)
+                {
+                    return;
+                }
+
+                if (inviterInfo.AddedMemberCount > 0)
+                {
+                    subtitle.Text = Locale.Declension("Invitations", inviterInfo.AddedMemberCount);
+                }
+                else
+                {
+                    subtitle.Text = string.Empty;
+                }
+
+                title.Text = user.GetFullName();
+                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+
+                button.Command = ViewModel.OpenProfileCommand;
+                button.CommandParameter = inviterInfo.UserId;
+            }
         }
     }
 }
