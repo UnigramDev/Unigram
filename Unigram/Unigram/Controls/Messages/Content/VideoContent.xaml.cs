@@ -274,11 +274,6 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (_message.SendingState is MessageSendingStatePending)
-                {
-                    return;
-                }
-
                 var file = video.VideoValue;
                 if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
                 {
@@ -286,6 +281,11 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
+                    if (_message.SendingState is MessageSendingStatePending)
+                    {
+                        return;
+                    }
+
                     _message.Delegate.OpenMedia(_message, this);
                 }
             }
