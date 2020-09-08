@@ -766,50 +766,99 @@ namespace Unigram.Common
             }
         }
 
-        public static File GetThumbnail(this Message message)
+        public static Thumbnail GetThumbnail(this Message message)
         {
             switch (message.Content)
             {
                 case MessageAnimation animation:
-                    return animation.Animation.Thumbnail?.File;
+                    return animation.Animation.Thumbnail;
                 case MessageAudio audio:
-                    return audio.Audio.AudioValue;
+                    return audio.Audio.AlbumCoverThumbnail;
                 case MessageDocument document:
-                    return document.Document.Thumbnail?.File;
+                    return document.Document.Thumbnail;
                 case MessageGame game:
-                    return game.Game.Animation?.Thumbnail?.File;
+                    return game.Game.Animation?.Thumbnail;
                 case MessageSticker sticker:
-                    return sticker.Sticker.Thumbnail?.File;
+                    return sticker.Sticker.Thumbnail;
                 case MessageText text:
                     if (text.WebPage != null && text.WebPage.Animation != null)
                     {
-                        return text.WebPage.Animation.Thumbnail?.File;
+                        return text.WebPage.Animation.Thumbnail;
                     }
                     else if (text.WebPage != null && text.WebPage.Audio != null)
                     {
-                        return text.WebPage.Audio.AlbumCoverThumbnail?.File;
+                        return text.WebPage.Audio.AlbumCoverThumbnail;
                     }
                     else if (text.WebPage != null && text.WebPage.Document != null)
                     {
-                        return text.WebPage.Document.Thumbnail?.File;
+                        return text.WebPage.Document.Thumbnail;
                     }
                     else if (text.WebPage != null && text.WebPage.Sticker != null)
                     {
-                        return text.WebPage.Sticker.Thumbnail?.File;
+                        return text.WebPage.Sticker.Thumbnail;
                     }
                     else if (text.WebPage != null && text.WebPage.Video != null)
                     {
-                        return text.WebPage.Video.Thumbnail?.File;
+                        return text.WebPage.Video.Thumbnail;
                     }
                     else if (text.WebPage != null && text.WebPage.VideoNote != null)
                     {
-                        return text.WebPage.VideoNote.Thumbnail?.File;
+                        return text.WebPage.VideoNote.Thumbnail;
                     }
                     break;
                 case MessageVideo video:
-                    return video.Video.Thumbnail?.File;
+                    return video.Video.Thumbnail;
                 case MessageVideoNote videoNote:
-                    return videoNote.VideoNote.Thumbnail?.File;
+                    return videoNote.VideoNote.Thumbnail;
+            }
+
+            return null;
+        }
+
+        public static Minithumbnail GetMinithumbnail(this Message message)
+        {
+            switch (message.Content)
+            {
+                case MessagePhoto photo:
+                    return photo.Photo.Minithumbnail;
+                case MessageAnimation animation:
+                    return animation.Animation.Minithumbnail;
+                case MessageAudio audio:
+                    return audio.Audio.AlbumCoverMinithumbnail;
+                case MessageDocument document:
+                    return document.Document.Minithumbnail;
+                case MessageGame game:
+                    return game.Game.Animation?.Minithumbnail;
+                case MessageText text:
+                    if (text.WebPage != null && text.WebPage.Animation != null)
+                    {
+                        return text.WebPage.Animation.Minithumbnail;
+                    }
+                    else if (text.WebPage != null && text.WebPage.Audio != null)
+                    {
+                        return text.WebPage.Audio.AlbumCoverMinithumbnail;
+                    }
+                    else if (text.WebPage != null && text.WebPage.Document != null)
+                    {
+                        return text.WebPage.Document.Minithumbnail;
+                    }
+                    else if (text.WebPage != null && text.WebPage.Video != null)
+                    {
+                        return text.WebPage.Video.Minithumbnail;
+                    }
+                    else if (text.WebPage != null && text.WebPage.VideoNote != null)
+                    {
+                        return text.WebPage.VideoNote.Minithumbnail;
+                    }
+                    else if (text.WebPage != null && text.WebPage.Photo != null)
+                    {
+                        return text.WebPage.Photo.Minithumbnail;
+                    }
+                    break;
+                case MessageVideo video:
+                    return video.Video.Minithumbnail;
+                case MessageVideoNote videoNote:
+                    return videoNote.VideoNote.Minithumbnail;
             }
 
             return null;
