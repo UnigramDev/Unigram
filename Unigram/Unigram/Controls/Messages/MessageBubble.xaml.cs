@@ -315,7 +315,7 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                     shown = true;
                 }
-                else if (message.ForwardInfo != null)
+                else if (message.IsSaved())
                 {
                     var title = string.Empty;
                     var foreground = default(SolidColorBrush);
@@ -347,6 +347,17 @@ namespace Unigram.Controls.Messages
                     paragraph.Inlines.Add(hyperlink);
                     shown = true;
                 }
+                else
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = chat.Title });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    //hyperlink.Foreground = PlaceholderHelper.GetBrush(chat.Id);
+                    hyperlink.Click += (s, args) => From_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                    shown = false;
+                }
             }
             else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup && string.IsNullOrEmpty(message.ForwardInfo?.PublicServiceAnnouncementType))
             {
@@ -357,7 +368,7 @@ namespace Unigram.Controls.Messages
                 hyperlink.Click += (s, args) => From_Click(message);
 
                 paragraph.Inlines.Add(hyperlink);
-                shown = true;
+                shown = false;
             }
             else if (!light && message.IsFirst && message.IsSaved())
             {
@@ -1630,7 +1641,7 @@ namespace Unigram.Controls.Messages
         protected override Size MeasureOverride(Size availableSize)
         {
             var maxWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, MaxWidth));
-            
+
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
