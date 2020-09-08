@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 09/05/2020 07:28:02
+// 	Generated: 09/08/2020 15:14:36
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -6913,7 +6913,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Call settings"
+        /// Localized resource similar to "Calls"
         /// </summary>
         public static string CallsDataUsage
         {
@@ -22537,7 +22537,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Disable"
+        /// Localized resource similar to "Mute forever"
         /// </summary>
         public static string MuteDisable
         {
@@ -31462,6 +31462,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Video was distorted"
+        /// </summary>
+        public static string RateCallVideoDistorted
+        {
+            get
+            {
+                return resourceLoader.GetString("RateCallVideoDistorted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video was pixelated"
+        /// </summary>
+        public static string RateCallVideoPixelated
+        {
+            get
+            {
+                return resourceLoader.GetString("RateCallVideoPixelated");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Recent"
         /// </summary>
         public static string Recent
@@ -40326,6 +40348,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Headset"
+        /// </summary>
+        public static string VoipAudioRoutingHeadset
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipAudioRoutingHeadset");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Speaker"
         /// </summary>
         public static string VoipAudioRoutingSpeaker
@@ -40678,6 +40711,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Sorry, **{0}** is using an old version of Telegram that doesn't support video calls."
+        /// </summary>
+        public static string VoipPeerVideoOutdated
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipPeerVideoOutdated");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Make a voice call"
+        /// </summary>
+        public static string VoipPeerVideoOutdatedMakeVoice
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipPeerVideoOutdatedMakeVoice");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Respond with Text"
         /// </summary>
         public static string VoipQuickReplies
@@ -40707,6 +40762,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipRateCallAlert");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reconnecting"
+        /// </summary>
+        public static string VoipReconnecting
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipReconnecting");
             }
         }
         
@@ -40850,6 +40916,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipUserMicrophoneIsOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video"
+        /// </summary>
+        public static string VoipVideoUnavailable
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipVideoUnavailable");
             }
         }
         

@@ -1944,7 +1944,7 @@ Sunrise: {1}</value>
     <value>Calls</value>
   </data>
   <data name="CallsDataUsage" xml:space="preserve">
-    <value>Call settings</value>
+    <value>Calls</value>
   </data>
   <data name="CallsTotalTime" xml:space="preserve">
     <value>Total time</value>
@@ -6264,7 +6264,7 @@ Minimum length is 5 characters.</value>
     <value>To send music files</value>
   </data>
   <data name="MuteDisable" xml:space="preserve">
-    <value>Disable</value>
+    <value>Mute forever</value>
   </data>
   <data name="MuteFor" xml:space="preserve">
     <value>Mute for {0}</value>
@@ -8724,6 +8724,12 @@ Please turn on location services to enable this feature.</value>
   <data name="RateCallSilentRemote" xml:space="preserve">
     <value>The other side couldn't hear me</value>
   </data>
+  <data name="RateCallVideoDistorted" xml:space="preserve">
+    <value>Video was distorted</value>
+  </data>
+  <data name="RateCallVideoPixelated" xml:space="preserve">
+    <value>Video was pixelated</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Recent</value>
   </data>
@@ -11172,6 +11178,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipAudioRoutingEarpiece" xml:space="preserve">
     <value>Earpiece</value>
   </data>
+  <data name="VoipAudioRoutingHeadset" xml:space="preserve">
+    <value>Headset</value>
+  </data>
   <data name="VoipAudioRoutingSpeaker" xml:space="preserve">
     <value>Speaker</value>
   </data>
@@ -11268,6 +11277,12 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>**{0}**'s app does not support calls. They need to update their app before you can call them.</value>
   </data>
+  <data name="VoipPeerVideoOutdated" xml:space="preserve">
+    <value>Sorry, **{0}** is using an old version of Telegram that doesn't support video calls.</value>
+  </data>
+  <data name="VoipPeerVideoOutdatedMakeVoice" xml:space="preserve">
+    <value>Make a voice call</value>
+  </data>
   <data name="VoipQuickReplies" xml:space="preserve">
     <value>Respond with Text</value>
   </data>
@@ -11276,6 +11291,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>Please rate the quality of your Telegram call</value>
+  </data>
+  <data name="VoipReconnecting" xml:space="preserve">
+    <value>Reconnecting</value>
   </data>
   <data name="VoipRequesting" xml:space="preserve">
     <value>Requesting</value>
@@ -11315,6 +11333,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="VoipUserMicrophoneIsOff" xml:space="preserve">
     <value>{0}'s microphone is off</value>
+  </data>
+  <data name="VoipVideoUnavailable" xml:space="preserve">
+    <value>Video</value>
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Waiting</value>
