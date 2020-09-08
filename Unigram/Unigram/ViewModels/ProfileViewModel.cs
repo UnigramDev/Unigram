@@ -824,13 +824,13 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new AddContact(new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
+                ProtoService.Send(new AddContact(new Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
                     fullInfo.NeedPhoneNumberPrivacyException ? dialog.SharePhoneNumber : true));
             }
         }
 
         public RelayCommand EditCommand { get; }
-        private async void EditExecute()
+        private void EditExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -844,19 +844,7 @@ namespace Unigram.ViewModels
             }
             else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                var user = ProtoService.GetUser(chat);
-                if (user == null)
-                {
-                    return;
-                }
-
-                var dialog = new EditUserNamePopup(user.FirstName, user.LastName);
-
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id) }));
-                }
+                AddExecute();
             }
         }
 
