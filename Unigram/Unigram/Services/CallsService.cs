@@ -111,7 +111,10 @@ namespace Unigram.Services
             {
                 if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
                 {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
+                    var message = video
+                        ? Strings.Resources.VoipPeerVideoOutdated
+                        : Strings.Resources.VoipPeerOutdated;
+                    await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK);
                 }
                 else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
                 {
@@ -306,6 +309,22 @@ namespace Unigram.Services
                 //_controller?.Dispose();
                 _controller = null;
                 _call = null;
+            }
+            else if (update.Call.State is CallStateError error)
+            {
+                if (string.Equals(error.Error.Message, "PARTICIPANT_VERSION_OUTDATED", StringComparison.OrdinalIgnoreCase))
+                {
+                    var user = CacheService.GetUser(update.Call.UserId);
+                    if (user == null)
+                    {
+                        return;
+                    }
+
+                    var message = update.Call.IsVideo
+                        ? Strings.Resources.VoipPeerVideoOutdated
+                        : Strings.Resources.VoipPeerOutdated;
+                    BeginOnUIThread(async () => await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK));
+                }
             }
 
             await Dispatcher.DispatchAsync(() =>
