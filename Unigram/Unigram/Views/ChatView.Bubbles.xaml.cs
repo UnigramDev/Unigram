@@ -46,7 +46,7 @@ namespace Unigram.Views
                 Arrow.Visibility = Visibility.Collapsed;
                 //VisualUtilities.SetIsVisible(Arrow, false);
             }
-            else
+            else if (ViewModel.Type == DialogType.Normal)
             {
                 Arrow.Visibility = Visibility.Visible;
                 //VisualUtilities.SetIsVisible(Arrow, true);
