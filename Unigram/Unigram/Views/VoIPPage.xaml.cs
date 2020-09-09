@@ -36,6 +36,7 @@ namespace Unigram.Views
         private readonly IEventAggregator _aggregator;
 
         private VoipManager _controller;
+        private VoipVideoCapture _capturer;
         private Call _call;
 
         private VoipState _state;
@@ -48,11 +49,16 @@ namespace Unigram.Views
         private DispatcherTimer _debugTimer;
         private DispatcherTimer _durationTimer;
 
+        private bool _viewfinderPressed;
+        private Vector2 _viewfinderDelta;
+        private Visual _viewfinder;
+
+
         private bool _disposed;
 
         public OverlayPage Dialog { get; set; }
 
-        public VoIPPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, Call call, VoipManager controller, DateTime started)
+        public VoIPPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, Call call, VoipManager controller, VoipVideoCapture capturer, DateTime started)
         {
             this.InitializeComponent();
 
@@ -103,6 +109,9 @@ namespace Unigram.Views
             // Why does this crashes due to an access violation exception on certain devices?
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
 
+            var viewfinder = DropShadowEx.Attach(ViewfinderShadow, 20, 0.25f);
+            viewfinder.RelativeSizeAdjustment = Vector2.One;
+
             #endregion
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
@@ -122,7 +131,116 @@ namespace Unigram.Views
             {
                 Connect(controller);
             }
+
+            if (capturer != null)
+            {
+                Connect(capturer);
+            }
+
+            _viewfinder = ElementCompositionPreview.GetElementVisual(ViewfinderPanel);
+
+            ViewfinderPanel.PointerPressed += Viewfinder_PointerPressed;
+            ViewfinderPanel.PointerMoved += Viewfinder_PointerMoved;
+            ViewfinderPanel.PointerReleased += Viewfinder_PointerReleased;
         }
+
+        #region Interactions
+
+        private void Viewfinder_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            _viewfinderPressed = true;
+            Viewfinder.CapturePointer(e.Pointer);
+
+            var pointer = e.GetCurrentPoint(this);
+            var point = pointer.Position.ToVector2();
+            _viewfinderDelta = new Vector2(_viewfinder.Offset.X - point.X, _viewfinder.Offset.Y - point.Y);
+        }
+
+        private void Viewfinder_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            if (!_viewfinderPressed)
+            {
+                return;
+            }
+
+            var pointer = e.GetCurrentPoint(this);
+            var delta = _viewfinderDelta + pointer.Position.ToVector2();
+
+            _viewfinder.Offset = new Vector3(delta, 0);
+        }
+
+        private void Viewfinder_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            _viewfinderPressed = false;
+            Viewfinder.ReleasePointerCapture(e.Pointer);
+
+            CheckConstraints();
+        }
+
+        private void CheckConstraints()
+        {
+            var w = (float)ActualWidth;
+            var h = (float)ActualHeight;
+
+            var x1 = Math.Max(0, Math.Min(w - 146, _viewfinder.Offset.X));
+            var y1 = Math.Max(0, Math.Min(h - 110, _viewfinder.Offset.Y));
+
+            var x2 = x1 + 146;
+            var y2 = y1 + 110;
+
+            if (Math.Min(x1, w - x2) < Math.Min(y1, h - y2))
+            {
+                if (x1 < w - x2)
+                {
+                    x1 = 0;
+                }
+                else
+                {
+                    x1 = w - 146;
+                }
+            }
+            else
+            {
+                if (y1 < h - y2)
+                {
+                    y1 = 0;
+                }
+                else
+                {
+                    y1 = h - 110;
+                }
+            }
+
+            var bx1 = (w - 240) / 2;
+            var bx2 = bx1 + 240;
+
+            if (y2 > h / 2 && ((x1 >= bx1 && x1 <= bx2) || (x2 >= bx1 && x2 <= bx2)))
+            {
+                y1 = h - 110 - 72;
+            }
+
+            if (x1 != _viewfinder.Offset.X || y1 != _viewfinder.Offset.Y)
+            {
+                //var anim = Window.Current.Compositor.CreateSpringVector3Animation();
+                //anim.InitialValue = _target.Offset;
+                //anim.FinalValue = new Vector3(x1, y1, 0);
+
+                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(0, _viewfinder.Offset);
+                anim.InsertKeyFrame(1, new Vector3(x1, y1, 0));
+
+                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += (s, args) =>
+                {
+                    _viewfinder.Offset = new Vector3(x1, y1, 0);
+                };
+
+                _viewfinder.StartAnimation("Offset", anim);
+                batch.End();
+            }
+        }
+
+        #endregion
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -163,6 +281,26 @@ namespace Unigram.Views
 
             //OnStateUpdated(controller, controller.GetConnectionState());
             //OnSignalBarsUpdated(controller, controller.GetSignalBarsCount());
+        }
+
+        public void Connect(VoipVideoCapture capturer)
+        {
+            if (capturer != null)
+            {
+                _capturer = capturer;
+                _capturer.SetOutput(Viewfinder);
+                ViewfinderPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                if (_capturer != null)
+                {
+                    _capturer.SetOutput(null);
+                }
+
+                _capturer = null;
+                ViewfinderPanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void OnRemoteMediaStateUpdated(VoipManager sender, RemoteMediaStateUpdatedEventArgs args)
@@ -566,7 +704,7 @@ namespace Unigram.Views
 
                 if (_controller != null)
                 {
-                    _controller.SetVideoCapture(value);
+                    //_controller.SetVideoCapture(value, "default");
                 }
             }
         }

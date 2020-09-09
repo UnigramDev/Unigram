@@ -76,5 +76,23 @@ namespace Unigram.Services.Settings
                 AddOrUpdateValue("OutputVolume", value);
             }
         }
+
+        private string _videoDevice;
+        public string VideoDevice
+        {
+            get
+            {
+                if (_videoDevice == null)
+                    _videoDevice = GetValueOrDefault("VideoDevice", "default");
+
+                return _videoDevice ?? "default";
+            }
+            set
+            {
+                _videoDevice = value;
+                AddOrUpdateValue("VideoDevice", value);
+            }
+        }
+
     }
 }

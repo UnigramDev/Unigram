@@ -23,12 +23,16 @@ namespace Unigram.ViewModels.Settings
 
             Input = new MvxObservableCollection<DeviceInformation>();
             Output = new MvxObservableCollection<DeviceInformation>();
+            Video = new MvxObservableCollection<DeviceInformation>();
 
             SystemCommand = new RelayCommand(SystemExecute);
+
+            _ = OnNavigatedToAsync(null, NavigationMode.New, null);
         }
 
         public MvxObservableCollection<DeviceInformation> Input { get; private set; }
         public MvxObservableCollection<DeviceInformation> Output { get; private set; }
+        public MvxObservableCollection<DeviceInformation> Video { get; private set; }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
@@ -48,6 +52,15 @@ namespace Unigram.ViewModels.Settings
 
                 _selectedOutput = output.FirstOrDefault(x => x.Id == _voipService.CurrentAudioOutput) ?? output.FirstOrDefault(x => x.Id == MediaDevice.GetDefaultAudioRenderId(AudioDeviceRole.Communications));
                 RaisePropertyChanged(() => SelectedOutput);
+            }
+
+            var video = await DeviceInformation.FindAllAsync(MediaDevice.GetVideoCaptureSelector());
+            if (video != null)
+            {
+                Video.ReplaceWith(video);
+
+                _selectedOutput = video.FirstOrDefault(x => x.Id == _voipService.CurrentAudioOutput) ?? video.FirstOrDefault();
+                RaisePropertyChanged(() => SelectedVideo);
             }
 
             _inputVolume = _voipService.CurrentVolumeInput;
@@ -109,6 +122,20 @@ namespace Unigram.ViewModels.Settings
                 {
                     Set(ref _outputVolume, value);
                     _voipService.CurrentVolumeOutput = value;
+                }
+            }
+        }
+
+        private DeviceInformation _selectedVideo;
+        public DeviceInformation SelectedVideo
+        {
+            get { return _selectedVideo; }
+            set
+            {
+                if (_selectedVideo?.Id != value?.Id)
+                {
+                    Set(ref _selectedVideo, value);
+                    _voipService.CurrentAudioOutput = value?.Id ?? "default";
                 }
             }
         }

@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Shared", "Un
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Media", "Unigram.Native.Media\Unigram.Native.Media.vcxproj", "{3ADBF08F-0550-4A1C-9794-FEA30CF69E3A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Calls", "Unigram.Native.Calls\Unigram.Native.Calls.vcxproj", "{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{1b521e77-46bd-4d60-89f6-d68e9bb9abff}*SharedItemsImports = 4
@@ -166,6 +168,22 @@ Global
 		{3ADBF08F-0550-4A1C-9794-FEA30CF69E3A}.Release|x64.Build.0 = Release|x64
 		{3ADBF08F-0550-4A1C-9794-FEA30CF69E3A}.Release|x86.ActiveCfg = Release|Win32
 		{3ADBF08F-0550-4A1C-9794-FEA30CF69E3A}.Release|x86.Build.0 = Release|Win32
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Debug|ARM.ActiveCfg = Debug|ARM
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Debug|ARM.Build.0 = Debug|ARM
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Debug|ARM64.Build.0 = Debug|ARM64
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Debug|x64.ActiveCfg = Debug|x64
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Debug|x64.Build.0 = Debug|x64
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Debug|x86.ActiveCfg = Debug|Win32
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Debug|x86.Build.0 = Debug|Win32
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Release|ARM.ActiveCfg = Release|ARM
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Release|ARM.Build.0 = Release|ARM
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Release|ARM64.ActiveCfg = Release|ARM64
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Release|ARM64.Build.0 = Release|ARM64
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Release|x64.ActiveCfg = Release|x64
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Release|x64.Build.0 = Release|x64
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Release|x86.ActiveCfg = Release|Win32
+		{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

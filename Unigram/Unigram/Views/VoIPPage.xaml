@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:settings="using:Unigram.Views.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -16,6 +17,78 @@
     <Page.Resources>
         <SolidColorBrush x:Key="SignalBarForegroundBrush" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="SignalBarForegroundDisabledBrush" Color="#99FFFFFF"/>
+
+        <Style x:Key="CallGlyphButtonStyle" TargetType="controls:GlyphButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+            <Setter Property="Glyph" Value="&#xE700;" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Width" Value="48" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="FocusVisualMargin" Value="-3" />
+            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:GlyphButton">
+                        <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+
+                            <TextBlock
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Text="{TemplateBinding Glyph}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <Style TargetType="controls:GlyphToggleButton">
             <Setter Property="Background" Value="{ThemeResource ToggleButtonBackground}" />
@@ -260,7 +333,24 @@
             </Grid>
         </Grid>
 
-        <StackPanel VerticalAlignment="Bottom" Margin="0,12">
+        <controls:GlyphButton
+            Glyph="&#xE713;"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="0,0,12,0"
+            AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
+            ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"
+            Grid.Column="1">
+            <Button.Flyout>
+                <Flyout>
+                    <settings:SettingsVoIPPage
+                        Width="296"
+                        Margin="-12"/>
+                </Flyout>
+            </Button.Flyout>
+        </controls:GlyphButton>
+
+        <StackPanel x:Name="BottomPanel" VerticalAlignment="Bottom" Margin="0,12">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition/>
@@ -314,7 +404,7 @@
                     Grid.Column="1"/>
             </Grid>
 
-            <Grid>
+            <Grid HorizontalAlignment="Center">
                 <Grid.ChildrenTransitions>
                     <TransitionCollection>
                         <RepositionThemeTransition/>
@@ -322,12 +412,10 @@
                     </TransitionCollection>
                 </Grid.ChildrenTransitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphToggleButton
                     x:Name="Video"
@@ -358,7 +446,8 @@
                         RequestedTheme="Light"
                         Radius="24"
                         AutomationProperties.Name="{CustomResource Close}"
-                        ToolTipService.ToolTip="{CustomResource Close}"/>
+                        ToolTipService.ToolTip="{CustomResource Close}"
+                        Style="{StaticResource CallGlyphButtonStyle}"/>
                 </Border>
                 <Border x:Name="Accept" Visibility="Collapsed" Background="#64BA57" CornerRadius="24" Grid.Column="3">
                     <controls:GlyphButton
@@ -366,7 +455,8 @@
                         Glyph="&#xE13A;"
                         Radius="24"
                         AutomationProperties.Name="{CustomResource VoipAnswerCall}"
-                        ToolTipService.ToolTip="{CustomResource VoipAnswerCall}"/>
+                        ToolTipService.ToolTip="{CustomResource VoipAnswerCall}"
+                        Style="{StaticResource CallGlyphButtonStyle}"/>
                 </Border>
                 <Border x:Name="Discard" Background="#E33A32" CornerRadius="24" Grid.Column="4">
                     <controls:GlyphButton
@@ -377,9 +467,24 @@
                         Padding="0,0,0,2"
                         Radius="24"
                         AutomationProperties.Name="{CustomResource VoipEndCall}"
-                        ToolTipService.ToolTip="{CustomResource VoipEndCall}"/>
+                        ToolTipService.ToolTip="{CustomResource VoipEndCall}"
+                        Style="{StaticResource CallGlyphButtonStyle}"/>
                 </Border>
             </Grid>
         </StackPanel>
+
+        <Grid
+            x:Name="ViewfinderPanel"
+            Width="146"
+            Height="110"
+            Background="#000000"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top">
+            <Border
+                x:Name="ViewfinderShadow"
+                Background="#000000"/>
+            <Border
+                x:Name="Viewfinder"/>
+        </Grid>
     </Grid>
 </Page>
