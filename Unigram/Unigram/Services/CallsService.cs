@@ -480,7 +480,7 @@ namespace Unigram.Services
 
                         window = await AppWindow.TryCreateAsync();
                         window.PersistedStateId = "Calls";
-                        window.TitleBar.ExtendsContentIntoTitleBar = true;
+                        //window.TitleBar.ExtendsContentIntoTitleBar = true;
                         window.Closed += (s, args) =>
                         {
                             if (_callPage != null)

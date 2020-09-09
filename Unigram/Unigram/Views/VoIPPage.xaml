@@ -477,6 +477,7 @@
             x:Name="ViewfinderPanel"
             Width="146"
             Height="110"
+            CornerRadius="4"
             Background="#000000"
             HorizontalAlignment="Left"
             VerticalAlignment="Top">

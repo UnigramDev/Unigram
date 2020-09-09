@@ -51,8 +51,8 @@ namespace Unigram.Views
 
         private bool _viewfinderPressed;
         private Vector2 _viewfinderDelta;
+        private Vector2 _viewfinderOffset = Vector2.One;
         private Visual _viewfinder;
-
 
         private bool _disposed;
 
@@ -120,7 +120,7 @@ namespace Unigram.Views
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveForegroundColor = Colors.White;
 
-            Window.Current.SetTitleBar(BlurPanel);
+            //Window.Current.SetTitleBar(BlurPanel);
 
             if (call != null)
             {
@@ -132,10 +132,7 @@ namespace Unigram.Views
                 Connect(controller);
             }
 
-            if (capturer != null)
-            {
-                Connect(capturer);
-            }
+            Connect(capturer);
 
             _viewfinder = ElementCompositionPreview.GetElementVisual(ViewfinderPanel);
 
@@ -174,16 +171,30 @@ namespace Unigram.Views
             _viewfinderPressed = false;
             Viewfinder.ReleasePointerCapture(e.Pointer);
 
+            var pointer = e.GetCurrentPoint(this);
+            var offset = _viewfinderDelta + pointer.Position.ToVector2();
+
+            // Padding maybe
+            var p = 8;
+
+            var w = (float)ActualWidth - 146 - p * 2;
+            var h = (float)ActualHeight - 110 - p * 2;
+
+            _viewfinderOffset = new Vector2((offset.X - p) / w, (offset.Y - p) / h);
+
             CheckConstraints();
         }
 
         private void CheckConstraints()
         {
+            // Padding maybe
+            var p = 8;
+
             var w = (float)ActualWidth;
             var h = (float)ActualHeight;
 
-            var x1 = Math.Max(0, Math.Min(w - 146, _viewfinder.Offset.X));
-            var y1 = Math.Max(0, Math.Min(h - 110, _viewfinder.Offset.Y));
+            var x1 = Math.Max(8, Math.Min(w - 146 - p, _viewfinderOffset.X * w));
+            var y1 = Math.Max(8, Math.Min(h - 110 - p, _viewfinderOffset.Y * h));
 
             var x2 = x1 + 146;
             var y2 = y1 + 110;
@@ -192,22 +203,22 @@ namespace Unigram.Views
             {
                 if (x1 < w - x2)
                 {
-                    x1 = 0;
+                    x1 = p;
                 }
                 else
                 {
-                    x1 = w - 146;
+                    x1 = w - 146 - p;
                 }
             }
             else
             {
                 if (y1 < h - y2)
                 {
-                    y1 = 0;
+                    y1 = p;
                 }
                 else
                 {
-                    y1 = h - 110;
+                    y1 = h - 110 - p;
                 }
             }
 
@@ -216,11 +227,13 @@ namespace Unigram.Views
 
             if (y2 > h / 2 && ((x1 >= bx1 && x1 <= bx2) || (x2 >= bx1 && x2 <= bx2)))
             {
-                y1 = h - 110 - 72;
+                y1 = h - 110 - 72 - p;
             }
 
             if (x1 != _viewfinder.Offset.X || y1 != _viewfinder.Offset.Y)
             {
+                _viewfinderOffset = new Vector2(x1 / (w - 146 - p * 2), y1 / (h -110 - p * 2));
+
                 //var anim = Window.Current.Compositor.CreateSpringVector3Animation();
                 //anim.InitialValue = _target.Offset;
                 //anim.FinalValue = new Vector3(x1, y1, 0);
@@ -289,17 +302,17 @@ namespace Unigram.Views
             {
                 _capturer = capturer;
                 _capturer.SetOutput(Viewfinder);
-                ViewfinderPanel.Visibility = Visibility.Visible;
+                //ViewfinderPanel.Visibility = Visibility.Visible;
             }
             else
             {
-                if (_capturer != null)
-                {
-                    _capturer.SetOutput(null);
-                }
+                //if (_capturer != null)
+                //{
+                //    _capturer.SetOutput(null);
+                //}
 
-                _capturer = null;
-                ViewfinderPanel.Visibility = Visibility.Collapsed;
+                //_capturer = null;
+                //ViewfinderPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -339,6 +352,8 @@ namespace Unigram.Views
                 _largeVisual.Scale = new Vector3(0.5f);
                 _blurBrush.Properties.InsertScalar("Blur.BlurAmount", 0);
             }
+
+            CheckConstraints();
         }
 
         public void Update(Call call, DateTime started)
@@ -705,6 +720,20 @@ namespace Unigram.Views
                 if (_controller != null)
                 {
                     //_controller.SetVideoCapture(value, "default");
+                    if (_capturer != null)
+                    {
+                        _capturer.SetOutput(null);
+                        _controller.SetVideoCapture(null);
+
+                        _capturer = null;
+                    }
+                    else
+                    {
+                        _capturer = new VoipVideoCapture(string.Empty);
+
+                        _capturer.SetOutput(Viewfinder);
+                        _controller.SetVideoCapture(_capturer);
+                    }
                 }
             }
         }
