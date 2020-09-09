@@ -50,6 +50,15 @@
                         Command="{x:Bind ViewModel.SystemCommand}"/>
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl
+                    Header="Camera">
+                    <ComboBox Header="Input device"
+                              ItemsSource="{x:Bind ViewModel.Video}"
+                              SelectedItem="{x:Bind ViewModel.SelectedVideo, Mode=TwoWay}"
+                              DisplayMemberPath="Name"
+                              Margin="12,0"/>
+                </controls:HeaderedControl>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>
