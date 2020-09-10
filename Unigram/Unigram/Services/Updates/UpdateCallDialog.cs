@@ -6,6 +6,7 @@ namespace Unigram.Services.Updates
     {
         public UpdateCallDialog(Call call, bool open)
         {
+            Call = call;
             IsOpen = open;
         }
 

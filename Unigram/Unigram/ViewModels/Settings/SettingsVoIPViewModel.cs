@@ -59,7 +59,7 @@ namespace Unigram.ViewModels.Settings
             {
                 Video.ReplaceWith(video);
 
-                _selectedOutput = video.FirstOrDefault(x => x.Id == _voipService.CurrentAudioOutput) ?? video.FirstOrDefault();
+                _selectedVideo = video.FirstOrDefault(x => x.Id == _voipService.CurrentVideoInput) ?? video.FirstOrDefault();
                 RaisePropertyChanged(() => SelectedVideo);
             }
 
@@ -135,7 +135,7 @@ namespace Unigram.ViewModels.Settings
                 if (_selectedVideo?.Id != value?.Id)
                 {
                     Set(ref _selectedVideo, value);
-                    _voipService.CurrentAudioOutput = value?.Id ?? "default";
+                    _voipService.CurrentVideoInput = value?.Id ?? "default";
                 }
             }
         }

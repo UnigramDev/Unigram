@@ -513,7 +513,14 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                CallBanner.Visibility = update.IsOpen ? Visibility.Collapsed : Visibility.Visible;
+                if (update.Call.IsValidState())
+                {
+                    CallBanner.Visibility = update.IsOpen ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else
+                {
+                    CallBanner.Visibility = Visibility.Collapsed;
+                }
             });
         }
 

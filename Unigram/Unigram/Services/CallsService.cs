@@ -33,11 +33,17 @@ namespace Unigram.Services
 
         string CurrentVideoInput { get; set; }
 
-        Call ActiveCall { get; }
+        VoipManager Manager { get; }
+        VoipVideoCapture Capturer { get; set; }
+
+        Call Call { get; }
+        DateTime CallStarted { get; }
 
         void Show();
 
         void Start(long chatId, bool video);
+
+        CallProtocol GetProtocol();
     }
 
     public class VoipService : TLViewModelBase, IVoipService
@@ -71,6 +77,18 @@ namespace Unigram.Services
             aggregator.Subscribe(this);
         }
 
+        public CallProtocol GetProtocol()
+        {
+            return new CallProtocol(true, true, 92, 92, new[] { "3.0.0" });
+        }
+
+        public VoipManager Manager => _controller;
+        public VoipVideoCapture Capturer
+        {
+            get => _capturer;
+            set => _capturer = value;
+        }
+
         public async void Start(long chatId, bool video)
         {
             var chat = CacheService.GetChat(chatId);
@@ -85,7 +103,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var call = ActiveCall;
+            var call = Call;
             if (call != null)
             {
                 var callUser = CacheService.GetUser(call.UserId);
@@ -112,7 +130,9 @@ namespace Unigram.Services
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 92, 92, new[] { "3.0.0" }), video));
+            var protocol = GetProtocol();
+
+            var response = await ProtoService.SendAsync(new CreateCall(user.Id, protocol, video));
             if (response is Error error)
             {
                 if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
@@ -150,15 +170,15 @@ namespace Unigram.Services
         {
             get
             {
-                return SettingsService.Current.VoIP.InputDevice;
+                return SettingsService.Current.VoIP.VideoDevice;
             }
             set
             {
-                SettingsService.Current.VoIP.InputDevice = value;
+                SettingsService.Current.VoIP.VideoDevice = value;
 
-                if (_controller != null)
+                if (_capturer != null)
                 {
-                    _controller.SetAudioInputDevice(value);
+                    _capturer.SwitchToDevice(value);
                 }
             }
         }
@@ -184,11 +204,11 @@ namespace Unigram.Services
         {
             get
             {
-                return SettingsService.Current.VoIP.VideoDevice;
+                return SettingsService.Current.VoIP.OutputDevice;
             }
             set
             {
-                SettingsService.Current.VoIP.VideoDevice = value;
+                SettingsService.Current.VoIP.OutputDevice = value;
 
                 if (_controller != null)
                 {
@@ -224,21 +244,29 @@ namespace Unigram.Services
 
         public async void Handle(UpdateCall update)
         {
+            if (_call != null && _call.Id != update.Call.Id)
+            {
+                return;
+            }
+
             _call = update.Call;
 
             if (update.Call.State is CallStatePending pending)
             {
                 if (update.Call.IsOutgoing && pending.IsCreated && pending.IsReceived)
                 {
-                    if (pending.IsCreated && pending.IsReceived)
-                    {
-                        _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_ringback.mp3"));
-                        _mediaPlayer.IsLoopingEnabled = true;
-                        _mediaPlayer.Play();
-                    }
+                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_ringback.mp3"));
+                    _mediaPlayer.IsLoopingEnabled = true;
+                    _mediaPlayer.Play();
                 }
             }
-            if (update.Call.State is CallStateReady ready)
+            else if (update.Call.State is CallStateExchangingKeys exchangingKeys)
+            {
+                _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3"));
+                _mediaPlayer.IsLoopingEnabled = false;
+                _mediaPlayer.Play();
+            }
+            else if (update.Call.State is CallStateReady ready)
             {
                 var user = CacheService.GetUser(update.Call.UserId);
                 if (user == null)
@@ -293,7 +321,7 @@ namespace Unigram.Services
                 }
 
                 _capturer = update.Call.IsVideo
-                    ? new VoipVideoCapture(string.Empty)
+                    ? new VoipVideoCapture(SettingsService.Current.VoIP.VideoDevice)
                     : null;
 
                 var descriptor = new VoipDescriptor
@@ -404,7 +432,28 @@ namespace Unigram.Services
 
         private void OnSignalingDataEmitted(VoipManager sender, SignalingDataEmittedEventArgs args)
         {
-            ProtoService.Send(new SendCallSignalingData(_call.Id, args.Data));
+            var call = _call;
+            if (call != null)
+            {
+                ProtoService.Send(new SendCallSignalingData(_call.Id, args.Data));
+            }
+            else
+            {
+                if (_controller != null)
+                {
+                    _controller.StateUpdated -= OnStateUpdated;
+                    _controller.SignalingDataEmitted -= OnSignalingDataEmitted;
+
+                    _controller.SetIncomingVideoOutput(null);
+                    _controller = null;
+                }
+
+                if (_capturer != null)
+                {
+                    _capturer.SetOutput(null);
+                    _capturer = null;
+                }
+            }
         }
 
         private async Task SendRatingAsync(int callId)
@@ -436,13 +485,8 @@ namespace Unigram.Services
             }
         }
 
-        public Call ActiveCall
-        {
-            get
-            {
-                return _call;
-            }
-        }
+        public Call Call => _call;
+        public DateTime CallStarted => _callStarted;
 
         public async void Show()
         {
@@ -476,7 +520,7 @@ namespace Unigram.Services
                     var window = _callLifetime;
                     if (window == null)
                     {
-                        _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _capturer, _callStarted);
+                        _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this);
 
                         window = await AppWindow.TryCreateAsync();
                         window.PersistedStateId = "Calls";
@@ -505,17 +549,9 @@ namespace Unigram.Services
                     window.RequestSize(new Windows.Foundation.Size(720 * scaleFactor, 540 * scaleFactor));
                     //window.RequestMoveAdjacentToCurrentView();
                 }
-
-                //if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
-                //if (false)
-                //{
-                //    _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _capturer, _callStarted), call.Id);
-                //    _callLifetime.WindowWrapper.ApplicationView().Consolidated -= ApplicationView_Consolidated;
-                //    _callLifetime.WindowWrapper.ApplicationView().Consolidated += ApplicationView_Consolidated;
-                //}
                 else
                 {
-                    _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, _call, _controller, _capturer, _callStarted);
+                    _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this);
 
                     _callDialog = new OverlayPage();
                     _callDialog.HorizontalAlignment = HorizontalAlignment.Stretch;

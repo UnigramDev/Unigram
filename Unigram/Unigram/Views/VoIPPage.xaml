@@ -253,9 +253,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
-        <!--<Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
-        <Image x:Name="Image" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Canvas x:Name="Camera"/>
+        <controls:ProfilePicture x:Name="Image" Width="144" Height="144" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Border x:Name="BackgroundPanel" Background="Transparent"/>
 
         <Grid Padding="12,0">
@@ -306,7 +304,7 @@
             </Grid>
         </Grid>
 
-        <Border x:Name="SmallEmojiLabel" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+        <Border x:Name="SmallEmojiLabel" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0">
             <StackPanel x:Name="SmallPanel" Orientation="Horizontal" Width="108" Height="24" Margin="12,6"/>
         </Border>
 
@@ -416,10 +414,11 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphToggleButton
                     x:Name="Video"
-                    IsChecked="{x:Bind IsVideo, Mode=TwoWay}"
+                    Click="Video_Click"
                     IsOneWay="False"
                     CheckedGlyph="&#xE714;"
                     HorizontalAlignment="Right"
@@ -427,8 +426,8 @@
                     AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
                     ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"/>
                 <controls:GlyphToggleButton
-                    x:Name="Mute"
-                    IsChecked="{x:Bind IsMuted, Mode=TwoWay}"
+                    x:Name="Audio"
+                    Click="Audio_Click"
                     IsOneWay="False"
                     CheckedGlyph="&#xE610;"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"

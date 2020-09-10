@@ -75,6 +75,7 @@
                     Visibility="Collapsed"
                     Command="{x:Bind ViewModel.CallCommand}"
                     Style="{StaticResource HeaderGlyphButtonStyle}"
+                    FontSize="20"
                     Grid.Column="1">
                     <Button.CommandParameter>
                         <x:Boolean>True</x:Boolean>
