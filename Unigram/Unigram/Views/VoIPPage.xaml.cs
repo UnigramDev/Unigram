@@ -300,23 +300,21 @@ namespace Unigram.Views
             //OnSignalBarsUpdated(controller, controller.GetSignalBarsCount());
         }
 
+        private bool _capturerWasNull = true;
+
         public void Connect(VoipVideoCapture capturer)
         {
-            if (capturer != null)
+            if (capturer != null && _capturerWasNull)
             {
-                //_capturer = capturer;
-                capturer.SetOutput(Viewfinder);
-                //ViewfinderPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                //if (_capturer != null)
-                //{
-                //    _capturer.SetOutput(null);
-                //}
+                _capturerWasNull = false;
 
-                //_capturer = null;
-                //ViewfinderPanel.Visibility = Visibility.Collapsed;
+                ViewfinderPanel.Visibility = Visibility.Visible;
+                capturer.SetOutput(Viewfinder);
+            }
+            else if (capturer == null && !_capturerWasNull)
+            {
+                _capturerWasNull = true;
+                ViewfinderPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -328,13 +326,13 @@ namespace Unigram.Views
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                VideoOff.Visibility = args.Video == VoipVideoState.Inactive
+                VideoOff.Visibility = args.Video == VoipVideoState.Inactive && _service.Capturer != null
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
                 BackgroundPanel.Visibility = args.Video == VoipVideoState.Inactive
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             });
         }
 
@@ -693,7 +691,7 @@ namespace Unigram.Views
             }
 
             var duration = _state == VoipState.Established ? DateTime.Now - _service.CallStarted : TimeSpan.Zero;
-            _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, false, relay));
+            _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
         }
 
         private void Video_Click(object sender, RoutedEventArgs e)
@@ -702,6 +700,8 @@ namespace Unigram.Views
             {
                 if (_service.Capturer != null)
                 {
+                    ViewfinderPanel.Visibility = Visibility.Collapsed;
+
                     _service.Capturer.SetOutput(null);
                     _service.Manager.SetVideoCapture(null);
 
@@ -709,6 +709,8 @@ namespace Unigram.Views
                 }
                 else
                 {
+                    ViewfinderPanel.Visibility = Visibility.Visible;
+
                     _service.Capturer = new VoipVideoCapture(string.Empty);
 
                     _service.Capturer.SetOutput(Viewfinder);
