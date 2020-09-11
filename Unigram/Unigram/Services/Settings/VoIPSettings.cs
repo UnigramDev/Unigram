@@ -26,23 +26,6 @@ namespace Unigram.Services.Settings
             }
         }
 
-        private float? _inputVolume;
-        public float InputVolume
-        {
-            get
-            {
-                if (_inputVolume == null)
-                    _inputVolume = GetValueOrDefault("InputVolume", 1.0f);
-
-                return _inputVolume ?? 1.0f;
-            }
-            set
-            {
-                _inputVolume = value;
-                AddOrUpdateValue("InputVolume", value);
-            }
-        }
-
         private string _outputDevice;
         public string OutputDevice
         {
@@ -57,23 +40,6 @@ namespace Unigram.Services.Settings
             {
                 _outputDevice = value;
                 AddOrUpdateValue("OutputDevice", value);
-            }
-        }
-
-        private float? _outputVolume;
-        public float OutputVolume
-        {
-            get
-            {
-                if (_outputVolume == null)
-                    _outputVolume = GetValueOrDefault("OutputVolume", 1.0f);
-
-                return _outputVolume ?? 1.0f;
-            }
-            set
-            {
-                _outputVolume = value;
-                AddOrUpdateValue("OutputVolume", value);
             }
         }
 
@@ -93,6 +59,5 @@ namespace Unigram.Services.Settings
                 AddOrUpdateValue("VideoDevice", value);
             }
         }
-
     }
 }

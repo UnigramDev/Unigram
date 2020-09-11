@@ -26,11 +26,7 @@ namespace Unigram.Services
     public interface IVoipService : IHandle<UpdateCall>, IHandle<UpdateNewCallSignalingData>
     {
         string CurrentAudioInput { get; set; }
-        float CurrentVolumeInput { get; set; }
-
         string CurrentAudioOutput { get; set; }
-        float CurrentVolumeOutput { get; set; }
-
         string CurrentVideoInput { get; set; }
 
         VoipManager Manager { get; }
@@ -183,23 +179,6 @@ namespace Unigram.Services
             }
         }
 
-        public float CurrentVolumeInput
-        {
-            get
-            {
-                return SettingsService.Current.VoIP.InputVolume;
-            }
-            set
-            {
-                SettingsService.Current.VoIP.InputVolume = value;
-
-                if (_controller != null)
-                {
-                    _controller.SetInputVolume(value);
-                }
-            }
-        }
-
         public string CurrentAudioOutput
         {
             get
@@ -213,23 +192,6 @@ namespace Unigram.Services
                 if (_controller != null)
                 {
                     _controller.SetAudioOutputDevice(value);
-                }
-            }
-        }
-
-        public float CurrentVolumeOutput
-        {
-            get
-            {
-                return SettingsService.Current.VoIP.OutputVolume;
-            }
-            set
-            {
-                SettingsService.Current.VoIP.OutputVolume = value;
-
-                if (_controller != null)
-                {
-                    _controller.SetOutputVolume(value);
                 }
             }
         }
@@ -333,9 +295,7 @@ namespace Unigram.Services
                     IsOutgoing = update.Call.IsOutgoing,
                     VideoCapture = _capturer,
                     AudioInputId = SettingsService.Current.VoIP.InputDevice,
-                    AudioOutputId = SettingsService.Current.VoIP.OutputDevice,
-                    InputVolume = SettingsService.Current.VoIP.InputVolume,
-                    OutputVolume = SettingsService.Current.VoIP.OutputVolume
+                    AudioOutputId = SettingsService.Current.VoIP.OutputDevice
                 };
 
                 _controller = new VoipManager(descriptor);
@@ -406,7 +366,7 @@ namespace Unigram.Services
                         Hide();
                         break;
                     default:
-                        Show(update.Call, null, null, _callStarted);
+                        Show(update.Call, _controller, _capturer, _callStarted);
                         break;
                 }
             });

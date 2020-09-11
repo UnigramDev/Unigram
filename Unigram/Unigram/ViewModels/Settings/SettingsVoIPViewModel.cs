@@ -62,12 +62,6 @@ namespace Unigram.ViewModels.Settings
                 _selectedVideo = video.FirstOrDefault(x => x.Id == _voipService.CurrentVideoInput) ?? video.FirstOrDefault();
                 RaisePropertyChanged(() => SelectedVideo);
             }
-
-            _inputVolume = _voipService.CurrentVolumeInput;
-            _outputVolume = _voipService.CurrentVolumeOutput;
-
-            RaisePropertyChanged(() => InputVolume);
-            RaisePropertyChanged(() => OutputVolume);
         }
 
         private DeviceInformation _selectedInput;
@@ -84,20 +78,6 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private float _inputVolume;
-        public float InputVolume
-        {
-            get { return _inputVolume; }
-            set
-            {
-                if (_inputVolume != value)
-                {
-                    Set(ref _inputVolume, value);
-                    _voipService.CurrentVolumeInput = value;
-                }
-            }
-        }
-
         private DeviceInformation _selectedOutput;
         public DeviceInformation SelectedOutput
         {
@@ -108,20 +88,6 @@ namespace Unigram.ViewModels.Settings
                 {
                     Set(ref _selectedOutput, value);
                     _voipService.CurrentAudioOutput = value?.Id ?? "default";
-                }
-            }
-        }
-
-        private float _outputVolume;
-        public float OutputVolume
-        {
-            get { return _outputVolume; }
-            set
-            {
-                if (_outputVolume != value)
-                {
-                    Set(ref _outputVolume, value);
-                    _voipService.CurrentVolumeOutput = value;
                 }
             }
         }
