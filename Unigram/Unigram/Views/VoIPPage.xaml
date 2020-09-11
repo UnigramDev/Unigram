@@ -423,8 +423,8 @@
                     CheckedGlyph="&#xE714;"
                     HorizontalAlignment="Right"
                     Margin="0,0,12,0"
-                    AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
-                    ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"/>
+                    AutomationProperties.Name="{CustomResource VoipSwitchToVideoCall}"
+                    ToolTipService.ToolTip="{CustomResource VoipSwitchToVideoCall}"/>
                 <controls:GlyphToggleButton
                     x:Name="Audio"
                     Click="Audio_Click"

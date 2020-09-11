@@ -21,7 +21,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
+            <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Style="{StaticResource HeaderGlyphButtonStyle}" AutomationProperties.Name="{CustomResource ShareSendTo}" ToolTipService.ToolTip="{CustomResource ShareSendTo}" Grid.Column="1"/>
 
             <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.StickerSet.Title, Mode=OneWay}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
 
