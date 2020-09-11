@@ -3855,7 +3855,7 @@ namespace Unigram.Views
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            if (group.Status is ChatMemberStatusLeft)
+            if (group.Status is ChatMemberStatusLeft || group.Status is ChatMemberStatusBanned)
             {
                 ShowAction(Strings.Resources.DeleteThisGroup, true);
 
