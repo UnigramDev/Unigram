@@ -71,7 +71,11 @@ namespace Unigram.Services
             {
                 //Set(ref _isActive, value);
                 _isActive = value;
-                CacheService.Options.Online = value;
+
+                if (!value)
+                {
+                    CacheService.Options.Online = value;
+                }
             }
         }
 

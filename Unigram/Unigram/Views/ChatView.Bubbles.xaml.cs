@@ -760,12 +760,20 @@ namespace Unigram.Views
                             photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
                         }
                     }
-                    else
+                    else if (message.SenderUserId != 0)
                     {
                         var user = message.GetSenderUser();
                         if (user != null)
                         {
                             photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
+                        }
+                    }
+                    else
+                    {
+                        var chat = message.GetChat();
+                        if (chat != null)
+                        {
+                            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
                         }
                     }
                 }

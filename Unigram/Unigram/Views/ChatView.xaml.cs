@@ -880,7 +880,7 @@ namespace Unigram.Views
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
-            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            if (Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 ViewVisibleMessages(false);
                 StickersPanel.LoadVisibleItems();
@@ -4177,12 +4177,20 @@ namespace Unigram.Views
                                     }
                                 }
                             }
-                            else
+                            else if (message.SenderUserId != 0)
                             {
                                 var user = message.GetSenderUser();
                                 if (user != null)
                                 {
-                                    photo.Source = PlaceholderHelper.GetUser(null, user, 32);
+                                    photo.Source = PlaceholderHelper.GetUser(null, user, 30);
+                                }
+                            }
+                            else
+                            {
+                                var chat2 = message.GetChat();
+                                if (chat2 != null)
+                                {
+                                    photo.Source = PlaceholderHelper.GetChat(null, chat2, 30);
                                 }
                             }
                         }
