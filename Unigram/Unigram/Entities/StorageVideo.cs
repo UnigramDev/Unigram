@@ -39,7 +39,7 @@ namespace Unigram.Entities
         public override uint Width => Properties.GetWidth();
         public override uint Height => Properties.GetHeight();
 
-        public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
+        public new static async Task<StorageVideo> CreateAsync(StorageFile file)
         {
             try
             {

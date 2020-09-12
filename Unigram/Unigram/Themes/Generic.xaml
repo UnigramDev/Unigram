@@ -235,6 +235,51 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:VideoRangeSlider">
+        <Setter Property="Foreground" Value="{ThemeResource PageHeaderHighlightBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:VideoRangeSlider">
+                    <Grid Background="Transparent" CornerRadius="4">
+                        <Border
+                            x:Name="BackgroundMinimum"
+                            Background="#99000000"
+                            HorizontalAlignment="Stretch"/>
+                        <Border
+                            x:Name="BackgroundMaximum"
+                            Background="#99000000"
+                            HorizontalAlignment="Stretch"/>
+                        <Border
+                            x:Name="MiddleThumb1"
+                            Background="Transparent"
+                            BorderThickness="1"
+                            BorderBrush="{TemplateBinding Foreground}"
+                            HorizontalAlignment="Stretch"
+                            CornerRadius="4"/>
+                        <Border
+                            x:Name="MinimumThumb"
+                            Background="{TemplateBinding Foreground}"
+                            Width="12"
+                            HorizontalAlignment="Left"
+                            CornerRadius="4,0,0,4"/>
+                        <Border
+                            x:Name="MaximumThumb"
+                            Background="{TemplateBinding Foreground}"
+                            Width="12"
+                            HorizontalAlignment="Left"
+                            CornerRadius="0,4,4,0"/>
+                        <Border
+                            x:Name="MiddleThumb2"
+                            Background="White"
+                            Width="12"
+                            HorizontalAlignment="Left"
+                            CornerRadius="4"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:TableListView">
         <Setter Property="ItemsPanelCornerRadius" Value="8" />
         <Setter Property="IsTabStop" Value="False" />
@@ -3834,6 +3879,80 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             AutomationProperties.AccessibilityView="Raw"
                             Text="{TemplateBinding Glyph}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:SwitchThemeButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Width" Value="48" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SwitchThemeButton">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>-->
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>-->
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>-->
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <microsoft:AnimatedVisualPlayer
+                            x:Name="ContentPresenter"
+                            AutoPlay="False"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Width="32"
+                            Height="32"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

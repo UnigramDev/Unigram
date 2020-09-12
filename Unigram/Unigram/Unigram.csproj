@@ -464,6 +464,7 @@
     <Compile Include="Controls\UndoView.xaml.cs">
       <DependentUpon>UndoView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\VideoRangeSlider.cs" />
     <Compile Include="Controls\VideoTimelineControl.xaml.cs">
       <DependentUpon>VideoTimelineControl.xaml</DependentUpon>
     </Compile>

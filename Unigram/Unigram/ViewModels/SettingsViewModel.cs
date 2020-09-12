@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -6,13 +7,15 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Settings;
-using Windows.Storage;
+using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels
 {
@@ -36,7 +39,7 @@ namespace Unigram.ViewModels
             _searchService = searchService;
 
             AskCommand = new RelayCommand(AskExecute);
-            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
             NavigateCommand = new RelayCommand<SettingsSearchEntry>(NavigateExecute);
 
             Results = new MvxObservableCollection<SettingsSearchEntry>();
@@ -134,11 +137,47 @@ namespace Unigram.ViewModels
 
 
 
-        public RelayCommand<StorageFile> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageFile file)
+        public RelayCommand<StorageMedia> EditPhotoCommand { get; }
+        private async void EditPhotoExecute(StorageMedia media)
         {
-            var props = await file.GetBasicPropertiesAsync();
-            var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(await file.ToGeneratedAsync())));
+            if (media is StorageVideo)
+            {
+                var props = await media.File.Properties.GetVideoPropertiesAsync();
+
+                var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
+                if (duration.TotalSeconds > 9)
+                {
+                    media.EditState.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(9);
+                }
+
+                var conversion = new VideoConversion();
+                conversion.Mute = true;
+                conversion.TrimStartTime = media.EditState.TrimStartTime;
+                conversion.TrimStopTime = media.EditState.TrimStopTime;
+                conversion.Transcode = true;
+                conversion.Transform = true;
+                //conversion.Rotation = file.EditState.Rotation;
+                conversion.OutputSize = new Size(500, 500);
+                //conversion.Mirror = transform.Mirror;
+                conversion.CropRectangle = new Rect(
+                    media.EditState.Rectangle.X * props.Width,
+                    media.EditState.Rectangle.Y * props.Height,
+                    media.EditState.Rectangle.Width * props.Width,
+                    media.EditState.Rectangle.Height * props.Height);
+
+                var rectangle = conversion.CropRectangle;
+                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
+                rectangle.Height = rectangle.Width;
+
+                conversion.CropRectangle = rectangle;
+
+                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
+                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0)));
+            }
+            else
+            {
+                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(await media.File.ToGeneratedAsync())));
+            }
         }
 
         public RelayCommand AskCommand { get; }

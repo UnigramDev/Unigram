@@ -1,15 +1,19 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
-using Windows.Storage;
+using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels.Supergroups
 {
@@ -29,7 +33,7 @@ namespace Unigram.ViewModels.Supergroups
             EditHistoryCommand = new RelayCommand(EditHistoryExecute);
             EditLinkedChatCommand = new RelayCommand(EditLinkedChatExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
-            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
             DeletePhotoCommand = new RelayCommand(DeletePhotoExecute);
 
             RevokeCommand = new RelayCommand(RevokeExecute);
@@ -50,7 +54,7 @@ namespace Unigram.ViewModels.Supergroups
             set { Set(ref _chat, value); }
         }
 
-        private StorageFile _photo;
+        private StorageMedia _photo;
         private bool _deletePhoto;
 
         private string _title;
@@ -262,13 +266,43 @@ namespace Unigram.ViewModels.Supergroups
                 }
             }
 
-            if (_photo != null)
+            if (_photo is StorageVideo media)
             {
-                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoStatic(await _photo.ToGeneratedAsync())));
-                if (response is Error)
+                var props = await media.File.Properties.GetVideoPropertiesAsync();
+
+                var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
+                if (duration.TotalSeconds > 9)
                 {
-                    // TODO:
+                    media.EditState.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(9);
                 }
+
+                var conversion = new VideoConversion();
+                conversion.Mute = true;
+                conversion.TrimStartTime = media.EditState.TrimStartTime;
+                conversion.TrimStopTime = media.EditState.TrimStopTime;
+                conversion.Transcode = true;
+                conversion.Transform = true;
+                //conversion.Rotation = file.EditState.Rotation;
+                conversion.OutputSize = new Size(500, 500);
+                //conversion.Mirror = transform.Mirror;
+                conversion.CropRectangle = new Rect(
+                    media.EditState.Rectangle.X * props.Width,
+                    media.EditState.Rectangle.Y * props.Height,
+                    media.EditState.Rectangle.Width * props.Width,
+                    media.EditState.Rectangle.Height * props.Height);
+
+                var rectangle = conversion.CropRectangle;
+                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
+                rectangle.Height = rectangle.Width;
+
+                conversion.CropRectangle = rectangle;
+
+                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
+                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoAnimation(generated, 0)));
+            }
+            else if (_photo is StoragePhoto photo)
+            {
+                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoStatic(await photo.File.ToGeneratedAsync())));
             }
             else if (_deletePhoto)
             {
@@ -305,8 +339,8 @@ namespace Unigram.ViewModels.Supergroups
             NavigationService.GoBack();
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageFile file)
+        public RelayCommand<StorageMedia> EditPhotoCommand { get; }
+        private async void EditPhotoExecute(StorageMedia file)
         {
             _photo = file;
             _deletePhoto = false;

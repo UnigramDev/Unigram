@@ -140,7 +140,7 @@ namespace Unigram.Entities
             RaisePropertyChanged(() => Preview);
         }
 
-        public static async Task<StorageMedia> CreateAsync(StorageFile file, bool selected)
+        public static async Task<StorageMedia> CreateAsync(StorageFile file)
         {
             if (file == null)
             {
@@ -148,11 +148,11 @@ namespace Unigram.Entities
             }
             else if (file.ContentType.Equals("video/mp4"))
             {
-                return await StorageVideo.CreateAsync(file, selected);
+                return await StorageVideo.CreateAsync(file);
             }
             else
             {
-                return await StoragePhoto.CreateAsync(file, selected);
+                return await StoragePhoto.CreateAsync(file);
             }
         }
 
@@ -167,7 +167,7 @@ namespace Unigram.Entities
                     file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
                     file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                 {
-                    var photo = await StoragePhoto.CreateAsync(file, true);
+                    var photo = await StoragePhoto.CreateAsync(file);
                     if (photo != null)
                     {
                         results.Add(photo);
@@ -179,7 +179,7 @@ namespace Unigram.Entities
                 }
                 else if (file.ContentType == "video/mp4")
                 {
-                    var video = await StorageVideo.CreateAsync(file, true);
+                    var video = await StorageVideo.CreateAsync(file);
                     if (video != null)
                     {
                         results.Add(video);

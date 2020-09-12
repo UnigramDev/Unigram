@@ -1,6 +1,7 @@
 ﻿using System;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Unigram.ViewModels.Channels;
 using Unigram.Views.Popups;
 using Windows.Storage.Pickers;
@@ -36,12 +37,13 @@ namespace Unigram.Views.Channels
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var media = await StorageMedia.CreateAsync(file);
+                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                    ViewModel.EditPhotoCommand.Execute(media);
                 }
             }
         }

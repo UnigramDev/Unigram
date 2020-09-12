@@ -353,7 +353,7 @@ namespace Unigram.Views.Popups
                 using (var stream = await bitmap.OpenReadAsync())
                 {
                     var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                    var photo = await StoragePhoto.CreateAsync(result, true);
+                    var photo = await StoragePhoto.CreateAsync(result);
                     if (photo == null)
                     {
                         return;

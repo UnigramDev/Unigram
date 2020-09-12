@@ -3,6 +3,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
+using Unigram.Entities;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
@@ -224,17 +225,18 @@ namespace Unigram.Views
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
+            picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var media = await StorageMedia.CreateAsync(file);
+                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                    ViewModel.EditPhotoCommand.Execute(media);
                 }
             }
         }
@@ -249,12 +251,13 @@ namespace Unigram.Views
             var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (file != null)
             {
-                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var media = await StorageMedia.CreateAsync(file);
+                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                    ViewModel.EditPhotoCommand.Execute(media);
                 }
             }
         }

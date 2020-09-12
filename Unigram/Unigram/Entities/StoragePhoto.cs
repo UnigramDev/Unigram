@@ -47,7 +47,7 @@ namespace Unigram.Entities
 
         public ImageProperties Properties { get; private set; }
 
-        public new static async Task<StoragePhoto> CreateAsync(StorageFile file, bool selected)
+        public new static async Task<StoragePhoto> CreateAsync(StorageFile file)
         {
             try
             {

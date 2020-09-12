@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unigram.Controls;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -14,6 +15,9 @@ namespace Unigram.Entities
 
         public BitmapRotation Rotation { get; set; } = BitmapRotation.None;
         public BitmapFlip Flip { get; set; }
+
+        public TimeSpan TrimStartTime { get; set; }
+        public TimeSpan TrimStopTime { get; set; }
 
         public bool IsEmpty
         {

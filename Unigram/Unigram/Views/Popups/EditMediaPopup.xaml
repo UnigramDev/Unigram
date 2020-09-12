@@ -22,6 +22,8 @@
 
         <controls:ImageCropper x:Name="Cropper" Padding="24">
             <Grid>
+                <MediaPlayerElement
+                    x:Name="Media"/>
                 <controls:PencilCanvas
                     x:Name="Canvas"
                     StrokesChanged="Canvas_StrokesChanged"
@@ -144,6 +146,20 @@
                     CheckedGlyph="&#xE75C;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     Grid.Column="3"/>
+            </Grid>
+
+            <Grid x:Name="TrimToolbar" x:Load="False" Grid.Column="2">
+                <StackPanel
+                    x:Name="TrimThumbnails"
+                    Orientation="Horizontal"
+                    Width="296"
+                    CornerRadius="4"/>
+                <controls:VideoRangeSlider
+                    x:Name="TrimRange"
+                    MinimumChanged="TrimRange_MinimumChanged"
+                    MaximumChanged="TrimRange_MaximumChanged"
+                    Height="40"
+                    Width="296"/>
             </Grid>
             
             <Rectangle

@@ -973,7 +973,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var storage = await StorageMedia.CreateAsync(file, true);
+            var storage = await StorageMedia.CreateAsync(file);
             if (storage == null)
             {
                 return;
