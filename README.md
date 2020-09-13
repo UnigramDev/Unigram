@@ -27,8 +27,8 @@ Thanks to the [Universal Windows Platform](https://docs.microsoft.com/en-us/wind
 - [Download without Microsoft Store](#alternativedownload)
 - [Windows 10 N](#windows10n)
 - [Translations](#translations)
+- [Documentation](#doc)
 - [Privacy policy](#privacy)
-
 
 <a name="features"></a>
 ## Features
@@ -79,6 +79,10 @@ To work with Windows 10 N you will need Media Feature pack. To install it proper
 ## Translations
 Unigram has 18 built-in languages, but has access to unlimited packs using Telegram translations platform.
 If you are wishing to translate it to your language, you can do that [here](https://translations.telegram.org/en/android/), since Unigram uses the same translations as the official Telegram app for Android.
+
+<a name="doc"></a>
+## Documentation
+You can find [here](https://github.com/UnigramDev/Unigram/tree/develop/Documentation) some documentation on how to build Unigram, grab TDLib logs and a list of all built-in keyboard shortcuts.
 
 <a name="privacy"></a>
 ## Privacy policy
