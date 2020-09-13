@@ -16,6 +16,7 @@ using Windows.Graphics.Display;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -321,8 +322,23 @@ namespace Unigram.Services
                     BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
                 }
 
-                //_controller?.Dispose();
-                _controller = null;
+                if (_controller != null)
+                {
+                    _controller.StateUpdated -= OnStateUpdated;
+                    _controller.SignalingDataEmitted -= OnSignalingDataEmitted;
+
+                    _controller.SetIncomingVideoOutput(null);
+                    _controller.Dispose();
+                    _controller = null;
+                }
+
+                if (_capturer != null)
+                {
+                    _capturer.SetOutput(null);
+                    _capturer.Dispose();
+                    _capturer = null;
+                }
+
                 _call = null;
             }
             else if (update.Call.State is CallStateError error)
@@ -405,12 +421,14 @@ namespace Unigram.Services
                     _controller.SignalingDataEmitted -= OnSignalingDataEmitted;
 
                     _controller.SetIncomingVideoOutput(null);
+                    _controller.Dispose();
                     _controller = null;
                 }
 
                 if (_capturer != null)
                 {
                     _capturer.SetOutput(null);
+                    _capturer.Dispose();
                     _capturer = null;
                 }
             }
@@ -485,6 +503,10 @@ namespace Unigram.Services
                         window = await AppWindow.TryCreateAsync();
                         window.PersistedStateId = "Calls";
                         //window.TitleBar.ExtendsContentIntoTitleBar = true;
+                        window.TitleBar.BackgroundColor = Color.FromArgb(0xFF, 0x17, 0x17, 0x17);
+                        window.TitleBar.ButtonBackgroundColor = Color.FromArgb(0xFF, 0x17, 0x17, 0x17);
+                        window.TitleBar.ForegroundColor = Colors.White;
+                        window.TitleBar.ButtonForegroundColor = Colors.White;
                         window.Closed += (s, args) =>
                         {
                             if (_callPage != null)

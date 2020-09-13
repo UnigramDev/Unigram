@@ -274,7 +274,6 @@ namespace Unigram.Views
             var capturer = _service.Capturer;
             if (capturer != null)
             {
-                _service.Capturer = null;
                 capturer.SetOutput(null);
             }
         }
@@ -705,6 +704,7 @@ namespace Unigram.Views
                     _service.Capturer.SetOutput(null);
                     _service.Manager.SetVideoCapture(null);
 
+                    _service.Capturer.Dispose();
                     _service.Capturer = null;
                 }
                 else
