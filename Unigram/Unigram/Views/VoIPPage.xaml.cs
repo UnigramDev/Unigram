@@ -307,12 +307,16 @@ namespace Unigram.Views
             {
                 _capturerWasNull = false;
 
+                Video.IsChecked = true;
                 ViewfinderPanel.Visibility = Visibility.Visible;
+                
                 capturer.SetOutput(Viewfinder);
             }
             else if (capturer == null && !_capturerWasNull)
             {
                 _capturerWasNull = true;
+
+                Video.IsChecked = false;
                 ViewfinderPanel.Visibility = Visibility.Collapsed;
             }
         }
