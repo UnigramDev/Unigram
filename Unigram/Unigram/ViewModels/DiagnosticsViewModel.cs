@@ -102,6 +102,16 @@ namespace Unigram.ViewModels
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
         public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
 
+        public bool Minithumbnails
+        {
+            get => Settings.Diagnostics.Minithumbnails;
+            set
+            {
+                Settings.Diagnostics.Minithumbnails = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool BubbleKnockout
         {
             get => Settings.Diagnostics.BubbleKnockout;

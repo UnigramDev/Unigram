@@ -23,5 +23,22 @@
                 AddOrUpdateValue("BubbleKnockout", value);
             }
         }
+
+        private bool? _minithumbnails;
+        public bool Minithumbnails
+        {
+            get
+            {
+                if (_minithumbnails == null)
+                    _minithumbnails = GetValueOrDefault("Minithumbnails", true);
+
+                return _minithumbnails ?? true;
+            }
+            set
+            {
+                _minithumbnails = value;
+                AddOrUpdateValue("Minithumbnails", value);
+            }
+        }
     }
 }

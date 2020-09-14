@@ -21,6 +21,10 @@
                 <controls:HeaderedControl
                     Header="Experimental">
                     <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.Minithumbnails, Mode=TwoWay}"
+                        Header="Minithumbnails"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch
                         IsOn="{x:Bind ViewModel.BubbleKnockout, Mode=TwoWay}"
                         Header="Bubble knockout"
                         Style="{StaticResource CheckButtonStyle}"/>
