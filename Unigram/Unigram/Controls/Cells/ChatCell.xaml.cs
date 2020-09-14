@@ -1,7 +1,9 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -21,6 +23,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Cells
 {
@@ -94,6 +97,8 @@ namespace Unigram.Controls.Cells
             UpdateChatType(chat);
             UpdateNotificationSettings(chat);
 
+            UpdateMinithumbnail(message);
+
             PinnedIcon.Visibility = Visibility.Collapsed;
             UnreadBadge.Visibility = Visibility.Collapsed;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
@@ -125,6 +130,8 @@ namespace Unigram.Controls.Cells
             FailedBadge.Visibility = Visibility.Collapsed;
 
             MutedIcon.Visibility = Visibility.Collapsed;
+
+            MinithumbnailPanel.Visibility = Visibility.Collapsed;
 
             VisualStateManager.GoToState(LayoutRoot, "Muted", false);
 
@@ -289,6 +296,8 @@ namespace Unigram.Controls.Cells
             TimeLabel.Text = UpdateTimeLabel(chat, position);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
+
+            UpdateMinithumbnail(chat.LastMessage);
         }
 
         public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
@@ -357,11 +366,13 @@ namespace Unigram.Controls.Cells
                 TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, out ChatAction commonAction);
                 TypingLabel.Visibility = Visibility.Visible;
                 BriefInfo.Visibility = Visibility.Collapsed;
+                Minithumbnail.Visibility = Visibility.Collapsed;
             }
             else
             {
                 TypingLabel.Visibility = Visibility.Collapsed;
                 BriefInfo.Visibility = Visibility.Visible;
+                Minithumbnail.Visibility = Visibility.Visible;
             }
         }
 
@@ -471,6 +482,36 @@ namespace Unigram.Controls.Cells
                 _expanded = threeLines;
 
                 UpdateChatList(_protoService, _delegate, chatList);
+            }
+        }
+
+        private async void UpdateMinithumbnail(Message message)
+        {
+            var thumbnail = message.GetMinithumbnail();
+            if (thumbnail != null && SettingsService.Current.Diagnostics.Minithumbnails)
+            {
+                double ratioX = (double)16 / thumbnail.Width;
+                double ratioY = (double)16 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
+
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                var bytes = thumbnail.Data.ToArray();
+
+                var stream = new System.IO.MemoryStream(bytes);
+                var random = System.IO.WindowsRuntimeStreamExtensions.AsRandomAccessStream(stream);
+
+                Minithumbnail.Source = bitmap;
+                MinithumbnailPanel.Visibility = Visibility.Visible;
+
+                await bitmap.SetSourceAsync(random);
+            }
+            else
+            {
+                MinithumbnailPanel.Visibility = Visibility.Collapsed;
+                Minithumbnail.Source = null;
             }
         }
 

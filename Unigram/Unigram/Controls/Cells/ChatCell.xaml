@@ -80,6 +80,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition MinWidth="4"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -117,7 +118,7 @@
                 </Border>
             </Grid>
 
-            <Grid x:Name="TitlePanel" VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="2" Grid.ColumnSpan="3">
+            <Grid x:Name="TitlePanel" VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="2" Grid.ColumnSpan="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -174,6 +175,20 @@
                            Margin="0,0,0,1"
                            Grid.Column="2"/>
             </Grid>
+            <Border
+                x:Name="MinithumbnailPanel"
+                Margin="12,-8,-4,0"
+                CornerRadius="2"
+                Height="16"
+                Grid.Column="2"
+                Grid.Row="1">
+                <Image
+                    x:Name="Minithumbnail"
+                    Stretch="UniformToFill"
+                    Width="16"
+                    Height="16"/>
+            </Border>
+
             <TextBlock x:Name="BriefInfo"
                        Style="{StaticResource BodyTextBlockStyle}"
                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
@@ -183,7 +198,7 @@
                        VerticalAlignment="Top"
                        MaxLines="1"
                        Margin="12,2,0,0"
-                       Grid.Column="2"
+                       Grid.Column="3"
                        Grid.Row="1">
                 <ToolTipService.ToolTip>
                     <ToolTip Opened="ToolTip_Opened"/>
@@ -201,6 +216,7 @@
                        MaxLines="1"
                        Margin="12,2,0,0"
                        Grid.Column="2"
+                       Grid.ColumnSpan="2"
                        Grid.Row="1"/>
 
             <Border x:Name="PinnedIcon"
@@ -210,7 +226,7 @@
                     HorizontalAlignment="Right"
                     Margin="8,0,0,8"
                     Grid.ColumnSpan="2"
-                    Grid.Column="3"
+                    Grid.Column="4"
                     Grid.Row="1">
                 <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
@@ -223,7 +239,7 @@
                     HorizontalAlignment="Right"
                     Margin="8,0,0,8"
                     Visibility="Collapsed"
-                    Grid.Column="3"
+                    Grid.Column="4"
                     Grid.Row="1">
                 <TextBlock x:Name="UnreadMentionsLabel"
                            Text="&#xE168;"
@@ -242,7 +258,7 @@
                     HorizontalAlignment="Right"
                     Margin="8,0,0,8"
                     Visibility="Collapsed"
-                    Grid.Column="4"
+                    Grid.Column="5"
                     Grid.Row="1">
                 <TextBlock x:Name="UnreadLabel"
                            Style="{StaticResource CaptionTextBlockStyle}"
@@ -260,7 +276,7 @@
                     HorizontalAlignment="Right"
                     Margin="8,0,0,8"
                     Visibility="Collapsed"
-                    Grid.Column="4"
+                    Grid.Column="5"
                     Grid.Row="1">
                 <TextBlock x:Name="FailedLabel"
                            Text="&#xE171;"
@@ -274,7 +290,7 @@
             <Rectangle x:Name="DropVisual"
                        x:DeferLoadStrategy="Lazy"
                        Grid.RowSpan="2"
-                       Grid.ColumnSpan="5"
+                       Grid.ColumnSpan="6"
                        Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
                        StrokeThickness="2"
                        Margin="0,-8,-12,0"
