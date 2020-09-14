@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Telegram.Td.Api;
 using Windows.Foundation;
 
@@ -287,7 +288,8 @@ namespace Unigram.Common
                     case InlineQueryResultAnimation animationResult:
                         return new Size(animationResult.Animation.Width, animationResult.Animation.Height);
                     case InlineQueryResultPhoto photoResult:
-                        var big = photoResult.Photo.GetBig();
+                        //var big = photoResult.Photo.GetBig();
+                        var big = photoResult.Photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
                         if (big != null)
                         {
                             return new Size(big.Width, big.Height);
@@ -297,39 +299,6 @@ namespace Unigram.Common
                         return Size.Empty;
                 }
             }
-
-            //if (_items[i] is TLDocument document)
-            //{
-            //    var size = new Size(100, 100);
-            //    if (document.Thumb is TLPhotoSize photoSize)
-            //    {
-            //        size.Width = photoSize.W;
-            //        size.Height = photoSize.H;
-            //    }
-            //    else if (document.Thumb is TLPhotoCachedSize photoCachedSize)
-            //    {
-            //        size.Width = photoCachedSize.W;
-            //        size.Height = photoCachedSize.H;
-            //    }
-
-            //    for (int j = 0; j < document.Attributes.Count; j++)
-            //    {
-            //        if (document.Attributes[j] is TLDocumentAttributeVideo videoAttribute)
-            //        {
-            //            size.Width = videoAttribute.W;
-            //            size.Height = videoAttribute.H;
-            //            break;
-            //        }
-            //        else if (document.Attributes[j] is TLDocumentAttributeImageSize imageSizeAttribute)
-            //        {
-            //            size.Width = imageSizeAttribute.W;
-            //            size.Height = imageSizeAttribute.H;
-            //            break;
-            //        }
-            //    }
-
-            //    return size;
-            //}
 
             return new Size(100, 100);
         }
