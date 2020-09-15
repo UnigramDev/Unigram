@@ -16,7 +16,7 @@
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel>
+            <StackPanel Margin="0,0,0,12">
                 <controls:HeaderedControl
                     Header="Camera">
                     <ComboBox
