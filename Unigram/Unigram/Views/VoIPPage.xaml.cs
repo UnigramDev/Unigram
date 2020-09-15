@@ -184,6 +184,11 @@ namespace Unigram.Views
 
         private void CheckConstraints()
         {
+            if (ViewfinderPanel.Visibility == Visibility.Collapsed)
+            {
+                return;
+            }
+
             // Padding maybe
             var p = 8;
 
@@ -267,6 +272,7 @@ namespace Unigram.Views
                 controller.StateUpdated -= OnStateUpdated;
                 controller.SignalBarsUpdated -= OnSignalBarsUpdated;
                 controller.RemoteMediaStateUpdated -= OnRemoteMediaStateUpdated;
+
                 controller.SetIncomingVideoOutput(null);
                 //_controller = null;
             }
@@ -319,6 +325,8 @@ namespace Unigram.Views
                 Video.IsChecked = false;
                 ViewfinderPanel.Visibility = Visibility.Collapsed;
             }
+
+            CheckConstraints();
         }
 
         private void OnRemoteMediaStateUpdated(VoipManager sender, RemoteMediaStateUpdatedEventArgs args)
@@ -520,7 +528,7 @@ namespace Unigram.Views
                         SignalBarsLabel.Visibility = Visibility.Visible;
                         StartUpdatingCallDuration();
 
-                        _service.Manager.SetIncomingVideoOutput(BackgroundPanel);
+                        sender.SetIncomingVideoOutput(BackgroundPanel);
                         break;
                     case VoipState.Failed:
                         //switch (sender.GetLastError())
@@ -720,6 +728,8 @@ namespace Unigram.Views
                     _service.Capturer.SetOutput(Viewfinder);
                     _service.Manager.SetVideoCapture(_service.Capturer);
                 }
+
+                CheckConstraints();
             }
         }
 

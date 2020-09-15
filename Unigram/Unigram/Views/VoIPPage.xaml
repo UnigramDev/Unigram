@@ -474,6 +474,7 @@
 
         <Grid
             x:Name="ViewfinderPanel"
+            Visibility="Collapsed"
             Width="146"
             Height="110"
             CornerRadius="4"
