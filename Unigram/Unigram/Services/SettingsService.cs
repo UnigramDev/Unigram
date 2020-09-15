@@ -195,8 +195,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (4UL << 48) | (2UL << 32) | (5263UL << 16);
-        public const string CurrentChangelog = "• Groups and channels Recent actions section is now feature complete.";
+        public const ulong CurrentVersion = (7UL << 48) | (0UL << 32) | (5322UL << 16);
+        public const string CurrentChangelog = "VIDEO CALLS (alpha)\r\n• Still work in progress, sorry.\r\n\r\nIncreased limits for sending files\r\n• Share and store unlimited files of any type, now up to 2 GB each.\r\n\r\nProfile Videos\r\n• Set a Profile Video instead of a static picture.\r\n• Apply effects and choose a key frame as the cover for your Profile Video.\r\n• Quickly change back to a previous profile photo or video by tapping ‘Set as Main’.\r\n\r\nMini-thumbnails, Group Stats and More\r\n• See what media is in a message thanks to new mini-thumbnails in the chat list, message search and notifications.\r\n• View detailed statistics for the large groups you own.\r\n• If you're getting too much attention, flip a switch in Privacy & Security settings to automatically archive and mute all new chats from non-contacts.\r\n• Send a single football emoji to see if you score a goal.";
 
         public int Session => _session;
 
