@@ -509,14 +509,21 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Collapsed;
 
             TitleLabel.Text = GetFromLabel(message, title);
-            ServiceLabel.Text = Strings.Resources.AttachMusic;
+            //ServiceLabel.Text = Strings.Resources.AttachMusic;
             MessageLabel.Text = string.Empty;
 
-            //var document = documentMedia.Document as TLDocument;
-            //if (document != null)
-            //{
-            //    ServiceLabel.Text = document.Title;
-            //}
+
+            var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
+            var audioTitle = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
+
+            if (performer == null || audioTitle == null)
+            {
+                ServiceLabel.Text = Strings.Resources.AttachMusic;
+            }
+            else
+            {
+                ServiceLabel.Text = $"\uD83C\uDFB5 {performer} - {audioTitle}";
+            }
 
             if (audio.Caption != null && !string.IsNullOrWhiteSpace(audio.Caption.Text))
             {
