@@ -336,8 +336,8 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="0,0,12,0"
-            AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
-            ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"
+            AutomationProperties.Name="{CustomResource Settings}"
+            ToolTipService.ToolTip="{CustomResource Settings}"
             Grid.Column="1">
             <Button.Flyout>
                 <Flyout>
