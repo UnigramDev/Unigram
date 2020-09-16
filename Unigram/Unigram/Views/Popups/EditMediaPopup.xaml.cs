@@ -136,6 +136,15 @@ namespace Unigram.Views.Popups
                 var w = Cropper.PixelWidth;
                 var h = Cropper.PixelHeight;
 
+                TimeSpan trimStartTime;
+                TimeSpan trimStopTime;
+
+                if (TrimRange != null)
+                {
+                    trimStartTime = TimeSpan.FromMilliseconds(TrimRange.Minimum * TrimRange.OriginalDuration.TotalMilliseconds);
+                    trimStopTime = TimeSpan.FromMilliseconds(TrimRange.Maximum * TrimRange.OriginalDuration.TotalMilliseconds);
+                }
+
                 _media.EditState = new BitmapEditState
                 {
                     //Rectangle = new Rect(rect.X * w, rect.Y * h, rect.Width * w, rect.Height * h),
@@ -144,8 +153,8 @@ namespace Unigram.Views.Popups
                     Strokes = Canvas.Strokes,
                     Flip = _flip,
                     Rotation = _rotation,
-                    TrimStartTime = TimeSpan.FromMilliseconds(TrimRange.Minimum * TrimRange.OriginalDuration.TotalMilliseconds),
-                    TrimStopTime = TimeSpan.FromMilliseconds(TrimRange.Maximum * TrimRange.OriginalDuration.TotalMilliseconds),
+                    TrimStartTime = trimStartTime,
+                    TrimStopTime = trimStopTime,
                 };
 
                 Hide(ContentDialogResult.Primary);
