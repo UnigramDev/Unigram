@@ -4471,6 +4471,7 @@
         <Setter Property="Glyph" Value=""/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Radius" Value="8"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
