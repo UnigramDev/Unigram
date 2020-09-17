@@ -185,6 +185,8 @@
                      Glyph="&#xE72D;"
                      Command="{x:Bind ViewModel.ShareCommand}"
                      Style="{StaticResource HeaderGlyphButtonStyle}"
+                     AutomationProperties.Name="{CustomResource ShareLink}"
+                     ToolTipService.ToolTip="{CustomResource ShareLink}"                 
                      Grid.Column="1"/>
                 <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
                         Padding="{StaticResource EllipsisButtonPadding}"
