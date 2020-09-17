@@ -16,7 +16,7 @@
                 <VisualStateGroup>
                     <VisualState x:Name="Missed">
                         <VisualState.Setters>
-                            <Setter Target="DisplayLabel.Foreground" Value="{ThemeResource MessageCallMissedForegroundBrush}"/>
+                            <Setter Target="TypeLabel.Foreground" Value="{ThemeResource MessageCallMissedForegroundBrush}"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Default"/>
