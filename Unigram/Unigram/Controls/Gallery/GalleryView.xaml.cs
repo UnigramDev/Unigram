@@ -56,13 +56,6 @@ namespace Unigram.Controls.Gallery
         {
             InitializeComponent();
 
-            //CreateKeyboardAccelerator(Windows.System.VirtualKey.C);
-            //CreateKeyboardAccelerator(Windows.System.VirtualKey.S);
-            //CreateKeyboardAccelerator(Windows.System.VirtualKey.Left, Windows.System.VirtualKeyModifiers.None);
-            //CreateKeyboardAccelerator(Windows.System.VirtualKey.GamepadLeftShoulder, Windows.System.VirtualKeyModifiers.None);
-            //CreateKeyboardAccelerator(Windows.System.VirtualKey.Right, Windows.System.VirtualKeyModifiers.None);
-            //CreateKeyboardAccelerator(Windows.System.VirtualKey.GamepadRightShoulder, Windows.System.VirtualKeyModifiers.None);
-
             _layer = ElementCompositionPreview.GetElementVisual(Layer);
             _layer.Opacity = 0;
 
@@ -72,41 +65,6 @@ namespace Unigram.Controls.Gallery
             _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
 
             Initialize();
-        }
-
-        private void CreateKeyboardAccelerator(Windows.System.VirtualKey key, Windows.System.VirtualKeyModifiers modifiers = Windows.System.VirtualKeyModifiers.Control)
-        {
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAccelerators"))
-            {
-                var accelerator = new KeyboardAccelerator { Modifiers = modifiers, Key = key, ScopeOwner = this };
-                accelerator.Invoked += FlyoutAccelerator_Invoked;
-
-                Transport.KeyboardAccelerators.Add(accelerator);
-            }
-        }
-
-        private void FlyoutAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-        {
-            if (sender.Key == Windows.System.VirtualKey.C && sender.Modifiers == Windows.System.VirtualKeyModifiers.Control)
-            {
-                ViewModel.CopyCommand.Execute();
-                args.Handled = true;
-            }
-            else if (sender.Key == Windows.System.VirtualKey.S && sender.Modifiers == Windows.System.VirtualKeyModifiers.Control)
-            {
-                ViewModel.SaveCommand.Execute();
-                args.Handled = true;
-            }
-            else if (sender.Key == Windows.System.VirtualKey.Left || sender.Key == Windows.System.VirtualKey.GamepadLeftShoulder)
-            {
-                ChangeView(0, false);
-                args.Handled = true;
-            }
-            else if (sender.Key == Windows.System.VirtualKey.Right || sender.Key == Windows.System.VirtualKey.GamepadRightShoulder)
-            {
-                ChangeView(2, false);
-                args.Handled = true;
-            }
         }
 
         public void Handle(UpdateFile update)
@@ -739,6 +697,10 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
+            var alt = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+            var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+            var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
             if (args.VirtualKey == Windows.System.VirtualKey.Left || args.VirtualKey == Windows.System.VirtualKey.GamepadLeftShoulder)
             {
                 ChangeView(0, false);
@@ -749,6 +711,17 @@ namespace Unigram.Controls.Gallery
                 ChangeView(2, false);
                 args.Handled = true;
             }
+            else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift)
+            {
+                ViewModel.CopyCommand.Execute();
+                args.Handled = true;
+            }
+            else if (args.VirtualKey == Windows.System.VirtualKey.S && ctrl && !alt && !shift)
+            {
+                ViewModel.SaveCommand.Execute();
+                args.Handled = true;
+            }
+
         }
 
         private void Transport_Switch(GalleryTransportControls sender, int args)
