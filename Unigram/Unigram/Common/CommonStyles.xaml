@@ -1307,7 +1307,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border x:Name="BackgroundElement" VerticalAlignment="Bottom" Margin="12,0,12,4" Height="2"/>
-                        
+
                         <TextBlock
                             x:Name="ContentPresenter"
                             Margin="{TemplateBinding Padding}"
@@ -1320,7 +1320,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="IndicatorListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="Width" Value="20"/>
         <Setter Property="Height" Value="20"/>
@@ -2377,7 +2377,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                
+
                                 <ContentPresenter x:Name="ContentPresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                 <ContentControl x:Name="BadgePresenter" FontSize="{ThemeResource ControlContentThemeFontSize}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="12,-12,12,12" IsTabStop="False" Grid.Row="1">
                                     <ContentControl.ContentTemplate>
@@ -3348,7 +3348,7 @@
                                           VerticalContentAlignment="Center"
                                           Padding="{TemplateBinding Padding}"
                                           IsHitTestVisible="False"
-                                          AutomationProperties.AccessibilityView="Raw" 
+                                          AutomationProperties.AccessibilityView="Raw"
                                           Grid.RowSpan="4"/>
                         <Grid x:Name="SwitchAreaGrid"
                               Grid.Row="1"
@@ -3541,9 +3541,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
-                    <Grid x:Name="RootGrid" 
-                        Background="{TemplateBinding Background}" 
-                        BorderBrush="{TemplateBinding BorderBrush}" 
+                    <Grid x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -3688,7 +3688,7 @@
                                 Height="10"
                                 UseLayoutRounding="False"
                                 Opacity="0"
-                                Fill="{ThemeResource RadioButtonCheckGlyphFill}" 
+                                Fill="{ThemeResource RadioButtonCheckGlyphFill}"
                                 Stroke="{ThemeResource RadioButtonCheckGlyphStroke}"/>
                         </Grid>
                         <ContentPresenter x:Name="ContentPresenter"
@@ -3707,7 +3707,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style x:Key="ChatListRadioButtonStyle" TargetType="RadioButton">
         <Setter Property="Background" Value="{ThemeResource RadioButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource RadioButtonForeground}" />
@@ -3796,9 +3796,9 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Border
-                            x:Name="RootGrid" 
-                            Background="{TemplateBinding Background}" 
-                            BorderBrush="{ThemeResource PlaceholderBackgroundBrush}" 
+                            x:Name="RootGrid"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{ThemeResource PlaceholderBackgroundBrush}"
                             BorderThickness="2"
                             CornerRadius="8"
                             Grid.ColumnSpan="2"/>
@@ -3914,9 +3914,9 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Border
-                            x:Name="RootGrid" 
-                            Background="{TemplateBinding Background}" 
-                            BorderBrush="{ThemeResource PlaceholderBackgroundBrush}" 
+                            x:Name="RootGrid"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{ThemeResource PlaceholderBackgroundBrush}"
                             BorderThickness="2"
                             CornerRadius="8"
                             Grid.ColumnSpan="2"/>
@@ -4471,7 +4471,7 @@
         <Setter Property="Glyph" Value=""/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
-        <Setter Property="Radius" Value="8"/>
+        <Setter Property="Radius" Value="{StaticResource ControlCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
