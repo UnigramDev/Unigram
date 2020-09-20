@@ -711,6 +711,22 @@ namespace Unigram.Controls.Gallery
                 ChangeView(2, false);
                 args.Handled = true;
             }
+            else if (args.VirtualKey == Windows.System.VirtualKey.Space && !ctrl && !alt && !shift)
+            {
+                if (_mediaPlayer != null)
+                {
+                    if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+                    {
+                        _mediaPlayer.Pause();
+                    }
+                    else
+                    {
+                        _mediaPlayer.Play();
+                    }
+
+                    args.Handled = true;
+                }
+            }
             else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift)
             {
                 ViewModel.CopyCommand.Execute();
