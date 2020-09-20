@@ -55,6 +55,7 @@ namespace Unigram.ViewModels
 
                     List<TLCallGroup> groups = new List<TLCallGroup>();
                     List<Message> currentMessages = null;
+                    Chat currentChat = null;
                     User currentPeer = null;
                     bool currentFailed = false;
                     DateTime? currentTime = null;
@@ -93,10 +94,11 @@ namespace Unigram.ViewModels
                             }
                             else
                             {
-                                groups.Add(new TLCallGroup(currentMessages, currentPeer, currentFailed));
+                                groups.Add(new TLCallGroup(currentMessages, currentChat.Id, currentPeer, currentFailed));
                             }
                         }
 
+                        currentChat = chat;
                         currentPeer = peer;
                         currentMessages = new List<Message> { message };
                         currentFailed = failed;
@@ -105,7 +107,7 @@ namespace Unigram.ViewModels
 
                     if (currentMessages?.Count > 0)
                     {
-                        groups.Add(new TLCallGroup(currentMessages, currentPeer, currentFailed));
+                        groups.Add(new TLCallGroup(currentMessages, currentChat.Id, currentPeer, currentFailed));
                     }
 
                     return groups;
@@ -131,42 +133,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            //var messages = new TLVector<int>(group.Items.Select(x => x.Id).ToList());
-
-            //Task<MTProtoResponse<TLMessagesAffectedMessages>> task = null;
-
-            //var peer = group.Message.Parent.ToInputPeer();
-            //if (peer is TLInputPeerChannel channelPeer)
-            //{
-            //    task = LegacyService.DeleteMessagesAsync(new TLInputChannel { ChannelId = channelPeer.ChannelId, AccessHash = channelPeer.AccessHash }, messages);
-            //}
-            //else
-            //{
-            //    task = LegacyService.DeleteMessagesAsync(messages, false);
-            //}
-
-            //var response = await task;
-            //if (response.IsSucceeded)
-            //{
-            //    var cachedMessages = new TLVector<long>();
-            //    var remoteMessages = new TLVector<int>();
-            //    for (int i = 0; i < messages.Count; i++)
-            //    {
-            //        if (group.Items[i].RandomId.HasValue && group.Items[i].RandomId != 0L)
-            //        {
-            //            cachedMessages.Add(group.Items[i].RandomId.Value);
-            //        }
-            //        if (group.Items[i].Id > 0)
-            //        {
-            //            remoteMessages.Add(group.Items[i].Id);
-            //        }
-            //    }
-
-            //    CacheService.DeleteMessages(peer.ToPeer(), null, remoteMessages);
-            //    CacheService.DeleteMessages(cachedMessages);
-
-            //    Items.Remove(group);
-            //}
+            var response = await ProtoService.SendAsync(new DeleteMessages(group.ChatId, group.Items.Select(x => x.Id).ToArray(), false));
+            if (response is Ok)
+            {
+                Items.Remove(group);
+            }
         }
 
         #endregion
@@ -174,9 +145,10 @@ namespace Unigram.ViewModels
 
     public class TLCallGroup
     {
-        public TLCallGroup(IEnumerable<Message> messages, User peer, bool failed)
+        public TLCallGroup(IEnumerable<Message> messages, long chatId, User peer, bool failed)
         {
             Items = new ObservableCollection<Message>(messages);
+            ChatId = chatId;
             Peer = peer;
             IsFailed = failed;
         }
@@ -184,6 +156,8 @@ namespace Unigram.ViewModels
         public ObservableCollection<Message> Items { get; private set; }
 
         public User Peer { get; private set; }
+
+        public long ChatId { get; private set; }
 
         public bool IsFailed { get; private set; }
 
