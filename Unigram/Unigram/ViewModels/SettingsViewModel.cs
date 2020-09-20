@@ -176,7 +176,8 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(await media.File.ToGeneratedAsync())));
+                var generated = await media.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(media.EditState));
+                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
             }
         }
 
