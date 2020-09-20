@@ -1491,6 +1491,18 @@ namespace Unigram.ViewModels
                 {
                     _filesMap[voiceNote.Voice.Id].Add(target);
                 }
+                else if (content is ChatPhoto chatPhoto)
+                {
+                    if (chatPhoto.Animation != null)
+                    {
+                        _filesMap[chatPhoto.Animation.File.Id].Add(target);
+                    }
+
+                    foreach (var size in chatPhoto.Sizes)
+                    {
+                        _filesMap[size.Photo.Id].Add(target);
+                    }
+                }
 
                 if (target.IsSaved() || ((chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !target.IsOutgoing && !target.IsChannelPost))
                 {
