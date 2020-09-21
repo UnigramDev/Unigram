@@ -43,7 +43,7 @@
     <local:GalleryTransportControls x:Name="Transport" Switch="Transport_Switch" RequestedTheme="Dark">
         <local:GalleryTransportControls.Content>
             <Grid>
-                <Border x:Name="Layer" Margin="0,-32,0,0" Background="Black"/>
+                <Border x:Name="Layer" Margin="0,-32,0,0" Background="#99000000"/>
                 <local:GalleryContentView x:Name="Preview" Loaded="Preview_ImageOpened"/>
 
                 <ScrollViewer x:Name="ScrollingHost"
@@ -73,61 +73,15 @@
         </local:GalleryTransportControls.Content>
         <local:GalleryTransportControls.Header>
             <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Style="{StaticResource BaseTextBlockStyle}"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Grid.ColumnSpan="4"/>
-
                 <controls:GlyphButton
-                    Glyph="&#xE72B;"
+                    Glyph="&#xE8BB;"
                     Click="BackButton_Click"
                     Height="{ThemeResource AppBarThemeCompactHeight}"
-                    FontSize="15"
-                    Width="40"
-                    Margin="0,0,-12,0"
                     AutomationProperties.Name="{CustomResource AccDescrGoBack}"
                     ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Right"
                     VerticalAlignment="Top"/>
 
-
-                <controls:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
-                                      Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
-                                      Glyph="&#xF4AA;"
-                                      FontSize="{StaticResource GlyphButtonFontSize}"
-                                      Grid.Column="1"/>
-                <controls:GlyphButton Click="Compact_Click"
-                                      Visibility="{x:Bind ConvertCompactVisibility(ViewModel.SelectedItem), Mode=OneWay}"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
-                                      FontFamily="ms-appx:///Assets/Fonts/SegMVR2.ttf#Segoe MVR MDL2 Assets"
-                                      Glyph="&#xEE49;"
-                                      FontSize="16"
-                                      Grid.Column="2"/>
-
-                <Button Click="Menu_ContextRequested"
-                        HorizontalAlignment="Right"
-                        Padding="{StaticResource EllipsisButtonPadding}"
-                        Style="{StaticResource EllipsisButton}"
-                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                        Grid.Column="3">
-                    <FontIcon x:Name="EllipsisIcon"
-                              VerticalAlignment="Center"
-                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                              FontSize="16"
-                              Glyph="&#xE10C;"
-                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                </Button>
             </Grid>
         </local:GalleryTransportControls.Header>
         <local:GalleryTransportControls.Footer>
@@ -141,24 +95,45 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock x:Name="Caption"
-                           Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
-                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                           Style="{StaticResource BodyTextBlockStyle}"
-                           TextTrimming="CharacterEllipsis"
-                           MaxLines="5"
-                           Margin="12,8"
-                           Grid.ColumnSpan="3"/>
+                <TextBlock
+                    x:Name="Caption"
+                    Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    TextTrimming="CharacterEllipsis"
+                    MaxLines="5"
+                    Margin="12,8"
+                    Grid.ColumnSpan="3"/>
 
                 <Border Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2"/>
 
                 <Border x:Name="Details" Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2">
-                    <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <StackPanel Padding="12,0,0,0">
+                        <TextBlock
+                            Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            Grid.ColumnSpan="4"/>
+
+                        <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock
+                                Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}"
+                                TextWrapping="NoWrap"
+                                TextTrimming="CharacterEllipsis"
+                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock
+                                Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}"
+                                Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                                VerticalAlignment="Bottom"
+                                Margin="8,0,0,0"/>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
 
@@ -168,6 +143,40 @@
                     Glyph="&#xE72D;"
                     Grid.Column="1"
                     Grid.Row="2"/>
+
+                <controls:GlyphButton
+                    Command="{x:Bind ViewModel.StickersCommand}"
+                    Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    Glyph="&#xF4AA;"
+                    FontSize="{StaticResource GlyphButtonFontSize}"
+                    Grid.Column="2"
+                    Grid.Row="2"/>
+                <controls:GlyphButton
+                    Click="Compact_Click"
+                    Visibility="{x:Bind ConvertCompactVisibility(ViewModel.SelectedItem), Mode=OneWay}"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    FontFamily="ms-appx:///Assets/Fonts/SegMVR2.ttf#Segoe MVR MDL2 Assets"
+                    Glyph="&#xEE49;"
+                    FontSize="16"
+                    Grid.Column="3"
+                    Grid.Row="2"/>
+
+                <Button Click="Menu_ContextRequested"
+                        HorizontalAlignment="Right"
+                        Padding="{StaticResource EllipsisButtonPadding}"
+                        Style="{StaticResource EllipsisButton}"
+                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
+                        Grid.Column="4"
+                        Grid.Row="2">
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                </Button>
             </Grid>
         </local:GalleryTransportControls.Footer>
     </local:GalleryTransportControls>

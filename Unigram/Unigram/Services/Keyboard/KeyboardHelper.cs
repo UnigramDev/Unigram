@@ -2,6 +2,7 @@
 using Unigram.Navigation;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 
 namespace Unigram.Services.Keyboard
@@ -87,6 +88,18 @@ namespace Unigram.Services.Keyboard
                 if (backPressed) RaisePointerGoBackGestured();
                 if (forwardPressed) RaisePointerGoForwardGestured();
             }
+        }
+
+        public static bool IsPointerGoBackGesture(PointerPointProperties properties)
+        {
+            // Ignore button chords with the left, right, and middle buttons
+            if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
+                properties.IsMiddleButtonPressed)
+                return false;
+
+            // If back or foward are pressed (but not both) navigate appropriately
+            bool backPressed = properties.IsXButton1Pressed;
+            return backPressed;
         }
 
         public Action PointerGoForwardGestured { get; set; }

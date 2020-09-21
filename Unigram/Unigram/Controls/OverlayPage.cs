@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
+using Unigram.Services.Keyboard;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -48,6 +52,18 @@ namespace Unigram.Controls
 
             //Opened += OnOpened;
             //Closed += OnClosed;
+        }
+
+        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        {
+            if (!IsConstrainedToRootBounds && KeyboardHelper.IsPointerGoBackGesture(e.GetCurrentPoint(this).Properties))
+            {
+                var args = new HandledEventArgs();
+                OnBackRequested(args);
+                e.Handled = args.Handled;
+            }
+
+            base.OnPointerPressed(e);
         }
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
@@ -93,19 +109,6 @@ namespace Unigram.Controls
             TLWindowContext.GetForCurrentView().UpdateTitleBar();
         }
 
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Escape)
-            {
-                Hide();
-                e.Handled = true;
-            }
-            else
-            {
-                base.OnKeyDown(e);
-            }
-        }
-
         public bool IsOpen
         {
             get
@@ -125,6 +128,8 @@ namespace Unigram.Controls
             }
         }
 
+        public bool IsConstrainedToRootBounds => ApiInfo.CanUnconstrainFromBounds ? _popupHost?.IsConstrainedToRootBounds ?? true : true;
+
         public IAsyncOperation<ContentDialogResult> ShowAsync()
         {
             return AsyncInfo.Run(async (token) =>
@@ -141,18 +146,14 @@ namespace Unigram.Controls
                 _result = ContentDialogResult.None;
                 _callback = new TaskCompletionSource<ContentDialogResult>();
 
-                _applicationView = ApplicationView.GetForCurrentView();
-                OnVisibleBoundsChanged(_applicationView, null);
-
-                Padding = new Thickness(0, CoreApplication.GetCurrentView().TitleBar.Height, 0, 0);
-
                 if (_popupHost == null)
                 {
                     _popupHost = new Popup();
                     _popupHost.Child = this;
+                    _popupHost.ShouldConstrainToRootBounds = ApiInfo.CanUnconstrainFromBounds;
                     _popupHost.IsLightDismissEnabled = false;
                     _popupHost.Loading += PopupHost_Loading;
-                    _popupHost.Loaded += PopupHostLoaded;
+                    _popupHost.Loaded += PopupHost_Loaded;
                     _popupHost.Opened += PopupHost_Opened;
                     _popupHost.Closed += PopupHost_Closed;
 
@@ -169,11 +170,45 @@ namespace Unigram.Controls
                 //    await Task.Delay(200);
                 //}
 
+                if (ApiInfo.CanUseWindowManagement && ApiInfo.CanUnconstrainFromBounds)
+                {
+                    var regions = ApplicationView.GetForCurrentView().GetDisplayRegions();
+                    var region = regions.FirstOrDefault();
+                    region.Changed += DisplayRegion_Changed;
+
+                    DisplayRegion_Changed(region, null);
+                }
+                else
+                {
+                    _applicationView = ApplicationView.GetForCurrentView();
+                    OnVisibleBoundsChanged(_applicationView, null);
+
+                    Padding = new Thickness(0, CoreApplication.GetCurrentView().TitleBar.Height, 0, 0);
+                }
+
                 _closing = false;
                 _popupHost.IsOpen = true;
 
                 return await _callback.Task;
             });
+        }
+
+        private void DisplayRegion_Changed(DisplayRegion sender, object args)
+        {
+            var scaleFactor = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+
+            var x = Window.Current.Bounds.X - sender.WorkAreaOffset.X / scaleFactor;
+            var y = Window.Current.Bounds.Y - sender.WorkAreaOffset.Y / scaleFactor;
+
+            var width = sender.WorkAreaSize.Width / scaleFactor;
+            var height = sender.WorkAreaSize.Height / scaleFactor;
+
+            this.Width = width;
+            this.Height = height;
+
+            _popupHost.Margin = new Thickness(-x, -y, 0, 0);
+            _popupHost.Width = width;
+            _popupHost.Height = height;
         }
 
         private void PopupHost_Unloaded(object sender, RoutedEventArgs e)
@@ -183,10 +218,13 @@ namespace Unigram.Controls
 
         private void PopupHost_Loading(FrameworkElement sender, object args)
         {
-            OnVisibleBoundsChanged(_applicationView, null);
+            if (_applicationView != null)
+            {
+                OnVisibleBoundsChanged(_applicationView, null);
+            }
         }
 
-        private void PopupHostLoaded(object sender, RoutedEventArgs e)
+        private void PopupHost_Loaded(object sender, RoutedEventArgs e)
         {
             Focus(FocusState.Programmatic);
         }
@@ -195,12 +233,11 @@ namespace Unigram.Controls
         {
             MaskTitleAndStatusBar();
 
-            //BackButtonVisibility = SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility;
-            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-            //Window.Current.SizeChanged += OnSizeChanged;
-
-            OnVisibleBoundsChanged(_applicationView, null);
+            if (_applicationView != null)
+            {
+                _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
+                OnVisibleBoundsChanged(_applicationView, null);
+            }
         }
 
         private void PopupHost_Closed(object sender, object e)
@@ -209,8 +246,10 @@ namespace Unigram.Controls
 
             //_callback.TrySetResult(_result);
 
-            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
-            _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            if (_applicationView != null)
+            {
+                _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            }
         }
 
         public void OnBackRequested(HandledEventArgs e)
@@ -273,7 +312,10 @@ namespace Unigram.Controls
             Container = (Border)GetTemplateChild("Container");
             BackgroundElement = (Border)GetTemplateChild("BackgroundElement");
 
-            OnVisibleBoundsChanged(_applicationView, null);
+            if (_applicationView != null)
+            {
+                OnVisibleBoundsChanged(_applicationView, null);
+            }
 
             Container.Tapped += Outside_Tapped;
             BackgroundElement.Tapped += Inside_Tapped;
@@ -316,9 +358,12 @@ namespace Unigram.Controls
 
         private void UpdateViewBase()
         {
-            var bounds = _applicationView.VisibleBounds;
-            Width = bounds.Width;
-            Height = bounds.Height;
+            if (_applicationView != null)
+            {
+                var bounds = _applicationView.VisibleBounds;
+                Width = bounds.Width;
+                Height = bounds.Height;
+            }
         }
 
         #region OverlayBrush

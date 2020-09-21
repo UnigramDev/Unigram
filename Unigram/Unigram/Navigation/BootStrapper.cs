@@ -324,19 +324,7 @@ namespace Unigram.Navigation
             {
                 if (popup.Child is INavigablePage page)
                 {
-                    if (key == Windows.System.VirtualKey.Escape)
-                    {
-                        if (popup.Child is INavigatingPage navigating)
-                        {
-                            navigating.OnBackRequesting(args);
-                        }
-
-                        args.Handled = true;
-                    }
-                    else
-                    {
-                        page.OnBackRequested(args);
-                    }
+                    page.OnBackRequested(args);
 
                     if (handled = args.Handled)
                         return;

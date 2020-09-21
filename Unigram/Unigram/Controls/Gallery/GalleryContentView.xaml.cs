@@ -162,8 +162,10 @@ namespace Unigram.Controls.Gallery
                 {
                     _delegate?.OpenFile(item, file);
                 }
-
-                _delegate?.OpenItem(item);
+                else
+                {
+                    _delegate?.OpenItem(item);
+                }
             }
         }
 

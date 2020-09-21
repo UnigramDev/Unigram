@@ -140,13 +140,20 @@ namespace Unigram.Controls.Gallery
 
         public void OpenItem(GalleryContent item)
         {
-            if (Transport.IsVisible)
+            if (IsConstrainedToRootBounds)
             {
-                Transport.Hide();
+                if (Transport.IsVisible)
+                {
+                    Transport.Hide();
+                }
+                else
+                {
+                    Transport.Show();
+                }
             }
             else
             {
-                Transport.Show();
+                OnBackRequested(new HandledEventArgs());
             }
         }
 
@@ -420,6 +427,16 @@ namespace Unigram.Controls.Gallery
                 if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
                 {
                     animation.Configuration = new BasicConnectedAnimationConfiguration();
+                }
+
+                if (!IsConstrainedToRootBounds)
+                {
+                    var customKeyFrameAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    customKeyFrameAnimation.Duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+                    customKeyFrameAnimation.InsertExpressionKeyFrame(0.0f, "1");
+                    customKeyFrameAnimation.InsertExpressionKeyFrame(1.0f, "1");
+
+                    animation.SetAnimationComponent(ConnectedAnimationComponent.CrossFade, customKeyFrameAnimation);
                 }
 
                 _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
@@ -834,9 +851,33 @@ namespace Unigram.Controls.Gallery
             }
         }
 
-        private void ChangeView(int index, bool disableAnimation)
+        private bool ChangeView(int index, bool disableAnimation)
         {
-            ScrollingHost.ChangeView(ActualWidth * index, null, null, disableAnimation);
+            var selected = ViewModel.SelectedIndex;
+            var previous = selected > 0;
+            var next = selected < ViewModel.Items.Count - 1;
+
+            if (previous && index == 0)
+            {
+                ViewModel.SelectedItem = ViewModel.Items[selected - 1];
+                PrepareNext(-1, dispose: true);
+
+                ViewModel.LoadMore();
+
+                return true;
+            }
+            else if (next && index == 2)
+            {
+                ViewModel.SelectedItem = ViewModel.Items[selected + 1];
+                PrepareNext(+1, dispose: true);
+
+                ViewModel.LoadMore();
+
+                return true;
+            }
+
+            return false;
+            //ScrollingHost.ChangeView(ActualWidth * index, null, null, disableAnimation);
         }
 
         private void PrepareNext(int direction, bool initialize = false, bool dispose = false)

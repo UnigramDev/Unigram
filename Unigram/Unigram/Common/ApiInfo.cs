@@ -22,6 +22,12 @@ namespace Unigram.Common
         private static bool? _canUseViewports;
         public static bool CanUseViewports => (_canUseViewports = _canUseViewports ?? ApiInformation.IsEventPresent("Windows.UI.Xaml.FrameworkElement", "EffectiveViewportChanged")) ?? false;
 
+        private static bool? _canUseWindowManagement;
+        public static bool CanUseWindowManagement => (_canUseWindowManagement = _canUseWindowManagement ?? ApiInformation.IsTypePresent("Windows.UI.WindowManagement.DisplayRegion")) ?? false;
+
+        private static bool? _canUnconstrainFromBounds;
+        public static bool CanUnconstrainFromBounds => (_canUnconstrainFromBounds = _canUnconstrainFromBounds ?? ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.Primitives.Popup", "ShouldConstrainToRootBounds")) ?? false;
+
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => (_isMediaSupported = _isMediaSupported ?? NativeUtils.IsMediaSupported()) ?? true;
 
