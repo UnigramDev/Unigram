@@ -150,12 +150,16 @@ namespace Unigram.Controls
                 {
                     _popupHost = new Popup();
                     _popupHost.Child = this;
-                    _popupHost.ShouldConstrainToRootBounds = ApiInfo.CanUnconstrainFromBounds;
                     _popupHost.IsLightDismissEnabled = false;
                     _popupHost.Loading += PopupHost_Loading;
                     _popupHost.Loaded += PopupHost_Loaded;
                     _popupHost.Opened += PopupHost_Opened;
                     _popupHost.Closed += PopupHost_Closed;
+
+                    if (ApiInfo.CanUnconstrainFromBounds)
+                    {
+                        _popupHost.ShouldConstrainToRootBounds = false;
+                    }
 
                     this.Unloaded += PopupHost_Unloaded;
                 }
