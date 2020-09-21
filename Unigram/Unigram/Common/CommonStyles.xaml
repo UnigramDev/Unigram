@@ -2878,7 +2878,7 @@
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding UncheckedGlyph}"/>
+                                Text="{TemplateBinding Glyph}"/>
                         </Grid>
                     </Grid>
                 </ControlTemplate>

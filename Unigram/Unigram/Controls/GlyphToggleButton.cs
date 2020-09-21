@@ -25,16 +25,16 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region UncheckedGlyph
+        #region Glyph
 
-        public string UncheckedGlyph
+        public string Glyph
         {
-            get { return (string)GetValue(UncheckedGlyphProperty); }
-            set { SetValue(UncheckedGlyphProperty, value); }
+            get { return (string)GetValue(GlyphProperty); }
+            set { SetValue(GlyphProperty, value); }
         }
 
-        public static readonly DependencyProperty UncheckedGlyphProperty =
-            DependencyProperty.Register("UncheckedGlyph", typeof(string), typeof(GlyphToggleButton), new PropertyMetadata(null));
+        public static readonly DependencyProperty GlyphProperty =
+            DependencyProperty.Register("Glyph", typeof(string), typeof(GlyphToggleButton), new PropertyMetadata(null));
 
         #endregion
 

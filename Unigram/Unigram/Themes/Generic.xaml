@@ -3379,7 +3379,7 @@
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
-        <Setter Property="UncheckedGlyph" Value="&#xE720;" />
+        <Setter Property="Glyph" Value="&#xE720;" />
         <Setter Property="CheckedGlyph" Value="&#xE612;" />
         <Setter Property="Height" Value="48" />
         <Setter Property="Width" Value="48" />
@@ -3515,7 +3515,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding UncheckedGlyph}"/>
+                                Text="{TemplateBinding Glyph}"/>
                         </Grid>
 
                         <TextBlock
@@ -3649,7 +3649,7 @@
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding UncheckedGlyph}"/>
+                                Text="{TemplateBinding Glyph}"/>
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -4281,7 +4281,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="CheckedGlyph" Value="&#xE700;" />
-        <Setter Property="UncheckedGlyph" Value="&#xE700;" />
+        <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="48" />
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />

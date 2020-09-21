@@ -41,7 +41,7 @@ namespace Unigram.Controls
             _visual2.Scale = new Vector3();
             _visual2.CenterPoint = new Vector3(10);
 
-            _label1.Text = IsChecked == true ? CheckedGlyph : UncheckedGlyph ?? string.Empty;
+            _label1.Text = IsChecked == true ? CheckedGlyph : Glyph ?? string.Empty;
 
             _visual1.Opacity = 1;
             _visual1.Scale = new Vector3(1);
@@ -74,7 +74,7 @@ namespace Unigram.Controls
             visualHide.StartAnimation("Scale", hide1);
             visualHide.StartAnimation("Opacity", hide2);
 
-            labelShow.Text = IsChecked == true ? CheckedGlyph : UncheckedGlyph;
+            labelShow.Text = IsChecked == true ? CheckedGlyph : Glyph;
 
             var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
             show1.InsertKeyFrame(1, new Vector3(1));
@@ -104,16 +104,16 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region UncheckedGlyph
+        #region Glyph
 
-        public string UncheckedGlyph
+        public string Glyph
         {
-            get { return (string)GetValue(UncheckedGlyphProperty); }
-            set { SetValue(UncheckedGlyphProperty, value); }
+            get { return (string)GetValue(GlyphProperty); }
+            set { SetValue(GlyphProperty, value); }
         }
 
-        public static readonly DependencyProperty UncheckedGlyphProperty =
-            DependencyProperty.Register("UncheckedGlyph", typeof(string), typeof(AnimatedGlyphToggleButton), new PropertyMetadata(null));
+        public static readonly DependencyProperty GlyphProperty =
+            DependencyProperty.Register("Glyph", typeof(string), typeof(AnimatedGlyphToggleButton), new PropertyMetadata(null));
 
         #endregion
 

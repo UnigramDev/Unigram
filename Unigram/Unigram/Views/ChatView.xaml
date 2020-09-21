@@ -1144,7 +1144,7 @@
                         <!-- Button to toggle silent mode, channels only -->
                         <controls:AnimatedGlyphToggleButton
                             x:Name="ButtonSilent"
-                            UncheckedGlyph="&#xEA8F;"
+                            Glyph="&#xEA8F;"
                             CheckedGlyph="&#xE7ED;"
                             Command="{x:Bind ViewModel.ToggleSilentCommand}"
                             VerticalAlignment="Bottom"

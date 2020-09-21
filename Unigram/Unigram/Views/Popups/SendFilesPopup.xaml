@@ -167,7 +167,7 @@
                     <controls:GlyphToggleButton
                         x:Name="Mute"
                         Click="Mute_Click"
-                        UncheckedGlyph="&#xE906;"
+                        Glyph="&#xE906;"
                         CheckedGlyph="&#xE906;"
                         CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                         Tag="{x:Bind}"
@@ -180,7 +180,7 @@
                     <controls:GlyphToggleButton
                         x:Name="Crop"
                         Click="Crop_Click" 
-                        UncheckedGlyph="&#xE7A8;"
+                        Glyph="&#xE7A8;"
                         CheckedGlyph="&#xE7A8;"
                         CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                         Tag="{x:Bind}"
@@ -199,7 +199,7 @@
                         Width="40"
                         Height="40"
                         IsChecked="{x:Bind IsSecret, Mode=OneWay}"
-                        UncheckedGlyph="&#xE916;"
+                        Glyph="&#xE916;"
                         CheckedGlyph="&#xE916;"
                         CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                         AutomationProperties.Name="{CustomResource SetTimer}"
@@ -268,7 +268,7 @@
             <controls:GlyphToggleButton
                 x:Name="AlbumButton"
                 CheckedGlyph="&#xE90C;"
-                UncheckedGlyph="&#xE90C;"
+                Glyph="&#xE90C;"
                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                 Click="Album_Click"
                 FontFamily="{StaticResource TelegramThemeFontFamily}"

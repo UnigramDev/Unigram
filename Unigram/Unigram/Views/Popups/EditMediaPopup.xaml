@@ -77,7 +77,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Rotate"
                     Click="Rotate_Click"
-                    UncheckedGlyph="&#xE909;"
+                    Glyph="&#xE909;"
                     CheckedGlyph="&#xE909;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -87,7 +87,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Flip"
                     Click="Flip_Click"
-                    UncheckedGlyph="&#xE908;"
+                    Glyph="&#xE908;"
                     CheckedGlyph="&#xE908;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -104,7 +104,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Proportions"
                     Click="Proportions_Click"
-                    UncheckedGlyph="&#xE90A;"
+                    Glyph="&#xE90A;"
                     CheckedGlyph="&#xE90A;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -134,7 +134,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Brush"
                     Click="Brush_Click"
-                    UncheckedGlyph="&#xEE56;"
+                    Glyph="&#xEE56;"
                     CheckedGlyph="&#xEE56;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     Grid.Column="2"/>
@@ -142,7 +142,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Erase"
                     Click="Erase_Click"
-                    UncheckedGlyph="&#xE75C;"
+                    Glyph="&#xE75C;"
                     CheckedGlyph="&#xE75C;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     Grid.Column="3"/>

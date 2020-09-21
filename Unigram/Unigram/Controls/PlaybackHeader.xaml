@@ -240,7 +240,7 @@
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     AutomationProperties.AccessibilityView="Raw"
-                                    Text="{TemplateBinding UncheckedGlyph}"/>
+                                    Text="{TemplateBinding Glyph}"/>
                             </Grid>
                         </Grid>
                     </ControlTemplate>
@@ -354,7 +354,7 @@
             Click="Rate_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            UncheckedGlyph="&#xEC57;"
+            Glyph="&#xEC57;"
             CheckedGlyph="&#xEC58;"
             FontSize="16"
             Width="40"
@@ -369,7 +369,7 @@
             Click="Repeat_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            UncheckedGlyph="&#xE8EE;"
+            Glyph="&#xE8EE;"
             CheckedGlyph="&#xE8EE;"
             IndeterminateGlyph="&#xE8ED;"
             FontSize="16"
@@ -384,7 +384,7 @@
             Click="Shuffle_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            UncheckedGlyph="&#xE8CB;"
+            Glyph="&#xE8CB;"
             CheckedGlyph="&#xE8CB;"
             FontSize="16"
             Width="40"
@@ -399,7 +399,7 @@
             Click="Shuffle_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            UncheckedGlyph="&#xE8B1;"
+            Glyph="&#xE8B1;"
             CheckedGlyph="&#xE8B1;"
             FontSize="16"
             Width="40"
