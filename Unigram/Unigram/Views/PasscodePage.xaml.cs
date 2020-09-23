@@ -147,7 +147,7 @@ namespace Unigram.Views
                 Biometrics.Visibility = Visibility.Visible;
 
                 var windowContext = TLWindowContext.GetForCurrentView();
-                if (windowContext.ActivationMode != CoreWindowActivationMode.Deactivated)
+                if (windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
                 {
                     var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
                     if (result.Credential != null)
