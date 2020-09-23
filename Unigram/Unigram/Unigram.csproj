@@ -249,6 +249,8 @@
     <Compile Include="Controls\AnimationView.cs" />
     <Compile Include="Controls\BackButton.cs" />
     <Compile Include="Controls\Brushes\TiledBrush.cs" />
+    <Compile Include="Controls\CallHangupButton.cs" />
+    <Compile Include="Controls\CallToggleButton.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>

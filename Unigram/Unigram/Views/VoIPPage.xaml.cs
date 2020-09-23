@@ -442,10 +442,11 @@ namespace Unigram.Views
                         Close.Visibility = Visibility.Collapsed;
                         Close.Margin = new Thickness();
 
-                        Accept.Margin = new Thickness(0, 0, 6, 0);
+                        Accept.IsChecked = false;
+                        Accept.Margin = new Thickness(8, 0, 0, 0);
                         Accept.Visibility = Visibility.Visible;
 
-                        Discard.Margin = new Thickness(6, 0, 0, 0);
+                        Discard.Margin = new Thickness(0, 0, 8, 0);
                         Discard.Visibility = Visibility.Visible;
                     }
                     break;
@@ -455,10 +456,11 @@ namespace Unigram.Views
                         Audio.Visibility = Visibility.Collapsed;
                         Video.Visibility = Visibility.Collapsed;
 
-                        Close.Margin = new Thickness(0, 0, 6, 0);
+                        Close.Margin = new Thickness(8, 0, 0, 0);
                         Close.Visibility = Visibility.Visible;
 
-                        Accept.Margin = new Thickness(6, 0, 0, 0);
+                        Accept.IsChecked = false;
+                        Accept.Margin = new Thickness(0, 0, 8, 0);
                         Accept.Visibility = Visibility.Visible;
 
                         Discard.Visibility = Visibility.Collapsed;
@@ -503,11 +505,12 @@ namespace Unigram.Views
             Close.Visibility = Visibility.Collapsed;
             Close.Margin = new Thickness();
 
-            Accept.Visibility = Visibility.Collapsed;
+            Accept.IsChecked = true;
+            Accept.Visibility = Visibility.Visible;
             Accept.Margin = new Thickness();
 
             Discard.Margin = new Thickness();
-            Discard.Visibility = Visibility.Visible;
+            Discard.Visibility = Visibility.Collapsed;
         }
 
         private void OnStateUpdated(VoipManager sender, VoipState newState)
@@ -681,6 +684,17 @@ namespace Unigram.Views
             {
                 _protoService.Send(new CreateCall(call.UserId, _service.GetProtocol(), false));
             }
+            else if (call.State is CallStateReady)
+            {
+                var relay = 0L;
+                if (_service.Manager != null)
+                {
+                    relay = _service.Manager.GetPreferredRelayId();
+                }
+
+                var duration = _state == VoipState.Established ? DateTime.Now - _service.CallStarted : TimeSpan.Zero;
+                _protoService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
+            }
             else
             {
                 _protoService.Send(new AcceptCall(call.Id, _service.GetProtocol()));
@@ -737,7 +751,7 @@ namespace Unigram.Views
         {
             if (_service.Manager != null)
             {
-                _service.Manager.SetMuteMicrophone(Audio.IsChecked == true);
+                _service.Manager.SetMuteMicrophone(Audio.IsChecked == false);
             }
         }
 
