@@ -429,16 +429,6 @@ namespace Unigram.Controls.Gallery
                     animation.Configuration = new BasicConnectedAnimationConfiguration();
                 }
 
-                if (!IsConstrainedToRootBounds)
-                {
-                    var customKeyFrameAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                    customKeyFrameAnimation.Duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
-                    customKeyFrameAnimation.InsertExpressionKeyFrame(0.0f, "1");
-                    customKeyFrameAnimation.InsertExpressionKeyFrame(1.0f, "1");
-
-                    animation.SetAnimationComponent(ConnectedAnimationComponent.CrossFade, customKeyFrameAnimation);
-                }
-
                 _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
 
                 if (animation.TryStart(image.Presenter))
