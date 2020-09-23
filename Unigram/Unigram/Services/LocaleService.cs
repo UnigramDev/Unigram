@@ -16,6 +16,8 @@ namespace Unigram.Services
     {
         Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh);
 
+        string Language { get; }
+
         string GetString(string key);
         string GetString(string key, int quantity);
     }
@@ -51,6 +53,8 @@ namespace Unigram.Services
 
         private static ILocaleService _current;
         public static ILocaleService Current => _current ??= new LocaleService();
+
+        public string Language => _languageCode;
 
         public async Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh)
         {
