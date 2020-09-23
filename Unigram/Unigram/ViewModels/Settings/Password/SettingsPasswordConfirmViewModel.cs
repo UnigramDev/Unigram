@@ -69,6 +69,10 @@ namespace Unigram.ViewModels.Settings.Password
         private async void SendExecute()
         {
             var code = _code;
+            if (string.IsNullOrEmpty(code))
+            {
+                return;
+            }
 
             var response = await ProtoService.SendAsync(new CheckRecoveryEmailAddressCode(code));
             if (response is PasswordState passwordState)
