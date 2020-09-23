@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Telegram.Td.Api;
+using Unigram.Native;
 using Unigram.Services;
 
 namespace Unigram.Common
@@ -29,10 +30,13 @@ namespace Unigram.Common
             var monthEngl = new string[12];
             var monthInLocal = new string[12];
 
+            var cultureEngl = new CultureInfo("en");
+            var cultureInLocal = new CultureInfo(NativeUtils.GetCurrentCulture());
+
             for (int i = 1; i <= 12; i++)
             {
-                monthEngl[i - 1] = new CultureInfo("en").DateTimeFormat.GetMonthName(i).ToLower();
-                monthInLocal[i - 1] = new CultureInfo(LocaleService.Current.Language).DateTimeFormat.GetMonthName(i).ToLower();
+                monthEngl[i - 1] = cultureEngl.DateTimeFormat.GetMonthName(i).ToLower();
+                monthInLocal[i - 1] = cultureInLocal.DateTimeFormat.GetMonthName(i).ToLower();
             }
 
             var split = query.ToLower().Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -57,7 +61,7 @@ namespace Unigram.Common
 
             foreach (var format in _formats)
             {
-                if (TryParseExact(text, format.Key, out DateTime result))
+                if (TryParseExact(text, format.Key, cultureEngl, cultureInLocal, out DateTime result))
                 {
                     DateTime start = result.Date;
                     DateTime end = result.Date;
@@ -91,14 +95,14 @@ namespace Unigram.Common
             return results;
         }
 
-        static bool TryParseExact(string text, string format, out DateTime result)
+        static bool TryParseExact(string text, string format, CultureInfo cultureEngl, CultureInfo cultureInLocal, out DateTime result)
         {
-            if (DateTime.TryParseExact(text, format, new CultureInfo("en"), DateTimeStyles.None, out result))
+            if (DateTime.TryParseExact(text, format, cultureEngl, DateTimeStyles.None, out result))
             {
                 return true;
             }
 
-            return DateTime.TryParseExact(text, format, new CultureInfo("it"), DateTimeStyles.None, out result);
+            return DateTime.TryParseExact(text, format, cultureInLocal, DateTimeStyles.None, out result);
         }
     }
 }
