@@ -118,6 +118,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\Animations\ChatArchivedAnimation.cs" />
+    <Compile Include="Assets\Animations\SwitchThemeAnimation.cs" />
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />
@@ -457,6 +458,7 @@
       <DependentUpon>StickerPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\StorageChart.cs" />
+    <Compile Include="Controls\SwitchThemeButton.cs" />
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
