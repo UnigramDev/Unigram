@@ -169,6 +169,7 @@
     <Compile Include="Common\Colors.cs" />
     <Compile Include="Common\ColorsHelper.cs" />
     <Compile Include="Common\ConcurrentQueueWorker.cs" />
+    <Compile Include="Common\DateTimeParser.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
     <Compile Include="Common\Expressions\CompositionExtensions.cs" />
