@@ -10,13 +10,13 @@ namespace Unigram.Controls
 {
     public class AnimatedGlyphToggleButton : ToggleButton
     {
-        private TextBlock _label1;
-        private TextBlock _label2;
+        private FrameworkElement _label1;
+        private FrameworkElement _label2;
 
         private Visual _visual1;
         private Visual _visual2;
 
-        private TextBlock _label;
+        private FrameworkElement _label;
         private Visual _visual;
 
         public AnimatedGlyphToggleButton()
@@ -29,19 +29,33 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _label1 = _label = GetTemplateChild("ContentPresenter1") as TextBlock;
-            _label2 = GetTemplateChild("ContentPresenter2") as TextBlock;
+            _label1 = _label = GetTemplateChild("ContentPresenter1") as FrameworkElement;
+            _label2 = GetTemplateChild("ContentPresenter2") as FrameworkElement;
 
             _visual1 = _visual = ElementCompositionPreview.GetElementVisual(_label1);
             _visual2 = ElementCompositionPreview.GetElementVisual(_label2);
 
-            _label2.Text = string.Empty;
+            if (_label2 is TextBlock text2)
+            {
+                text2.Text = string.Empty;
+            }
+            else if (_label2 is ContentPresenter presenter2)
+            {
+                presenter2.Content = new object();
+            }
 
             _visual2.Opacity = 0;
             _visual2.Scale = new Vector3();
             _visual2.CenterPoint = new Vector3(10);
 
-            _label1.Text = IsChecked == true ? CheckedGlyph : Glyph ?? string.Empty;
+            if (_label1 is TextBlock text1)
+            {
+                text1.Text = IsChecked == true ? CheckedGlyph : Glyph ?? string.Empty;
+            }
+            else if (_label1 is ContentPresenter presenter1)
+            {
+                presenter1.Content = IsChecked == true ? CheckedContent : Content ?? new object();
+            }
 
             _visual1.Opacity = 1;
             _visual1.Scale = new Vector3(1);
@@ -56,6 +70,9 @@ namespace Unigram.Controls
             {
                 return;
             }
+
+            _visual1.CenterPoint = new Vector3((float)_label1.ActualWidth / 2f, (float)_label1.ActualHeight / 2f, 0);
+            _visual2.CenterPoint = new Vector3((float)_label2.ActualWidth / 2f, (float)_label2.ActualHeight / 2f, 0);
 
             var visualShow = _visual == _visual1 ? _visual2 : _visual1;
             var visualHide = _visual == _visual1 ? _visual1 : _visual2;
@@ -74,7 +91,14 @@ namespace Unigram.Controls
             visualHide.StartAnimation("Scale", hide1);
             visualHide.StartAnimation("Opacity", hide2);
 
-            labelShow.Text = IsChecked == true ? CheckedGlyph : Glyph;
+            if (labelShow is TextBlock textShow)
+            {
+                textShow.Text = IsChecked == true ? CheckedGlyph : Glyph;
+            }
+            else if (labelShow is ContentPresenter presenterShow)
+            {
+                presenterShow.Content = IsChecked == true ? CheckedContent : Content;
+            }
 
             var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
             show1.InsertKeyFrame(1, new Vector3(1));
@@ -90,6 +114,19 @@ namespace Unigram.Controls
             _visual = visualShow;
             _label = labelShow;
         }
+
+        #region CheckedContent
+
+        public object CheckedContent
+        {
+            get { return (object)GetValue(CheckedContentProperty); }
+            set { SetValue(CheckedContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty CheckedContentProperty =
+            DependencyProperty.Register("CheckedContent", typeof(object), typeof(AnimatedGlyphToggleButton), new PropertyMetadata(null));
+
+        #endregion
 
         #region CheckedGlyph
 
