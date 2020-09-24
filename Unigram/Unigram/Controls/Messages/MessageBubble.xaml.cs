@@ -1268,6 +1268,10 @@ namespace Unigram.Controls.Messages
                 var diff = width - rect.Right;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
                 {
+                    // Sometimes rect.Right is slightly higher than width, because of layout rounding.
+                    // This, in some (not so) rare conditions causes a layout cycle.
+                    width = Math.Max(width, rect.Right);
+
                     if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right /*&& !_placeholderVertical*/)
                     {
                         Message.Margin = new Thickness(0, 0, footerWidth, 0);
