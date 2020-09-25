@@ -1740,7 +1740,7 @@ namespace Unigram.Views
 
             var search = ElementCompositionPreview.GetElementVisual(SearchField);
             var chats = ElementCompositionPreview.GetElementVisual(DialogsPanel);
-            var panel = ElementCompositionPreview.GetElementVisual(DialogsSearchListView);
+            var panel = ElementCompositionPreview.GetElementVisual(DialogsSearchPanel);
 
             chats.CenterPoint = panel.CenterPoint = new Vector3((float)DialogsPanel.ActualWidth / 2, (float)DialogsPanel.ActualHeight / 2, 0);
 
@@ -1820,7 +1820,7 @@ namespace Unigram.Views
             {
                 DialogsPanel.Visibility = Visibility.Collapsed;
 
-                if (string.IsNullOrEmpty(SearchField.Text))
+                if (ViewModel.Chats.SearchFilters.IsEmpty() && string.IsNullOrEmpty(SearchField.Text))
                 {
                     var top = ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ProtoService, new TopChatCategoryUsers(), 30);
                     await top.LoadMoreItemsAsync(0);
@@ -1830,7 +1830,7 @@ namespace Unigram.Views
                     ViewModel.Chats.TopChats = null;
                 }
 
-                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, FolderPanel.Visibility == Visibility.Collapsed ? null : new ChatListArchive());
+                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, FolderPanel.Visibility == Visibility.Collapsed ? null : new ChatListArchive());
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
             }
@@ -1869,6 +1869,7 @@ namespace Unigram.Views
             ContactsPanel.Visibility = Visibility.Visible;
             SettingsView.Visibility = Visibility.Visible;
 
+            ViewModel.Chats.SearchFilters.Clear();
             ViewModel.Chats.TopChats = null;
             ViewModel.Chats.Search = null;
             ViewModel.Contacts.Search = null;
@@ -2994,6 +2995,40 @@ namespace Unigram.Views
                 MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage))
             {
                 MasterDetail.NavigationService.GoBackAt(0);
+            }
+        }
+
+        private void SearchFilters_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.Item is ISearchChatsFilter filter)
+            {
+                var content = args.ItemContainer.ContentTemplateRoot as StackPanel;
+                if (content == null)
+                {
+                    return;
+                }
+
+                var glyph = content.Children[0] as TextBlock;
+                glyph.Text = filter.Glyph ?? string.Empty;
+
+                var title = content.Children[1] as TextBlock;
+                title.Text = filter.Text ?? string.Empty;
+            }
+        }
+
+        private async void SearchFilters_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is ISearchChatsFilter filter)
+            {
+                ViewModel.Chats.SearchFilters.Add(filter);
+                SearchField.Text = string.Empty;
+
+                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, FolderPanel.Visibility == Visibility.Collapsed ? null : new ChatListArchive());
+                await items.LoadMoreItemsAsync(0);
+                await items.LoadMoreItemsAsync(1);
+                await items.LoadMoreItemsAsync(2);
+                await items.LoadMoreItemsAsync(3);
+                await items.LoadMoreItemsAsync(4);
             }
         }
     }

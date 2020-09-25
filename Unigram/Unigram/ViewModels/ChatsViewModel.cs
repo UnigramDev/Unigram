@@ -34,6 +34,8 @@ namespace Unigram.ViewModels
 
             Items = new ItemsCollection(protoService, aggregator, this, chatList);
 
+            SearchFilters = new MvxObservableCollection<ISearchChatsFilter>();
+
             ChatPinCommand = new RelayCommand<Chat>(ChatPinExecute);
             ChatArchiveCommand = new RelayCommand<Chat>(ChatArchiveExecute);
             ChatMarkCommand = new RelayCommand<Chat>(ChatMarkExecute);
@@ -157,6 +159,8 @@ namespace Unigram.ViewModels
                 Set(ref _search, value);
             }
         }
+
+        public MvxObservableCollection<ISearchChatsFilter> SearchFilters { get; private set; }
 
         private TopChatsCollection _topChats;
         public TopChatsCollection TopChats

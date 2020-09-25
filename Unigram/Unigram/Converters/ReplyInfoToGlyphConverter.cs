@@ -112,6 +112,8 @@ namespace Unigram.Converters
 
         public const string Camera = "\uE722";
         public const string Photo = "\uEB9F";
+        public const string Music = "\uE7F6";
+        public const string Microphone = "\uE720";
 
         public const string Statistics = "\uE9D9";
 

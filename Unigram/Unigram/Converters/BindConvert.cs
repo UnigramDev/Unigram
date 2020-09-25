@@ -36,6 +36,8 @@ namespace Unigram.Converters
         public DateTimeFormatter MonthFullYear { get; private set; }
         public DateTimeFormatter DayMonthFull { get; private set; }
         public DateTimeFormatter DayMonthFullYear { get; private set; }
+        public DateTimeFormatter MonthAbbreviatedYear { get; private set; }
+        public DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
 
         private BindConvert()
         {
@@ -54,6 +56,8 @@ namespace Unigram.Converters
             MonthFullYear = new DateTimeFormatter("month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             DayMonthFull = new DateTimeFormatter("day month.full", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            MonthAbbreviatedYear = new DateTimeFormatter("month.abbreviated year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            DayMonthAbbreviatedYear = new DateTimeFormatter("day month.abbreviated year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
         }
 
         public static string MonthGrouping(DateTime date)
