@@ -29,6 +29,8 @@ namespace Unigram.Controls
         private int _lastHide;
 
         private ApplicationView _applicationView;
+        private DisplayRegion _displayRegion;
+
         private Popup _popupHost;
 
         private bool _closing;
@@ -130,6 +132,31 @@ namespace Unigram.Controls
 
         public bool IsConstrainedToRootBounds => ApiInfo.CanUnconstrainFromBounds ? _popupHost?.IsConstrainedToRootBounds ?? true : true;
 
+        public bool CanUnconstrainFromRootBounds
+        {
+            get
+            {
+                if (ApiInfo.CanUseWindowManagement && ApiInfo.CanUnconstrainFromBounds)
+                {
+                    if (_displayRegion != null)
+                    {
+                        return true;
+                    }
+
+                    var regions = ApplicationView.GetForCurrentView().GetDisplayRegions();
+
+                    var region = regions.FirstOrDefault(x => x.WindowingEnvironment.Kind != WindowingEnvironmentKind.Unknown);
+                    if (region != null && region.WorkAreaSize.Width > 0 && region.WorkAreaSize.Height > 0)
+                    {
+                        _displayRegion = region;
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
         public IAsyncOperation<ContentDialogResult> ShowAsync()
         {
             return AsyncInfo.Run(async (token) =>
@@ -156,7 +183,7 @@ namespace Unigram.Controls
                     _popupHost.Opened += PopupHost_Opened;
                     _popupHost.Closed += PopupHost_Closed;
 
-                    if (ApiInfo.CanUnconstrainFromBounds)
+                    if (CanUnconstrainFromRootBounds)
                     {
                         _popupHost.ShouldConstrainToRootBounds = false;
                     }
@@ -174,12 +201,9 @@ namespace Unigram.Controls
                 //    await Task.Delay(200);
                 //}
 
-                if (ApiInfo.CanUseWindowManagement && ApiInfo.CanUnconstrainFromBounds)
+                if (CanUnconstrainFromRootBounds && _displayRegion is DisplayRegion region)
                 {
-                    var regions = ApplicationView.GetForCurrentView().GetDisplayRegions();
-                    var region = regions.FirstOrDefault();
                     region.Changed += DisplayRegion_Changed;
-
                     DisplayRegion_Changed(region, null);
                 }
                 else
