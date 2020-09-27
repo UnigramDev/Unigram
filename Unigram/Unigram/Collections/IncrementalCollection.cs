@@ -88,7 +88,7 @@ namespace Unigram.Collections
                 var result = await LoadDataAsync();
                 var oldCount = Count;
                 Merge(result);
-                HasMoreItems = Count > 0 && (/*Count > oldCount ||*/ GetHasMoreItems());
+                HasMoreItems = /*Count > 0 &&*/ (/*Count > oldCount ||*/ GetHasMoreItems());
 
                 return new LoadMoreItemsResult { Count = (uint)result.Count };
             });

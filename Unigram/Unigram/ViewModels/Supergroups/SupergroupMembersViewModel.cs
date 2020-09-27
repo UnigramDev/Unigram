@@ -71,7 +71,7 @@ namespace Unigram.ViewModels.Supergroups
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
-                Members = new ChatMemberGroupedCollection(ProtoService, supergroup.SupergroupId, !IsEmbedded);
+                Members = new ChatMemberGroupedCollection(ProtoService, supergroup.SupergroupId, !IsEmbedded && !supergroup.IsChannel);
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
