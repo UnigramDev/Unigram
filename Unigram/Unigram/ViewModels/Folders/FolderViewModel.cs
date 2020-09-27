@@ -252,7 +252,7 @@ namespace Unigram.ViewModels.Folders
         private async void SendExecute()
         {
             var response = await SendAsync();
-            if (response is Ok)
+            if (response is ChatFilterInfo)
             {
                 NavigationService.GoBack();
             }
