@@ -82,12 +82,6 @@ namespace Unigram.Common
             set => _popupPanel.DownloadFile = value;
         }
 
-        public Func<int, Task<BaseObject>> GetEmojisAsync
-        {
-            get => _popupPanel.GetEmojisAsync;
-            set => _popupPanel.GetEmojisAsync = value;
-        }
-
         public Action Opening { get; set; }
         public Action Closing { get; set; }
 
