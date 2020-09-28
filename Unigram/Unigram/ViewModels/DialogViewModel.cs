@@ -134,7 +134,6 @@ namespace Unigram.ViewModels
             SwitchCommand = new RelayCommand<string>(SwitchExecute);
             SetTimerCommand = new RelayCommand(SetTimerExecute);
             ActionCommand = new RelayCommand(ActionExecute);
-            DiscussCommand = new RelayCommand(DiscussExecute);
             OpenMessageCommand = new RelayCommand<Message>(OpenMessageExecute);
             ScheduledCommand = new RelayCommand(ScheduledExecute);
 
@@ -3204,31 +3203,6 @@ namespace Unigram.ViewModels
                         ChatDeleteExecute();
                     }
                 }
-            }
-        }
-
-        #endregion
-
-        #region Linked chat
-
-        public RelayCommand DiscussCommand { get; }
-        private void DiscussExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var full = CacheService.GetSupergroupFull(chat);
-            if (full == null)
-            {
-                return;
-            }
-
-            if (full.LinkedChatId != 0)
-            {
-                NavigationService.NavigateToChat(full.LinkedChatId);
             }
         }
 

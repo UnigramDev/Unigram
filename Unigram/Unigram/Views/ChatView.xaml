@@ -1249,44 +1249,12 @@
         </ContentControl>
 
         <Grid x:Name="ChatFooter" Margin="12,0,12,8" CornerRadius="15" Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition x:Name="DiscussColumn"/>
-            </Grid.ColumnDefinitions>
-
             <chats:ChatBottomButton
                 x:Name="ButtonAction"
                 Command="{x:Bind ViewModel.ActionCommand}"
                 Height="{StaticResource TelegramToolBarHeight}">
                 <Button.Content>
                     <TextBlock x:Name="LabelAction" TextWrapping="Wrap" TextAlignment="Center"/>
-                </Button.Content>
-            </chats:ChatBottomButton>
-
-            <chats:ChatBottomButton
-                x:Name="DiscussButton"
-                Command="{x:Bind ViewModel.DiscussCommand}"
-                Height="{StaticResource TelegramToolBarHeight}"
-                Grid.Column="1">
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{CustomResource ChannelDiscuss}" TextWrapping="Wrap" TextAlignment="Center"/>
-                        
-                        <Border
-                            x:Name="DiscussBadge"
-                            Background="{ThemeResource ChatUnreadBadgeBrush}"
-                            MinWidth="20"
-                            Height="20"
-                            CornerRadius="10"
-                            Margin="8,0,0,0"
-                            Visibility="Collapsed">
-                            <TextBlock x:Name="DiscussBadgeLabel"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                               TextAlignment="Center"
-                               Margin="6,2,6,0"/>
-                        </Border>
-                    </StackPanel>
                 </Button.Content>
             </chats:ChatBottomButton>
         </Grid>

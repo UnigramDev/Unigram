@@ -72,6 +72,7 @@ namespace Unigram.ViewModels
             CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
             CopyUsernameLinkCommand = new RelayCommand(CopyUsernameLinkExecute);
             AddCommand = new RelayCommand(AddExecute);
+            DiscussCommand = new RelayCommand(DiscussExecute);
             EditCommand = new RelayCommand(EditExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
             ShareCommand = new RelayCommand(ShareExecute);
@@ -355,6 +356,16 @@ namespace Unigram.ViewModels
             if (chat == null)
             {
                 return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup)
+            {
+                var fullInfo = CacheService.GetSupergroupFull(chat);
+                if (fullInfo != null && fullInfo.LinkedChatId != 0)
+                {
+                    NavigationService.NavigateToChat(fullInfo.LinkedChatId);
+                    return;
+                }
             }
 
             NavigationService.NavigateToChat(chat);
@@ -845,6 +856,27 @@ namespace Unigram.ViewModels
             else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
                 AddExecute();
+            }
+        }
+
+        public RelayCommand DiscussCommand { get; }
+        private void DiscussExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup)
+            {
+                var fullInfo = CacheService.GetSupergroupFull(chat);
+                if (fullInfo == null)
+                {
+                    return;
+                }
+
+                NavigationService.NavigateToChat(fullInfo.LinkedChatId);
             }
         }
 

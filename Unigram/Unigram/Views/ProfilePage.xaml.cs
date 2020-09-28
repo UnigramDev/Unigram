@@ -597,6 +597,10 @@ namespace Unigram.Views
                         flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.LeaveMegaMenu, new FontIcon { Glyph = Icons.Delete });
                     }
                 }
+                else if (supergroup.HasLinkedChat)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.DiscussCommand, Strings.Resources.ViewDiscussion, new FontIcon { Glyph = Icons.Message });
+                }
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
             {
