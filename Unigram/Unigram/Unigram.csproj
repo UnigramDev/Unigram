@@ -1597,15 +1597,6 @@
     <Content Include="Assets\Fonts\SEGMDL2.TTF" />
     <Content Include="Assets\Emoji\apple.ttf" />
     <Content Include="Assets\Animations\SendingGrams.tgs" />
-    <Content Include="Assets\Animations\WalletCreated.tgs" />
-    <Content Include="Assets\Animations\WalletEmpty.tgs" />
-    <Content Include="Assets\Animations\WalletIntroLoading.tgs" />
-    <Content Include="Assets\Animations\WalletIntroStatic.tgs" />
-    <Content Include="Assets\Animations\WalletKeyLock.tgs" />
-    <Content Include="Assets\Animations\WalletWordCheck.tgs" />
-    <Content Include="Assets\Animations\WalletWordList.tgs" />
-    <Content Include="Assets\Animations\WalletDone.tgs" />
-    <Content Include="Assets\Animations\WalletNotAvailable.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupDone.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupHint.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupIntro.tgs" />
@@ -1616,9 +1607,6 @@
     <Content Include="Assets\Animations\TwoFactorSetupMonkeyTracking.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupMonkeyCloseAndPeek.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupMonkeyCloseAndPeekToIdle.tgs" />
-    <Content Include="Assets\Animations\WalletApologiesAccepted.tgs" />
-    <Content Include="Assets\Animations\WalletInitializing.tgs" />
-    <Content Include="Assets\Animations\WalletSynchronization.tgs" />
     <Content Include="Assets\Animations\Compass.tgs" />
     <Content Include="Assets\Animations\ChatListFolders.tgs" />
     <PRIResource Include="Strings\uk\Additional.resw">
@@ -1768,6 +1756,7 @@
     <PRIResource Include="Strings\uz\Resources.resw" />
     <Content Include="Assets\Animations\ChatListNewFolder.tgs" />
     <PRIResource Include="Strings\be\Resources.resw" />
+    <Content Include="Assets\Animations\DiscussionGroupSetup.tgs" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
