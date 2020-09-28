@@ -530,8 +530,8 @@ namespace Unigram.Views
             UpdateTextAreaRadius();
 
             TextField.IsReplaceEmojiEnabled = ViewModel.Settings.IsReplaceEmojiEnabled;
-            TextField.IsTextPredictionEnabled = SettingsService.Current.AutocorrectWords;
-            TextField.IsSpellCheckEnabled = SettingsService.Current.HighlightWords;
+            TextField.IsTextPredictionEnabled = !SettingsService.Current.DisableHighlightWords;
+            TextField.IsSpellCheckEnabled = !SettingsService.Current.DisableHighlightWords;
             TextField.Focus(FocusState.Programmatic);
 
             Options.Visibility = ViewModel.Type == DialogType.Normal

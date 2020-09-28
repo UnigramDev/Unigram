@@ -59,8 +59,8 @@ namespace Unigram.Services
 
         DistanceUnits DistanceUnits { get; set; }
 
-        bool AutocorrectWords { get; set; }
-        bool HighlightWords { get; set; }
+        bool FullScreenGallery { get; set; }
+        bool DisableHighlightWords { get; set; }
 
         bool IsStreamingEnabled { get; set; }
         double VolumeLevel { get; set; }
@@ -590,37 +590,37 @@ namespace Unigram.Services
             }
         }
 
-        private static bool? _autocorrectWords;
-        public bool AutocorrectWords
+        private static bool? _fullScreenGallery;
+        public bool FullScreenGallery
         {
             get
             {
-                if (_autocorrectWords == null)
-                    _autocorrectWords = GetValueOrDefault(_local, "AutocorrectWords", true);
+                if (_fullScreenGallery == null)
+                    _fullScreenGallery = GetValueOrDefault(_local, "FullScreenGallery", true);
 
-                return _autocorrectWords ?? true;
+                return _fullScreenGallery ?? true;
             }
             set
             {
-                _autocorrectWords = value;
-                AddOrUpdateValue(_local, "AutocorrectWords", value);
+                _fullScreenGallery = value;
+                AddOrUpdateValue(_local, "FullScreenGallery", value);
             }
         }
 
-        private static bool? _highlightWords;
-        public bool HighlightWords
+        private static bool? _disableHighlightWords;
+        public bool DisableHighlightWords
         {
             get
             {
-                if (_highlightWords == null)
-                    _highlightWords = GetValueOrDefault(_local, "HighlightWords", true);
+                if (_disableHighlightWords == null)
+                    _disableHighlightWords = GetValueOrDefault(_local, "DisableHighlightWords", false);
 
-                return _highlightWords ?? true;
+                return _disableHighlightWords ?? false;
             }
             set
             {
-                _highlightWords = value;
-                AddOrUpdateValue(_local, "HighlightWords", value);
+                _disableHighlightWords = value;
+                AddOrUpdateValue(_local, "DisableHighlightWords", value);
             }
         }
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
+using Unigram.Services;
 using Unigram.Services.Keyboard;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
@@ -136,7 +137,7 @@ namespace Unigram.Controls
         {
             get
             {
-                if (ApiInfo.CanUseWindowManagement && ApiInfo.CanUnconstrainFromBounds)
+                if (ApiInfo.CanUseWindowManagement && ApiInfo.CanUnconstrainFromBounds && SettingsService.Current.FullScreenGallery)
                 {
                     if (_displayRegion != null)
                     {

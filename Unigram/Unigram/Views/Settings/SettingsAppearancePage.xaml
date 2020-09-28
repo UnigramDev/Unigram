@@ -512,12 +512,12 @@
                 <controls:HeaderedControl
                     Header="{CustomResource Settings}">
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.AutocorrectWords, Mode=TwoWay}"
-                        Header="Autocorrect mispelled words"
+                        IsOn="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
+                        Header="Enable full-screen gallery"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.HighlightWords, Mode=TwoWay}"
-                        Header="Highlight mispelled words"
+                        IsOn="{x:Bind ViewModel.DisableHighlightWords, Mode=TwoWay}"
+                        Header="Disable mispelled words highlight"
                         Style="{StaticResource CheckButtonStyle}"/>
 
                     <ToggleSwitch
