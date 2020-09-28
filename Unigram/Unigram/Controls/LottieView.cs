@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using Unigram.Common;
 using Windows.Foundation;
+using Windows.Graphics;
 using Windows.Graphics.DirectX;
 using Windows.Storage;
 using Windows.UI.Composition;
@@ -50,6 +51,8 @@ namespace Unigram.Controls
 
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
+
+        private SizeInt32 _frameSize =new SizeInt32 { Width = 256, Height = 256 };
 
         private LoopThread _thread;
         private LoopThread _threadUI;
@@ -158,7 +161,7 @@ namespace Unigram.Controls
             }
 
             _device = sender;
-            _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, 256, 256, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+            _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
@@ -246,28 +249,28 @@ namespace Unigram.Controls
                         _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
                     }
                 }
-
-                return;
-            }
-
-            if (index + framesPerUpdate < _animationTotalFrame)
-            {
-                PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animationTotalFrame)));
-
-                _index += framesPerUpdate;
             }
             else
             {
-                _index = 0;
-
-                if (!_isLoopingEnabled)
+                if (index + framesPerUpdate < _animationTotalFrame)
                 {
-                    //sender.Paused = true;
-                    //sender.ResetElapsedTime();
-                    _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
-                }
+                    PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animationTotalFrame)));
 
-                PositionChanged?.Invoke(this, 1);
+                    _index += framesPerUpdate;
+                }
+                else
+                {
+                    _index = 0;
+
+                    if (!_isLoopingEnabled)
+                    {
+                        //sender.Paused = true;
+                        //sender.ResetElapsedTime();
+                        _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                    }
+
+                    PositionChanged?.Invoke(this, 1);
+                }
             }
         }
 
@@ -466,6 +469,24 @@ namespace Unigram.Controls
         private static void OnCachingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d)._isCachingEnabled = (bool)e.NewValue;
+        }
+
+        #endregion
+
+        #region FrameSize
+
+        public SizeInt32 FrameSize
+        {
+            get { return (SizeInt32)GetValue(FrameSizeProperty); }
+            set { SetValue(FrameSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty FrameSizeProperty =
+            DependencyProperty.Register("FrameSize", typeof(SizeInt32), typeof(LottieView), new PropertyMetadata(new SizeInt32 { Width = 256, Height = 256 }, OnFrameSizeChanged));
+
+        private static void OnFrameSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._frameSize = (SizeInt32)e.NewValue;
         }
 
         #endregion

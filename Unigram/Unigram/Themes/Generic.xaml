@@ -3944,7 +3944,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <microsoft:AnimatedVisualPlayer
+                        <local:LottieView
                             x:Name="ContentPresenter"
                             AutoPlay="False"
                             Margin="{TemplateBinding Padding}"

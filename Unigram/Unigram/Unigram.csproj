@@ -118,7 +118,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assets\Animations\ChatArchivedAnimation.cs" />
-    <Compile Include="Assets\Animations\SwitchThemeAnimation.cs" />
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />
@@ -1761,6 +1760,7 @@
     <Content Include="Assets\Animations\ChatListNewFolder.tgs" />
     <PRIResource Include="Strings\be\Resources.resw" />
     <Content Include="Assets\Animations\DiscussionGroupSetup.tgs" />
+    <Content Include="Assets\Animations\Sun.tgs" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

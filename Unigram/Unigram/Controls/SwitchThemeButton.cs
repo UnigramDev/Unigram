@@ -1,13 +1,12 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using System;
-using Unigram.Assets.Animations;
+﻿using System;
+using Windows.Graphics;
 using Windows.UI.Xaml;
 
 namespace Unigram.Controls
 {
     public class SwitchThemeButton : SimpleButton
     {
-        private AnimatedVisualPlayer _player;
+        private LottieView _player;
 
         public SwitchThemeButton()
         {
@@ -17,15 +16,18 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _player = GetTemplateChild("ContentPresenter") as AnimatedVisualPlayer;
-            _player.Source = new SwitchThemeAnimation();
-            _player.SetProgress(ActualTheme == ElementTheme.Light ? 1 : 0);
+            _player = GetTemplateChild("ContentPresenter") as LottieView;
+            _player.IsLoopingEnabled = false;
+            _player.IsCachingEnabled = false;
+            _player.FrameSize = new SizeInt32 { Width = 40, Height = 40 };
+            _player.Source = new Uri("ms-appx:///Assets/Animations/Sun.tgs");
+            _player.SetPosition(ActualTheme == ElementTheme.Dark ? 1 : 0);
         }
 
-        private async void OnActualThemeChanged(FrameworkElement sender, object args)
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            _player.PlaybackRate = ActualTheme == ElementTheme.Light ? 1 : -1;
-            await _player.PlayAsync(0, 1, false);
+            _player.SetPosition(ActualTheme != ElementTheme.Dark ? 1 : 0);
+            _player.Play(ActualTheme != ElementTheme.Dark);
         }
     }
 }
