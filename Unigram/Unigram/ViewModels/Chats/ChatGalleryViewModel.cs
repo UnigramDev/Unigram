@@ -10,7 +10,9 @@ namespace Unigram.ViewModels.Chats
     public class ChatGalleryViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+
         private readonly long _chatId;
+        private readonly long _threadId;
 
         private readonly SearchMessagesFilter _filter;
 
@@ -18,13 +20,15 @@ namespace Unigram.ViewModels.Chats
 
         private readonly MvxObservableCollection<GalleryContent> _group;
 
-        public ChatGalleryViewModel(IProtoService protoService, IEventAggregator aggregator, long chatId, Message selected, bool mirrored = false)
+        public ChatGalleryViewModel(IProtoService protoService, IEventAggregator aggregator, long chatId, long threadId, Message selected, bool mirrored = false)
             : base(protoService, aggregator)
         {
             _isMirrored = mirrored;
 
             _group = new MvxObservableCollection<GalleryContent>();
+
             _chatId = chatId;
+            _threadId = threadId;
 
             if (selected.Content is MessageAnimation)
             {
@@ -62,7 +66,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, _filter));
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -111,7 +115,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 20;
                 var offset = _isMirrored ? -limit : 0;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, _filter));
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -148,7 +152,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 20;
                 var offset = _isMirrored ? 0 : -limit;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, _filter));
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, fromMessageId, offset, limit, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;

@@ -10,13 +10,21 @@ namespace Unigram.Common.Chats
         private readonly Chat _chat;
         private readonly double _delay;
 
+        private long _threadId;
+
         private DateTime? _lastTypingTime;
 
-        public OutputChatActionManager(IProtoService protoService, Chat chat, double delay = 5.0)
+        public OutputChatActionManager(IProtoService protoService, Chat chat, long threadId  = 0, double delay = 5.0)
         {
             _chat = chat;
+            _threadId = threadId;
             _delay = delay;
             _protoService = protoService;
+        }
+
+        public void SetThreadId(long threadId)
+        {
+            _threadId = threadId;
         }
 
         public void SetTyping(ChatAction action)
@@ -38,7 +46,7 @@ namespace Unigram.Common.Chats
             }
 
             _lastTypingTime = DateTime.Now;
-            _protoService.Send(new SendChatAction(chat.Id, action));
+            _protoService.Send(new SendChatAction(chat.Id, _threadId, action));
         }
 
         public void CancelTyping()
@@ -55,7 +63,7 @@ namespace Unigram.Common.Chats
             }
 
             _lastTypingTime = null;
-            _protoService.Send(new SendChatAction(chat.Id, new ChatActionCancel()));
+            _protoService.Send(new SendChatAction(chat.Id, _threadId, new ChatActionCancel()));
         }
     }
 }

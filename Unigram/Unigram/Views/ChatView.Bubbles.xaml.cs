@@ -46,7 +46,7 @@ namespace Unigram.Views
                 Arrow.Visibility = Visibility.Collapsed;
                 //VisualUtilities.SetIsVisible(Arrow, false);
             }
-            else if (ViewModel.Type == DialogType.Normal)
+            else if (ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread)
             {
                 Arrow.Visibility = Visibility.Visible;
                 //VisualUtilities.SetIsVisible(Arrow, true);
@@ -105,7 +105,7 @@ namespace Unigram.Views
 
             if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
-                ViewModel.ProtoService.Send(new ViewMessages(chat.Id, messages, false));
+                ViewModel.ProtoService.Send(new ViewMessages(chat.Id, ViewModel.ThreadId, messages, false));
             }
 
             if (animations.Count > 0 && !intermediate)
@@ -342,7 +342,7 @@ namespace Unigram.Views
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
                     {
-                        viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, message.Get());
+                        viewModel = new ChatGalleryViewModel(ViewModel.ProtoService, ViewModel.Aggregator, message.ChatId, ViewModel.ThreadId, message.Get());
                     }
                     else
                     {

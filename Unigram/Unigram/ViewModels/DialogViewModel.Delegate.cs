@@ -536,7 +536,7 @@ namespace Unigram.ViewModels
                 {
                     if ((message.Content is MessageAnimation || message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
                     {
-                        viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
+                        viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, _threadId, message.Get());
                     }
                     else
                     {

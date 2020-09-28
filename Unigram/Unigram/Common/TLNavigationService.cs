@@ -68,7 +68,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
+        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
         {
             if (chat == null)
             {
@@ -112,7 +112,7 @@ namespace Unigram.Common
                 }
             }
 
-            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && !scheduled)
+            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled)
             {
                 if (message != null)
                 {
@@ -148,30 +148,46 @@ namespace Unigram.Common
 
                 //Frame.Navigated += handler;
 
-                if (message != null || accessToken != null)
+                state = state ?? new Dictionary<string, object>();
+
+                if (message != null)
                 {
-                    state = state ?? new Dictionary<string, object>();
+                    state["message_id"] = message.Value;
+                }
 
-                    if (message != null)
-                    {
-                        state["message_id"] = message.Value;
-                    }
-
-                    if (accessToken != null)
-                    {
-                        state["access_token"] = accessToken;
-                    }
+                if (accessToken != null)
+                {
+                    state["access_token"] = accessToken;
                 }
 
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift && !ctrl)
                 {
-                    await OpenAsync(scheduled ? typeof(ChatScheduledPage) : typeof(ChatPage), chat.Id);
+                    Type target;
+                    object parameter;
+
+                    if (thread != null)
+                    {
+                        target = typeof(ChatThreadPage);
+                        parameter = $"{chat.Id};{thread}";
+                    }
+                    else if (scheduled)
+                    {
+                        target = typeof(ChatScheduledPage);
+                        parameter = chat.Id;
+                    }
+                    else
+                    {
+                        target = typeof(ChatPage);
+                        parameter = chat.Id;
+                    }
+
+                    await OpenAsync(target, parameter);
                 }
                 else
                 {
-                    if (Frame.Content is ChatPage chatPage && !scheduled && !force)
+                    if (Frame.Content is ChatPage chatPage && thread == null && !scheduled && !force)
                     {
                         chatPage.ViewModel.OnNavigatingFrom(null);
 
@@ -179,19 +195,38 @@ namespace Unigram.Common
                         chatPage.Activate();
                         chatPage.ViewModel.NavigationService = this;
                         chatPage.ViewModel.Dispatcher = Dispatcher;
-                        await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, new Dictionary<string, object>());
+                        await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
 
                         FrameFacade.RaiseNavigated(chat.Id);
                     }
                     else
                     {
-                        Navigate(scheduled ? typeof(ChatScheduledPage) : typeof(ChatPage), chat.Id, state);
+                        Type target;
+                        object parameter;
+
+                        if (thread != null)
+                        {
+                            target = typeof(ChatThreadPage);
+                            parameter = $"{chat.Id};{thread}";
+                        }
+                        else if (scheduled)
+                        {
+                            target = typeof(ChatScheduledPage);
+                            parameter = chat.Id;
+                        }
+                        else
+                        {
+                            target = typeof(ChatPage);
+                            parameter = chat.Id;
+                        }
+
+                        Navigate(target, parameter, state);
                     }
                 }
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
+        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
@@ -204,7 +239,7 @@ namespace Unigram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, accessToken, state, scheduled, force);
+            NavigateToChat(chat, message, thread, accessToken, state, scheduled, force);
         }
 
         public async void NavigateToPasscode()

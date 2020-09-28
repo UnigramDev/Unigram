@@ -257,14 +257,17 @@ namespace Unigram.Collections
                     var range = _internal.FirstOrDefault(x => x is SearchChatsFilterDateRange) as SearchChatsFilterDateRange;
                     var chat = _internal.FirstOrDefault(x => x is SearchChatsFilterChat) as SearchChatsFilterChat;
 
+                    var minDate = range?.StartDate ?? 0;
+                    var maxDate = range?.EndDate ?? 0;
+
                     Function function;
                     if (chat != null)
                     {
-                        function = new SearchChatMessages(chat.Id, _query, 0, 0, 0, 100, content?.Filter);
+                        function = new SearchChatMessages(chat.Id, _query, 0, 0, 0, 100, content?.Filter, 0);
                     }
                     else
                     {
-                        function = new SearchMessages(_chatList, _query, int.MaxValue, 0, 0, 100);
+                        function = new SearchMessages(_chatList, _query, int.MaxValue, 0, 0, 100, content?.Filter, minDate, maxDate);
                     }
 
                     var response = await _protoService.SendAsync(function);

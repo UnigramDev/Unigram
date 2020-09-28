@@ -263,7 +263,7 @@ namespace Unigram.Services
 
             await _protoService.SendAsync(new OpenChat(chat.Id));
 
-            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#update", 0, 0, 0, 100, new SearchMessagesFilterDocument())) as Messages;
+            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#update", 0, 0, 0, 100, new SearchMessagesFilterDocument(), 0)) as Messages;
             if (response == null)
             {
                 _protoService.Send(new CloseChat(chat.Id));

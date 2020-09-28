@@ -53,7 +53,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, 0, offset, limit, new SearchMessagesFilterChatPhoto()));
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
                 if (response is Telegram.Td.Api.Messages messages)
                 {
                     TotalItems = messages.TotalCount;

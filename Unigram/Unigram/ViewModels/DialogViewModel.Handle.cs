@@ -383,7 +383,7 @@ namespace Unigram.ViewModels
                 return message.SchedulingState != null;
             }
 
-            return message.SchedulingState == null && _type == DialogType.Normal;
+            return message.SchedulingState == null && _type == DialogType.History;
         }
 
         public void Handle(UpdateNewMessage update)

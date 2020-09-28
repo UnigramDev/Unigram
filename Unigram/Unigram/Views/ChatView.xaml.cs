@@ -534,7 +534,7 @@ namespace Unigram.Views
             TextField.IsSpellCheckEnabled = !SettingsService.Current.DisableHighlightWords;
             TextField.Focus(FocusState.Programmatic);
 
-            Options.Visibility = ViewModel.Type == DialogType.Normal
+            Options.Visibility = ViewModel.Type == DialogType.History
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -1888,7 +1888,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (ViewModel.Type != DialogType.Normal)
+            if (ViewModel.Type != DialogType.History)
             {
                 return;
             }
@@ -1909,7 +1909,7 @@ namespace Unigram.Views
             }
         }
 
-        private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private async void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
 
@@ -1980,6 +1980,12 @@ namespace Unigram.Views
                 }
             }
 
+            var response = await ViewModel.ProtoService.SendAsync(new GetMessage(message.ChatId, message.Id));
+            if (response is Message)
+            {
+                message = ViewModel.Create(response as Message);
+            }
+
             if (message.SendingState is MessageSendingStateFailed || message.SendingState is MessageSendingStatePending)
             {
                 if (message.SendingState is MessageSendingStateFailed)
@@ -1999,6 +2005,7 @@ namespace Unigram.Views
                 // Generic
                 flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });
                 flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.Thread, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
 
                 flyout.CreateFlyoutSeparator();
 
@@ -2079,7 +2086,7 @@ namespace Unigram.Views
 
         private bool MessageReply_Loaded(MessageViewModel message)
         {
-            if (message.SchedulingState != null || ViewModel.Type != DialogType.Normal)
+            if (message.SchedulingState != null || (ViewModel.Type != DialogType.History && ViewModel.Type != DialogType.Thread))
             {
                 return false;
             }
@@ -2103,7 +2110,7 @@ namespace Unigram.Views
 
         private bool MessagePin_Loaded(MessageViewModel message)
         {
-            if (message.SchedulingState != null || ViewModel.Type != DialogType.Normal || message.IsService())
+            if (message.SchedulingState != null || ViewModel.Type != DialogType.History || message.IsService())
             {
                 return false;
             }
@@ -2147,6 +2154,11 @@ namespace Unigram.Views
             return message.CanBeEdited;
         }
 
+        private bool MessageThread_Loaded(MessageViewModel message)
+        {
+            return message.CanGetReplies && !message.IsChannelPost;
+        }
+
         private bool MessageDelete_Loaded(MessageViewModel message)
         {
             return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers;
@@ -2159,7 +2171,7 @@ namespace Unigram.Views
 
         private bool MessageUnvotePoll_Loaded(MessageViewModel message)
         {
-            if (ViewModel.Type == DialogType.Normal && message.Content is MessagePoll poll && poll.Poll.Type is PollTypeRegular)
+            if ((ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread) && message.Content is MessagePoll poll && poll.Poll.Type is PollTypeRegular)
             {
                 return poll.Poll.Options.Any(x => x.IsChosen) && !poll.Poll.IsClosed;
             }
@@ -2248,7 +2260,7 @@ namespace Unigram.Views
             {
                 //var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                 //return !string.IsNullOrEmpty(supergroup.Username);
-                return ViewModel.Type == DialogType.Normal;
+                return ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread;
             }
 
             return false;
@@ -3073,7 +3085,7 @@ namespace Unigram.Views
 
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
 
-            ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.Normal ? Visibility.Visible : Visibility.Collapsed;
+            ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.History ? Visibility.Visible : Visibility.Collapsed;
             ButtonTimer.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.IsChecked = chat.DefaultDisableNotification;
@@ -3109,7 +3121,7 @@ namespace Unigram.Views
 
         public void UpdateChatHasScheduledMessages(Chat chat)
         {
-            ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.Normal ? Visibility.Visible : Visibility.Collapsed;
+            ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.History ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateChatActionBar(Chat chat)
@@ -3261,7 +3273,7 @@ namespace Unigram.Views
 
         public void UpdateChatUnreadMentionCount(Chat chat, int count)
         {
-            if (ViewModel.Type == DialogType.Normal && count > 0)
+            if (ViewModel.Type == DialogType.History && count > 0)
             {
                 MentionsPanel.Visibility = Visibility.Visible;
                 Mentions.Text = count.ToString();

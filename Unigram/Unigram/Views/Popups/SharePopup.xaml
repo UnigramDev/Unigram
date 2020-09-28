@@ -54,7 +54,6 @@
                         <MenuFlyout x:Name="MenuFlyout">
                             <ToggleMenuFlyoutItem Text="Send as copy" IsChecked="{x:Bind ViewModel.SendAsCopy, Mode=TwoWay}"/>
                             <ToggleMenuFlyoutItem Text="Remove captions in copies" IsChecked="{x:Bind ViewModel.RemoveCaptions, Mode=TwoWay}"/>
-                            <ToggleMenuFlyoutItem Text="Send as album" IsChecked="{x:Bind ViewModel.SendAsAlbum, Mode=TwoWay}"/>
                         </MenuFlyout>
                     </controls:GlyphButton.Flyout>
                 </controls:GlyphButton>

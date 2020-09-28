@@ -13,17 +13,19 @@ namespace Unigram.Collections
         private readonly IProtoService _protoService;
 
         private readonly long _chatId;
+        private readonly long _threadId;
         private readonly string _query;
         private readonly int _senderUserId;
         private readonly long _fromMessageId;
 
         private readonly SearchMessagesFilter _filter;
 
-        public SearchChatMessagesCollection(IProtoService protoService, long chatId, string query, int senderUserId, long fromMessageId, SearchMessagesFilter filter)
+        public SearchChatMessagesCollection(IProtoService protoService, long chatId, long threadId, string query, int senderUserId, long fromMessageId, SearchMessagesFilter filter)
         {
             _protoService = protoService;
 
             _chatId = chatId;
+            _threadId = threadId;
             _query = query;
             _senderUserId = senderUserId;
             _fromMessageId = fromMessageId;
@@ -48,7 +50,7 @@ namespace Unigram.Collections
                     offset = 0;
                 }
 
-                var response = await _protoService.SendAsync(new SearchChatMessages(_chatId, _query, _senderUserId, fromMessageId, offset, (int)count, _filter));
+                var response = await _protoService.SendAsync(new SearchChatMessages(_chatId, _query, _senderUserId, fromMessageId, offset, (int)count, _filter, _threadId));
                 if (response is Messages messages)
                 {
                     TotalCount = messages.TotalCount;

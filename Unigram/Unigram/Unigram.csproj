@@ -493,6 +493,7 @@
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
+    <Compile Include="ViewModels\DialogThreadViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
@@ -502,6 +503,9 @@
     </Compile>
     <Compile Include="Views\Chats\ChatSharedMediaView.xaml.cs">
       <DependentUpon>ChatSharedMediaView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatThreadPage.xaml.cs">
+      <DependentUpon>ChatThreadPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
@@ -2032,6 +2036,10 @@
     <Page Include="Views\Chats\ChatSharedMediaView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatThreadPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\SelectColorPopup.xaml">
       <SubType>Designer</SubType>

@@ -99,7 +99,7 @@ namespace Unigram.Services
             }
 
             Monitor.Exit(_chatList);
-            return new Chats(result);
+            return new Chats(0, result);
         }
 
         private struct OrderedChat : IComparable<OrderedChat>

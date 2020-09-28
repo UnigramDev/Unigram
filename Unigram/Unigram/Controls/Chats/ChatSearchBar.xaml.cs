@@ -45,9 +45,10 @@ namespace Unigram.Controls.Chats
 
             if (viewModel != null)
             {
-                SearchPrevious.Visibility = viewModel.Dialog.Type != DialogType.Normal ? Visibility.Collapsed : Visibility.Visible;
-                SearchNext.Visibility = viewModel.Dialog.Type != DialogType.Normal ? Visibility.Collapsed : Visibility.Visible;
-                ToolsPanel.Visibility = viewModel.Dialog.Type != DialogType.Normal ? Visibility.Collapsed : Visibility.Visible;
+                var history = viewModel.Dialog.Type != DialogType.History && viewModel.Dialog.Type != DialogType.Thread;
+                SearchPrevious.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
+                SearchNext.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
+                ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
             }
 
             ShowHide(viewModel != null);
@@ -279,7 +280,8 @@ namespace Unigram.Controls.Chats
                     ViewModel.Autocomplete = null;
                     break;
                 default:
-                    ToolsPanel.Visibility = ViewModel.Dialog.Type != DialogType.Normal ? Visibility.Collapsed : Visibility.Visible;
+                    var history = ViewModel.Dialog.Type != DialogType.History && ViewModel.Dialog.Type != DialogType.Thread;
+                    ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                     ViewModel.Autocomplete = null;
                     break;
             }
