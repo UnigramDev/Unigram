@@ -1,0 +1,17 @@
+import "Unigram.Native.Calls.idl";
+
+namespace Unigram.Native.Calls
+{
+    [default_interface]
+    runtimeclass VoipVideoCapture : Windows.Foundation.IClosable
+    {
+        VoipVideoCapture(String id);
+
+        void SwitchToDevice(String deviceId);
+        void SetState(VoipVideoState state);
+        void SetPreferredAspectRatio(Single aspectRatio);
+        void SetOutput(Windows.UI.Xaml.UIElement canvas);
+
+        void FeedBytes(Windows.Graphics.Imaging.SoftwareBitmap bitmap);
+    }
+} // namespace Unigram.Native.Calls

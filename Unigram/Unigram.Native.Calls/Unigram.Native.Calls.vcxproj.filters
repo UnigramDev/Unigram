@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="VoipServer.cpp" />
+    <ClCompile Include="SignalingDataEmittedEventArgs.cpp" />
+    <ClCompile Include="VoipManager.cpp" />
+    <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp" />
+    <ClCompile Include="VoipDescriptor.cpp" />
+    <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\DesktopInterface.cpp">
+      <Filter>tgcalls\platform\tdesktop</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\CodecSelectHelper.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\CryptoHelper.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\EncryptedConnection.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\Instance.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\InstanceImpl.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\reference\InstanceImplReference.cpp">
+      <Filter>tgcalls\reference</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\LogSinkImpl.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\Manager.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\MediaManager.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\Message.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\NetworkManager.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\ThreadLocalObject.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.cpp">
+      <Filter>tgcalls\platform\tdesktop</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\VideoCaptureInterface.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\VideoCaptureInterfaceImpl.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.cpp">
+      <Filter>tgcalls\platform\tdesktop</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.cpp">
+      <Filter>tgcalls\platform\tdesktop</Filter>
+    </ClCompile>
+    <ClCompile Include="VoipVideoCapture.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="VoipServer.h" />
+    <ClInclude Include="SignalingDataEmittedEventArgs.h" />
+    <ClInclude Include="VoipManager.h" />
+    <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h" />
+    <ClInclude Include="VoipDescriptor.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\DesktopInterface.h">
+      <Filter>tgcalls\platform\tdesktop</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\CodecSelectHelper.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\CryptoHelper.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\EncryptedConnection.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\Instance.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\InstanceImpl.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\reference\InstanceImplReference.h">
+      <Filter>tgcalls\reference</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\LogSinkImpl.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\Manager.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\MediaManager.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\Message.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\NetworkManager.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\PlatformContext.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\ThreadLocalObject.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.h">
+      <Filter>tgcalls\platform\tdesktop</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterface.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterfaceImpl.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\VideoCapturerInterface.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.h">
+      <Filter>tgcalls\platform\tdesktop</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\Stats.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.h">
+      <Filter>tgcalls\platform\tdesktop</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\PlatformInterface.h">
+      <Filter>tgcalls\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="VoipVideoCapture.h" />
+    <ClInclude Include="VoipVideoRenderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VoipManager.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="Unigram.Native.Calls.idl" />
+    <Midl Include="VoipServer.idl" />
+    <Midl Include="VoipVideoCapture.idl" />
+    <Midl Include="VoipDescriptor.idl" />
+    <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />
+    <Midl Include="SignalingDataEmittedEventArgs.idl" />
+    <Midl Include="VoipManager.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format" />
+    <None Include="packages.config" />
+    <None Include="PropertySheet.props" />
+    <None Include="VoipManager.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="tgcalls">
+      <UniqueIdentifier>{31575539-48de-4331-9d2a-a81bfb48d4b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\reference">
+      <UniqueIdentifier>{af6df8d7-572c-4870-9a95-a57e13536cdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\platform">
+      <UniqueIdentifier>{ed094891-5317-4064-8558-0596ddb40580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\platform\tdesktop">
+      <UniqueIdentifier>{e2fd9230-7dfa-417e-827c-ed7ae5504134}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

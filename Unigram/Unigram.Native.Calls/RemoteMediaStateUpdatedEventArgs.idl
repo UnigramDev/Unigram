@@ -1,0 +1,11 @@
+import "Unigram.Native.Calls.idl";
+
+namespace Unigram.Native.Calls
+{
+    [default_interface]
+    runtimeclass RemoteMediaStateUpdatedEventArgs
+    {
+        VoipAudioState Audio{ get; };
+        VoipVideoState Video{ get; };
+    }
+} // namespace Unigram.Native.Calls

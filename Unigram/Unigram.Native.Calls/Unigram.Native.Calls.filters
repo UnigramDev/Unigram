@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>accd3aa8-1ba0-4223-9bbe-0c431709210b</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{926ab91d-31b4-48c3-b9a4-e681349f27f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{5527a8eb-3a5d-4949-a7a6-7ddfd6204ec3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="test\test_video_capturer.cc">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="test\vcm_capturer.cc">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="Simple.VideoConferencing.AppRtc.cpp" />
+    <ClCompile Include="Simple.VideoConferencing.AppRtcControl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="test\test_video_capturer.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="test\vcm_capturer.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="Simple.VideoConferencing.AppRtc.h" />
+    <ClInclude Include="Simple.VideoConferencing.AppRtcControl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Microsoft.WinRTC.Simple.VideoConferencing.AppRtc.def" />
+    <None Include="packages.config" />
+    <None Include=".clang-format" />
+    <None Include="Simple.VideoConferencing.AppRtc.targets" />
+    <None Include="Simple.VideoConferencing.AppRtc.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Microsoft.WinRTC.Simple.VideoConferencing.AppRtc.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="Simple.VideoConferencing.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Simple.VideoConferencing.AppRtcControl.xaml" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,31 @@
+namespace Unigram.Native.Calls
+{
+    enum VoipDataSaving {
+        Never,
+        Mobile,
+        Always
+    };
+
+    enum VoipState
+    {
+        WaitInit = 0,
+        WaitInitAck = 1,
+        Established = 2,
+        Failed = 3,
+        Reconnecting = 4
+    };
+
+    enum VoipAudioState
+    {
+        Muted = 0,
+        Active = 1,
+    };
+
+    enum VoipVideoState
+    {
+        Inactive = 0,
+        Paused = 1,
+        Active = 2,
+    };
+} // namespace Unigram.Native.Calls
+
