@@ -1443,6 +1443,10 @@ namespace Unigram.Services
             {
 
             }
+            else if (update is UpdateMessageInteractionInfo updateMessageInteractionInfo)
+            {
+                
+            }
             else if (update is UpdateMessageMentionRead updateMessageMentionRead)
             {
                 if (_chats.TryGetValue(updateMessageMentionRead.ChatId, out Chat value))
@@ -1459,10 +1463,6 @@ namespace Unigram.Services
 
             }
             else if (update is UpdateMessageSendSucceeded updateMessageSendSucceeded)
-            {
-
-            }
-            else if (update is UpdateMessageViews updateMessageViews)
             {
 
             }

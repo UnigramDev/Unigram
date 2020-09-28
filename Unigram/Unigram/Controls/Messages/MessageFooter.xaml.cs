@@ -35,7 +35,7 @@ namespace Unigram.Controls.Messages
             ConvertState(message);
             ConvertDate(message);
             ConvertEdited(message);
-            ConvertViews(message);
+            //ConvertInteractionInfo(message);
         }
 
         public void UpdateMessageState(MessageViewModel message)
@@ -48,9 +48,9 @@ namespace Unigram.Controls.Messages
             ConvertEdited(message);
         }
 
-        public void UpdateMessageViews(MessageViewModel message)
+        public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
-            ConvertViews(message);
+            ConvertInteractionInfo(message);
         }
 
         public void ConvertDate(MessageViewModel message)
@@ -75,26 +75,38 @@ namespace Unigram.Controls.Messages
             StateLabel.Text = outgoing ? "\u00A0\u00A0\uE601" : string.Empty;
         }
 
-        public void ConvertViews(MessageViewModel message)
+        public void ConvertInteractionInfo(MessageViewModel message)
         {
-            var number = string.Empty;
-            if (message.Views > 0)
+            if (message.InteractionInfo?.ReplyCount > 0 && !message.IsChannelPost)
             {
-                number = BindConvert.ShortNumber(Math.Max(message.Views, 1));
-                number += "   ";
+                RepliesGlyph.Text = "\uE93E\u00A0\u00A0";
+                RepliesLabel.Text = $"{message.InteractionInfo.ReplyCount}   ";
+            }
+            else
+            {
+                RepliesGlyph.Text = string.Empty;
+                RepliesLabel.Text = string.Empty;
+            }
+
+            var views = string.Empty;
+
+            if (message.InteractionInfo?.ViewCount > 0)
+            {
+                views = BindConvert.ShortNumber(message.InteractionInfo.ViewCount);
+                views += "   ";
             }
 
             if (message.IsChannelPost && !string.IsNullOrEmpty(message.AuthorSignature))
             {
-                number += $"{message.AuthorSignature}, ";
+                views += $"{message.AuthorSignature}, ";
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
             {
-                number += $"{forwardedPost.AuthorSignature}, ";
+                views += $"{forwardedPost.AuthorSignature}, ";
             }
 
-            ViewsGlyph.Text = message.Views > 0 ? "\uE607\u00A0\u00A0" : string.Empty;
-            ViewsLabel.Text = number;
+            ViewsGlyph.Text = message.InteractionInfo?.ViewCount > 0 ? "\uE607\u00A0\u00A0" : string.Empty;
+            ViewsLabel.Text = views;
         }
 
         private void ConvertEdited(MessageViewModel message)

@@ -68,6 +68,7 @@ namespace Unigram.Controls.Messages
                 UpdateMessageHeader(message);
                 UpdateMessageReply(message);
                 UpdateMessageContent(message);
+                UpdateMessageInteractionInfo(message);
 
                 Footer.UpdateMessage(message);
                 Markup.Update(message, message.ReplyMarkup);
@@ -598,9 +599,9 @@ namespace Unigram.Controls.Messages
             Markup.Update(message, message.ReplyMarkup);
         }
 
-        public void UpdateMessageViews(MessageViewModel message)
+        public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
-            Footer.UpdateMessageViews(message);
+            Footer.UpdateMessageInteractionInfo(message);
         }
 
         public void UpdateMessageContentOpened(MessageViewModel message)

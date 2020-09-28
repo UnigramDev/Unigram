@@ -33,7 +33,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateMessageContentOpened>,
         IHandle<UpdateMessageMentionRead>,
         IHandle<UpdateMessageEdited>,
-        IHandle<UpdateMessageViews>,
+        IHandle<UpdateMessageInteractionInfo>,
         IHandle<UpdateMessageSendFailed>,
         IHandle<UpdateMessageSendSucceeded>,
 
@@ -582,14 +582,14 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void Handle(UpdateMessageViews update)
+        public void Handle(UpdateMessageInteractionInfo update)
         {
             if (update.ChatId == _chat?.Id)
             {
                 Handle(update.MessageId, message =>
                 {
-                    message.Views = update.Views;
-                }, (bubble, message) => bubble.UpdateMessageViews(message));
+                    message.InteractionInfo = update.InteractionInfo;
+                }, (bubble, message) => bubble.UpdateMessageInteractionInfo(message));
             }
         }
 
