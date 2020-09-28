@@ -49,6 +49,7 @@ namespace Unigram.Controls.Gallery
         private Grid _surface;
 
         private Visual _layer;
+        private Visual _bottom;
 
         private bool _wasFullScreen;
 
@@ -57,7 +58,10 @@ namespace Unigram.Controls.Gallery
             InitializeComponent();
 
             _layer = ElementCompositionPreview.GetElementVisual(Layer);
+            _bottom = ElementCompositionPreview.GetElementVisual(BottomPanel);
+
             _layer.Opacity = 0;
+            _bottom.Opacity = 0;
 
             _mediaPlayerElement = new MediaPlayerElement { Style = Resources["TransportLessMediaPlayerStyle"] as Style };
             _mediaPlayerElement.AreTransportControlsEnabled = true;
@@ -384,6 +388,7 @@ namespace Unigram.Controls.Gallery
             }
 
             _layer.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
+            _bottom.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
 
             if (Transport.IsVisible)
             {
@@ -430,6 +435,7 @@ namespace Unigram.Controls.Gallery
                 }
 
                 _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
+                _bottom.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
 
                 if (animation.TryStart(image.Presenter))
                 {
@@ -1214,6 +1220,7 @@ namespace Unigram.Controls.Gallery
                 }
 
                 _layer.Opacity = opacity;
+                _bottom.Opacity = opacity;
             }
 
             _layout.Offset = offset;
@@ -1259,6 +1266,7 @@ namespace Unigram.Controls.Gallery
                 if (direction != 0)
                 {
                     _layer.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
+                    _bottom.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
 
                     if (Transport.IsVisible)
                     {
@@ -1273,6 +1281,7 @@ namespace Unigram.Controls.Gallery
                 else
                 {
                     _layer.StartAnimation("Opacity", CreateScalarAnimation(_layer.Opacity, 1));
+                    _bottom.StartAnimation("Opacity", CreateScalarAnimation(_bottom.Opacity, 1));
                 }
 
                 _layout.StartAnimation("Offset.Y", animation);

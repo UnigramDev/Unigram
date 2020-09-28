@@ -40,144 +40,128 @@
         </Style>
     </Control.Resources>
 
-    <local:GalleryTransportControls x:Name="Transport" Switch="Transport_Switch" RequestedTheme="Dark">
-        <local:GalleryTransportControls.Content>
-            <Grid>
-                <Border x:Name="Layer" Margin="0,-32,0,0" Background="#EB222222"/>
-                <local:GalleryContentView x:Name="Preview" Loaded="Preview_ImageOpened"/>
+    <Grid RequestedTheme="Dark">
+        <local:GalleryTransportControls x:Name="Transport" Switch="Transport_Switch">
+        </local:GalleryTransportControls>
 
-                <ScrollViewer x:Name="ScrollingHost"
-                              VerticalScrollMode="Disabled"
-                              VerticalScrollBarVisibility="Disabled"
-                              HorizontalScrollMode="Auto"
-                              HorizontalScrollBarVisibility="Hidden"
-                              HorizontalSnapPointsType="MandatorySingle"
-                              HorizontalSnapPointsAlignment="Near"
-                              HorizontalContentAlignment="Center"
-                              ViewChanged="ScrollingHost_ViewChanged"
-                              Opacity="0">
-                    <local:GalleryPanel x:Name="LayoutRoot" HorizontalSnapPointsChanged="LayoutRoot_HorizontalSnapPointsChanged">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <!--<Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>-->
+        <Grid>
+            <Border x:Name="Layer" Margin="0,-32,0,0" Background="#EB222222"/>
+            <local:GalleryContentView x:Name="Preview" Loaded="Preview_ImageOpened"/>
 
-                        <local:GalleryContentView x:Name="Element2" ContextRequested="ImageView_ContextRequested"/>
-                        <local:GalleryContentView x:Name="Element0" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
-                        <local:GalleryContentView x:Name="Element1" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
-                    </local:GalleryPanel>
-                </ScrollViewer>
-            </Grid>
-        </local:GalleryTransportControls.Content>
-        <local:GalleryTransportControls.Header>
-            <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
-                <controls:GlyphButton
-                    Glyph="&#xE8BB;"
-                    Click="BackButton_Click"
-                    Height="{ThemeResource AppBarThemeCompactHeight}"
-                    AutomationProperties.Name="{CustomResource AccDescrGoBack}"
-                    ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"/>
+            <ScrollViewer x:Name="ScrollingHost"
+                            VerticalScrollMode="Disabled"
+                            VerticalScrollBarVisibility="Disabled"
+                            HorizontalScrollMode="Auto"
+                            HorizontalScrollBarVisibility="Hidden"
+                            HorizontalSnapPointsType="MandatorySingle"
+                            HorizontalSnapPointsAlignment="Near"
+                            HorizontalContentAlignment="Center"
+                            ViewChanged="ScrollingHost_ViewChanged"
+                            Opacity="0">
+                <local:GalleryPanel x:Name="LayoutRoot" HorizontalSnapPointsChanged="LayoutRoot_HorizontalSnapPointsChanged">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <!--<Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>-->
 
-            </Grid>
-        </local:GalleryTransportControls.Header>
-        <local:GalleryTransportControls.Footer>
-            <Grid x:Name="BotBar">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                    <local:GalleryContentView x:Name="Element2" ContextRequested="ImageView_ContextRequested"/>
+                    <local:GalleryContentView x:Name="Element0" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
+                    <local:GalleryContentView x:Name="Element1" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
+                </local:GalleryPanel>
+            </ScrollViewer>
+        </Grid>
+        <controls:GlyphButton
+            Glyph="&#xE8BB;"
+            Click="BackButton_Click"
+            Height="{ThemeResource AppBarThemeCompactHeight}"
+            AutomationProperties.Name="{CustomResource AccDescrGoBack}"
+            ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"/>
 
-                <TextBlock
-                    x:Name="Caption"
-                    Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    TextTrimming="CharacterEllipsis"
-                    MaxLines="5"
-                    Margin="12,8"
-                    Grid.ColumnSpan="3"/>
+        <local:GalleryBottomPanel x:Name="BottomPanel">
+            <Border x:Name="Details" Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2">
+                <StackPanel Padding="12,0,0,0">
+                    <TextBlock
+                        Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource BaseTextBlockStyle}"
+                        Grid.ColumnSpan="4"/>
 
-                <Border Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2"/>
-
-                <Border x:Name="Details" Height="{ThemeResource TelegramToolBarHeight}" Grid.Row="2">
-                    <StackPanel Padding="12,0,0,0">
+                    <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock
-                            Text="{x:Bind ConvertOf(ViewModel.Position, ViewModel.TotalItems), Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                            Style="{StaticResource BaseTextBlockStyle}"
-                            Grid.ColumnSpan="4"/>
-
-                        <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock
-                                Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}"
-                                TextWrapping="NoWrap"
-                                TextTrimming="CharacterEllipsis"
-                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                Style="{StaticResource BodyTextBlockStyle}"/>
-                            <TextBlock
-                                Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}"
-                                Style="{StaticResource DisabledCaptionTextBlockStyle}"
-                                VerticalAlignment="Bottom"
-                                Margin="8,0,0,0"/>
-                        </StackPanel>
+                            Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}"
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            Style="{StaticResource BodyTextBlockStyle}"/>
+                        <TextBlock
+                            Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}"
+                            Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                            VerticalAlignment="Bottom"
+                            Margin="8,0,0,0"/>
                     </StackPanel>
-                </Border>
+                </StackPanel>
+            </Border>
 
+            <StackPanel Orientation="Horizontal">
                 <controls:GlyphButton
                     Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.CanShare, Mode=OneWay}"
                     Click="{x:Bind ViewModel.SelectedItem.Share, Mode=OneWay}"
-                    Glyph="&#xE72D;"
-                    Grid.Column="1"
-                    Grid.Row="2"/>
+                    Glyph="&#xE72D;"/>
 
                 <controls:GlyphButton
                     Command="{x:Bind ViewModel.StickersCommand}"
                     Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
                     Height="{ThemeResource AppBarThemeCompactHeight}"
                     Glyph="&#xF4AA;"
-                    FontSize="{StaticResource GlyphButtonFontSize}"
-                    Grid.Column="2"
-                    Grid.Row="2"/>
+                    FontSize="{StaticResource GlyphButtonFontSize}"/>
+                
                 <controls:GlyphButton
                     Click="Compact_Click"
                     Visibility="{x:Bind ConvertCompactVisibility(ViewModel.SelectedItem), Mode=OneWay}"
                     Height="{ThemeResource AppBarThemeCompactHeight}"
                     FontFamily="ms-appx:///Assets/Fonts/SegMVR2.ttf#Segoe MVR MDL2 Assets"
                     Glyph="&#xEE49;"
-                    FontSize="16"
-                    Grid.Column="3"
-                    Grid.Row="2"/>
+                    FontSize="16"/>
 
-                <Button Click="Menu_ContextRequested"
-                        HorizontalAlignment="Right"
-                        Padding="{StaticResource EllipsisButtonPadding}"
-                        Style="{StaticResource EllipsisButton}"
-                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                        Grid.Column="4"
-                        Grid.Row="2">
+                <Button
+                    Click="Menu_ContextRequested"
+                    HorizontalAlignment="Right"
+                    Height="{ThemeResource AppBarThemeCompactHeight}"
+                    Padding="{StaticResource EllipsisButtonPadding}"
+                    Style="{StaticResource EllipsisButton}"
+                    AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
+                    ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}">
                     <FontIcon x:Name="EllipsisIcon"
-                              VerticalAlignment="Center"
-                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                              FontSize="16"
-                              Glyph="&#xE10C;"
-                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                            VerticalAlignment="Center"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="16"
+                            Glyph="&#xE10C;"
+                            Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                 </Button>
-            </Grid>
-        </local:GalleryTransportControls.Footer>
-    </local:GalleryTransportControls>
+            </StackPanel>
+
+            <Border Padding="12" MinWidth="320">
+                <Border
+                    Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
+                    Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                    CornerRadius="4"
+                    Padding="8">
+            
+                    <TextBlock
+                        x:Name="Caption"
+                        Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
+                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        TextTrimming="CharacterEllipsis"
+                        MaxLines="5"/>
+                </Border>
+            </Border>
+        </local:GalleryBottomPanel>
+
+    </Grid>
+
 </controls:OverlayPage>
