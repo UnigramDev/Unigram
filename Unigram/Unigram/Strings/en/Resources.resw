@@ -11549,4 +11549,256 @@ If you forget your password, you will lose access to your Telegram account. Ther
   <data name="ZoomOut" xml:space="preserve">
     <value>Zoom out</value>
   </data>
+  <data name="Block" xml:space="preserve">
+    <value>BLOCK</value>
+  </data>
+  <data name="BlockAndDeleteReplies" xml:space="preserve">
+    <value>BLOCK AND DELETE REPLIES</value>
+  </data>
+  <data name="BlockUserReplyAlert" xml:space="preserve">
+    <value>Do you want to block messages from **{0}**?</value>
+  </data>
+  <data name="BotOwnershipTransfer" xml:space="preserve">
+    <value>Transfer Bot Ownership</value>
+  </data>
+  <data name="BotOwnershipTransferAlertText" xml:space="preserve">
+    <value>You can transfer bot only if you have:</value>
+  </data>
+  <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
+    <value>Change Owner</value>
+  </data>
+  <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
+    <value>This will transfer the **full owner** rights for bot to selected user.</value>
+  </data>
+  <data name="CallAlert" xml:space="preserve">
+    <value>Are you sure you want to call **{0}**?</value>
+  </data>
+  <data name="CallAlertTitle" xml:space="preserve">
+    <value>Voice Call</value>
+  </data>
+  <data name="ChannelCantOpenBannedByAdmin" xml:space="preserve">
+    <value>Sorry, you can't access this chat because you were banned by an admin.</value>
+  </data>
+  <data name="ChooseDate" xml:space="preserve">
+    <value>Choose date</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="CommentsTitle" xml:space="preserve">
+    <value>Comments</value>
+  </data>
+  <data name="CommentsFew" xml:space="preserve">
+    <value>{0} Comments</value>
+  </data>
+  <data name="CommentsMany" xml:space="preserve">
+    <value>{0} Comments</value>
+  </data>
+  <data name="CommentsOne" xml:space="preserve">
+    <value>{0} Comment</value>
+  </data>
+  <data name="CommentsOther" xml:space="preserve">
+    <value>{0} Comments</value>
+  </data>
+  <data name="CommentsTwo" xml:space="preserve">
+    <value>{0} Comments</value>
+  </data>
+  <data name="CommentsZero" xml:space="preserve">
+    <value>{0} Comments</value>
+  </data>
+  <data name="DiscussionChannelGroupSetHelp2" xml:space="preserve">
+    <value>**{0}** is selected as the group that will be used to host comments for your channel.</value>
+  </data>
+  <data name="DiscussionChannelHelp3" xml:space="preserve">
+    <value>Select a group chat that will be used to host comments from your channel.</value>
+  </data>
+  <data name="DiscussionStarted" xml:space="preserve">
+    <value>Discussion started</value>
+  </data>
+  <data name="EditAdminSendAnonymously" xml:space="preserve">
+    <value>Send Anonymously</value>
+  </data>
+  <data name="EventLogPromotedSendAnonymously" xml:space="preserve">
+    <value>Send anonymously</value>
+  </data>
+  <data name="LeaveAComment" xml:space="preserve">
+    <value>Leave a comment</value>
+  </data>
+  <data name="Mention" xml:space="preserve">
+    <value>Mention</value>
+  </data>
+  <data name="MessagesDeletedHintFew" xml:space="preserve">
+    <value>{0} messages deleted</value>
+  </data>
+  <data name="MessagesDeletedHintMany" xml:space="preserve">
+    <value>{0} messages deleted</value>
+  </data>
+  <data name="MessagesDeletedHintOne" xml:space="preserve">
+    <value>Message deleted</value>
+  </data>
+  <data name="MessagesDeletedHintOther" xml:space="preserve">
+    <value>{0} messages deleted</value>
+  </data>
+  <data name="MessagesDeletedHintTwo" xml:space="preserve">
+    <value>{0} messages deleted</value>
+  </data>
+  <data name="MessagesDeletedHintZero" xml:space="preserve">
+    <value>{0} messages deleted</value>
+  </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>No comments here yet...</value>
+  </data>
+  <data name="NoContactsYet" xml:space="preserve">
+    <value>You have no contacts on Telegram yet</value>
+  </data>
+  <data name="NoContactsYetLine1" xml:space="preserve">
+    <value>Invite friends to try Telegram</value>
+  </data>
+  <data name="NoContactsYetLine2" xml:space="preserve">
+    <value>Find people nearby to chat with</value>
+  </data>
+  <data name="NoContactsYetLine3" xml:space="preserve">
+    <value>Search people by username</value>
+  </data>
+  <data name="NoReplies" xml:space="preserve">
+    <value>No replies here yet...</value>
+  </data>
+  <data name="NotificationsMutedForHint" xml:space="preserve">
+    <value>Notifications muted for {0}</value>
+  </data>
+  <data name="NotificationsMutedHint" xml:space="preserve">
+    <value>Notifications muted</value>
+  </data>
+  <data name="NotificationsUnmutedHint" xml:space="preserve">
+    <value>Notifications unmuted</value>
+  </data>
+  <data name="OpenChannel2" xml:space="preserve">
+    <value>Open Channel</value>
+  </data>
+  <data name="OpenProfile" xml:space="preserve">
+    <value>Open Profile</value>
+  </data>
+  <data name="PhotoSavedHint" xml:space="preserve">
+    <value>Photo saved to gallery</value>
+  </data>
+  <data name="RepliesChatInfo" xml:space="preserve">
+    <value>This chat helps you keep track of replies to your comments in Channels.</value>
+  </data>
+  <data name="RepliesTitle" xml:space="preserve">
+    <value>Replies</value>
+  </data>
+  <data name="RepliesFew" xml:space="preserve">
+    <value>{0} Replies</value>
+  </data>
+  <data name="RepliesMany" xml:space="preserve">
+    <value>{0} Replies</value>
+  </data>
+  <data name="RepliesOne" xml:space="preserve">
+    <value>{0} Reply</value>
+  </data>
+  <data name="RepliesOther" xml:space="preserve">
+    <value>{0} Replies</value>
+  </data>
+  <data name="RepliesTwo" xml:space="preserve">
+    <value>{0} Replies</value>
+  </data>
+  <data name="RepliesZero" xml:space="preserve">
+    <value>{0} Replies</value>
+  </data>
+  <data name="SearchAllChatsShort" xml:space="preserve">
+    <value>Chats</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitle" xml:space="preserve">
+    <value>{0} from all your chats will be shown here.</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
+    <value>Try a new search.</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleFiles" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleLinks" xml:space="preserve">
+    <value>Links</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleMedia" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleMusic" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleVoice" xml:space="preserve">
+    <value>Voice</value>
+  </data>
+  <data name="SearchEmptyViewTitle" xml:space="preserve">
+    <value>Nothing yet</value>
+  </data>
+  <data name="SearchEmptyViewTitle2" xml:space="preserve">
+    <value>No Results</value>
+  </data>
+  <data name="SendAnonymously" xml:space="preserve">
+    <value>Send anonymously</value>
+  </data>
+  <data name="SendMessage" xml:space="preserve">
+    <value>Send Message</value>
+  </data>
+  <data name="SharedToPrivateMessagesAndGroups" xml:space="preserve">
+    <value>to private messages and groups</value>
+  </data>
+  <data name="SharedFew" xml:space="preserve">
+    <value>{0} shared</value>
+  </data>
+  <data name="SharedMany" xml:space="preserve">
+    <value>{0} shared</value>
+  </data>
+  <data name="SharedOne" xml:space="preserve">
+    <value>{0} shared</value>
+  </data>
+  <data name="SharedOther" xml:space="preserve">
+    <value>{0} shared</value>
+  </data>
+  <data name="SharedTwo" xml:space="preserve">
+    <value>{0} shared</value>
+  </data>
+  <data name="SharedZero" xml:space="preserve">
+    <value>{0} shared</value>
+  </data>
+  <data name="Shares" xml:space="preserve">
+    <value>Shares</value>
+  </data>
+  <data name="VideoCallAlert" xml:space="preserve">
+    <value>Are you sure you want to video call **{0}**?</value>
+  </data>
+  <data name="VideoCallAlertTitle" xml:space="preserve">
+    <value>Video Call</value>
+  </data>
+  <data name="VideoSavedHint" xml:space="preserve">
+    <value>Video saved to gallery</value>
+  </data>
+  <data name="ViewDiscussion" xml:space="preserve">
+    <value>View discussion</value>
+  </data>
+  <data name="ViewInChat" xml:space="preserve">
+    <value>View in chat</value>
+  </data>
+  <data name="ViewRepliesFew" xml:space="preserve">
+    <value>View {0} Replies</value>
+  </data>
+  <data name="ViewRepliesMany" xml:space="preserve">
+    <value>View {0} Replies</value>
+  </data>
+  <data name="ViewRepliesOne" xml:space="preserve">
+    <value>View {0} Reply</value>
+  </data>
+  <data name="ViewRepliesOther" xml:space="preserve">
+    <value>View {0} Replies</value>
+  </data>
+  <data name="ViewRepliesTwo" xml:space="preserve">
+    <value>View {0} Replies</value>
+  </data>
+  <data name="ViewRepliesZero" xml:space="preserve">
+    <value>View {0} Replies</value>
+  </data>
+  <data name="ViewThread" xml:space="preserve">
+    <value>View Thread</value>
+  </data>
 </root>
