@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -12,7 +13,10 @@ using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.Foundation.Metadata;
+using Windows.Graphics.Capture;
+using Windows.Graphics.DirectX;
 using Windows.Graphics.Display;
+using Windows.Graphics.Imaging;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
@@ -86,8 +90,73 @@ namespace Unigram.Services
             set => _capturer = value;
         }
 
+        private GraphicsCaptureItem _item;
+        private Direct3D11CaptureFramePool _framePool;
+        private CanvasDevice _canvasDevice;
+        private GraphicsCaptureSession _session;
+
+        public void StartCaptureInternal(GraphicsCaptureItem item)
+        {
+            _item = item;
+            _canvasDevice = new CanvasDevice();
+
+            _framePool = Direct3D11CaptureFramePool.Create(
+                _canvasDevice, // D3D device
+                DirectXPixelFormat.B8G8R8A8UIntNormalized, // Pixel format
+                2, // Number of frames
+                _item.Size); // Size of the buffers
+
+            _session = _framePool.CreateCaptureSession(_item);
+            _session.StartCapture();
+
+            _framePool.FrameArrived += (s, a) =>
+            {
+                using (var frame = _framePool.TryGetNextFrame())
+                {
+                    ProcessFrame(frame);
+                }
+            };
+        }
+
+        private async void ProcessFrame(Direct3D11CaptureFrame frame)
+        {
+            if (Capturer != null)
+            {
+                //using (var bitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(frame.Surface))
+                {
+
+                    //var bitmap = CanvasBitmap.CreateFromDirect3D11Surface(_canvasDevice, frame.Surface);
+                    //var bytes = bitmap.GetPixelBytes();
+
+                    //Capturer.FeedBytes(frame.ContentSize.Width, frame.ContentSize.Height, bytes.ToArray());
+                    var bitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(frame.Surface);
+                    Capturer.FeedBytes(bitmap);
+                }
+            }
+            else
+            {
+                //_framePool.Dispose();
+                //_session.Dispose();
+            }
+        }
+
         public async void Start(long chatId, bool video)
         {
+            //if (_call == null)
+            //{
+            //    var picker = new GraphicsCapturePicker();
+            //    var item = await picker.PickSingleItemAsync();
+
+            //    // The item may be null if the user dismissed the
+            //    // control without making a selection or hit Cancel.
+            //    if (item != null)
+            //    {
+            //        // We'll define this method later in the document.
+            //        StartCaptureInternal(item);
+            //        //return;
+            //    }
+            //}
+
             var chat = CacheService.GetChat(chatId);
             if (chat == null)
             {
