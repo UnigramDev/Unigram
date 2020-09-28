@@ -3142,7 +3142,11 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (chat.IsBlocked)
+                if (CacheService.IsRepliesChat(chat))
+                {
+                    ToggleMuteExecute(CacheService.GetNotificationSettingsMuteFor(chat) > 0);
+                }
+                else if (chat.IsBlocked)
                 {
                     UnblockExecute();
                 }

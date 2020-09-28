@@ -62,6 +62,8 @@ namespace Unigram.Services
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
 
+        bool IsRepliesChat(Chat chat);
+
         bool CanPostMessages(Chat chat);
 
         bool TryGetChatFromUser(int userId, out Chat chat);
@@ -664,6 +666,10 @@ namespace Unigram.Services
                 {
                     return Strings.Resources.SavedMessages;
                 }
+                else if (chat.Id == _options.RepliesBotChatId)
+                {
+                    return Strings.Resources.RepliesTitle;
+                }
                 else if (tiny)
                 {
                     return user.FirstName;
@@ -695,12 +701,7 @@ namespace Unigram.Services
 
         public bool IsSavedMessages(User user)
         {
-            if (user.Id == _options.MyId)
-            {
-                return true;
-            }
-
-            return false;
+            return user.Id == _options.MyId;
         }
 
         public bool IsSavedMessages(Chat chat)
@@ -711,6 +712,11 @@ namespace Unigram.Services
             }
 
             return false;
+        }
+
+        public bool IsRepliesChat(Chat chat)
+        {
+            return chat.Id == _options.RepliesBotChatId;
         }
 
         public bool CanPostMessages(Chat chat)

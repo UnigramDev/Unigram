@@ -932,6 +932,11 @@ namespace Unigram.Controls.Cells
             }
             else if (chat.Type is ChatTypePrivate privata && _protoService != null)
             {
+                if (_protoService.IsRepliesChat(chat))
+                {
+                    return null;
+                }
+
                 var user = _protoService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
