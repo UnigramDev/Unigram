@@ -12,14 +12,14 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsBlockedUsersPage : HostedPage, IFileDelegate
+    public sealed partial class SettingsBlockedChatsPage : HostedPage, IFileDelegate
     {
-        public SettingsBlockedUsersViewModel ViewModel => DataContext as SettingsBlockedUsersViewModel;
+        public SettingsBlockedChatsViewModel ViewModel => DataContext as SettingsBlockedChatsViewModel;
 
-        public SettingsBlockedUsersPage()
+        public SettingsBlockedChatsPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsBlockedUsersViewModel, IFileDelegate>(this);
+            DataContext = TLContainer.Current.Resolve<SettingsBlockedChatsViewModel, IFileDelegate>(this);
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -52,24 +52,28 @@ namespace Unigram.Views.Settings
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var user = args.Item as User;
+            var chat = args.Item as Chat;
 
-            content.Tag = user;
+            content.Tag = chat;
 
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = user.GetFullName();
+                title.Text = ViewModel.ProtoService.GetTitle(chat);
             }
-            else if (args.Phase == 1)
+            else if (args.Phase == 1 && ViewModel.CacheService.TryGetUser(chat, out User user))
             {
                 var subtitle = content.Children[2] as TextBlock;
                 subtitle.Text = string.IsNullOrEmpty(user.PhoneNumber) ? Strings.Resources.NumberUnknown : PhoneNumber.Format(user.PhoneNumber);
             }
+            else if (args.Phase == 1)
+            {
+                // TODO: ???
+            }
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
             }
 
             if (args.Phase < 2)
@@ -87,9 +91,9 @@ namespace Unigram.Views.Settings
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var user = ScrollingHost.ItemFromContainer(element) as User;
+            var chat = ScrollingHost.ItemFromContainer(element) as Chat;
 
-            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Resources.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = user });
+            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Resources.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = chat });
 
             if (args.TryGetPosition(sender, out Point point))
             {
@@ -104,11 +108,11 @@ namespace Unigram.Views.Settings
 
         public void UpdateFile(Telegram.Td.Api.File file)
         {
-            foreach (User user in ScrollingHost.Items)
+            foreach (Chat chat in ScrollingHost.Items)
             {
-                if (user.UpdateFile(file))
+                if (chat.UpdateFile(file))
                 {
-                    var container = ScrollingHost.ContainerFromItem(user) as SelectorItem;
+                    var container = ScrollingHost.ContainerFromItem(chat) as SelectorItem;
                     if (container == null)
                     {
                         return;
@@ -117,7 +121,7 @@ namespace Unigram.Views.Settings
                     var content = container.ContentTemplateRoot as Grid;
 
                     var photo = content.Children[0] as ProfilePicture;
-                    photo.Source = PlaceholderHelper.GetUser(null, user, 36);
+                    photo.Source = PlaceholderHelper.GetChat(null, chat, 36);
                 }
             }
         }

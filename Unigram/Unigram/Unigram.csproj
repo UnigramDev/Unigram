@@ -493,6 +493,7 @@
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -729,7 +730,6 @@
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksArchivedViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
@@ -992,6 +992,9 @@
     <Compile Include="Views\Settings\SettingsBackgroundsPage.xaml.cs">
       <DependentUpon>SettingsBackgroundsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsBlockedChatsPage.xaml.cs">
+      <DependentUpon>SettingsBlockedChatsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsDataAutoPage.xaml.cs">
       <DependentUpon>SettingsDataAutoPage.xaml</DependentUpon>
     </Compile>
@@ -1039,9 +1042,6 @@
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsBlockedUsersPage.xaml.cs">
-      <DependentUpon>SettingsBlockedUsersPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsMasksArchivedPage.xaml.cs">
       <DependentUpon>SettingsMasksArchivedPage.xaml</DependentUpon>
@@ -2396,6 +2396,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsBlockedChatsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\SettingsDataAutoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2483,10 +2487,6 @@
     <Page Include="Views\SettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\SettingsBlockedUsersPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsDataAndStoragePage.xaml">
       <SubType>Designer</SubType>

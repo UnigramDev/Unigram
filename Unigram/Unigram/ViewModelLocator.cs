@@ -209,7 +209,7 @@ namespace Unigram
                 builder.RegisterType<SettingsUsernameViewModel>();
                 builder.RegisterType<SettingsSessionsViewModel>();
                 builder.RegisterType<SettingsWebSessionsViewModel>();
-                builder.RegisterType<SettingsBlockedUsersViewModel>();
+                builder.RegisterType<SettingsBlockedChatsViewModel>();
                 builder.RegisterType<SettingsNotificationsViewModel>();
                 builder.RegisterType<SettingsNotificationsExceptionsViewModel>();
                 builder.RegisterType<SettingsDataAndStorageViewModel>();

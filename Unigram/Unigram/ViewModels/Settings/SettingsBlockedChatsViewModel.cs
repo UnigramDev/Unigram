@@ -17,17 +17,17 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsBlockedUsersViewModel : TLViewModelBase, IDelegable<IFileDelegate>, IHandle<UpdateUserFullInfo>, IHandle<UpdateFile>
+    public class SettingsBlockedChatsViewModel : TLViewModelBase, IDelegable<IFileDelegate>, IHandle<UpdateChatIsBlocked>, IHandle<UpdateFile>
     {
         public IFileDelegate Delegate { get; set; }
 
-        public SettingsBlockedUsersViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public SettingsBlockedChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new ItemsCollection(protoService, cacheService);
 
             BlockCommand = new RelayCommand(BlockExecute);
-            UnblockCommand = new RelayCommand<User>(UnblockExecute);
+            UnblockCommand = new RelayCommand<Chat>(UnblockExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -42,12 +42,12 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        public void Handle(UpdateUserFullInfo update)
+        public void Handle(UpdateChatIsBlocked update)
         {
             BeginOnUIThread(() =>
             {
-                var already = Items.FirstOrDefault(x => x.Id == update.UserId);
-                if (already != null && !update.UserFullInfo.IsBlocked)
+                var already = Items.FirstOrDefault(x => x.Id == update.ChatId);
+                if (already != null && !update.IsBlocked)
                 {
                     Items.Remove(already);
                 }
@@ -59,7 +59,7 @@ namespace Unigram.ViewModels.Settings
             BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
         }
 
-        public ObservableCollection<User> Items { get; private set; }
+        public ObservableCollection<Chat> Items { get; private set; }
 
         //public async void Handle(TLUpdateUserBlocked message)
         //{
@@ -102,27 +102,25 @@ namespace Unigram.ViewModels.Settings
         private async void BlockExecute()
         {
             var selected = await SharePopup.PickChatAsync(Strings.Resources.BlockUser);
-            var user = CacheService.GetUser(selected);
-
-            if (user == null)
+            if (selected == null)
             {
                 return;
             }
 
-            ProtoService.Send(new BlockUser(user.Id));
+            ProtoService.Send(new ToggleChatIsBlocked(selected.Id, true));
         }
 
-        public RelayCommand<User> UnblockCommand { get; }
-        private async void UnblockExecute(User user)
+        public RelayCommand<Chat> UnblockCommand { get; }
+        private async void UnblockExecute(Chat chat)
         {
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureUnblockContact, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new UnblockUser(user.Id));
+                ProtoService.Send(new ToggleChatIsBlocked(chat.Id, false));
             }
         }
 
-        public class ItemsCollection : MvxObservableCollection<User>, ISupportIncrementalLoading
+        public class ItemsCollection : MvxObservableCollection<Chat>, ISupportIncrementalLoading
         {
             private readonly IProtoService _protoService;
             private readonly ICacheService _cacheService;
@@ -137,19 +135,19 @@ namespace Unigram.ViewModels.Settings
             {
                 return AsyncInfo.Run(async task =>
                 {
-                    var response = await _protoService.SendAsync(new GetBlockedUsers(Count, 20));
-                    if (response is Telegram.Td.Api.Users users)
+                    var response = await _protoService.SendAsync(new GetBlockedChats(Count, 20));
+                    if (response is Telegram.Td.Api.Chats chats)
                     {
-                        foreach (var id in users.UserIds)
+                        foreach (var id in chats.ChatIds)
                         {
-                            var user = _protoService.GetUser(id);
-                            if (user != null)
+                            var chat = _protoService.GetChat(id);
+                            if (chat != null)
                             {
-                                Add(user);
+                                Add(chat);
                             }
                         }
 
-                        return new LoadMoreItemsResult { Count = (uint)users.UserIds.Count };
+                        return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                     }
 
                     return new LoadMoreItemsResult();
