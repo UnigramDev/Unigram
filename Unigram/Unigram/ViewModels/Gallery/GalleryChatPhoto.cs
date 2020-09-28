@@ -59,7 +59,7 @@ namespace Unigram.ViewModels.Gallery
             return false;
         }
 
-        public override object Constraint => new PhotoSize(string.Empty, null, 640, 640);
+        public override object Constraint => new PhotoSize(string.Empty, null, 640, 640, new int[0]);
 
         public override string Caption => _caption;
 

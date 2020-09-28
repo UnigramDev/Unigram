@@ -583,7 +583,7 @@ namespace Unigram.Views
 
                 var fullInfo = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
 
-                if (fullInfo != null && fullInfo.CanViewStatistics)
+                if (fullInfo != null && fullInfo.CanGetStatistics)
                 {
                     flyout.CreateFlyoutItem(ViewModel.StatisticsCommand, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.Statistics });
                 }

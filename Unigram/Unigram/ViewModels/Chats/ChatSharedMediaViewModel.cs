@@ -480,6 +480,11 @@ namespace Unigram.ViewModels.Chats
             throw new NotImplementedException();
         }
 
+        public void OpenThread(MessageViewModel message)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

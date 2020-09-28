@@ -83,7 +83,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand<ConnectedWebsite> TerminateCommand { get; }
         private async void TerminateExecute(ConnectedWebsite session)
         {
-            var bot = ProtoService.GetUser(session.BotUserId);
+            var bot = await ProtoService.SendAsync(new CreatePrivateChat(session.BotUserId, false)) as Chat;
             if (bot == null)
             {
                 return;
@@ -94,7 +94,7 @@ namespace Unigram.ViewModels.Settings
             dialog.Message = string.Format(Strings.Resources.TerminateWebSessionQuestion, session.DomainName);
             dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.SecondaryButtonText = Strings.Resources.Cancel;
-            dialog.CheckBoxLabel = string.Format(Strings.Resources.TerminateWebSessionStop, bot.FirstName);
+            dialog.CheckBoxLabel = string.Format(Strings.Resources.TerminateWebSessionStop, bot.Title);
 
             var terminate = await dialog.ShowQueuedAsync();
             if (terminate == ContentDialogResult.Primary)
@@ -109,7 +109,7 @@ namespace Unigram.ViewModels.Settings
                     Logs.Logger.Error(Logs.Target.API, "auth.resetWebAuthotization error " + error);
                 }
 
-                ProtoService.Send(new BlockUser(bot.Id));
+                ProtoService.Send(new ToggleChatIsBlocked(bot.Id, true));
             }
         }
 

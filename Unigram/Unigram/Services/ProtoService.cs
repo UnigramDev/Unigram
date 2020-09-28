@@ -327,7 +327,7 @@ namespace Unigram.Services
 
         private void InitializeDiagnostics()
         {
-            Client.Execute(new SetLogStream(new LogStreamFile(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024)));
+            Client.Execute(new SetLogStream(new LogStreamFile(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024, false)));
             Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
 
             var tags = Client.Execute(new GetLogTags()) as LogTags;

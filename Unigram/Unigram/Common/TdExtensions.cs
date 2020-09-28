@@ -731,7 +731,7 @@ namespace Unigram.Common
 
         public static Photo ToPhoto(this ChatPhotoInfo chatPhoto)
         {
-            return new Photo(false, null, new PhotoSize[] { new PhotoSize("t", chatPhoto.Small, 160, 160), new PhotoSize("i", chatPhoto.Big, 640, 640) });
+            return new Photo(false, null, new PhotoSize[] { new PhotoSize("t", chatPhoto.Small, 160, 160, new int[0]), new PhotoSize("i", chatPhoto.Big, 640, 640, new int[0]) });
         }
 
         public static Photo ToPhoto(this ChatPhoto chatPhoto)

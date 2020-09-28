@@ -180,7 +180,7 @@ namespace Unigram.ViewModels.Chats
                 {
                     if (i == Views.Chats.ChatStatisticsPage._loadIndex && stats[i].token != null)
                     {
-                        var resp = await ProtoService.SendAsync(new GetChatStatisticsGraph(chatId, stats[i].token, 0));
+                        var resp = await ProtoService.SendAsync(new GetStatisticsGraph(chatId, stats[i].token, 0));
                         if (resp is StatisticsGraphData data)
                         {
                             if (stats[i].title == Strings.Resources.LanguagesChartTitle)
@@ -306,7 +306,7 @@ namespace Unigram.ViewModels.Chats
 
         public async Task LoadAsync(IProtoService protoService, long chatId)
         {
-            var graph = await protoService.SendAsync(new GetChatStatisticsGraph(chatId, token, 0)) as StatisticsGraph;
+            var graph = await protoService.SendAsync(new GetStatisticsGraph(chatId, token, 0)) as StatisticsGraph;
             var viewData = this;
 
             if (graph == null || graph is StatisticsGraphError)
