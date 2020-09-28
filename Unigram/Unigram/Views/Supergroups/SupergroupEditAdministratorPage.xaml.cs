@@ -80,6 +80,7 @@ namespace Unigram.Views.Supergroups
                 DeleteMessages.Header = group.IsChannel ? Strings.Resources.EditAdminDeleteMessages : Strings.Resources.EditAdminGroupDeleteMessages;
                 BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
+                IsAnonymous.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 AddUsers.Header = chat.Permissions.CanInviteUsers ? Strings.Resources.EditAdminAddUsersViaLink : Strings.Resources.EditAdminAddUsers;
             }
             else

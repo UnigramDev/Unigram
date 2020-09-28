@@ -714,6 +714,10 @@ namespace Unigram.ViewModels
                 }
                 if (!channel)
                 {
+                    if (o.IsAnonymous != n.IsAnonymous)
+                    {
+                        AppendChange(n.IsAnonymous, Strings.Resources.EventLogPromotedSendAnonymously);
+                    }
                     if (o.CanRestrictMembers != n.CanRestrictMembers)
                     {
                         AppendChange(n.CanRestrictMembers, Strings.Resources.EventLogPromotedBanUsers);

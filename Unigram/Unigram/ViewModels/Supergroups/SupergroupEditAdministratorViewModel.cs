@@ -258,6 +258,20 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
+        private bool _isAnonymous;
+        public bool IsAnonymous
+        {
+            get
+            {
+                return _isAnonymous;
+            }
+            set
+            {
+                Set(ref _isAnonymous, value);
+                // Is Anonymous isn't needed for transfer ownership.
+            }
+        }
+
         private bool _canPromoteMembers;
         public bool CanPromoteMembers
         {
@@ -321,12 +335,13 @@ namespace Unigram.ViewModels.Supergroups
             ChatMemberStatus status;
             if (member.Status is ChatMemberStatusCreator creator)
             {
-                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, creator.IsMember);
+                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, supergroup.IsChannel ? false : _isAnonymous, creator.IsMember);
             }
             else
             {
                 status = new ChatMemberStatusAdministrator
                 {
+                    IsAnonymous =  supergroup.IsChannel ? false : _isAnonymous,
                     CanChangeInfo = _canChangeInfo,
                     CanDeleteMessages = _canDeleteMessages,
                     CanEditMessages = supergroup.IsChannel ? _canEditMessages : false,

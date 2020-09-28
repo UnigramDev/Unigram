@@ -100,6 +100,11 @@
                             IsOn="{x:Bind ViewModel.CanPromoteMembers, Mode=TwoWay}"
                             Header="{CustomResource EditAdminAddAdmins}"
                             Style="{StaticResource CheckButtonStyle}"/>
+                        <ToggleSwitch
+                            x:Name="IsAnonymous"
+                            IsOn="{x:Bind ViewModel.IsAnonymous, Mode=TwoWay}"
+                            Header="{CustomResource EditAdminSendAnonymously}"
+                            Style="{StaticResource CheckButtonStyle}"/>
                     </controls:HeaderedControl>
                 </UserControl>
 
