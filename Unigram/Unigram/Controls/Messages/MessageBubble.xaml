@@ -96,6 +96,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid x:Name="Header" Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -169,6 +170,51 @@
                 Margin="-8,0,-6,-2"
                 Grid.Column="1"
                 Grid.Row="4"/>
+
+            <HyperlinkButton
+                x:Name="Thread"
+                x:Load="False"
+                Click="Thread_Click"
+                Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Margin="-10,4,-10,-6"
+                Padding="0"
+                Grid.Column="1"
+                Grid.Row="5">
+                <Grid
+                    BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
+                    BorderThickness="0,1,0,0"
+                    Padding="10,4,10,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel
+                        x:Name="RecentRepliers"
+                        Orientation="Horizontal"
+                        Height="24"/>
+                    <TextBlock
+                        x:Name="ThreadGlyph"
+                        Text="&#xE8BD;"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        VerticalAlignment="Center"
+                        Margin="0,1,0,-1"
+                        FontSize="16"/>
+                    <TextBlock
+                        x:Name="ThreadLabel"
+                        Margin="8,-1,12,1"
+                        VerticalAlignment="Center"
+                        Grid.Column="1"/>
+                    <TextBlock
+                        Text="&#xE974;"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Grid.Column="2"/>
+                </Grid>
+            </HyperlinkButton>
         </Grid>
     </UserControl>
 

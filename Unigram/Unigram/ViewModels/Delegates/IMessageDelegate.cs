@@ -15,6 +15,7 @@ namespace Unigram.ViewModels.Delegates
         void ReplyToMessage(MessageViewModel message);
 
         void OpenReply(MessageViewModel message);
+        void OpenThread(MessageViewModel message);
 
         void OpenFile(File file);
         void OpenWebPage(WebPage webPage);

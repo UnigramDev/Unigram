@@ -58,6 +58,7 @@ namespace Unigram.Converters
         public const string Help2 = "\uE9CE";
 
         public const string Reply = "\uE248";
+        public const string Thread = "\uE93D";
         public const string Edit = "\uE104";
         public const string Timer = "\uE916";
         public const string Report = "\uE730";

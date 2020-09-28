@@ -674,11 +674,11 @@ namespace Unigram.Services
                     var formatted = Client.Execute(new ParseMarkdown(new FormattedText(messageText, new TextEntity[0]))) as FormattedText;
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
-                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, new MessageSendOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
+                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
 
                     if (chat.Type is ChatTypePrivate)
                     {
-                        await _protoService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, true));
+                        await _protoService.SendAsync(new ViewMessages(chat.Id, 0, new long[] { chat.LastMessage.Id }, true));
                     }
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
@@ -688,7 +688,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    await _protoService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, true));
+                    await _protoService.SendAsync(new ViewMessages(chat.Id, 0, new long[] { chat.LastMessage.Id }, true));
                 }
             }
         }

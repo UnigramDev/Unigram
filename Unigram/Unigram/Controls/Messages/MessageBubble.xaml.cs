@@ -601,6 +601,57 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
+            var info = message.InteractionInfo;
+            if (info == null || !message.IsChannelPost || !message.CanGetReplies)
+            {
+                if (Thread != null)
+                {
+                    Thread.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                if (Thread == null)
+                {
+                    FindName(nameof(Thread));
+                }
+
+                RecentRepliers.Children.Clear();
+
+                foreach (var id in info.RecentReplierUserIds)
+                {
+                    var user = message.ProtoService.GetUser(id);
+                    if (user == null)
+                    {
+                        continue;
+                    }
+
+                    var picture = new ProfilePicture();
+                    picture.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 24);
+                    picture.Width = 24;
+                    picture.Height = 24;
+                    picture.IsEnabled = false;
+
+                    if (RecentRepliers.Children.Count > 0)
+                    {
+                        picture.Margin = new Thickness(-10, 0, 0, 0);
+                    }
+
+                    Canvas.SetZIndex(picture, -RecentRepliers.Children.Count);
+                    RecentRepliers.Children.Add(picture);
+                }
+
+                ThreadGlyph.Visibility = RecentRepliers.Children.Count > 0
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+                ThreadLabel.Text = info.ReplyCount > 0
+                    ? Locale.Declension("Comments", info.ReplyCount)
+                    : Strings.Resources.LeaveAComment;
+
+                Thread.Visibility = Visibility.Visible;
+            }
+
             Footer.UpdateMessageInteractionInfo(message);
         }
 
@@ -1378,6 +1429,17 @@ namespace Unigram.Controls.Messages
             Window.Current.ShowTeachingTip(PsaInfo, new FormattedText(type, entities.Entities), TeachingTipPlacementMode.TopLeft);
         }
 
+        private void Thread_Click(object sender, RoutedEventArgs e)
+        {
+            var message = _message;
+            if (message == null)
+            {
+                return;
+            }
+
+            message.Delegate.OpenThread(message);
+        }
+
         private void Reply_Click(object sender, RoutedEventArgs e)
         {
             var message = _message;
@@ -1386,7 +1448,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            message.Delegate.OpenReply(_message);
+            message.Delegate.OpenReply(message);
         }
 
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupInlineButtonClickEventArgs e)

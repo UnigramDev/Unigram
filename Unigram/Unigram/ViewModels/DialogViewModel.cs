@@ -155,6 +155,7 @@ namespace Unigram.ViewModels
             MessageCopyLinkCommand = new RelayCommand<MessageViewModel>(MessageCopyLinkExecute);
             MessageEditLastCommand = new RelayCommand(MessageEditLastExecute);
             MessageEditCommand = new RelayCommand<MessageViewModel>(MessageEditExecute);
+            MessageThreadCommand = new RelayCommand<MessageViewModel>(MessageThreadExecute);
             MessagePinCommand = new RelayCommand<MessageViewModel>(MessagePinExecute);
             MessageReportCommand = new RelayCommand<MessageViewModel>(MessageReportExecute);
             MessageAddStickerCommand = new RelayCommand<MessageViewModel>(MessageAddStickerExecute);

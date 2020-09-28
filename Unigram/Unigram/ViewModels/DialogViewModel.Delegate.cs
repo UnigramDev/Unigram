@@ -227,7 +227,23 @@ namespace Unigram.ViewModels
         {
             if (message.ReplyToMessageState == ReplyToMessageState.None)
             {
-                await LoadMessageSliceAsync(message.Id, message.ReplyToMessageId);
+                if (message.ReplyInChatId == message.ChatId || message.ReplyInChatId == 0)
+                {
+                    await LoadMessageSliceAsync(message.Id, message.ReplyToMessageId);
+                }
+                else
+                {
+                    NavigationService.NavigateToChat(message.ReplyInChatId, message.ReplyToMessageId);
+                }
+            }
+        }
+
+        public async void OpenThread(MessageViewModel message)
+        {
+            var response = await ProtoService.SendAsync(new GetMessageThread(message.ChatId, message.Id));
+            if (response is MessageThreadInfo info)
+            {
+                NavigationService.NavigateToThread(info.ChatId, info.MessageThreadId);
             }
         }
 

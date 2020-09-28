@@ -683,27 +683,16 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var supergroup = CacheService.GetSupergroup(chat);
-            if (supergroup != null && string.IsNullOrEmpty(supergroup.Username))
+            var response = await ProtoService.SendAsync(new GetMessageLink(chat.Id, message.Id, false, false));
+            if (response is MessageLink link)
             {
-                var response = await ProtoService.SendAsync(new GetMessageLink(chat.Id, message.Id));
-                if (response is HttpUrl link)
-                {
-                    var dataPackage = new DataPackage();
-                    dataPackage.SetText(link.Url);
-                    ClipboardEx.TrySetContent(dataPackage);
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(link.Link);
+                ClipboardEx.TrySetContent(dataPackage);
 
-                    await MessagePopup.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
-                }
-            }
-            else
-            {
-                var response = await ProtoService.SendAsync(new GetPublicMessageLink(chat.Id, message.Id, false));
-                if (response is PublicMessageLink link)
+                if (!link.IsPublic)
                 {
-                    var dataPackage = new DataPackage();
-                    dataPackage.SetText(link.Link);
-                    ClipboardEx.TrySetContent(dataPackage);
+                    await MessagePopup.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }
@@ -775,6 +764,16 @@ namespace Unigram.ViewModels
             //        Logs.Log.Write("messages.getMessageEditData error " + response.Error);
             //    });
             //}
+        }
+
+        #endregion
+
+        #region View thread
+
+        public RelayCommand<MessageViewModel> MessageThreadCommand { get; }
+        private void MessageThreadExecute(MessageViewModel message)
+        {
+            OpenThread(message);
         }
 
         #endregion
@@ -1056,7 +1055,7 @@ namespace Unigram.ViewModels
                     var bot = GetBot(message);
                     if (bot != null)
                     {
-                        InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
+                        InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, 0, null, null, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
                     }
 
                     var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
@@ -1077,7 +1076,7 @@ namespace Unigram.ViewModels
                                     return;
                                 }
 
-                                InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
+                                InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, 0, null, null, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
                             }
                         }
                         else if (!string.IsNullOrEmpty(answer.Url))
