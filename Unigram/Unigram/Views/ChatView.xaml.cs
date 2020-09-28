@@ -3787,7 +3787,7 @@ namespace Unigram.Views
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            if (fullInfo.IsBlocked)
+            if (chat.IsBlocked)
             {
                 ShowAction(user.Type is UserTypeBot ? Strings.Resources.BotUnblock : Strings.Resources.Unblock, true);
             }

@@ -1245,6 +1245,13 @@ namespace Unigram.Services
                     value.HasScheduledMessages = updateChatHasScheduledMessages.HasScheduledMessages;
                 }
             }
+            else if (update is UpdateChatIsBlocked updateChatIsBlocked)
+            {
+                if (_chats.TryGetValue(updateChatIsBlocked.ChatId, out Chat value))
+                {
+                    value.IsBlocked = updateChatIsBlocked.IsBlocked;
+                }
+            }
             else if (update is UpdateChatIsMarkedAsUnread updateChatIsMarkedAsUnread)
             {
                 if (_chats.TryGetValue(updateChatIsMarkedAsUnread.ChatId, out Chat value))

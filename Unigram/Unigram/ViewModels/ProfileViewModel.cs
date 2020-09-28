@@ -427,13 +427,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate privata)
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                ProtoService.Send(new BlockUser(privata.UserId));
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                ProtoService.Send(new BlockUser(secret.UserId));
+                ProtoService.Send(new ToggleChatIsBlocked(chat.Id, true));
             }
         }
 
@@ -452,13 +448,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate privata)
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                ProtoService.Send(new UnblockUser(privata.UserId));
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                ProtoService.Send(new UnblockUser(secret.UserId));
+                ProtoService.Send(new ToggleChatIsBlocked(chat.Id, false));
             }
         }
 

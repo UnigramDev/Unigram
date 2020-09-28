@@ -504,7 +504,7 @@ namespace Unigram.Views
                     if (user.IsContact)
                     {
                         flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
-                        flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
+                        flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, chat.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Banned : Icons.Banned });
                         flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.EditContact, new FontIcon { Glyph = Icons.Edit });
                         flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteContact, new FontIcon { Glyph = Icons.Delete });
                     }
@@ -527,17 +527,17 @@ namespace Unigram.Views
                         if (user.PhoneNumber.Length > 0)
                         {
                             flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
-                            flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
+                            flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, chat.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Banned : Icons.Banned });
                         }
                         else
                         {
                             if (user.Type is UserTypeBot)
                             {
-                                flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.BotRestart : Strings.Resources.BotStop, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
+                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, chat.IsBlocked ? Strings.Resources.BotRestart : Strings.Resources.BotStop, new FontIcon { Glyph = chat.IsBlocked ? Icons.Banned : Icons.Banned });
                             }
                             else
                             {
-                                flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
+                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, chat.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Banned : Icons.Banned });
                             }
                         }
                     }
