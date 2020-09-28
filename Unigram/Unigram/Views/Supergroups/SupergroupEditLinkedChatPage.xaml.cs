@@ -52,7 +52,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.Resources.DiscussionChannelGroupSetHelp, chat.Title));
+            TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.Resources.DiscussionChannelGroupSetHelp2, chat.Title));
 
             Create.Visibility = group.HasLinkedChat ? Visibility.Collapsed : Visibility.Visible;
             Unlink.Visibility = group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
@@ -61,7 +61,24 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
+            var linkedChat = ViewModel.CacheService.GetChat(fullInfo.LinkedChatId);
+            if (linkedChat != null)
+            {
+                if (group.IsChannel)
+                {
+                    TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.Resources.DiscussionChannelGroupSetHelp2, linkedChat.Title));
+                    LayoutRoot.Footer = Strings.Resources.DiscussionChannelHelp2;
+                }
+                else
+                {
+                    TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.Resources.DiscussionGroupHelp, linkedChat.Title));
+                    LayoutRoot.Footer = Strings.Resources.DiscussionChannelHelp2;
+                }
+            }
+            else
+            {
 
+            }
         }
 
         public void UpdateChat(Chat chat) { }
