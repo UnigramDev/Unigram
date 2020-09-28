@@ -38,8 +38,6 @@ namespace Unigram.Services
 
     public interface ICacheService
     {
-        int UserId { get; }
-
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
@@ -513,19 +511,6 @@ namespace Unigram.Services
         public int SessionId => _session;
 
         public Client Client => _client;
-
-        private int? _userId;
-        public int UserId
-        {
-            get
-            {
-                return (_userId = _userId ?? _settings.UserId) ?? 0;
-            }
-            set
-            {
-                _userId = _settings.UserId = value;
-            }
-        }
 
         #region Cache
 
@@ -1503,11 +1488,6 @@ namespace Unigram.Services
             else if (update is UpdateOption updateOption)
             {
                 _options.Handle(updateOption);
-
-                if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
-                {
-                    UserId = myId.Value;
-                }
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {
