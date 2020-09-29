@@ -306,7 +306,7 @@ namespace Unigram.Services
                 dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
                 dialog.SecondaryButtonClick += (s, args) =>
                 {
-                    MessageHelper.NavigateToUsername(null, null, "spambot", null, null, null);
+                    MessageHelper.NavigateToUsername(null, null, "spambot", null, null, null, null);
                 };
             }
 
@@ -390,7 +390,7 @@ namespace Unigram.Services
                     dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
                     dialog.SecondaryButtonClick += (s, args) =>
                     {
-                        MessageHelper.NavigateToUsername(null, null, "spambot", null, null, null);
+                        MessageHelper.NavigateToUsername(null, null, "spambot", null, null, null, null);
                     };
                     break;
                 case "USER_BLOCKED":
