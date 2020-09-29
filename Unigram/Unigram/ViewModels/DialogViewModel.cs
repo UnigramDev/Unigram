@@ -833,7 +833,7 @@ namespace Unigram.ViewModels
         protected async Task AddHeaderAsync()
         {
             var previous = Items.FirstOrDefault();
-            if (previous != null && (previous.Content is MessageHeaderDate || previous.Id == 0))
+            if (previous != null && (previous.Content is MessageHeaderDate /*|| previous.Id == 0*/))
             {
                 return;
             }
@@ -1170,7 +1170,7 @@ namespace Unigram.ViewModels
 
                         if (target != null)
                         {
-                            if (index != -1)
+                            if (index > 0)
                             {
                                 replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.SenderChatId, target.ChatId, null, null, target.IsOutgoing, false, false, true, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null)));
                             }
