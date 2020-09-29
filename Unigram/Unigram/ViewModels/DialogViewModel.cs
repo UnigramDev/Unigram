@@ -1317,11 +1317,6 @@ namespace Unigram.ViewModels
 
         public MessageCollection Items { get; } = new MessageCollection();
 
-        public MessageViewModel Create(Message message)
-        {
-            return _messageFactory.Create(this, message);
-        }
-
         protected async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
         {
             if (Settings.IsLargeEmojiEnabled)

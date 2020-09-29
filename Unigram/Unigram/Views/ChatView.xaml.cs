@@ -1983,7 +1983,7 @@ namespace Unigram.Views
             var response = await ViewModel.ProtoService.SendAsync(new GetMessage(message.ChatId, message.Id));
             if (response is Message)
             {
-                message = ViewModel.Create(response as Message);
+                message.UpdateWith(response as Message);
             }
 
             if (message.SendingState is MessageSendingStateFailed || message.SendingState is MessageSendingStatePending)
@@ -2005,7 +2005,7 @@ namespace Unigram.Views
                 // Generic
                 flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });
                 flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.Thread, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
+                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyCount) : Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.Thread, FontFamily = new FontFamily("ms -appx:///Assets/Fonts/Telegram.ttf#Telegram") });
 
                 flyout.CreateFlyoutSeparator();
 
@@ -2156,6 +2156,11 @@ namespace Unigram.Views
 
         private bool MessageThread_Loaded(MessageViewModel message)
         {
+            if (ViewModel.Type != DialogType.History)
+            {
+                return false;
+            }
+
             return message.CanGetReplies && !message.IsChannelPost;
         }
 
