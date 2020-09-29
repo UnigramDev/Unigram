@@ -3109,7 +3109,37 @@ namespace Unigram.Views
 
         public void UpdateChatTitle(Chat chat)
         {
-            if (ViewModel.Type == DialogType.ScheduledMessages)
+            if (ViewModel.Type == DialogType.Thread)
+            {
+                var message = ViewModel.Thread?.Messages.FirstOrDefault();
+                if (message == null || message.InteractionInfo == null)
+                {
+                    return;
+                }
+
+                if (message.SenderChatId == 0)
+                {
+                    Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyCount);
+                }
+                else
+                {
+                    var senderChat = ViewModel.CacheService.GetChat(message.SenderChatId);
+                    if (senderChat == null)
+                    {
+                        return;
+                    }
+
+                    if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                    {
+                        Title.Text = Locale.Declension("Comments", message.InteractionInfo.ReplyCount);
+                    }
+                    else
+                    {
+                        Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyCount);
+                    }
+                }
+            }
+            else if (ViewModel.Type == DialogType.ScheduledMessages)
             {
                 Title.Text = ViewModel.CacheService.IsSavedMessages(chat) ? Strings.Resources.Reminders : Strings.Resources.ScheduledMessages;
             }
@@ -3121,7 +3151,14 @@ namespace Unigram.Views
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width);
+            if (ViewModel.Type == DialogType.Thread)
+            {
+                Photo.Source = PlaceholderHelper.GetGlyph(Icons.Reply, 5, (int)Photo.Width);
+            }
+            else
+            {
+                Photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, (int)Photo.Width);
+            }
         }
 
         public void UpdateChatHasScheduledMessages(Chat chat)
@@ -3994,12 +4031,29 @@ namespace Unigram.Views
                 }
             }
 
-            TextField.PlaceholderText = group.IsChannel
-                ? chat.DefaultDisableNotification
-                ? Strings.Resources.ChannelSilentBroadcast
-                : Strings.Resources.ChannelBroadcast
-                : Strings.Resources.TypeMessage;
-            ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+            if (group.IsChannel)
+            {
+                TextField.PlaceholderText = chat.DefaultDisableNotification
+                    ? Strings.Resources.ChannelSilentBroadcast
+                    : Strings.Resources.ChannelBroadcast;
+            }
+            else if (group.Status is ChatMemberStatusCreator creator && creator.IsAnonymous || group.Status is ChatMemberStatusAdministrator administrator && administrator.IsAnonymous)
+            {
+                TextField.PlaceholderText = Strings.Resources.SendAnonymously;
+            }
+            else
+            {
+                TextField.PlaceholderText = Strings.Resources.TypeMessage;
+            }
+
+            if (ViewModel.Type == DialogType.History)
+            {
+                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
+            }
+            else
+            {
+                ViewModel.LastSeen = null;
+            }
 
             if (group.IsChannel)
             {
@@ -4032,12 +4086,14 @@ namespace Unigram.Views
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            if (ViewModel.Type == DialogType.EventLog)
+            if (ViewModel.Type == DialogType.History)
             {
-                return;
+                ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
             }
-
-            ViewModel.LastSeen = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", fullInfo.MemberCount);
+            else
+            {
+                ViewModel.LastSeen = null;
+            }
 
             btnSendMessage.SlowModeDelay = fullInfo.SlowModeDelay;
             btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;

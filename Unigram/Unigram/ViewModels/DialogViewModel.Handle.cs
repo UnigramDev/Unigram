@@ -55,7 +55,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateUserChatAction update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id && (_type == DialogType.History || (_type == DialogType.Thread && update.MessageThreadId == _threadId)))
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatActions(_chat, CacheService.GetChatActions(update.ChatId)));
             }
@@ -381,6 +381,10 @@ namespace Unigram.ViewModels
             if (_type == DialogType.ScheduledMessages)
             {
                 return message.SchedulingState != null;
+            }
+            else if (_type == DialogType.Thread)
+            {
+                return message.SchedulingState == null && message.MessageThreadId == _threadId;
             }
 
             return message.SchedulingState == null && _type == DialogType.History;

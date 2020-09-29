@@ -771,9 +771,13 @@ namespace Unigram.ViewModels
         #region View thread
 
         public RelayCommand<MessageViewModel> MessageThreadCommand { get; }
-        private void MessageThreadExecute(MessageViewModel message)
+        private async void MessageThreadExecute(MessageViewModel message)
         {
-            OpenThread(message);
+            var response = await ProtoService.SendAsync(new GetMessageThread(message.ChatId, message.Id));
+            if (response is MessageThreadInfo info)
+            {
+                NavigationService.NavigateToThread(info.ChatId, info.MessageThreadId, message.Id);
+            }
         }
 
         #endregion
