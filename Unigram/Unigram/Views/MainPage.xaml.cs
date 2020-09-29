@@ -1737,10 +1737,22 @@ namespace Unigram.Views
 
         private void ShowHideSearch(bool show)
         {
-            SearchField.Visibility = Visibility.Visible;
+            if ((show && DialogsPanel.Visibility == Visibility.Collapsed) || (!show && (DialogsPanel.Visibility == Visibility.Visible || _searchCollapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _searchCollapsed = false;
+            }
+            else
+            {
+                _searchCollapsed = true;
+            }
+
             DialogsPanel.Visibility = Visibility.Visible;
 
-            var search = ElementCompositionPreview.GetElementVisual(SearchField);
             var chats = ElementCompositionPreview.GetElementVisual(DialogsPanel);
             var panel = ElementCompositionPreview.GetElementVisual(DialogsSearchPanel);
 
@@ -1751,6 +1763,7 @@ namespace Unigram.Views
             {
                 if (show)
                 {
+                    _searchCollapsed = false;
                     DialogsPanel.Visibility = Visibility.Collapsed;
                 }
             };
@@ -1758,22 +1771,22 @@ namespace Unigram.Views
             var scale1 = panel.Compositor.CreateVector3KeyFrameAnimation();
             scale1.InsertKeyFrame(show ? 0 : 1, new Vector3(1.05f, 1.05f, 1));
             scale1.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
-            //scale1.Duration = TimeSpan.FromMilliseconds(150);
+            scale1.Duration = TimeSpan.FromMilliseconds(200);
 
             var scale2 = panel.Compositor.CreateVector3KeyFrameAnimation();
             scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(1));
             scale2.InsertKeyFrame(show ? 1 : 0, new Vector3(0.95f, 0.95f, 1));
-            //scale2.Duration = TimeSpan.FromMilliseconds(150);
+            scale2.Duration = TimeSpan.FromMilliseconds(200);
 
             var opacity1 = panel.Compositor.CreateScalarKeyFrameAnimation();
             opacity1.InsertKeyFrame(show ? 0 : 1, 0);
             opacity1.InsertKeyFrame(show ? 1 : 0, 1);
-            //opacity1.Duration = TimeSpan.FromMilliseconds(150);
+            opacity1.Duration = TimeSpan.FromMilliseconds(200);
 
             var opacity2 = panel.Compositor.CreateScalarKeyFrameAnimation();
             opacity2.InsertKeyFrame(show ? 0 : 1, 1);
             opacity2.InsertKeyFrame(show ? 1 : 0, 0);
-            //opacity2.Duration = TimeSpan.FromMilliseconds(150);
+            opacity2.Duration = TimeSpan.FromMilliseconds(200);
 
             panel.StartAnimation("Scale", scale1);
             panel.StartAnimation("Opacity", opacity1);
@@ -1820,7 +1833,8 @@ namespace Unigram.Views
 
             if (rpMasterTitlebar.SelectedIndex == 0)
             {
-                DialogsPanel.Visibility = Visibility.Collapsed;
+                //DialogsPanel.Visibility = Visibility.Collapsed;
+                ShowHideSearch(true);
 
                 if (ViewModel.Chats.SearchFilters.IsEmpty() && string.IsNullOrEmpty(SearchField.Text))
                 {
@@ -1867,7 +1881,8 @@ namespace Unigram.Views
 
         private void SearchReset()
         {
-            DialogsPanel.Visibility = Visibility.Visible;
+            //DialogsPanel.Visibility = Visibility.Visible;
+            ShowHideSearch(false);
             ContactsPanel.Visibility = Visibility.Visible;
             SettingsView.Visibility = Visibility.Visible;
 
