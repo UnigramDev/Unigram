@@ -18,7 +18,7 @@ namespace Unigram.Converters
                 switch (format)
                 {
                     case "unigram.monthgrouping":
-                        return ConvertMonthGrouping((DateTime)value);
+                        return BindConvert.MonthGrouping((DateTime)value);
                 }
             }
             else
@@ -33,32 +33,6 @@ namespace Unigram.Converters
             }
 
             return value;
-        }
-
-        public static string ConvertMonthGrouping(DateTime date)
-        {
-            var now = DateTime.Now;
-
-            var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
-            if (difference >= 12)
-            {
-                return BindConvert.Current.MonthFullYear.Format(date);
-            }
-
-            return BindConvert.Current.MonthFull.Format(date);
-        }
-
-        public static string ConvertDayGrouping(DateTime date)
-        {
-            var now = DateTime.Now;
-
-            var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
-            if (difference >= 12)
-            {
-                return BindConvert.Current.DayMonthFullYear.Format(date);
-            }
-
-            return BindConvert.Current.DayMonthFull.Format(date);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

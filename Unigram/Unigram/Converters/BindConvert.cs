@@ -82,6 +82,10 @@ namespace Unigram.Converters
             {
                 return Current.DayMonthFullYear.Format(date);
             }
+            else if (date.Date == now.Date)
+            {
+                return Strings.Resources.MessageScheduleToday;
+            }
 
             return Current.DayMonthFull.Format(date);
         }

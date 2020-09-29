@@ -137,14 +137,14 @@ namespace Unigram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                return (string.Format(Strings.Resources.MessageScheduledOn, DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate))), null);
+                return (string.Format(Strings.Resources.MessageScheduledOn, BindConvert.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate))), null);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
                 return (Strings.Resources.MessageScheduledUntilOnline, null);
             }
 
-            return (DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date)), null);
+            return (BindConvert.DayGrouping(Utils.UnixTimestampToDateTime(message.Date)), null);
         }
 
         #endregion

@@ -208,7 +208,7 @@ namespace Unigram.Views
 
                         if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
                         {
-                            DateHeaderLabel.Text = string.Format(Strings.Resources.MessageScheduledOn, DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate)));
+                            DateHeaderLabel.Text = string.Format(Strings.Resources.MessageScheduledOn, BindConvert.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate)));
                         }
                         else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
                         {
@@ -216,7 +216,7 @@ namespace Unigram.Views
                         }
                         else
                         {
-                            DateHeaderLabel.Text = DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                            DateHeaderLabel.Text = BindConvert.DayGrouping(Utils.UnixTimestampToDateTime(message.Date));
                         }
                     }
                 }
