@@ -251,6 +251,11 @@ namespace Unigram.ViewModels
 
         public void UpdateWith(MessageViewModel message)
         {
+            UpdateWith(message.Get());
+        }
+
+        public void UpdateWith(Message message)
+        {
             _message.AuthorSignature = message.AuthorSignature;
             _message.CanBeDeletedForAllUsers = message.CanBeDeletedForAllUsers;
             _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
