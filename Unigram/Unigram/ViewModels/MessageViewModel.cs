@@ -48,7 +48,7 @@ namespace Unigram.ViewModels
         public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
         public bool CanBeForwarded => _message.CanBeForwarded;
         public bool CanBeEdited => _message.CanBeEdited;
-        public bool CanGetReplies => _message.CanGetReplies;
+        public bool CanGetMessageThread => _message.CanGetMessageThread;
         public bool CanGetStatistics => _message.CanGetStatistics;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
         public MessageSchedulingState SchedulingState => _message.SchedulingState;
@@ -261,7 +261,7 @@ namespace Unigram.ViewModels
             _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
             _message.CanBeEdited = message.CanBeEdited;
             _message.CanBeForwarded = message.CanBeForwarded;
-            _message.CanGetReplies = message.CanGetReplies;
+            _message.CanGetMessageThread = message.CanGetMessageThread;
             _message.CanGetStatistics = message.CanGetStatistics;
             _message.ChatId = message.ChatId;
             _message.ContainsUnreadMention = message.ContainsUnreadMention;

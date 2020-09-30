@@ -655,26 +655,16 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var limit = 50;
-
-                //for (int i = 0; i < Items.Count; i++)
-                //{
-                //    if (Items[i].Id != 0 && Items[i].Id < maxId)
-                //    {
-                //        maxId = Items[i].Id;
-                //    }
-                //}
-
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
 
                 Function func;
                 if (_threadId != 0)
                 {
-                    func = new GetChatMessageThreadHistory(chat.Id, _threadId, maxId.Value, 0, limit);
+                    func = new GetMessageThreadHistory(chat.Id, _threadId, maxId.Value, 0, 50);
                 }
                 else
                 {
-                    func = new GetChatHistory(chat.Id, maxId.Value, 0, limit, false);
+                    func = new GetChatHistory(chat.Id, maxId.Value, 0, 50, false);
                 }
 
                 var response = await ProtoService.SendAsync(func);
@@ -785,7 +775,7 @@ namespace Unigram.ViewModels
                 Function func;
                 if (_threadId != 0)
                 {
-                    func = new GetChatMessageThreadHistory(chat.Id, _threadId, maxId.Value, -49, 50);
+                    func = new GetMessageThreadHistory(chat.Id, _threadId, maxId.Value, -49, 50);
                 }
                 else
                 {
@@ -1107,7 +1097,7 @@ namespace Unigram.ViewModels
                 Function func;
                 if (_threadId != 0)
                 {
-                    func = new GetChatMessageThreadHistory(chat.Id, _threadId, maxId, -25, 50);
+                    func = new GetMessageThreadHistory(chat.Id, _threadId, maxId, -25, 50);
                 }
                 else
                 {

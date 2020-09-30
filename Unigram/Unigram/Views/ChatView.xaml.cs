@@ -2005,7 +2005,7 @@ namespace Unigram.Views
                 // Generic
                 flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });
                 flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyCount) : Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.Thread, FontFamily = new FontFamily("ms -appx:///Assets/Fonts/Telegram.ttf#Telegram") });
+                flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyCount) : Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.Thread, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
 
                 flyout.CreateFlyoutSeparator();
 
@@ -2161,7 +2161,7 @@ namespace Unigram.Views
                 return false;
             }
 
-            return message.CanGetReplies && !message.IsChannelPost;
+            return message.CanGetMessageThread && !message.IsChannelPost;
         }
 
         private bool MessageDelete_Loaded(MessageViewModel message)
@@ -3989,7 +3989,14 @@ namespace Unigram.Views
             {
                 if ((group.Status is ChatMemberStatusLeft && (group.Username.Length > 0 || group.HasLocation || group.HasLinkedChat)) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
-                    ShowAction(Strings.Resources.ChannelJoin, true);
+                    if (ViewModel.Type == DialogType.Thread)
+                    {
+                        ShowArea();
+                    }
+                    else
+                    {
+                        ShowAction(Strings.Resources.ChannelJoin, true);
+                    }
                 }
                 else if (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator administrator)
                 {

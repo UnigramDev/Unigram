@@ -602,7 +602,7 @@ namespace Unigram.Controls.Messages
         public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
             var info = message.InteractionInfo;
-            if (info == null || !message.IsChannelPost || !message.CanGetReplies)
+            if (info == null || !message.IsChannelPost || !message.CanGetMessageThread)
             {
                 if (Thread != null)
                 {
