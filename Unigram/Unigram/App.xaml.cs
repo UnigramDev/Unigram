@@ -56,11 +56,7 @@ namespace Unigram
         {
             Locator.Configure(/*session*/);
 
-            if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
-            {
-                RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
-            }
-
+            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
 
             try

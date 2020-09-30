@@ -64,7 +64,7 @@ namespace Unigram.ViewModels.Settings
             Items.ReplaceWith(_themeService.GetThemes());
             Custom.ReplaceWith(await _themeService.GetCustomThemesAsync());
 
-            var type = Settings.Appearance.RequestedThemeType;
+            var type = Settings.Appearance[Settings.Appearance.RequestedTheme].Type;
             if (ThemeAccentInfo.IsAccent(type))
             {
                 var accent = Settings.Appearance.Accents[type];
@@ -153,7 +153,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return Settings.Appearance.RequestedTheme.HasFlag(ElementTheme.Light);
+                return Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light);
             }
         }
 
@@ -181,11 +181,11 @@ namespace Unigram.ViewModels.Settings
             {
                 if (x is ThemeCustomInfo custom)
                 {
-                    return string.Equals(SettingsService.Current.Appearance.RequestedThemeCustom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                    return string.Equals(Settings.Appearance[Settings.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
                 }
                 else
                 {
-                    return SettingsService.Current.Appearance.RequestedTheme == (x.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
+                    return Settings.Appearance.RequestedTheme == x.Parent;
                 }
             });
 
@@ -198,7 +198,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AccentThemeCommand { get; }
         private async void AccentThemeExecute()
         {
-            var type = Settings.Appearance.RequestedThemeType;
+            var type = Settings.Appearance[Settings.Appearance.RequestedTheme].Type;
             if (ThemeAccentInfo.IsAccent(type))
             {
                 var accent = Settings.Appearance.Accents[type];
@@ -304,7 +304,7 @@ namespace Unigram.ViewModels.Settings
             }
             catch { }
 
-            if (Settings.Appearance.RequestedThemeCustom == theme.Path)
+            if (Settings.Appearance[Settings.Appearance.RequestedTheme].Custom == theme.Path)
             {
                 await SetThemeAsync(new ThemeBundledInfo { Parent = theme.Parent });
             }

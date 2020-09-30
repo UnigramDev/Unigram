@@ -58,7 +58,7 @@ namespace Unigram.ViewModels.Settings
 
             var conditions = Settings.Appearance.CheckNightModeConditions();
             var theme = conditions == null
-                ? Settings.Appearance.RequestedTheme
+                ? Settings.Appearance.GetActualTheme()
                 : conditions == true
                 ? ElementTheme.Dark
                 : ElementTheme.Light;

@@ -378,7 +378,7 @@ namespace Unigram.Views.Settings
 
         private async void Update()
         {
-            var value = SettingsService.Current.Appearance.RequestedTheme;
+            var value = SettingsService.Current.Appearance.GetActualTheme();
             var mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(_theme.Parent);
 
             _theme.Values.Clear();

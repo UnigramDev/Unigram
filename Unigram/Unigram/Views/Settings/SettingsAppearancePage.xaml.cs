@@ -188,17 +188,17 @@ namespace Unigram.Views.Settings
             if (theme is ThemeCustomInfo custom)
             {
                 radio.RequestedTheme = custom.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = SettingsService.Current.Appearance.RequestedThemeType == TelegramThemeType.Custom && string.Equals(SettingsService.Current.Appearance.RequestedThemeCustom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == TelegramThemeType.Custom && string.Equals(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
             }
             else if (theme is ThemeAccentInfo accent)
             {
                 radio.RequestedTheme = accent.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = SettingsService.Current.Appearance.RequestedThemeType == accent.Type && SettingsService.Current.Appearance.Accents[accent.Type] == accent.AccentColor;
+                radio.IsChecked = SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Type == accent.Type && SettingsService.Current.Appearance.Accents[accent.Type] == accent.AccentColor;
             }
             else
             {
                 radio.RequestedTheme = theme.Parent.HasFlag(TelegramTheme.Dark) ? ElementTheme.Dark : ElementTheme.Light;
-                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemeCustom) && SettingsService.Current.Appearance.RequestedTheme == (theme.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
+                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom) && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
             }
         }
 

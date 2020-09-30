@@ -72,11 +72,11 @@ namespace Unigram.Views.Settings
 
             if (theme is ThemeCustomInfo custom)
             {
-                radio.IsChecked = string.Equals(SettingsService.Current.Appearance.RequestedThemeCustom, custom.Path, StringComparison.OrdinalIgnoreCase);
+                radio.IsChecked = string.Equals(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom, custom.Path, StringComparison.OrdinalIgnoreCase);
             }
             else
             {
-                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance.RequestedThemeCustom) && SettingsService.Current.Appearance.RequestedTheme == (theme.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark);
+                radio.IsChecked = string.IsNullOrEmpty(SettingsService.Current.Appearance[SettingsService.Current.Appearance.RequestedTheme].Custom) && SettingsService.Current.Appearance.RequestedTheme == theme.Parent;
             }
         }
     }

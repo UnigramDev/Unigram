@@ -53,14 +53,19 @@ namespace Unigram.Common
 
         public void Initialize()
         {
+            Initialize(SettingsService.Current.Appearance.RequestedTheme);
+        }
+
+        public void Initialize(TelegramTheme requested)
+        {
             var settings = SettingsService.Current.Appearance;
-            if (settings.RequestedThemeType == TelegramThemeType.Custom && File.Exists(settings.RequestedThemeCustom))
+            if (settings[requested].Type == TelegramThemeType.Custom && File.Exists(settings[requested].Custom))
             {
-                InitializeCustom(settings.RequestedThemeCustom);
+                InitializeCustom(settings[requested].Custom);
             }
-            else if (ThemeAccentInfo.IsAccent(settings.RequestedThemeType))
+            else if (ThemeAccentInfo.IsAccent(settings[requested].Type))
             {
-                Update(ThemeAccentInfo.FromAccent(settings.RequestedThemeType, settings.Accents[settings.RequestedThemeType]));
+                Update(ThemeAccentInfo.FromAccent(settings[requested].Type, settings.Accents[settings[requested].Type]));
             }
             else
             {
@@ -73,7 +78,7 @@ namespace Unigram.Common
             var lines = File.ReadAllLines(path);
             var dict = new ResourceDictionary();
 
-            var flags = SettingsService.Current.Appearance.RequestedTheme == ElementTheme.Light ? TelegramTheme.Light : TelegramTheme.Dark;
+            var flags = SettingsService.Current.Appearance.RequestedTheme;
 
             foreach (var line in lines)
             {

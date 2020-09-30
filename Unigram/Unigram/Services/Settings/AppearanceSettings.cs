@@ -11,11 +11,10 @@ using Windows.UI.Xaml;
 
 namespace Unigram.Services.Settings
 {
-    [Flags]
     public enum TelegramTheme
     {
-        Light = 1 << 1,
-        Dark = 1 << 2,
+        Light,
+        Dark,
     }
 
     [Flags]
@@ -63,7 +62,7 @@ namespace Unigram.Services.Settings
 
         public void UpdateTimer()
         {
-            if (NightMode == NightMode.Scheduled && RequestedTheme == ElementTheme.Light)
+            if (NightMode == NightMode.Scheduled && RequestedTheme == TelegramTheme.Light)
             {
                 var start = DateTime.Today;
                 var end = DateTime.Today;
@@ -125,34 +124,31 @@ namespace Unigram.Services.Settings
         {
             UpdateTimer();
 
-            if (RequestedTheme != ElementTheme.Default)
+            var conditions = CheckNightModeConditions();
+            var theme = conditions == null
+                ? GetActualTheme()
+                : conditions == true
+                ? ElementTheme.Dark
+                : ElementTheme.Light;
+
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
             {
-                var conditions = CheckNightModeConditions();
-                var theme = conditions == null
-                    ? RequestedTheme
-                    : conditions == true
-                    ? ElementTheme.Dark
-                    : ElementTheme.Light;
-
-                foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+                await window.Dispatcher.DispatchAsync(() =>
                 {
-                    await window.Dispatcher.DispatchAsync(() =>
+                    window.UpdateTitleBar();
+
+                    if (window.Content is FrameworkElement element)
                     {
-                        window.UpdateTitleBar();
-
-                        if (window.Content is FrameworkElement element)
-                        {
-                            element.RequestedTheme = theme;
-                        }
-                    });
-                }
-
-                var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-                var protoService = TLContainer.Current.Resolve<IProtoService>();
-
-                aggregator.Publish(new UpdateSelectedBackground(true, protoService.GetSelectedBackground(true)));
-                aggregator.Publish(new UpdateSelectedBackground(false, protoService.GetSelectedBackground(false)));
+                        element.RequestedTheme = theme;
+                    }
+                });
             }
+
+            var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
+            var protoService = TLContainer.Current.Resolve<IProtoService>();
+
+            aggregator.Publish(new UpdateSelectedBackground(true, protoService.GetSelectedBackground(true)));
+            aggregator.Publish(new UpdateSelectedBackground(false, protoService.GetSelectedBackground(false)));
         }
 
         private InstalledEmojiSet _emojiSet;
@@ -195,74 +191,87 @@ namespace Unigram.Services.Settings
             {
                 if (path.EndsWith("Assets\\Themes\\DarkBlue.unigram-theme"))
                 {
-                    RequestedThemeType = TelegramThemeType.Tinted;
+                    RequestedTheme = TelegramTheme.Dark;
+                    this[TelegramTheme.Dark].Type = TelegramThemeType.Tinted;
                     Accents[TelegramThemeType.Tinted] = ThemeAccentInfo.Accents[TelegramThemeType.Tinted];
                 }
                 else if (path.Length > 0 && System.IO.File.Exists(path))
                 {
-                    RequestedThemeType = TelegramThemeType.Custom;
-                    RequestedThemeCustom = path;
+                    if (RequestedTheme == TelegramTheme.Dark)
+                    {
+                        this[TelegramTheme.Dark].Type = TelegramThemeType.Custom;
+                        this[TelegramTheme.Dark].Custom = path;
+                    }
+                    else
+                    {
+                        this[TelegramTheme.Light].Type = TelegramThemeType.Custom;
+                        this[TelegramTheme.Light].Custom = path;
+                    }
                 }
 
                 _container.Values.Remove("ThemePath");
             }
-            else if (RequestedTheme == ElementTheme.Default)
+            else if (_container.Values.TryGet("ThemeCustom", out string custom))
             {
-                var system = GetSystemTheme();
-                if (system == TelegramAppTheme.Dark)
+                if (custom.EndsWith("Assets\\Themes\\DarkBlue.unigram-theme"))
                 {
-                    RequestedTheme = ElementTheme.Dark;
-                    RequestedThemeType = TelegramThemeType.Night;
-                    Accents[TelegramThemeType.Night] = default;
+                    RequestedTheme = TelegramTheme.Dark;
+                    this[TelegramTheme.Dark].Type = TelegramThemeType.Tinted;
+                    Accents[TelegramThemeType.Tinted] = ThemeAccentInfo.Accents[TelegramThemeType.Tinted];
                 }
-                else if (system == TelegramAppTheme.Light)
+                else if (custom.Length > 0 && System.IO.File.Exists(custom))
                 {
-                    RequestedTheme = ElementTheme.Light;
-                    RequestedThemeType = TelegramThemeType.Day;
-                    Accents[TelegramThemeType.Day] = default;
+                    if (RequestedTheme == TelegramTheme.Dark)
+                    {
+                        this[TelegramTheme.Dark].Type = TelegramThemeType.Custom;
+                        this[TelegramTheme.Dark].Custom = custom;
+                    }
+                    else
+                    {
+                        this[TelegramTheme.Light].Type = TelegramThemeType.Custom;
+                        this[TelegramTheme.Light].Custom = custom;
+                    }
                 }
+
+                _container.Values.Remove("ThemePath");
+                _container.Values.Remove("ThemeType");
+            }
+            else if (_container.Values.TryGet("ThemeType", out int type))
+            {
+                if (RequestedTheme == TelegramTheme.Dark)
+                {
+                    this[TelegramTheme.Dark].Type = (TelegramThemeType)type;
+                }
+                else
+                {
+                    this[TelegramTheme.Light].Type = (TelegramThemeType)type;
+                }
+
+                _container.Values.Remove("ThemeType");
             }
         }
 
-        private TelegramThemeType? _requestedThemeType;
-        public TelegramThemeType RequestedThemeType
+        private ThemeSettingsBase _themeLight;
+        private ThemeSettingsBase _themeDark;
+
+        public ThemeSettingsBase this[TelegramTheme type]
         {
             get
             {
-                if (_requestedThemeType == null)
-                    _requestedThemeType = (TelegramThemeType)GetValueOrDefault(_container, "ThemeType", 0);
+                if (type == TelegramTheme.Light)
+                {
+                    return _themeLight = _themeLight ?? new ThemeSettingsBase(_container, "Light");
+                }
 
-                return _requestedThemeType ?? TelegramThemeType.Classic;
-            }
-            set
-            {
-                _requestedThemeType = value;
-                AddOrUpdateValue(_container, "ThemeType", (int)value);
+                return _themeDark = _themeDark ?? new ThemeSettingsBase(_container, "Dark");
             }
         }
 
-        private string _requestedThemeCustom;
-        public string RequestedThemeCustom
-        {
-            get
-            {
-                if (_requestedThemeCustom == null)
-                    _requestedThemeCustom = GetValueOrDefault(_container, "ThemeCustom", string.Empty);
+        private ThemeTypeSettingsBase _accents;
+        public ThemeTypeSettingsBase Accents => _accents ??= new ThemeTypeSettingsBase(_container);
 
-                return _requestedThemeCustom ?? string.Empty;
-            }
-            set
-            {
-                _requestedThemeCustom = value ?? string.Empty;
-                AddOrUpdateValue(_container, "ThemeCustom", value);
-            }
-        }
-
-        private ThemeSettingsBase _accents;
-        public ThemeSettingsBase Accents => _accents ??= new ThemeSettingsBase(_container);
-
-        private ElementTheme? _requestedTheme;
-        public ElementTheme RequestedTheme
+        private TelegramTheme? _requestedTheme;
+        public TelegramTheme RequestedTheme
         {
             get
             {
@@ -271,27 +280,21 @@ namespace Unigram.Services.Settings
                     var theme = (TelegramAppTheme)GetValueOrDefault(_container, "Theme", (int)GetSystemTheme());
                     if (theme.HasFlag(TelegramAppTheme.Dark))
                     {
-                        _requestedTheme = ElementTheme.Dark;
-                    }
-                    else if (theme.HasFlag(TelegramAppTheme.Light))
-                    {
-                        _requestedTheme = ElementTheme.Light;
+                        _requestedTheme = TelegramTheme.Dark;
                     }
                     else
                     {
-                        _requestedTheme = ElementTheme.Default;
+                        _requestedTheme = TelegramTheme.Light;
                     }
                 }
 
-                return _requestedTheme ?? (GetSystemTheme() == TelegramAppTheme.Dark ? ElementTheme.Dark : ElementTheme.Light);
+                return _requestedTheme ?? (GetSystemTheme() == TelegramAppTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
             }
             set
             {
                 _requestedTheme = value;
 
-                var theme = value == ElementTheme.Default
-                    ? TelegramAppTheme.Default
-                    : value == ElementTheme.Dark
+                var theme = value == TelegramTheme.Dark
                     ? TelegramAppTheme.Dark
                     : TelegramAppTheme.Light;
 
@@ -432,7 +435,7 @@ namespace Unigram.Services.Settings
 
         public bool? CheckNightModeConditions()
         {
-            if (NightMode == NightMode.Scheduled && RequestedTheme == ElementTheme.Light)
+            if (NightMode == NightMode.Scheduled && RequestedTheme == TelegramTheme.Light)
             {
                 TimeSpan start;
                 TimeSpan end;
@@ -476,11 +479,8 @@ namespace Unigram.Services.Settings
 
         public ElementTheme GetActualTheme()
         {
-            var app = App.Current as App;
-            var current = app.UISettings.GetColorValue(UIColorType.Background);
-
             var theme = RequestedTheme;
-            if (theme == ElementTheme.Dark || (theme == ElementTheme.Default && current == Colors.Black))
+            if (theme == TelegramTheme.Dark)
             {
                 return ElementTheme.Dark;
             }
@@ -503,21 +503,6 @@ namespace Unigram.Services.Settings
         public bool IsLightTheme()
         {
             return GetCalculatedApplicationTheme() == ApplicationTheme.Light;
-
-            var app = App.Current as App;
-            var current = app.UISettings.GetColorValue(UIColorType.Background);
-
-            var theme = RequestedTheme;
-            if (theme == ElementTheme.Dark || (theme == ElementTheme.Default && current == Colors.Black))
-            {
-                return false;
-            }
-            //else if (theme == ElementTheme.Light || (theme == ElementTheme.Default && current == Colors.White))
-            //{
-            //    return ElementTheme.Light;
-            //}
-
-            return true;
         }
 
         public bool IsDarkTheme()
@@ -540,7 +525,7 @@ namespace Unigram.Services.Settings
         public ApplicationTheme GetApplicationTheme()
         {
             var theme = RequestedTheme;
-            return theme.HasFlag(ElementTheme.Dark)
+            return theme.HasFlag(TelegramTheme.Dark)
                 ? ApplicationTheme.Dark
                 : ApplicationTheme.Light;
         }
@@ -565,9 +550,9 @@ namespace Unigram.Services.Settings
         }
     }
 
-    public class ThemeSettingsBase : SettingsServiceBase
+    public class ThemeTypeSettingsBase : SettingsServiceBase
     {
-        public ThemeSettingsBase(ApplicationDataContainer container)
+        public ThemeTypeSettingsBase(ApplicationDataContainer container)
             : base(container)
         {
         }
@@ -581,6 +566,51 @@ namespace Unigram.Services.Settings
         private string ConvertToKey(TelegramThemeType type, string key)
         {
             return $"{type}{key}";
+        }
+    }
+
+    public class ThemeSettingsBase : SettingsServiceBase
+    {
+        private readonly string _prefix;
+
+        public ThemeSettingsBase(ApplicationDataContainer container, string prefix)
+            : base(container)
+        {
+            _prefix = prefix;
+        }
+
+        private TelegramThemeType? _type;
+        public TelegramThemeType Type
+        {
+            get
+            {
+                if (_type == null)
+                    _type = (TelegramThemeType)GetValueOrDefault(_container, $"ThemeType{_prefix}", 0);
+
+                return _type ?? TelegramThemeType.Classic;
+            }
+            set
+            {
+                _type = value;
+                AddOrUpdateValue(_container, $"ThemeType{_prefix}", (int)value);
+            }
+        }
+
+        private string _custom;
+        public string Custom
+        {
+            get
+            {
+                if (_custom == null)
+                    _custom = GetValueOrDefault(_container, $"ThemeCustom{_prefix}", string.Empty);
+
+                return _custom ?? string.Empty;
+            }
+            set
+            {
+                _custom = value ?? string.Empty;
+                AddOrUpdateValue(_container, $"ThemeCustom{_prefix}", value);
+            }
         }
     }
 }

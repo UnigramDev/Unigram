@@ -21,10 +21,7 @@ namespace Unigram.Views.Host
 
         public StandalonePage(INavigationService navigationService)
         {
-            if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
-            {
-                RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
-            }
+            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
 
             InitializeComponent();
 
