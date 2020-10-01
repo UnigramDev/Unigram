@@ -55,7 +55,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateUserChatAction update)
         {
-            if (update.ChatId == _chat?.Id && (_type == DialogType.History || (_type == DialogType.Thread && update.MessageThreadId == _threadId)))
+            if (update.ChatId == _chat?.Id && update.MessageThreadId == _threadId && (_type == DialogType.History || _type == DialogType.Thread))
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatActions(_chat, CacheService.GetChatActions(update.ChatId)));
             }
