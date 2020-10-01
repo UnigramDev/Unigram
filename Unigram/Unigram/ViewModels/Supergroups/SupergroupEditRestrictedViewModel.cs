@@ -172,6 +172,12 @@ namespace Unigram.ViewModels.Supergroups
                 {
                     CanAddWebPagePreviews = false;
                 }
+
+                // Don't allow polls
+                if (!value && _canSendPolls)
+                {
+                    CanSendPolls = false;
+                }
             }
         }
 
