@@ -10,24 +10,17 @@ namespace Unigram.ViewModels.Chats
     public class ChatPhotosViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        //private readonly TLInputPeerBase _peer;
+        private readonly Chat _chat;
 
-        private int _lastMaxId;
-        private readonly long _chatId;
-
-        public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, Chat chat)
+        public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, Chat chat, ChatPhoto photo)
             : base(protoService, aggregator)
         {
-            _chatId = chat.Id;
-
-            //_peer = chat.ToInputPeer();
-            //_lastMaxId = int.MaxValue;
-
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, chat.Photo) };
+            _chat = chat;
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, chat, photo) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
-            Initialize(chat.Photo.Big.Id, chat.Photo.Small.Id);
+            Initialize(photo.GetBig().Photo.Id, photo.GetSmall().Photo.Id);
         }
 
         //public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
@@ -53,7 +46,7 @@ namespace Unigram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, 0, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
                 if (response is Telegram.Td.Api.Messages messages)
                 {
                     TotalItems = messages.TotalCount;
@@ -70,7 +63,7 @@ namespace Unigram.ViewModels.Chats
                                 continue;
                             }
 
-                            Items.Add(new GalleryMessage(ProtoService, message));
+                            Items.Add(new GalleryChatPhoto(ProtoService, _chat, chatChangePhoto.Photo));
                         }
                         else
                         {

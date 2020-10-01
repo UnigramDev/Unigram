@@ -1,42 +1,44 @@
 ﻿using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery
 {
     public class GalleryChatPhoto : GalleryContent
     {
-        private readonly ChatPhotoInfo _photo;
-        private readonly string _caption;
+        private readonly object _from;
+        private readonly ChatPhoto _photo;
 
-        public GalleryChatPhoto(IProtoService protoService, ChatPhotoInfo photo)
+        public GalleryChatPhoto(IProtoService protoService, object from, ChatPhoto photo)
             : base(protoService)
         {
+            _from = from;
             _photo = photo;
         }
 
-        public GalleryChatPhoto(IProtoService protoService, ChatPhotoInfo photo, string caption)
-            : base(protoService)
-        {
-            _photo = photo;
-            _caption = caption;
-        }
+        public long Id => _photo.Id;
 
         public override File GetFile()
         {
-            return _photo.Big;
+            if (_photo?.Animation != null)
+            {
+                return _photo.Animation.File;
+            }
+
+            return _photo?.GetBig()?.Photo;
         }
 
         public override File GetThumbnail()
         {
-            return _photo.Small;
+            return _photo?.GetSmall().Photo;
         }
 
         public override (File File, string FileName) GetFileAndName()
         {
-            var big = _photo.Big;
+            var big = _photo.GetBig();
             if (big != null)
             {
-                return (big, null);
+                return (big.Photo, null);
             }
 
             return (null, null);
@@ -44,24 +46,21 @@ namespace Unigram.ViewModels.Gallery
 
         public override bool UpdateFile(File file)
         {
-            if (_photo.Big.Id == file.Id)
-            {
-                _photo.Big = file;
-                return true;
-            }
-
-            if (_photo.Small.Id == file.Id)
-            {
-                _photo.Small = file;
-                return true;
-            }
-
-            return false;
+            return _photo.UpdateFile(file);
         }
 
-        public override object Constraint => new PhotoSize(string.Empty, null, 640, 640, new int[0]);
+        public override bool IsVideo => _photo.Animation != null;
+        public override bool IsLoop => _photo.Animation != null;
 
-        public override string Caption => _caption;
+        public override int Duration => 1;
+
+        public override string MimeType => "video/mp4";
+
+        public override object From => _from;
+
+        public override object Constraint => _photo;
+
+        public override int Date => _photo.AddedDate;
 
         public override bool CanCopy => true;
         public override bool CanSave => true;

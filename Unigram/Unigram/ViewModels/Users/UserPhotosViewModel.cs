@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Users
         {
             _user = user;
 
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryUserProfilePhoto(protoService, user, userFull.Photo) };
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, user, userFull.Photo) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -42,7 +42,7 @@ namespace Unigram.ViewModels.Users
                             continue;
                         }
 
-                        Items.Add(new GalleryUserProfilePhoto(ProtoService, _user, item));
+                        Items.Add(new GalleryChatPhoto(ProtoService, _user, item));
                     }
                 }
             }
@@ -59,7 +59,7 @@ namespace Unigram.ViewModels.Users
 
                     foreach (var item in photos.Photos)
                     {
-                        Items.Add(new GalleryUserProfilePhoto(ProtoService, _user, item));
+                        Items.Add(new GalleryChatPhoto(ProtoService, _user, item));
                     }
                 }
             }
@@ -72,7 +72,7 @@ namespace Unigram.ViewModels.Users
         protected override async void DeleteExecute()
         {
             var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryUserProfilePhoto profileItem)
+            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryChatPhoto profileItem)
             {
                 var response = await ProtoService.SendAsync(new DeleteProfilePhoto(profileItem.Id));
                 if (response is Ok)

@@ -673,7 +673,6 @@
     <Compile Include="ViewModels\Gallery\GalleryContent.cs" />
     <Compile Include="ViewModels\Gallery\GalleryMessage.cs" />
     <Compile Include="ViewModels\Gallery\GalleryPhoto.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryUserProfilePhoto.cs" />
     <Compile Include="ViewModels\Gallery\GalleryVideo.cs" />
     <Compile Include="ViewModels\Gallery\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
