@@ -303,7 +303,7 @@ namespace Unigram.ViewModels.Supergroups
             else if (_photo is StoragePhoto photo)
             {
                 var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
-                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
+                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoStatic(generated)));
             }
             else if (_deletePhoto)
             {
