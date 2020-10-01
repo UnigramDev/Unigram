@@ -1072,18 +1072,18 @@ namespace Unigram.Services
         {
         }
 
-        public object this[long chatId, ChatSetting key]
+        public object this[long chatId, long threadId, ChatSetting key]
         {
             //get => GetValueOrDefault<object>(chatId + key, null);
-            set => AddOrUpdateValue(ConvertToKey(chatId, key), value);
+            set => AddOrUpdateValue(ConvertToKey(chatId, threadId, key), value);
         }
 
-        public bool TryRemove<T>(long chatId, ChatSetting key, out T value)
+        public bool TryRemove<T>(long chatId, long threadId, ChatSetting key, out T value)
         {
-            if (_container.Values.ContainsKey(ConvertToKey(chatId, key)))
+            if (_container.Values.ContainsKey(ConvertToKey(chatId, threadId, key)))
             {
-                value = (T)_container.Values[ConvertToKey(chatId, key)];
-                _container.Values.Remove(ConvertToKey(chatId, key));
+                value = (T)_container.Values[ConvertToKey(chatId, threadId, key)];
+                _container.Values.Remove(ConvertToKey(chatId, threadId, key));
                 return true;
             }
 
@@ -1091,8 +1091,13 @@ namespace Unigram.Services
             return false;
         }
 
-        private string ConvertToKey(long chatId, ChatSetting setting)
+        private string ConvertToKey(long chatId, long threadId, ChatSetting setting)
         {
+            if (threadId != 0)
+            {
+                return $"{chatId}{threadId}{setting}";
+            }
+
             return $"{chatId}{setting}";
         }
     }
