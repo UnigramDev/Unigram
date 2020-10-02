@@ -60,10 +60,7 @@ namespace Unigram.Controls.Drawers
             //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
 
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
-            Separator.SizeChanged += (s, args) =>
-            {
-                shadow.Size = args.NewSize.ToVector2();
-            };
+            shadow.RelativeSizeAdjustment = Vector2.One;
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(FieldStickers, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>

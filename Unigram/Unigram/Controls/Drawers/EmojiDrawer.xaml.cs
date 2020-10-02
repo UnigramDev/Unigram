@@ -34,11 +34,7 @@ namespace Unigram.Controls.Drawers
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
-
-            Separator.SizeChanged += (s, args) =>
-            {
-                shadow.Size = args.NewSize.ToVector2();
-            };
+            shadow.RelativeSizeAdjustment = Vector2.One;
 
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();
