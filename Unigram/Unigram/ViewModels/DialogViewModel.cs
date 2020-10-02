@@ -1124,8 +1124,8 @@ namespace Unigram.ViewModels
                     var thread = _thread;
                     if (thread != null)
                     {
-                        lastReadMessageId = _thread.Messages[0].InteractionInfo.LastReadInboxCommentMessageId;
-                        lastMessageId = _thread.Messages[0].InteractionInfo.LastCommentMessageId;
+                        lastReadMessageId = _thread.Messages[0].InteractionInfo.ReplyInfo.LastReadInboxMessageId;
+                        lastMessageId = _thread.Messages[0].InteractionInfo.ReplyInfo.LastMessageId;
                     }
                     else
                     {
@@ -1786,8 +1786,8 @@ namespace Unigram.ViewModels
                 var thread = _thread;
                 if (thread != null)
                 {
-                    lastReadMessageId = _thread.Messages[0].InteractionInfo.LastReadInboxCommentMessageId;
-                    lastMessageId = _thread.Messages[0].InteractionInfo.LastCommentMessageId;
+                    lastReadMessageId = _thread.Messages[0].InteractionInfo.ReplyInfo.LastReadInboxMessageId;
+                    lastMessageId = _thread.Messages[0].InteractionInfo.ReplyInfo.LastMessageId;
                 }
                 else
                 {
@@ -2023,7 +2023,7 @@ namespace Unigram.ViewModels
                         var thread = _thread;
                         if (thread != null)
                         {
-                            lastReadMessageId = thread.Messages[0].InteractionInfo.LastReadInboxCommentMessageId;
+                            lastReadMessageId = thread.Messages[0].InteractionInfo.ReplyInfo.LastReadInboxMessageId;
                         }
                         else
                         {

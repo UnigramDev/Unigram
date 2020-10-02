@@ -243,7 +243,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendAsync(new GetMessageThread(message.ChatId, message.Id));
             if (response is MessageThreadInfo info)
             {
-                NavigationService.NavigateToThread(info.ChatId, info.MessageThreadId);
+                NavigationService.NavigateToThread(message.ChatId, message.Id);
             }
         }
 

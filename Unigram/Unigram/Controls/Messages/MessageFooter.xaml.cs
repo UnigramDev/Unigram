@@ -77,10 +77,10 @@ namespace Unigram.Controls.Messages
 
         public void ConvertInteractionInfo(MessageViewModel message)
         {
-            if (message.InteractionInfo?.ReplyCount > 0 && !message.IsChannelPost)
+            if (message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 && !message.IsChannelPost)
             {
                 RepliesGlyph.Text = "\uE93E\u00A0\u00A0";
-                RepliesLabel.Text = $"{message.InteractionInfo.ReplyCount}   ";
+                RepliesLabel.Text = $"{message.InteractionInfo.ReplyInfo.ReplyCount}   ";
             }
             else
             {
