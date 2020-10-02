@@ -1730,6 +1730,12 @@ Lever : {1}</value>
   <data name="Black" xml:space="preserve">
     <value>Noir</value>
   </data>
+  <data name="Block" xml:space="preserve">
+    <value>BLOQUER</value>
+  </data>
+  <data name="BlockAndDeleteReplies" xml:space="preserve">
+    <value>BLOQUER ET SUPPRIMER LES RÉPONSES</value>
+  </data>
   <data name="BlockContact" xml:space="preserve">
     <value>Bloquer l'utilisateur</value>
   </data>
@@ -1778,6 +1784,9 @@ Lever : {1}</value>
   <data name="BlockUserMultiTitle" xml:space="preserve">
     <value>Bloquer l'utilisateur</value>
   </data>
+  <data name="BlockUserReplyAlert" xml:space="preserve">
+    <value>Voulez-vous bloquer les messages de **{0}** ?</value>
+  </data>
   <data name="BlockUsers" xml:space="preserve">
     <value>Bloquer les utilisateurs</value>
   </data>
@@ -1816,6 +1825,18 @@ Lever : {1}</value>
   </data>
   <data name="BotInvite" xml:space="preserve">
     <value>Ajouter à un groupe</value>
+  </data>
+  <data name="BotOwnershipTransfer" xml:space="preserve">
+    <value>Transférer la propriété du bot</value>
+  </data>
+  <data name="BotOwnershipTransferAlertText" xml:space="preserve">
+    <value>Vous pouvez transférer un bot uniquement si vous avez :</value>
+  </data>
+  <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
+    <value>Changer le propriétaire</value>
+  </data>
+  <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
+    <value>Ceci transférera les **pleins droits de propriété** pour le bot à l'utilisateur sélectionné.</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
     <value>Autorisez-vous {0} à transmettre vos nom et identifiant Telegram (pas votre numéro) aux pages ouvertes avec ce bot ?</value>
@@ -1877,6 +1898,12 @@ Lever : {1}</value>
   <data name="CallAgain" xml:space="preserve">
     <value>Rappeler</value>
   </data>
+  <data name="CallAlert" xml:space="preserve">
+    <value>Voulez-vous vraiment appeler **{0}** ?</value>
+  </data>
+  <data name="CallAlertTitle" xml:space="preserve">
+    <value>Appel vocal</value>
+  </data>
   <data name="CallBack" xml:space="preserve">
     <value>Rappeler</value>
   </data>
@@ -1932,7 +1959,7 @@ Lever : {1}</value>
     <value>Inclure les informations techniques</value>
   </data>
   <data name="CallReportLogsExplain" xml:space="preserve">
-    <value>Ne dévoile pas le contenu de l'échange et nous aide à régler le problème plus vite.</value>
+    <value>Ne dévoile pas le contenu de l'échange et nous aide à régler le problème plus rapidement.</value>
   </data>
   <data name="CallReportSent" xml:space="preserve">
     <value>En vous remerciant d'aider à rendre les appels Telegram meilleurs.</value>
@@ -2126,6 +2153,9 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
   <data name="ChannelCantOpenBanned" xml:space="preserve">
     <value>Vous avez malheureusement été banni et ne pouvez pas participer à des groupes publics.</value>
   </data>
+  <data name="ChannelCantOpenBannedByAdmin" xml:space="preserve">
+    <value>Désolé, vous n'avez pas accès à cet échange car vous avez été banni par un administrateur.</value>
+  </data>
   <data name="ChannelCantOpenNa" xml:space="preserve">
     <value>Cet échange n'est plus accessible.</value>
   </data>
@@ -2287,6 +2317,9 @@ Si vous oubliez votre code, vous devrez supprimer et réinstaller l'application.
   </data>
   <data name="ChannelPhotoEditNotification" xml:space="preserve">
     <value>Le canal {0} a changé sa photo </value>
+  </data>
+  <data name="ChannelPostDeleted" xml:space="preserve">
+    <value>Désolé, cette publication a été retirée du groupe de discussion.</value>
   </data>
   <data name="ChannelPrivate" xml:space="preserve">
     <value>Canal privé</value>
@@ -2664,6 +2697,9 @@ La longueur minimale est de 5 caractères.</value>
   <data name="ChooseCover" xml:space="preserve">
     <value>Choisissez une couverture pour votre vidéo de profil</value>
   </data>
+  <data name="ChooseDate" xml:space="preserve">
+    <value>Choisir une date</value>
+  </data>
   <data name="ChooseFromGallery" xml:space="preserve">
     <value>Choisir depuis la galerie</value>
   </data>
@@ -2855,6 +2891,48 @@ La longueur minimale est de 5 caractères.</value>
   </data>
   <data name="ColorYellow" xml:space="preserve">
     <value>Jaune</value>
+  </data>
+  <data name="Comment" xml:space="preserve">
+    <value>Commenter</value>
+  </data>
+  <data name="CommentsCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsCountOne" xml:space="preserve">
+    <value>{0} commentaire</value>
+  </data>
+  <data name="CommentsCountOther" xml:space="preserve">
+    <value>{0} commentaires</value>
+  </data>
+  <data name="CommentsCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsOne" xml:space="preserve">
+    <value>{0} commentaire</value>
+  </data>
+  <data name="CommentsOther" xml:space="preserve">
+    <value>{0} commentaires</value>
+  </data>
+  <data name="CommentsTitle" xml:space="preserve">
+    <value>Commentaires</value>
+  </data>
+  <data name="CommentsTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="CommonGroupsFew" xml:space="preserve">
     <value/>
@@ -3518,11 +3596,17 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
   <data name="DiscussionChannelGroupSetHelp" xml:space="preserve">
     <value>Un lien vers **{0}** sera affiché pour tous les abonnés en bas de leur écran.</value>
   </data>
+  <data name="DiscussionChannelGroupSetHelp2" xml:space="preserve">
+    <value>{0} est défini comme le groupe hébergeant les commentaires sur votre canal.</value>
+  </data>
   <data name="DiscussionChannelHelp" xml:space="preserve">
     <value>Choisissez un groupe de discussion qui sera affiché dans votre canal.</value>
   </data>
   <data name="DiscussionChannelHelp2" xml:space="preserve">
     <value>Tout ce que vous publiez dans le canal sera transféré à ce groupe.</value>
+  </data>
+  <data name="DiscussionChannelHelp3" xml:space="preserve">
+    <value>Choisissez un groupe de discussion qui hébergera les commentaires de votre canal.</value>
   </data>
   <data name="DiscussionCreateGroup" xml:space="preserve">
     <value>Créer un nouveau groupe</value>
@@ -3554,6 +3638,9 @@ Tout membre de ce groupe pourra voir les messages de ce canal.</value>
     <value>Voulez-vous faire de **{0}** le forum de discussion de **{1}** ?
 
 Tout abonné à ce canal pourra voir les messages de ce groupe.</value>
+  </data>
+  <data name="DiscussionStarted" xml:space="preserve">
+    <value>Discussion lancée</value>
   </data>
   <data name="DiscussionUnlink" xml:space="preserve">
     <value>Délier</value>
@@ -3656,6 +3743,9 @@ Tout abonné à ce canal pourra voir les messages de ce groupe.</value>
   </data>
   <data name="EditAdminRights" xml:space="preserve">
     <value>Modifier les droits</value>
+  </data>
+  <data name="EditAdminSendAnonymously" xml:space="preserve">
+    <value>Envoi anonyme</value>
   </data>
   <data name="EditAdminTransferAlertText" xml:space="preserve">
     <value>Vous pouvez transférer ce groupe à **{0}** uniquement si vous avez :</value>
@@ -4126,6 +4216,9 @@ ne correspond à votre requête.</value>
   </data>
   <data name="EventLogPromotedRemovedTitle" xml:space="preserve">
     <value>Titre</value>
+  </data>
+  <data name="EventLogPromotedSendAnonymously" xml:space="preserve">
+    <value>Envoi anonyme</value>
   </data>
   <data name="EventLogPromotedTitle" xml:space="preserve">
     <value>Titre : {0}</value>
@@ -4644,6 +4737,9 @@ Durée : {1}</value>
   </data>
   <data name="formatterWeek" xml:space="preserve">
     <value>EEE</value>
+  </data>
+  <data name="formatterWeekLong" xml:space="preserve">
+    <value>EEEE</value>
   </data>
   <data name="formatterYear" xml:space="preserve">
     <value>dd/MM/yy</value>
@@ -5531,6 +5627,9 @@ Vous pouvez changer de langue à tout moment dans les paramètres.</value>
   <data name="Later" xml:space="preserve">
     <value>PLUS TARD</value>
   </data>
+  <data name="LeaveAComment" xml:space="preserve">
+    <value>Laisser un commentaire</value>
+  </data>
   <data name="LeaveChannel" xml:space="preserve">
     <value>Quitter le canal</value>
   </data>
@@ -5980,6 +6079,9 @@ La longueur minimale est de 5 caractères.</value>
   <data name="MembersZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Mention" xml:space="preserve">
+    <value>Mentionner</value>
+  </data>
   <data name="Message" xml:space="preserve">
     <value>Message</value>
   </data>
@@ -6048,6 +6150,24 @@ La longueur minimale est de 5 caractères.</value>
   </data>
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>Messages et autres données</value>
+  </data>
+  <data name="MessagesDeletedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedHintOne" xml:space="preserve">
+    <value>Message supprimé</value>
+  </data>
+  <data name="MessagesDeletedHintOther" xml:space="preserve">
+    <value>{0} messages supprimés</value>
+  </data>
+  <data name="MessagesDeletedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="messagesFew" xml:space="preserve">
     <value/>
@@ -6411,8 +6531,23 @@ sur le bouton en bas à droite.</value>
     <value>Commencez à discuter en appuyant
 sur le bouton en bas à droite.</value>
   </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>Aucun commentaire ici pour le moment...</value>
+  </data>
   <data name="NoContacts" xml:space="preserve">
     <value>Aucun contact pour l'instant</value>
+  </data>
+  <data name="NoContactsYet" xml:space="preserve">
+    <value>Vous n'avez pas encore de contacts sur Telegram</value>
+  </data>
+  <data name="NoContactsYetLine1" xml:space="preserve">
+    <value>Inviter des amis à essayer Telegram</value>
+  </data>
+  <data name="NoContactsYetLine2" xml:space="preserve">
+    <value>Trouver des personnes à proximité pour discuter</value>
+  </data>
+  <data name="NoContactsYetLine3" xml:space="preserve">
+    <value>Rechercher par nom d'utilisateur</value>
   </data>
   <data name="NoEmojiFound" xml:space="preserve">
     <value>Aucun emoji trouvé</value>
@@ -6499,6 +6634,9 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   </data>
   <data name="NoRecentSearches" xml:space="preserve">
     <value>Aucune recherche récente</value>
+  </data>
+  <data name="NoReplies" xml:space="preserve">
+    <value>Aucune réponse ici pour le moment...</value>
   </data>
   <data name="NoResult" xml:space="preserve">
     <value>Aucun résultat</value>
@@ -6956,6 +7094,12 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   <data name="NotificationsMuted" xml:space="preserve">
     <value>Sourdine</value>
   </data>
+  <data name="NotificationsMutedForHint" xml:space="preserve">
+    <value>Notifications désactivées pour {0}</value>
+  </data>
+  <data name="NotificationsMutedHint" xml:space="preserve">
+    <value>Notifications désactivées</value>
+  </data>
   <data name="NotificationsNewException" xml:space="preserve">
     <value>Nouvelle exception</value>
   </data>
@@ -7018,6 +7162,9 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
   </data>
   <data name="NotificationsUnmuted" xml:space="preserve">
     <value>Activées</value>
+  </data>
+  <data name="NotificationsUnmutedHint" xml:space="preserve">
+    <value>Notifications activées</value>
   </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
     <value>{0},
@@ -7105,11 +7252,17 @@ L'équipe Telegram</value>
   <data name="OpenChannel" xml:space="preserve">
     <value>VOIR LE CANAL</value>
   </data>
+  <data name="OpenChannel2" xml:space="preserve">
+    <value>Ouvrir le canal</value>
+  </data>
   <data name="OpenFile" xml:space="preserve">
     <value>OUVRIR LE FICHIER</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>VOIR LE GROUPE</value>
+  </data>
+  <data name="OpenGroup2" xml:space="preserve">
+    <value>Groupe ouvert</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>OUVRIR DANS...</value>
@@ -7122,6 +7275,9 @@ L'équipe Telegram</value>
   </data>
   <data name="OpenMessage" xml:space="preserve">
     <value>VOIR LE MESSAGE</value>
+  </data>
+  <data name="OpenProfile" xml:space="preserve">
+    <value>Ouvrir le profil</value>
   </data>
   <data name="OpenTheme" xml:space="preserve">
     <value>VOIR LE THÈME</value>
@@ -8195,6 +8351,9 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   <data name="PhotoEditorDiscardAlert" xml:space="preserve">
     <value>Voulez-vous vraiment effacer tous les changements ?</value>
   </data>
+  <data name="PhotoSavedHint" xml:space="preserve">
+    <value>Photo enregistrée dans la galerie</value>
+  </data>
   <data name="PhotosFew" xml:space="preserve">
     <value/>
   </data>
@@ -8792,6 +8951,30 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
   <data name="RepeatSong" xml:space="preserve">
     <value>Répéter le morceau</value>
   </data>
+  <data name="RepliesChatInfo" xml:space="preserve">
+    <value>Cet échange facilite le suivi des réponses à vos commentaires dans les canaux.</value>
+  </data>
+  <data name="RepliesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RepliesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RepliesOne" xml:space="preserve">
+    <value>{0} réponse</value>
+  </data>
+  <data name="RepliesOther" xml:space="preserve">
+    <value>{0} réponses</value>
+  </data>
+  <data name="RepliesTitle" xml:space="preserve">
+    <value>Réponses</value>
+  </data>
+  <data name="RepliesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="RepliesZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Reply" xml:space="preserve">
     <value>Répondre</value>
   </data>
@@ -9106,6 +9289,9 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   <data name="Search" xml:space="preserve">
     <value>Rechercher</value>
   </data>
+  <data name="SearchAllChatsShort" xml:space="preserve">
+    <value>Échanges</value>
+  </data>
   <data name="SearchBackgrounds" xml:space="preserve">
     <value>Rechercher des arrière-plans</value>
   </data>
@@ -9114,6 +9300,30 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Rechercher des emoji</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
+    <value>Essayer une nouvelle recherche.</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleFiles" xml:space="preserve">
+    <value>Les fichiers de tous vos échanges seront affichés ici.</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleLinks" xml:space="preserve">
+    <value>Les liens de tous vos échanges seront affichés ici.</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleMedia" xml:space="preserve">
+    <value>Les médias de tous vos échanges seront affichés ici.</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleMusic" xml:space="preserve">
+    <value>La musique de tous vos échanges sera affichée ici.</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleVoice" xml:space="preserve">
+    <value>Les messages vocaux de tous vos échanges seront affichés ici.</value>
+  </data>
+  <data name="SearchEmptyViewTitle" xml:space="preserve">
+    <value>Aucun résultat</value>
+  </data>
+  <data name="SearchEmptyViewTitle2" xml:space="preserve">
+    <value>Aucun résultat</value>
   </data>
   <data name="SearchForPeople" xml:space="preserve">
     <value>Rechercher des personnes...</value>
@@ -9159,6 +9369,12 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   </data>
   <data name="SearchStickersHint" xml:space="preserve">
     <value>Rechercher des autocollants</value>
+  </data>
+  <data name="SearchTipToday" xml:space="preserve">
+    <value>Aujourd'hui</value>
+  </data>
+  <data name="SearchTipYesterday" xml:space="preserve">
+    <value>Hier</value>
   </data>
   <data name="SearchTrendingStickersHint" xml:space="preserve">
     <value>Rechercher les autocollants en vogue</value>
@@ -9265,6 +9481,9 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   <data name="Send" xml:space="preserve">
     <value>Envoyer</value>
   </data>
+  <data name="SendAnonymously" xml:space="preserve">
+    <value>Envoi anonyme</value>
+  </data>
   <data name="SendAsFile" xml:space="preserve">
     <value>Envoyer comme fichier</value>
   </data>
@@ -9357,6 +9576,9 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
   </data>
   <data name="SendLocation" xml:space="preserve">
     <value>Envoyer ma position actuelle</value>
+  </data>
+  <data name="SendMessage" xml:space="preserve">
+    <value>Envoyer un message</value>
   </data>
   <data name="SendMessageLocation" xml:space="preserve">
     <value>Envoyer un message</value>
@@ -9561,6 +9783,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="SharedContentTitle" xml:space="preserve">
     <value>Contenu partagé</value>
   </data>
+  <data name="SharedFew" xml:space="preserve">
+    <value/>
+  </data>
   <data name="SharedFilesTab" xml:space="preserve">
     <value>FICHIERS</value>
   </data>
@@ -9582,6 +9807,9 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="SharedLinksTab2" xml:space="preserve">
     <value>Liens</value>
   </data>
+  <data name="SharedMany" xml:space="preserve">
+    <value/>
+  </data>
   <data name="SharedMedia" xml:space="preserve">
     <value>Médias partagés</value>
   </data>
@@ -9598,10 +9826,16 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
     <value>Médias partagés</value>
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
-    <value>AUDIO</value>
+    <value>MUSIQUE</value>
   </data>
   <data name="SharedMusicTab2" xml:space="preserve">
-    <value>Audio</value>
+    <value>Musique</value>
+  </data>
+  <data name="SharedOne" xml:space="preserve">
+    <value>{0} partagé</value>
+  </data>
+  <data name="SharedOther" xml:space="preserve">
+    <value>{0} partagés</value>
   </data>
   <data name="SharedPhotosAndVideos" xml:space="preserve">
     <value>Photos et vidéos</value>
@@ -9609,11 +9843,20 @@ Ne répondez pas, Telegram traitera tout automatiquement.</value>
   <data name="SharedPlace" xml:space="preserve">
     <value>Lieu</value>
   </data>
+  <data name="SharedToPrivateMessagesAndGroups" xml:space="preserve">
+    <value>aux messages et groupes privés</value>
+  </data>
+  <data name="SharedTwo" xml:space="preserve">
+    <value/>
+  </data>
   <data name="SharedVoiceTab" xml:space="preserve">
     <value>VOIX</value>
   </data>
   <data name="SharedVoiceTab2" xml:space="preserve">
-    <value>Messages vocaux</value>
+    <value>Voix</value>
+  </data>
+  <data name="SharedZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="ShareFile" xml:space="preserve">
     <value>Partager</value>
@@ -10975,6 +11218,12 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   <data name="VideoCall" xml:space="preserve">
     <value>Appel vidéo</value>
   </data>
+  <data name="VideoCallAlert" xml:space="preserve">
+    <value>Voulez-vous vraiment appeler **{0}** en vidéo ?</value>
+  </data>
+  <data name="VideoCallAlertTitle" xml:space="preserve">
+    <value>Appel vidéo</value>
+  </data>
   <data name="VideoCallViaTelegram" xml:space="preserve">
     <value>Appel vidéo Telegram</value>
   </data>
@@ -10989,6 +11238,9 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   </data>
   <data name="VideoQualityIsTooLow" xml:space="preserve">
     <value>La qualité de la vidéo est trop basse pour modifier les réglages de compression.</value>
+  </data>
+  <data name="VideoSavedHint" xml:space="preserve">
+    <value>Vidéo enregistrée dans la galerie</value>
   </data>
   <data name="VideosFew" xml:space="preserve">
     <value/>
@@ -11032,14 +11284,38 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   <data name="ViewDetails" xml:space="preserve">
     <value>VOIR LE CONTACT</value>
   </data>
+  <data name="ViewDiscussion" xml:space="preserve">
+    <value>Voir discussion</value>
+  </data>
   <data name="ViewExceptions" xml:space="preserve">
     <value>Voir les exceptions</value>
+  </data>
+  <data name="ViewInChat" xml:space="preserve">
+    <value>Voir dans l'échange</value>
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Membres lecteurs</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Voir le lot d'autocollants</value>
+  </data>
+  <data name="ViewRepliesFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewRepliesMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewRepliesOne" xml:space="preserve">
+    <value>Voir {0} réponse</value>
+  </data>
+  <data name="ViewRepliesOther" xml:space="preserve">
+    <value>Voir {0} réponses</value>
+  </data>
+  <data name="ViewRepliesTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="ViewRepliesZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="ViewsBySourceChartTitle" xml:space="preserve">
     <value>Vues par source</value>
@@ -11064,6 +11340,9 @@ Vous pouvez utilisez des lettres, des chiffres, et des tirets bas. La longueur m
   </data>
   <data name="ViewsZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="ViewThread" xml:space="preserve">
+    <value>Voir le fil</value>
   </data>
   <data name="Vignette" xml:space="preserve">
     <value>Vignettage</value>

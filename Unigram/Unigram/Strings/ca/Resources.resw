@@ -2940,7 +2940,7 @@ Quan {1} actualitzi el Telegram, les fotos amb autodestrucció d'1 minut o menys
     <value>Truca a {0}</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
-    <value>El **Telegram** necessita accés als vostres contactes per a ajudar-vos a connectar amb els amics en tots els dispositius. Els vostres contactes se sincronitzaran automàticament als servidors xifrats del Telegram.</value>
+    <value>El **Telegram** necessita accedir als contactes perquè pugueu connectar amb els amics en tots els dispositius. Els vostres contactes se sincronitzaran automàticament als servidors xifrats del Telegram.</value>
   </data>
   <data name="ContactsPermissionAlertContinue" xml:space="preserve">
     <value>CONTINUA</value>
@@ -3379,7 +3379,7 @@ Sempre podreu tornar al tema predeterminat de Telegram aquí.</value>
     <value>Voleu suprimir el servidor intermediari?</value>
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
-    <value>Marca com a brossa</value>
+    <value>Notifica com a brossa</value>
   </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Elimina el missatge</value>
@@ -4459,7 +4459,7 @@ Durada: {1}</value>
     <value>Altre usuari</value>
   </data>
   <data name="FilterNonContacts" xml:space="preserve">
-    <value>Usuaris</value>
+    <value>Altres usuaris</value>
   </data>
   <data name="FilterRead" xml:space="preserve">
     <value>Llegits</value>
@@ -8125,7 +8125,7 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
     <value>El Telegram necessita accedir a la càmera perquè pugueu fer fotos i vídeos. Activeu-la en la configuració.</value>
   </data>
   <data name="PermissionNoLocation" xml:space="preserve">
-    <value>El Telegram necessita accés a la ubicació perquè la pugueu compartir amb els amics.</value>
+    <value>El Telegram necessita accedir a la ubicació perquè la pugueu compartir amb els amics.</value>
   </data>
   <data name="PermissionNoLocationPosition" xml:space="preserve">
     <value>El Telegram necessita accedir a la ubicació.</value>
@@ -8821,7 +8821,7 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
     <value>Violència</value>
   </data>
   <data name="ReportSpam" xml:space="preserve">
-    <value>MARCA COM A BROSSA</value>
+    <value>NOTIFICA COM A BROSSA</value>
   </data>
   <data name="ReportSpamAlert" xml:space="preserve">
     <value>Segur que voleu denunciar rebre brossa d'aquest usuari?</value>
@@ -8833,13 +8833,13 @@ Permeteu l'accés a la ubicació per a activar aquesta opció.</value>
     <value>Segur que voleu denunciar rebre brossa d'aquest grup?</value>
   </data>
   <data name="ReportSpamAndLeave" xml:space="preserve">
-    <value>MARCA COM A BROSSA I SURT</value>
+    <value>NOTIFICA COM A BROSSA I SURT</value>
   </data>
   <data name="ReportSpamLocation" xml:space="preserve">
     <value>NO TÉ RELACIÓ AMB LA UBICACIÓ?</value>
   </data>
   <data name="ReportSpamTitle" xml:space="preserve">
-    <value>Marca com a brossa</value>
+    <value>Notifica com a brossa</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>BLOCA L'USUARI</value>
@@ -9593,10 +9593,10 @@ No respongueu la trucada, el Telegram ho processarà tot automàticament.</value
     <value>Multimèdia</value>
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
-    <value>ÀUDIO</value>
+    <value>MÚSICA</value>
   </data>
   <data name="SharedMusicTab2" xml:space="preserve">
-    <value>Àudio</value>
+    <value>Música</value>
   </data>
   <data name="SharedPhotosAndVideos" xml:space="preserve">
     <value>Fotos i vídeos</value>
@@ -11152,7 +11152,7 @@ Podeu usar **a-z**, **0-9** i guions baixos. Longitud mínima: **5** caràcters.
     <value>Silencia</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
-    <value>Telegram necessita accés al vostre micròfon i càmera perquè pugueu fer videotrucades.</value>
+    <value>El Telegram necessita accedir al micròfon i la càmera perquè pugueu fer videotrucades.</value>
   </data>
   <data name="VoipNeedMicPermission" xml:space="preserve">
     <value>El Telegram necessita accedir al micròfon perquè pugueu fer trucades.</value>

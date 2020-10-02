@@ -1942,7 +1942,7 @@ Zonsopkomst: {1}</value>
     <value>Oproepen</value>
   </data>
   <data name="CallsDataUsage" xml:space="preserve">
-    <value>Oproepinstellingen</value>
+    <value>Oproepen</value>
   </data>
   <data name="CallsTotalTime" xml:space="preserve">
     <value>Totale oproeptijd</value>
@@ -8720,6 +8720,12 @@ Sta locatietoegang toe om deze functie te gebruiken.</value>
   <data name="RateCallSilentRemote" xml:space="preserve">
     <value>De andere kant kon me niet horen</value>
   </data>
+  <data name="RateCallVideoDistorted" xml:space="preserve">
+    <value>Video was vervormd</value>
+  </data>
+  <data name="RateCallVideoPixelated" xml:space="preserve">
+    <value>Video was korrelig</value>
+  </data>
   <data name="Recent" xml:space="preserve">
     <value>Recent</value>
   </data>
@@ -9157,6 +9163,9 @@ Het kan zijn dat je de app moet herstarten voordat dit actief is.</value>
   <data name="Search" xml:space="preserve">
     <value>Zoeken</value>
   </data>
+  <data name="SearchAllChatsShort" xml:space="preserve">
+    <value>Chats</value>
+  </data>
   <data name="SearchBackgrounds" xml:space="preserve">
     <value>Zoek Achtergronden</value>
   </data>
@@ -9165,6 +9174,18 @@ Het kan zijn dat je de app moet herstarten voordat dit actief is.</value>
   </data>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>Emoji zoeken</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleFiles" xml:space="preserve">
+    <value>Bestanden</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleLinks" xml:space="preserve">
+    <value>Links</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleMedia" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="SearchEmptyViewFilteredSubtitleMusic" xml:space="preserve">
+    <value>Muziek</value>
   </data>
   <data name="SearchForPeople" xml:space="preserve">
     <value>Zoek mensen</value>
@@ -9649,10 +9670,10 @@ Neem niet op, Telegram verwerkt alles automatisch.</value>
     <value>Gedeelde media</value>
   </data>
   <data name="SharedMusicTab" xml:space="preserve">
-    <value>AUDIO</value>
+    <value>MUZIEK</value>
   </data>
   <data name="SharedMusicTab2" xml:space="preserve">
-    <value>Audio</value>
+    <value>Muziek</value>
   </data>
   <data name="SharedPhotosAndVideos" xml:space="preserve">
     <value>Foto's en video's</value>
@@ -11251,6 +11272,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   <data name="VoipPeerOutdated" xml:space="preserve">
     <value>**{0}** heeft nog geen ondersteuning voor spraakoproepen en zal eerst een update moeten uitvoeren.</value>
   </data>
+  <data name="VoipPeerVideoOutdated" xml:space="preserve">
+    <value>Sorry, **{0}** gebruikt een oude versie van Telegram die geen videogesprekken ondersteunt.</value>
+  </data>
   <data name="VoipQuickReplies" xml:space="preserve">
     <value>Antwoord met bericht</value>
   </data>
@@ -11259,6 +11283,9 @@ Je mag **a–z**, **0–9** en liggend streepje gebruiken. De minimale lengte is
   </data>
   <data name="VoipRateCallAlert" xml:space="preserve">
     <value>Beoordeel de kwaliteit van je Telegram-oproep.</value>
+  </data>
+  <data name="VoipReconnecting" xml:space="preserve">
+    <value>Opnieuw verbinden</value>
   </data>
   <data name="VoipRequesting" xml:space="preserve">
     <value>Aanvragen</value>
