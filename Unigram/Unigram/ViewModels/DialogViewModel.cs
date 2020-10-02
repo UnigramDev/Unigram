@@ -1578,12 +1578,20 @@ namespace Unigram.ViewModels
                                 _photosMap[user.ProfilePhoto.Small.Id].Add(target);
                             }
                         }
-                        else if (target.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                        else if (target.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                         {
-                            var fromChat = message.ProtoService.GetChat(post.ChatId);
-                            if (fromChat != null && fromChat.Photo != null)
+                            var originChat = message.ProtoService.GetChat(fromChat.SenderChatId);
+                            if (originChat != null && originChat.Photo != null)
                             {
-                                _photosMap[fromChat.Photo.Small.Id].Add(target);
+                                _photosMap[originChat.Photo.Small.Id].Add(target);
+                            }
+                        }
+                        else if (target.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                        {
+                            var originChannel = message.ProtoService.GetChat(fromChannel.ChatId);
+                            if (originChannel != null && originChannel.Photo != null)
+                            {
+                                _photosMap[originChannel.Photo.Small.Id].Add(target);
                             }
                         }
                     }
@@ -3518,20 +3526,30 @@ namespace Unigram.ViewModels
         {
             var saved1 = message1.IsSaved();
             var saved2 = message2.IsSaved();
+
             if (saved1 && saved2)
             {
                 if (message1.ForwardInfo?.Origin is MessageForwardOriginUser fromUser1 && message2.ForwardInfo?.Origin is MessageForwardOriginUser fromUser2)
                 {
                     return fromUser1.SenderUserId == fromUser2.SenderUserId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
                 }
-                else if (message1.ForwardInfo?.Origin is MessageForwardOriginChannel post1 && message2.ForwardInfo?.Origin is MessageForwardOriginChannel post2)
+                else if (message1.ForwardInfo?.Origin is MessageForwardOriginChat fromChat1 && message2.ForwardInfo?.Origin is MessageForwardOriginChat fromChat2)
                 {
-                    return post1.ChatId == post2.ChatId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
+                    return fromChat1.SenderChatId == fromChat2.SenderChatId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
+                }
+                else if (message1.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel1 && message2.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel2)
+                {
+                    return fromChannel1.ChatId == fromChannel2.ChatId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
                 }
             }
             else if (saved1 || saved2)
             {
                 return false;
+            }
+
+            if (message1.SenderUserId == 0 || message2.SenderUserId == 0)
+            {
+                return message1.SenderChatId == message2.SenderChatId;
             }
 
             return message1.SenderUserId == message2.SenderUserId;

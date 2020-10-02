@@ -747,9 +747,17 @@ namespace Unigram.Views
                                 photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
                             }
                         }
-                        else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                        else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                         {
-                            var chat = message.ProtoService.GetChat(post.ChatId);
+                            var chat = message.ProtoService.GetChat(fromChat.SenderChatId);
+                            if (chat != null)
+                            {
+                                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
+                            }
+                        }
+                        else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                        {
+                            var chat = message.ProtoService.GetChat(fromChannel.ChatId);
                             if (chat != null)
                             {
                                 photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
@@ -766,6 +774,14 @@ namespace Unigram.Views
                         if (user != null)
                         {
                             photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
+                        }
+                    }
+                    else if (message.SenderChatId != 0)
+                    {
+                        var chat = message.GetSenderChat();
+                        if (chat != null)
+                        {
+                            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
                         }
                     }
                     else

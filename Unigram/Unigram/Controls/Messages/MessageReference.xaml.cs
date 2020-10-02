@@ -843,9 +843,9 @@ namespace Unigram.Controls.Messages
                 return title;
             }
 
-            if (message.IsChannelPost)
+            if (message.SenderChatId != 0)
             {
-                var chat = message.GetChat();
+                var chat = message.GetSenderChat();
                 if (chat != null)
                 {
                     return message.ProtoService.GetTitle(chat);
@@ -853,17 +853,10 @@ namespace Unigram.Controls.Messages
             }
             else if (message.IsSaved())
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                var forward = message.ProtoService.GetTitle(message.ForwardInfo);
+                if (forward != null)
                 {
-                    return message.ProtoService.GetUser(fromUser.SenderUserId)?.GetFullName();
-                }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
-                {
-                    return message.ProtoService.GetTitle(message.ProtoService.GetChat(post.ChatId));
-                }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
-                {
-                    return fromHiddenUser.SenderName;
+                    return forward;
                 }
             }
 

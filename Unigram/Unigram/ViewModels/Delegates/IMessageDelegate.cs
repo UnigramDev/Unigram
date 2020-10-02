@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.Delegates
 
         void OpenUsername(string username);
         void OpenUser(int userId);
-        void OpenChat(long chatId);
+        void OpenChat(long chatId, bool profile = false);
         void OpenChat(long chatId, long messageId);
         void OpenViaBot(int viaBotUserId);
 

@@ -265,18 +265,7 @@ namespace Unigram.Common
             }
             else if (!light && /*message.IsFirst &&*/ message.IsSaved(cacheService.Options.MyId))
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
-                {
-                    title = cacheService.GetUser(fromUser.SenderUserId)?.GetFullName();
-                }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
-                {
-                    title = cacheService.GetTitle(cacheService.GetChat(post.ChatId));
-                }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
-                {
-                    title = fromHiddenUser.SenderName;
-                }
+                title = cacheService.GetTitle(message.ForwardInfo);
             }
 
             var builder = new StringBuilder();

@@ -303,7 +303,13 @@ namespace Unigram.ViewModels
                     var date = BindConvert.Current.DateTime(message.Date);
                     builder.AppendLine(string.Format("{0}, [{1} {2}]", title, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date)));
 
-                    if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost)
+                    if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                    {
+                        var from = ProtoService.GetChat(fromChat.SenderChatId);
+                        builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
+                        builder.AppendLine($"[{Strings.Resources.From} {ProtoService.GetTitle(from)}]");
+                    }
+                    else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost)
                     {
                         var from = ProtoService.GetChat(forwardedPost.ChatId);
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");

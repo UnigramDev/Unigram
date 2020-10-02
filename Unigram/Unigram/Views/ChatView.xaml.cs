@@ -1720,10 +1720,14 @@ namespace Unigram.Views
                 {
                     ViewModel.OpenUser(fromUser.SenderUserId);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                {
+                    ViewModel.OpenChat(fromChat.SenderChatId, true);
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
                 {
                     // TODO: verify if this is sufficient
-                    ViewModel.OpenChat(post.ChatId);
+                    ViewModel.OpenChat(fromChannel.ChatId);
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
                 {
@@ -1753,13 +1757,13 @@ namespace Unigram.Views
 
             if (message.IsSaved())
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser || message.ForwardInfo?.Origin is MessageForwardOriginChat)
                 {
                     ViewModel.NavigationService.NavigateToChat(message.ForwardInfo.FromChatId, message.ForwardInfo.FromMessageId);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
                 {
-                    ViewModel.NavigationService.NavigateToChat(post.ChatId, post.MessageId);
+                    ViewModel.NavigationService.NavigateToChat(fromChannel.ChatId, fromChannel.MessageId);
                 }
             }
             else
@@ -3129,14 +3133,14 @@ namespace Unigram.Views
             if (ViewModel.Type == DialogType.Thread)
             {
                 var message = ViewModel.Thread?.Messages.FirstOrDefault();
-                if (message == null || message.InteractionInfo == null)
+                if (message == null || message.InteractionInfo?.ReplyInfo == null)
                 {
                     return;
                 }
 
                 if (message.SenderChatId == 0)
                 {
-                    Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyCount);
+                    Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyInfo.ReplyCount);
                 }
                 else
                 {
@@ -3148,11 +3152,11 @@ namespace Unigram.Views
 
                     if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                     {
-                        Title.Text = Locale.Declension("Comments", message.InteractionInfo.ReplyCount);
+                        Title.Text = Locale.Declension("Comments", message.InteractionInfo.ReplyInfo.ReplyCount);
                     }
                     else
                     {
-                        Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyCount);
+                        Title.Text = Locale.Declension("Replies", message.InteractionInfo.ReplyInfo.ReplyCount);
                     }
                 }
             }
@@ -4226,12 +4230,20 @@ namespace Unigram.Views
                                         photo.Source = PlaceholderHelper.GetUser(null, user, 32);
                                     }
                                 }
-                                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+                                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                                 {
-                                    var fromChat = message.ProtoService.GetChat(post.ChatId);
-                                    if (fromChat != null)
+                                    var originChat = message.ProtoService.GetChat(fromChat.SenderChatId);
+                                    if (originChat != null)
                                     {
-                                        photo.Source = PlaceholderHelper.GetChat(null, fromChat, 32);
+                                        photo.Source = PlaceholderHelper.GetChat(null, originChat, 32);
+                                    }
+                                }
+                                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                                {
+                                    var originChannel = message.ProtoService.GetChat(fromChannel.ChatId);
+                                    if (originChannel != null)
+                                    {
+                                        photo.Source = PlaceholderHelper.GetChat(null, originChannel, 32);
                                     }
                                 }
                             }

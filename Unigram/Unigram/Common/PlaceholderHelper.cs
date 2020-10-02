@@ -27,7 +27,7 @@ namespace Unigram.Common
             Color.FromArgb(0xFF, 0xF2, 0x74, 0x9A),
         };
 
-        public static SolidColorBrush GetBrush(int i)
+        public static SolidColorBrush GetBrush(long i)
         {
             return new SolidColorBrush(_colors[Math.Abs(i % _colors.Length)]);
         }

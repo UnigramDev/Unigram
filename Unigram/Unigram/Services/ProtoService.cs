@@ -54,6 +54,8 @@ namespace Unigram.Services
         ConnectionState GetConnectionState();
 
         string GetTitle(Chat chat, bool tiny = false);
+        string GetTitle(MessageForwardInfo info);
+
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
 
@@ -677,6 +679,28 @@ namespace Unigram.Services
             }
 
             return chat.Title;
+        }
+
+        public string GetTitle(MessageForwardInfo info)
+        {
+            if (info?.Origin is MessageForwardOriginUser fromUser)
+            {
+                return GetUser(fromUser.SenderUserId)?.GetFullName();
+            }
+            else if (info?.Origin is MessageForwardOriginChat fromChat)
+            {
+                return GetTitle(GetChat(fromChat.SenderChatId));
+            }
+            else if (info?.Origin is MessageForwardOriginChannel fromChannel)
+            {
+                return GetTitle(GetChat(fromChannel.ChatId));
+            }
+            else if (info?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+            {
+                return fromHiddenUser.SenderName;
+            }
+
+            return null;
         }
 
         public Chat GetChat(long id)

@@ -80,6 +80,11 @@ namespace Unigram.ViewModels
             return ProtoService.GetUser(_message.SenderUserId);
         }
 
+        public Chat GetSenderChat()
+        {
+            return ProtoService.GetChat(_message.SenderChatId);
+        }
+
         public User GetViaBotUser()
         {
             if (_message.ViaBotUserId != 0)

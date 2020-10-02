@@ -100,9 +100,9 @@ namespace Unigram.Controls.Messages
             {
                 views += $"{message.AuthorSignature}, ";
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost && !string.IsNullOrEmpty(forwardedPost.AuthorSignature))
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && !string.IsNullOrEmpty(fromChannel.AuthorSignature))
             {
-                views += $"{forwardedPost.AuthorSignature}, ";
+                views += $"{fromChannel.AuthorSignature}, ";
             }
 
             ViewsGlyph.Text = message.InteractionInfo?.ViewCount > 0 ? "\uE607\u00A0\u00A0" : string.Empty;

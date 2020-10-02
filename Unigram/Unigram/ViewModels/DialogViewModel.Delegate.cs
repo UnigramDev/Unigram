@@ -431,7 +431,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void OpenChat(long chatId)
+        public void OpenChat(long chatId, bool profile = false)
         {
             var chat = ProtoService.GetChat(chatId);
             if (chat == null)
@@ -439,7 +439,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.NavigateToChat(chat);
+            if (profile)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+            }
+            else
+            {
+                NavigationService.NavigateToChat(chat);
+            }
         }
 
         public void OpenChat(long chatId, long messageId)

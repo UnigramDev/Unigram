@@ -1047,7 +1047,11 @@ namespace Unigram.Common
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+            {
+                return message.ForwardInfo.FromChatId != 0;
+            }
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
             {
                 return message.ForwardInfo.FromChatId != 0;
             }

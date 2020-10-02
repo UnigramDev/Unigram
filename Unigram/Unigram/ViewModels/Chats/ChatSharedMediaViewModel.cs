@@ -440,7 +440,7 @@ namespace Unigram.ViewModels.Chats
         {
         }
 
-        public void OpenChat(long chatId)
+        public void OpenChat(long chatId, bool profile = false)
         {
         }
 

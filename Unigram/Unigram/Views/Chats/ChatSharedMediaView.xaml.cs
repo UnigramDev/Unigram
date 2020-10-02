@@ -447,7 +447,7 @@ namespace Unigram.Views.Chats
             }
             else if (message.Content is MessageHeaderDate && args.ItemContainer.ContentTemplateRoot is Border content && content.Child is TextBlock header)
             {
-                header.Text = DateTimeToFormatConverter.ConvertMonthGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                header.Text = BindConvert.MonthGrouping(Utils.UnixTimestampToDateTime(message.Date));
             }
 
             if (args.ItemContainer.ContentTemplateRoot is FrameworkElement element)
