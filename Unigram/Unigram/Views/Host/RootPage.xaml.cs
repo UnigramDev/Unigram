@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -9,13 +11,18 @@ using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Services.Settings;
 using Unigram.ViewModels;
 using Unigram.Views.SignIn;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
+using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Host
@@ -73,10 +80,10 @@ namespace Unigram.Views.Host
             Navigation.Content = _navigationService.Frame;
 
             var shadow = DropShadowEx.Attach(ThemeShadow, 20, 0.25f);
-            ThemeShadow.SizeChanged += (s, args) =>
-            {
-                shadow.Size = args.NewSize.ToVector2();
-            };
+            shadow.RelativeSizeAdjustment = Vector2.One;
+
+            var visual = ElementCompositionPreview.GetElementVisual(ThemeReplacement);
+            visual.Offset = new Vector3(-48, 32, 0);
         }
 
         public void UpdateComponent()
@@ -520,6 +527,124 @@ namespace Unigram.Views.Host
 
             var view = ApplicationView.GetForCurrentView();
             view.TryResizeView(ApplicationView.PreferredLaunchViewSize);
+        }
+
+        private async void Theme_Click(object sender, RoutedEventArgs e)
+        {
+            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreatePathKeyFrameAnimation"))
+            {
+                var target = new RenderTargetBitmap();
+                await target.RenderAsync(Navigation);
+
+                LayoutRoot.Background = new ImageBrush { ImageSource = target, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+
+                var actualWidth = (float)ActualWidth;
+                var actualHeight = (float)ActualHeight;
+
+                var transform = ThemeReplacement.TransformToVisual(this);
+                var point = transform.TransformPoint(new Point()).ToVector2();
+
+                var width = MathF.Max(actualWidth - point.X, actualHeight - point.Y);
+                var diaginal = MathF.Sqrt((width * width) + (width * width));
+
+                var device = CanvasDevice.GetSharedDevice();
+
+                var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, ActualTheme == ElementTheme.Dark ? actualWidth : 0, ActualTheme == ElementTheme.Dark ? actualHeight : 0);
+
+                var elli1 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? 0 : diaginal);
+                var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+                var elli2 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? diaginal : 0);
+                var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+                var visual = ElementCompositionPreview.GetElementVisual(Navigation);
+                var ellipse = visual.Compositor.CreatePathGeometry(new CompositionPath(group2));
+                var clip = visual.Compositor.CreateGeometricClip(ellipse);
+
+                visual.Clip = clip;
+
+                var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                batch.Completed += (s, args) =>
+                {
+                    visual.Clip = null;
+                    LayoutRoot.Background = null;
+                };
+
+                CompositionEasingFunction ease;
+                if (ActualTheme == ElementTheme.Dark)
+                {
+                    ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(.42f, 0), new Vector2(1, 1));
+                }
+                else
+                {
+                    ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(.58f, 1));
+                }
+
+                var anim = visual.Compositor.CreatePathKeyFrameAnimation();
+                anim.InsertKeyFrame(0, new CompositionPath(group2), ease);
+                anim.InsertKeyFrame(1, new CompositionPath(group1), ease);
+                anim.Duration = TimeSpan.FromMilliseconds(500);
+
+                ellipse.StartAnimation("Path", anim);
+                batch.End();
+            }
+
+            var theme = ActualTheme == ElementTheme.Dark ? TelegramTheme.Light : TelegramTheme.Dark;
+            var flags = ActualTheme == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
+            SettingsService.Current.Appearance.RequestedTheme = theme;
+
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            {
+                await window.Dispatcher.DispatchAsync(() =>
+                {
+                    Theme.Current.Initialize(theme);
+
+                    window.UpdateTitleBar();
+
+                    if (window.Content is FrameworkElement element)
+                    {
+                        if (flags == element.RequestedTheme)
+                        {
+                            element.RequestedTheme = flags == ElementTheme.Dark
+                                ? ElementTheme.Light
+                                : ElementTheme.Dark;
+                        }
+
+                        element.RequestedTheme = flags;
+                    }
+                });
+            }
+
+            TLContainer.Current.Resolve<IEventAggregator>().Publish(new UpdateSelectedBackground(true, TLContainer.Current.Resolve<IProtoService>().GetSelectedBackground(true)));
+            TLContainer.Current.Resolve<IEventAggregator>().Publish(new UpdateSelectedBackground(false, TLContainer.Current.Resolve<IProtoService>().GetSelectedBackground(false)));
+        }
+
+        private void Navigation_PaneOpening(SplitView sender, object args)
+        {
+            //ThemeReplacement.Visibility = Visibility.Visible;
+
+            var visual = ElementCompositionPreview.GetElementVisual(ThemeReplacement);
+            var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
+            var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
+            anim.InsertKeyFrame(0, new Vector3(-48, 32, 0), ease);
+            anim.InsertKeyFrame(1, new Vector3(192, 32, 0), ease);
+            anim.Duration = TimeSpan.FromMilliseconds(350);
+
+            visual.StartAnimation("Offset", anim);
+        }
+
+        private void Navigation_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
+        {
+            //ThemeReplacement.Visibility = Visibility.Collapsed;
+
+            var visual = ElementCompositionPreview.GetElementVisual(ThemeReplacement);
+            var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
+            var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
+            anim.InsertKeyFrame(0, new Vector3(192, 32, 0), ease);
+            anim.InsertKeyFrame(1, new Vector3(-48, 32, 0), ease);
+            anim.Duration = TimeSpan.FromMilliseconds(120);
+
+            visual.StartAnimation("Offset", anim);
         }
     }
 

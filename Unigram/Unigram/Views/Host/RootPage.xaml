@@ -113,12 +113,12 @@
 
     </Page.Resources>
 
-    <Grid>
+    <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="MainColumn"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <controls:NavigationView x:Name="Navigation">
+        <controls:NavigationView x:Name="Navigation" PaneOpening="Navigation_PaneOpening" PaneClosing="Navigation_PaneClosing">
             <controls:NavigationView.PaneHeader>
                 <Button x:Name="Accounts" Click="Expand_Click" RequestedTheme="Dark" Style="{StaticResource EmptyButtonStyle}">
                     <Grid Padding="12,8">
@@ -131,18 +131,18 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock x:Name="NameLabel"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis"
-                                   VerticalAlignment="Bottom"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+                                    TextWrapping="NoWrap"
+                                    TextTrimming="CharacterEllipsis"
+                                    VerticalAlignment="Bottom"
+                                    FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
                         <TextBlock x:Name="PhoneLabel"
-                                   VerticalAlignment="Top"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Grid.Row="1"
-                                   MaxLines="1"/>
+                                    VerticalAlignment="Top"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    Foreground="{ThemeResource SystemControlBackgroundBaseMediumBrush}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    Grid.Row="1"
+                                    MaxLines="1"/>
                         <CheckBox x:Name="Expanded" MinWidth="0" IsEnabled="False" Style="{StaticResource NavigationViewExpanderStyle}" Grid.Column="1" Grid.RowSpan="2"/>
                     </Grid>
                 </Button>
@@ -164,6 +164,13 @@
                 </ListView>
             </controls:NavigationView.PaneFooter>
         </controls:NavigationView>
+
+        <controls:SwitchThemeButton
+            x:Name="ThemeReplacement"
+            Click="Theme_Click"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            IsTabStop="False"/>
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
