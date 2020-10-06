@@ -315,4 +315,12 @@ namespace Unigram.ViewModels
             }
         }
     }
+
+    public enum ReplyToMessageState
+    {
+        None,
+        Loading,
+        Deleted,
+        Hidden
+    }
 }

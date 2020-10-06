@@ -98,7 +98,7 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageReply(MessageViewModel message)
         {
-            if (message.ReplyToMessageId == 0)
+            if (message.ReplyToMessageState == ReplyToMessageState.Hidden || message.ReplyToMessageId == 0)
             {
                 Visibility = Visibility.Collapsed;
             }
