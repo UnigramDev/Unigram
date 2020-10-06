@@ -27,7 +27,7 @@ namespace Unigram.Services
         Task<ThemeCustomInfo> DeserializeAsync(StorageFile file);
 
         Task InstallThemeAsync(StorageFile file);
-        Task SetThemeAsync(ThemeInfoBase info);
+        Task SetThemeAsync(ThemeInfoBase info, bool apply);
 
         void Refresh();
     }
@@ -38,22 +38,11 @@ namespace Unigram.Services
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        private readonly UISettings _uiSettings;
-
         public ThemeService(IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _settingsService = settingsService;
             _aggregator = aggregator;
-
-            _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
-        }
-
-        private void OnColorValuesChanged(UISettings sender, object args)
-        {
-            _aggregator.Publish(new UpdateSelectedBackground(true, _protoService.GetSelectedBackground(true)));
-            _aggregator.Publish(new UpdateSelectedBackground(false, _protoService.GetSelectedBackground(false)));
         }
 
         public Dictionary<string, string[]> GetMapping(TelegramTheme flags)
@@ -190,7 +179,7 @@ namespace Unigram.Services
             var equals = installed.FirstOrDefault(x => x is ThemeCustomInfo custom && ThemeCustomInfo.Equals(custom, info));
             if (equals != null)
             {
-                await SetThemeAsync(equals);
+                await SetThemeAsync(equals, true);
                 return;
             }
 
@@ -200,13 +189,16 @@ namespace Unigram.Services
             var theme = await DeserializeAsync(result);
             if (theme != null)
             {
-                await SetThemeAsync(theme);
+                await SetThemeAsync(theme, true);
             }
         }
 
-        public async Task SetThemeAsync(ThemeInfoBase info)
+        public async Task SetThemeAsync(ThemeInfoBase info, bool apply)
         {
-            _settingsService.Appearance.RequestedTheme = info.Parent;
+            if (apply)
+            {
+                _settingsService.Appearance.RequestedTheme = info.Parent;
+            }
 
             if (info is ThemeCustomInfo custom)
             {
@@ -224,6 +216,12 @@ namespace Unigram.Services
             }
 
             var flags = _settingsService.Appearance.GetCalculatedElementTheme();
+            var theme = flags == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
+
+            if (theme != info.Parent && !apply)
+            {
+                return;
+            }
 
             foreach (TLWindowContext window in WindowContext.ActiveWrappers)
             {
