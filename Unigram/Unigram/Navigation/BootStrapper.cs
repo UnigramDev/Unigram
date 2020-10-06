@@ -192,7 +192,11 @@ namespace Unigram.Navigation
 
         // it is the intent of Template 10 to no longer require Launched/Activated overrides, only OnStartAsync()
 
-        protected sealed override void OnLaunched(LaunchActivatedEventArgs e) { DebugWrite(); CallInternalLaunchAsync(e); }
+        protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            DebugWrite();
+            CallInternalLaunchAsync(e);
+        }
 
         async void CallInternalLaunchAsync(ILaunchActivatedEventArgs e)
         {

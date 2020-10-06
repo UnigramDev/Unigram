@@ -6,6 +6,21 @@ using Windows.UI.Core;
 
 namespace Unigram.Navigation
 {
+    public interface IDispatcherWrapper
+    {
+        void Dispatch(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
+        Task DispatchAsync(Func<Task> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
+        Task DispatchAsync(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
+        Task<T> DispatchAsync<T>(Func<T> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
+
+        void DispatchIdle(Action action);
+        Task DispatchIdleAsync(Func<Task> func);
+        Task DispatchIdleAsync(Action action);
+        Task<T> DispatchIdleAsync<T>(Func<T> func);
+
+        bool HasThreadAccess { get; }
+    }
+
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-DispatcherWrapper
     public class DispatcherWrapper : IDispatcherWrapper
     {
@@ -30,11 +45,8 @@ namespace Unigram.Navigation
         private readonly CoreDispatcher dispatcher;
 
         [DebuggerNonUserCode]
-        public async Task DispatchAsync(Action action, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public async Task DispatchAsync(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (delayms > 0)
-                await Task.Delay(delayms).ConfigureAwait(false);
-
             if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 action();
@@ -59,11 +71,8 @@ namespace Unigram.Navigation
         }
 
         [DebuggerNonUserCode]
-        public async Task DispatchAsync(Func<Task> func, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public async Task DispatchAsync(Func<Task> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (delayms > 0)
-                await Task.Delay(delayms).ConfigureAwait(false);
-
             if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 await func().ConfigureAwait(false);
@@ -88,11 +97,8 @@ namespace Unigram.Navigation
         }
 
         [DebuggerNonUserCode]
-        public async Task<T> DispatchAsync<T>(Func<T> func, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public async Task<T> DispatchAsync<T>(Func<T> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (delayms > 0)
-                await Task.Delay(delayms).ConfigureAwait(false);
-
             if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 return func();
@@ -116,27 +122,22 @@ namespace Unigram.Navigation
         }
 
         [DebuggerNonUserCode]
-        public async void Dispatch(Action action, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public async void Dispatch(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (delayms > 0)
-                await Task.Delay(delayms).ConfigureAwait(false);
-
             if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 action();
             }
             else
             {
-                dispatcher.RunAsync(priority, () => action()).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
+                //dispatcher.RunAsync(priority, () => action()).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
+                await dispatcher.RunAsync(priority, () => action());
             }
         }
 
         [DebuggerNonUserCode]
-        public T Dispatch<T>(Func<T> action, int delayms = 0, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public T Dispatch<T>(Func<T> action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (delayms > 0)
-                Task.Delay(delayms).ConfigureAwait(false).GetAwaiter().GetResult();
-
             if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 return action();
@@ -160,11 +161,8 @@ namespace Unigram.Navigation
         }
 
         [DebuggerNonUserCode]
-        public async Task DispatchIdleAsync(Action action, int delayms = 0)
+        public async Task DispatchIdleAsync(Action action)
         {
-            if (delayms > 0)
-                await Task.Delay(delayms).ConfigureAwait(false);
-
             var tcs = new TaskCompletionSource<object>();
             await dispatcher.RunIdleAsync(delegate
             {
@@ -182,11 +180,8 @@ namespace Unigram.Navigation
         }
 
         [DebuggerNonUserCode]
-        public async Task DispatchIdleAsync(Func<Task> func, int delayms = 0)
+        public async Task DispatchIdleAsync(Func<Task> func)
         {
-            if (delayms > 0)
-                await Task.Delay(delayms).ConfigureAwait(false);
-
             var tcs = new TaskCompletionSource<object>();
             await dispatcher.RunIdleAsync(async delegate
             {
@@ -204,11 +199,8 @@ namespace Unigram.Navigation
         }
 
         [DebuggerNonUserCode]
-        public async Task<T> DispatchIdleAsync<T>(Func<T> func, int delayms = 0)
+        public async Task<T> DispatchIdleAsync<T>(Func<T> func)
         {
-            if (delayms > 0)
-                await Task.Delay(delayms).ConfigureAwait(false);
-
             var tcs = new TaskCompletionSource<T>();
             await dispatcher.RunIdleAsync(delegate
             {
@@ -225,20 +217,14 @@ namespace Unigram.Navigation
         }
 
         [DebuggerNonUserCode]
-        public async void DispatchIdle(Action action, int delayms = 0)
+        public async void DispatchIdle(Action action)
         {
-            if (delayms > 0)
-                await Task.Delay(delayms).ConfigureAwait(false);
-
             dispatcher.RunIdleAsync(args => action()).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         [DebuggerNonUserCode]
-        public T DispatchIdle<T>(Func<T> action, int delayms = 0) where T : class
+        public T DispatchIdle<T>(Func<T> action) where T : class
         {
-            if (delayms > 0)
-                Task.Delay(delayms).ConfigureAwait(false).GetAwaiter().GetResult();
-
             var tcs = new TaskCompletionSource<T>();
             dispatcher.RunIdleAsync(delegate
             {

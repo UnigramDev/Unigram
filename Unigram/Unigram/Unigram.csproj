@@ -540,7 +540,6 @@
     <Compile Include="Navigation\BindableBase.cs" />
     <Compile Include="Navigation\BootStrapper.cs" />
     <Compile Include="Navigation\DispatcherWrapper.cs" />
-    <Compile Include="Navigation\IDispatcherWrapper.cs" />
     <Compile Include="Navigation\TypedEventHandler.cs" />
     <Compile Include="Navigation\ViewModelBase.cs" />
     <Compile Include="Navigation\WindowContext.cs" />
