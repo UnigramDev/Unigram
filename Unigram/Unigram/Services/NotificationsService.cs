@@ -102,27 +102,27 @@ namespace Unigram.Services
                 return;
             }
 
-            async void DeleteAccount()
-            {
-                var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
-                if (decline != ContentDialogResult.Primary)
-                {
-                    Handle(update);
-                    return;
-                }
-
-                var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
-                if (delete != ContentDialogResult.Primary)
-                {
-                    Handle(update);
-                    return;
-                }
-
-                _protoService.Send(new DeleteAccount("Decline ToS update"));
-            }
-
             if (terms.ShowPopup)
             {
+                async void DeleteAccount()
+                {
+                    var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                    if (decline != ContentDialogResult.Primary)
+                    {
+                        Handle(update);
+                        return;
+                    }
+
+                    var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                    if (delete != ContentDialogResult.Primary)
+                    {
+                        Handle(update);
+                        return;
+                    }
+
+                    _protoService.Send(new DeleteAccount("Decline ToS update"));
+                }
+
                 await Task.Delay(2000);
                 BeginOnUIThread(async () =>
                 {
@@ -148,21 +148,24 @@ namespace Unigram.Services
             }
         }
 
-        public async void Handle(UpdateSuggestedActions update)
+        public void Handle(UpdateSuggestedActions update)
         {
-            foreach (var action in update.AddedActions)
+            BeginOnUIThread(async () =>
             {
-                if (action is SuggestedActionEnableArchiveAndMuteNewChats)
+                foreach (var action in update.AddedActions)
                 {
-                    var confirm = await MessagePopup.ShowAsync(Strings.Resources.HideNewChatsAlertText, Strings.Resources.HideNewChatsAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
-                    if (confirm == ContentDialogResult.Primary)
+                    if (action is SuggestedActionEnableArchiveAndMuteNewChats)
                     {
-                        _protoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = true;
-                    }
+                        var confirm = await MessagePopup.ShowAsync(Strings.Resources.HideNewChatsAlertText, Strings.Resources.HideNewChatsAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                        if (confirm == ContentDialogResult.Primary)
+                        {
+                            _protoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = true;
+                        }
 
-                    _protoService.Send(new HideSuggestedAction(action));
+                        _protoService.Send(new HideSuggestedAction(action));
+                    }
                 }
-            }
+            });
         }
 
         public void Handle(UpdateServiceNotification update)
@@ -1219,11 +1222,11 @@ namespace Unigram.Services
             }
             else
             {
-                try
-                {
-                    action();
-                }
-                catch { }
+                //try
+                //{
+                //    action();
+                //}
+                //catch { }
             }
         }
 
