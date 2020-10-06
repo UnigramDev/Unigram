@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 09/28/2020 11:28:15
+// 	Generated: 10/06/2020 19:17:48
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
