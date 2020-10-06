@@ -23,11 +23,13 @@ namespace Unigram.ViewModels.Settings
     public class SettingsThemesViewModel : TLViewModelBase
     {
         private readonly IThemeService _themeService;
+        private readonly bool _darkOnly;
 
-        public SettingsThemesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService)
+        public SettingsThemesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, bool darkOnly = false)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _themeService = themeService;
+            _darkOnly = darkOnly;
 
             Items = new MvxObservableCollection<ThemeInfoBase>();
             Custom = new MvxObservableCollection<ThemeInfoBase>();
@@ -53,7 +55,7 @@ namespace Unigram.ViewModels.Settings
 
         public async Task SetThemeAsync(ThemeInfoBase info)
         {
-            await _themeService.SetThemeAsync(info);
+            await _themeService.SetThemeAsync(info, !_darkOnly && NightMode == NightMode.Disabled);
             RaisePropertyChanged(() => IsNightModeAvailable);
 
             await RefreshThemesAsync();
@@ -61,8 +63,16 @@ namespace Unigram.ViewModels.Settings
 
         private async Task RefreshThemesAsync()
         {
-            Items.ReplaceWith(_themeService.GetThemes());
-            Custom.ReplaceWith(await _themeService.GetCustomThemesAsync());
+            if (_darkOnly)
+            {
+                Items.ReplaceWith(_themeService.GetThemes().Where(x => x.Parent == TelegramTheme.Dark));
+                Custom.ReplaceWith((await _themeService.GetCustomThemesAsync()).Where(x => x.Parent == TelegramTheme.Dark));
+            }
+            else
+            {
+                Items.ReplaceWith(_themeService.GetThemes());
+                Custom.ReplaceWith(await _themeService.GetCustomThemesAsync());
+            }
 
             var type = Settings.Appearance[Settings.Appearance.RequestedTheme].Type;
             if (ThemeAccentInfo.IsAccent(type))

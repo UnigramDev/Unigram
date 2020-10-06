@@ -13,12 +13,12 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsNightModeViewModel : TLViewModelBase
+    public class SettingsNightModeViewModel : SettingsThemesViewModel
     {
         private readonly ILocationService _locationService;
 
-        public SettingsNightModeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsNightModeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, ILocationService locationService)
+            : base(protoService, cacheService, settingsService, aggregator, themeService, true)
         {
             _locationService = locationService;
 
@@ -67,6 +67,8 @@ namespace Unigram.ViewModels.Settings
             {
                 await window.Dispatcher.DispatchAsync(() =>
                 {
+                    Theme.Current.Initialize(theme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
+
                     window.UpdateTitleBar();
 
                     if (window.Content is FrameworkElement element)

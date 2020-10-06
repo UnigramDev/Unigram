@@ -120,11 +120,7 @@ namespace Unigram.Views.Popups
             SecondaryButtonText = Strings.Resources.Cancel;
 
             var shadow = DropShadowEx.Attach(Shadow, 20, 0.25f);
-            Shadow.SizeChanged += (s, args) =>
-            {
-                shadow.Size = args.NewSize.ToVector2();
-            };
-
+            shadow.RelativeSizeAdjustment = Vector2.One;
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

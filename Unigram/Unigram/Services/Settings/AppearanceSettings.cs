@@ -38,7 +38,8 @@ namespace Unigram.Services.Settings
     {
         Disabled,
         Scheduled,
-        Automatic
+        Automatic,
+        System
     }
 
     public class InstalledEmojiSet
@@ -50,14 +51,24 @@ namespace Unigram.Services.Settings
 
     public class AppearanceSettings : SettingsServiceBase
     {
-        private Timer _nightModeTimer;
+        private readonly UISettings _uiSettings;
+
+        private readonly Timer _nightModeTimer;
 
         public AppearanceSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always))
+            : base("Theme")
         {
+            _uiSettings = new UISettings();
+            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
+
             _nightModeTimer = new Timer(CheckNightModeConditions, null, Timeout.Infinite, Timeout.Infinite);
             MigrateTheme();
             UpdateTimer();
+        }
+
+        private void OnColorValuesChanged(UISettings sender, object args)
+        {
+            CheckNightModeConditions(null);
         }
 
         public void UpdateTimer()
@@ -135,6 +146,8 @@ namespace Unigram.Services.Settings
             {
                 await window.Dispatcher.DispatchAsync(() =>
                 {
+                    Theme.Current.Initialize(theme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
+
                     window.UpdateTitleBar();
 
                     if (window.Content is FrameworkElement element)
@@ -430,6 +443,10 @@ namespace Unigram.Services.Settings
 
                 // start is after end, so do the inverse comparison
                 return !(end < now && now < start);
+            }
+            else if (NightMode == NightMode.System)
+            {
+                return GetSystemTheme() == TelegramAppTheme.Dark;
             }
 
             return null;

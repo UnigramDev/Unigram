@@ -82,6 +82,8 @@ namespace Unigram.Views.Settings
                 ? Strings.Resources.AutoNightScheduled
                 : mode == NightMode.Automatic
                 ? Strings.Resources.AutoNightAutomatic
+                : mode == NightMode.System
+                ? Strings.Resources.AutoNightSystemDefault
                 : Strings.Resources.AutoNightDisabled;
         }
 

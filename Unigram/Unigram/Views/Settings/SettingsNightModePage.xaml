@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:services="using:Unigram.Services"
     xmlns:settings="using:Unigram.Services.Settings"
     xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -42,7 +43,7 @@
                         Index="1"
                         Click="UpdateTheme_Click"
                         Margin="12,0"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
 
                     <controls:PivotRadioButton
                         x:Name="Automatic"
@@ -52,9 +53,76 @@
                         Index="2"
                         Click="UpdateTheme_Click"
                         Margin="12,0"/>
-                    <Rectangle x:Name="AutomaticSeparator" x:DeferLoadStrategy="Lazy" Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+                    <Rectangle x:Name="AutomaticSeparator" x:DeferLoadStrategy="Lazy" Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+
+                    <controls:PivotRadioButton
+                        Content="{CustomResource AutoNightSystemDefault}"
+                        SelectedValue="{x:Bind ConvertMode(ViewModel.Mode), BindBack=ConvertModeBack, Mode=TwoWay}"
+                        Index="3"
+                        Click="UpdateTheme_Click"
+                        Margin="12,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
                 </controls:HeaderedControl>
-                
+
+                <controls:HeaderedControl
+                    Header="{CustomResource AutoNightPreferred}">
+                    <ListView x:Name="List"
+                              ItemsSource="{x:Bind ViewModel.Items}"
+                              SelectionMode="None"
+                              ChoosingItemContainer="OnChoosingItemContainer"
+                              ContainerContentChanging="OnContainerContentChanging"
+                              Style="{StaticResource HorizontalListViewStyle}"
+                              ItemContainerTransitions="{x:Null}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="services:ThemeInfoBase">
+                                <StackPanel Margin="12,12,0,12">
+                                    <RadioButton
+                                        Tag="{x:Bind}"
+                                        GroupName="Theme"
+                                        Style="{StaticResource ThemeRadioButtonStyle}">
+                                        <RadioButton.Background>
+                                            <SolidColorBrush Color="{x:Bind ChatBackgroundColor}"/>
+                                        </RadioButton.Background>
+                                        <RadioButton.BorderBrush>
+                                            <SolidColorBrush Color="{x:Bind SelectionColor}"/>
+                                        </RadioButton.BorderBrush>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Rectangle Height="16" RadiusX="8" RadiusY="8" Margin="0,0,12,0" Grid.Column="1">
+                                                <Rectangle.Fill>
+                                                    <SolidColorBrush Color="{x:Bind MessageBackgroundColor}"/>
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                            <Rectangle Height="16" RadiusX="8" RadiusY="8" Margin="12,6,0,0" Grid.Column="1" Grid.Row="1">
+                                                <Rectangle.Fill>
+                                                    <SolidColorBrush Color="{x:Bind MessageBackgroundOutColor}"/>
+                                                </Rectangle.Fill>
+                                            </Rectangle>
+                                        </Grid>
+                                    </RadioButton>
+                                    <TextBlock Text="{x:Bind Name}" Margin="0,4,0,0" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Padding" Value="0"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ListView.Footer>
+                            <Border Width="12"/>
+                        </ListView.Footer>
+                    </ListView>
+                </controls:HeaderedControl>
 
                 <controls:HeaderedControl
                     Header="{CustomResource AutoNightSchedule}"
