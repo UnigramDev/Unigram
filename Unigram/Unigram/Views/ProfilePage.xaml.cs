@@ -73,7 +73,7 @@ namespace Unigram.Views
                 }
 
                 var userFull = ViewModel.ProtoService.GetUserFull(user.Id);
-                if (userFull == null)
+                if (userFull?.Photo == null)
                 {
                     return;
                 }
