@@ -241,7 +241,7 @@
                     x:Name="Transport"
                     ShowAndHideAutomatically="False"
                     IsFullWindowButtonVisible="False"
-                    IsFullWindowEnabled="False"
+                    IsZoomButtonVisible="False"
                     MaxWidth="396"/>
                 <Border
                     Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
