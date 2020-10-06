@@ -38,12 +38,106 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <ControlTemplate x:Key="HorizontalNextTemplate" TargetType="Button">
+            <Border x:Name="Root"
+                    Background="{ThemeResource FlipViewNextPreviousButtonBackground}"
+                    BorderThickness="{ThemeResource FlipViewButtonBorderThemeThickness}"
+                    BorderBrush="{ThemeResource FlipViewNextPreviousButtonBorderBrush}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBackgroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBorderBrushPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow" Storyboard.TargetProperty="Foreground">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousArrowForegroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBackgroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBorderBrushPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow" Storyboard.TargetProperty="Foreground">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousArrowForegroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <FontIcon
+                    x:Name="Arrow"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    FontSize="12"
+                    Foreground="{ThemeResource FlipViewNextPreviousArrowForeground}"
+                    Glyph="&#xE0E3;"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    MirroredWhenRightToLeft="True"
+                    UseLayoutRounding="False" />
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="HorizontalPreviousTemplate" TargetType="Button">
+            <Border x:Name="Root"
+                    Background="{ThemeResource FlipViewNextPreviousButtonBackground}"
+                    BorderThickness="{ThemeResource FlipViewButtonBorderThemeThickness}"
+                    BorderBrush="{ThemeResource FlipViewNextPreviousButtonBorderBrush}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBackgroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBorderBrushPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow" Storyboard.TargetProperty="Foreground">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousArrowForegroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBackgroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBorderBrushPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow" Storyboard.TargetProperty="Foreground">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousArrowForegroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <FontIcon
+                    x:Name="Arrow"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    FontSize="12"
+                    Foreground="{ThemeResource FlipViewNextPreviousArrowForeground}"
+                    Glyph="&#xE0E2;"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    MirroredWhenRightToLeft="True"
+                    UseLayoutRounding="False" />
+            </Border>
+        </ControlTemplate>
     </Control.Resources>
 
     <Grid RequestedTheme="Dark">
-        <local:GalleryTransportControls x:Name="Transport" Switch="Transport_Switch">
-        </local:GalleryTransportControls>
-
         <Grid>
             <Border x:Name="Layer" Margin="0,-32,0,0" Background="#EB222222"/>
             <local:GalleryContentView x:Name="Preview" Loaded="Preview_ImageOpened"/>
@@ -64,8 +158,6 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <!--<Button Click="ImageView_Click" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Style="{StaticResource TextBlockButtonStyle}" Grid.Column="1"/>-->
-
                     <local:GalleryContentView x:Name="Element2" ContextRequested="ImageView_ContextRequested"/>
                     <local:GalleryContentView x:Name="Element0" ContextRequested="ImageView_ContextRequested" Grid.Column="1"/>
                     <local:GalleryContentView x:Name="Element1" ContextRequested="ImageView_ContextRequested" Grid.Column="2"/>
@@ -144,13 +236,20 @@
                 </Button>
             </StackPanel>
 
-            <Border Padding="12" MinWidth="320">
+            <StackPanel Padding="12" MinWidth="320">
+                <MediaTransportControls
+                    x:Name="Transport"
+                    ShowAndHideAutomatically="False"
+                    IsFullWindowButtonVisible="False"
+                    IsFullWindowEnabled="False"
+                    MaxWidth="396"/>
                 <Border
                     Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
                     Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                    HorizontalAlignment="Center"
                     CornerRadius="4"
-                    Padding="8">
-            
+                    Padding="8"
+                    Margin="0,8,0,0">
                     <TextBlock
                         x:Name="Caption"
                         Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
@@ -159,8 +258,29 @@
                         TextTrimming="CharacterEllipsis"
                         MaxLines="5"/>
                 </Border>
-            </Border>
+            </StackPanel>
         </local:GalleryBottomPanel>
+
+        <Button
+            x:Name="PreviousButton"
+            Visibility="Collapsed"
+            Template="{StaticResource HorizontalPreviousTemplate}"
+            Width="20"
+            Height="36"
+            IsTabStop="False"
+            UseSystemFocusVisuals="False"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center" />
+        <Button
+            x:Name="NextButton"
+            Visibility="Collapsed"
+            Template="{StaticResource HorizontalNextTemplate}"
+            Width="20"
+            Height="36"
+            IsTabStop="False"
+            UseSystemFocusVisuals="False"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center" />
 
     </Grid>
 
