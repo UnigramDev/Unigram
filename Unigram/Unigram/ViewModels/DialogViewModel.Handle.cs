@@ -322,7 +322,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateChatReadInbox update)
         {
-            if (update.ChatId == _chat?.Id)
+            if (update.ChatId == _chat?.Id && _type == DialogType.History)
             {
                 BeginOnUIThread(() =>
                 {
