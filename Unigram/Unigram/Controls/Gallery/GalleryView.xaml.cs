@@ -72,8 +72,10 @@ namespace Unigram.Controls.Gallery
 
             _inactivityTimer = new DispatcherTimer();
             _inactivityTimer.Tick += OnTick;
-            _inactivityTimer.Interval = TimeSpan.FromSeconds(3);
+            _inactivityTimer.Interval = TimeSpan.FromSeconds(2);
             _inactivityTimer.Start();
+
+            Transport.Visibility = Visibility.Collapsed;
 
             Initialize();
         }
