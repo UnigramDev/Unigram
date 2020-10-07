@@ -110,16 +110,10 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
             var updateShadow = DropShadowEx.Attach(UpdateShadow, 20, 0.25f);
-            UpdateShadow.SizeChanged += (s, args) =>
-            {
-                updateShadow.Size = args.NewSize.ToVector2();
-            };
+            updateShadow.RelativeSizeAdjustment = Vector2.One;
 
             var folderShadow = DropShadowEx.Attach(FolderShadow, 20, 0.25f);
-            FolderShadow.SizeChanged += (s, args) =>
-            {
-                folderShadow.Size = args.NewSize.ToVector2();
-            };
+            folderShadow.RelativeSizeAdjustment = Vector2.One;
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
@@ -1893,8 +1887,29 @@ namespace Unigram.Views
             ViewModel.Settings.Results.Clear();
         }
 
-        private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
+        private async void Search_KeyDown(object sender, KeyRoutedEventArgs e)
         {
+            if (rpMasterTitlebar.SelectedIndex == 0 && e.Key == Windows.System.VirtualKey.Back)
+            {
+                if (SearchField.SelectionStart == 0 && SearchField.SelectionLength == 0)
+                {
+                    if (ViewModel.Chats.SearchFilters?.Count > 0)
+                    {
+                        e.Handled = true;
+                        ViewModel.Chats.SearchFilters.RemoveAt(ViewModel.Chats.SearchFilters.Count - 1);
+
+                        var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, FolderPanel.Visibility == Visibility.Collapsed ? null : new ChatListArchive());
+                        await items.LoadMoreItemsAsync(0);
+                        await items.LoadMoreItemsAsync(1);
+                        await items.LoadMoreItemsAsync(2);
+                        await items.LoadMoreItemsAsync(3);
+                        await items.LoadMoreItemsAsync(4);
+
+                        return;
+                    }
+                }
+            }
+
             var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
             var activeList = rpMasterTitlebar.SelectedIndex == 0 ? DialogsSearchListView : ContactsSearchListView;
             var activeResults = rpMasterTitlebar.SelectedIndex == 0 ? ChatsResults : ContactsResults;
