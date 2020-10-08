@@ -1675,6 +1675,7 @@ namespace Unigram.ViewModels
 
                 Handle(new UpdateMessageContent(chat.Id, group.Item1.Id, group.Item1.Content));
                 Handle(new UpdateMessageEdited(chat.Id, group.Item1.Id, group.Item1.EditDate, group.Item1.ReplyMarkup));
+                Handle(new UpdateMessageInteractionInfo(chat.Id, group.Item1.Id, group.Item1.InteractionInfo));
             }
         }
 
