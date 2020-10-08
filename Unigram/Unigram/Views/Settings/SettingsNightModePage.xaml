@@ -65,6 +65,60 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl
+                    Header="{CustomResource AutoNightSchedule}"
+                    Footer="{x:Bind ConvertSunDate(ViewModel.IsLocationBased, ViewModel.Location), Mode=OneWay}"
+                    Visibility="{x:Bind ConvertModeVisibility(ViewModel.Mode, settings:NightMode.Scheduled), Mode=OneWay}">
+
+                    <CheckBox x:Name="AutoNightLocation"
+                              Content="{CustomResource AutoNightLocation}"
+                              IsChecked="{x:Bind ViewModel.IsLocationBased, Mode=TwoWay}"
+                              Click="UpdateTheme_Click"
+                              Margin="12,6,0,0"/>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+
+                    <StackPanel Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                        <controls:BadgeButton Content="{CustomResource AutoNightFrom}"
+                                              Badge="{x:Bind ConvertTimeSpan(ViewModel.From), Mode=OneWay}">
+                            <Button.Flyout>
+                                <TimePickerFlyout x:Name="FromPicker" Time="{x:Bind ViewModel.From, Mode=TwoWay}" TimePicked="UpdateTheme_Picked"/>
+                            </Button.Flyout>
+                        </controls:BadgeButton>
+                        <controls:BadgeButton Content="{CustomResource AutoNightTo}"
+                                              Badge="{x:Bind ConvertTimeSpan(ViewModel.To), Mode=OneWay}">
+                            <Button.Flyout>
+                                <TimePickerFlyout x:Name="ToPicker" Time="{x:Bind ViewModel.To, Mode=TwoWay}" TimePicked="UpdateTheme_Picked"/>
+                            </Button.Flyout>
+                        </controls:BadgeButton>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <controls:BadgeButton Content="{CustomResource AutoNightUpdateLocation}"
+                                              Command="{x:Bind ViewModel.UpdateLocationCommand}"
+                                              Badge="{x:Bind ViewModel.Town, Mode=OneWay}"/>
+                    </StackPanel>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
+                    Header="{CustomResource AutoNightBrightness}"
+                    Footer="{x:Bind ConvertBrightness(5), Mode=OneWay}"
+                    Visibility="{x:Bind ConvertModeVisibility(ViewModel.Mode, settings:NightMode.Automatic), Mode=OneWay}" Margin="0,24,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="48"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xEC8A;"/>
+                        <FontIcon Glyph="&#xE706;" Grid.Column="2"/>
+
+                        <microsoft:ProgressBar x:Name="Lux" Grid.Column="1"/>
+                        <Slider Background="Transparent" Foreground="Transparent" Grid.Column="1"/>
+                    </Grid>
+
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
                     Header="{CustomResource AutoNightPreferred}">
                     <ListView x:Name="List"
                               ItemsSource="{x:Bind ViewModel.Items}"
@@ -122,60 +176,6 @@
                             <Border Width="12"/>
                         </ListView.Footer>
                     </ListView>
-                </controls:HeaderedControl>
-
-                <controls:HeaderedControl
-                    Header="{CustomResource AutoNightSchedule}"
-                    Footer="{x:Bind ConvertSunDate(ViewModel.IsLocationBased, ViewModel.Location), Mode=OneWay}"
-                    Visibility="{x:Bind ConvertModeVisibility(ViewModel.Mode, settings:NightMode.Scheduled), Mode=OneWay}">
-
-                    <CheckBox x:Name="AutoNightLocation"
-                              Content="{CustomResource AutoNightLocation}"
-                              IsChecked="{x:Bind ViewModel.IsLocationBased, Mode=TwoWay}"
-                              Click="UpdateTheme_Click"
-                              Margin="12,6,0,0"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
-
-                    <StackPanel Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                        <controls:BadgeButton Content="{CustomResource AutoNightFrom}"
-                                              Badge="{x:Bind ConvertTimeSpan(ViewModel.From), Mode=OneWay}">
-                            <Button.Flyout>
-                                <TimePickerFlyout x:Name="FromPicker" Time="{x:Bind ViewModel.From, Mode=TwoWay}" TimePicked="UpdateTheme_Picked"/>
-                            </Button.Flyout>
-                        </controls:BadgeButton>
-                        <controls:BadgeButton Content="{CustomResource AutoNightTo}"
-                                              Badge="{x:Bind ConvertTimeSpan(ViewModel.To), Mode=OneWay}">
-                            <Button.Flyout>
-                                <TimePickerFlyout x:Name="ToPicker" Time="{x:Bind ViewModel.To, Mode=TwoWay}" TimePicked="UpdateTheme_Picked"/>
-                            </Button.Flyout>
-                        </controls:BadgeButton>
-                    </StackPanel>
-
-                    <StackPanel Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <controls:BadgeButton Content="{CustomResource AutoNightUpdateLocation}"
-                                              Command="{x:Bind ViewModel.UpdateLocationCommand}"
-                                              Badge="{x:Bind ViewModel.Town, Mode=OneWay}"/>
-                    </StackPanel>
-                </controls:HeaderedControl>
-
-                <controls:HeaderedControl
-                    Header="{CustomResource AutoNightBrightness}"
-                    Footer="{x:Bind ConvertBrightness(5), Mode=OneWay}"
-                    Visibility="{x:Bind ConvertModeVisibility(ViewModel.Mode, settings:NightMode.Automatic), Mode=OneWay}" Margin="0,24,0,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="48"/>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="48"/>
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xEC8A;"/>
-                        <FontIcon Glyph="&#xE706;" Grid.Column="2"/>
-
-                        <microsoft:ProgressBar x:Name="Lux" Grid.Column="1"/>
-                        <Slider Background="Transparent" Foreground="Transparent" Grid.Column="1"/>
-                    </Grid>
-
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
