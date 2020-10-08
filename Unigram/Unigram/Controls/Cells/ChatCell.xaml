@@ -105,6 +105,7 @@
             
                 <Border x:Name="OnlineBadge"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        UseLayoutRounding="False"
                         Width="13"
                         Height="13"
                         CornerRadius="6.5"

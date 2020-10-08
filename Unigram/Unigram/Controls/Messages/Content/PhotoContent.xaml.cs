@@ -43,7 +43,7 @@ namespace Unigram.Controls.Messages.Content
             var small = photo.GetSmall();
             var big = photo.GetBig();
 
-            if (small != null && !big.Photo.Local.IsDownloadingCompleted /*&& small.Photo.Id != big.Photo.Id*/ && !message.IsSecret())
+            if (small != null /*&& !big.Photo.Local.IsDownloadingCompleted*/ /*&& small.Photo.Id != big.Photo.Id*/)
             {
                 UpdateThumbnail(message, small.Photo);
             }

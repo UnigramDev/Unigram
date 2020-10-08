@@ -703,11 +703,6 @@ namespace Unigram.Controls.Gallery
                 _request.RequestRelease();
                 _request = null;
             }
-
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MediaTransportControls", "ShowAndHideAutomatically"))
-            {
-                Transport.ShowAndHideAutomatically = false;
-            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

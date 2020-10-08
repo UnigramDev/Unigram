@@ -487,7 +487,7 @@ namespace Unigram.Controls.Cells
 
         private async void UpdateMinithumbnail(Message message)
         {
-            var thumbnail = message?.GetMinithumbnail();
+            var thumbnail = message?.GetMinithumbnail(false);
             if (thumbnail != null && SettingsService.Current.Diagnostics.Minithumbnails)
             {
                 double ratioX = (double)16 / thumbnail.Width;

@@ -643,14 +643,14 @@ namespace Unigram.Common
             return null;
         }
 
-        public static Minithumbnail GetMinithumbnail(this Message message)
+        public static Minithumbnail GetMinithumbnail(this Message message, bool secret)
         {
             switch (message.Content)
             {
                 case MessagePhoto photo:
-                    return photo.Photo.Minithumbnail;
+                    return photo.IsSecret && !secret ? null : photo.Photo.Minithumbnail;
                 case MessageAnimation animation:
-                    return animation.Animation.Minithumbnail;
+                    return animation.IsSecret && !secret ? null : animation.Animation.Minithumbnail;
                 case MessageAudio audio:
                     return audio.Audio.AlbumCoverMinithumbnail;
                 case MessageDocument document:
@@ -684,9 +684,9 @@ namespace Unigram.Common
                     }
                     break;
                 case MessageVideo video:
-                    return video.Video.Minithumbnail;
+                    return video.IsSecret && !secret ? null : video.Video.Minithumbnail;
                 case MessageVideoNote videoNote:
-                    return videoNote.VideoNote.Minithumbnail;
+                    return videoNote.IsSecret && !secret ? null : videoNote.VideoNote.Minithumbnail;
             }
 
             return null;
