@@ -333,8 +333,10 @@ namespace Unigram.Common
             {
                 SetContactPanel(contact.ContactPanel);
 
-                var backgroundBrush = Application.Current.Resources["PageHeaderBackgroundBrush"] as SolidColorBrush;
-                contact.ContactPanel.HeaderColor = backgroundBrush.Color;
+                if (Application.Current.Resources.TryGet("PageHeaderBackgroundBrush", out SolidColorBrush backgroundBrush))
+                {
+                    contact.ContactPanel.HeaderColor = backgroundBrush.Color;
+                }
 
                 var contactId = await ContactsService.GetContactIdAsync(contact.Contact.Id);
                 if (contactId is int userId)
