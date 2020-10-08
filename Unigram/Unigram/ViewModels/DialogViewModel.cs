@@ -1734,7 +1734,12 @@ namespace Unigram.ViewModels
                 }
 
                 Thread = await ProtoService.SendAsync(new GetMessageThread(result1, result2)) as MessageThreadInfo;
-                parameter = _thread.ChatId;
+                parameter = _thread?.ChatId;
+
+                if (parameter == null)
+                {
+                    return;
+                }
             }
 
             var chat = ProtoService.GetChat((long)parameter);
@@ -1799,8 +1804,8 @@ namespace Unigram.ViewModels
                 var thread = _thread;
                 if (thread != null)
                 {
-                    lastReadMessageId = _thread.Messages[0].InteractionInfo.ReplyInfo.LastReadInboxMessageId;
-                    lastMessageId = _thread.Messages[0].InteractionInfo.ReplyInfo.LastMessageId;
+                    lastReadMessageId = _thread.Messages[0].InteractionInfo?.ReplyInfo?.LastReadInboxMessageId ?? 0;
+                    lastMessageId = _thread.Messages[0].InteractionInfo?.ReplyInfo?.LastMessageId ?? long.MaxValue;
                 }
                 else
                 {
