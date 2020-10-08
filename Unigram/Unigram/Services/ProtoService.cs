@@ -127,7 +127,7 @@ namespace Unigram.Services
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
-        private readonly ConcurrentDictionary<long, Dictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, Dictionary<int, ChatAction>>();
+        private readonly ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
@@ -715,7 +715,7 @@ namespace Unigram.Services
 
         public IDictionary<int, ChatAction> GetChatActions(long id)
         {
-            if (_chatActions.TryGetValue(id, out Dictionary<int, ChatAction> value))
+            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<int, ChatAction> value))
             {
                 return value;
             }
@@ -1605,10 +1605,10 @@ namespace Unigram.Services
             }
             else if (update is UpdateUserChatAction updateUserChatAction)
             {
-                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new Dictionary<int, ChatAction>());
+                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<int, ChatAction>());
                 if (updateUserChatAction.Action is ChatActionCancel)
                 {
-                    actions.Remove(updateUserChatAction.UserId);
+                    actions.TryRemove(updateUserChatAction.UserId, out _);
                 }
                 else
                 {
