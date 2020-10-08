@@ -238,6 +238,12 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AlwaysCommand { get; }
         public async void AlwaysExecute()
         {
+            if (_allowedUsers == null ||
+                _allowedChatMembers == null)
+            {
+                return;
+            }
+
             var chats = new List<long>();
             var users = new List<int>();
 
@@ -303,6 +309,12 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand NeverCommand { get; }
         public async void NeverExecute()
         {
+            if (_restrictedUsers == null ||
+                _restrictedChatMembers == null)
+            {
+                return;
+            }
+
             var chats = new List<long>();
             var users = new List<int>();
 
