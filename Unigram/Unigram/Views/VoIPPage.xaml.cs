@@ -119,6 +119,12 @@ namespace Unigram.Views
 
             //Window.Current.SetTitleBar(BlurPanel);
 
+            _viewfinder = ElementCompositionPreview.GetElementVisual(ViewfinderPanel);
+
+            ViewfinderPanel.PointerPressed += Viewfinder_PointerPressed;
+            ViewfinderPanel.PointerMoved += Viewfinder_PointerMoved;
+            ViewfinderPanel.PointerReleased += Viewfinder_PointerReleased;
+
             if (voipService.Call != null)
             {
                 Update(voipService.Call, voipService.CallStarted);
@@ -130,12 +136,6 @@ namespace Unigram.Views
             }
 
             Connect(voipService.Capturer);
-
-            _viewfinder = ElementCompositionPreview.GetElementVisual(ViewfinderPanel);
-
-            ViewfinderPanel.PointerPressed += Viewfinder_PointerPressed;
-            ViewfinderPanel.PointerMoved += Viewfinder_PointerMoved;
-            ViewfinderPanel.PointerReleased += Viewfinder_PointerReleased;
         }
 
         #region Interactions
