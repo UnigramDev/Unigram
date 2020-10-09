@@ -531,7 +531,7 @@ namespace Unigram.Views.Host
 
         private async void Theme_Click(object sender, RoutedEventArgs e)
         {
-            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreatePathKeyFrameAnimation"))
+            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
             {
                 var target = new RenderTargetBitmap();
                 await target.RenderAsync(Navigation);
@@ -589,34 +589,15 @@ namespace Unigram.Views.Host
                 batch.End();
             }
 
-            var theme = ActualTheme == ElementTheme.Dark ? TelegramTheme.Light : TelegramTheme.Dark;
-            var flags = ActualTheme == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
-            SettingsService.Current.Appearance.RequestedTheme = theme;
-
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            if (SettingsService.Current.Appearance.NightMode != NightMode.Disabled)
             {
-                await window.Dispatcher.DispatchAsync(() =>
-                {
-                    Theme.Current.Initialize(theme);
-
-                    window.UpdateTitleBar();
-
-                    if (window.Content is FrameworkElement element)
-                    {
-                        if (flags == element.RequestedTheme)
-                        {
-                            element.RequestedTheme = flags == ElementTheme.Dark
-                                ? ElementTheme.Light
-                                : ElementTheme.Dark;
-                        }
-
-                        element.RequestedTheme = flags;
-                    }
-                });
+                SettingsService.Current.Appearance.NightMode = NightMode.Disabled;
+                // TODO: Notify user?
             }
 
-            TLContainer.Current.Resolve<IEventAggregator>().Publish(new UpdateSelectedBackground(true, TLContainer.Current.Resolve<IProtoService>().GetSelectedBackground(true)));
-            TLContainer.Current.Resolve<IEventAggregator>().Publish(new UpdateSelectedBackground(false, TLContainer.Current.Resolve<IProtoService>().GetSelectedBackground(false)));
+            var theme = ActualTheme == ElementTheme.Dark ? TelegramTheme.Light : TelegramTheme.Dark;
+            SettingsService.Current.Appearance.RequestedTheme = theme;
+            SettingsService.Current.Appearance.UpdateNightMode();
         }
 
         private void Navigation_PaneOpening(SplitView sender, object args)
