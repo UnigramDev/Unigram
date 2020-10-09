@@ -46,6 +46,8 @@
             <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
                       SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                       PlaceholderText="{CustomResource ChooseCountry}"
+                      AutomationProperties.Name="{CustomResource ChooseCountry}"
+                      SelectionChanged="Countries_SelectionChanged"
                       MinWidth="280"
                       HorizontalAlignment="Stretch"
                       Grid.Row="2">

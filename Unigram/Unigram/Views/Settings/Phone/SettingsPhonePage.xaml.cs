@@ -47,6 +47,14 @@ namespace Unigram.Views.Settings
             PrimaryInput.Focus(FocusState.Keyboard);
         }
 
+        private void Countries_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems?.Count > 0)
+            {
+                PrimaryInput.Focus(FocusState.Keyboard);
+            }
+        }
+
         private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
