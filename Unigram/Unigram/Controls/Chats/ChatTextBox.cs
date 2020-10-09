@@ -254,7 +254,21 @@ namespace Unigram.Controls.Chats
                 AcceptsReturn = !send;
                 e.Handled = send;
 
-                if (send)
+                // If handwriting panel is open, the app would crash on send.
+                // Still, someone should fill a ticket to Microsoft about this.
+                if (send && HandwritingView.IsOpen)
+                {
+                    RoutedEventHandler handler = null;
+                    handler = (s, args) =>
+                    {
+                        _ = SendAsync();
+                        HandwritingView.Unloaded -= handler;
+                    };
+
+                    HandwritingView.Unloaded += handler;
+                    HandwritingView.TryClose();
+                }
+                else if (send)
                 {
                     _ = SendAsync();
                 }
