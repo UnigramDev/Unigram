@@ -225,6 +225,25 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
+            if (chat.Type is ChatTypeBasicGroup)
+            {
+                if (_slowModeDelay != 0)
+                {
+                    chat = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id)) as Chat;
+                }
+                else
+                {
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
+                    return;
+                }
+            }
+
+            if (chat == null)
+            {
+                return;
+            }
+
             var fullInfo = CacheService.GetSupergroupFull(chat);
             if (fullInfo == null)
             {
