@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Controls;
 using Windows.ApplicationModel.ExtendedExecution;
+using Windows.Devices.Enumeration;
 using Windows.Devices.Geolocation;
+using Windows.System;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
@@ -83,8 +87,8 @@ namespace Unigram.Services
         {
             try
             {
-                var accessStatus = await Geolocator.RequestAccessAsync();
-                if (accessStatus == GeolocationAccessStatus.Allowed)
+                var accessStatus = await CheckDeviceAccessAsync();
+                if (accessStatus)
                 {
                     var geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
                     var location = await geolocator.GetGeopositionAsync();
@@ -95,6 +99,35 @@ namespace Unigram.Services
             catch { }
 
             return null;
+        }
+
+        public async Task<bool> CheckDeviceAccessAsync()
+        {
+            var access = DeviceAccessInformation.CreateFromDeviceClass(DeviceClass.Location);
+            if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
+            {
+                var accessStatus = await Geolocator.RequestAccessAsync();
+                if (accessStatus == GeolocationAccessStatus.Allowed)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            else if (access.CurrentStatus != DeviceAccessStatus.Allowed)
+            {
+                var message = Strings.Resources.PermissionNoLocationPosition;
+
+                var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    await Launcher.LaunchUriAsync(new Uri("ms-settings:privacy-location"));
+                }
+
+                return false;
+            }
+
+            return true;
         }
 
         public async Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null)
