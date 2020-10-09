@@ -88,8 +88,8 @@ namespace Unigram.Views.Popups
                 }
             }
 
-            LayoutRoot.Resources.ThemeDictionaries[flags.HasFlag(TelegramTheme.Light) ? "Light" : "Dark"] = dict;
-            LayoutRoot.RequestedTheme = flags.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark;
+            LayoutRoot.Resources.ThemeDictionaries[flags == TelegramTheme.Light ? "Light" : "Dark"] = dict;
+            LayoutRoot.RequestedTheme = flags == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
 
             Chat1.Mockup(new ChatTypePrivate(), 0, "Eva Summer", string.Empty, "Reminds me of a Chinese proverb...", false, 0, false, true, DateTime.Now);
             Chat2.Mockup(new ChatTypePrivate(), 1, "Alexandra Smith", string.Empty, "This is amazing!", false, 2, false, false, DateTime.Now.AddHours(-1));

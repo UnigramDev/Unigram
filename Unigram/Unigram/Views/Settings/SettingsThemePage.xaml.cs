@@ -63,7 +63,7 @@ namespace Unigram.Views.Settings
             //    baseTheme = baseTheme.ThemeDictionaries[theme.Parent.HasFlag(TelegramTheme.Light) ? "Light" : "Dark"] as ResourceDictionary;
             //}
             baseTheme = Theme.Current;
-            if (theme.Parent.HasFlag(TelegramTheme.Light))
+            if (theme.Parent == TelegramTheme.Light)
             {
                 baseTheme = baseTheme.MergedDictionaries[0].ThemeDictionaries["Light"] as ResourceDictionary;
             }

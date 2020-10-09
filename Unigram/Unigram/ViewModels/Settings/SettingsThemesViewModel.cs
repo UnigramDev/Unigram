@@ -163,7 +163,7 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                return Settings.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light);
+                return Settings.Appearance.RequestedTheme == TelegramTheme.Light;
             }
         }
 

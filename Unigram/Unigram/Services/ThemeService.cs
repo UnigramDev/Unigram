@@ -47,12 +47,12 @@ namespace Unigram.Services
 
         public Dictionary<string, string[]> GetMapping(TelegramTheme flags)
         {
-            return flags.HasFlag(TelegramTheme.Dark) ? _mappingDark : _mapping;
+            return flags == TelegramTheme.Dark ? _mappingDark : _mapping;
         }
 
         public Color GetDefaultColor(TelegramTheme flags, string key)
         {
-            var resources = flags.HasFlag(TelegramTheme.Dark) ? _defaultDark : _defaultLight;
+            var resources = flags == TelegramTheme.Dark ? _defaultDark : _defaultLight;
 
             while (resources.TryGetValue(key, out object value))
             {
@@ -223,7 +223,7 @@ namespace Unigram.Services
                 return;
             }
 
-            _settingsService.Appearance.UpdateNightMode();
+            _settingsService.Appearance.UpdateNightMode(true);
         }
 
         public async void Refresh()
@@ -528,7 +528,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0xdf, 0xe4, 0xe8);
                 }
@@ -541,7 +541,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0xe6, 0xe6, 0xe6);
                 }
@@ -554,7 +554,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
                 }
@@ -567,7 +567,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF);
                 }
@@ -582,7 +582,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0x15, 0x8D, 0xCD);
                 }
