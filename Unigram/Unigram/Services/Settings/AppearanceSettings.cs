@@ -131,6 +131,11 @@ namespace Unigram.Services.Settings
             }
         }
 
+        public void UpdateNightMode()
+        {
+            CheckNightModeConditions(null);
+        }
+
         private async void CheckNightModeConditions(object state)
         {
             UpdateTimer();
@@ -160,8 +165,8 @@ namespace Unigram.Services.Settings
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
             var protoService = TLContainer.Current.Resolve<IProtoService>();
 
-            aggregator.Publish(new UpdateSelectedBackground(true, protoService.GetSelectedBackground(true)));
-            aggregator.Publish(new UpdateSelectedBackground(false, protoService.GetSelectedBackground(false)));
+            var dark = theme == ElementTheme.Dark;
+            aggregator.Publish(new UpdateSelectedBackground(dark, protoService.GetSelectedBackground(dark)));
         }
 
         private InstalledEmojiSet _emojiSet;

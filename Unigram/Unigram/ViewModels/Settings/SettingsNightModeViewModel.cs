@@ -43,43 +43,13 @@ namespace Unigram.ViewModels.Settings
             var geopoint = new Geopoint(new BasicGeoposition { Latitude = location.Latitude, Longitude = location.Longitude });
 
             Location = location;
-            UpdateTheme();
+            Settings.Appearance.UpdateNightMode();
 
             var result = await MapLocationFinder.FindLocationsAtAsync(geopoint, MapLocationDesiredAccuracy.Low);
             if (result.Status == MapLocationFinderStatus.Success)
             {
                 Town = result.Locations[0].Address.Town;
             }
-        }
-
-        public async void UpdateTheme()
-        {
-            Settings.Appearance.UpdateTimer();
-
-            var conditions = Settings.Appearance.CheckNightModeConditions();
-            var theme = conditions == null
-                ? Settings.Appearance.GetActualTheme()
-                : conditions == true
-                ? ElementTheme.Dark
-                : ElementTheme.Light;
-
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
-            {
-                await window.Dispatcher.DispatchAsync(() =>
-                {
-                    Theme.Current.Initialize(theme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
-
-                    window.UpdateTitleBar();
-
-                    if (window.Content is FrameworkElement element)
-                    {
-                        element.RequestedTheme = theme;
-                    }
-                });
-            }
-
-            Aggregator.Publish(new UpdateSelectedBackground(true, ProtoService.GetSelectedBackground(true)));
-            Aggregator.Publish(new UpdateSelectedBackground(false, ProtoService.GetSelectedBackground(false)));
         }
 
         public NightMode Mode

@@ -212,12 +212,12 @@ namespace Unigram.Views.Settings
 
         private void UpdateTheme_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.UpdateTheme();
+            ViewModel.Settings.Appearance.UpdateNightMode();
         }
 
         private void UpdateTheme_Picked(TimePickerFlyout sender, TimePickedEventArgs args)
         {
-            ViewModel.UpdateTheme();
+            ViewModel.Settings.Appearance.UpdateNightMode();
         }
     }
 }

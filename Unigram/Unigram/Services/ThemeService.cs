@@ -223,30 +223,7 @@ namespace Unigram.Services
                 return;
             }
 
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
-            {
-                await window.Dispatcher.DispatchAsync(() =>
-                {
-                    Theme.Current.Update(info);
-
-                    window.UpdateTitleBar();
-
-                    if (window.Content is FrameworkElement element)
-                    {
-                        if (flags == element.RequestedTheme)
-                        {
-                            element.RequestedTheme = flags == ElementTheme.Dark
-                                ? ElementTheme.Light
-                                : ElementTheme.Dark;
-                        }
-
-                        element.RequestedTheme = flags;
-                    }
-                });
-            }
-
-            _aggregator.Publish(new UpdateSelectedBackground(true, _protoService.GetSelectedBackground(true)));
-            _aggregator.Publish(new UpdateSelectedBackground(false, _protoService.GetSelectedBackground(false)));
+            _settingsService.Appearance.UpdateNightMode();
         }
 
         public async void Refresh()
