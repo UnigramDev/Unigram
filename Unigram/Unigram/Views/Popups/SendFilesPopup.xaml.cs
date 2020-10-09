@@ -588,7 +588,15 @@ namespace Unigram.Views.Popups
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
             var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0 || (char.IsControl(character[0]) && character != "\u0016" && character != "\r") || char.IsWhiteSpace(character[0]))
+            if (character.Length == 0)
+            {
+                return;
+            }
+            else if (character != "\u0016" && character != "\r" && char.IsControl(character[0]))
+            {
+                return;
+            }
+            else if (character != "\u0016" && character != "\r" && char.IsWhiteSpace(character[0]))
             {
                 return;
             }
