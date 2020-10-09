@@ -101,16 +101,18 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <microsoft:ProgressBar x:Name="Status" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="2"/>
-            <TextBlock x:Name="StatusLabel"
-                               VerticalAlignment="Center"
-                               TextLineBounds="TrimToCapHeight"
-                               Margin="6,0,0,0"
-                               AutomationProperties.LiveSetting="Assertive"
-                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               Grid.Column="1"/>
+            <microsoft:ProgressBar x:Name="State" VerticalAlignment="Top" Background="Transparent" Grid.ColumnSpan="3"/>
+            <TextBlock
+                x:Name="StateLabel"
+                VerticalAlignment="Center"
+                TextLineBounds="TrimToCapHeight"
+                Margin="6,0,6,0"
+                AutomationProperties.LiveSetting="Assertive"
+                Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Grid.Column="1"/>
         </Grid>
 
         <Border
