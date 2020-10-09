@@ -17,6 +17,9 @@ using namespace qrcodegen;
 
 std::map<int, WeakReference> PlaceholderImageHelper::s_windowContext;
 
+CriticalSection PlaceholderImageHelper::s_criticalSection;
+PlaceholderImageHelper^ PlaceholderImageHelper::s_current = nullptr;
+
 class CustomFontFileEnumerator
 	: public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteFontFileEnumerator>
 {

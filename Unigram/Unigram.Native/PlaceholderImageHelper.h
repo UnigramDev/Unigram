@@ -28,6 +28,19 @@ namespace Unigram
 		public:
 			static PlaceholderImageHelper^ GetForCurrentView();
 
+			static property PlaceholderImageHelper^ Current
+			{
+				PlaceholderImageHelper^ get() {
+					auto lock = s_criticalSection.Lock();
+
+					if (s_current == nullptr) {
+						s_current = ref new PlaceholderImageHelper();
+					}
+
+					return s_current;
+				}
+			}
+
 			Windows::Foundation::Size DrawSvg(_In_ String^ path, _In_ Color foreground, IRandomAccessStream^ randomAccessStream);
 			void DrawQr(_In_ String^ data, _In_ Color foreground, _In_ Color background, IRandomAccessStream^ randomAccessStream);
 			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
@@ -57,6 +70,9 @@ namespace Unigram
 
 		private:
 			static std::map<int, WeakReference> s_windowContext;
+
+			static CriticalSection s_criticalSection;
+			static PlaceholderImageHelper^ s_current;
 
 			ComPtr<ID2D1Factory1> m_d2dFactory;
 			ComPtr<ID2D1Device> m_d2dDevice;

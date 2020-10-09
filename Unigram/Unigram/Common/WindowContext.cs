@@ -2,7 +2,6 @@
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
-using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -33,8 +32,6 @@ namespace Unigram.Common
         private readonly int _id;
 
         private readonly ILifetimeService _lifetime;
-
-        private PlaceholderImageHelper _placeholderHelper;
 
         public TLWindowContext(Window window, int id)
             : base(window)
