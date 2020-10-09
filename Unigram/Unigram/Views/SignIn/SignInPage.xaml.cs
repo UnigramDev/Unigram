@@ -1,7 +1,5 @@
 ﻿using System.Numerics;
-using System.Text;
 using Unigram.Common;
-using Unigram.Entities;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.SignIn;
 using Windows.ApplicationModel;
@@ -54,9 +52,6 @@ namespace Unigram.Views.SignIn
         {
             switch (e.PropertyName)
             {
-                case "PHONE_CODE_INVALID":
-                    VisualUtilities.ShakeView(PhoneCode);
-                    break;
                 case "PHONE_NUMBER_INVALID":
                     VisualUtilities.ShakeView(PrimaryInput);
                     break;
@@ -83,43 +78,7 @@ namespace Unigram.Views.SignIn
                 ViewModel.SendCommand.Execute(null);
                 e.Handled = true;
             }
-            else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(PrimaryInput.Text))
-            {
-                PhoneCode.Focus(FocusState.Keyboard);
-                PhoneCode.SelectionStart = PhoneCode.Text.Length;
-                e.Handled = true;
-            }
         }
-
-        #region Binding
-
-        private string ConvertFormat(Country country)
-        {
-            if (country == null)
-            {
-                return null;
-            }
-
-            var groups = PhoneNumber.Parse(country.PhoneCode);
-            var builder = new StringBuilder();
-
-            for (int i = 1; i < groups.Length; i++)
-            {
-                for (int j = 0; j < groups[i]; j++)
-                {
-                    builder.Append('-');
-                }
-
-                if (i + 1 < groups.Length)
-                {
-                    builder.Append(' ');
-                }
-            }
-
-            return builder.ToString();
-        }
-
-        #endregion
 
         private int _advanced;
 

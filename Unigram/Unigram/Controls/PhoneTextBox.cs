@@ -1,22 +1,29 @@
 ﻿using System;
 using System.Text;
+using Unigram.Common;
+using Unigram.Entities;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
     public class PhoneTextBox : TextBox
     {
-        private string previousText = string.Empty;
-        private int selectionStart;
+        private string _previousText = string.Empty;
+        private int _selectionStart;
 
-        private int characterAction = -1;
-        private int actionPosition;
+        private int _characterAction = -1;
+        private int _actionPosition;
 
-        private bool ignoreOnPhoneChange;
+        private bool _ignoreOnPhoneChange;
+
+        private Country _country;
 
         public PhoneTextBox()
         {
             DefaultStyleKey = typeof(PhoneTextBox);
+
+            Text = "+";
 
             TextChanging += OnTextChanging;
             TextChanged += OnTextChanged;
@@ -25,46 +32,86 @@ namespace Unigram.Controls
         private void Started()
         {
             var start = SelectionStart;
-            var after = Math.Max(0, Text.Length - previousText.Length);
-            var count = Math.Max(0, previousText.Length - Text.Length);
+            var after = Math.Max(0, Text.Length - _previousText.Length);
+            var count = Math.Max(0, _previousText.Length - Text.Length);
 
             if (count == 0 && after == 1)
             {
-                characterAction = 1;
+                _characterAction = 1;
             }
             else if (count == 1 && after == 0)
             {
-                if (previousText[start] == ' ' && start > 0)
+                if (_previousText[start] == ' ' && start > 0)
                 {
-                    characterAction = 3;
-                    actionPosition = start - 1;
+                    _characterAction = 3;
+                    _actionPosition = start - 1;
                 }
                 else
                 {
-                    characterAction = 2;
+                    _characterAction = 2;
                 }
             }
             else
             {
-                characterAction = -1;
+                _characterAction = -1;
             }
+        }
+
+        private string GetHint(string text)
+        {
+            var groups = PhoneNumber.Parse(text);
+            if (groups.Length < 1)
+            {
+                _country = null;
+                Country = null;
+
+                return null;
+            }
+
+            var builder = new StringBuilder();
+
+            for (int i = 0; i < groups.Length; i++)
+            {
+                for (int j = 0; j < groups[i]; j++)
+                {
+                    builder.Append('-');
+                }
+
+                if (i + 1 < groups.Length)
+                {
+                    builder.Append(' ');
+                }
+            }
+
+            if (Country.KeyedCountries.TryGetValue(text.Substring(0, groups[0]), out Country value))
+            {
+                _country = value;
+                Country = value;
+            }
+            else
+            {
+                _country = null;
+                Country = null;
+            }
+
+            return builder.ToString();
         }
 
         private void OnTextChanging(TextBox sender, TextBoxTextChangingEventArgs w)
         {
             Started();
 
-            if (ignoreOnPhoneChange)
+            if (_ignoreOnPhoneChange)
             {
                 return;
             }
 
             int start = SelectionStart;
             String phoneChars = "0123456789";
-            String str = Text.ToString();
-            if (characterAction == 3)
+            String str = Text;
+            if (_characterAction == 3)
             {
-                str = str.Substring(0, actionPosition) + str.Substring(actionPosition + 1);
+                str = str.Substring(0, _actionPosition) + str.Substring(_actionPosition + 1);
                 start--;
             }
             StringBuilder builder = new StringBuilder(str.Length);
@@ -76,8 +123,8 @@ namespace Unigram.Controls
                     builder.Append(ch);
                 }
             }
-            ignoreOnPhoneChange = true;
-            String hint = PlaceholderText;
+            _ignoreOnPhoneChange = true;
+            String hint = GetHint(builder.ToString());
             if (hint != null)
             {
                 for (int a = 0; a < builder.Length; a++)
@@ -88,7 +135,7 @@ namespace Unigram.Controls
                         {
                             builder.Insert(a, ' ');
                             a++;
-                            if (start == a && characterAction != 2 && characterAction != 3)
+                            if (start == a && _characterAction != 2 && _characterAction != 3)
                             {
                                 start++;
                             }
@@ -97,7 +144,7 @@ namespace Unigram.Controls
                     else
                     {
                         builder.Insert(a, ' ');
-                        if (start == a + 1 && characterAction != 2 && characterAction != 3)
+                        if (start == a + 1 && _characterAction != 2 && _characterAction != 3)
                         {
                             start++;
                         }
@@ -105,20 +152,64 @@ namespace Unigram.Controls
                     }
                 }
             }
-            Text = builder.ToString();
-            if (start >= 0)
+            Text = $"+{builder}";
+            if (start + 1 >= 0)
             {
-                selectionStart = start <= Text.Length ? start : Text.Length;
-                SelectionStart = selectionStart;
+                _selectionStart = start + 1 <= Text.Length ? start + 1 : Text.Length;
+                SelectionStart = _selectionStart;
             }
-            ignoreOnPhoneChange = false;
+            _ignoreOnPhoneChange = false;
 
-            previousText = Text;
+            _previousText = Text;
         }
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            SelectionStart = selectionStart;
+            SelectionStart = _selectionStart;
         }
+
+        #region Country
+
+        public Country Country
+        {
+            get { return (Country)GetValue(CountryProperty); }
+            set { SetValue(CountryProperty, value); }
+        }
+
+        public static readonly DependencyProperty CountryProperty =
+            DependencyProperty.Register("Country", typeof(Country), typeof(PhoneTextBox), new PropertyMetadata(null, OnCountryChanged));
+
+        private static void OnCountryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((PhoneTextBox)d).OnCountryChange((Country)e.NewValue, (Country)e.OldValue);
+        }
+
+        private void OnCountryChange(Country newValue, Country oldValue)
+        {
+            if (newValue?.PhoneCode == oldValue?.PhoneCode)
+            {
+                return;
+            }
+
+            if (newValue?.PhoneCode == _country?.PhoneCode)
+            {
+                return;
+            }
+
+            _ignoreOnPhoneChange = true;
+            _selectionStart = $"+{newValue?.PhoneCode}".Length;
+
+            Text = $"+{newValue?.PhoneCode}";
+
+            _country = newValue;
+
+            _ignoreOnPhoneChange = false;
+            _previousText = string.Empty;
+
+            SelectionStart = Text.Length;
+            Started();
+        }
+
+        #endregion
     }
 }

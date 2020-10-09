@@ -38,6 +38,8 @@ namespace Unigram.Entities
             var alphabet = "abcdefghijklmnopqrstuvwxyz";
             var list = new List<KeyedList<string, Country>>(alphabet.Length);
             var dictionary = new Dictionary<string, KeyedList<string, Country>>();
+            var keyed = new Dictionary<string, Country>();
+
             for (int i = 0; i < alphabet.Length; i++)
             {
                 var key = alphabet[i].ToString();
@@ -50,12 +52,16 @@ namespace Unigram.Entities
             foreach (var country in Countries)
             {
                 dictionary[country.GetKey()].Add(country);
+                keyed[country.PhoneCode] = country;
             }
 
             GroupedCountries = list;
+            KeyedCountries = keyed;
         }
 
         public static readonly List<KeyedList<string, Country>> GroupedCountries;
+
+        public static readonly Dictionary<string, Country> KeyedCountries;
 
         public static readonly IList<Country> Countries = new List<Country>
         {

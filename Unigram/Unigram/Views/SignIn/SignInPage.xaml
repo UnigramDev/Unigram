@@ -84,30 +84,16 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <Grid Margin="0,12,0,4" Grid.Row="4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox
-                        x:Name="PhoneCode"
-                        Text="{x:Bind ViewModel.PhoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Margin="0,0,8,0"
-                        Width="30"
-                        InputScope="TelephoneNumber"
-                        PlaceholderText="+"
-                        Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                    <controls:PhoneTextBox
-                        x:Name="PrimaryInput"
-                        Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        PlaceholderText="{x:Bind ConvertFormat(ViewModel.SelectedCountry), Mode=OneWay}"
-                        MinWidth="200"
-                        InputScope="TelephoneNumber"
-                        IsTextPredictionEnabled="False"
-                        KeyDown="PhoneNumber_KeyDown"
-                        Grid.Column="1"/>
-                </Grid>
+                <controls:PhoneTextBox
+                    x:Name="PrimaryInput"
+                    Text="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Country="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                    MinWidth="200"
+                    InputScope="TelephoneNumber"
+                    IsTextPredictionEnabled="False"
+                    KeyDown="PhoneNumber_KeyDown"
+                    Margin="0,12,0,4"
+                    Grid.Row="4"/>
 
                 <microsoft:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
 
