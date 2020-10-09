@@ -456,16 +456,9 @@ namespace Unigram.Services.Settings
         public ElementTheme GetActualTheme()
         {
             var theme = RequestedTheme;
-            if (theme == TelegramTheme.Dark)
-            {
-                return ElementTheme.Dark;
-            }
-            //else if (theme == ElementTheme.Light || (theme == ElementTheme.Default && current == Colors.White))
-            //{
-            //    return ElementTheme.Light;
-            //}
-
-            return ElementTheme.Light;
+            return theme == TelegramTheme.Dark
+                ? ElementTheme.Dark
+                : ElementTheme.Light;
         }
 
         public TelegramTheme GetSystemTheme()
@@ -490,7 +483,7 @@ namespace Unigram.Services.Settings
         {
             var conditions = CheckNightModeConditions();
             var theme = conditions == null
-                ? SettingsService.Current.Appearance.GetApplicationTheme()
+                ? GetApplicationTheme()
                 : conditions == true
                 ? ApplicationTheme.Dark
                 : ApplicationTheme.Light;

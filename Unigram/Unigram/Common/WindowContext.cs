@@ -18,7 +18,6 @@ using Windows.Foundation.Metadata;
 using Windows.Media.SpeechRecognition;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -42,34 +41,10 @@ namespace Unigram.Common
 
             _lifetime = TLContainer.Current.Lifetime;
 
-            _placeholderHelper = PlaceholderImageHelper.GetForCurrentView();
-
             Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
 
             UpdateTitleBar();
-
-            var app = App.Current as App;
-            app.UISettings.ColorValuesChanged += UISettings_ColorValuesChanged;
-
-            _window.CoreWindow.Closed += (s, e) =>
-            {
-                try
-                {
-                    _placeholderHelper = null;
-                    app.UISettings.ColorValuesChanged -= UISettings_ColorValuesChanged;
-                }
-                catch { }
-            };
-            _window.Closed += (s, e) =>
-            {
-                try
-                {
-                    _placeholderHelper = null;
-                    app.UISettings.ColorValuesChanged -= UISettings_ColorValuesChanged;
-                }
-                catch { }
-            };
         }
 
         public int Id => _id;
@@ -95,42 +70,28 @@ namespace Unigram.Common
 
         #region UI
 
-        private async void UISettings_ColorValuesChanged(UISettings sender, object args)
-        {
-            try
-            {
-                await _window.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateTitleBar);
-            }
-            catch { }
-        }
-
         /// <summary>
         /// Update the Title and Status Bars colors.
         /// </summary>
         public void UpdateTitleBar()
         {
-            Color background;
+            //Color background;
             Color foreground;
             Color buttonHover;
             Color buttonPressed;
 
-            var app = App.Current as App;
-            var current = app.UISettings.GetColorValue(UIColorType.Background);
-
             // Apply buttons feedback based on Light or Dark theme
-            var theme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
-            //if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Dark) || (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && current == Colors.Black))
-            if (theme == ElementTheme.Dark || (theme == ElementTheme.Default && current == Colors.Black))
+            var theme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
+            if (theme == ApplicationTheme.Dark)
             {
-                background = Color.FromArgb(255, 43, 43, 43);
+                //background = Color.FromArgb(255, 43, 43, 43);
                 foreground = Colors.White;
                 buttonHover = Color.FromArgb(25, 255, 255, 255);
                 buttonPressed = Color.FromArgb(51, 255, 255, 255);
             }
-            //else if (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Light) || (SettingsService.Current.Appearance.RequestedTheme.HasFlag(TelegramTheme.Default) && current == Colors.White))
-            else if (theme == ElementTheme.Light || (theme == ElementTheme.Default && current == Colors.White))
+            else if (theme == ApplicationTheme.Light)
             {
-                background = Color.FromArgb(255, 230, 230, 230);
+                //background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;
                 buttonHover = Color.FromArgb(25, 0, 0, 0);
                 buttonPressed = Color.FromArgb(51, 0, 0, 0);
@@ -141,8 +102,8 @@ namespace Unigram.Common
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
             // Background
-            titleBar.BackgroundColor = background;
-            titleBar.InactiveBackgroundColor = background;
+            //titleBar.BackgroundColor = background;
+            //titleBar.InactiveBackgroundColor = background;
 
             // Foreground
             titleBar.ForegroundColor = foreground;

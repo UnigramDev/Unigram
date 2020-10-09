@@ -313,8 +313,6 @@ namespace Unigram
                 Window.Current.Activated += Window_Activated;
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
-
-                TLWindowContext.GetForCurrentView().UpdateTitleBar();
             }
 
             return base.OnInitializeAsync(args);
@@ -359,7 +357,6 @@ namespace Unigram
             }
 
             TLWindowContext.GetForCurrentView().SetActivatedArgs(args, navService);
-            TLWindowContext.GetForCurrentView().UpdateTitleBar();
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.Activated += Window_Activated;

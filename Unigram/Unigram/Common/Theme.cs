@@ -61,7 +61,7 @@ namespace Unigram.Common
             var settings = SettingsService.Current.Appearance;
             if (settings[requested].Type == TelegramThemeType.Custom && File.Exists(settings[requested].Custom))
             {
-                InitializeCustom(settings[requested].Custom);
+                UpdateCustom(settings[requested].Custom);
             }
             else if (ThemeAccentInfo.IsAccent(settings[requested].Type))
             {
@@ -73,7 +73,7 @@ namespace Unigram.Common
             }
         }
 
-        private void InitializeCustom(string path)
+        private void UpdateCustom(string path)
         {
             var lines = File.ReadAllLines(path);
             var dict = new ResourceDictionary();
@@ -124,14 +124,6 @@ namespace Unigram.Common
             MergedDictionaries[0].MergedDictionaries.Clear();
             MergedDictionaries[0].MergedDictionaries.Add(dict);
 
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                try
-                {
-                    TLWindowContext.GetForCurrentView().UpdateTitleBar();
-                }
-                catch { }
-            }
         }
 
         public void Update()
@@ -168,12 +160,7 @@ namespace Unigram.Common
         {
             try
             {
-                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
-                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
-                ThemeDictionaries.Clear();
-                MergedDictionaries.Clear();
-
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+                Update();
 
                 var dict = new ResourceDictionary();
 
@@ -191,11 +178,6 @@ namespace Unigram.Common
 
                 MergedDictionaries[0].MergedDictionaries.Clear();
                 MergedDictionaries[0].MergedDictionaries.Add(dict);
-
-                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-                {
-                    TLWindowContext.GetForCurrentView().UpdateTitleBar();
-                }
             }
             catch { }
         }
