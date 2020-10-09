@@ -12,13 +12,16 @@ using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
+using Windows.Devices.Enumeration;
 using Windows.Foundation.Metadata;
 using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Imaging;
+using Windows.Media.Capture;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -41,7 +44,11 @@ namespace Unigram.Services
 
         void Start(long chatId, bool video);
 
+        void StartCaptureInternal(GraphicsCaptureItem item);
+
         CallProtocol GetProtocol();
+
+        Task<bool> CheckAccessAsync(bool video);
     }
 
     public class VoipService : TLViewModelBase, IVoipService
@@ -139,20 +146,11 @@ namespace Unigram.Services
 
         public async void Start(long chatId, bool video)
         {
-            //if (_call == null)
-            //{
-            //    var picker = new GraphicsCapturePicker();
-            //    var item = await picker.PickSingleItemAsync();
-
-            //    // The item may be null if the user dismissed the
-            //    // control without making a selection or hit Cancel.
-            //    if (item != null)
-            //    {
-            //        // We'll define this method later in the document.
-            //        StartCaptureInternal(item);
-            //        //return;
-            //    }
-            //}
+            var permissions = await CheckAccessAsync(video);
+            if (permissions == false)
+            {
+                return;
+            }
 
             var chat = CacheService.GetChat(chatId);
             if (chat == null)
@@ -210,6 +208,76 @@ namespace Unigram.Services
                     await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
+        }
+
+        public async Task<bool> CheckAccessAsync(bool video)
+        {
+            var audioPermission = await CheckDeviceAccessAsync(true, video);
+            if (audioPermission == false)
+            {
+                return false;
+            }
+
+            if (video)
+            {
+                var videoPermission = await CheckDeviceAccessAsync(false, true);
+                if (videoPermission == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private async Task<bool> CheckDeviceAccessAsync(bool audio, bool video)
+        {
+            var access = DeviceAccessInformation.CreateFromDeviceClass(audio ? DeviceClass.AudioCapture : DeviceClass.VideoCapture);
+            if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
+            {
+                MediaCapture capture = null;
+                try
+                {
+                    capture = new MediaCapture();
+                    var settings = new MediaCaptureInitializationSettings();
+                    settings.StreamingCaptureMode = video
+                        ? StreamingCaptureMode.AudioAndVideo
+                        : StreamingCaptureMode.Audio;
+                    await capture.InitializeAsync(settings);
+                }
+                catch { }
+                finally
+                {
+                    if (capture != null)
+                    {
+                        capture.Dispose();
+                        capture = null;
+                    }
+                }
+
+                return false;
+            }
+            else if (access.CurrentStatus != DeviceAccessStatus.Allowed)
+            {
+                var message = audio
+                    ? video
+                    ? Strings.Resources.PermissionNoAudio
+                    : Strings.Resources.PermissionNoAudioVideo
+                    : Strings.Resources.PermissionNoCamera;
+
+                this.BeginOnUIThread(async () =>
+                {
+                    var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
+                    }
+                });
+
+                return false;
+            }
+
+            return true;
         }
 
         public string CurrentAudioInput

@@ -91,7 +91,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0,32,0,0" RequestedTheme="Dark">
         <controls:ProfilePicture x:Name="Image" Width="144" Height="144" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Border x:Name="BackgroundPanel" Background="Transparent"/>
 

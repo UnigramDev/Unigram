@@ -672,7 +672,7 @@ namespace Unigram.Views
             _aggregator.Publish(new UpdateCall(new Call { State = new CallStateDiscarded { Reason = new CallDiscardReasonEmpty() } }));
         }
 
-        private void Accept_Click(object sender, RoutedEventArgs e)
+        private async void Accept_Click(object sender, RoutedEventArgs e)
         {
             var call = _service.Call;
             if (call == null)
@@ -684,7 +684,7 @@ namespace Unigram.Views
             {
                 _protoService.Send(new CreateCall(call.UserId, _service.GetProtocol(), false));
             }
-            else if (call.State is CallStatePending || call.State is CallStateReady)
+            else if (call.State is CallStateReady)
             {
                 var relay = 0L;
                 if (_service.Manager != null)
@@ -697,7 +697,15 @@ namespace Unigram.Views
             }
             else
             {
-                _protoService.Send(new AcceptCall(call.Id, _service.GetProtocol()));
+                var permissions = await _service.CheckAccessAsync(call.IsVideo);
+                if (permissions == false)
+                {
+                    _protoService.Send(new DiscardCall(call.Id, false, 0, call.IsVideo, 0));
+                }
+                else
+                {
+                    _protoService.Send(new AcceptCall(call.Id, _service.GetProtocol()));
+                }
             }
         }
 
