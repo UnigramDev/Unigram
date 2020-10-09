@@ -23,9 +23,9 @@ namespace Unigram.Views.Channels
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
-                if (ViewModel.UpdateIsValid(Username.Text))
+                if (ViewModel.UpdateIsValid(Username.Value))
                 {
-                    ViewModel.CheckAvailability(Username.Text);
+                    ViewModel.CheckAvailability(Username.Value);
                 }
             });
         }

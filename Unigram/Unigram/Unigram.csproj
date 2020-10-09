@@ -443,6 +443,7 @@
     <Compile Include="Controls\PollOptionControl.xaml.cs">
       <DependentUpon>PollOptionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PrefixTextBox.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\ProfilePicture.cs" />
     <Compile Include="Controls\ProxyStatusControl.xaml.cs">
@@ -612,7 +613,6 @@
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
     <Compile Include="Services\Updates\UpdateWindowActivated.cs" />
-    <Compile Include="Services\ViewService\IViewService.cs" />
     <Compile Include="Services\ViewService\SecondaryViewSynchronizationContextDecorator.cs" />
     <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />
     <Compile Include="Services\ViewService\ViewService.cs" />

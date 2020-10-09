@@ -55,11 +55,10 @@
                     Header="{CustomResource ChannelLinkTitle}"
                     Footer="{CustomResource ChannelUsernameHelp}"
                     Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
-                    <TextBox
+                    <controls:PrefixTextBox
                         x:Name="Username"
-                        Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        PlaceholderText="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
-                        Style="{StaticResource InlinePlaceholderTextBoxStyle}"
+                        Value="{x:Bind ViewModel.Username, Mode=TwoWay}"
+                        Prefix="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
                         Margin="12,8,12,8"/>
 
                     <TextBlock
