@@ -836,7 +836,7 @@ namespace Unigram.Views.Popups
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
             var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            if (character.Length == 0 || (char.IsControl(character[0]) && character != "\r") || char.IsWhiteSpace(character[0]))
             {
                 return;
             }
@@ -844,9 +844,16 @@ namespace Unigram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
             {
-                Search_Click(null, null);
-                SearchField.Text = character;
-                SearchField.SelectionStart = character.Length;
+                if (IsPrimaryButtonEnabled && character == "\r")
+                {
+                    ViewModel.SendCommand.Execute();
+                }
+                else
+                {
+                    Search_Click(null, null);
+                    SearchField.Text = character;
+                    SearchField.SelectionStart = character.Length;
+                }
 
                 args.Handled = true;
             }
