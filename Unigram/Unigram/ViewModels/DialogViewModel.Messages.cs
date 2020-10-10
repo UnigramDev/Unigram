@@ -1473,6 +1473,7 @@ namespace Unigram.ViewModels
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
                     var offset = first.Date.ToTimestamp();
+
                     await LoadDateSliceAsync(offset);
                 }
             }
