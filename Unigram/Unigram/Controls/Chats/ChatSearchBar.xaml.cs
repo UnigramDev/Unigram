@@ -280,7 +280,7 @@ namespace Unigram.Controls.Chats
                     ViewModel.Autocomplete = null;
                     break;
                 default:
-                    var history = ViewModel.Dialog.Type != DialogType.History && ViewModel.Dialog.Type != DialogType.Thread;
+                    var history = ViewModel?.Dialog != null && ViewModel.Dialog.Type != DialogType.History && ViewModel.Dialog.Type != DialogType.Thread;
                     ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
                     ViewModel.Autocomplete = null;
                     break;
