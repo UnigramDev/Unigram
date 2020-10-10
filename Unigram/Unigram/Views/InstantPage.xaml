@@ -243,15 +243,21 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.Footer>
-                <Border Background="{ThemeResource PageHeaderBackgroundBrush}">
+                <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
                     <Button
                         Command="{x:Bind ViewModel.FeedbackCommand}"
-                        Content="{CustomResource PreviewFeedback}"
-                        HorizontalContentAlignment="Center"
+                        Content="{CustomResource PreviewFeedback2}"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
-                        Padding="8,6"
+                        Padding="12,6"
                         Style="{StaticResource EmptyButtonStyle}"/>
-                </Border>
+
+                    <TextBlock
+                        x:Name="ViewsLabel"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Margin="12,0"/>
+                </Grid>
             </ListView.Footer>
             <ListView.ItemContainerTransitions>
                 <TransitionCollection/>
@@ -276,7 +282,7 @@
              </Grid>
              </ScrollViewer>-->
         <controls:ScrollViewerBackground
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Background="{ThemeResource PageBackgroundDarkBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
             VerticalAlignment="Top"
             Grid.Row="1"/>

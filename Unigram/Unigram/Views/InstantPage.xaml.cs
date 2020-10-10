@@ -192,6 +192,15 @@ namespace Unigram.Views
 
             ScrollingHost.FlowDirection = instantView.IsRtl ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 
+            if (instantView.ViewCount > 0)
+            {
+                ViewsLabel.Text = Locale.Declension("Views", instantView.ViewCount);
+            }
+            else
+            {
+                ViewsLabel.Text = string.Empty;
+            }
+
             var processed = 0;
             PageBlock previousBlock = null;
             FrameworkElement previousElement = null;
