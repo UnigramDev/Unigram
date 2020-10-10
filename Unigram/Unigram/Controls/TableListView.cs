@@ -20,6 +20,11 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (GroupStyle != null)
+            {
+                return;
+            }
+
             var root = ItemsPanelRoot;
             if (root == null || !ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
             {
@@ -82,6 +87,11 @@ namespace Unigram.Controls
 
         private static void OnItemsPanelCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            if (((TableListView)d).GroupStyle != null)
+            {
+                return;
+            }
+
             var root = ((TableListView)d).ItemsPanelRoot;
             if (root == null || !ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
             {

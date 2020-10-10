@@ -100,7 +100,7 @@
                     </GroupStyle.HeaderTemplate>
                     <GroupStyle.HeaderContainerStyle>
                         <Style TargetType="ListViewHeaderItem">
-                            <Setter Property="Background" Value="{ThemeResource PageSubHeaderBackgroundBrush}" />
+                            <Setter Property="Background" Value="{ThemeResource PageBackgroundDarkBrush}" />
                             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                             <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
                             <Setter Property="Margin" Value="0,0,0,0"/>
