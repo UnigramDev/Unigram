@@ -505,7 +505,7 @@ namespace Unigram.Views
 #if DEBUG && !MOCKUP
             StateLabel.Text = Strings.Resources.AppName;
 #else
-            StatusLabel.Text = "Unigram";
+            StateLabel.Text = "Unigram";
 #endif
         }
 
