@@ -11,10 +11,10 @@ namespace Unigram.Controls
         {
             var container = element as ListViewItem;
             var message = item as MessageViewModel;
+            var chat = message?.GetChat();
 
-            if (container != null && message != null)
+            if (container != null && message != null && chat != null)
             {
-                var chat = message.GetChat();
                 var action = message.IsSaved() || message.IsShareable();
 
                 if (message.IsService())
