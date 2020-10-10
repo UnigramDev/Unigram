@@ -615,9 +615,9 @@ namespace Unigram.Services
             }
             else if (_callLifetime != null)
             {
-                _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, this), _call.Id, 720, 540, ApplicationViewMode.Default);
-                _callLifetime.WindowWrapper.ApplicationView().Consolidated -= ApplicationView_Consolidated;
-                _callLifetime.WindowWrapper.ApplicationView().Consolidated += ApplicationView_Consolidated;
+                _callLifetime = await _viewService.OpenAsync(control => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, this), _call.Id, 720, 540, ApplicationViewMode.Default);
+                _callLifetime.Released -= ApplicationView_Released;
+                _callLifetime.Released += ApplicationView_Released;
             }
 
             Aggregator.Publish(new UpdateCallDialog(_call, true));
@@ -629,9 +629,9 @@ namespace Unigram.Services
             {
                 if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
                 {
-                    _callLifetime = await _viewService.OpenAsync(() => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, this), call.Id, 720, 540, ApplicationViewMode.Default);
-                    _callLifetime.WindowWrapper.ApplicationView().Consolidated -= ApplicationView_Consolidated;
-                    _callLifetime.WindowWrapper.ApplicationView().Consolidated += ApplicationView_Consolidated;
+                    _callLifetime = await _viewService.OpenAsync(control => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, this), call.Id, 720, 540, ApplicationViewMode.Default);
+                    _callLifetime.Released -= ApplicationView_Released;
+                    _callLifetime.Released += ApplicationView_Released;
                 }
                 else
                 {
@@ -672,7 +672,6 @@ namespace Unigram.Services
                     }
                     else if (_callLifetime != null)
                     {
-                        _callLifetime.StopViewInUse();
                         _callLifetime.WindowWrapper.Window.Close();
                         _callLifetime = null;
                     }
@@ -688,12 +687,10 @@ namespace Unigram.Services
             }
         }
 
-        private void ApplicationView_Consolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
+        private void ApplicationView_Released(object sender, EventArgs e)
         {
             if (_callLifetime != null)
             {
-                _callLifetime.StopViewInUse();
-                _callLifetime.WindowWrapper.Window.Close();
                 _callLifetime = null;
             }
 

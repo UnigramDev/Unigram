@@ -208,12 +208,6 @@ namespace Unigram.Navigation.Services
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
-        public Task<ViewLifetimeControl> OpenAsync(Func<UIElement> content, object parameter)
-        {
-            DebugWrite($"Content: {content}, Parameter: {parameter}");
-            return viewService.OpenAsync(content, parameter);
-        }
-
         public bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
             DebugWrite($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");

@@ -320,6 +320,7 @@
       <DependentUpon>EmbedUrlView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Gallery\GalleryBottomPanel.cs" />
+    <Compile Include="Controls\Gallery\GalleryCompactView.cs" />
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
       <DependentUpon>GalleryContentView.xaml</DependentUpon>
     </Compile>

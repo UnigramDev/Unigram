@@ -25,7 +25,7 @@ namespace Unigram.Services.ViewService
         /// It won't not be called before all previously started async operations on <see cref="CoreDispatcher"/> complete. <remarks>DO NOT call operations on Dispatcher after this</remarks></returns>
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf, int session = 0, string id = "0");
 
-        Task<ViewLifetimeControl> OpenAsync(Func<UIElement> content, object parameter, double width = 340, double height = 200, ApplicationViewMode viewMode = ApplicationViewMode.CompactOverlay);
+        Task<ViewLifetimeControl> OpenAsync(Func<ViewLifetimeControl, UIElement> content, object parameter, double width = 340, double height = 200, ApplicationViewMode viewMode = ApplicationViewMode.CompactOverlay);
     }
 
     public sealed class ViewService : IViewService
@@ -44,11 +44,11 @@ namespace Unigram.Services.ViewService
             }
         }
 
-        public async Task<ViewLifetimeControl> OpenAsync(Func<UIElement> content, object parameter, double width, double height, ApplicationViewMode viewMode)
+        public async Task<ViewLifetimeControl> OpenAsync(Func<ViewLifetimeControl, UIElement> content, object parameter, double width, double height, ApplicationViewMode viewMode)
         {
             if (_windows.TryGetValue(parameter, out DispatcherWrapper value))
             {
-                var newControl = await value.Dispatch(async () =>
+                var newControl = await value.DispatchAsync(async () =>
                 {
                     var control = ViewLifetimeControl.GetForCurrentView();
                     var newAppView = ApplicationView.GetForCurrentView();
@@ -71,7 +71,7 @@ namespace Unigram.Services.ViewService
 
                 var bounds = Window.Current.Bounds;
 
-                var newControl = await dispatcher.Dispatch(async () =>
+                var newControl = await dispatcher.DispatchAsync(async () =>
                 {
                     var newWindow = Window.Current;
                     newWindow.Closed += (s, args) =>
@@ -102,7 +102,7 @@ namespace Unigram.Services.ViewService
                         newWindow.Close();
                     };
 
-                    newWindow.Content = content();
+                    newWindow.Content = content(control);
                     newWindow.Activate();
 
                     var preferences = ViewModePreferences.CreateDefault(viewMode);
@@ -134,18 +134,10 @@ namespace Unigram.Services.ViewService
 
             if (parameter != null && _windows.TryGetValue(parameter, out DispatcherWrapper value))
             {
-                var newControl = await value.Dispatch(async () =>
+                var newControl = await value.DispatchAsync(async () =>
                 {
                     var control = ViewLifetimeControl.GetForCurrentView();
                     var newAppView = ApplicationView.GetForCurrentView();
-
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-                    {
-                        newAppView.PersistedStateId = "Floating";
-                    }
-
-                    var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.Default);
-                    preferences.CustomSize = new Windows.Foundation.Size(360, 640);
 
                     await ApplicationViewSwitcher
                         .SwitchAsync(newAppView.Id, currentView.Id, ApplicationViewSwitchingOptions.Default);
@@ -166,11 +158,16 @@ namespace Unigram.Services.ViewService
 
                 var bounds = Window.Current.Bounds;
 
-                var newControl = await dispatcher.Dispatch(async () =>
+                var newControl = await dispatcher.DispatchAsync(async () =>
                 {
                     var newWindow = Window.Current;
                     var newAppView = ApplicationView.GetForCurrentView();
                     newAppView.Title = title;
+
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
+                    {
+                        newAppView.PersistedStateId = "Floating";
+                    }
 
                     var control = ViewLifetimeControl.GetForCurrentView();
                     control.Released += (s, args) =>

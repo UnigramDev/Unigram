@@ -47,7 +47,7 @@ namespace Unigram.Controls.Gallery
         private DisplayRequest _request;
         private MediaPlayerElement _mediaPlayerElement;
         private MediaPlayer _mediaPlayer;
-        private RemoteFileStream _streamingInterop;
+        private RemoteFileStream _fileStream;
         private Grid _surface;
 
         private Visual _layer;
@@ -149,7 +149,7 @@ namespace Unigram.Controls.Gallery
 
         public void Handle(UpdateFile update)
         {
-            _streamingInterop?.UpdateFile(update.File);
+            _fileStream?.UpdateFile(update.File);
             this.BeginOnUIThread(() => UpdateFile(update.File));
         }
 
@@ -204,7 +204,7 @@ namespace Unigram.Controls.Gallery
                         Element2.UpdateFile(item, file);
                     }
 
-                    if (_streamingInterop?.FileId == file.Id)
+                    if (_fileStream?.FileId == file.Id)
                     {
                         //Transport.DownloadMaximum = file.Size;
                         //Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
@@ -318,12 +318,10 @@ namespace Unigram.Controls.Gallery
                     var compact = _compactLifetime;
                     await compact.CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        compact.StopViewInUse();
                         compact.WindowWrapper.Close();
                     });
 
                     _compactLifetime = null;
-                    Dispose();
                 }
 
                 parameter.Delegate = this;
@@ -640,8 +638,8 @@ namespace Unigram.Controls.Gallery
                 var streamable = SettingsService.Current.IsStreamingEnabled && item.IsStreamable /*&& !file.Local.IsDownloadingCompleted*/;
                 if (streamable)
                 {
-                    _streamingInterop = new RemoteFileStream(item.ProtoService, file, TimeSpan.FromSeconds(item.Duration));
-                    _mediaPlayer.Source = MediaSource.CreateFromStream(_streamingInterop, item.MimeType);
+                    _fileStream = new RemoteFileStream(item.ProtoService, file, TimeSpan.FromSeconds(item.Duration));
+                    _mediaPlayer.Source = MediaSource.CreateFromStream(_fileStream, item.MimeType);
 
                     //Transport.DownloadMaximum = file.Size;
                     //Transport.DownloadValue = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
@@ -669,12 +667,14 @@ namespace Unigram.Controls.Gallery
                 _surface = null;
             }
 
-            if (_streamingInterop != null)
+            if (_fileStream != null)
             {
-                var interop = _streamingInterop;
-                _streamingInterop = null;
+                if (_compactLifetime == null)
+                {
+                    _fileStream.Dispose();
+                }
 
-                Task.Run(() => interop?.Dispose());
+                _fileStream = null;
             }
 
             if (_mediaPlayer != null)
@@ -692,9 +692,9 @@ namespace Unigram.Controls.Gallery
                 if (_compactLifetime == null)
                 {
                     _mediaPlayer.Dispose();
-                    _mediaPlayer = null;
                 }
 
+                _mediaPlayer = null;
                 OnSourceChanged();
             }
 
@@ -1153,49 +1153,13 @@ namespace Unigram.Controls.Gallery
                 height *= ratio;
             }
 
+            var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
             var viewService = TLContainer.Current.Resolve<IViewService>();
 
-            _compactLifetime = await viewService.OpenAsync(() =>
-            {
-                var element = new MediaPlayerElement();
-                element.RequestedTheme = ElementTheme.Dark;
-                element.SetMediaPlayer(_mediaPlayer);
-                element.TransportControls = new MediaTransportControls
-                {
-                    IsCompact = true,
-                    IsCompactOverlayButtonVisible = false,
-                    IsFastForwardButtonVisible = false,
-                    IsFastRewindButtonVisible = false,
-                    IsFullWindowButtonVisible = false,
-                    IsNextTrackButtonVisible = false,
-                    IsPlaybackRateButtonVisible = false,
-                    IsPreviousTrackButtonVisible = false,
-                    IsRepeatButtonVisible = false,
-                    IsSkipBackwardButtonVisible = false,
-                    IsSkipForwardButtonVisible = false,
-                    IsVolumeButtonVisible = false,
-                    IsStopButtonVisible = false,
-                    IsZoomButtonVisible = false,
-                };
-                element.AreTransportControlsEnabled = true;
-                return element;
+            var mediaPlayer = _mediaPlayer;
+            var fileStream = _fileStream;
 
-            }, "PIP", width, height);
-            _compactLifetime.WindowWrapper.ApplicationView().Consolidated += (s, args) =>
-            {
-                if (_compactLifetime != null)
-                {
-                    _compactLifetime.StopViewInUse();
-                    _compactLifetime.WindowWrapper.Window.Close();
-                    _compactLifetime = null;
-                }
-
-                this.BeginOnUIThread(() =>
-                {
-                    Dispose();
-                });
-            };
-
+            _compactLifetime = await viewService.OpenAsync(control => new GalleryCompactView(aggregator, control, mediaPlayer, fileStream), "PIP", width, height);
             OnBackRequestedOverride(this, new HandledEventArgs());
         }
 
