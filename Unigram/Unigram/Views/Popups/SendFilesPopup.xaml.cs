@@ -312,8 +312,25 @@ namespace Unigram.Views.Popups
 
         public void Accept()
         {
-            Caption = CaptionInput.GetFormattedText();
-            Hide(ContentDialogResult.Primary);
+            if (CaptionInput.HandwritingView.IsOpen)
+            {
+                RoutedEventHandler handler = null;
+                handler = (s, args) =>
+                {
+                    CaptionInput.HandwritingView.Unloaded -= handler;
+
+                    Caption = CaptionInput.GetFormattedText();
+                    Hide(ContentDialogResult.Primary);
+                };
+
+                CaptionInput.HandwritingView.Unloaded += handler;
+                CaptionInput.HandwritingView.TryClose();
+            }
+            else
+            {
+                Caption = CaptionInput.GetFormattedText();
+                Hide(ContentDialogResult.Primary);
+            }
         }
 
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
