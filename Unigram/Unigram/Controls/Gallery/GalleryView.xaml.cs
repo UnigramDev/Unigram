@@ -122,7 +122,7 @@ namespace Unigram.Controls.Gallery
 
             var parent = ElementCompositionPreview.GetElementVisual(BottomPanel);
             var next = ElementCompositionPreview.GetElementVisual(NextButton);
-            var prev = ElementCompositionPreview.GetElementVisual(PreviousButton);
+            var prev = ElementCompositionPreview.GetElementVisual(PrevButton);
 
             var batch = parent.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -777,20 +777,25 @@ namespace Unigram.Controls.Gallery
             }
             else if (args.VirtualKey == Windows.System.VirtualKey.C && ctrl && !alt && !shift)
             {
-                ViewModel.CopyCommand.Execute();
+                ViewModel?.CopyCommand.Execute();
                 args.Handled = true;
             }
             else if (args.VirtualKey == Windows.System.VirtualKey.S && ctrl && !alt && !shift)
             {
-                ViewModel.SaveCommand.Execute();
+                ViewModel?.SaveCommand.Execute();
                 args.Handled = true;
             }
 
         }
 
-        private void Transport_Switch(GalleryTransportControls sender, int args)
+        private void PrevButton_Click(object sender, RoutedEventArgs e)
         {
-            ChangeView(args, false);
+            ChangeView(0, false);
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeView(2, false);
         }
 
         #region Flippitiflip
@@ -884,25 +889,31 @@ namespace Unigram.Controls.Gallery
 
         private bool ChangeView(int index, bool disableAnimation)
         {
-            var selected = ViewModel.SelectedIndex;
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return false;
+            }
+
+            var selected = viewModel.SelectedIndex;
             var previous = selected > 0;
-            var next = selected < ViewModel.Items.Count - 1;
+            var next = selected < viewModel.Items.Count - 1;
 
             if (previous && index == 0)
             {
-                ViewModel.SelectedItem = ViewModel.Items[selected - 1];
+                viewModel.SelectedItem = viewModel.Items[selected - 1];
                 PrepareNext(-1, dispose: true);
 
-                ViewModel.LoadMore();
+                viewModel.LoadMore();
 
                 return true;
             }
             else if (next && index == 2)
             {
-                ViewModel.SelectedItem = ViewModel.Items[selected + 1];
+                viewModel.SelectedItem = viewModel.Items[selected + 1];
                 PrepareNext(+1, dispose: true);
 
-                ViewModel.LoadMore();
+                viewModel.LoadMore();
 
                 return true;
             }
@@ -962,12 +973,12 @@ namespace Unigram.Controls.Gallery
 
             if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
             {
-                PreviousButton.Visibility = index > 0 ? Visibility.Visible : Visibility.Collapsed;
+                PrevButton.Visibility = index > 0 ? Visibility.Visible : Visibility.Collapsed;
                 NextButton.Visibility = index < viewModel.Items.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
-                PreviousButton.Visibility = Visibility.Collapsed;
+                PrevButton.Visibility = Visibility.Collapsed;
                 NextButton.Visibility = Visibility.Collapsed;
             }
 

@@ -262,7 +262,8 @@
         </local:GalleryBottomPanel>
 
         <Button
-            x:Name="PreviousButton"
+            x:Name="PrevButton"
+            Click="PrevButton_Click"
             Visibility="Collapsed"
             Template="{StaticResource HorizontalPreviousTemplate}"
             Width="20"
@@ -273,6 +274,7 @@
             VerticalAlignment="Center" />
         <Button
             x:Name="NextButton"
+            Click="NextButton_Click"
             Visibility="Collapsed"
             Template="{StaticResource HorizontalNextTemplate}"
             Width="20"
