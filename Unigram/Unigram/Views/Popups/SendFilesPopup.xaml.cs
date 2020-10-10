@@ -16,8 +16,8 @@ using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -364,23 +364,28 @@ namespace Unigram.Views.Popups
             {
                 var bitmap = await package.GetBitmapAsync();
 
-                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.bmp", DateTime.Now);
                 var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
                 using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream.GetInputStreamAt(0)))
+                using (var output = await cache.OpenAsync(FileAccessMode.ReadWrite))
                 {
-                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                    var photo = await StoragePhoto.CreateAsync(result);
-                    if (photo == null)
-                    {
-                        return;
-                    }
-
-                    Items.Add(photo);
-
-                    UpdateView();
-                    UpdatePanel();
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = reader.ReadBuffer(reader.UnconsumedBufferLength);
+                    await output.WriteAsync(buffer);
                 }
+
+                var photo = await StoragePhoto.CreateAsync(cache);
+                if (photo == null)
+                {
+                    return;
+                }
+
+                Items.Add(photo);
+
+                UpdateView();
+                UpdatePanel();
             }
             else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
             {
