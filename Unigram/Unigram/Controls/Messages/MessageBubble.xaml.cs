@@ -1321,7 +1321,9 @@ namespace Unigram.Controls.Messages
             {
                 var footerWidth = Footer.ActualWidth - 5;
 
-                var width = Message.ActualWidth;
+                // For some reason ActualWidth isn't reporting the correct value:
+                // it seems instead to report the width of the inner text.
+                var width = Message.RenderSize.Width;
                 var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
 
                 var diff = width - rect.Right;
