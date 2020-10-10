@@ -1480,6 +1480,13 @@ namespace Unigram.ViewModels
             {
                 await LoadMessageSliceAsync(null, pinMessage.MessageId);
             }
+            else if (message.Content is MessageChatEvent chatEvent)
+            {
+                if (chatEvent.Action is ChatEventStickerSetChanged stickerSetChanged && stickerSetChanged.NewStickerSetId != 0)
+                {
+                    await StickerSetPopup.GetForCurrentView().ShowAsync(stickerSetChanged.NewStickerSetId);
+                }
+            }
         }
 
         #endregion
