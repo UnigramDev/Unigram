@@ -21,7 +21,14 @@ namespace Unigram.Common
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                flyout.ShowAt(element, point);
+                try
+                {
+                    flyout.ShowAt(element, point);
+                }
+                catch
+                {
+                    flyout.ShowAt(element);
+                }
             }
             else if (flyout.Items.Count > 0)
             {
