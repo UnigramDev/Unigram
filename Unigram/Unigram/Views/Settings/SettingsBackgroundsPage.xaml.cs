@@ -4,7 +4,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
-using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -53,12 +53,12 @@ namespace Unigram.Views.Settings
             {
                 return;
             }
-            else if (wallpaper.Id == Constants.WallpaperLocalId)
+            else if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
             {
                 //var content = root.Children[0] as Image;
                 //content.Source = new BitmapImage(new Uri($"ms-appdata:///local/{ViewModel.SessionId}/{Constants.WallpaperLocalFileName}"));
 
-                var file = await ApplicationData.Current.LocalFolder.GetFileAsync($"{ViewModel.SessionId}\\{Constants.WallpaperLocalFileName}");
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
                 using (var stream = await file.OpenReadAsync())
                 {
                     var bitmap = new BitmapImage();

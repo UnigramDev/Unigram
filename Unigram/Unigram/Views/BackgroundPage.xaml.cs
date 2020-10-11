@@ -11,7 +11,7 @@ using Unigram.ViewModels.Delegates;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Sensors;
 using Windows.Graphics.Display;
-using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -169,9 +169,9 @@ namespace Unigram.Views
                 return;
             }
 
-            if (wallpaper.Id == Constants.WallpaperLocalId && wallpaper.Name == Constants.WallpaperLocalFileName)
+            if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
             {
-                var file = await ApplicationData.Current.LocalFolder.GetFileAsync($"{ViewModel.SessionId}\\{Constants.WallpaperLocalFileName}");
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
                 using (var stream = await file.OpenReadAsync())
                 {
                     var bitmap = new BitmapImage();

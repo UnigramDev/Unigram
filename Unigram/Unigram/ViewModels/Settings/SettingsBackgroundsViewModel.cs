@@ -8,7 +8,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Services;
 using Unigram.Views;
-using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Navigation;
 
@@ -95,10 +95,8 @@ namespace Unigram.ViewModels.Settings
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var result = await ApplicationData.Current.LocalFolder.CreateFileAsync($"{SessionId}\\{Constants.WallpaperLocalFileName}", CreationCollisionOption.ReplaceExisting);
-                await file.CopyAndReplaceAsync(result);
-
-                NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperLocalFileName);
+                var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
+                NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperLocalFileName + $"#{token}");
             }
         }
 
