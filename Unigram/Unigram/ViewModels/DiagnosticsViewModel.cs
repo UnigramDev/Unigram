@@ -28,6 +28,13 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            var calls = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
+            if (calls != null)
+            {
+                var basic = await calls.GetBasicPropertiesAsync();
+                LogCallsSize = basic.Size;
+            }
+
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
             if (log != null)
             {
@@ -142,6 +149,13 @@ namespace Unigram.ViewModels
             }
         }
 
+
+        private ulong _logCallsSize;
+        public ulong LogCallsSize
+        {
+            get => _logCallsSize;
+            set => Set(ref _logCallsSize, value);
+        }
 
         private ulong _logSize;
         public ulong LogSize
