@@ -45,28 +45,29 @@ namespace Unigram.Common
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
 
             UpdateTitleBar();
+
+            window.Activated += OnActivated;
+        }
+
+        private static object _activeLock = new object();
+        public static TLWindowContext ActiveWindow { get; private set; }
+
+        private void OnActivated(object sender, WindowActivatedEventArgs e)
+        {
+            lock (_activeLock)
+            {
+                if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+                {
+                    ActiveWindow = this;
+                }
+                else if (ActiveWindow == this)
+                {
+                    ActiveWindow = null;
+                }
+            }
         }
 
         public int Id => _id;
-
-        public bool IsChatOpen(int session, long chatId)
-        {
-            return Dispatcher.Dispatch(() =>
-            {
-                var service = this.NavigationServices?.GetByFrameId("Main" + session);
-                if (service == null)
-                {
-                    return false;
-                }
-
-                if (ActivationMode == CoreWindowActivationMode.ActivatedInForeground && service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chatId)
-                {
-                    return true;
-                }
-
-                return false;
-            });
-        }
 
         #region UI
 
@@ -327,8 +328,12 @@ namespace Unigram.Common
 
                 if (App.ShareOperation != null)
                 {
-                    App.ShareOperation.ReportCompleted();
-                    App.ShareOperation = null;
+                    try
+                    {
+                        App.ShareOperation.ReportCompleted();
+                        App.ShareOperation = null;
+                    }
+                    catch { }
                 }
 
                 if (App.ShareWindow != null)
