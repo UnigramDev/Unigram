@@ -35,10 +35,9 @@ namespace Unigram.Views.BasicGroups
             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
             picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
 
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
+            var media = await picker.PickSingleMediaAsync();
+            if (media != null)
             {
-                var media = await StorageMedia.CreateAsync(file);
                 var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();

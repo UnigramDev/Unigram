@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
+using Unigram.Entities;
 using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
@@ -20,6 +21,7 @@ using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
+using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -34,6 +36,17 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static async Task<StorageMedia> PickSingleMediaAsync(this FileOpenPicker picker)
+        {
+            var file = await picker.PickSingleFileAsync();
+            if (file == null)
+            {
+                return null;
+            }
+
+            return await StorageMedia.CreateAsync(file);
+        }
+
         public static Version ToVersion(this PackageVersion version)
         {
             return new Version(version.Major, version.Minor, version.Build, version.Revision);
