@@ -3,12 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
+using Windows.Foundation;
 using Windows.UI.Input;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls
@@ -31,6 +34,42 @@ namespace Unigram.Controls
                     RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
                 }
             }
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+        }
+
+        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            var element = FocusManager.GetFocusedElement() as Control;
+            if (element is TextBox || element is RichEditBox)
+            {
+                var transform = element.TransformToVisual(Window.Current.Content);
+                var point = transform.TransformPoint(new Point());
+
+                var offset = point.Y + element.ActualHeight + 8;
+                if (offset > args.OccludedRect.Y)
+                {
+                    RenderTransform = new TranslateTransform { Y = args.OccludedRect.Y - offset };
+                }
+            }
+        }
+
+        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            RenderTransform = null;
         }
 
         public bool FocusPrimaryButton { get; set; } = true;
