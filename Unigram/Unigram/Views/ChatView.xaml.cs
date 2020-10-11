@@ -3114,6 +3114,9 @@ namespace Unigram.Views
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
             UpdateChatDefaultDisableNotification(chat, chat.DefaultDisableNotification);
 
+            TypeIcon.Text = chat.Type is ChatTypeSecret ? Icons.Secret : string.Empty;
+            TypeIcon.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
+
             Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
 
             ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.History ? Visibility.Visible : Visibility.Collapsed;

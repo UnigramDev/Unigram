@@ -350,15 +350,34 @@
                         Click="Profile_Click"
                         Grid.Column="1">
                         <HyperlinkButton.Content>
-                            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
-                                <TextBlock x:Name="Title"
-                                            Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                            Style="{StaticResource BaseTextBlockStyle}"
-                                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                            TextWrapping="NoWrap"
-                                            TextTrimming="CharacterEllipsis"
-                                            MaxLines="1"/>
-                                <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                            <Grid VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="TypeIcon"
+                                    Text="&#xE125;"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                    VerticalAlignment="Bottom"
+                                    FontSize="16"
+                                    Margin="0,0,4,1"/>
+
+                                <TextBlock
+                                    x:Name="Title"
+                                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                                    Style="{StaticResource BaseTextBlockStyle}"
+                                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                    TextWrapping="NoWrap"
+                                    TextTrimming="CharacterEllipsis"
+                                    MaxLines="1"
+                                    Grid.Column="1"/>
+                                
+                                <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="2" Grid.Row="1">
                                     <TextBlock x:Name="Subtitle"
                                                 Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
                                                 Foreground="{ThemeResource PageHeaderDisabledBrush}"
@@ -379,7 +398,7 @@
                                                     VerticalAlignment="Top"/>
                                     </StackPanel>
                                 </Grid>
-                            </StackPanel>
+                            </Grid>
                         </HyperlinkButton.Content>
                     </controls:SimpleHyperlinkButton>
 

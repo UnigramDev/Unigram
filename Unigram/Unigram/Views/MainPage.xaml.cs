@@ -2017,6 +2017,8 @@ namespace Unigram.Views
                     var grid = content.Children[1] as Grid;
 
                     var title = grid.Children[0] as TextBlock;
+                    title.Style = App.Current.Resources[result.Chat.Type is ChatTypeSecret ? "SecretBodyTextBlockStyle" : "BodyTextBlockStyle"] as Style;
+
                     if (result.Chat != null)
                     {
                         title.Text = ViewModel.ProtoService.GetTitle(result.Chat);
@@ -2046,7 +2048,7 @@ namespace Unigram.Views
                 else if (args.Phase == 1)
                 {
                     var subtitle = content.Children[2] as TextBlock;
-                    if (result.User != null || result.Chat != null && result.Chat.Type is ChatTypePrivate privata)
+                    if (result.User != null || result.Chat != null && (result.Chat.Type is ChatTypePrivate privata || result.Chat.Type is ChatTypeSecret))
                     {
                         var user = result.User ?? ViewModel.ProtoService.GetUser(result.Chat);
                         if (result.IsPublic)
