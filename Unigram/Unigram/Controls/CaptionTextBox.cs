@@ -109,11 +109,17 @@ namespace Unigram.Controls
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
             Document.GetText(TextGetOptions.NoHidden, out string text);
 
             if (ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
-                var chat = ViewModel.Chat;
+                var chat = viewModel.Chat;
                 if (chat == null)
                 {
                     return;
@@ -121,7 +127,7 @@ namespace Unigram.Controls
 
                 if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
                 {
-                    View.Autocomplete = new ChatTextBox.UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, false, true);
+                    View.Autocomplete = new ChatTextBox.UsernameCollection(viewModel.ProtoService, viewModel.Chat.Id, username, false, true);
                 }
                 else
                 {
@@ -130,7 +136,7 @@ namespace Unigram.Controls
             }
             else if (ChatTextBox.SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
             {
-                View.Autocomplete = new ChatTextBox.EmojiCollection(ViewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
+                View.Autocomplete = new ChatTextBox.EmojiCollection(viewModel.ProtoService, replacement.Length < 2 ? replacement : replacement.ToLower(), CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
             }
             else
             {

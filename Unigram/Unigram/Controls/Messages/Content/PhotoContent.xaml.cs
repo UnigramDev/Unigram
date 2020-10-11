@@ -48,7 +48,10 @@ namespace Unigram.Controls.Messages.Content
                 UpdateThumbnail(message, small.Photo);
             }
 
-            UpdateFile(message, big.Photo);
+            if (big != null)
+            {
+                UpdateFile(message, big.Photo);
+            }
         }
 
         public void Mockup(MessagePhoto photo)
