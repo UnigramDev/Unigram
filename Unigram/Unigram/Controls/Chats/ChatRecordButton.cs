@@ -14,6 +14,7 @@ using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Display;
+using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -344,6 +345,12 @@ namespace Unigram.Controls.Chats
 
         private async Task<bool> CheckDeviceAccessAsync(bool audio, ChatRecordMode mode)
         {
+            // For some reason, as far as I understood, CurrentStatus is always Unspecified on Xbox
+            if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
+            {
+                return true;
+            }
+
             var access = DeviceAccessInformation.CreateFromDeviceClass(audio ? DeviceClass.AudioCapture : DeviceClass.VideoCapture);
             if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
             {
@@ -545,7 +552,7 @@ namespace Unigram.Controls.Chats
                     {
                         Logger.Debug(Target.Recording, "Failed to initialize devices, abort: " + ex);
 
-                        _recorder.Dispose();
+                        _recorder?.Dispose();
                         _recorder = null;
 
                         _file = null;

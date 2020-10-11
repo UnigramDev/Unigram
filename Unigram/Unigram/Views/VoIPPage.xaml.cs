@@ -684,7 +684,7 @@ namespace Unigram.Views
             {
                 _protoService.Send(new CreateCall(call.UserId, _service.GetProtocol(), false));
             }
-            else if (call.State is CallStateReady)
+            else if (call.State is CallStateReady || (call.State is CallStatePending && call.IsOutgoing))
             {
                 var relay = 0L;
                 if (_service.Manager != null)

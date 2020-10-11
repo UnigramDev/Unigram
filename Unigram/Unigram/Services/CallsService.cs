@@ -22,6 +22,7 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.System;
+using Windows.System.Profile;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -232,10 +233,17 @@ namespace Unigram.Services
 
         private async Task<bool> CheckDeviceAccessAsync(bool audio, bool video)
         {
+            // For some reason, as far as I understood, CurrentStatus is always Unspecified on Xbox
+            if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
+            {
+                return true;
+            }
+
             var access = DeviceAccessInformation.CreateFromDeviceClass(audio ? DeviceClass.AudioCapture : DeviceClass.VideoCapture);
             if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
             {
                 MediaCapture capture = null;
+                bool success = false;
                 try
                 {
                     capture = new MediaCapture();
@@ -244,6 +252,7 @@ namespace Unigram.Services
                         ? StreamingCaptureMode.AudioAndVideo
                         : StreamingCaptureMode.Audio;
                     await capture.InitializeAsync(settings);
+                    success = true;
                 }
                 catch { }
                 finally
@@ -255,7 +264,7 @@ namespace Unigram.Services
                     }
                 }
 
-                return false;
+                return success;
             }
             else if (access.CurrentStatus != DeviceAccessStatus.Allowed)
             {
@@ -645,6 +654,11 @@ namespace Unigram.Services
                 }
 
                 Aggregator.Publish(new UpdateCallDialog(call, true));
+            }
+
+            if (_callDialog == null)
+            {
+                return;
             }
 
             await _callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
