@@ -250,6 +250,12 @@ namespace Unigram.Controls.Chats
 
         private void SetState(ChatSearchState state, User from = null, ChatSearchMediaFilter filter = null)
         {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
             if (from != null)
             {
                 Field.Filter = null;
@@ -268,21 +274,20 @@ namespace Unigram.Controls.Chats
             {
                 case ChatSearchState.Members:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, string.Empty, false, true);
+                    viewModel.Autocomplete = new UsernameCollection(viewModel.ProtoService, viewModel.Dialog.Chat.Id, string.Empty, false, true);
                     break;
                 case ChatSearchState.Media:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.Autocomplete = ViewModel.Filters;
+                    viewModel.Autocomplete = viewModel.Filters;
                     break;
                 case ChatSearchState.TextByMember:
                 case ChatSearchState.TextByMedia:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.Autocomplete = null;
+                    viewModel.Autocomplete = null;
                     break;
                 default:
-                    var history = ViewModel?.Dialog != null && ViewModel.Dialog.Type != DialogType.History && ViewModel.Dialog.Type != DialogType.Thread;
-                    ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
-                    ViewModel.Autocomplete = null;
+                    ToolsPanel.Visibility = viewModel.Dialog.Type != DialogType.History && viewModel.Dialog.Type != DialogType.Thread ? Visibility.Collapsed : Visibility.Visible;
+                    viewModel.Autocomplete = null;
                     break;
             }
 
