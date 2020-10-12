@@ -48,13 +48,20 @@ namespace Unigram.Services.Factories
 
         public async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, int ttl = 0, BitmapEditState editState = null)
         {
-            using (var stream = await file.OpenReadAsync())
+            try
             {
-                var decoder = await BitmapDecoder.CreateAsync(stream);
-                if (decoder.FrameCount > 1)
+                using (var stream = await file.OpenReadAsync())
                 {
-                    asFile = true;
+                    var decoder = await BitmapDecoder.CreateAsync(stream);
+                    if (decoder.FrameCount > 1)
+                    {
+                        asFile = true;
+                    }
                 }
+            }
+            catch
+            {
+                asFile = true;
             }
 
             var size = await ImageHelper.GetScaleAsync(file, editState: editState);
@@ -68,7 +75,7 @@ namespace Unigram.Services.Factories
                 {
                     InputFile = generated,
                     Type = new FileTypeDocument(),
-                    Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, true, caption)
+                    Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, false, caption)
                 };
             }
 
