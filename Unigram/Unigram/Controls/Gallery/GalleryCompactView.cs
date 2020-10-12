@@ -61,12 +61,18 @@ namespace Unigram.Controls.Gallery
         {
             _aggregator.Unsubscribe(this);
 
-            _mediaPlayer.Source = null;
-            //_mediaPlayer.Dispose();
-            _mediaPlayer = null;
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.Source = null;
+                //_mediaPlayer.Dispose();
+                _mediaPlayer = null;
+            }
 
-            _fileStream.Dispose();
-            _fileStream = null;
+            if (_fileStream != null)
+            {
+                _fileStream.Dispose();
+                _fileStream = null;
+            }
         }
     }
 }
