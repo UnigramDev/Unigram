@@ -17,6 +17,7 @@ using Unigram.Views.SignIn;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -120,6 +121,7 @@ namespace Unigram.Views.Host
                 Destroy(_navigationService);
             }
 
+            Navigation.IsPaneOpen = false;
             Navigation.SetTopPadding(new Thickness());
 
             var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
@@ -289,6 +291,7 @@ namespace Unigram.Views.Host
                 args.ItemContainer = new ListViewItem();
                 args.ItemContainer.Style = NavigationViewList.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = Resources["SessionItemTemplate"] as DataTemplate;
+                args.ItemContainer.ContextRequested += OnContextRequested;
             }
             else if (args.Item is RootDestination destination)
             {
@@ -299,10 +302,36 @@ namespace Unigram.Views.Host
                 else if (destination != RootDestination.Separator && !(args.ItemContainer is Controls.NavigationViewItem))
                 {
                     args.ItemContainer = new Controls.NavigationViewItem();
+                    args.ItemContainer.ContextRequested += OnContextRequested;
                 }
             }
 
             args.IsContainerPrepared = true;
+        }
+
+        private void OnContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+        {
+            var container = sender as Controls.NavigationViewItem;
+            if (container is ISessionService session && !session.IsActive)
+            {
+
+            }
+            else if (container.Content is RootDestination destination && destination == RootDestination.AddAccount)
+            {
+                var alt = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = Window.Current.CoreWindow.GetKeyState(Windows.System.VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+                if (alt && !ctrl && shift)
+                {
+                    var flyout = new MenuFlyout();
+
+                    flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: false))), "Production Server", new FontIcon { Glyph = "\uE774" });
+                    flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: true))), "Test Server", new FontIcon { Glyph = "\uE825" });
+
+                    args.ShowAt(flyout, container);
+                }
+            }
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -423,7 +452,7 @@ namespace Unigram.Views.Host
             Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);
         }
 
-        private async void OnItemClick(object sender, ItemClickEventArgs e)
+        private void OnItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is ISessionService session)
             {
@@ -438,24 +467,7 @@ namespace Unigram.Views.Host
             {
                 if (destination == RootDestination.AddAccount)
                 {
-#if DEBUG
-                    var dialog = new MessagePopup();
-                    dialog.Title = "Environment";
-                    dialog.Message = "Choose your environment";
-                    dialog.PrimaryButtonText = "Live";
-                    dialog.SecondaryButtonText = "Test";
-                    dialog.CloseButtonText = "Cancel";
-
-                    var confirm = await dialog.ShowQueuedAsync();
-                    if (confirm == ContentDialogResult.None)
-                    {
-                        return;
-                    }
-
-                    Switch(_lifetime.Create(test: confirm == ContentDialogResult.Secondary));
-#else
                     Switch(_lifetime.Create());
-#endif
                 }
                 else if (_navigationService?.Frame?.Content is IRootContentPage content)
                 {
