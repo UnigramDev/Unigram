@@ -122,7 +122,7 @@ namespace Unigram
 
         protected override WindowContext CreateWindowWrapper(Window window)
         {
-            return new TLWindowContext(window, 0);
+            return new TLWindowContext(window, ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow));
         }
 
         private void Inactivity_Detected(object sender, EventArgs e)
@@ -277,11 +277,6 @@ namespace Unigram
                     }
 
                     await service.SendAsync(new ProcessPushNotification(notification.Content));
-
-                    foreach (var item in TLContainer.Current.ResolveAll<IProtoService>())
-                    {
-                        await item.SendAsync(new Close());
-                    }
                 }
 
                 deferral.Complete();
