@@ -622,7 +622,7 @@
                     <ColumnDefinition Width="48"/>
                 </Grid.ColumnDefinitions>
 
-                <messages:MessageReference x:Name="PinnedMessage" Click="Reply_Click" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
+                <messages:MessagePinned x:Name="PinnedMessage" Click="Reply_Click"/>
 
                 <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
             </Grid>

@@ -367,6 +367,9 @@
     <Compile Include="Controls\Messages\MessageFooter.xaml.cs">
       <DependentUpon>MessageFooter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\MessagePinned.xaml.cs">
+      <DependentUpon>MessagePinned.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\MessageService.cs" />
     <Compile Include="Controls\MediaPlayerView.cs" />
     <Compile Include="Controls\Messages\Content\AnimationContent.xaml.cs">
@@ -1984,6 +1987,10 @@
     <Page Include="Controls\Messages\InvoiceFooter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\MessagePinned.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Passport\PassportDocumentCell.xaml">
       <SubType>Designer</SubType>

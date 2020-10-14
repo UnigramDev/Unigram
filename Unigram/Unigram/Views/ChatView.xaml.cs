@@ -3389,7 +3389,7 @@ namespace Unigram.Views
             else
             {
                 PinnedMessagePanel.Visibility = Visibility.Visible;
-                PinnedMessage.UpdateMessage(message, loading, Strings.Resources.PinnedMessage);
+                PinnedMessage.UpdateMessage(chat, chat.PinnedMessageId, message, loading);
             }
         }
 
