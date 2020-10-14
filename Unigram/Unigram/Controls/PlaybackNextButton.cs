@@ -30,13 +30,13 @@ namespace Unigram.Controls
             var easing = Window.Current.Compositor.CreateLinearEasingFunction();
 
             var scale1 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-            scale1.InsertKeyFrame(0, Vector2.One, easing);
-            scale1.InsertKeyFrame(1, Vector2.Zero, easing);
+            scale1.InsertKeyFrame(1, Vector2.One, easing);
+            scale1.InsertKeyFrame(0, Vector2.Zero, easing);
             //scale1.Duration = TimeSpan.FromMilliseconds(500);
 
             var scale2 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-            scale2.InsertKeyFrame(0, Vector2.Zero, easing);
-            scale2.InsertKeyFrame(1, Vector2.One, easing);
+            scale2.InsertKeyFrame(1, Vector2.Zero, easing);
+            scale2.InsertKeyFrame(0, Vector2.One, easing);
             //scale2.Duration = TimeSpan.FromMilliseconds(500);
 
             _triangle1.StartAnimation("Scale", scale1);

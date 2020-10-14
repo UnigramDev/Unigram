@@ -14,62 +14,6 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Style TargetType="controls:PlaybackSlider">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:PlaybackSlider">
-                        <Grid Background="Transparent">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualStateGroup.Transitions>
-                                        <VisualTransition From="PointerOver" To="Normal">
-                                            <Storyboard>
-                                                <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                                 Storyboard.TargetName="HorizontalThumbTransform"
-                                                                 Storyboard.TargetProperty="ScaleY"
-                                                                 To="0.3333333333333333" />
-                                                <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                                 Storyboard.TargetName="HorizontalThumbTransform"
-                                                                 Storyboard.TargetProperty="TranslateY"
-                                                                 To="4" />
-                                            </Storyboard>
-                                        </VisualTransition>
-                                    </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalThumbTransform"
-                                                         Storyboard.TargetProperty="ScaleY"
-                                                         To="1.0" />
-                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalThumbTransform"
-                                                         Storyboard.TargetProperty="TranslateY"
-                                                         To="0" />
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid x:Name="LayoutRoot" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="HorizontalThumbTransform"
-                                                        ScaleX="1.0"
-                                                        ScaleY="0.3333333333333333"
-                                                        TranslateX="0"
-                                                        TranslateY="4" />
-                                </Grid.RenderTransform>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Border x:Name="HorizontalThumb" Background="{ThemeResource SystemControlHighlightAccentBrush}"/>
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <Style x:Key="ThreeStateToggleStyle" TargetType="controls:GlyphToggleButton">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="UncheckedForeground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
