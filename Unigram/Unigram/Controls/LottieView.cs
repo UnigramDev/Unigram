@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Unigram.Common;
+using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
@@ -79,6 +80,8 @@ namespace Unigram.Controls
         //    Dispose();
         //}
 
+        public bool IsUnloaded { get; private set; }
+
         protected override void OnApplyTemplate()
         {
             var canvas = GetTemplateChild("Canvas") as CanvasControl;
@@ -113,6 +116,8 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            IsUnloaded = true;
+
             Subscribe(false);
 
             _canvas.CreateResources -= OnCreateResources;
@@ -336,7 +341,14 @@ namespace Unigram.Controls
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
 
-            _index = _isCachingEnabled ? 0 : _animationTotalFrame - 1;
+            if (_backward)
+            {
+                _index = _animationTotalFrame - 1;
+            }
+            else
+            {
+                _index = _isCachingEnabled ? 0 : _animationTotalFrame - 1;
+            }
 
             //canvas.Paused = true;
             //canvas.ResetElapsedTime();
@@ -420,7 +432,7 @@ namespace Unigram.Controls
             switch (uri.Scheme)
             {
                 case "ms-appx":
-                    return Path.Combine(uri.Segments.Select(x => x.Trim('/')).ToArray());
+                    return Path.Combine(new[] { Package.Current.InstalledLocation.Path }.Union(uri.Segments.Select(x => x.Trim('/'))).ToArray());
                 case "ms-appdata":
                     switch (uri.Host)
                     {
@@ -469,6 +481,24 @@ namespace Unigram.Controls
         private static void OnCachingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d)._isCachingEnabled = (bool)e.NewValue;
+        }
+
+        #endregion
+
+        #region IsBackward
+
+        public bool IsBackward
+        {
+            get { return (bool)GetValue(IsBackwardProperty); }
+            set { SetValue(IsBackwardProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsBackwardProperty =
+            DependencyProperty.Register("IsBackward", typeof(bool), typeof(LottieView), new PropertyMetadata(false, OnBackwardChanged));
+        
+        private static void OnBackwardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._backward = (bool)e.NewValue;
         }
 
         #endregion
