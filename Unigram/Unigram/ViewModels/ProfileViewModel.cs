@@ -358,7 +358,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypeSupergroup)
+            if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
             {
                 var fullInfo = CacheService.GetSupergroupFull(chat);
                 if (fullInfo != null && fullInfo.LinkedChatId != 0)
