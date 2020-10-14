@@ -261,6 +261,19 @@ namespace Unigram.Services
             _transport.IsPreviousEnabled = true;
             _transport.IsNextEnabled = items.Count > 1;
 
+            void SetProperties(string title, string artist)
+            {
+                _transport.DisplayUpdater.ClearAll();
+                _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
+
+                try
+                {
+                    _transport.DisplayUpdater.MusicProperties.Title = title ?? string.Empty;
+                    _transport.DisplayUpdater.MusicProperties.Artist = artist ?? string.Empty;
+                }
+                catch { }
+            }
+
             if (item.File.Local.IsDownloadingCompleted)
             {
                 try
@@ -270,18 +283,12 @@ namespace Unigram.Services
                 }
                 catch
                 {
-                    _transport.DisplayUpdater.ClearAll();
-                    _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
-                    _transport.DisplayUpdater.MusicProperties.Title = item.Title ?? string.Empty;
-                    _transport.DisplayUpdater.MusicProperties.Artist = item.Artist ?? string.Empty;
+                    SetProperties(item.Title, item.Artist);
                 }
             }
             else
             {
-                _transport.DisplayUpdater.ClearAll();
-                _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
-                _transport.DisplayUpdater.MusicProperties.Title = item.Title ?? string.Empty;
-                _transport.DisplayUpdater.MusicProperties.Artist = item.Artist ?? string.Empty;
+                SetProperties(item.Title, item.Artist);
             }
 
             _transport.DisplayUpdater.Update();
@@ -492,7 +499,7 @@ namespace Unigram.Services
 
         private void SetSource(List<PlaybackItem> items, int index)
         {
-            if (index > 0 && index < items.Count - 1)
+            if (index >= 0 && index <= items.Count - 1)
             {
                 _mediaPlayer.Source = items[index].Source;
             }
@@ -543,7 +550,7 @@ namespace Unigram.Services
             var offset = -49;
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
 
-            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, 0, message.Id, offset, 100, filter), result =>
+            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, 0, message.Id, offset, 100, filter, 0), result =>
             {
                 if (result is Messages messages)
                 {

@@ -440,6 +440,7 @@
     <Compile Include="Controls\PlaybackHeader.xaml.cs">
       <DependentUpon>PlaybackHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PlaybackNextButton.cs" />
     <Compile Include="Controls\PlaybackSlider.cs" />
     <Compile Include="Controls\PollOptionControl.xaml.cs">
       <DependentUpon>PollOptionControl.xaml</DependentUpon>

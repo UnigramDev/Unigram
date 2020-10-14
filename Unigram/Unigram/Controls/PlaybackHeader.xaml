@@ -312,16 +312,23 @@
                     </ListView>
                 </Flyout>
             </FlyoutBase.AttachedFlyout>
-            <TextBlock TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource BodyTextBlockStyle}">
-                <Run x:Name="TitleLabel" FontWeight="SemiBold"/>
-                <Run x:Name="SubtitleLabel"/>
-            </TextBlock>
+            <Grid Margin="0,-2,0,0">
+                <TextBlock x:Name="Label1" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource BodyTextBlockStyle}">
+                    <Run x:Name="TitleLabel1" FontWeight="SemiBold"/>
+                    <Run x:Name="SubtitleLabel1"/>
+                </TextBlock>
+
+                <TextBlock x:Name="Label2" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource BodyTextBlockStyle}">
+                    <Run x:Name="TitleLabel2" FontWeight="SemiBold"/>
+                    <Run x:Name="SubtitleLabel2"/>
+                </TextBlock>
+            </Grid>
         </Button>
 
-        <controls:GlyphButton
+        <controls:PlaybackNextButton
             x:Name="PreviousButton"
             Click="Previous_Click"
-            Glyph="&#xE892;"
+            IsPrevious="True"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
             FontSize="16"
             Width="40"
@@ -337,10 +344,10 @@
             Width="40"
             Height="40"
             Grid.Column="1"/>
-        <controls:GlyphButton
+        <controls:PlaybackNextButton
             x:Name="NextButton"
             Click="Next_Click"
-            Glyph="&#xE893;"
+            IsPrevious="False"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
             FontSize="16"
             Width="40"

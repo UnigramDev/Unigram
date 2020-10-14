@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -8,9 +9,11 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.Media.Playback;
 using Windows.System;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
@@ -22,6 +25,14 @@ namespace Unigram.Controls
         private INavigationService _navigationService;
         private IEventAggregator _aggregator;
 
+        private Visual _visual1;
+        private Visual _visual2;
+
+        private Visual _visual;
+
+        private long _chatId;
+        private long _messageId;
+
         public PlaybackHeader()
         {
             InitializeComponent();
@@ -30,6 +41,11 @@ namespace Unigram.Controls
             Slider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
             Slider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
             Slider.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(Slider_PointerCaptureLost), true);
+
+            _visual1 = ElementCompositionPreview.GetElementVisual(Label1);
+            _visual2 = ElementCompositionPreview.GetElementVisual(Label2);
+
+            _visual = _visual1;
         }
 
         public void Update(IProtoService cacheService, IPlaybackService playbackService, INavigationService navigationService, IEventAggregator aggregator)
@@ -140,10 +156,19 @@ namespace Unigram.Controls
 
         private void UpdateGlyph()
         {
-            if (_playbackService.CurrentItem == null)
+            var message = _playbackService.CurrentItem;
+            if (message == null)
             {
+                _chatId = 0;
+                _messageId = 0;
+
                 _aggregator.Unsubscribe(this);
+
+                TitleLabel1.Text = TitleLabel2.Text = string.Empty;
+                SubtitleLabel1.Text = SubtitleLabel2.Text = string.Empty;
                 Visibility = Visibility.Collapsed;
+
+                return;
             }
             else
             {
@@ -153,12 +178,6 @@ namespace Unigram.Controls
 
             PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
             Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Playing ? Strings.Resources.AccActionPause : Strings.Resources.AccActionPlay);
-
-            var message = _playbackService.CurrentItem;
-            if (message == null)
-            {
-                return;
-            }
 
             var webPage = message.Content is MessageText text ? text.WebPage : null;
 
@@ -171,8 +190,10 @@ namespace Unigram.Controls
                     return;
                 }
 
-                TitleLabel.Text = user.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : user.GetFullName();
-                SubtitleLabel.Text = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+                var title = user.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : user.GetFullName();
+                var subtitle = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+
+                UpdateText(message.ChatId, message.Id, title, subtitle);
 
                 PreviousButton.Visibility = Visibility.Collapsed;
                 NextButton.Visibility = Visibility.Collapsed;
@@ -194,13 +215,11 @@ namespace Unigram.Controls
 
                 if (audio.Performer.Length > 0 && audio.Title.Length > 0)
                 {
-                    TitleLabel.Text = audio.Title;
-                    SubtitleLabel.Text = "- " + audio.Performer;
+                    UpdateText(message.ChatId, message.Id, audio.Title, "- " + audio.Performer);
                 }
                 else
                 {
-                    TitleLabel.Text = audio.FileName;
-                    SubtitleLabel.Text = string.Empty;
+                    UpdateText(message.ChatId, message.Id, audio.FileName, string.Empty);
                 }
 
                 PreviousButton.Visibility = Visibility.Visible;
@@ -215,6 +234,52 @@ namespace Unigram.Controls
 
                 ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
             }
+        }
+
+        private void UpdateText(long chatId, long messageId, string title, string subtitle)
+        {
+            if (_chatId == chatId && _messageId == messageId)
+            {
+                return;
+            }
+
+            var prev = _chatId == chatId && _messageId > messageId;
+
+            _chatId = chatId;
+            _messageId = messageId;
+
+            var visualShow = _visual == _visual1 ? _visual2 : _visual1;
+            var visualHide = _visual == _visual1 ? _visual1 : _visual2;
+
+            var titleShow = _visual == _visual1 ? TitleLabel2 : TitleLabel1;
+            var subtitleShow = _visual == _visual1 ? SubtitleLabel2 : SubtitleLabel1;
+
+            var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
+            hide1.InsertKeyFrame(0, new Vector3(0));
+            hide1.InsertKeyFrame(1, new Vector3(prev ? -32 : 32, 0, 0));
+
+            var hide2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
+            hide2.InsertKeyFrame(0, 1);
+            hide2.InsertKeyFrame(1, 0);
+
+            visualHide.StartAnimation("Offset", hide1);
+            visualHide.StartAnimation("Opacity", hide2);
+
+            titleShow.Text = title;
+            subtitleShow.Text = subtitle;
+
+            var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
+            show1.InsertKeyFrame(0, new Vector3(prev ? 32 : -32, 0, 0));
+            show1.InsertKeyFrame(1, new Vector3(0));
+
+            var show2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
+            show2.InsertKeyFrame(0, 0);
+            show2.InsertKeyFrame(1, 1);
+
+            visualShow.StartAnimation("Offset", show1);
+            visualShow.StartAnimation("Opacity", show2);
+
+            _visual = visualShow;
         }
 
         private void UpdateRepeat()

@@ -3534,6 +3534,119 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:PlaybackSlider">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PlaybackSlider">
+                    <Grid Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="PointerOver" To="Normal">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                                 Storyboard.TargetName="HorizontalThumbTransform"
+                                                                 Storyboard.TargetProperty="ScaleY"
+                                                                 To="0.3333333333333333" />
+                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                                 Storyboard.TargetName="HorizontalThumbTransform"
+                                                                 Storyboard.TargetProperty="TranslateY"
+                                                                 To="4" />
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                         Storyboard.TargetName="HorizontalThumbTransform"
+                                                         Storyboard.TargetProperty="ScaleY"
+                                                         To="1.0" />
+                                        <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
+                                                         Storyboard.TargetName="HorizontalThumbTransform"
+                                                         Storyboard.TargetProperty="TranslateY"
+                                                         To="0" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="LayoutRoot" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
+                            <Grid.RenderTransform>
+                                <CompositeTransform x:Name="HorizontalThumbTransform"
+                                                        ScaleX="1.0"
+                                                        ScaleY="0.3333333333333333"
+                                                        TranslateX="0"
+                                                        TranslateY="4" />
+                            </Grid.RenderTransform>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="HorizontalThumb" Background="{ThemeResource SystemControlHighlightAccentBrush}"/>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:PlaybackNextButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="Glyph" Value="&#xE700;" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Width" Value="48" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PlaybackNextButton">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}"
+                        Margin="{StaticResource GlyphButtonPadding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled"/>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Border
+                            x:Name="Target"
+                            Width="16"
+                            Height="16"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:GlyphToggleButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="UncheckedForeground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
