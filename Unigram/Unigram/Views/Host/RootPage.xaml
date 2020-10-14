@@ -166,8 +166,9 @@
         </controls:NavigationView>
 
         <controls:SwitchThemeButton
-            x:Name="ThemeReplacement"
+            x:Name="Theme"
             Click="Theme_Click"
+            Visibility="Collapsed"
             VerticalAlignment="Top"
             HorizontalAlignment="Left"
             IsTabStop="False"/>

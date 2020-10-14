@@ -82,9 +82,6 @@ namespace Unigram.Views.Host
 
             var shadow = DropShadowEx.Attach(ThemeShadow, 20, 0.25f);
             shadow.RelativeSizeAdjustment = Vector2.One;
-
-            var visual = ElementCompositionPreview.GetElementVisual(ThemeReplacement);
-            visual.Offset = new Vector3(-48, 32, 0);
         }
 
         public void UpdateComponent()
@@ -311,8 +308,8 @@ namespace Unigram.Views.Host
 
         private void OnContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
         {
-            var container = sender as Controls.NavigationViewItem;
-            if (container is ISessionService session && !session.IsActive)
+            var container = sender as ListViewItem;
+            if (container.Content is ISessionService session && !session.IsActive)
             {
 
             }
@@ -553,7 +550,7 @@ namespace Unigram.Views.Host
                 var actualWidth = (float)ActualWidth;
                 var actualHeight = (float)ActualHeight;
 
-                var transform = ThemeReplacement.TransformToVisual(this);
+                var transform = Theme.TransformToVisual(this);
                 var point = transform.TransformPoint(new Point()).ToVector2();
 
                 var width = MathF.Max(actualWidth - point.X, actualHeight - point.Y);
@@ -614,9 +611,9 @@ namespace Unigram.Views.Host
 
         private void Navigation_PaneOpening(SplitView sender, object args)
         {
-            //ThemeReplacement.Visibility = Visibility.Visible;
+            Theme.Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(ThemeReplacement);
+            var visual = ElementCompositionPreview.GetElementVisual(Theme);
             var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
             var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(-48, 32, 0), ease);
@@ -628,9 +625,15 @@ namespace Unigram.Views.Host
 
         private void Navigation_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
         {
-            //ThemeReplacement.Visibility = Visibility.Collapsed;
+            Theme.Visibility = Visibility.Visible;
 
-            var visual = ElementCompositionPreview.GetElementVisual(ThemeReplacement);
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                Theme.Visibility = Visibility.Collapsed;
+            };
+
+            var visual = ElementCompositionPreview.GetElementVisual(Theme);
             var ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
             var anim = visual.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(192, 32, 0), ease);
@@ -638,6 +641,7 @@ namespace Unigram.Views.Host
             anim.Duration = TimeSpan.FromMilliseconds(120);
 
             visual.StartAnimation("Offset", anim);
+            batch.End();
         }
     }
 
