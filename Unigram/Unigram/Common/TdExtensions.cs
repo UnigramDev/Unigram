@@ -1065,7 +1065,7 @@ namespace Unigram.Common
 
         public static string GetFullName(this User user)
         {
-            if (user.Type is UserTypeDeleted)
+            if (user == null || user.Type is UserTypeDeleted)
             {
                 return Strings.Resources.HiddenName;
             }
