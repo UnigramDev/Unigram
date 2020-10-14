@@ -203,6 +203,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <Button x:Name="ViewButton"
@@ -300,6 +301,32 @@
             AutomationProperties.Name="{CustomResource Next}"
             ToolTipService.ToolTip="{CustomResource Next}"/>
 
+        <controls:GlyphButton
+            x:Name="VolumeButton"
+            Glyph="&#xE74F;"
+            FontSize="16"
+            Width="40"
+            Height="40"
+            Grid.Column="4"
+            Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+            AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
+            ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}">
+            <controls:GlyphButton.Flyout>
+                <Flyout Placement="Bottom">
+                    <Flyout.FlyoutPresenterStyle>
+                        <Style TargetType="FlyoutPresenter">
+                            <Setter Property="MinWidth" Value="0"/>
+                        </Style>
+                    </Flyout.FlyoutPresenterStyle>
+                    <Slider
+                        x:Name="VolumeSlider"
+                        ValueChanged="VolumeSlider_ValueChanged"
+                        Orientation="Vertical"
+                        Height="140"/>
+                </Flyout>
+            </controls:GlyphButton.Flyout>
+        </controls:GlyphButton>
+
         <controls:GlyphToggleButton
             x:Name="RateButton"
             Click="Rate_Click"
@@ -310,7 +337,7 @@
             FontSize="16"
             Width="40"
             Height="40"
-            Grid.Column="4"
+            Grid.Column="5"
             AutomationProperties.Name="{CustomResource AccDescrPlayerSpeed}"
             ToolTipService.ToolTip="{CustomResource AccDescrPlayerSpeed}"
             Visibility="Collapsed"/>
@@ -326,7 +353,7 @@
             FontSize="16"
             Width="40"
             Height="40"
-            Grid.Column="4"
+            Grid.Column="5"
             IsOneWay="False"
             IsThreeState="True"
             Style="{StaticResource ThreeStateToggleStyle}"/>
@@ -340,7 +367,7 @@
             FontSize="16"
             Width="40"
             Height="40"
-            Grid.Column="5"
+            Grid.Column="6"
             IsOneWay="False"
             AutomationProperties.Name="{CustomResource Shuffle}"
             ToolTipService.ToolTip="{CustomResource Shuffle}"/>
@@ -363,7 +390,7 @@
             Glyph="&#xE10A;"
             FontSize="16"
             Height="40"
-            Grid.Column="6"
+            Grid.Column="7"
             AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
             ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}"/>
 
@@ -371,6 +398,6 @@
             x:Name="Slider"
             Height="6"
             VerticalAlignment="Bottom"
-            Grid.ColumnSpan="7"/>
+            Grid.ColumnSpan="8"/>
     </Grid>
 </UserControl>

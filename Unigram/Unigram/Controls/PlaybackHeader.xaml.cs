@@ -176,6 +176,8 @@ namespace Unigram.Controls
                 Visibility = Visibility.Visible;
             }
 
+            VolumeSlider.Value = _playbackService.Volume * 100;
+
             PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
             Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Playing ? Strings.Resources.AccActionPause : Strings.Resources.AccActionPlay);
 
@@ -324,6 +326,27 @@ namespace Unigram.Controls
             else
             {
                 _playbackService.MovePrevious();
+            }
+        }
+
+        private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            _playbackService.Volume = e.NewValue / 100;
+
+            switch (_playbackService.Volume)
+            {
+                case double n when n >= 1d / 3d * 2d:
+                    VolumeButton.Glyph = "\uE995";
+                    break;
+                case double n when n >= 1d / 3d && n < 1d / 3d * 2d:
+                    VolumeButton.Glyph = "\uE994";
+                    break;
+                case double n when n > 0 && n < 1d / 3d:
+                    VolumeButton.Glyph = "\uE993";
+                    break;
+                default:
+                    VolumeButton.Glyph = "\uE74F";
+                    break;
             }
         }
 
