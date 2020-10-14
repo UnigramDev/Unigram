@@ -393,7 +393,7 @@ namespace Unigram.Controls
 
         private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _playbackService.SetPosition(TimeSpan.FromSeconds(Slider.Value));
+            _playbackService?.SetPosition(TimeSpan.FromSeconds(Slider.Value));
             _scrubbing = false;
         }
 
