@@ -18,7 +18,7 @@
     <Image x:Name="Texture" Stretch="UniformToFill"/>
 
     <Border x:Name="Overlay" Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="8,4,8,4" Margin="4">
-        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" TextWrapping="NoWrap"/>
     </Border>
     
     <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
