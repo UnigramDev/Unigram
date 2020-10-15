@@ -700,7 +700,7 @@ namespace Unigram.Services
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
                     var response = await _protoService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
 
-                    if (chat.Type is ChatTypePrivate)
+                    if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
                     {
                         await _protoService.SendAsync(new ViewMessages(chat.Id, 0, new long[] { chat.LastMessage.Id }, true));
                     }
