@@ -1,12 +1,11 @@
 ﻿using System;
-using Windows.Storage;
 
 namespace Unigram.Services.Settings
 {
     public class PasscodeLockSettings : SettingsServiceBase
     {
         public PasscodeLockSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("PasscodeLock", ApplicationDataCreateDisposition.Always))
+            : base("PasscodeLock")
         {
         }
 

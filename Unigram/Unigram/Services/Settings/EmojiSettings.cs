@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using Unigram.Common;
-using Windows.Storage;
 
 namespace Unigram.Services.Settings
 {
@@ -24,7 +23,7 @@ namespace Unigram.Services.Settings
         private const int MAX_RECENT_EMOJI_COUNT = 35;
 
         public EmojiSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("Emoji", ApplicationDataCreateDisposition.Always))
+            : base("Emoji")
         {
         }
 

@@ -1,11 +1,9 @@
-﻿using Windows.Storage;
-
-namespace Unigram.Services.Settings
+﻿namespace Unigram.Services.Settings
 {
     public class VoIPSettings : SettingsServiceBase
     {
         public VoIPSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("VoIP", ApplicationDataCreateDisposition.Always))
+            : base("VoIP")
         {
         }
 
