@@ -427,13 +427,6 @@ namespace Unigram
             }
             catch { }
 
-#if !DEBUG && !PREVIEW
-            Execute.BeginOnThreadPool(async () =>
-            {
-                await new HockeyAppUpdateService().CheckForUpdatesAsync(Constants.HockeyAppId, dispatcher);
-            });
-#endif
-
 #if DESKTOP_BRIDGE
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
