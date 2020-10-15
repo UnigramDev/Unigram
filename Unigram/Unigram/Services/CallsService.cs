@@ -501,52 +501,46 @@ namespace Unigram.Services
                 }
             }
 
-            await Dispatcher.DispatchAsync(() =>
+            switch (update.Call.State)
             {
-                switch (update.Call.State)
-                {
-                    case CallStateDiscarded discarded:
-                        if (update.Call.IsOutgoing && discarded.Reason is CallDiscardReasonDeclined)
-                        {
-                            _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_busy.mp3"));
-                            _mediaPlayer.IsLoopingEnabled = true;
-                            _mediaPlayer.Play();
+                case CallStateDiscarded discarded:
+                    if (update.Call.IsOutgoing && discarded.Reason is CallDiscardReasonDeclined)
+                    {
+                        _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_busy.mp3"));
+                        _mediaPlayer.IsLoopingEnabled = true;
+                        _mediaPlayer.Play();
 
-                            Show(update.Call, null, null, _callStarted);
-                        }
-                        else
-                        {
-                            _mediaPlayer.Source = null;
+                        Show(update.Call, null, null, _callStarted);
+                    }
+                    else
+                    {
+                        _mediaPlayer.Source = null;
 
-                            Hide();
-                        }
-                        break;
-                    case CallStateError error:
                         Hide();
-                        break;
-                    default:
-                        Show(update.Call, _controller, _capturer, _callStarted);
-                        break;
-                }
-            });
+                    }
+                    break;
+                case CallStateError error:
+                    Hide();
+                    break;
+                default:
+                    Show(update.Call, _controller, _capturer, _callStarted);
+                    break;
+            }
         }
 
         private void OnStateUpdated(VoipManager sender, VoipState args)
         {
-            BeginOnUIThread(() =>
+            if (args == VoipState.WaitInit || args == VoipState.WaitInitAck)
             {
-                if (args == VoipState.WaitInit || args == VoipState.WaitInitAck)
-                {
-                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3"));
-                    _mediaPlayer.IsLoopingEnabled = false;
-                    _mediaPlayer.Play();
-                }
-                else if (args == VoipState.Established)
-                {
-                    _callStarted = DateTime.Now;
-                    _mediaPlayer.Source = null;
-                }
-            });
+                _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3"));
+                _mediaPlayer.IsLoopingEnabled = false;
+                _mediaPlayer.Play();
+            }
+            else if (args == VoipState.Established)
+            {
+                _callStarted = DateTime.Now;
+                _mediaPlayer.Source = null;
+            }
         }
 
         private void OnSignalingDataEmitted(VoipManager sender, SignalingDataEmittedEventArgs args)
@@ -656,7 +650,7 @@ namespace Unigram.Services
                 Aggregator.Publish(new UpdateCallDialog(call, true));
             }
 
-            if (_callDialog == null)
+            if (_callPage == null)
             {
                 return;
             }

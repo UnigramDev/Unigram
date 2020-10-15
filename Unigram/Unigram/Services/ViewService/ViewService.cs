@@ -53,11 +53,11 @@ namespace Unigram.Services.ViewService
                     var control = ViewLifetimeControl.GetForCurrentView();
                     var newAppView = ApplicationView.GetForCurrentView();
 
-                    var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                    var preferences = ViewModePreferences.CreateDefault(viewMode);
                     preferences.CustomSize = new Size(width, height);
 
                     await ApplicationViewSwitcher
-                    .TryShowAsViewModeAsync(newAppView.Id, ApplicationViewMode.CompactOverlay, preferences);
+                    .TryShowAsViewModeAsync(newAppView.Id, viewMode, preferences);
 
                     return control;
                 }).ConfigureAwait(false);
@@ -68,8 +68,6 @@ namespace Unigram.Services.ViewService
                 var newView = CoreApplication.CreateNewView();
                 var dispatcher = new DispatcherWrapper(newView.Dispatcher);
                 _windows[parameter] = dispatcher;
-
-                var bounds = Window.Current.Bounds;
 
                 var newControl = await dispatcher.DispatchAsync(async () =>
                 {
