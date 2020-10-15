@@ -262,6 +262,7 @@ namespace Unigram.ViewModels.Settings
             }
 
             var dialog = SharePopup.GetForCurrentView();
+            dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
@@ -333,6 +334,8 @@ namespace Unigram.ViewModels.Settings
             }
 
             var dialog = SharePopup.GetForCurrentView();
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
             {
