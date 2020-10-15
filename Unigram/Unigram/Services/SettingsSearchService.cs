@@ -51,8 +51,8 @@ namespace Unigram.Services
         {
             var results = new List<SettingsSearchEntry>();
 
-            //var sane = "\\b" + Regex.Escape(query).Replace(' ', '.');
-            var sane = "\\b" + query.Replace(' ', '.').Replace("\\", "\\\\");
+            var sane = "\\b" + Regex.Escape(query);
+            //var sane = "\\b" + query.Replace(' ', '.').Replace("\\", "\\\\");
             if (entry.IsValid && Regex.IsMatch(entry.Text, sane, RegexOptions.IgnoreCase))
             {
                 var clone = entry.Clone();
