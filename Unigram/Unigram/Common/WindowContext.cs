@@ -198,39 +198,44 @@ namespace Unigram.Common
             if (args is ShareTargetActivatedEventArgs share)
             {
                 var package = new DataPackage();
-                var operation = share.ShareOperation.Data;
-                if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
+
+                try
                 {
-                    package.SetApplicationLink(await operation.GetApplicationLinkAsync());
+                    var operation = share.ShareOperation.Data;
+                    if (operation.AvailableFormats.Contains(StandardDataFormats.ApplicationLink))
+                    {
+                        package.SetApplicationLink(await operation.GetApplicationLinkAsync());
+                    }
+                    if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+                    {
+                        package.SetBitmap(await operation.GetBitmapAsync());
+                    }
+                    //if (operation.Contains(StandardDataFormats.Html))
+                    //{
+                    //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
+                    //}
+                    //if (operation.Contains(StandardDataFormats.Rtf))
+                    //{
+                    //    package.SetRtf(await operation.GetRtfAsync());
+                    //}
+                    if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
+                    {
+                        package.SetStorageItems(await operation.GetStorageItemsAsync());
+                    }
+                    if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
+                    {
+                        package.SetText(await operation.GetTextAsync());
+                    }
+                    //if (operation.Contains(StandardDataFormats.Uri))
+                    //{
+                    //    package.SetUri(await operation.GetUriAsync());
+                    //}
+                    if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
+                    {
+                        package.SetWebLink(await operation.GetWebLinkAsync());
+                    }
                 }
-                if (operation.AvailableFormats.Contains(StandardDataFormats.Bitmap))
-                {
-                    package.SetBitmap(await operation.GetBitmapAsync());
-                }
-                //if (operation.Contains(StandardDataFormats.Html))
-                //{
-                //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
-                //}
-                //if (operation.Contains(StandardDataFormats.Rtf))
-                //{
-                //    package.SetRtf(await operation.GetRtfAsync());
-                //}
-                if (operation.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-                {
-                    package.SetStorageItems(await operation.GetStorageItemsAsync());
-                }
-                if (operation.AvailableFormats.Contains(StandardDataFormats.Text))
-                {
-                    package.SetText(await operation.GetTextAsync());
-                }
-                //if (operation.Contains(StandardDataFormats.Uri))
-                //{
-                //    package.SetUri(await operation.GetUriAsync());
-                //}
-                if (operation.AvailableFormats.Contains(StandardDataFormats.WebLink))
-                {
-                    package.SetWebLink(await operation.GetWebLinkAsync());
-                }
+                catch { }
 
                 var query = "tg://";
 
