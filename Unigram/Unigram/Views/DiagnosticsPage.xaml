@@ -31,8 +31,7 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl
-                    Header="Calls Logs"
-                    Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
+                    Header="Calls Logs">
                     <controls:BadgeButton
                         Content="tgcalls.txt"
                         Click="Calls_Click"
