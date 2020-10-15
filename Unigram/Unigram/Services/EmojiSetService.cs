@@ -23,6 +23,8 @@ namespace Unigram.Services
         private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
+        private long? _chatId;
+
         public EmojiSetService(IProtoService protoService, ISettingsService settings, IEventAggregator aggregator)
         {
             _protoService = protoService;
@@ -73,7 +75,11 @@ namespace Unigram.Services
                         var file = await folder.TryGetItemAsync($"{set.Key}.{version}.ttf") as StorageFile;
                         if (file != null)
                         {
-                            await file.DeleteAsync();
+                            try
+                            {
+                                await file.DeleteAsync();
+                            }
+                            catch { }
                         }
                     }
                 }
@@ -132,22 +138,31 @@ namespace Unigram.Services
 
         public async Task<IList<EmojiSet>> GetCloudSetsAsync()
         {
-            var chat = await _protoService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
-            if (chat == null)
+            if (_chatId == null)
+            {
+                var chat = await _protoService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
+                if (chat != null)
+                {
+                    _chatId = chat.Id;
+                }
+            }
+
+            if (_chatId == null)
             {
                 return new EmojiSet[0];
             }
 
-            await _protoService.SendAsync(new OpenChat(chat.Id));
+            var chatId = _chatId.Value;
+            await _protoService.SendAsync(new OpenChat(chatId));
 
-            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#emoji", 0, 0, 0, 100, new SearchMessagesFilterDocument(), 0)) as Messages;
+            var response = await _protoService.SendAsync(new SearchChatMessages(chatId, "#emoji", 0, 0, 0, 100, null, 0)) as Messages;
             if (response == null)
             {
-                _protoService.Send(new CloseChat(chat.Id));
+                _protoService.Send(new CloseChat(chatId));
                 return new EmojiSet[0];
             }
 
-            _protoService.Send(new CloseChat(chat.Id));
+            _protoService.Send(new CloseChat(chatId));
 
             var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("emoji", CreationCollisionOption.OpenIfExists);
 
