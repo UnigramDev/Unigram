@@ -60,6 +60,7 @@ namespace Unigram.Controls.Messages
             var visualHide = _visual == _visual1 ? _visual1 : _visual2;
 
             var referenceShow = _visual == _visual1 ? Reference2 : Reference1;
+            var referenceHide = _visual == _visual1 ? Reference1 : Reference2;
 
             if (cross)
             {
@@ -77,6 +78,8 @@ namespace Unigram.Controls.Messages
             visualHide.StartAnimation("Opacity", hide2);
 
             referenceShow.UpdateMessage(message, loading, Strings.Resources.PinnedMessage);
+            referenceShow.IsTabStop = true;
+            referenceHide.IsTabStop = false;
 
             if (cross)
             {
