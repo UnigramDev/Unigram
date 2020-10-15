@@ -14,6 +14,7 @@ namespace Unigram.Common
     public static class TextBlockHelper
     {
         #region Markdown
+
         public static string GetMarkdown(DependencyObject obj)
         {
             return (string)obj.GetValue(MarkdownProperty);
@@ -109,9 +110,11 @@ namespace Unigram.Common
             //    sender.Inlines.Add(new Run { Text = markdown.Substring(previous, markdown.Length - previous) });
             //}
         }
+
         #endregion
 
         #region FormattedText
+
         public static FormattedText GetFormattedText(DependencyObject obj)
         {
             return (FormattedText)obj.GetValue(FormattedTextProperty);
@@ -233,6 +236,141 @@ namespace Unigram.Common
             //    sender.Inlines.Add(new Run { Text = markdown.Substring(previous, markdown.Length - previous) });
             //}
         }
+
+        #endregion
+
+        #region Text
+
+        public static string GetText(DependencyObject obj)
+        {
+            return (string)obj.GetValue(TextProperty);
+        }
+
+        public static void SetText(DependencyObject obj, string value)
+        {
+            obj.SetValue(TextProperty, value);
+        }
+
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.RegisterAttached("Text", typeof(string), typeof(TextBlockHelper), new PropertyMetadata(null, OnTextChanged));
+
+        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as TextBlock;
+            var newValue = e.NewValue as string;
+
+            var span = new Span();
+            sender.Inlines.Clear();
+            sender.Inlines.Add(span);
+
+            var markdown = Client.Execute(new GetTextEntities(newValue)) as TextEntities;
+            if (markdown == null)
+            {
+                return;
+            }
+
+            var entities = markdown.Entities;
+            var text = newValue;
+
+            var runs = TextStyleRun.GetRuns(text, entities);
+            var previous = 0;
+
+            foreach (var entity in runs)
+            {
+                if (entity.Offset > previous)
+                {
+                    span.Inlines.Add(new Run { Text = text.Substring(previous, entity.Offset - previous) });
+                }
+
+                if (entity.Length + entity.Offset > text.Length)
+                {
+                    previous = entity.Offset + entity.Length;
+                    continue;
+                }
+
+                if (entity.HasFlag(TextStyle.Monospace))
+                {
+                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
+                }
+                else
+                {
+                    var local = span;
+
+                    if (entity.Type is TextEntityTypeTextUrl textUrl)
+                    {
+                        var hyperlink = new Hyperlink { NavigateUri = new Uri(textUrl.Url) };
+                        span.Inlines.Add(hyperlink);
+                        local = hyperlink;
+                    }
+                    else if (entity.Type is TextEntityTypeUrl url)
+                    {
+                        var data = text.Substring(entity.Offset, entity.Length);
+                        var hyperlink = new Hyperlink { NavigateUri = new Uri(data) };
+                        span.Inlines.Add(hyperlink);
+                        local = hyperlink;
+                    }
+                    else if (entity.Type is TextEntityTypeMention mention)
+                    {
+                        var data = text.Substring(entity.Offset + 1, entity.Length - 1);
+                        var hyperlink = new Hyperlink { NavigateUri = new Uri("https://t.me/" + data) };
+                        span.Inlines.Add(hyperlink);
+                        local = hyperlink;
+                    }
+
+                    var run = new Run { Text = text.Substring(entity.Offset, entity.Length) };
+
+                    if (entity.HasFlag(TextStyle.Bold))
+                    {
+                        run.FontWeight = FontWeights.SemiBold;
+                    }
+                    if (entity.HasFlag(TextStyle.Italic))
+                    {
+                        run.FontStyle |= FontStyle.Italic;
+                    }
+                    if (entity.HasFlag(TextStyle.Underline))
+                    {
+                        run.TextDecorations |= TextDecorations.Underline;
+                    }
+                    if (entity.HasFlag(TextStyle.Strikethrough))
+                    {
+                        run.TextDecorations |= TextDecorations.Strikethrough;
+                    }
+
+                    local.Inlines.Add(run);
+                }
+
+                previous = entity.Offset + entity.Length;
+            }
+
+            if (text.Length > previous)
+            {
+                span.Inlines.Add(new Run { Text = text.Substring(previous) });
+            }
+
+            //var previous = 0;
+            //var index = markdown.IndexOf("**");
+            //var next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
+
+            //while (index > -1 && next > -1)
+            //{
+            //    if (index - previous > 0)
+            //    {
+            //        sender.Inlines.Add(new Run { Text = markdown.Substring(previous, index - previous) });
+            //    }
+
+            //    sender.Inlines.Add(new Run { Text = markdown.Substring(index + 2, next - index - 2), FontWeight = FontWeights.SemiBold });
+
+            //    previous = next + 2;
+            //    index = markdown.IndexOf("**", next + 2);
+            //    next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
+            //}
+
+            //if (markdown.Length - previous > 0)
+            //{
+            //    sender.Inlines.Add(new Run { Text = markdown.Substring(previous, markdown.Length - previous) });
+            //}
+        }
+
         #endregion
 
     }
