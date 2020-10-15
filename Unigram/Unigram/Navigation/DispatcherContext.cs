@@ -6,23 +6,24 @@ using Windows.UI.Core;
 
 namespace Unigram.Navigation
 {
-    public interface IDispatcherWrapper
+    public interface IDispatcherContext
     {
         void Dispatch(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
         Task DispatchAsync(Func<Task> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
         Task DispatchAsync(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
         Task<T> DispatchAsync<T>(Func<T> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
+        Task<T> DispatchAsync<T>(Func<Task<T>> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
 
         void DispatchIdle(Action action);
         Task DispatchIdleAsync(Func<Task> func);
         Task DispatchIdleAsync(Action action);
-        Task<T> DispatchIdleAsync<T>(Func<T> func);
+        Task<T> DispatchIdleAsync<T>(Func<Task<T>> func);
 
         bool HasThreadAccess { get; }
     }
 
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-DispatcherWrapper
-    public class DispatcherWrapper : IDispatcherWrapper
+    public class DispatcherContext : IDispatcherContext
     {
         #region Debug
 
@@ -32,29 +33,29 @@ namespace Unigram.Navigation
 
         #endregion
 
-        public static IDispatcherWrapper Current() => WindowContext.GetForCurrentView().Dispatcher;
+        public static IDispatcherContext Current() => WindowContext.GetForCurrentView().Dispatcher;
 
-        public DispatcherWrapper(CoreDispatcher dispatcher)
+        public DispatcherContext(CoreDispatcher dispatcher)
         {
             DebugWrite(caller: "Constructor");
-            this.dispatcher = dispatcher;
+            this._dispatcher = dispatcher;
         }
 
-        public bool HasThreadAccess => dispatcher.HasThreadAccess;
+        public bool HasThreadAccess => _dispatcher.HasThreadAccess;
 
-        private readonly CoreDispatcher dispatcher;
+        private readonly CoreDispatcher _dispatcher;
 
         [DebuggerNonUserCode]
         public async Task DispatchAsync(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 action();
             }
             else
             {
                 var tcs = new TaskCompletionSource<object>();
-                await dispatcher.RunAsync(priority, () =>
+                await _dispatcher.RunAsync(priority, () =>
                 {
                     try
                     {
@@ -65,48 +66,48 @@ namespace Unigram.Navigation
                     {
                         tcs.TrySetException(ex);
                     }
-                }).AsTask().ConfigureAwait(false);
-                await tcs.Task.ConfigureAwait(false);
+                }).AsTask();
+                await tcs.Task;
             }
         }
 
         [DebuggerNonUserCode]
         public async Task DispatchAsync(Func<Task> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 await func().ConfigureAwait(false);
             }
             else
             {
                 var tcs = new TaskCompletionSource<object>();
-                await dispatcher.RunAsync(priority, async () =>
+                await _dispatcher.RunAsync(priority, async () =>
                 {
                     try
                     {
-                        await func().ConfigureAwait(false);
+                        await func();
                         tcs.TrySetResult(null);
                     }
                     catch (Exception ex)
                     {
                         tcs.TrySetException(ex);
                     }
-                }).AsTask().ConfigureAwait(false);
-                await tcs.Task.ConfigureAwait(false);
+                });
+                await tcs.Task;
             }
         }
 
         [DebuggerNonUserCode]
         public async Task<T> DispatchAsync<T>(Func<T> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 return func();
             }
             else
             {
                 var tcs = new TaskCompletionSource<T>();
-                await dispatcher.RunAsync(priority, () =>
+                await _dispatcher.RunAsync(priority, () =>
                 {
                     try
                     {
@@ -116,47 +117,54 @@ namespace Unigram.Navigation
                     {
                         tcs.TrySetException(ex);
                     }
-                }).AsTask().ConfigureAwait(false);
-                return await tcs.Task.ConfigureAwait(false);
+                });
+                return await tcs.Task;
             }
         }
 
         [DebuggerNonUserCode]
-        public async void Dispatch(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public async Task<T> DispatchAsync<T>(Func<Task<T>> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
         {
-            if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            {
+                return await func();
+            }
+            else
+            {
+                var tcs = new TaskCompletionSource<T>();
+                await _dispatcher.RunAsync(priority, async () =>
+                {
+                    try
+                    {
+                        tcs.TrySetResult(await func());
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.TrySetException(ex);
+                    }
+                });
+                return await tcs.Task;
+            }
+        }
+
+        [DebuggerNonUserCode]
+        public void Dispatch(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        {
+            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
             {
                 action();
             }
             else
             {
                 //dispatcher.RunAsync(priority, () => action()).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
-                await dispatcher.RunAsync(priority, () => action());
-            }
-        }
-
-        [DebuggerNonUserCode]
-        public T Dispatch<T>(Func<T> action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
-        {
-            if (dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
-            {
-                return action();
-            }
-            else
-            {
-                var tcs = new TaskCompletionSource<T>();
-                dispatcher.RunAsync(priority, delegate
+                try
                 {
-                    try
-                    {
-                        tcs.TrySetResult(action());
-                    }
-                    catch (Exception ex)
-                    {
-                        tcs.TrySetException(ex);
-                    }
-                }).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
-                return tcs.Task.ConfigureAwait(false).GetAwaiter().GetResult();
+                    _ = _dispatcher.RunAsync(priority, () => action());
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
 
@@ -164,7 +172,7 @@ namespace Unigram.Navigation
         public async Task DispatchIdleAsync(Action action)
         {
             var tcs = new TaskCompletionSource<object>();
-            await dispatcher.RunIdleAsync(delegate
+            await _dispatcher.RunIdleAsync(delegate
             {
                 try
                 {
@@ -183,7 +191,7 @@ namespace Unigram.Navigation
         public async Task DispatchIdleAsync(Func<Task> func)
         {
             var tcs = new TaskCompletionSource<object>();
-            await dispatcher.RunIdleAsync(async delegate
+            await _dispatcher.RunIdleAsync(async delegate
             {
                 try
                 {
@@ -202,7 +210,7 @@ namespace Unigram.Navigation
         public async Task<T> DispatchIdleAsync<T>(Func<T> func)
         {
             var tcs = new TaskCompletionSource<T>();
-            await dispatcher.RunIdleAsync(delegate
+            await _dispatcher.RunIdleAsync(delegate
             {
                 try
                 {
@@ -217,27 +225,27 @@ namespace Unigram.Navigation
         }
 
         [DebuggerNonUserCode]
-        public async void DispatchIdle(Action action)
-        {
-            dispatcher.RunIdleAsync(args => action()).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
-        }
-
-        [DebuggerNonUserCode]
-        public T DispatchIdle<T>(Func<T> action) where T : class
+        public async Task<T> DispatchIdleAsync<T>(Func<Task<T>> func)
         {
             var tcs = new TaskCompletionSource<T>();
-            dispatcher.RunIdleAsync(delegate
+            await _dispatcher.RunIdleAsync(async delegate
             {
                 try
                 {
-                    tcs.TrySetResult(action());
+                    tcs.TrySetResult(await func());
                 }
                 catch (Exception ex)
                 {
                     tcs.TrySetException(ex);
                 }
-            }).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
-            return tcs.Task.ConfigureAwait(false).GetAwaiter().GetResult();
+            }).AsTask().ConfigureAwait(false);
+            return await tcs.Task.ConfigureAwait(false);
+        }
+
+        [DebuggerNonUserCode]
+        public void DispatchIdle(Action action)
+        {
+            _ = _dispatcher.RunIdleAsync(args => action());
         }
     }
 }

@@ -225,7 +225,7 @@ namespace Unigram.ViewModels
 
         public ItemClickEventHandler Sticker_Click;
 
-        public override IDispatcherWrapper Dispatcher
+        public override IDispatcherContext Dispatcher
         {
             get => base.Dispatcher;
             set

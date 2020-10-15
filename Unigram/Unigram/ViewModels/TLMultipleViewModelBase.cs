@@ -18,7 +18,7 @@ namespace Unigram.ViewModels
             Children = new List<TLViewModelBase>();
         }
 
-        public override IDispatcherWrapper Dispatcher
+        public override IDispatcherContext Dispatcher
         {
             get
             {

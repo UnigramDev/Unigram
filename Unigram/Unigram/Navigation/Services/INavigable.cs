@@ -11,7 +11,7 @@ namespace Unigram.Navigation.Services
         Task OnNavigatedFromAsync(IDictionary<string, object> suspensionState, bool suspending);
         void OnNavigatingFrom(NavigatingEventArgs args);
         INavigationService NavigationService { get; set; }
-        IDispatcherWrapper Dispatcher { get; set; }
+        IDispatcherContext Dispatcher { get; set; }
         IDictionary<string, object> SessionState { get; set; }
     }
 }

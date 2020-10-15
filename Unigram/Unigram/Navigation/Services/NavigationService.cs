@@ -10,13 +10,65 @@ using Unigram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Navigation.Services
 {
+    public interface INavigationService
+    {
+        void GoBack(NavigationTransitionInfo infoOverride = null);
+        void GoForward();
+
+        object Content { get; }
+
+        bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null);
+
+        bool CanGoBack { get; }
+        bool CanGoForward { get; }
+
+        string NavigationState { get; set; }
+
+        IDictionary<string, long> CacheKeyToChatId { get; }
+
+        void Refresh();
+
+        void Refresh(object param);
+
+
+
+        Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf);
+
+        object CurrentPageParam { get; }
+        Type CurrentPageType { get; }
+
+        IDispatcherContext Dispatcher { get; }
+
+        Task SaveAsync();
+
+        Task<bool> LoadAsync();
+
+        event TypedEventHandler<INavigationService, Type> AfterRestoreSavedNavigation;
+
+        void ClearHistory();
+        void ClearCache(bool removeCachedPagesInBackStack = false);
+
+        Task SuspendingAsync();
+        void Resuming();
+
+        Frame Frame { get; }
+        FrameFacade FrameFacade { get; }
+
+        int SessionId { get; }
+
+        /// <summary>
+        /// Specifies if this instance of INavigationService associated with <see cref="CoreApplication.MainView"/> or any other secondary view.
+        /// </summary>
+        /// <returns><value>true</value> if associated with MainView, <value>false</value> otherwise</returns>
+        bool IsInMainView { get; }
+    }
+
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public partial class NavigationService : INavigationService
     {
@@ -26,7 +78,7 @@ namespace Unigram.Navigation.Services
         public Frame Frame => FrameFacade.Frame;
         public object Content => Frame.Content;
 
-        public DispatcherWrapper Dispatcher => this.GetDispatcherWrapper() as DispatcherWrapper;
+        public IDispatcherContext Dispatcher => this.GetDispatcherWrapper();
 
 
         public string NavigationState

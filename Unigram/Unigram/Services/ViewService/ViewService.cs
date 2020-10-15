@@ -46,7 +46,7 @@ namespace Unigram.Services.ViewService
 
         public async Task<ViewLifetimeControl> OpenAsync(Func<ViewLifetimeControl, UIElement> content, object parameter, double width, double height, ApplicationViewMode viewMode)
         {
-            if (_windows.TryGetValue(parameter, out DispatcherWrapper value))
+            if (_windows.TryGetValue(parameter, out IDispatcherContext value))
             {
                 var newControl = await value.DispatchAsync(async () =>
                 {
@@ -66,7 +66,7 @@ namespace Unigram.Services.ViewService
             else
             {
                 var newView = CoreApplication.CreateNewView();
-                var dispatcher = new DispatcherWrapper(newView.Dispatcher);
+                var dispatcher = new DispatcherContext(newView.Dispatcher);
                 _windows[parameter] = dispatcher;
 
                 var newControl = await dispatcher.DispatchAsync(async () =>
@@ -130,7 +130,7 @@ namespace Unigram.Services.ViewService
 
 
 
-            if (parameter != null && _windows.TryGetValue(parameter, out DispatcherWrapper value))
+            if (parameter != null && _windows.TryGetValue(parameter, out IDispatcherContext value))
             {
                 var newControl = await value.DispatchAsync(async () =>
                 {
@@ -147,7 +147,7 @@ namespace Unigram.Services.ViewService
             else
             {
                 var newView = CoreApplication.CreateNewView();
-                var dispatcher = new DispatcherWrapper(newView.Dispatcher);
+                var dispatcher = new DispatcherContext(newView.Dispatcher);
 
                 if (parameter != null)
                 {
@@ -172,7 +172,7 @@ namespace Unigram.Services.ViewService
                     {
                         if (parameter != null)
                         {
-                            _windows.TryRemove(parameter, out DispatcherWrapper _);
+                            _windows.TryRemove(parameter, out IDispatcherContext _);
                         }
 
                         newWindow.Close();
@@ -195,6 +195,6 @@ namespace Unigram.Services.ViewService
             }
         }
 
-        private readonly ConcurrentDictionary<object, DispatcherWrapper> _windows = new ConcurrentDictionary<object, DispatcherWrapper>();
+        private readonly ConcurrentDictionary<object, IDispatcherContext> _windows = new ConcurrentDictionary<object, IDispatcherContext>();
     }
 }

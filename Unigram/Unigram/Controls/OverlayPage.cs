@@ -435,7 +435,7 @@ namespace Unigram.Controls
 
         public Type CurrentPageType => throw new NotImplementedException();
 
-        public DispatcherWrapper Dispatcher => throw new NotImplementedException();
+        public IDispatcherContext Dispatcher => throw new NotImplementedException();
 
         public Frame Frame => throw new NotImplementedException();
 

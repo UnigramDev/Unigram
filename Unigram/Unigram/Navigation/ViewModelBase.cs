@@ -28,7 +28,7 @@ namespace Unigram.Navigation
         public virtual INavigationService NavigationService { get; set; }
 
         [JsonIgnore]
-        public virtual IDispatcherWrapper Dispatcher { get; set; }
+        public virtual IDispatcherContext Dispatcher { get; set; }
 
         [JsonIgnore]
         public virtual IDictionary<string, object> SessionState { get; set; }
