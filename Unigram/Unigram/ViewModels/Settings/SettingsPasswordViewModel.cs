@@ -104,11 +104,11 @@ namespace Unigram.ViewModels.Settings
             //    return;
             //}
 
-            //if (_password == null)
-            //{
-            //    await MessagePopup.ShowAsync("Please enter your password.");
-            //    return;
-            //}
+            if (string.IsNullOrEmpty(_password))
+            {
+                await MessagePopup.ShowAsync("Please enter your password.");
+                return;
+            }
 
             var response = await ProtoService.SendAsync(new GetRecoveryEmailAddress(_password));
             if (response is RecoveryEmailAddress)
