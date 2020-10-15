@@ -566,7 +566,7 @@ namespace Unigram.ViewModels
             }
 
             ProtoService.Send(new RemoveTopChat(new TopChatCategoryUsers(), chat.Id));
-            TopChats.Remove(chat);
+            TopChats?.Remove(chat);
         }
 
         #endregion
