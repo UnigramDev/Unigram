@@ -25,14 +25,15 @@ namespace Unigram.Common
                 {
                     flyout.ShowAt(element, point);
                 }
-                catch
-                {
-                    flyout.ShowAt(element);
-                }
+                catch { }
             }
             else if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(element);
+                try
+                {
+                    flyout.ShowAt(element);
+                }
+                catch { }
             }
 
             args.Handled = true;
