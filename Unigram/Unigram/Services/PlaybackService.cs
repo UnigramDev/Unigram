@@ -22,6 +22,8 @@ namespace Unigram.Services
 
         double PlaybackRate { get; set; }
 
+        double Volume { get; set; }
+
         void Pause();
         void Play();
 
@@ -93,6 +95,7 @@ namespace Unigram.Services
             _mediaPlayer.MediaEnded += OnMediaEnded;
             _mediaPlayer.SourceChanged += OnSourceChanged;
             _mediaPlayer.CommandManager.IsEnabled = false;
+            _mediaPlayer.Volume = _settingsService.VolumeLevel;
 
             _transport = _mediaPlayer.SystemMediaTransportControls;
             _transport.ButtonPressed += Transport_ButtonPressed;
@@ -423,6 +426,16 @@ namespace Unigram.Services
                     _mediaPlayer.PlaybackSession.PlaybackRate = value;
                 }
                 catch { }
+            }
+        }
+
+        public double Volume
+        {
+            get => _mediaPlayer.Volume;
+            set
+            {
+                _settingsService.VolumeLevel = value;
+                _mediaPlayer.Volume = value;
             }
         }
 
