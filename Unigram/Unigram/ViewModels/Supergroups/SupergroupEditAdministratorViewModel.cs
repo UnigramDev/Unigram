@@ -96,6 +96,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = administrator.CanPostMessages;
                     CanPromoteMembers = administrator.CanPromoteMembers;
                     CanRestrictMembers = administrator.CanRestrictMembers;
+                    IsAnonymous = administrator.IsAnonymous;
 
                     CustomTitle = administrator.CustomTitle;
                 }
@@ -112,7 +113,15 @@ namespace Unigram.ViewModels.Supergroups
 
                     if (member.Status is ChatMemberStatusCreator creator)
                     {
+                        IsAnonymous = creator.IsAnonymous;
+
                         CustomTitle = creator.CustomTitle;
+                    }
+                    else
+                    {
+                        IsAnonymous = false;
+
+                        CustomTitle = string.Empty;
                     }
                 }
             }
@@ -326,30 +335,26 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var supergroup = chat.Type as ChatTypeSupergroup;
-            if (supergroup == null)
-            {
-                return;
-            }
+            var channel = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
 
             ChatMemberStatus status;
             if (member.Status is ChatMemberStatusCreator creator)
             {
-                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, supergroup.IsChannel ? false : _isAnonymous, creator.IsMember);
+                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, channel ? false : _isAnonymous, creator.IsMember);
             }
             else
             {
                 status = new ChatMemberStatusAdministrator
                 {
-                    IsAnonymous =  supergroup.IsChannel ? false : _isAnonymous,
+                    IsAnonymous = channel ? false : _isAnonymous,
                     CanChangeInfo = _canChangeInfo,
                     CanDeleteMessages = _canDeleteMessages,
-                    CanEditMessages = supergroup.IsChannel ? _canEditMessages : false,
+                    CanEditMessages = channel ? _canEditMessages : false,
                     CanInviteUsers = _canInviteUsers,
-                    CanPinMessages = supergroup.IsChannel ? false : _canPinMessages,
-                    CanPostMessages = supergroup.IsChannel ? _canPostMessages : false,
+                    CanPinMessages = channel ? false : _canPinMessages,
+                    CanPostMessages = channel ? _canPostMessages : false,
                     CanPromoteMembers = _canPromoteMembers,
-                    CanRestrictMembers = supergroup.IsChannel ? false : _canRestrictMembers,
+                    CanRestrictMembers = channel ? false : _canRestrictMembers,
                     CustomTitle = _customTitle ?? string.Empty
                 };
             }
