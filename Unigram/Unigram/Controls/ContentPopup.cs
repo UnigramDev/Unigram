@@ -41,14 +41,28 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged += ApplicationView_VisibleBoundsChanged;
+
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
+            ApplicationView_VisibleBoundsChanged(ApplicationView.GetForCurrentView());
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= ApplicationView_VisibleBoundsChanged;
+
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+        }
+
+        private void ApplicationView_VisibleBoundsChanged(ApplicationView sender, object args = null)
+        {
+            if (Content is FrameworkElement element)
+            {
+                element.MaxHeight = sender.VisibleBounds.Height - 32 - 32 - 48 - 48;
+            }
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
