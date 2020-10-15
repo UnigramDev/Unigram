@@ -42,14 +42,14 @@ namespace Unigram.Controls.Messages
                     var referenceShown = _visual == _visual1 ? Reference1 : Reference2;
                     referenceShown.UpdateMessage(message, loading, Strings.Resources.PinnedMessage);
 
-                    _loading = false;
+                    _loading = loading;
                 }
 
                 return;
             }
 
             var cross = _chatId == chat.Id;
-            var prev = _messageId > messageId;
+            var prev = _messageId < messageId;
 
             _chatId = chat.Id;
             _messageId = messageId;
@@ -70,6 +70,10 @@ namespace Unigram.Controls.Messages
 
                 visualHide.StartAnimation("Offset", hide1);
             }
+            else
+            {
+                visualHide.Offset = Vector3.Zero;
+            }
 
             var hide2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
             hide2.InsertKeyFrame(0, 1);
@@ -88,6 +92,10 @@ namespace Unigram.Controls.Messages
                 show1.InsertKeyFrame(1, new Vector3(0));
             
                 visualShow.StartAnimation("Offset", show1);
+            }
+            else
+            {
+                visualShow.Offset = Vector3.Zero;
             }
 
             var show2 = _visual.Compositor.CreateScalarKeyFrameAnimation();

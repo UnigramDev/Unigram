@@ -22,18 +22,7 @@ namespace Unigram.Controls.Messages
         public object Message
         {
             get { return (object)GetValue(MessageProperty); }
-            //set { SetValue(MessageProperty, value); }
-            set
-            {
-                // TODO: shitty hack!!!
-                var oldValue = (object)GetValue(MessageProperty);
-                SetValue(MessageProperty, value);
-
-                if (oldValue == value)
-                {
-                    //SetTemplateCore(value);
-                }
-            }
+            set { SetValue(MessageProperty, value); }
         }
 
         public static readonly DependencyProperty MessageProperty =
@@ -41,10 +30,10 @@ namespace Unigram.Controls.Messages
 
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((MessageReference)d).UpdateEmbedData(e.NewValue as MessageComposerHeader);
+            ((MessageReference)d).OnMessageChanged(e.NewValue as MessageComposerHeader);
         }
 
-        private void UpdateEmbedData(MessageComposerHeader embedded)
+        private void OnMessageChanged(MessageComposerHeader embedded)
         {
             if (embedded == null)
             {

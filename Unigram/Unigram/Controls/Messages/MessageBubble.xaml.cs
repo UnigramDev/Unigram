@@ -664,7 +664,7 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (Media.Child is IContentWithFile content && content.IsValid(message.Content, true))
+            if (Media.Child is IContentWithFile content && content.IsValid(message.GeneratedContent ?? message.Content, true))
             {
                 content.UpdateMessageContentOpened(message);
             }
