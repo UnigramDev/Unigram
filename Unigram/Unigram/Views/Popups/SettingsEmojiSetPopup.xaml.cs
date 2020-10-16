@@ -78,7 +78,7 @@ namespace Unigram.Views.Popups
             }
 
             SettingsService.Current.Appearance.EmojiSet = emojiSet.ToInstalled();
-            TLContainer.Current.Resolve<IThemeService>().Refresh();
+            SettingsService.Current.Appearance.UpdateNightMode(true);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

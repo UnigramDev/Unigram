@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services.Settings;
@@ -28,8 +27,6 @@ namespace Unigram.Services
 
         Task InstallThemeAsync(StorageFile file);
         Task SetThemeAsync(ThemeInfoBase info, bool apply);
-
-        void Refresh();
     }
 
     public partial class ThemeService : IThemeService
@@ -224,29 +221,6 @@ namespace Unigram.Services
             }
 
             _settingsService.Appearance.UpdateNightMode(true);
-        }
-
-        public async void Refresh()
-        {
-            var flags = _settingsService.Appearance.GetActualTheme();
-
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
-            {
-                await window.Dispatcher.DispatchAsync(() =>
-                {
-                    if (window.Content is FrameworkElement element)
-                    {
-                        if (flags == element.RequestedTheme)
-                        {
-                            element.RequestedTheme = flags == ElementTheme.Dark
-                                ? ElementTheme.Light
-                                : ElementTheme.Dark;
-                        }
-
-                        element.RequestedTheme = flags;
-                    }
-                });
-            }
         }
     }
 
