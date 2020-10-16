@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     TitleTemplate="{x:Null}"
+    IsFullWindow="True"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded"
     Closing="OnClosing">
