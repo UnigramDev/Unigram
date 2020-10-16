@@ -271,19 +271,16 @@ namespace Unigram.ViewModels.Supergroups
                 var props = await media.File.Properties.GetVideoPropertiesAsync();
 
                 var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
-                if (duration.TotalSeconds > 9)
-                {
-                    media.EditState.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(9);
-                }
+                var seconds = duration.TotalSeconds;
 
                 var conversion = new VideoConversion();
                 conversion.Mute = true;
                 conversion.TrimStartTime = media.EditState.TrimStartTime;
-                conversion.TrimStopTime = media.EditState.TrimStopTime;
+                conversion.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
                 conversion.Transcode = true;
                 conversion.Transform = true;
                 //conversion.Rotation = file.EditState.Rotation;
-                conversion.OutputSize = new Size(500, 500);
+                conversion.OutputSize = new Size(640, 640);
                 //conversion.Mirror = transform.Mirror;
                 conversion.CropRectangle = new Rect(
                     media.EditState.Rectangle.X * props.Width,
