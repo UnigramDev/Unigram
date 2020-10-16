@@ -1102,7 +1102,14 @@ namespace Unigram.ViewModels
                 Function func;
                 if (_threadId != 0)
                 {
-                    func = new GetMessageThreadHistory(chat.Id, _threadId, maxId, -25, 50);
+                    if (_thread.Messages.Any(x => x.Id == maxId))
+                    {
+                        func = new GetMessageThreadHistory(chat.Id, _threadId, 1, -25, 50);
+                    }
+                    else
+                    {
+                        func = new GetMessageThreadHistory(chat.Id, _threadId, maxId, -25, 50);
+                    }
                 }
                 else
                 {
@@ -1129,8 +1136,8 @@ namespace Unigram.ViewModels
                     var thread = _thread;
                     if (thread != null)
                     {
-                        lastReadMessageId = _thread.Messages[_thread.Messages.Count - 1].InteractionInfo.ReplyInfo.LastReadInboxMessageId;
-                        lastMessageId = _thread.Messages[_thread.Messages.Count - 1].InteractionInfo.ReplyInfo.LastMessageId;
+                        lastReadMessageId = _thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
+                        lastMessageId = _thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
                     }
                     else
                     {
@@ -1204,7 +1211,11 @@ namespace Unigram.ViewModels
                     IsLastSliceLoaded = null;
                     IsFirstSliceLoaded = IsEndReached();
 
-                    if (replied.IsEmpty())
+                    if (_thread != null && _thread.Messages.Any(x => x.Id == maxId))
+                    {
+                        await AddHeaderAsync();
+                    }
+                    else if (replied.IsEmpty())
                     {
                         await AddHeaderAsync();
                     }
@@ -1326,6 +1337,16 @@ namespace Unigram.ViewModels
         }
 
         public MessageCollection Items { get; } = new MessageCollection();
+
+        public MessageViewModel CreateMessage(Message message)
+        {
+            if (message == null)
+            {
+                return null;
+            }
+
+            return _messageFactory.Create(this, message);
+        }
 
         protected async Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
         {
@@ -1805,8 +1826,8 @@ namespace Unigram.ViewModels
                 var thread = _thread;
                 if (thread != null)
                 {
-                    lastReadMessageId = _thread.Messages[_thread.Messages.Count - 1].InteractionInfo.ReplyInfo.LastReadInboxMessageId;
-                    lastMessageId = _thread.Messages[_thread.Messages.Count - 1].InteractionInfo.ReplyInfo.LastMessageId;
+                    lastReadMessageId = _thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
+                    lastMessageId = _thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
                 }
                 else
                 {
@@ -2042,7 +2063,7 @@ namespace Unigram.ViewModels
                         var thread = _thread;
                         if (thread != null)
                         {
-                            lastReadMessageId = thread.Messages[thread.Messages.Count - 1].InteractionInfo.ReplyInfo.LastReadInboxMessageId;
+                            lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
                         }
                         else
                         {
@@ -2156,7 +2177,7 @@ namespace Unigram.ViewModels
 
                 Delegate?.UpdatePinnedMessage(chat, null, true);
 
-                var response = await ProtoService.SendAsync(new GetMessage(chat.Id, chat.PinnedMessageId));
+                var response = await ProtoService.SendAsync(new GetChatPinnedMessage(chat.Id));
                 if (response is Message message)
                 {
                     Delegate?.UpdatePinnedMessage(chat, _messageFactory.Create(this, message), false);

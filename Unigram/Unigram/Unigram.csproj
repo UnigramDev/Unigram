@@ -21,7 +21,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>602F1A7B283C48CF3345BD23DAEA58A1E444B2AD</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -479,7 +479,6 @@
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="Navigation\Services\FrameFacade.cs" />
     <Compile Include="Navigation\Services\INavigable.cs" />
-    <Compile Include="Navigation\Services\INavigationService.cs" />
     <Compile Include="Navigation\Services\NavigatedEventArgs.cs" />
     <Compile Include="Navigation\Services\NavigatingEventArgs.cs" />
     <Compile Include="Navigation\Services\NavigationService.cs" />
@@ -536,7 +535,7 @@
     <Compile Include="Logs\LogLevel.cs" />
     <Compile Include="Navigation\BindableBase.cs" />
     <Compile Include="Navigation\BootStrapper.cs" />
-    <Compile Include="Navigation\DispatcherWrapper.cs" />
+    <Compile Include="Navigation\DispatcherContext.cs" />
     <Compile Include="Navigation\TypedEventHandler.cs" />
     <Compile Include="Navigation\ViewModelBase.cs" />
     <Compile Include="Navigation\WindowContext.cs" />

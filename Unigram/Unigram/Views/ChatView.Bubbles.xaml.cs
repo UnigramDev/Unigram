@@ -18,6 +18,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -112,6 +113,20 @@ namespace Unigram.Views
             {
                 Play(animations, ViewModel.Settings.IsAutoPlayAnimationsEnabled, false);
             }
+
+            var thread = ViewModel.Thread;
+            if (thread != null)
+            {
+                var message = ViewModel.CreateMessage(thread.Messages.LastOrDefault());
+                if (message == null || messages.Contains(message.Id))
+                {
+                    PinnedMessage.UpdateMessage(ViewModel.Chat, 0, null, false);
+                }
+                else
+                {
+                    PinnedMessage.UpdateMessage(ViewModel.Chat, message.Id, message, false);
+                }
+            }
         }
 
         private void UnloadVisibleMessages()
@@ -156,7 +171,7 @@ namespace Unigram.Views
         private void UpdateHeaderDate(bool intermediate)
         {
             var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
-            if (panel == null || panel.FirstVisibleIndex < 0)
+            if (panel == null || panel.FirstVisibleIndex < 0 || Messages.ScrollingHost.ScrollableHeight == 0)
             {
                 return;
             }
@@ -171,6 +186,7 @@ namespace Unigram.Views
             var minKnock = knockout;
             var minItem = true;
             var minDate = true;
+            var minDateIndex = start;
 
             for (int i = start; i <= end; i++)
             {
@@ -233,13 +249,15 @@ namespace Unigram.Views
 
                     minDate = false;
 
-                    if (offset >= 0 && offset < height)
+                    if (/*offset >= 0 &&*/ offset < height)
                     {
                         container.Opacity = 0;
+                        minDateIndex = int.MaxValue; // Force show
                     }
                     else
                     {
                         container.Opacity = 1;
+                        minDateIndex = i;
                     }
 
                     if (offset >= height && offset < height * 2)
@@ -248,7 +266,7 @@ namespace Unigram.Views
                     }
                     else
                     {
-                        _dateHeader.Offset = new Vector3();
+                        _dateHeader.Offset = Vector3.Zero;
                     }
                 }
                 else
@@ -267,7 +285,55 @@ namespace Unigram.Views
 
             _dateHeaderTimer.Stop();
             _dateHeaderTimer.Start();
-            VisualUtilities.SetIsVisible(DateHeaderPanel, true);
+            ShowHideDateHeader(minDateIndex > 0, minDateIndex > 0 && minDateIndex < int.MaxValue);
+        }
+
+        private bool _dateHeaderCollapsed = true;
+
+        private void ShowHideDateHeader(bool show, bool animate)
+        {
+            if ((show && DateHeaderPanel.Visibility == Visibility.Visible) || (!show && (DateHeaderPanel.Visibility == Visibility.Collapsed || _dateHeaderCollapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _dateHeaderCollapsed = false;
+            }
+            else
+            {
+                _dateHeaderCollapsed = true;
+            }
+
+            if (!animate)
+            {
+                DateHeaderPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+                return;
+            }
+
+            DateHeaderPanel.Visibility = Visibility.Visible;
+
+            var batch = _dateHeaderPanel.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                if (show)
+                {
+                    _dateHeaderCollapsed = false;
+                }
+                else
+                {
+                    DateHeaderPanel.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var opacity = _dateHeaderPanel.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, show ? 0 : 1);
+            opacity.InsertKeyFrame(1, show ? 1 : 0);
+
+            _dateHeaderPanel.StartAnimation("Opacity", opacity);
+
+            batch.End();
         }
 
         class MediaPlayerItem

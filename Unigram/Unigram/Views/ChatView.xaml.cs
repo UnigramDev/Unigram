@@ -1542,26 +1542,6 @@ namespace Unigram.Views
             {
                 await ViewModel.LoadMessageSliceAsync(null, message);
             }
-
-            //if (message != null)
-            //{
-            //    if (message is TLMessagesContainter container)
-            //    {
-            //        if (container.EditMessage != null)
-            //        {
-            //            message = container.EditMessage;
-            //        }
-            //        else
-            //        {
-            //            return;
-            //        }
-            //    }
-
-            //    if (message is TLMessageCommonBase messageCommon)
-            //    {
-            //        await ViewModel.LoadMessageSliceAsync(null, messageCommon.Id);
-            //    }
-            //}
         }
 
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
@@ -3384,7 +3364,7 @@ namespace Unigram.Views
 
         public void UpdatePinnedMessage(Chat chat, MessageViewModel message, bool loading)
         {
-            PinnedMessage.UpdateMessage(chat, chat.PinnedMessageId, message, loading);
+            PinnedMessage.UpdateMessage(chat, chat.PinnedMessageId, message, loading, Strings.Resources.PinnedMessage);
         }
 
         public void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel message)
