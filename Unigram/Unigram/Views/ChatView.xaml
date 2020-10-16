@@ -609,35 +609,30 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <!--<controls:PlaybackHeader x:Name="Playback" Command="{x:Bind ViewModel.OpenMessageCommand}"/>-->
-
-            <Grid x:Name="PinnedMessagePanel"
-                    Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                    MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                    Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="48"/>
-                </Grid.ColumnDefinitions>
-
-                <messages:MessagePinned x:Name="PinnedMessage" Click="Reply_Click"/>
-
-                <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
-            </Grid>
-            <Grid x:Name="CallbackQueryAnswerPanel"
-                    Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                    Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                    MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-                    Grid.Row="1">
-                <messages:MessageReference x:Name="CallbackQueryAnswer" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
+            <messages:MessagePinned
+                x:Name="PinnedMessage"
+                Click="Reply_Click"
+                HideCommand="{x:Bind ViewModel.UnpinMessageCommand}"
+                Visibility="Collapsed"/>
+            
+            <Grid 
+                x:Name="CallbackQueryAnswerPanel"
+                Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                MinHeight="{ThemeResource AppBarThemeCompactHeight}">
+                <messages:MessageReference
+                    x:Name="CallbackQueryAnswer"
+                    VerticalAlignment="Stretch"
+                    Margin="0"
+                    Padding="12,6"
+                    IsHitTestVisible="False"/>
             </Grid>
 
             <Grid
                 x:Name="ActionBar"
                 Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                Grid.Row="2">
+                Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="48"/>
@@ -650,7 +645,7 @@
                 <controls:GlyphButton Command="{x:Bind ViewModel.RemoveActionBarCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
             </Grid>
 
-            <StackPanel x:Name="DateHeaderRelative" Grid.Row="3">
+            <StackPanel x:Name="DateHeaderRelative" Grid.Row="2">
                 <Border x:Name="DateHeaderPanel"
                         common:VisualUtilities.IsScaleEnabled="False"
                         common:VisualUtilities.IsVisible="False"
@@ -805,11 +800,11 @@
                 </ListView.Header>
             </chats:ChatListView>
 
-            <Border Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <Border x:Name="Yolo2" x:Load="False" Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,7" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <TextBlock x:Name="EmptyLabel" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
             </Border>
 
-            <StackPanel Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <StackPanel x:Name="Yolo1" x:Load="False" Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <FontIcon Glyph="&#xE753;" Foreground="White" FontSize="64"/>
                 <TextBlock Text="{CustomResource ChatYourSelfTitle}" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
                 <TextBlock Foreground="White" Style="{StaticResource BodyTextBlockStyle}">

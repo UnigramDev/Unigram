@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
@@ -10,6 +12,8 @@ namespace Unigram.Controls.Messages
 {
     public sealed partial class MessagePinned : Grid
     {
+        private UIElement _parent;
+
         private Visual _visual1;
         private Visual _visual2;
 
@@ -33,8 +37,21 @@ namespace Unigram.Controls.Messages
             _visual = _visual1;
         }
 
+        public void InitializeParent(UIElement parent)
+        {
+            _parent = parent;
+        }
+
         public void UpdateMessage(Chat chat, long messageId, MessageViewModel message, bool loading)
         {
+            if (message == null && !loading)
+            {
+                ShowHide(false);
+                return;
+            }
+
+            ShowHide(true);
+
             if (_chatId == chat.Id && _messageId == messageId)
             {
                 if (_loading)
@@ -61,6 +78,9 @@ namespace Unigram.Controls.Messages
 
             var referenceShow = _visual == _visual1 ? Reference2 : Reference1;
             var referenceHide = _visual == _visual1 ? Reference1 : Reference2;
+
+            Canvas.SetZIndex(referenceShow, 1);
+            Canvas.SetZIndex(referenceHide, 0);
 
             if (cross)
             {
@@ -90,7 +110,7 @@ namespace Unigram.Controls.Messages
                 var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
                 show1.InsertKeyFrame(0, new Vector3(0, prev ? 32 : -32, 0));
                 show1.InsertKeyFrame(1, new Vector3(0));
-            
+
                 visualShow.StartAnimation("Offset", show1);
             }
             else
@@ -105,6 +125,67 @@ namespace Unigram.Controls.Messages
             visualShow.StartAnimation("Opacity", show2);
 
             _visual = visualShow;
+        }
+
+        private bool _collapsed = true;
+
+        private void ShowHide(bool show)
+        {
+            if ((show && Visibility == Visibility.Visible) || (!show && (Visibility == Visibility.Collapsed || _collapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _collapsed = false;
+            }
+            else
+            {
+                _collapsed = true;
+            }
+
+            Visibility = Visibility.Visible;
+
+            var visual = ElementCompositionPreview.GetElementVisual(_parent);
+            visual.Clip = visual.Compositor.CreateInsetClip();
+
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                visual.Clip = null;
+                visual.Offset = new Vector3();
+
+                if (show)
+                {
+                    _collapsed = false;
+                }
+                else
+                {
+                    Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(show ? 0 : 1, 48);
+            clip.InsertKeyFrame(show ? 1 : 0, 0);
+            clip.Duration = TimeSpan.FromMilliseconds(150);
+
+            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -48, 0));
+            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
+            offset.Duration = TimeSpan.FromMilliseconds(150);
+
+            visual.Clip.StartAnimation("TopInset", clip);
+            visual.StartAnimation("Offset", offset);
+
+            batch.End();
+        }
+
+        public ICommand HideCommand
+        {
+            get => HideButton.Command;
+            set => HideButton.Command = value;
         }
 
         public event RoutedEventHandler Click;
