@@ -53,7 +53,15 @@ namespace Unigram.Common
 
         public void Initialize()
         {
-            Initialize(SettingsService.Current.Appearance.RequestedTheme);
+            var theme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
+            if (theme == ApplicationTheme.Dark)
+            {
+                Initialize(TelegramTheme.Dark);
+            }
+            else
+            {
+                Initialize(TelegramTheme.Light);
+            }
         }
 
         public void Initialize(TelegramTheme requested)
