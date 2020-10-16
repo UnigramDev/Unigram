@@ -143,7 +143,7 @@ namespace Unigram.Services.Settings
             {
                 await window.Dispatcher.DispatchAsync(() =>
                 {
-                    Theme.Current.Initialize(theme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
+                    Theme.Current.Initialize(theme);
 
                     window.UpdateTitleBar();
 

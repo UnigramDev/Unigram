@@ -465,9 +465,8 @@ namespace Unigram
         {
             Logs.Logger.Info(Logs.Target.Lifecycle, "OnResuming");
 
-            //#if DEBUG
-            //await VoIPConnection.Current.ConnectAsync();
-            //#endif
+            // #2034: Will this work? No one knows.
+            SettingsService.Current.Appearance.UpdateNightMode();
 
             base.OnResuming(s, e, previousExecutionState);
         }

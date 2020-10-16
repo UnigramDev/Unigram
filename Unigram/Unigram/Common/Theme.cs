@@ -6,6 +6,7 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
+using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -53,15 +54,17 @@ namespace Unigram.Common
 
         public void Initialize()
         {
-            var theme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
-            if (theme == ApplicationTheme.Dark)
-            {
-                Initialize(TelegramTheme.Dark);
-            }
-            else
-            {
-                Initialize(TelegramTheme.Light);
-            }
+            Initialize(SettingsService.Current.Appearance.GetCalculatedApplicationTheme());
+        }
+
+        public void Initialize(ApplicationTheme requested)
+        {
+            Initialize(requested == ApplicationTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
+        }
+
+        public void Initialize(ElementTheme requested)
+        {
+            Initialize(requested == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
         }
 
         public void Initialize(TelegramTheme requested)
@@ -129,23 +132,26 @@ namespace Unigram.Common
 
             Update();
 
-            MergedDictionaries[0].MergedDictionaries.Clear();
-            MergedDictionaries[0].MergedDictionaries.Add(dict);
-
+            //MergedDictionaries[0].MergedDictionaries.Clear();
+            //MergedDictionaries[0].MergedDictionaries.Add(dict);
+            MergedDictionaries.Add(dict);
         }
 
         public void Update()
         {
-            try
-            {
-                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
-                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
-                ThemeDictionaries.Clear();
-                MergedDictionaries.Clear();
+            // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
+            // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
+            string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
+            ulong version = ulong.Parse(deviceFamilyVersion);
+            ulong build = (version & 0x00000000FFFF0000L) >> 16;
 
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+            if (build < 17763)
+            {
+                ThemeDictionaries.Clear();
             }
-            catch { }
+
+            MergedDictionaries.Clear();
+            MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
         }
 
         public void Update(ThemeInfoBase info)
@@ -176,16 +182,17 @@ namespace Unigram.Common
                 {
                     if (item.Key.EndsWith("Brush"))
                     {
-                        dict[item.Key] = new SolidColorBrush((Color)item.Value);
+                        dict[item.Key] = new SolidColorBrush(item.Value);
                     }
                     else if (item.Key.EndsWith("Color"))
                     {
-                        dict[item.Key] = (Color)item.Value;
+                        dict[item.Key] = item.Value;
                     }
                 }
 
-                MergedDictionaries[0].MergedDictionaries.Clear();
-                MergedDictionaries[0].MergedDictionaries.Add(dict);
+                //MergedDictionaries[0].MergedDictionaries.Clear();
+                //MergedDictionaries[0].MergedDictionaries.Add(dict);
+                MergedDictionaries.Add(dict);
             }
             catch { }
         }
