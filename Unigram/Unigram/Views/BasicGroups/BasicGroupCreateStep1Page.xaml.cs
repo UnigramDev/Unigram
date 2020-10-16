@@ -2,7 +2,6 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Entities;
 using Unigram.ViewModels.BasicGroups;
 using Unigram.Views.Popups;
 using Windows.Storage.Pickers;

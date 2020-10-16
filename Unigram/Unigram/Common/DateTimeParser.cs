@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using Telegram.Td.Api;
 using Unigram.Native;
-using Unigram.Services;
 
 namespace Unigram.Common
 {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views.Popups;

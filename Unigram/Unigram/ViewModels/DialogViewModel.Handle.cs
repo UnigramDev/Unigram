@@ -505,7 +505,7 @@ namespace Unigram.ViewModels
                     else
                     {
                         message.Content = update.NewContent;
-                        
+
                         if (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo)
                         {
                             // Probably not the best way

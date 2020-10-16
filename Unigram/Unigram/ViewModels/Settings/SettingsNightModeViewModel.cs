@@ -2,13 +2,11 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Devices.Geolocation;
 using Windows.Services.Maps;
 using Windows.System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings

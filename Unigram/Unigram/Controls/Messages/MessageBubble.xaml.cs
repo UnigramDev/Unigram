@@ -44,13 +44,13 @@ namespace Unigram.Controls.Messages
                 ContentPanel.Background = gradient = new LinearGradientBrush();
                 //gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), Offset = 0 });
                 //gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF8, 0xEA, 0x8F), Offset = 1 });
-                gradient.GradientStops.Add(new GradientStop { Color =Color.FromArgb(0xff, 0xea, 0x27, 0x39), Offset = 0d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color =Color.FromArgb(0xff, 0xdb, 0x3a, 0xd2), Offset = 1d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color =Color.FromArgb(0xff, 0x30, 0x51, 0xe3), Offset = 2d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color =Color.FromArgb(0xff, 0x49, 0xc5, 0xed), Offset = 3d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color =Color.FromArgb(0xff, 0x80, 0xc8, 0x64), Offset = 4d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color =Color.FromArgb(0xff, 0xfc, 0xde, 0x65), Offset = 5d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color =Color.FromArgb(0xff, 0xfc, 0x96, 0x4d), Offset = 6d / 6d });
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0xea, 0x27, 0x39), Offset = 0d / 6d });
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0xdb, 0x3a, 0xd2), Offset = 1d / 6d });
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0x30, 0x51, 0xe3), Offset = 2d / 6d });
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0x49, 0xc5, 0xed), Offset = 3d / 6d });
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0x80, 0xc8, 0x64), Offset = 4d / 6d });
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0xfc, 0xde, 0x65), Offset = 5d / 6d });
+                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0xfc, 0x96, 0x4d), Offset = 6d / 6d });
             }
 
             gradient.StartPoint = new Point(0, top);

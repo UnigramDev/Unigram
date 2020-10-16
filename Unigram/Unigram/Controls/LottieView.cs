@@ -53,7 +53,7 @@ namespace Unigram.Controls
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
 
-        private SizeInt32 _frameSize =new SizeInt32 { Width = 256, Height = 256 };
+        private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
 
         private LoopThread _thread;
         private LoopThread _threadUI;
@@ -495,7 +495,7 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty IsBackwardProperty =
             DependencyProperty.Register("IsBackward", typeof(bool), typeof(LottieView), new PropertyMetadata(false, OnBackwardChanged));
-        
+
         private static void OnBackwardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d)._backward = (bool)e.NewValue;

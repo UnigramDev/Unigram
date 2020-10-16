@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -22,7 +21,7 @@ namespace Unigram.Views.Popups
 
             _applicationView = ApplicationView.GetForCurrentView();
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
-            
+
             OnVisibleBoundsChanged(_applicationView, null);
         }
 

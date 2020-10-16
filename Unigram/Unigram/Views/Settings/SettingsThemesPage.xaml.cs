@@ -2,7 +2,6 @@
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
-using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;

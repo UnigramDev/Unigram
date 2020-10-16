@@ -6,9 +6,7 @@ using System.Runtime.CompilerServices;
 using Unigram.Navigation.Services;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Graphics.Display;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Unigram.Navigation

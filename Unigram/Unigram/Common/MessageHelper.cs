@@ -1023,7 +1023,7 @@ namespace Unigram.Common
                     if (type == null || type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
                     {
                         var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
-                        
+
                         var action = GetEntityAction(hyperlink);
                         if (action != null)
                         {

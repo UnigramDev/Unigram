@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.RegularExpressions;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;

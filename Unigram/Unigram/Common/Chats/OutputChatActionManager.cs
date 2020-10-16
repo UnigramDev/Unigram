@@ -14,7 +14,7 @@ namespace Unigram.Common.Chats
 
         private DateTime? _lastTypingTime;
 
-        public OutputChatActionManager(IProtoService protoService, Chat chat, long threadId  = 0, double delay = 5.0)
+        public OutputChatActionManager(IProtoService protoService, Chat chat, long threadId = 0, double delay = 5.0)
         {
             _chat = chat;
             _threadId = threadId;

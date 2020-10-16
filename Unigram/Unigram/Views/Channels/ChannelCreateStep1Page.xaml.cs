@@ -1,7 +1,6 @@
 ﻿using System;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Entities;
 using Unigram.ViewModels.Channels;
 using Unigram.Views.Popups;
 using Windows.Storage.Pickers;
