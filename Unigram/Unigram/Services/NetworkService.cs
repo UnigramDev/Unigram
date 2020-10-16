@@ -5,6 +5,8 @@ namespace Unigram.Services
 {
     public interface INetworkService
     {
+        void Reconnect();
+
         NetworkType Type { get; }
     }
 
@@ -23,6 +25,12 @@ namespace Unigram.Services
                 Update(NetworkInformation.GetInternetConnectionProfile());
             }
             catch { }
+        }
+
+        public void Reconnect()
+        {
+            _protoService.Send(new SetNetworkType(new NetworkTypeNone()));
+            _protoService.Send(new SetNetworkType(_type));
         }
 
         private void OnNetworkStatusChanged(object sender)

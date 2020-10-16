@@ -465,6 +465,12 @@ namespace Unigram
         {
             Logs.Logger.Info(Logs.Target.Lifecycle, "OnResuming");
 
+            // #1225: Will this work? No one knows.
+            foreach (var network in TLContainer.Current.ResolveAll<INetworkService>())
+            {
+                network.Reconnect();
+            }
+
             // #2034: Will this work? No one knows.
             SettingsService.Current.Appearance.UpdateNightMode();
 
