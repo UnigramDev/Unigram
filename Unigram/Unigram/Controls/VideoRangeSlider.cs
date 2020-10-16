@@ -46,7 +46,7 @@ namespace Unigram.Controls
         {
             OriginalDuration = duration;
 
-            _maxLength = Math.Min(9 / duration.TotalSeconds, 1);
+            _maxLength = Math.Min(10 / duration.TotalSeconds, 1);
             _minLength = Math.Min(3 / duration.TotalSeconds, 1);
 
             _minimum = 0;
