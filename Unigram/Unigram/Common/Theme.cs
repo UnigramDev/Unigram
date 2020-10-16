@@ -132,9 +132,9 @@ namespace Unigram.Common
 
             Update();
 
-            //MergedDictionaries[0].MergedDictionaries.Clear();
-            //MergedDictionaries[0].MergedDictionaries.Add(dict);
-            MergedDictionaries.Add(dict);
+            MergedDictionaries[0].MergedDictionaries.Clear();
+            MergedDictionaries[0].MergedDictionaries.Add(dict);
+            //MergedDictionaries.Add(dict);
         }
 
         public void Update()
@@ -190,9 +190,9 @@ namespace Unigram.Common
                     }
                 }
 
-                //MergedDictionaries[0].MergedDictionaries.Clear();
-                //MergedDictionaries[0].MergedDictionaries.Add(dict);
-                MergedDictionaries.Add(dict);
+                MergedDictionaries[0].MergedDictionaries.Clear();
+                MergedDictionaries[0].MergedDictionaries.Add(dict);
+                //MergedDictionaries.Add(dict);
             }
             catch { }
         }
