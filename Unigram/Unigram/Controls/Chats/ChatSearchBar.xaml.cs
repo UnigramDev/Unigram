@@ -194,12 +194,12 @@ namespace Unigram.Controls.Chats
 
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {
-                ViewModel.Search(Field.Text, Field.From, Field.Filter?.Filter);
+                ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Enter && shift && Field.State != ChatSearchState.Members)
             {
-                ViewModel.NextCommand.Execute();
+                ViewModel?.NextCommand.Execute();
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(Field.Text))
@@ -211,7 +211,7 @@ namespace Unigram.Controls.Chats
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Search(Field.Text, Field.From, Field.Filter?.Filter);
+            ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
