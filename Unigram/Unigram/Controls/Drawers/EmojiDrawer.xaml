@@ -115,11 +115,6 @@
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="7"/>
             </common:FluidGridView.Triggers>
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="common:EmojiData">
-                    <TextBlock x:Phase="0" Text="{x:Bind Value, Mode=OneWay}" FontSize="22" FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
-                </DataTemplate>
-            </GridView.ItemTemplate>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="Template">
