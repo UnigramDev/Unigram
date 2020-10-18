@@ -258,7 +258,7 @@ namespace Unigram.Controls
 
             var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
             hide1.InsertKeyFrame(0, new Vector3(0));
-            hide1.InsertKeyFrame(1, new Vector3(prev ? -32 : 32, 0, 0));
+            hide1.InsertKeyFrame(1, new Vector3(prev ? -12 : 12, 0, 0));
 
             var hide2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
             hide2.InsertKeyFrame(0, 1);
@@ -271,7 +271,7 @@ namespace Unigram.Controls
             subtitleShow.Text = subtitle;
 
             var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
-            show1.InsertKeyFrame(0, new Vector3(prev ? 32 : -32, 0, 0));
+            show1.InsertKeyFrame(0, new Vector3(prev ? 12 : -12, 0, 0));
             show1.InsertKeyFrame(1, new Vector3(0));
 
             var show2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
