@@ -42,10 +42,15 @@ namespace Unigram.Controls.Messages
             _parent = parent;
         }
 
-        public void UpdateMessage(Chat chat, long messageId, MessageViewModel message, bool loading)
+        public void UpdateMessage(Chat chat, long messageId, MessageViewModel message, bool loading, string title = null)
         {
             if (message == null && !loading)
             {
+                _chatId = 0;
+                _messageId = 0;
+
+                _loading = false;
+
                 ShowHide(false);
                 return;
             }
@@ -57,7 +62,7 @@ namespace Unigram.Controls.Messages
                 if (_loading)
                 {
                     var referenceShown = _visual == _visual1 ? Reference1 : Reference2;
-                    referenceShown.UpdateMessage(message, loading, Strings.Resources.PinnedMessage);
+                    referenceShown.UpdateMessage(message, loading, title);
 
                     _loading = loading;
                 }
@@ -101,7 +106,7 @@ namespace Unigram.Controls.Messages
 
             visualHide.StartAnimation("Opacity", hide2);
 
-            referenceShow.UpdateMessage(message, loading, Strings.Resources.PinnedMessage);
+            referenceShow.UpdateMessage(message, loading, title);
             referenceShow.IsTabStop = true;
             referenceHide.IsTabStop = false;
 
