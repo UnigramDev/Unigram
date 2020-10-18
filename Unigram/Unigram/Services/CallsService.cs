@@ -638,13 +638,16 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this);
+                    await Dispatcher.DispatchAsync(() =>
+                    {
+                        _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this);
 
-                    _callDialog = new OverlayPage();
-                    _callDialog.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    _callDialog.VerticalAlignment = VerticalAlignment.Stretch;
-                    _callDialog.Content = _callPage;
-                    _callDialog.IsOpen = true;
+                        _callDialog = new OverlayPage();
+                        _callDialog.HorizontalAlignment = HorizontalAlignment.Stretch;
+                        _callDialog.VerticalAlignment = VerticalAlignment.Stretch;
+                        _callDialog.Content = _callPage;
+                        _callDialog.IsOpen = true;
+                    });
                 }
 
                 Aggregator.Publish(new UpdateCallDialog(call, true));
