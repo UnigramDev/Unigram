@@ -583,18 +583,6 @@ namespace Unigram.Controls.Messages
             }
         }
 
-
-        //private Thickness UpdateFirst(bool isFirst)
-        //{
-        //    OnMessageChanged(HeaderLabel, AdminLabel, Header);
-        //    return isFirst ? new Thickness(0, 2, 0, 0) : new Thickness();
-        //}
-
-        //private void OnMediaChanged(object sender, EventArgs e)
-        //{
-        //    OnMediaChanged();
-        //}
-
         public void UpdateMessageState(MessageViewModel message)
         {
             Footer.UpdateMessageState(message);
@@ -1786,7 +1774,7 @@ namespace Unigram.Controls.Messages
                         constraint = videoContent.Video;
                     }
                 }
-                else
+                else if (album.IsMedia)
                 {
                     var positions = album.GetPositionsForWidth(availableWidth + MessageAlbum.ITEM_MARGIN);
                     width = positions.Item2.Width - MessageAlbum.ITEM_MARGIN;
@@ -1912,8 +1900,9 @@ namespace Unigram.Controls.Messages
                 case MessagePhoto photo:
                 case MessageVideo video:
                 case MessageAnimation animation:
-                case MessageAlbum album:
                     return true;
+                case MessageAlbum album:
+                    return album.IsMedia;
                 case MessageInvoice invoice:
                     return width && invoice.Photo != null;
                 default:

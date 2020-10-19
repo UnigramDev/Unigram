@@ -2128,17 +2128,15 @@ namespace Telegram.Td.Api
 {
     public class MessageAlbum : MessageContent
     {
+        public bool IsMedia { get; }
+
         public FormattedText Caption { get; set; }
 
         public UniqueList<long, MessageViewModel> Messages { get; } = new UniqueList<long, MessageViewModel>(x => x.Id);
 
-        public MessageAlbum()
+        public MessageAlbum(bool media)
         {
-        }
-
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
+            IsMedia = media;
         }
 
         public const double ITEM_MARGIN = 2;
@@ -2270,26 +2268,13 @@ namespace Telegram.Td.Api
             Date = chatEvent.Date;
             Id = chatEvent.Id;
         }
-
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class MessageHeaderDate : MessageContent
     {
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class MessageHeaderUnread : MessageContent
     {
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

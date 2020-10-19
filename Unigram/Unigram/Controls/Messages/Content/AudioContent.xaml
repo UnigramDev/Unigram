@@ -25,13 +25,16 @@
     </Grid>
     <Grid
         x:Name="DownloadPanel"
-        Width="20"
-        Height="20"
-        CornerRadius="10"
-        Margin="0,0,-4,-2"
+        Width="22"
+        Height="22"
+        CornerRadius="11"
+        Margin="0,0,-5,-3"
+        BorderThickness="1"
+        BorderBrush="{ThemeResource MessageBackgroundBrush}"
         Background="{ThemeResource MessageMediaBackgroundBrush}"
         HorizontalAlignment="Right"
-        VerticalAlignment="Bottom">
+        VerticalAlignment="Bottom"
+        UseLayoutRounding="False">
         <controls:FileButton
             x:Name="Download"
             IsSmall="True"
