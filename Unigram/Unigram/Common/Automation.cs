@@ -256,8 +256,14 @@ namespace Unigram.Common
 
             if (!light && /*message.IsFirst &&*/ !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
             {
-                var sender = cacheService.GetUser(message.SenderUserId);
-                title = sender?.GetFullName();
+                if (cacheService.TryGetUser(message.Sender, out User senderUser))
+                {
+                    title = senderUser.GetFullName();
+                }
+                else if (cacheService.TryGetChat(message.Sender, out Chat senderChat))
+                {
+                    title = senderChat.Title;
+                }
             }
             else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup)
             {
