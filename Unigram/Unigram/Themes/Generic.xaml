@@ -210,6 +210,19 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:DiceView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:DiceView">
+                    <Grid>
+                        <Image x:Name="Thumbnail" Source="{TemplateBinding Thumbnail}"/>
+                        <xaml:CanvasControl x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:AnimationView">
         <Setter Property="Template">
             <Setter.Value>

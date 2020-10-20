@@ -567,17 +567,33 @@ namespace Unigram.Common
             }
         }
 
-        public static File GetAnimatedSticker(this MessageViewModel message)
+        public static bool IsAnimatedStickerDownloadCompleted(this MessageViewModel message)
         {
             var content = message.GeneratedContent ?? message.Content;
             switch (content)
             {
                 case MessageSticker sticker:
-                    return sticker.Sticker.IsAnimated ? sticker.Sticker.StickerValue : null;
+                    return sticker.Sticker.IsAnimated ? sticker.Sticker.StickerValue.Local.IsDownloadingCompleted : false;
                 case MessageText text:
-                    return text.WebPage?.Sticker?.IsAnimated ?? false ? text.WebPage?.Sticker?.StickerValue : null;
+                    return text.WebPage?.Sticker?.IsAnimated ?? false ? text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted : false;
+                case MessageDice dice:
+                    var state = dice.FinalState ?? dice.InitialState;
+                    if (state is DiceStickersRegular regular)
+                    {
+                        return regular.Sticker.StickerValue.Local.IsDownloadingCompleted;
+                    }
+                    else if (state is DiceStickersSlotMachine slotMachine)
+                    {
+                        return slotMachine.Background.StickerValue.Local.IsDownloadingCompleted
+                            && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted
+                            && slotMachine.CenterReel.StickerValue.Local.IsDownloadingCompleted
+                            && slotMachine.RightReel.StickerValue.Local.IsDownloadingCompleted
+                            && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted;
+                    }
+
+                    return false;
                 default:
-                    return null;
+                    return false;
             }
         }
 

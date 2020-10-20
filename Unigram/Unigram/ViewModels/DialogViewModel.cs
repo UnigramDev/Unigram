@@ -1414,14 +1414,13 @@ namespace Unigram.ViewModels
             {
                 if (message.Content is MessageDice dice)
                 {
-                    message.GeneratedContent = new MessageSticker(
-                        dice.FinalStateSticker
-                        ?? dice.InitialStateSticker
-                        ?? new Sticker(0, 512, 512, dice.Emoji, true, false, null, null, Common.TdExtensions.InvalidFile()));
-
                     if (message.Id > chat.LastReadInboxMessageId)
                     {
                         message.GeneratedContentUnread = true;
+                    }
+                    else
+                    {
+                        message.GeneratedContentUnread = message.SendingState is MessageSendingStatePending;
                     }
                 }
 
@@ -1441,6 +1440,34 @@ namespace Unigram.ViewModels
                 else if (content is MessageAudio audioMessage)
                 {
                     content = audioMessage.Audio;
+                }
+                else if (content is MessageDice diceMessage)
+                {
+                    if (diceMessage.InitialState is DiceStickersRegular initialRegular)
+                    {
+                        _filesMap[initialRegular.Sticker.StickerValue.Id].Add(target);
+                    }
+                    else if (diceMessage.InitialState is DiceStickersSlotMachine initialSlotMachine)
+                    {
+                        _filesMap[initialSlotMachine.Background.StickerValue.Id].Add(target);
+                        _filesMap[initialSlotMachine.LeftReel.StickerValue.Id].Add(target);
+                        _filesMap[initialSlotMachine.CenterReel.StickerValue.Id].Add(target);
+                        _filesMap[initialSlotMachine.RightReel.StickerValue.Id].Add(target);
+                        _filesMap[initialSlotMachine.Lever.StickerValue.Id].Add(target);
+                    }
+
+                    if (diceMessage.FinalState is DiceStickersRegular finalRegular)
+                    {
+                        _filesMap[finalRegular.Sticker.StickerValue.Id].Add(target);
+                    }
+                    else if (diceMessage.FinalState is DiceStickersSlotMachine finalSlotMachine)
+                    {
+                        _filesMap[finalSlotMachine.Background.StickerValue.Id].Add(target);
+                        _filesMap[finalSlotMachine.LeftReel.StickerValue.Id].Add(target);
+                        _filesMap[finalSlotMachine.CenterReel.StickerValue.Id].Add(target);
+                        _filesMap[finalSlotMachine.RightReel.StickerValue.Id].Add(target);
+                        _filesMap[finalSlotMachine.Lever.StickerValue.Id].Add(target);
+                    }
                 }
                 else if (content is MessageDocument documentMessage)
                 {
@@ -1666,7 +1693,7 @@ namespace Unigram.ViewModels
 
                 if (group == null)
                 {
-                    var media = new MessageAlbum();
+                    var media = new MessageAlbum(message.Content is MessagePhoto || message.Content is MessageVideo);
 
                     var groupBase = new Message();
                     groupBase.Content = media;

@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Unigram.Common;
+using Unigram.Views;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
@@ -22,7 +23,7 @@ namespace Unigram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     [TemplatePart(Name = "Thumbnail", Type = typeof(Image))]
-    public class LottieView : Control
+    public class LottieView : Control, IPlayerView
     {
         private CanvasControl _canvas;
         private CanvasBitmap _bitmap;
@@ -368,6 +369,11 @@ namespace Unigram.Controls
                 Invalidate();
                 _canvas.Invalidate();
             }
+        }
+
+        public void Play()
+        {
+            Play(false);
         }
 
         public void Play(bool backward = false)

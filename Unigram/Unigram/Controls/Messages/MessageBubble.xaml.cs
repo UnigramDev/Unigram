@@ -101,7 +101,7 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             var content = message.GeneratedContent ?? message.Content;
 
-            var sticker = content is MessageSticker;
+            var sticker = content is MessageSticker || content is MessageDice;
             var light = sticker || content is MessageVideoNote;
 
             var title = string.Empty;
@@ -240,7 +240,7 @@ namespace Unigram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
             {
-                if (content is MessageSticker || content is MessageVideoNote)
+                if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
                 {
                     ContentPanel.CornerRadius = new CornerRadius();
                 }
@@ -251,7 +251,7 @@ namespace Unigram.Controls.Messages
 
                 Markup.CornerRadius = new CornerRadius(small, small, bottomRight, bottomLeft);
             }
-            else if (content is MessageSticker || content is MessageVideoNote)
+            else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
             {
                 ContentPanel.CornerRadius = new CornerRadius();
             }
@@ -726,7 +726,7 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Footer, caption ? 4 : 3);
                 Grid.SetRow(Message, caption ? 4 : 2);
             }
-            else if (content is MessageSticker || content is MessageVideoNote)
+            else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
             {
                 Media.Margin = new Thickness(-10, -4, -10, -6);
                 _placeholder = false;
@@ -842,6 +842,10 @@ namespace Unigram.Controls.Messages
                 else if (content is MessageContact)
                 {
                     Media.Child = new ContactContent(message);
+                }
+                else if (content is MessageDice)
+                {
+                    Media.Child = new DiceContent(message);
                 }
                 else if (content is MessageDocument)
                 {

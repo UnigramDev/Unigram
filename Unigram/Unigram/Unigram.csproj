@@ -295,6 +295,7 @@
     <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\ContentPopup.cs" />
     <Compile Include="Controls\DialogListView.cs" />
+    <Compile Include="Controls\DiceView.cs" />
     <Compile Include="Controls\Drawers\AnimationDrawer.xaml.cs">
       <DependentUpon>AnimationDrawer.xaml</DependentUpon>
     </Compile>
@@ -342,6 +343,9 @@
     </Compile>
     <Compile Include="Controls\Messages\Content\AudioContent.xaml.cs">
       <DependentUpon>AudioContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\Content\DiceContent.xaml.cs">
+      <DependentUpon>DiceContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\Content\DocumentPhotoContent.xaml.cs">
       <DependentUpon>DocumentPhotoContent.xaml</DependentUpon>
@@ -1891,6 +1895,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Content\AudioContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\Content\DiceContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
