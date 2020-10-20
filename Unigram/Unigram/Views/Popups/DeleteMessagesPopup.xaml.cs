@@ -32,10 +32,12 @@ namespace Unigram.Views.Popups
 
             var user = cacheService.GetUser(chat);
 
-            var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
-            if (sameUser && first.SenderUserId != 0 && !first.IsOutgoing && chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
+            var firstSender = first.Sender as MessageSenderUser;
+
+            var sameUser = firstSender != null && messages.All(x => x.Sender is MessageSenderUser senderUser && senderUser.UserId == firstSender.UserId);
+            if (sameUser && !first.IsOutgoing && chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
-                var sender = cacheService.GetUser(first.SenderUserId);
+                var sender = cacheService.GetUser(firstSender.UserId);
 
                 RevokeCheck.Visibility = Visibility.Collapsed;
                 BanUserCheck.Visibility = Visibility.Visible;

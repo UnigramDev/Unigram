@@ -261,7 +261,7 @@ namespace Unigram.Collections
                     Function function;
                     if (chat != null)
                     {
-                        function = new SearchChatMessages(chat.Id, _query, 0, 0, 0, 100, content?.Filter, 0);
+                        function = new SearchChatMessages(chat.Id, _query, null, 0, 0, 100, content?.Filter, 0);
                     }
                     else
                     {

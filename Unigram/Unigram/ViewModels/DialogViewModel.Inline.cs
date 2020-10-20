@@ -209,23 +209,6 @@ namespace Unigram.ViewModels
 
             var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, _threadId, reply, options, queryId, queryResult.GetId(), false));
         }
-
-        private User GetBot(MessageViewModel message)
-        {
-            var via = message?.GetViaBotUser();
-            if (via != null)
-            {
-                return via;
-            }
-
-            var sender = message?.GetSenderUser();
-            if (sender != null && sender.Type is UserTypeBot)
-            {
-                return sender;
-            }
-
-            return null;
-        }
     }
 
     public class BotResultsCollection : IncrementalCollection<InlineQueryResult>

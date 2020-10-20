@@ -609,6 +609,16 @@ namespace Unigram.ViewModels
             return false;
         }
 
+        public string GetAdminTitle(MessageSender sender)
+        {
+            if (sender is MessageSenderUser senderUser)
+            {
+                return GetAdminTitle(senderUser.UserId);
+            }
+
+            return null;
+        }
+
         public string GetAdminTitle(int userId)
         {
             var chat = _chat;

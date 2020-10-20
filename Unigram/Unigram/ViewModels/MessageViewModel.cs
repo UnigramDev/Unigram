@@ -2,6 +2,7 @@
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.ViewModels
 {
@@ -55,8 +56,7 @@ namespace Unigram.ViewModels
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;
         public long MessageThreadId => _message.MessageThreadId;
-        public int SenderUserId => _message.SenderUserId;
-        public long SenderChatId => _message.SenderChatId;
+        public MessageSender Sender => _message.Sender;
         public long Id => _message.Id;
 
         public Photo GetPhoto() => _message.GetPhoto();
@@ -75,14 +75,15 @@ namespace Unigram.ViewModels
         public MessageContent GeneratedContent { get; set; }
         public bool GeneratedContentUnread { get; set; }
 
+        [Deprecated("Use ICacheService.TryGetUser instead", DeprecationType.Deprecate, 1)]
         public User GetSenderUser()
         {
-            return ProtoService.GetUser(_message.SenderUserId);
-        }
+            if (_message.Sender is MessageSenderUser user)
+            {
+                return ProtoService.GetUser(user.UserId);
+            }
 
-        public Chat GetSenderChat()
-        {
-            return ProtoService.GetChat(_message.SenderChatId);
+            return null;
         }
 
         public User GetViaBotUser()
@@ -92,8 +93,7 @@ namespace Unigram.ViewModels
                 return ProtoService.GetUser(_message.ViaBotUserId);
             }
 
-            var user = ProtoService.GetUser(_message.SenderUserId);
-            if (user?.Type is UserTypeBot)
+            if (ProtoService.TryGetUser(_message.Sender, out User user) && user.Type is UserTypeBot)
             {
                 return user;
             }
@@ -194,15 +194,14 @@ namespace Unigram.ViewModels
             //{
             //    return true;
             //}
-            else if (message.SenderUserId != 0)
+            else if (message.Sender is MessageSenderUser)
             {
                 if (message.Content is MessageText)
                 {
                     return false;
                 }
 
-                var user = message.GetSenderUser();
-                if (user != null && user.Type is UserTypeBot)
+                if (ProtoService.TryGetUser(message.Sender, out User user) && user.Type is UserTypeBot)
                 {
                     return true;
                 }
@@ -282,8 +281,7 @@ namespace Unigram.ViewModels
             _message.ReplyMarkup = message.ReplyMarkup;
             _message.ReplyInChatId = message.ReplyInChatId;
             _message.ReplyToMessageId = message.ReplyToMessageId;
-            _message.SenderChatId = message.SenderChatId;
-            _message.SenderUserId = message.SenderUserId;
+            _message.Sender = message.Sender;
             _message.SendingState = message.SendingState;
             _message.Ttl = message.Ttl;
             _message.TtlExpiresIn = message.TtlExpiresIn;

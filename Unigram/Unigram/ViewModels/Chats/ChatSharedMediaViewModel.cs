@@ -248,11 +248,23 @@ namespace Unigram.ViewModels.Chats
             {
                 for (int i = 0; i < updated.MessagesValue.Count; i++)
                 {
-                    messages[i] = updated.MessagesValue[i];
+                    if (updated.MessagesValue[i] != null)
+                    {
+                        messages[i] = updated.MessagesValue[i];
+                    }
+                    else
+                    {
+                        messages.RemoveAt(i);
+                        updated.MessagesValue.RemoveAt(i);
+
+                        i--;
+                    }
                 }
             }
 
-            var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
+            var firstSender = first.Sender as MessageSenderUser;
+
+            var sameUser = firstSender != null && messages.All(x => x.Sender is MessageSenderUser senderUser && senderUser.UserId == firstSender.UserId);
             var dialog = new DeleteMessagesPopup(CacheService, messages.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
@@ -265,7 +277,7 @@ namespace Unigram.ViewModels.Chats
 
             if (dialog.DeleteAll && sameUser)
             {
-                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, first.SenderUserId));
+                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, firstSender.UserId));
             }
             else
             {
@@ -274,12 +286,12 @@ namespace Unigram.ViewModels.Chats
 
             if (dialog.BanUser && sameUser)
             {
-                ProtoService.Send(new SetChatMemberStatus(chat.Id, first.SenderUserId, new ChatMemberStatusBanned()));
+                ProtoService.Send(new SetChatMemberStatus(chat.Id, firstSender.UserId, new ChatMemberStatusBanned()));
             }
 
             if (dialog.ReportSpam && sameUser && chat.Type is ChatTypeSupergroup supertype)
             {
-                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, first.SenderUserId, messages.Select(x => x.Id).ToList()));
+                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, firstSender.UserId, messages.Select(x => x.Id).ToList()));
             }
         }
 
@@ -476,6 +488,11 @@ namespace Unigram.ViewModels.Chats
         }
 
         public string GetAdminTitle(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetAdminTitle(MessageSender sender)
         {
             throw new NotImplementedException();
         }

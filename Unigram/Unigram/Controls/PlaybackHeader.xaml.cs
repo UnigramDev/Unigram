@@ -185,14 +185,18 @@ namespace Unigram.Controls
 
             if (message.Content is MessageVoiceNote || message.Content is MessageVideoNote || webPage?.VoiceNote != null || webPage?.VideoNote != null)
             {
+                var title = string.Empty;
                 var date = BindConvert.Current.DateTime(message.Date);
-                var user = _cacheService.GetUser(message.SenderUserId);
-                if (user == null)
+
+                if (_cacheService.TryGetUser(message.Sender, out Telegram.Td.Api.User senderUser))
                 {
-                    return;
+                    title = senderUser.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.GetFullName();
+                }
+                else if (_cacheService.TryGetChat(message.Sender, out Chat senderChat))
+                {
+                    title = _cacheService.GetTitle(senderChat);
                 }
 
-                var title = user.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : user.GetFullName();
                 var subtitle = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
 
                 UpdateText(message.ChatId, message.Id, title, subtitle);

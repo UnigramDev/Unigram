@@ -75,12 +75,16 @@ namespace Unigram.ViewModels.Gallery
                     // TODO: ...
                 }
 
-                if (_message.IsChannelPost)
+                if (_message.Sender is MessageSenderChat senderChat)
                 {
-                    return _protoService.GetChat(_message.ChatId);
+                    return _protoService.GetChat(senderChat.ChatId);
+                }
+                else if (_message.Sender is MessageSenderUser senderUser)
+                {
+                    return _protoService.GetUser(senderUser.UserId);
                 }
 
-                return _protoService.GetUser(_message.SenderUserId);
+                return null;
             }
         }
 

@@ -155,7 +155,7 @@ namespace Unigram.Services
             var chatId = _chatId.Value;
             await _protoService.SendAsync(new OpenChat(chatId));
 
-            var response = await _protoService.SendAsync(new SearchChatMessages(chatId, "#emoji", 0, 0, 0, 100, null, 0)) as Messages;
+            var response = await _protoService.SendAsync(new SearchChatMessages(chatId, "#emoji", null, 0, 0, 100, null, 0)) as Messages;
             if (response == null)
             {
                 _protoService.Send(new CloseChat(chatId));

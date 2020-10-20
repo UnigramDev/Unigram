@@ -832,13 +832,9 @@ namespace Unigram.Controls.Messages
                 return title;
             }
 
-            if (message.SenderChatId != 0)
+            if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
             {
-                var chat = message.GetSenderChat();
-                if (chat != null)
-                {
-                    return message.ProtoService.GetTitle(chat);
-                }
+                return message.ProtoService.GetTitle(senderChat);
             }
             else if (message.IsSaved())
             {
@@ -849,8 +845,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            var user = message.GetSenderUser();
-            if (user != null)
+            if (message.ProtoService.TryGetUser(message.Sender, out User user))
             {
                 return user.GetFullName();
             }

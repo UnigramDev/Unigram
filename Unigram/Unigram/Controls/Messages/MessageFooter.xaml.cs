@@ -119,11 +119,9 @@ namespace Unigram.Controls.Messages
             //}
 
             var bot = false;
-
-            var sender = message.GetSenderUser();
-            if (sender != null && sender.Type is UserTypeBot)
+            if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
             {
-                bot = true;
+                bot = senderUser.Type is UserTypeBot;
             }
 
             EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard) ? $"{Strings.Resources.EditedMessage}\u00A0\u2009" : string.Empty;
@@ -216,10 +214,9 @@ namespace Unigram.Controls.Messages
             }
 
             var bot = false;
-            var user = message.GetSenderUser();
-            if (user != null)
+            if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
             {
-                bot = user.Type is UserTypeBot;
+                bot = senderUser.Type is UserTypeBot;
             }
 
             if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard))

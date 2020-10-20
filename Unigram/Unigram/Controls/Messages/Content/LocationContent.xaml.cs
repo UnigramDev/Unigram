@@ -54,10 +54,13 @@ namespace Unigram.Controls.Messages.Content
                     LivePanel.Visibility = Visibility.Visible;
                     PinDot.Visibility = Visibility.Collapsed;
 
-                    var user = _message.ProtoService.GetUser(message.SenderUserId);
-                    if (user != null)
+                    if (_message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                     {
-                        PinPhoto.Source = PlaceholderHelper.GetUser(message.ProtoService, user, 32);
+                        PinPhoto.Source = PlaceholderHelper.GetUser(message.ProtoService, senderUser, 32);
+                    }
+                    else if (_message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+                    {
+                        PinPhoto.Source = PlaceholderHelper.GetChat(message.ProtoService, senderChat, 32);
                     }
 
                     Title.Text = Strings.Resources.AttachLiveLocation;
@@ -91,10 +94,13 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                var user = _message.GetSenderUser();
-                if (user != null)
+                if (_message.ProtoService.TryGetUser(_message.Sender, out User senderUser))
                 {
-                    _message.Delegate.OpenLocation(location.Location, user.GetFullName());
+                    _message.Delegate.OpenLocation(location.Location, senderUser.GetFullName());
+                }
+                else if (_message.ProtoService.TryGetChat(_message.Sender, out Chat senderChat))
+                {
+                    _message.Delegate.OpenLocation(location.Location, _message.ProtoService.GetTitle(senderChat));
                 }
             }
         }

@@ -241,24 +241,20 @@ namespace Unigram.Controls.Cells
             }
 
             //if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
-            if (ShowFrom(chat, message))
+            if (ShowFrom(protoService, chat, message, out User fromUser))
             {
-                var fromUser = protoService.GetUser(message.SenderUserId);
-                if (fromUser != null)
+                if (message.IsOutgoing)
                 {
-                    if (message.IsOutgoing)
+                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser.Id) && !message.IsChannelPost)
                     {
-                        if (!(chat.Type is ChatTypePrivate priv && priv.UserId == message.SenderUserId) && !message.IsChannelPost)
-                        {
-                            builder.Append(Strings.Resources.FromYou);
-                            builder.Append(": ");
-                        }
-                    }
-                    else
-                    {
-                        builder.Append(fromUser.GetFullName());
+                        builder.Append(Strings.Resources.FromYou);
                         builder.Append(": ");
                     }
+                }
+                else
+                {
+                    builder.Append(fromUser.GetFullName());
+                    builder.Append(": ");
                 }
             }
 
@@ -654,40 +650,36 @@ namespace Unigram.Controls.Cells
             var format = _expanded ? "{0}\r\n" : "{0}: ";
             var result = string.Empty;
 
-            if (ShowFrom(chat, message))
+            if (ShowFrom(_protoService, chat, message, out User from))
             {
                 if (message.IsOutgoing)
                 {
-                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == message.SenderUserId) && !message.IsChannelPost)
+                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == from.Id) && !message.IsChannelPost)
                     {
                         result = string.Format(format, Strings.Resources.FromYou);
                     }
                 }
                 else
                 {
-                    var from = _protoService.GetUser(message.SenderUserId);
-                    if (from != null)
+                    if (!string.IsNullOrEmpty(from.FirstName))
                     {
-                        if (!string.IsNullOrEmpty(from.FirstName))
-                        {
-                            result = string.Format(format, from.FirstName.Trim());
-                        }
-                        else if (!string.IsNullOrEmpty(from.LastName))
-                        {
-                            result = string.Format(format, from.LastName.Trim());
-                        }
-                        else if (!string.IsNullOrEmpty(from.Username))
-                        {
-                            result = string.Format(format, from.Username.Trim());
-                        }
-                        else if (from.Type is UserTypeDeleted)
-                        {
-                            result = string.Format(format, Strings.Resources.HiddenName);
-                        }
-                        else
-                        {
-                            result = string.Format(format, from.Id);
-                        }
+                        result = string.Format(format, from.FirstName.Trim());
+                    }
+                    else if (!string.IsNullOrEmpty(from.LastName))
+                    {
+                        result = string.Format(format, from.LastName.Trim());
+                    }
+                    else if (!string.IsNullOrEmpty(from.Username))
+                    {
+                        result = string.Format(format, from.Username.Trim());
+                    }
+                    else if (from.Type is UserTypeDeleted)
+                    {
+                        result = string.Format(format, Strings.Resources.HiddenName);
+                    }
+                    else
+                    {
+                        result = string.Format(format, from.Id);
                     }
                 }
             }
@@ -794,28 +786,31 @@ namespace Unigram.Controls.Cells
             return result;
         }
 
-        private bool ShowFrom(Chat chat, Message message)
+        private bool ShowFrom(ICacheService cacheService, Chat chat, Message message, out User senderUser)
         {
             if (message.IsService())
             {
+                senderUser = null;
                 return false;
             }
 
             if (message.IsOutgoing)
             {
-                return true;
+                return cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
-                return true;
+                return cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                return !supergroup.IsChannel;
+                senderUser = null;
+                return !supergroup.IsChannel && cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
+            senderUser = null;
             return false;
         }
 
@@ -1525,6 +1520,14 @@ namespace Unigram.Controls.Cells
                 _delegate?.SetSelectionMode(false);
             }
         }
+
+        //protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        //{
+        //    if (_selectionMode == ListViewSelectionMode.Multiple)
+        //    {
+        //        base.OnPointerPressed(e);
+        //    }
+        //}
     }
 
     public class ChatCellAutomationPeer : ToggleButtonAutomationPeer

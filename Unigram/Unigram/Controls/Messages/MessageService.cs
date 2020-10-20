@@ -461,7 +461,7 @@ namespace Unigram.Controls.Messages
             if (singleUserId != 0)
             {
                 var whoUser = message.ProtoService.GetUser(singleUserId);
-                if (singleUserId == message.SenderUserId)
+                if (message.Sender is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
                 {
                     var chat = message.GetChat();
                     if (chat == null)
@@ -616,7 +616,7 @@ namespace Unigram.Controls.Messages
 
             var fromUser = message.GetSenderUser();
 
-            if (chatDeleteMember.UserId == message.SenderUserId)
+            if (message.Sender is MessageSenderUser senderUser && chatDeleteMember.UserId == senderUser.UserId)
             {
                 if (message.IsOutgoing)
                 {
@@ -756,24 +756,30 @@ namespace Unigram.Controls.Messages
             var game = GetGame(message);
             if (game == null)
             {
-                if (message.SenderUserId == message.ProtoService.Options.MyId)
+                if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
-                    content = string.Format(Strings.Resources.ActionYouScored, Locale.Declension("Points", gameScore.Score));
-                }
-                else
-                {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScored, Locale.Declension("Points", gameScore.Score)), "un1", message.GetSenderUser(), ref entities);
+                    if (senderUser.Id == message.ProtoService.Options.MyId)
+                    {
+                        content = string.Format(Strings.Resources.ActionYouScored, Locale.Declension("Points", gameScore.Score));
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScored, Locale.Declension("Points", gameScore.Score)), "un1", senderUser, ref entities);
+                    }
                 }
             }
             else
             {
-                if (message.SenderUserId == message.ProtoService.Options.MyId)
+                if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
-                    content = string.Format(Strings.Resources.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
-                }
-                else
-                {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScoredInGame, Locale.Declension("Points", gameScore.Score)), "un1", message.GetSenderUser(), ref entities);
+                    if (senderUser.Id == message.ProtoService.Options.MyId)
+                    {
+                        content = string.Format(Strings.Resources.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScoredInGame, Locale.Declension("Points", gameScore.Score)), "un1", senderUser, ref entities);
+                    }
                 }
 
                 content = ReplaceWithLink(content, "un2", game, ref entities);

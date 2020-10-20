@@ -56,8 +56,8 @@ namespace Unigram.ViewModels.Chats
             set { Set(ref _date, value); }
         }
 
-        private User _from;
-        public User From
+        private MessageSender _from;
+        public MessageSender From
         {
             get { return _from; }
             set { Set(ref _from, value); }
@@ -172,13 +172,27 @@ namespace Unigram.ViewModels.Chats
 
         #endregion
 
-        public async void Search(string query, User from, SearchMessagesFilter filter)
+        public async void Search(string query, MessageSender from, SearchMessagesFilter filter)
         {
+            bool FromEquals(MessageSender x, MessageSender y)
+            {
+                if (x is MessageSenderUser userX && y is MessageSenderUser userY)
+                {
+                    return userX.UserId == userY.UserId;
+                }
+                else if (x is MessageSenderChat chatX && y is MessageSenderChat chatY)
+                {
+                    return chatX.ChatId == chatY.ChatId;
+                }
+
+                return x == null && y == null;
+            }
+
             if (Dialog.Type == DialogType.EventLog)
             {
                 await Dialog.LoadEventLogSliceAsync(query);
             }
-            else if (string.Equals(_query, query) && _from?.Id == from?.Id && _filter?.GetType() == filter?.GetType() && PreviousCanExecute())
+            else if (string.Equals(_query, query) && FromEquals(_from, from) && _filter?.GetType() == filter?.GetType() && PreviousCanExecute())
             {
                 PreviousExecute();
             }
@@ -214,7 +228,7 @@ namespace Unigram.ViewModels.Chats
                     }
                 }
 
-                var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, _dialog.ThreadId, query, from?.Id ?? 0, fromMessageId, filter);
+                var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, _dialog.ThreadId, query, from, fromMessageId, filter);
                 var result = await collection.LoadMoreItemsAsync(100);
                 if (result.Count > 0)
                 {

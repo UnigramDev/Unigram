@@ -866,7 +866,7 @@ namespace Unigram.ViewModels
                 var message = $"{Strings.Resources.BotInfoTitle}{Environment.NewLine}{fullInfo.BotInfo.Description}";
                 var text = new FormattedText(message, entities);
 
-                Items.Insert(0, _messageFactory.Create(this, new Message(0, user.Id, 0, chat.Id, null, null, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(text, null), null)));
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(text, null), null)));
                 return;
             }
 
@@ -881,19 +881,19 @@ namespace Unigram.ViewModels
 
                 if (Items.Count > 0)
                 {
-                    Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.SenderChatId, previous.ChatId, null, null, previous.IsOutgoing, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.Resources.DiscussionStarted), null)));
+                    Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.Sender, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.Resources.DiscussionStarted), null)));
                 }
                 else
                 {
-                    Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.SenderChatId, previous.ChatId, null, null, previous.IsOutgoing, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.Resources.NoComments), null)));
+                    Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.Sender, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.Resources.NoComments), null)));
                 }
 
                 Items.Insert(0, previous);
-                Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.SenderChatId, previous.ChatId, null, null, previous.IsOutgoing, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.Sender, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
             }
             else if (previous != null)
             {
-                Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderUserId, previous.SenderChatId, previous.ChatId, null, null, previous.IsOutgoing, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.Sender, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
             }
         }
 
@@ -973,7 +973,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, 0, fromMessageId, -9, 10, new SearchMessagesFilterUnreadMention(), _threadId));
+                var response = await ProtoService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, null, fromMessageId, -9, 10, new SearchMessagesFilterUnreadMention(), _threadId));
                 if (response is Messages messages)
                 {
                     var stack = new List<long>();
@@ -1186,7 +1186,7 @@ namespace Unigram.ViewModels
                         {
                             if (index > 0)
                             {
-                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.SenderChatId, target.ChatId, null, null, target.IsOutgoing, false, false, true, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null)));
+                                replied.Insert(index, _messageFactory.Create(this, new Message(0, target.Sender, target.ChatId, null, null, target.IsOutgoing, false, false, false, true, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null)));
                             }
                             else if (maxId == lastReadMessageId)
                             {
@@ -1282,7 +1282,7 @@ namespace Unigram.ViewModels
                     var target = replied.FirstOrDefault();
                     if (target != null)
                     {
-                        replied.Insert(0, _messageFactory.Create(this, new Message(0, target.SenderUserId, target.SenderChatId, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, true, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                        replied.Insert(0, _messageFactory.Create(this, new Message(0, target.Sender, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, true, false, false, false, target.IsChannelPost, false, target.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
                     }
 
                     Items.ReplaceWith(replied);
@@ -1635,10 +1635,12 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var user = target.GetSenderUser();
-                        if (user != null && user.ProfilePhoto != null)
+                        if (CacheService.TryGetUser(target.Sender, out User senderUser) && senderUser.ProfilePhoto != null)
                         {
-                            _photosMap[user.ProfilePhoto.Small.Id].Add(target);
+                            if (senderUser.ProfilePhoto != null)
+                            {
+                                _photosMap[senderUser.ProfilePhoto.Small.Id].Add(target);
+                            }
                         }
                     }
                 }
@@ -2022,15 +2024,6 @@ namespace Unigram.ViewModels
                 await HandlePackageAsync(package);
             }
         }
-
-        //public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
-        //{
-        //    if (suspending)
-        //    {
-        //        await OnNavigatingFromAsync(new NavigatingEventArgs(null));
-        //        Items.Clear();
-        //    }
-        //}
 
         public override void OnNavigatingFrom(NavigatingEventArgs args)
         {
@@ -3435,7 +3428,7 @@ namespace Unigram.ViewModels
                 var previousDate = Utils.UnixTimestampToDateTime(GetMessageDate(previous));
                 if (previousDate.Date != itemDate.Date)
                 {
-                    var service = new MessageViewModel(previous.ProtoService, previous.PlaybackService, previous.Delegate, new Message(0, previous.SenderUserId, previous.SenderChatId, previous.ChatId, null, previous.SchedulingState, previous.IsOutgoing, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null));
+                    var service = new MessageViewModel(previous.ProtoService, previous.PlaybackService, previous.Delegate, new Message(0, previous.Sender, previous.ChatId, null, previous.SchedulingState, previous.IsOutgoing, false, false, false, true, false, false, false, previous.IsChannelPost, false, previous.Date, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null));
                     return service;
                 }
             }
@@ -3591,12 +3584,16 @@ namespace Unigram.ViewModels
                 return false;
             }
 
-            if (message1.SenderUserId == 0 || message2.SenderUserId == 0)
+            if (message1.Sender is MessageSenderChat chat1 && message2.Sender is MessageSenderChat chat2)
             {
-                return message1.SenderChatId == message2.SenderChatId;
+                return chat1.ChatId == chat2.ChatId;
+            }
+            else if (message1.Sender is MessageSenderUser user1 && message2.Sender is MessageSenderUser user2)
+            {
+                return user1.UserId == user2.UserId;
             }
 
-            return message1.SenderUserId == message2.SenderUserId;
+            return false;
         }
     }
 

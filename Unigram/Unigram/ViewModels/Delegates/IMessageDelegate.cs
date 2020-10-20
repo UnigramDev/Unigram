@@ -44,5 +44,6 @@ namespace Unigram.ViewModels.Delegates
 
         bool IsAdmin(int userId);
         string GetAdminTitle(int userId);
+        string GetAdminTitle(MessageSender sender);
     }
 }

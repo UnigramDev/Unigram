@@ -138,7 +138,9 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
+            var firstSender = first.Sender as MessageSenderUser;
+
+            var sameUser = firstSender != null && messages.All(x => x.Sender is MessageSenderUser senderUser && senderUser.UserId == firstSender.UserId);
             var dialog = new DeleteMessagesPopup(CacheService, items.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
@@ -151,7 +153,7 @@ namespace Unigram.ViewModels
 
             if (dialog.DeleteAll && sameUser)
             {
-                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, first.SenderUserId));
+                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, firstSender.UserId));
             }
             else
             {
@@ -160,12 +162,12 @@ namespace Unigram.ViewModels
 
             if (dialog.BanUser && sameUser)
             {
-                ProtoService.Send(new SetChatMemberStatus(chat.Id, first.SenderUserId, new ChatMemberStatusBanned()));
+                ProtoService.Send(new SetChatMemberStatus(chat.Id, firstSender.UserId, new ChatMemberStatusBanned()));
             }
 
             if (dialog.ReportSpam && sameUser && chat.Type is ChatTypeSupergroup supertype)
             {
-                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, first.SenderUserId, messages.Select(x => x.Id).ToList()));
+                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, firstSender.UserId, messages.Select(x => x.Id).ToList()));
             }
         }
 
@@ -287,17 +289,13 @@ namespace Unigram.ViewModels
                     var chat = message.GetChat();
                     var title = chat.Title;
 
-                    if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+                    if (CacheService.TryGetUser(message.Sender, out Telegram.Td.Api.User senderUser))
                     {
-                        title = ProtoService.GetTitle(chat);
+                        title = senderUser.GetFullName();
                     }
-                    else
+                    else if (CacheService.TryGetChat(message.Sender, out Chat senderChat))
                     {
-                        var sender = message.GetSenderUser();
-                        if (sender != null)
-                        {
-                            title = sender.GetFullName();
-                        }
+                        title = ProtoService.GetTitle(senderChat);
                     }
 
                     var date = BindConvert.Current.DateTime(message.Date);
@@ -329,10 +327,13 @@ namespace Unigram.ViewModels
 
                     if (message.ReplyToMessage != null)
                     {
-                        var replySender = message.ReplyToMessage.GetSenderUser();
-                        if (replySender != null)
+                        if (CacheService.TryGetUser(message.ReplyToMessage.Sender, out Telegram.Td.Api.User replyUser))
                         {
-                            builder.AppendLine($"[In reply to {replySender.GetFullName()}]");
+                            builder.AppendLine($"[In reply to {replyUser.GetFullName()}]");
+                        }
+                        else if (CacheService.TryGetChat(message.ReplyToMessage.Sender, out Chat replyChat))
+                        {
+                            builder.AppendLine($"[In reply to {replyChat.Title}]");
                         }
                     }
 
@@ -464,7 +465,9 @@ namespace Unigram.ViewModels
             }
 
             var myId = CacheService.Options.MyId;
-            var messages = SelectedItems.Where(x => x.SenderUserId != myId).OrderBy(x => x.Id).Select(x => x.Id).ToList();
+            var messages = SelectedItems
+                .Where(x => x.Sender is MessageSenderChat || (x.Sender is MessageSenderUser senderUser && senderUser.UserId != myId))
+                .OrderBy(x => x.Id).Select(x => x.Id).ToList();
             if (messages.Count < 1)
             {
                 return;
@@ -529,7 +532,8 @@ namespace Unigram.ViewModels
             }
 
             var myId = CacheService.Options.MyId;
-            return chat.CanBeReported && SelectedItems.Count > 0 && SelectedItems.All(x => x.SenderUserId != myId);
+            return chat.CanBeReported && SelectedItems.Count > 0
+                && SelectedItems.All(x => x.Sender is MessageSenderChat || (x.Sender is MessageSenderUser senderUser && senderUser.UserId != myId));
         }
 
         #endregion
@@ -1024,7 +1028,7 @@ namespace Unigram.ViewModels
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeSwitchInline switchInline)
                 {
-                    var bot = GetBot(message);
+                    var bot = message.GetViaBotUser();
                     if (bot == null)
                     {
                         return;
@@ -1062,10 +1066,10 @@ namespace Unigram.ViewModels
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeCallback callback)
                 {
-                    var bot = GetBot(message);
+                    var bot = message.GetViaBotUser();
                     if (bot != null)
                     {
-                        InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, 0, null, null, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
+                        InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
                     }
 
                     var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
@@ -1086,7 +1090,7 @@ namespace Unigram.ViewModels
                                     return;
                                 }
 
-                                InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, 0, null, null, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
+                                InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
                             }
                         }
                         else if (!string.IsNullOrEmpty(answer.Url))

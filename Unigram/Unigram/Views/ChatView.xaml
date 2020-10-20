@@ -647,8 +647,6 @@
 
             <StackPanel x:Name="DateHeaderRelative" Grid.Row="2">
                 <Border x:Name="DateHeaderPanel"
-                        common:VisualUtilities.IsScaleEnabled="False"
-                        common:VisualUtilities.IsVisible="False"
                         Visibility="Collapsed"
                         HorizontalAlignment="Center"
                         SizeChanged="DateHeaderPanel_SizeChanged">

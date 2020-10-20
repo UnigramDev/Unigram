@@ -240,7 +240,7 @@ namespace Unigram.Controls.Chats
         {
             if (e.ClickedItem is User from)
             {
-                SetState(ChatSearchState.TextByMember, from);
+                SetState(ChatSearchState.TextByMember, new MessageSenderUser(from.Id));
             }
             else if (e.ClickedItem is ChatSearchMediaFilter filter)
             {
@@ -248,7 +248,7 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private void SetState(ChatSearchState state, User from = null, ChatSearchMediaFilter filter = null)
+        private void SetState(ChatSearchState state, MessageSender from = null, ChatSearchMediaFilter filter = null)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -260,11 +260,22 @@ namespace Unigram.Controls.Chats
             {
                 Field.Filter = null;
                 Field.From = from;
+
+                if (viewModel.CacheService.TryGetUser(from, out User user))
+                {
+                    Field.Header = user.GetFullName();
+                }
+                else if (viewModel.CacheService.TryGetChat(from, out Chat chat))
+                {
+                    Field.Header = chat.Title;
+                }
             }
             else
             {
                 Field.From = null;
                 Field.Filter = filter;
+
+                Field.Header = filter.Text;
             }
 
             Field.Text = string.Empty;

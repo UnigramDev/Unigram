@@ -18,7 +18,6 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -837,29 +836,13 @@ namespace Unigram.Views
                             photo.Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
                         }
                     }
-                    else if (message.SenderUserId != 0)
+                    else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                     {
-                        var user = message.GetSenderUser();
-                        if (user != null)
-                        {
-                            photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 30);
-                        }
+                        photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, senderUser, 30);
                     }
-                    else if (message.SenderChatId != 0)
+                    else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
                     {
-                        var chat = message.GetSenderChat();
-                        if (chat != null)
-                        {
-                            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
-                        }
-                    }
-                    else
-                    {
-                        var chat = message.GetChat();
-                        if (chat != null)
-                        {
-                            photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 30);
-                        }
+                        photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, senderChat, 30);
                     }
                 }
 
