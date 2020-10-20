@@ -17,6 +17,6 @@
         <ToolTipService.ToolTip>
             <ToolTip Opened="ToolTip_Opened"/>
         </ToolTipService.ToolTip>
-        <Run x:Name="RepliesGlyph" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/><Run x:Name="RepliesLabel"/><Run x:Name="ViewsGlyph" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/><Run x:Name="ViewsLabel" FontFamily="{ThemeResource EmojiThemeFontFamily}"/><Run x:Name="EditedLabel" FontStyle="Italic"/><Run x:Name="DateLabel"/><Run x:Name="StateLabel" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+        <Run x:Name="PinnedGlyph" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/><Run x:Name="RepliesGlyph" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/><Run x:Name="RepliesLabel"/><Run x:Name="ViewsGlyph" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/><Run x:Name="ViewsLabel" FontFamily="{ThemeResource EmojiThemeFontFamily}"/><Run x:Name="EditedLabel" FontStyle="Italic"/><Run x:Name="DateLabel"/><Run x:Name="StateLabel" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
     </TextBlock>
 </ContentPresenter>

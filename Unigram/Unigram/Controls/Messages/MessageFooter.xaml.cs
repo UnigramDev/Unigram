@@ -32,28 +32,14 @@ namespace Unigram.Controls.Messages
         {
             _mesage = message;
 
-            ConvertState(message);
-            ConvertDate(message);
-            ConvertEdited(message);
+            UpdateMessageState(message);
+            UpdateMessageDate(message);
+            UpdateMessageEdited(message);
+            UpdateMessagePinned(message);
             //ConvertInteractionInfo(message);
         }
 
-        public void UpdateMessageState(MessageViewModel message)
-        {
-            ConvertState(message);
-        }
-
-        public void UpdateMessageEdited(MessageViewModel message)
-        {
-            ConvertEdited(message);
-        }
-
-        public void UpdateMessageInteractionInfo(MessageViewModel message)
-        {
-            ConvertInteractionInfo(message);
-        }
-
-        public void ConvertDate(MessageViewModel message)
+        private void UpdateMessageDate(MessageViewModel message)
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
@@ -75,7 +61,7 @@ namespace Unigram.Controls.Messages
             StateLabel.Text = outgoing ? "\u00A0\u00A0\uE601" : string.Empty;
         }
 
-        public void ConvertInteractionInfo(MessageViewModel message)
+        public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
             if (message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 && !message.IsChannelPost)
             {
@@ -109,7 +95,7 @@ namespace Unigram.Controls.Messages
             ViewsLabel.Text = views;
         }
 
-        private void ConvertEdited(MessageViewModel message)
+        public void UpdateMessageEdited(MessageViewModel message)
         {
             //var message = ViewModel;
             //var bot = false;
@@ -127,7 +113,19 @@ namespace Unigram.Controls.Messages
             EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard) ? $"{Strings.Resources.EditedMessage}\u00A0\u2009" : string.Empty;
         }
 
-        private void ConvertState(MessageViewModel message)
+        private void UpdateMessagePinned(MessageViewModel message)
+        {
+            if (message.IsPinned)
+            {
+                PinnedGlyph.Text = "\uE93F\u00A0\u00A0\u00A0";
+            }
+            else
+            {
+                PinnedGlyph.Text = string.Empty;
+            }
+        }
+
+        public void UpdateMessageState(MessageViewModel message)
         {
             if (message.IsOutgoing && !message.IsChannelPost && !message.IsSaved())
             {
