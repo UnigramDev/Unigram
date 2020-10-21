@@ -1,16 +1,12 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Numerics;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Brushes;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
-using Windows.Devices.Enumeration;
-using Windows.Devices.Sensors;
-using Windows.Graphics.Display;
 using Windows.Storage.AccessCache;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -28,12 +24,9 @@ namespace Unigram.Views
     {
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
 
-        private Visual _motionVisual;
         private SpriteVisual _blurVisual;
         private CompositionEffectBrush _blurBrush;
         private Compositor _compositor;
-
-        private BackgroundParallaxEffect _parallaxEffect;
 
         public BackgroundPage()
         {
@@ -45,14 +38,12 @@ namespace Unigram.Views
 
             //Presenter.Update(ViewModel.SessionId, ViewModel.Settings, ViewModel.Aggregator);
 
-            InitializeMotion();
             InitializeBlur();
         }
 
         private void InitializeBlur()
         {
-            _motionVisual = ElementCompositionPreview.GetElementVisual(Presenter);
-            _compositor = _motionVisual.Compositor;
+            _compositor = Window.Current.Compositor;
 
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
 
@@ -77,13 +68,6 @@ namespace Unigram.Views
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
         }
 
-        private async void InitializeMotion()
-        {
-            _parallaxEffect = new BackgroundParallaxEffect();
-
-            Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
-        }
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ViewModel.Aggregator.Subscribe(this);
@@ -96,7 +80,6 @@ namespace Unigram.Views
 
         private void BlurPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _motionVisual.CenterPoint = new Vector3((float)ActualWidth / 2, (float)ActualHeight / 2, 0);
             _blurVisual.Size = e.NewSize.ToVector2();
         }
 
@@ -115,30 +98,6 @@ namespace Unigram.Views
             }
 
             _blurBrush.Properties.StartAnimation("Blur.BlurAmount", animation);
-        }
-
-        private async void Motion_Click(object sender, RoutedEventArgs e)
-        {
-            var animation = _compositor.CreateVector3KeyFrameAnimation();
-            animation.Duration = TimeSpan.FromMilliseconds(300);
-
-            if (sender is CheckBox check && check.IsChecked == true)
-            {
-                animation.InsertKeyFrame(1, new Vector3(_parallaxEffect.getScale(ActualWidth, ActualHeight)));
-                await _parallaxEffect.RegisterAsync(OnParallaxChanged);
-            }
-            else
-            {
-                animation.InsertKeyFrame(1, new Vector3(1));
-                await _parallaxEffect.UnregisterAsync(OnParallaxChanged);
-            }
-
-            _motionVisual.StartAnimation("Scale", animation);
-        }
-
-        private void OnParallaxChanged(object sender, (int x, int y) e)
-        {
-            _motionVisual.Offset = new Vector3(e.x, e.y, 0);
         }
 
         private void Color_Click(object sender, RoutedEventArgs e)
@@ -247,28 +206,22 @@ namespace Unigram.Views
             if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Document != null)
             {
                 Blur.Visibility = Visibility.Visible;
-                Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
                 Blur.Visibility = Visibility.Collapsed;
                 ViewModel.IsBlurEnabled = false;
-
-                Motion.Visibility = Visibility.Collapsed;
-                ViewModel.IsMotionEnabled = false;
             }
 
             if (wallpaper.Type is BackgroundTypeFill || wallpaper.Type is BackgroundTypePattern)
             {
                 Blur.Visibility = Visibility.Collapsed;
-                Motion.Visibility = (wallpaper.Type is BackgroundTypePattern && await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
                 Pattern.Visibility = Visibility.Visible;
                 Color.Visibility = Visibility.Visible;
             }
             else
             {
                 Blur.Visibility = Visibility.Visible;
-                Motion.Visibility = (await _parallaxEffect.IsSupportedAsync()) ? Visibility.Visible : Visibility.Collapsed;
                 Pattern.Visibility = Visibility.Collapsed;
                 Color.Visibility = Visibility.Collapsed;
             }
@@ -488,167 +441,6 @@ namespace Unigram.Views
                 RadioColor2.IsChecked = true;
                 PickerColor.Color = args.NewColor;
             }
-        }
-    }
-
-    public class BackgroundParallaxEffect
-    {
-        /** Earth's gravity in SI units (m/s^2) */
-        public const float GRAVITY_EARTH = 9.80665f;
-
-        private Accelerometer _accelerometer;
-        private DisposableMutex _registerMutex;
-        private bool _loaded;
-
-        private float[] _rollBuffer = new float[3];
-        private float[] _pitchBuffer = new float[3];
-        private int bufferOffset;
-
-        public BackgroundParallaxEffect()
-        {
-            //_accelerometer = Accelerometer.GetDefault();
-            _registerMutex = new DisposableMutex();
-        }
-
-        private void Initialize()
-        {
-            if (_accelerometer != null)
-            {
-                // Establish the report interval
-                uint minReportInterval = _accelerometer.MinimumReportInterval;
-                uint reportInterval = minReportInterval > 16 ? minReportInterval : 16;
-                _accelerometer.ReportInterval = reportInterval;
-            }
-        }
-
-        public async Task<bool> IsSupportedAsync()
-        {
-            using (await _registerMutex.WaitAsync())
-            {
-                if (_accelerometer == null && !_loaded)
-                {
-                    _loaded = true;
-                    //_accelerometer = await Task.Run(() => Accelerometer.GetDefault());
-
-                    var devices = await DeviceInformation.FindAllAsync(Accelerometer.GetDeviceSelector(AccelerometerReadingType.Standard));
-                    if (devices.Count > 0)
-                    {
-                        _accelerometer = await Accelerometer.FromIdAsync(devices[0].Id);
-                    }
-                }
-
-                return _accelerometer != null;
-            }
-        }
-
-        private void ReadingChanged(Accelerometer sender, AccelerometerReadingChangedEventArgs args)
-        {
-            //int rotation = wm.getDefaultDisplay().getRotation();
-            var rotation = DisplayOrientations.Portrait; //DisplayInformation.GetForCurrentView().CurrentOrientation;
-            double x = args.Reading.AccelerationX / GRAVITY_EARTH;
-            double y = args.Reading.AccelerationY / GRAVITY_EARTH;
-            double z = args.Reading.AccelerationZ / GRAVITY_EARTH;
-
-            float pitch = (float)(Math.Atan2(x, Math.Sqrt(y * y + z * z)) / Math.PI * 2.0);
-            float roll = (float)(Math.Atan2(y, Math.Sqrt(x * x + z * z)) / Math.PI * 2.0);
-
-            switch (rotation)
-            {
-                case DisplayOrientations.Portrait:
-                    break;
-                case DisplayOrientations.Landscape:
-                    {
-                        float tmp = pitch;
-                        pitch = roll;
-                        roll = tmp;
-                        break;
-                    }
-                case DisplayOrientations.LandscapeFlipped:
-                    roll = -roll;
-                    pitch = -pitch;
-                    break;
-                case DisplayOrientations.PortraitFlipped:
-                    {
-                        float tmp = -pitch;
-                        pitch = roll;
-                        roll = tmp;
-                        break;
-                    }
-            }
-
-            _rollBuffer[bufferOffset] = roll;
-            _pitchBuffer[bufferOffset] = pitch;
-            bufferOffset = (bufferOffset + 1) % _rollBuffer.Length;
-            roll = pitch = 0;
-            for (int i = 0; i < _rollBuffer.Length; i++)
-            {
-                roll += _rollBuffer[i];
-                pitch += _pitchBuffer[i];
-            }
-            roll /= _rollBuffer.Length;
-            pitch /= _rollBuffer.Length;
-            if (roll > 1f)
-            {
-                roll = 2f - roll;
-            }
-            else if (roll < -1f)
-            {
-                roll = -2f - roll;
-            }
-            int offsetX = (int)Math.Round(pitch * 16);
-            int offsetY = (int)Math.Round(roll * 16);
-
-            //if (callback != null)
-            //    callback.onOffsetsChanged(offsetX, offsetY);
-
-            _valueChanged?.Invoke(this, (offsetX, offsetY));
-        }
-
-        private event EventHandler<(int, int)> _valueChanged;
-
-        public async Task RegisterAsync(EventHandler<(int, int)> handler)
-        {
-            using (await _registerMutex.WaitAsync())
-            {
-                if (_accelerometer == null && !_loaded)
-                {
-                    _loaded = true;
-                    //_accelerometer = await Task.Run(() => Accelerometer.GetDefault());
-
-                    var devices = await DeviceInformation.FindAllAsync(Accelerometer.GetDeviceSelector(AccelerometerReadingType.Standard));
-                    if (devices.Count > 0)
-                    {
-                        _accelerometer = await Accelerometer.FromIdAsync(devices[0].Id);
-                    }
-                }
-
-                if (_accelerometer == null)
-                {
-                    return;
-                }
-
-                _valueChanged += handler;
-                _accelerometer.ReadingChanged += ReadingChanged;
-            }
-        }
-
-        public async Task UnregisterAsync(EventHandler<(int, int)> handler)
-        {
-            using (await _registerMutex.WaitAsync())
-            {
-                if (_accelerometer != null)
-                {
-                    _accelerometer.ReadingChanged -= ReadingChanged;
-                }
-
-                _valueChanged -= handler;
-            }
-        }
-
-        public float getScale(double boundsWidth, double boundsHeight)
-        {
-            int offset = 16;
-            return (float)Math.Max((boundsWidth + offset * 2) / boundsWidth, (boundsHeight + offset * 2) / boundsHeight);
         }
     }
 }

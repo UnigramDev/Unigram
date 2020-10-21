@@ -84,21 +84,18 @@ namespace Unigram.ViewModels
                 fill = typeFill.Fill;
                 Intensity = 100;
                 IsBlurEnabled = false;
-                IsMotionEnabled = false;
             }
             else if (background.Type is BackgroundTypePattern typePattern)
             {
                 fill = typePattern.Fill;
                 Intensity = typePattern.Intensity;
                 IsBlurEnabled = false;
-                IsMotionEnabled = typePattern.IsMoving;
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
             {
                 fill = null;
                 Intensity = 100;
                 IsBlurEnabled = typeWallpaper.IsBlurred;
-                IsMotionEnabled = typeWallpaper.IsMoving;
             }
 
             if (fill is BackgroundFillSolid fillSolid)
@@ -157,13 +154,6 @@ namespace Unigram.ViewModels
         {
             get { return _isBlurEnabled; }
             set { Set(ref _isBlurEnabled, value); }
-        }
-
-        private bool _isMotionEnabled;
-        public bool IsMotionEnabled
-        {
-            get { return _isMotionEnabled; }
-            set { Set(ref _isMotionEnabled, value); }
         }
 
         private BackgroundColor _color1;
@@ -329,7 +319,7 @@ namespace Unigram.ViewModels
                 var item = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
                 var generated = await item.ToGeneratedAsync(ConversionType.Copy);
 
-                task = ProtoService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled), Settings.Appearance.IsDarkTheme()));
+                task = ProtoService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), Settings.Appearance.IsDarkTheme()));
             }
             else
             {
@@ -340,11 +330,11 @@ namespace Unigram.ViewModels
                 }
                 else if (wallpaper.Type is BackgroundTypePattern)
                 {
-                    type = new BackgroundTypePattern(GetFill(), _intensity, _isMotionEnabled);
+                    type = new BackgroundTypePattern(GetFill(), _intensity, false);
                 }
                 else if (wallpaper.Type is BackgroundTypeWallpaper)
                 {
-                    type = new BackgroundTypeWallpaper(_isBlurEnabled, _isMotionEnabled);
+                    type = new BackgroundTypeWallpaper(_isBlurEnabled, false);
                 }
 
                 if (type == null)
