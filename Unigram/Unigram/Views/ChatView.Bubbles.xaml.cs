@@ -96,7 +96,7 @@ namespace Unigram.Views
                 {
                     messages.AddRange(album.Messages.Keys);
                 }
-                else if (message.SendingState is MessageSendingStatePending == false)
+                else
                 {
                     messages.Add(message.Id);
                     animations.Add(message);
@@ -533,7 +533,7 @@ namespace Unigram.Views
                 if (panel is Grid final)
                 {
                     final.Tag = message;
-                    news[message.Id] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame, Clip = target is VideoNote };
+                    news[message.GetHashCode()] = new MediaPlayerItem { File = animation, Container = final, Watermark = message.Content is MessageGame, Clip = target is VideoNote };
                 }
             }
 
@@ -662,7 +662,7 @@ namespace Unigram.Views
                 if (lottie != null)
                 {
                     lottie.Tag = message;
-                    news[message.Id] = new LottieViewItem { Player = lottie };
+                    news[message.GetHashCode()] = new LottieViewItem { Player = lottie };
                 }
             }
 
