@@ -37,6 +37,7 @@
                     <controls:HeaderedControl
                         Header="{CustomResource Filters}">
                         <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.Items}"
                             ElementPrepared="Items_ElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
@@ -58,6 +59,7 @@
                         Header="{CustomResource FilterRecommended}"
                         Visibility="{x:Bind ViewModel.Recommended.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.Recommended}"
                             ElementPrepared="Recommended_ElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>

@@ -63,6 +63,7 @@
                             Glyph="&#xE8FA;"/>
 
                         <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.Items}"
                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>

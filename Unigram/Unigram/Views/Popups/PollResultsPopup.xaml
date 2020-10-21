@@ -35,11 +35,16 @@
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <microsoft:ItemsRepeaterScrollHost>
             <ScrollViewer>
-                <microsoft:ItemsRepeater x:Name="Repeater" ElementPrepared="OnElementPrepared" Margin="0,0,0,16">
+                <microsoft:ItemsRepeater
+                    x:Name="Repeater"
+                    Layout="{StaticResource ThreadStackLayout}"
+                    ElementPrepared="OnElementPrepared"
+                    Margin="0,0,0,16">
                     <microsoft:ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="local:PollResultViewModel">
                             <controls:HeaderedControl Style="{StaticResource FooteredControlStyle}">
                                 <microsoft:ItemsRepeater
+                                    Layout="{StaticResource ThreadStackLayout}"
                                     ItemsSource="{x:Bind Items}"
                                     ElementPrepared="OnElementPrepared">
                                     <microsoft:ItemsRepeater.ItemTemplate>

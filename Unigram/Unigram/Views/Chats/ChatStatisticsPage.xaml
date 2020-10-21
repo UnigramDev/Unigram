@@ -480,7 +480,9 @@
                         Footer="{x:Bind ConvertPeriod(ViewModel.Period.StartDate, ViewModel.Period.EndDate), Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.Interactions.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource FooteredControlStyle}">
-                        <muxc:ItemsRepeater ItemsSource="{x:Bind ViewModel.Interactions}">
+                        <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
+                            ItemsSource="{x:Bind ViewModel.Interactions}">
 
                         </muxc:ItemsRepeater>
                     </controls:HeaderedControl>
@@ -491,6 +493,7 @@
                         Visibility="{x:Bind ViewModel.TopSenders.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource FooteredControlStyle}">
                         <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.TopSenders}"
                             ItemTemplate="{StaticResource UserTemplate}"
                             ElementPrepared="OnElementPrepared"/>
@@ -508,6 +511,7 @@
                         Visibility="{x:Bind ViewModel.TopAdministrators.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource FooteredControlStyle}">
                         <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.TopAdministrators}"
                             ItemTemplate="{StaticResource UserTemplate}"
                             ElementPrepared="OnElementPrepared"/>
@@ -519,6 +523,7 @@
                         Visibility="{x:Bind ViewModel.TopInviters.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource FooteredControlStyle}">
                         <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.TopInviters}"
                             ItemTemplate="{StaticResource UserTemplate}"
                             ElementPrepared="OnElementPrepared"/>
