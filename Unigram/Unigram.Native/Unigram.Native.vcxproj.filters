@@ -209,9 +209,6 @@
     <ClInclude Include="WebP\WebPImage.h">
       <Filter>WebP</Filter>
     </ClInclude>
-    <ClInclude Include="Helpers\MediaFoundationHelper.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="Helpers\MathHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>

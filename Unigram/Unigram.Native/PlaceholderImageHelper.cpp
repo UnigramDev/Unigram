@@ -251,7 +251,7 @@ HRESULT PlaceholderImageHelper::InternalDrawSvg(String^ path, _In_ Color foregro
 
 
 			ReturnIfFailed(result, sink->Close());
-			m_d2dContext->DrawGeometry(geometry.Get(), blackBrush.Get(), shape->strokeWidth);
+			m_d2dContext->DrawGeometry(geometry.Get(), blackBrush.Get(), shape->strokeWidth, strokeStyle.Get());
 		}
 	}
 
@@ -510,7 +510,7 @@ HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8>^ hash, int 
 	else
 	{
 		int bitPointer = 0;
-		float rectSize = (float)std::floor(std::min(192, 192) / 12.0f);
+		float rectSize = (float)std::floor(std::min(width, height) / 12.0f);
 		float xOffset = std::max(0.0f, (width - rectSize * 12) / 2);
 		float yOffset = std::max(0.0f, (height - rectSize * 12) / 2);
 		for (int iy = 0; iy < 12; iy++)
