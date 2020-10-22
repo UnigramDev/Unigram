@@ -69,7 +69,7 @@ namespace Unigram.Controls.Messages.Content
             var album = _message.Content as MessageAlbum;
             if (album == null || album.Messages.Count == 1)
             {
-                return base.MeasureOverride(finalSize);
+                return base.ArrangeOverride(finalSize);
             }
             else if (!album.IsMedia)
             {
@@ -136,7 +136,7 @@ namespace Unigram.Controls.Messages.Content
 
             foreach (var pos in album.Messages)
             {
-                Grid element = null;
+                Grid element;
                 if (pos.Content is MessagePhoto)
                 {
                     element = new PhotoContent(pos);
@@ -176,7 +176,7 @@ namespace Unigram.Controls.Messages.Content
                     return;
                 }
 
-                element.Margin = new Thickness(0, 0, 0, 8);
+                element.BorderThickness = new Thickness(0, 0, 0, 8);
 
                 var caption = pos.Content?.GetCaption();
                 if (string.IsNullOrEmpty(caption?.Text))
