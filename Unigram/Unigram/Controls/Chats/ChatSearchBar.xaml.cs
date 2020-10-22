@@ -275,7 +275,7 @@ namespace Unigram.Controls.Chats
                 Field.From = null;
                 Field.Filter = filter;
 
-                Field.Header = filter.Text;
+                Field.Header = filter?.Text;
             }
 
             Field.Text = string.Empty;
