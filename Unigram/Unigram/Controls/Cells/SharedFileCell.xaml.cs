@@ -37,17 +37,24 @@ namespace Unigram.Controls.Cells
 
             Ellipse.Background = UpdateEllipseBrush(data.FileName);
 
-            if (_protoService.TryGetUser(message.Sender, out User user))
+            if (string.IsNullOrEmpty(data.FileName))
             {
-                Title.Text = user.GetFullName();
-            }
-            else if (_protoService.TryGetChat(message.Sender, out Chat chat))
-            {
-                Title.Text = chat.Title;
+                if (_protoService.TryGetUser(message.Sender, out User user))
+                {
+                    Title.Text = user.GetFullName();
+                }
+                else if (_protoService.TryGetChat(message.Sender, out Chat chat))
+                {
+                    Title.Text = chat.Title;
+                }
+                else
+                {
+                    Title.Text = string.Empty;
+                }
             }
             else
             {
-                Title.Text = string.Empty;
+                Title.Text = data.FileName;
             }
 
             UpdateFile(message, data.File);

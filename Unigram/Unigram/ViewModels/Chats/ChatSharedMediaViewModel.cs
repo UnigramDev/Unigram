@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -16,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {
-    public class ChatSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
+    public class ChatSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -34,8 +35,6 @@ namespace Unigram.ViewModels.Chats
             MessageDeleteCommand = new RelayCommand<Message>(MessageDeleteExecute);
             MessageForwardCommand = new RelayCommand<Message>(MessageForwardExecute);
             MessageSelectCommand = new RelayCommand<Message>(MessageSelectExecute);
-
-            Aggregator.Subscribe(this);
         }
 
         public IPlaybackService PlaybackService => _playbackService;
@@ -66,12 +65,49 @@ namespace Unigram.ViewModels.Chats
             RaisePropertyChanged(() => Music);
             RaisePropertyChanged(() => Voice);
 
+            Aggregator.Subscribe(this);
+            return Task.CompletedTask;
+        }
+
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
         }
 
         public void Handle(UpdateFile update)
         {
             BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
+        }
+
+        public void Handle(UpdateDeleteMessages update)
+        {
+            if (update.ChatId == _chat?.Id && !update.FromCache)
+            {
+                var table = update.MessageIds.ToImmutableHashSet();
+
+                BeginOnUIThread(() =>
+                {
+                    UpdateDeleteMessages(Media, table);
+                    UpdateDeleteMessages(Files, table);
+                    UpdateDeleteMessages(Links, table);
+                    UpdateDeleteMessages(Music, table);
+                    UpdateDeleteMessages(Voice, table);
+                });
+            }
+        }
+
+        private void UpdateDeleteMessages(IList<Message> target, ImmutableHashSet<long> table)
+        {
+            for (int i = 0; i < target.Count; i++)
+            {
+                var message = target[i];
+                if (table.Contains(message.Id))
+                {
+                    target.RemoveAt(i);
+                    i--;
+                }
+            }
         }
 
         private Chat _chat;
