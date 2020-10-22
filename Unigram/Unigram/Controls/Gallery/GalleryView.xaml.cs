@@ -230,28 +230,30 @@ namespace Unigram.Controls.Gallery
 
         private async void OnSourceChanged()
         {
+            var source = _mediaPlayer == null || _mediaPlayer.Source == null;
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Transport.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
+                Transport.Visibility = source ? Visibility.Collapsed : Visibility.Visible;
                 //Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
                 //Caption.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
-                Element0.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
-                Element1.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
-                Element2.IsHitTestVisible = _mediaPlayer == null || _mediaPlayer.Source == null;
-            });
+                Element0.IsHitTestVisible = source;
+                Element1.IsHitTestVisible = source;
+                Element2.IsHitTestVisible = source;
 
-            if (_request != null && (_mediaPlayer == null || _mediaPlayer.Source == null))
-            {
-                _request.RequestRelease();
-                _request = null;
-            }
+                if (_request != null && source)
+                {
+                    _request.RequestRelease();
+                    _request = null;
+                }
+            });
         }
 
         private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
+            var state = sender.PlaybackState;
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                switch (sender.PlaybackState)
+                switch (state)
                 {
                     case MediaPlaybackState.Opening:
                     case MediaPlaybackState.Buffering:
