@@ -155,6 +155,12 @@ namespace Unigram.ViewModels.SignIn
 
             foreach (var session in _lifetimeService.Items)
             {
+                // We don't want to check other accounts if current one is test
+                if (Settings.UseTestDC)
+                {
+                    continue;
+                }
+
                 var user = session.ProtoService.GetUser(session.UserId);
                 if (user == null)
                 {
