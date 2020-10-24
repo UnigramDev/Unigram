@@ -36,7 +36,7 @@
             </Paragraph>
         </RichTextBlock>
 
-        <Border Width="48" Height="48" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.Column="1">
+        <Border Width="48" Height="48" CornerRadius="2" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.Column="1">
             <Image x:Name="Texture" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
 
