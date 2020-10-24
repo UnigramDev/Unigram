@@ -5267,6 +5267,9 @@ Note that they can still join via the group's invite link as long as they are no
   <data name="HideOnTop" xml:space="preserve">
     <value>Hide</value>
   </data>
+  <data name="HidePinnedMessages" xml:space="preserve">
+    <value>HIDE PINNED MESSAGES</value>
+  </data>
   <data name="Highlights" xml:space="preserve">
     <value>Highlights</value>
   </data>
@@ -8484,6 +8487,30 @@ Please turn on location services to enable this feature.</value>
   <data name="PinnedMessages" xml:space="preserve">
     <value>Pinned Messages</value>
   </data>
+  <data name="PinnedMessagesCountFew" xml:space="preserve">
+    <value>{0} Pinned Messages</value>
+  </data>
+  <data name="PinnedMessagesCountMany" xml:space="preserve">
+    <value>{0} Pinned Messages</value>
+  </data>
+  <data name="PinnedMessagesCountOne" xml:space="preserve">
+    <value>{0} Pinned Message</value>
+  </data>
+  <data name="PinnedMessagesCountOther" xml:space="preserve">
+    <value>{0} Pinned Messages</value>
+  </data>
+  <data name="PinnedMessagesCountTwo" xml:space="preserve">
+    <value>{0} Pinned Messages</value>
+  </data>
+  <data name="PinnedMessagesCountZero" xml:space="preserve">
+    <value>{0} Pinned Messages</value>
+  </data>
+  <data name="PinnedMessagesHidden" xml:space="preserve">
+    <value>Pinned messages hidden</value>
+  </data>
+  <data name="PinnedMessagesHiddenInfo" xml:space="preserve">
+    <value>You will see the bar with pinned messages only if a new message is pinned.</value>
+  </data>
   <data name="PinnedPoll" xml:space="preserve">
     <value>Pinned poll</value>
   </data>
@@ -10907,6 +10934,9 @@ But if you're generally not OK with Telegram's modest needs, it won't be possibl
   </data>
   <data name="UnofficialApp" xml:space="preserve">
     <value>unofficial app</value>
+  </data>
+  <data name="UnpinAllMessages" xml:space="preserve">
+    <value>UNPIN ALL MESSAGES</value>
   </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>Unpin from top</value>
