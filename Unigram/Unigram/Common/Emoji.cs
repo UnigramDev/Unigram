@@ -25,12 +25,12 @@ namespace Unigram.Common
 
         public bool UpdateFile(File file)
         {
-            if (Thumbnail.Id == file.Id)
+            if (Thumbnail?.Id == file.Id)
             {
                 Thumbnail = file;
                 return true;
             }
-            else if (Document.Id == file.Id)
+            else if (Document?.Id == file.Id)
             {
                 Document = file;
                 return true;
