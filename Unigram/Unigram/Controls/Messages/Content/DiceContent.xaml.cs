@@ -33,7 +33,7 @@ namespace Unigram.Controls.Messages.Content
             Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
             Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
 
-            var state = dice.FinalState ?? dice.InitialState;
+            var state = dice.GetState();
             if (state is DiceStickersRegular regular)
             {
                 if (regular.Sticker.Thumbnail != null && !regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
@@ -55,10 +55,15 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            var state = dice.FinalState ?? dice.InitialState;
-            if (state == null)
+            var state = dice.GetState();
+            if (state == null || (file != null && !state.UpdateFile(file)))
             {
                 return;
+            }
+
+            if (state != dice.FinalState && dice.FinalState != null)
+            {
+                DownloadFile(message, dice.FinalState);
             }
 
             if (state is DiceStickersRegular regular)
@@ -77,11 +82,11 @@ namespace Unigram.Controls.Messages.Content
             if (IsDownloadingCompleted(state))
             {
                 Player.IsContentUnread = message.GeneratedContentUnread;
-                Player.Value = dice;
+                Player.SetValue(state, state == dice.FinalState ? dice.Value : 0);
 
                 if (message.IsOutgoing &&
                     message.GeneratedContentUnread &&
-                    dice.FinalState != null &&
+                    dice.IsFinalState() &&
                     dice.SuccessAnimationFrameNumber != 0)
                 {
                     Player.IndexChanged += OnIndexChanged;

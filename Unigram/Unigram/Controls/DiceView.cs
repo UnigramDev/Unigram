@@ -34,9 +34,15 @@ namespace Unigram.Controls
 
         private const int _parts = 3;
 
-        private MessageDice _enqueued;
+        private int _enqueued = -1;
+        private DiceStickers _enqueuedState;
 
-        private MessageDice _value;
+        private int _value = -1;
+        private DiceStickers _valueState;
+
+        private int _previous = -1;
+        private DiceStickers _previousState;
+
         private LottieAnimation[] _animations;
 
         private LottieAnimation _frontAnimation;
@@ -101,7 +107,7 @@ namespace Unigram.Controls
 
             _thumbnail = (Image)GetTemplateChild("Thumbnail");
 
-            OnValueChanged(Value, _value);
+            OnValueChanged(_previousState, _previous);
 
             base.OnApplyTemplate();
         }
@@ -115,7 +121,9 @@ namespace Unigram.Controls
             //}
 
             //_animation = null;
-            _value = null;
+            _valueState = null;
+            _enqueuedState = null;
+            _previousState = null;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -179,7 +187,7 @@ namespace Unigram.Controls
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
-                OnValueChanged(Value, _value);
+                OnValueChanged(_previousState, _previous);
                 Invalidate();
             }
         }
@@ -265,13 +273,14 @@ namespace Unigram.Controls
                     {
                         _index[i] = 0;
 
-                        if (i == 1 && _value?.FinalState == null && _enqueued != null)
+                        if (i == 1 && _value == 0 && _enqueued != 0 && _enqueuedState != null)
                         {
                             enqueue = true;
                         }
                     }
                     else if (i == 1)
                     {
+                        _subscribed = false;
                         _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
                     }
                 }
@@ -279,7 +288,8 @@ namespace Unigram.Controls
 
             if (enqueue)
             {
-                _ = Dispatcher.RunIdleAsync(idle => OnValueChanged(_enqueued, _value));
+                _subscribed = false;
+                _ = Dispatcher.RunIdleAsync(idle => OnValueChanged(_enqueuedState, _enqueued));
             }
         }
 
@@ -297,15 +307,25 @@ namespace Unigram.Controls
             return false;
         }
 
-        private async void OnValueChanged(MessageDice newValue, MessageDice oldValue)
+        public void SetValue(DiceStickers state, int value)
+        {
+            OnValueChanged(state, value);
+        }
+
+        private async void OnValueChanged(DiceStickers state, int newValue)
         {
             var canvas = _canvas;
             if (canvas == null)
             {
+                _previous = newValue;
+                _previousState = state;
                 return;
             }
 
-            if (newValue == null)
+            _previous = 0;
+            _previousState = null;
+
+            if (state == null)
             {
                 //canvas.Paused = true;
                 //canvas.ResetElapsedTime();
@@ -315,51 +335,58 @@ namespace Unigram.Controls
                 return;
             }
 
-            if (ValueEquals(newValue, oldValue) || ValueEquals(newValue, _value))
+            if (newValue == _value)
             {
                 return;
             }
 
-            if (!ValueEquals(newValue, _value) && !ValueEquals(newValue, _enqueued) && _value != null && _value.FinalState == null)
+            if (newValue != _value && /*newValue != _enqueued &&*/ _value == 0)
             {
-                _shouldPlay = true;
-                _enqueued = newValue;
-                return;
+                if (_subscribed)
+                {
+                    _shouldPlay = true;
+                    _enqueued = newValue;
+                    _enqueuedState = state;
+                    return;
+                }
             }
 
             var force = _enqueued == newValue;
 
             _value = newValue;
-            _enqueued = null;
+            _valueState = state;
 
+            _enqueued = 0;
+            _enqueuedState = null;
+
+            var initial = newValue == 0;
+
+            var animations = new LottieAnimation[_parts];
             await Task.Run(() =>
             {
-                var animations = new LottieAnimation[_parts];
-
-                var state = newValue.FinalState ?? newValue.InitialState;
                 if (state is DiceStickersSlotMachine slotMachine)
                 {
                     animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, false, null);
-                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), $"{newValue.Value}", false, null);
+                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), $"{newValue}", false, null);
                     animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, false, null);
                 }
                 else if (state is DiceStickersRegular regular)
                 {
                     animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, false, null);
                 }
-
-                _animations = animations;
             });
 
-            _isLoopingEnabled[1] = newValue.FinalState == null;
+            _animations = animations;
+            _isLoopingEnabled[1] = initial;
 
-            _animationFrameRate = _animations.Max(x => x?.FrameRate ?? 0);
-            _animationTotalFrame = _animations.Max(x => x?.TotalFrame ?? 0);
+            _animationFrameRate = animations.Max(x => x?.FrameRate ?? 0);
+            _animationTotalFrame = animations.Max(x => x?.TotalFrame ?? 0);
 
-            _startIndex[0] = newValue.SuccessAnimationFrameNumber != 0 ? newValue.SuccessAnimationFrameNumber : int.MaxValue;
+            _startIndex[0] = _animationTotalFrame;
+
             _index[0] = 1;
-            _index[1] = IsContentUnread ? 0 : _animations[1].TotalFrame - 1;
-            _index[2] = newValue.FinalState == null ? 0 : _index[2];
+            _index[1] = IsContentUnread || initial ? 0 : animations[1].TotalFrame - 1;
+            _index[2] = initial ? 0 : _index[2];
 
             //canvas.Paused = true;
             //canvas.ResetElapsedTime();
@@ -534,24 +561,6 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty IsContentUnreadProperty =
             DependencyProperty.Register("IsContentUnread", typeof(bool), typeof(DiceView), new PropertyMetadata(false));
-
-        #endregion
-
-        #region Value
-
-        public MessageDice Value
-        {
-            get { return (MessageDice)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
-        }
-
-        public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(MessageDice), typeof(DiceView), new PropertyMetadata(null, OnValueChanged));
-
-        private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((DiceView)d).OnValueChanged((MessageDice)e.NewValue, (MessageDice)e.OldValue);
-        }
 
         #endregion
 

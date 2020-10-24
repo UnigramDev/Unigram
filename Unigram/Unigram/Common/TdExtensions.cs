@@ -577,7 +577,7 @@ namespace Unigram.Common
                 case MessageText text:
                     return text.WebPage?.Sticker?.IsAnimated ?? false ? text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted : false;
                 case MessageDice dice:
-                    var state = dice.FinalState ?? dice.InitialState;
+                    var state = dice.InitialState;
                     if (state is DiceStickersRegular regular)
                     {
                         return regular.Sticker.StickerValue.Local.IsDownloadingCompleted;
@@ -595,6 +595,57 @@ namespace Unigram.Common
                 default:
                     return false;
             }
+        }
+
+        public static bool IsInitialState(this MessageDice dice)
+        {
+            var state = dice.FinalState;
+            if (state == null || !state.IsDownloadingCompleted())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsFinalState(this MessageDice dice)
+        {
+            var state = dice.FinalState;
+            if (state == null || !state.IsDownloadingCompleted())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public static DiceStickers GetState(this MessageDice dice)
+        {
+            var state = dice.FinalState;
+            if (state == null || !state.IsDownloadingCompleted())
+            {
+                state = dice.InitialState;
+            }
+
+            return state;
+        }
+
+        public static bool IsDownloadingCompleted(this DiceStickers state)
+        {
+            if (state is DiceStickersRegular regular)
+            {
+                return regular.Sticker.StickerValue.Local.IsDownloadingCompleted;
+            }
+            else if (state is DiceStickersSlotMachine slotMachine)
+            {
+                return slotMachine.Background.StickerValue.Local.IsDownloadingCompleted
+                    && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted
+                    && slotMachine.CenterReel.StickerValue.Local.IsDownloadingCompleted
+                    && slotMachine.RightReel.StickerValue.Local.IsDownloadingCompleted
+                    && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted;
+            }
+
+            return false;
         }
 
         public static File GetAnimatedSticker(this Message message)
@@ -1516,6 +1567,8 @@ namespace Unigram.Common
                     return animation.UpdateFile(file);
                 case MessageAudio audio:
                     return audio.UpdateFile(file);
+                case MessageDice dice:
+                    return dice.UpdateFile(file);
                 case MessageDocument document:
                     return document.UpdateFile(file);
                 case MessageGame game:
@@ -1622,6 +1675,36 @@ namespace Unigram.Common
             }
 
             return any;
+        }
+
+
+
+        public static bool UpdateFile(this MessageDice dice, File file)
+        {
+            var initial = dice.InitialState?.UpdateFile(file) ?? false;
+            var final = dice.FinalState?.UpdateFile(file) ?? false;
+
+            return initial || final;
+        }
+
+        public static bool UpdateFile(this DiceStickers state, File file)
+        {
+            if (state is DiceStickersRegular regular)
+            {
+                return regular.Sticker.UpdateFile(file);
+            }
+            else if (state is DiceStickersSlotMachine slotMachine)
+            {
+                var background = slotMachine.Background.UpdateFile(file);
+                var left = slotMachine.LeftReel.UpdateFile(file);
+                var center = slotMachine.CenterReel.UpdateFile(file);
+                var right = slotMachine.RightReel.UpdateFile(file);
+                var lever = slotMachine.LeftReel.UpdateFile(file);
+
+                return background || left || center || right || lever;
+            }
+
+            return false;
         }
 
 

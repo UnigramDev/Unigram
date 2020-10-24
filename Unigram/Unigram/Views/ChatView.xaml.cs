@@ -4130,6 +4130,7 @@ namespace Unigram.Views
                 foreach (var message in messages)
                 {
                     message.UpdateFile(file);
+                    message.GeneratedContentUnread = true;
 
                     var container = Messages.ContainerFromItem(message) as ListViewItem;
                     if (container == null)
@@ -4166,6 +4167,10 @@ namespace Unigram.Views
                         ViewVisibleMessages(false);
                     }
                     else if (content is MessageSticker sticker && sticker.Sticker.IsAnimated && sticker.Sticker.StickerValue.Id == file.Id && file.Local.IsDownloadingCompleted)
+                    {
+                        ViewVisibleMessages(false);
+                    }
+                    else if (content is MessageDice && message.IsAnimatedStickerDownloadCompleted())
                     {
                         ViewVisibleMessages(false);
                     }

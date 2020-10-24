@@ -614,11 +614,11 @@ namespace Unigram.Views
                     continue;
                 }
 
-                if (message.Content is MessageDice)
+                if (message.Content is MessageDice dice)
                 {
                     if (message.GeneratedContentUnread)
                     {
-                        message.GeneratedContentUnread = message.SendingState is MessageSendingStatePending;
+                        message.GeneratedContentUnread = dice.IsInitialState();
                     }
                     else
                     {
