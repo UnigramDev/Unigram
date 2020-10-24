@@ -194,7 +194,7 @@ namespace Unigram.Controls.Messages.Content
             var poll = _message?.Content as MessagePoll;
             if (poll == null)
             {
-                _timeoutTimer.Stop();
+                _timeoutTimer?.Stop();
                 return;
             }
 
@@ -207,7 +207,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                _timeoutTimer.Stop();
+                _timeoutTimer?.Stop();
                 TimeoutLabel.Visibility = Visibility.Collapsed;
             }
         }
