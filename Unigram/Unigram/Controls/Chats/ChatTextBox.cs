@@ -877,7 +877,7 @@ namespace Unigram.Controls.Chats
                 }
                 else
                 {
-                    if (!char.IsLetter(text[i]))
+                    if (!char.IsLetter(text[i]) && !char.IsNumber(text[i]))
                     {
                         flag = false;
                         break;
