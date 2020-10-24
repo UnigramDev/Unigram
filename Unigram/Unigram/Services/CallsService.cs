@@ -653,57 +653,65 @@ namespace Unigram.Services
                 Aggregator.Publish(new UpdateCallDialog(call, true));
             }
 
-            if (_callPage == null)
+            var callPage = _callPage;
+            if (callPage == null)
             {
                 return;
             }
 
-            await _callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 if (controller != null)
                 {
-                    _callPage.Connect(controller);
+                    callPage.Connect(controller);
                 }
 
-                _callPage.Connect(capturer);
-                _callPage.Update(call, started);
+                callPage.Connect(capturer);
+                callPage.Update(call, started);
             });
         }
 
         private async void Hide()
         {
-            if (_callPage != null)
+            Aggregator.Publish(new UpdateCallDialog(_call, true));
+
+            _callPage = null;
+
+            if (_callLifetime != null)
             {
-                await _callPage.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                var callLifetime = _callLifetime;
+                _callLifetime = null;
+
+                await callLifetime.CoreDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    if (_callDialog != null)
+                    if (callLifetime.WindowWrapper.Content is VoIPPage callPage)
                     {
-                        _callDialog.IsOpen = false;
-                        _callDialog = null;
-                    }
-                    else if (_callLifetime != null)
-                    {
-                        _callLifetime.WindowWrapper.Window.Close();
-                        _callLifetime = null;
+                        callPage.Dispose();
                     }
 
-                    if (_callPage != null)
-                    {
-                        _callPage.Dispose();
-                        _callPage = null;
-                    }
+                    callLifetime.WindowWrapper.Window.Close();
                 });
+            }
+            else if (_callDialog != null)
+            {
+                var callDialog = _callDialog;
+                _callDialog = null;
 
-                Aggregator.Publish(new UpdateCallDialog(_call, true));
+                await callDialog.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    if (callDialog.Content is VoIPPage callPage)
+                    {
+                        callPage.Dispose();
+                    }
+
+                    callDialog.IsOpen = false;
+                });
             }
         }
 
         private void ApplicationView_Released(object sender, EventArgs e)
         {
-            if (_callLifetime != null)
-            {
-                _callLifetime = null;
-            }
+            _callLifetime = null;
 
             if (_callPage != null)
             {
