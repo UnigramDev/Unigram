@@ -168,7 +168,7 @@ namespace Unigram.Views
                     }
                     else
                     {
-                        rectangle.Fill = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                        rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                 }
             }
@@ -194,7 +194,7 @@ namespace Unigram.Views
 
         #region Delegates
 
-        public async void UpdateBackground(Background wallpaper)
+        public void UpdateBackground(Background wallpaper)
         {
             if (wallpaper == null)
             {
