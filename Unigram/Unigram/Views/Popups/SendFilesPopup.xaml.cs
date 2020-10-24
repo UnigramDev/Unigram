@@ -51,7 +51,18 @@ namespace Unigram.Views.Popups
         }
 
         public bool IsMediaOnly => Items.All(x => x is StoragePhoto || x is StorageVideo);
-        public bool IsAlbumAvailable => IsMediaSelected && Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == 0);
+        public bool IsAlbumAvailable
+        {
+            get
+            {
+                if (IsMediaSelected)
+                {
+                    return Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == 0);
+                }
+
+                return Items.Count > 1 && Items.Count <= 10;
+            }
+        }
         public bool IsTtlAvailable { get; }
 
         private bool _isMediaSelected;
@@ -92,7 +103,7 @@ namespace Unigram.Views.Popups
             {
                 if (_isAlbum != value)
                 {
-                    _isAlbum = IsMediaOnly ? value : false;
+                    _isAlbum = IsAlbumAvailable ? value : false;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsAlbum"));
                 }
             }
