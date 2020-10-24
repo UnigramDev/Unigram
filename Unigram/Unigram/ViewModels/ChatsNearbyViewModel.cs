@@ -65,11 +65,6 @@ namespace Unigram.ViewModels
                 return;
             }
 
-#if DEBUG
-            // GPS doesn't work within the VM
-            location = new Location(53.556064, 9.988436);
-#endif
-
             var response = await ProtoService.SendAsync(new SearchChatsNearby(location));
             if (response is ChatsNearby nearby)
             {
