@@ -627,12 +627,12 @@ namespace Unigram.Services
 
         public IList<string> AnimationSearchEmojis
         {
-            get { return _animationSearchParameters.Emojis; }
+            get => _animationSearchParameters?.Emojis ?? new string[0];
         }
 
         public string AnimationSearchProvider
         {
-            get { return _animationSearchParameters.Provider; }
+            get => _animationSearchParameters?.Provider;
         }
 
         public Background SelectedBackground
