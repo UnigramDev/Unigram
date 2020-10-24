@@ -2088,21 +2088,18 @@ namespace Unigram.Views
                         subtitle.Text = string.Empty;
                     }
 
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.TextBlock", "TextHighlighters"))
+                    if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
-                        {
-                            var highligher = new TextHighlighter();
-                            highligher.Foreground = new SolidColorBrush(Colors.Red);
-                            highligher.Background = new SolidColorBrush(Colors.Transparent);
-                            highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
+                        var highligher = new TextHighlighter();
+                        highligher.Foreground = new SolidColorBrush(Colors.Red);
+                        highligher.Background = new SolidColorBrush(Colors.Transparent);
+                        highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 
-                            subtitle.TextHighlighters.Add(highligher);
-                        }
-                        else
-                        {
-                            subtitle.TextHighlighters.Clear();
-                        }
+                        subtitle.TextHighlighters.Add(highligher);
+                    }
+                    else
+                    {
+                        subtitle.TextHighlighters.Clear();
                     }
                 }
                 else if (args.Phase == 2)
@@ -2268,21 +2265,18 @@ namespace Unigram.Views
                     subtitle.Text = LastSeenConverter.GetLabel(user, true);
                 }
 
-                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.TextBlock", "TextHighlighters"))
+                if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var highligher = new TextHighlighter();
-                        highligher.Foreground = new SolidColorBrush(Colors.Red);
-                        highligher.Background = new SolidColorBrush(Colors.Transparent);
-                        highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
+                    var highligher = new TextHighlighter();
+                    highligher.Foreground = new SolidColorBrush(Colors.Red);
+                    highligher.Background = new SolidColorBrush(Colors.Transparent);
+                    highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 
-                        subtitle.TextHighlighters.Add(highligher);
-                    }
-                    else
-                    {
-                        subtitle.TextHighlighters.Clear();
-                    }
+                    subtitle.TextHighlighters.Add(highligher);
+                }
+                else
+                {
+                    subtitle.TextHighlighters.Clear();
                 }
             }
             else if (args.Phase == 2)
