@@ -93,7 +93,10 @@ namespace Unigram.Services
                     var geolocator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default };
                     var location = await geolocator.GetGeopositionAsync();
 
-                    return new Location(location.Coordinate.Point.Position.Latitude, location.Coordinate.Point.Position.Longitude);
+                    return new Location(
+                        location.Coordinate.Point.Position.Latitude,
+                        location.Coordinate.Point.Position.Longitude,
+                        location.Coordinate.Accuracy);
                 }
             }
             catch { }
@@ -214,7 +217,7 @@ namespace Unigram.Services
                 return results;
             }
 
-            var response = await _protoService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude), query ?? string.Empty, string.Empty));
+            var response = await _protoService.SendAsync(new GetInlineQueryResults(user.Id, chatId, new Location(latitude, longitude, 0), query ?? string.Empty, string.Empty));
             if (response is InlineQueryResults inlineResults)
             {
                 foreach (var item in inlineResults.Results)
