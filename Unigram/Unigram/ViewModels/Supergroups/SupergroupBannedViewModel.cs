@@ -39,6 +39,10 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             var index = Members.IndexOf(member);
+            if (index == -1)
+            {
+                return;
+            }
 
             Members.Remove(member);
 
