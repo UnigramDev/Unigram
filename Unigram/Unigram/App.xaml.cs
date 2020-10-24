@@ -115,7 +115,7 @@ namespace Unigram
 
             //args.Window.CoreWindow.FlowDirection = flowDirectionSetting == "RTL" ? CoreWindowFlowDirection.RightToLeft : CoreWindowFlowDirection.LeftToRight;
 
-            Theme.Current.Initialize();
+            //Theme.Current.Initialize();
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
         }

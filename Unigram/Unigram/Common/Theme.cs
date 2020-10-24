@@ -50,6 +50,8 @@ namespace Unigram.Common
                 }
             }
             catch { }
+
+            Initialize();
         }
 
         public void Initialize()
