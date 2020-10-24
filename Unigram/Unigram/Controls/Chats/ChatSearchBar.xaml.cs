@@ -182,7 +182,7 @@ namespace Unigram.Controls.Chats
         {
             if (Field.State == ChatSearchState.Members)
             {
-                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, Field.Text, false, true);
+                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, 0, Field.Text, false, true);
             }
 
             DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && Field.State == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
@@ -285,7 +285,7 @@ namespace Unigram.Controls.Chats
             {
                 case ChatSearchState.Members:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    viewModel.Autocomplete = new UsernameCollection(viewModel.ProtoService, viewModel.Dialog.Chat.Id, string.Empty, false, true);
+                    viewModel.Autocomplete = new UsernameCollection(viewModel.ProtoService, viewModel.Dialog.Chat.Id, 0, string.Empty, false, true);
                     break;
                 case ChatSearchState.Media:
                     ToolsPanel.Visibility = Visibility.Collapsed;
