@@ -382,12 +382,12 @@ namespace Unigram.Controls
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-            _playbackService.Clear();
+            _playbackService?.Clear();
         }
 
         private void View_Click(object sender, RoutedEventArgs e)
         {
-            var message = _playbackService.CurrentItem;
+            var message = _playbackService?.CurrentItem;
             if (message == null)
             {
                 return;

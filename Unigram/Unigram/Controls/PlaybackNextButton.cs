@@ -21,11 +21,6 @@ namespace Unigram.Controls
             Click += OnClick;
         }
 
-        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            ApplyForeground();
-        }
-
         private void OnClick(object sender, RoutedEventArgs e)
         {
             if (_triangle1 == null || _triangle2 == null)
@@ -103,6 +98,11 @@ namespace Unigram.Controls
             RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
 
             ElementCompositionPreview.SetElementChildVisual(target, test);
+        }
+
+        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            ApplyForeground();
         }
 
         private void ApplyForeground()

@@ -83,6 +83,11 @@ namespace Unigram.Services
 
         public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
+            if (!ApiInfo.IsMediaSupported)
+            {
+                return;
+            }
+
             _protoService = protoService;
             _cacheService = cacheService;
             _settingsService = settingsService;
@@ -563,7 +568,7 @@ namespace Unigram.Services
             var offset = -49;
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
 
-            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, 0, message.Id, offset, 100, filter, 0), result =>
+            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, 0), result =>
             {
                 if (result is Messages messages)
                 {
