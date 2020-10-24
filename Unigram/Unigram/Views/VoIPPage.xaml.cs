@@ -293,7 +293,7 @@ namespace Unigram.Views
         {
             //_controller = controller;
 
-            //_controller.SetIncomingVideoOutput(BackgroundPanel);
+            controller.SetIncomingVideoOutput(BackgroundPanel);
 
             // Let's avoid duplicated events
             controller.StateUpdated -= OnStateUpdated;
