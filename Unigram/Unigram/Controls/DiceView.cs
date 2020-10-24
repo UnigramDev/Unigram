@@ -107,7 +107,7 @@ namespace Unigram.Controls
 
             _thumbnail = (Image)GetTemplateChild("Thumbnail");
 
-            OnValueChanged(_previousState, _previous);
+            SetValue(_previousState, _previous);
 
             base.OnApplyTemplate();
         }
@@ -187,7 +187,7 @@ namespace Unigram.Controls
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
-                OnValueChanged(_previousState, _previous);
+                SetValue(_previousState, _previous);
                 Invalidate();
             }
         }
@@ -289,7 +289,7 @@ namespace Unigram.Controls
             if (enqueue)
             {
                 _subscribed = false;
-                _ = Dispatcher.RunIdleAsync(idle => OnValueChanged(_enqueuedState, _enqueued));
+                _ = Dispatcher.RunIdleAsync(idle => SetValue(_enqueuedState, _enqueued));
             }
         }
 
@@ -297,22 +297,7 @@ namespace Unigram.Controls
         //public int Index => _index == int.MaxValue ? 0 : _index;
         public bool IsLoopingEnabled => _isLoopingEnabled[1];
 
-        private bool ValueEquals(MessageDice x, MessageDice y)
-        {
-            if (x?.Emoji == y?.Emoji && x?.Value == y?.Value)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public void SetValue(DiceStickers state, int value)
-        {
-            OnValueChanged(state, value);
-        }
-
-        private async void OnValueChanged(DiceStickers state, int newValue)
+        public async void SetValue(DiceStickers state, int newValue)
         {
             var canvas = _canvas;
             if (canvas == null)
@@ -321,9 +306,6 @@ namespace Unigram.Controls
                 _previousState = state;
                 return;
             }
-
-            _previous = 0;
-            _previousState = null;
 
             if (state == null)
             {
@@ -356,10 +338,14 @@ namespace Unigram.Controls
             _value = newValue;
             _valueState = state;
 
+            _previous = newValue;
+            _previousState = state;
+
             _enqueued = 0;
             _enqueuedState = null;
 
             var initial = newValue == 0;
+            var shouldPlay = _shouldPlay;
 
             var animations = new LottieAnimation[_parts];
             await Task.Run(() =>
@@ -375,6 +361,11 @@ namespace Unigram.Controls
                     animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, false, null);
                 }
             });
+
+            if (_shouldPlay)
+            {
+                shouldPlay = true;
+            }
 
             _animations = animations;
             _isLoopingEnabled[1] = initial;
@@ -392,7 +383,7 @@ namespace Unigram.Controls
             //canvas.ResetElapsedTime();
             //canvas.TargetElapsedTime = update > TimeSpan.Zero ? update : TimeSpan.MaxValue;
 
-            if (AutoPlay || _shouldPlay || force)
+            if (AutoPlay || shouldPlay || force)
             {
                 _shouldPlay = false;
                 Subscribe(true);
