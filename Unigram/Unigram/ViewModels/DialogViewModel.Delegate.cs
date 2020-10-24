@@ -352,9 +352,9 @@ namespace Unigram.ViewModels
                 else
                 {
                     var container = ListField?.ContainerFromItem(message) as SelectorItem;
-                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    var root = container?.ContentTemplateRoot as FrameworkElement;
 
-                    var bubble = root.FindName("Bubble") as FrameworkElement;
+                    var bubble = root?.FindName("Bubble") as FrameworkElement;
                     if (bubble == null)
                     {
                         return;
