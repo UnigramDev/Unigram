@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -390,9 +391,9 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        if (delete.Type is ChatTypePrivate && check)
+                        if (delete.Type is ChatTypePrivate privata && check)
                         {
-                            await ProtoService.SendAsync(new ToggleChatIsBlocked(delete.Id, true));
+                            await ProtoService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
                         }
 
                         ProtoService.Send(new DeleteChatHistory(delete.Id, true, false));
@@ -729,7 +730,12 @@ namespace Unigram.ViewModels
                         _hasMoreItems = chats.ChatIds.Count > 0;
                         _aggregator.Subscribe(this);
 
-                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                        _viewModel.Delegate?.SetSelectedItems();
+
+                        if (_hasMoreItems == false)
+                        {
+                            OnPropertyChanged(new PropertyChangedEventArgs("HasMoreItems"));
+                        }
 
                         return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
                     }
@@ -816,7 +822,7 @@ namespace Unigram.ViewModels
                             }
                             if (_viewModel.SelectedItems.Contains(chat))
                             {
-                                _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                                _viewModel.Delegate?.SetSelectedItems();
                             }
                         }
                         else if (lastMessage)
@@ -839,7 +845,7 @@ namespace Unigram.ViewModels
                     if (_viewModel.SelectedItems.Contains(chat))
                     {
                         _viewModel.SelectedItems.Remove(chat);
-                        _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                        _viewModel.Delegate?.SetSelectedItems();
                     }
 
                     if (!_hasMoreItems)

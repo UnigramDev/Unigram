@@ -2880,9 +2880,9 @@ namespace Unigram.Views
             }
         }
 
-        public void SetSelectedItems(IList<Chat> chats)
+        public void SetSelectedItems()
         {
-            ChatsList.SetSelectedItems(null);
+            ChatsList.SetSelectedItems();
 
             //if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
             //{

@@ -12,7 +12,7 @@ namespace Unigram.ViewModels.Delegates
         void SetSelectionMode(bool enabled);
 
         void SetSelectedItem(Chat chat);
-        void SetSelectedItems(IList<Chat> chats);
+        void SetSelectedItems();
 
         bool IsItemSelected(Chat chat);
 

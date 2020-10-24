@@ -65,11 +65,6 @@ namespace Unigram.Controls
             }
         }
 
-        protected override DependencyObject GetContainerForItemOverride()
-        {
-            return new ChatsListViewItem(null);
-        }
-
         #region Drag & Drop
 
         private ObservableCollection<Chat> _rows;

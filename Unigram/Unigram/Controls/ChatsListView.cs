@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Controls.Cells;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -113,7 +111,7 @@ namespace Unigram.Controls
             //}
         }
 
-        public void SetSelectedItems(IList<Chat> chats)
+        public void SetSelectedItems()
         {
             var panel = ItemsPanelRoot as ItemsStackPanel;
             if (panel == null)
@@ -194,40 +192,13 @@ namespace Unigram.Controls
                 }
             }
         }
-
-        protected override DependencyObject GetContainerForItemOverride()
-        {
-            return new ChatsListViewItem(this);
-        }
     }
 
     public class ChatsListViewItem : ListViewItem
     {
-        private ChatsListView _list;
-
-        public ChatsListViewItem()
-        {
-
-        }
-
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new ChatsListViewItemAutomationPeer(this);
-        }
-
-        public ChatsListViewItem(ChatsListView list)
-        {
-            _list = list;
-            //RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
-        }
-
-        private void OnSelectedChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var content = ContentTemplateRoot as ChatCell;
-            if (content != null)
-            {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact, SettingsService.Current.UseThreeLinesLayout);
-            }
         }
     }
 
