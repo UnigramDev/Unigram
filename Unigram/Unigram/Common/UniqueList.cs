@@ -75,7 +75,7 @@ namespace Unigram.Common
 
         public void CopyTo(TValue[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            _inner.Values.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<TValue> GetEnumerator()
@@ -85,7 +85,7 @@ namespace Unigram.Common
 
         public int IndexOf(TValue item)
         {
-            throw new NotImplementedException();
+            return _inner.Values.IndexOf(item);
         }
 
         public void Insert(int index, TValue item)
