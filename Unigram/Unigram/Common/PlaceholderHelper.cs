@@ -37,9 +37,9 @@ namespace Unigram.Common
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
-                PlaceholderImageHelper.Current.DrawIdenticon(hash, side, stream);
                 try
                 {
+                    PlaceholderImageHelper.Current.DrawIdenticon(hash, side, stream);
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -88,7 +88,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawProfilePlaceholder(_colors[0], InitialNameStringConverter.Convert(chat), stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -105,7 +104,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawProfilePlaceholder(_colors[Math.Abs(user.Id % _colors.Length)], InitialNameStringConverter.Convert(user), stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -122,7 +120,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert(firstName, lastName), stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -139,7 +136,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert((object)name), stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -156,7 +152,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawProfilePlaceholder(_colors[Math.Abs(color % _colors.Length)], InitialNameStringConverter.Convert(title), stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -173,7 +168,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawSavedMessages(_colors[Math.Abs(id % _colors.Length)], stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -190,7 +184,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawDeletedUser(_colors[Math.Abs(user.Id % _colors.Length)], stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -207,7 +200,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawGlyph(glyph, _colors[Math.Abs(id % _colors.Length)], stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -334,7 +326,6 @@ namespace Unigram.Common
                     try
                     {
                         PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream);
-
                         bitmap.SetSource(stream);
                     }
                     catch { }
@@ -456,7 +447,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(path, amount, stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -473,7 +463,6 @@ namespace Unigram.Common
                 try
                 {
                     PlaceholderImageHelper.Current.DrawQr(data, foreground, background, stream);
-
                     bitmap.SetSource(stream);
                 }
                 catch { }
