@@ -214,10 +214,22 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
+            var cached = await ProtoService.GetFileAsync(file);
+            if (cached == null)
+            {
+                return;
+            }
+
             var fileName = result.FileName;
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = System.IO.Path.GetFileName(file.Local.Path);
+            }
+
+            var clean = ProtoService.Execute(new CleanFileName(fileName));
+            if (clean is Text text && !string.IsNullOrEmpty(text.TextValue))
+            {
+                fileName = text.TextValue;
             }
 
             var extension = System.IO.Path.GetExtension(fileName);
@@ -231,16 +243,15 @@ namespace Unigram.ViewModels.Chats
             picker.SuggestedStartLocation = PickerLocationId.Downloads;
             picker.SuggestedFileName = fileName;
 
-            var picked = await picker.PickSaveFileAsync();
-            if (picked != null)
+            try
             {
-                try
+                var picked = await picker.PickSaveFileAsync();
+                if (picked != null)
                 {
-                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
                     await cached.CopyAndReplaceAsync(picked);
                 }
-                catch { }
             }
+            catch { }
         }
 
         #endregion

@@ -1185,7 +1185,7 @@ namespace Unigram.ViewModels
                         var location = await _locationService.GetPositionAsync();
                         if (location != null)
                         {
-                            await SendMessageAsync(0, new InputMessageLocation(location, 0), null);
+                            await SendMessageAsync(0, new InputMessageLocation(location, 0, 0), null);
                         }
                     }
                 }
@@ -1293,59 +1293,15 @@ namespace Unigram.ViewModels
             picker.SuggestedStartLocation = PickerLocationId.Downloads;
             picker.SuggestedFileName = fileName;
 
-            var picked = await picker.PickSaveFileAsync();
-            if (picked != null)
+            try
             {
-                try
+                var picked = await picker.PickSaveFileAsync();
+                if (picked != null)
                 {
                     await cached.CopyAndReplaceAsync(picked);
                 }
-                catch { }
             }
-        }
-
-        #endregion
-
-        #region Save to Downloads
-
-        public RelayCommand<MessageViewModel> MessageSaveDownloadCommand { get; }
-        private async void MessageSaveDownloadExecute(MessageViewModel message)
-        {
-            var result = message.Get().GetFileAndName(true);
-
-            var file = result.File;
-            if (file == null || !file.Local.IsDownloadingCompleted)
-            {
-                return;
-            }
-
-            var fileName = result.FileName;
-            if (string.IsNullOrEmpty(fileName))
-            {
-                fileName = Path.GetFileName(file.Local.Path);
-            }
-
-            var extension = Path.GetExtension(fileName);
-            if (string.IsNullOrEmpty(extension))
-            {
-                extension = ".dat";
-            }
-
-            var picker = new FileSavePicker();
-            picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
-            picker.SuggestedStartLocation = PickerLocationId.Downloads;
-            picker.SuggestedFileName = fileName;
-
-            var picked = await picker.PickSaveFileAsync();
-            if (picked != null)
-            {
-                try
-                {
-                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    await cached.CopyAndReplaceAsync(picked);
-                }
-                catch { }
-            }
+            catch { }
         }
 
         #endregion
@@ -1408,12 +1364,16 @@ namespace Unigram.ViewModels
             var item = await ProtoService.GetFileAsync(file);
             if (item != null)
             {
-                var folder = await item.GetParentAsync();
+                try
+                {
+                    var folder = await item.GetParentAsync();
 
-                var options = new FolderLauncherOptions();
-                options.ItemsToSelect.Add(item);
+                    var options = new FolderLauncherOptions();
+                    options.ItemsToSelect.Add(item);
 
-                await Launcher.LaunchFolderAsync(folder, options);
+                    await Launcher.LaunchFolderAsync(folder, options);
+                }
+                catch { }
             }
         }
 
