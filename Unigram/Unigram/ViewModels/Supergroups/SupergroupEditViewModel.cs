@@ -317,6 +317,7 @@ namespace Unigram.ViewModels.Supergroups
                 if (response is Chat result && result.Type is ChatTypeSupergroup super)
                 {
                     chat = result;
+                    supergroup = await ProtoService.SendAsync(new GetSupergroup(super.SupergroupId)) as Supergroup;
                     fullInfo = await ProtoService.SendAsync(new GetSupergroupFullInfo(super.SupergroupId)) as SupergroupFullInfo;
                 }
                 else if (response is Error)
@@ -325,7 +326,7 @@ namespace Unigram.ViewModels.Supergroups
                 }
             }
 
-            if (fullInfo != null && _isAllHistoryAvailable != fullInfo.IsAllHistoryAvailable)
+            if (supergroup != null && fullInfo != null && _isAllHistoryAvailable != fullInfo.IsAllHistoryAvailable)
             {
                 var response = await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(supergroup.Id, _isAllHistoryAvailable));
                 if (response is Error)
