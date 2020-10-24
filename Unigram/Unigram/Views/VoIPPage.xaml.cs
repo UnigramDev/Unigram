@@ -195,6 +195,11 @@ namespace Unigram.Views
             var w = (float)ActualWidth;
             var h = (float)ActualHeight;
 
+            if (w == 0 || h == 0)
+            {
+                return;
+            }
+
             var x1 = Math.Max(0, Math.Min(w - 146 - p * 2, _viewfinderOffset.X * (w - 146 - p * 2))) + p;
             var y1 = Math.Max(0, Math.Min(h - 110 - p * 2, _viewfinderOffset.Y * (h - 110 - p * 2))) + p;
 
