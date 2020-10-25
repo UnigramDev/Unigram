@@ -67,10 +67,14 @@ namespace Unigram.ViewModels
                 if (chat.Type is ChatTypePrivate privata)
                 {
                     var item = ProtoService.GetUser(privata.UserId);
-                    var cache = ProtoService.GetUserFull(privata.UserId);
+                    if (item == null)
+                    {
+                        return;
+                    }
 
                     Delegate?.UpdateUser(chat, item, false);
 
+                    var cache = ProtoService.GetUserFull(privata.UserId);
                     if (cache == null)
                     {
                         ProtoService.Send(new GetUserFullInfo(privata.UserId));

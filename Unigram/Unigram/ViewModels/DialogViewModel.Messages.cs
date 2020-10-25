@@ -1185,7 +1185,7 @@ namespace Unigram.ViewModels
                         var location = await _locationService.GetPositionAsync();
                         if (location != null)
                         {
-                            await SendMessageAsync(0, new InputMessageLocation(location, 0, 0), null);
+                            await SendMessageAsync(0, new InputMessageLocation(location, 0, 0, 0), null);
                         }
                     }
                 }

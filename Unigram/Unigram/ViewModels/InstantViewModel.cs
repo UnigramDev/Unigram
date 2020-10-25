@@ -70,10 +70,13 @@ namespace Unigram.ViewModels
         public RelayCommand ShareCommand { get; }
         private async void ShareExecute()
         {
-            if (ShareLink != null)
+            var link = ShareLink;
+            if (link == null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(ShareLink, ShareTitle);
+                return;
             }
+
+            await SharePopup.GetForCurrentView().ShowAsync(link, ShareTitle);
         }
 
         public RelayCommand FeedbackCommand { get; }
@@ -89,14 +92,26 @@ namespace Unigram.ViewModels
         public RelayCommand BrowserCommand { get; }
         private async void BrowserExecute()
         {
-            await Launcher.LaunchUriAsync(ShareLink);
+            var link = ShareLink;
+            if (link == null)
+            {
+                return;
+            }
+
+            await Launcher.LaunchUriAsync(link);
         }
 
         public RelayCommand CopyCommand { get; }
         private async void CopyExecute()
         {
+            var link = ShareLink;
+            if (link == null)
+            {
+                return;
+            }
+
             var dataPackage = new DataPackage();
-            dataPackage.SetText(ShareLink.AbsoluteUri);
+            dataPackage.SetText(link.AbsoluteUri);
             ClipboardEx.TrySetContent(dataPackage);
 
             await MessagePopup.ShowAsync(Strings.Resources.LinkCopied, Strings.Resources.AppName, Strings.Resources.OK);

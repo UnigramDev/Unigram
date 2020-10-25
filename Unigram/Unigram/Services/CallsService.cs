@@ -607,6 +607,7 @@ namespace Unigram.Services
         {
             if (_call == null)
             {
+                Aggregator.Publish(new UpdateCallDialog(null, false));
                 return;
             }
 

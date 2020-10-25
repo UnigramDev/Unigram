@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Folders
                 filter.IncludedChatIds.Add(includedChatId);
             }
 
-            _pinnedChatIds = filter.PinnedChatIds;
+            _pinnedChatIds = filter.PinnedChatIds ?? new List<long>();
 
             _iconPicked = !string.IsNullOrEmpty(filter.IconName);
 
