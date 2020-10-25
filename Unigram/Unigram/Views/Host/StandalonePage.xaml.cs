@@ -116,9 +116,9 @@ namespace Unigram.Views.Host
 
         private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            var commands = _shortcutsService.Process(args);
+            var invoked = _shortcutsService.Process(args);
 
-            foreach (var command in commands)
+            foreach (var command in invoked.Commands)
             {
                 ProcessAppCommands(command, args);
             }
