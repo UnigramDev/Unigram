@@ -396,6 +396,22 @@ namespace Unigram.Controls.Chats
         {
             if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
             {
+                var chat = ViewModel.Chat;
+                if (chat?.Permissions.CanSendOtherMessages == false)
+                {
+                    autocomplete = null;
+                    return false;
+                }
+
+                if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.Status is ChatMemberStatusRestricted restricted && !restricted.Permissions.CanSendOtherMessages)
+                    {
+                        autocomplete = null;
+                        return false;
+                    }
+                }
+
                 autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
                 return true;
             }
