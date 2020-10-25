@@ -58,5 +58,11 @@ namespace Unigram.Views
                 await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
+
+        private void Crash_Click(object sender, RoutedEventArgs e)
+        {
+            var zero = 0;
+            var uno = 1 / zero;
+        }
     }
 }

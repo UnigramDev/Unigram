@@ -87,6 +87,12 @@
                         </DataTemplate>
                     </controls:HeaderedControl.ItemTemplate>
                 </controls:HeaderedControl>
+
+                <controls:HeaderedControl>
+                    <controls:BadgeButton
+                        Content="Crash the app &#x2620;"
+                        Click="Crash_Click"/>
+                </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>
     </Grid>
