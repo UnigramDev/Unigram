@@ -784,6 +784,15 @@ namespace Unigram.Views
                 ViewModel.SelectedFilter = ChatFilterViewModel.Main;
                 args.Handled = true;
             }
+            else
+            {
+                var scrollViewer = ChatsList.GetScrollViewer();
+                if (scrollViewer != null)
+                {
+                    scrollViewer.ChangeView(null, 0, null);
+                    args.Handled = true;
+                }
+            }
         }
 
         private ChatsPage GetChatListForChat(Chat chat)
