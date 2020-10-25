@@ -451,8 +451,7 @@ namespace Unigram.Views
                         ShowState(Strings.Resources.Updating);
                         break;
                     case ConnectionStateReady ready:
-                        //ShowStatus(Strings.Resources.Connected);
-                        HideStatus();
+                        HideState();
                         return;
                 }
             });
@@ -496,10 +495,19 @@ namespace Unigram.Views
             StateLabel.Text = text;
 
             var peer = FrameworkElementAutomationPeer.FromElement(StateLabel);
-            peer.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
+            if (peer != null)
+            {
+                peer.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
+            }
+
+            try
+            {
+                ApplicationView.GetForCurrentView().Title = text;
+            }
+            catch { }
         }
 
-        private void HideStatus()
+        private void HideState()
         {
             State.IsIndeterminate = false;
 #if DEBUG && !MOCKUP
@@ -507,6 +515,12 @@ namespace Unigram.Views
 #else
             StateLabel.Text = "Unigram";
 #endif
+
+            try
+            {
+                ApplicationView.GetForCurrentView().Title = string.Empty;
+            }
+            catch { }
         }
 
         public void Handle(UpdateCallDialog update)
