@@ -797,11 +797,20 @@ namespace Unigram.Views
 
         private ChatsPage GetChatListForChat(Chat chat)
         {
-            if (chat.Positions.Any(x => x.List.ListEquals(ViewModel.Chats.Items.ChatList)))
+            var main = chat.GetPosition(ViewModel.Chats.Items.ChatList);
+            if (main != null)
             {
                 return ChatsList;
             }
-            else if (chat.Positions.Any(x => x.List.ListEquals(ViewModel.Folder?.Items.ChatList, false)))
+
+            var folder = ViewModel.Folder?.Items.ChatList;
+            if (folder == null)
+            {
+                return null;
+            }
+
+            var position = chat.GetPosition(folder);
+            if (position != null)
             {
                 return FolderList;
             }
