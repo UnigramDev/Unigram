@@ -887,6 +887,7 @@
                                 Width="36">
                             <controls:GlyphButton
                                 Command="{x:Bind ViewModel.PreviousSliceCommand}"
+                                RightTapped="Arrow_RightTapped"
                                 FontSize="16"
                                 Width="36"
                                 Height="36"

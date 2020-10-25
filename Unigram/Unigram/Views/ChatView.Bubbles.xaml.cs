@@ -101,6 +101,11 @@ namespace Unigram.Views
                     messages.Add(message.Id);
                     animations.Add(message);
                 }
+
+                while (ViewModel.RepliesStack.TryPeek(out long reply) && reply == message.Id)
+                {
+                    ViewModel.RepliesStack.Pop();
+                }
             }
 
             if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)

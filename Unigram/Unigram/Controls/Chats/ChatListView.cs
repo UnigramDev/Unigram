@@ -233,7 +233,7 @@ namespace Unigram.Controls.Chats
                 await this.ScrollIntoViewAsync(item, direction);
 
                 // this time the item shouldn't be null again
-                selectorItem = (SelectorItem)ContainerFromItem(item);
+                selectorItem = ContainerFromItem(item) as SelectorItem;
                 iter--;
             }
 
@@ -246,6 +246,28 @@ namespace Unigram.Controls.Chats
             // calculate the position object in order to know how much to scroll to
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
             var position = transform.TransformPoint(new Point(0, 0));
+
+            // If position is negative layout should still happen, 
+            // Lets wait for it.
+            if (position.Y < 0)
+            {
+                Logs.Logger.Debug(Logs.Target.Chat, "position.Y is negative, let's wait for layout");
+
+                // call task-based ScrollIntoViewAsync to realize the item
+                await this.ScrollIntoViewAsync(item, direction);
+
+                // this time the item shouldn't be null again
+                selectorItem = ContainerFromItem(item) as SelectorItem;
+
+                if (selectorItem == null)
+                {
+                    Logs.Logger.Debug(Logs.Target.Chat, "selectorItem == null after layout, abort");
+                    return;
+                }
+
+                transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
+                position = transform.TransformPoint(new Point(0, 0));
+            }
 
             if (alignment == VerticalAlignment.Top)
             {
@@ -275,19 +297,18 @@ namespace Unigram.Controls.Chats
                 }
             }
 
-            // scroll to desired position with animation!
-            scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
-
             if (highlight)
             {
                 var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
-                if (bubble == null)
+                if (bubble != null)
                 {
-                    return;
+                    bubble.Highlight();
                 }
-
-                bubble.Highlight();
             }
+
+            // scroll to desired position with animation!
+            await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center);
+            //scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
         }
     }
 }

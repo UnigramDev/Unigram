@@ -2950,6 +2950,12 @@ namespace Unigram.Views
             ViewModel.ReadMentionsCommand.Execute();
         }
 
+        private void Arrow_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            ViewModel.RepliesStack.Clear();
+            ViewModel.PreviousSliceCommand.Execute();
+        }
+
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
         {
             sender.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
