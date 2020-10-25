@@ -238,7 +238,7 @@ namespace Unigram.Views
             }
 
             Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
-            VideoCall.Visibility = fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
+            VideoCall.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
 
             Edit.Visibility = Visibility.Collapsed;
         }
@@ -254,7 +254,7 @@ namespace Unigram.Views
         {
             if (secretChat.State is SecretChatStateReady ready)
             {
-                SecretLifetime.Badge = Locale.FormatTtl(secretChat.Ttl);
+                SecretLifetime.Badge = secretChat.Ttl > 0 ? Locale.FormatTtl(secretChat.Ttl) : Strings.Resources.ShortMessageLifetimeForever;
                 //SecretIdenticon.Source = PlaceholderHelper.GetIdenticon(secretChat.KeyHash, 24);
 
                 MiscPanel.Visibility = Visibility.Visible;
