@@ -238,9 +238,16 @@ namespace Unigram.Views.Host
 
             NameLabel.Text = user.GetFullName();
 #if DEBUG
-            PhoneLabel.Text = "+39 --- --- ----";
+            PhoneLabel.Text = "+42 --- --- ----";
 #else
-            PhoneLabel.Text = PhoneNumber.Format(user.PhoneNumber);
+            if (viewModel.Chats.Settings.UseTestDC)
+            {
+                PhoneLabel.Text = "+42 --- --- ----";
+            }
+            else
+            {
+                PhoneLabel.Text = PhoneNumber.Format(user.PhoneNumber);
+            }
 #endif
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
             Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.Resources.AccDescrHideAccounts : Strings.Resources.AccDescrShowAccounts);

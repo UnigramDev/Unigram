@@ -271,9 +271,16 @@ namespace Unigram.Views
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
 #if DEBUG
-            PhoneNumber.Badge = "+39 --- --- ----";
+            PhoneNumber.Badge = "+42 --- --- ----";
 #else
-            PhoneNumber.Badge = Common.PhoneNumber.Format(user.PhoneNumber);
+            if (ViewModel.Settings.UseTestDC)
+            {
+                PhoneNumber.Badge = "+42 --- --- ----";
+            }
+            else
+            {
+                PhoneNumber.Badge = Common.PhoneNumber.Format(user.PhoneNumber);
+            }
 #endif
 
             Username.Badge = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"{user.Username}";
