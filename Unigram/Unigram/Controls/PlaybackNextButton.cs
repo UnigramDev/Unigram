@@ -27,7 +27,7 @@ namespace Unigram.Controls
             {
                 return;
             }
-            
+
             var easing = Window.Current.Compositor.CreateLinearEasingFunction();
 
             var scale1 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();

@@ -9,7 +9,6 @@ using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

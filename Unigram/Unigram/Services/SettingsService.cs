@@ -195,8 +195,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (0UL << 32) | (5322UL << 16);
-        public const string CurrentChangelog = "VIDEO CALLS (alpha)\r\n• Still work in progress, sorry.\r\n\r\nIncreased limits for sending files\r\n• Share and store unlimited files of any type, now up to 2 GB each.\r\n\r\nProfile Videos\r\n• Set a Profile Video instead of a static picture.\r\n• Apply effects and choose a key frame as the cover for your Profile Video.\r\n• Quickly change back to a previous profile photo or video by tapping ‘Set as Main’.\r\n\r\nMini-thumbnails, Group Stats and More\r\n• See what media is in a message thanks to new mini-thumbnails in the chat list, message search and notifications.\r\n• View detailed statistics for the large groups you own.\r\n• If you're getting too much attention, flip a switch in Privacy & Security settings to automatically archive and mute all new chats from non-contacts.\r\n• Send a single football emoji to see if you score a goal.";
+        public const ulong CurrentVersion = (7UL << 48) | (1UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = "SEARCH FILTERS, ANONYMOUS GROUP ADMINS, CHANNEL COMMENTS AND MORE\r\n\r\nSearch Filters\r\n• Search messages by type, date or source using the new filters in Global Search.\r\n• Use tabs to browse all media, links or documents you've ever sent or received.\r\n• Filter search results by date (like \"July 2015\" or \"Apr 4\") or source (people, groups, channels, bots).\r\n\r\nAnonymous Group Admins\r\n• Turn on \"Remain Anonymous\" in an admin's Permissions to let them post on behalf of the group and become invisible in the list of members.\r\n\r\nChannel Comments\r\n• Comment on posts in channels that have a discussion group.\r\n• Get notified about replies to your comments via the new Replies chat (if you are not a member in the discussion group).\r\n\r\nSilent Messages, now in Secret Chats\r\n• Send messages silently in Secret Chats by holding the Send button.";
 
         public int Session => _session;
 
@@ -596,9 +596,9 @@ namespace Unigram.Services
             get
             {
                 if (_fullScreenGallery == null)
-                    _fullScreenGallery = GetValueOrDefault(_local, "FullScreenGallery", true);
+                    _fullScreenGallery = GetValueOrDefault(_local, "FullScreenGallery", false);
 
-                return _fullScreenGallery ?? true;
+                return _fullScreenGallery ?? false;
             }
             set
             {
@@ -925,7 +925,7 @@ namespace Unigram.Services
             get
             {
                 if (_languagePackId == null)
-                    _languagePackId = GetValueOrDefault(_local, "LanguagePackId", ApplicationLanguages.Languages[0]);
+                    _languagePackId = GetValueOrDefault(_local, "LanguagePackId", ApplicationLanguages.Languages[0].Split('-').First());
 
                 return _languagePackId;
             }
@@ -942,7 +942,7 @@ namespace Unigram.Services
             get
             {
                 if (_languagePluralId == null)
-                    _languagePluralId = GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0]);
+                    _languagePluralId = GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0].Split('-').First());
 
                 return _languagePluralId;
             }

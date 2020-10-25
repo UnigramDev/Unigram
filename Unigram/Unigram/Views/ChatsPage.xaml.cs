@@ -27,7 +27,7 @@ namespace Unigram.Views
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new ChatsListViewItem(ChatsList);
+                args.ItemContainer = new ChatsListViewItem();
                 args.ItemContainer.Style = ChatsList.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
                 args.ItemContainer.ContextRequested += Chat_ContextRequested;
@@ -279,5 +279,10 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private string ConvertCount(int count)
+        {
+            return Locale.Declension("Chats", count);
+        }
     }
 }

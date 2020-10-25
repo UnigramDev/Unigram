@@ -20,7 +20,8 @@
     DragItemsCompleted="Chats_DragItemsCompleted"
     ChoosingItemContainer="ChatsList_ChoosingItemContainer">
     <!--CanDragItems="True"
-    CanReorderItems="False"-->
+    CanReorderItems="False"
+    ItemClick="ChatsList_ItemClick"-->
 
     <ListView.ItemContainerStyle>
         <Style TargetType="ListViewItem">
@@ -39,7 +40,20 @@
         </DataTemplate>
     </ListView.ItemTemplate>
     <ListView.Footer>
-        <Border Height="6"/>
+        <Border MinHeight="6">
+            <Border Background="{ThemeResource PageBackgroundDarkBrush}">
+                <TextBlock
+                    x:Name="Footer"
+                    x:Load="{x:Bind ViewModel.Items.HasMoreItems, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                    Text="{x:Bind ConvertCount(ViewModel.Items.Count), Mode=OneWay}"
+                    Style="{StaticResource InfoCaptionTextBlockStyle}"
+                    Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                    Margin="12,8,12,8"
+                    Grid.Column="1"
+                    Grid.Row="2"/>
+
+            </Border>
+        </Border>
     </ListView.Footer>
     <ListView.ItemContainerTransitions>
         <TransitionCollection/>

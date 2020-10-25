@@ -29,7 +29,6 @@ namespace Unigram.Services
 
         public void Reconnect()
         {
-            _protoService.Send(new SetNetworkType(new NetworkTypeNone()));
             _protoService.Send(new SetNetworkType(_type));
         }
 

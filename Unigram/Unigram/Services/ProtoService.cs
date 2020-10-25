@@ -210,11 +210,7 @@ namespace Unigram.Services
                 SystemVersion = _deviceInfoService.SystemVersion,
                 SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
                 DeviceModel = _deviceInfoService.DeviceModel,
-#if DEBUG
                 UseTestDc = _settings.UseTestDC
-#else
-                UseTestDc = false
-#endif
             };
 
             if (_settings.FilesDirectory != null)

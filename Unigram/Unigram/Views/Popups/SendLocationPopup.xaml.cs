@@ -205,7 +205,7 @@ namespace Unigram.Views.Popups
 
         private void CurrentLocation_Click(object sender, RoutedEventArgs e)
         {
-            Media = new InputMessageLocation(new Location(mMap.Center.Position.Latitude, mMap.Center.Position.Longitude), 0);
+            Media = new InputMessageLocation(new Location(mMap.Center.Position.Latitude, mMap.Center.Position.Longitude, 0), 0, 0, 0);
             Hide(ContentDialogResult.Primary);
         }
 
