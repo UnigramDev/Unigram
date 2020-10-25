@@ -24,10 +24,17 @@ namespace Unigram.Views.Settings
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is User user)
+            if (e.ClickedItem is MessageSender messageSender)
             {
-                var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
-                if (response is Chat chat)
+                if (ViewModel.CacheService.TryGetUser(messageSender, out User user))
+                {
+                    var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(user.Id, false));
+                    if (response is Chat chat)
+                    {
+                        ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                    }
+                }
+                else if (ViewModel.CacheService.TryGetChat(messageSender, out Chat chat))
                 {
                     ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
                 }
@@ -52,28 +59,38 @@ namespace Unigram.Views.Settings
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
-            var chat = args.Item as Chat;
+            var messageSender = args.Item as MessageSender;
 
-            content.Tag = chat;
+            content.Tag = messageSender;
+
+            User user = null;
+            Chat chat = null;
+            ViewModel.CacheService.TryGetUser(messageSender, out user);
+            ViewModel.CacheService.TryGetChat(messageSender, out chat);
 
             if (args.Phase == 0)
             {
                 var title = content.Children[1] as TextBlock;
-                title.Text = ViewModel.ProtoService.GetTitle(chat);
-            }
-            else if (args.Phase == 1 && ViewModel.CacheService.TryGetUser(chat, out User user))
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = string.IsNullOrEmpty(user.PhoneNumber) ? Strings.Resources.NumberUnknown : PhoneNumber.Format(user.PhoneNumber);
-            }
-            else if (args.Phase == 1)
-            {
-                // TODO: ???
+                if (user != null)
+                {
+                    title.Text = user.GetFullName();
+                }
+                else if (chat != null)
+                {
+                    title.Text = ViewModel.ProtoService.GetTitle(chat);
+                }
             }
             else if (args.Phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+                if (user != null)
+                {
+                    photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                }
+                else if (chat != null)
+                {
+                    photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
+                }
             }
 
             if (args.Phase < 2)
@@ -91,9 +108,9 @@ namespace Unigram.Views.Settings
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = ScrollingHost.ItemFromContainer(element) as Chat;
+            var messageSender = ScrollingHost.ItemFromContainer(element) as MessageSender;
 
-            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Resources.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = chat });
+            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Resources.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = messageSender });
 
             if (args.TryGetPosition(sender, out Point point))
             {
@@ -108,11 +125,24 @@ namespace Unigram.Views.Settings
 
         public void UpdateFile(Telegram.Td.Api.File file)
         {
-            foreach (Chat chat in ScrollingHost.Items)
+            foreach (MessageSender sender in ScrollingHost.Items)
             {
-                if (chat.UpdateFile(file))
+                if (ViewModel.CacheService.TryGetUser(sender, out User user) && user.UpdateFile(file))
                 {
-                    var container = ScrollingHost.ContainerFromItem(chat) as SelectorItem;
+                    var container = ScrollingHost.ContainerFromItem(sender) as SelectorItem;
+                    if (container == null)
+                    {
+                        return;
+                    }
+
+                    var content = container.ContentTemplateRoot as Grid;
+
+                    var photo = content.Children[0] as ProfilePicture;
+                    photo.Source = PlaceholderHelper.GetUser(null, user, 36);
+                }
+                else if (ViewModel.CacheService.TryGetChat(sender, out Chat chat) && chat.UpdateFile(file))
+                {
+                    var container = ScrollingHost.ContainerFromItem(sender) as SelectorItem;
                     if (container == null)
                     {
                         return;

@@ -68,11 +68,11 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ProtoService.Send(new GetBlockedChats(0, 1), result =>
+            ProtoService.Send(new GetBlockedMessageSenders(0, 1), result =>
             {
-                if (result is Telegram.Td.Api.Chats chats)
+                if (result is MessageSenders senders)
                 {
-                    BeginOnUIThread(() => BlockedUsers = chats.TotalCount);
+                    BeginOnUIThread(() => BlockedUsers = senders.TotalCount);
                 }
             });
 

@@ -20,7 +20,7 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (GroupStyle != null)
+            if (GroupStyle.Count > 0)
             {
                 return;
             }
@@ -87,7 +87,7 @@ namespace Unigram.Controls
 
         private static void OnItemsPanelCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (((TableListView)d).GroupStyle != null)
+            if (((TableListView)d).GroupStyle.Count > 0)
             {
                 return;
             }

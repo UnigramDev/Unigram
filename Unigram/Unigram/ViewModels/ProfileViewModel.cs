@@ -427,10 +427,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
-            {
-                ProtoService.Send(new ToggleChatIsBlocked(chat.Id, true));
-            }
+            ToggleIsBlocked(chat, true);
         }
 
         public RelayCommand UnblockCommand { get; }
@@ -448,9 +445,18 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            ToggleIsBlocked(chat, false);
+        }
+
+        private void ToggleIsBlocked(Chat chat, bool blocked)
+        {
+            if (chat.Type is ChatTypePrivate privata)
             {
-                ProtoService.Send(new ToggleChatIsBlocked(chat.Id, false));
+                ProtoService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), blocked));
+            }
+            else if (chat.Type is ChatTypeSecret secret)
+            {
+                ProtoService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(secret.UserId), blocked));
             }
         }
 

@@ -35,25 +35,18 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,6" Background="Transparent">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePicture Width="36" Height="36" Margin="0,0,12,0" IsEnabled="False" Grid.RowSpan="2"/>
 
-                        <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" FontFamily="{ThemeResource EmojiThemeFontFamily}" Grid.Row="0"/>
-                        <TextBlock VerticalAlignment="Top"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Grid.Column="1"
-                                   Grid.Row="1"
-                                   MaxLines="1"/>
+                        <TextBlock
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis"
+                            VerticalAlignment="Center"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            Grid.Column="1"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
