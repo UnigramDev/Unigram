@@ -1820,10 +1820,10 @@ namespace Unigram.Controls.Messages
                     width = 240;
                     height = 240;
                 }
-                else
+                else if (photo.Sizes.Count > 0)
                 {
-                    width = photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault().Width;
-                    height = photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault().Height;
+                    width = photo.Sizes[photo.Sizes.Count - 1].Width;
+                    height = photo.Sizes[photo.Sizes.Count - 1].Height;
                 }
 
                 goto Calculate;
