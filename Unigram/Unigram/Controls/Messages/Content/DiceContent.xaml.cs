@@ -79,7 +79,7 @@ namespace Unigram.Controls.Messages.Content
                 //}
             }
 
-            if (IsDownloadingCompleted(state))
+            if (state.IsDownloadingCompleted())
             {
                 Player.IsContentUnread = message.GeneratedContentUnread;
                 Player.SetValue(state, state == dice.FinalState ? dice.Value : 0);
@@ -121,24 +121,6 @@ namespace Unigram.Controls.Messages.Content
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
             }
-        }
-
-        private bool IsDownloadingCompleted(DiceStickers stickers)
-        {
-            if (stickers is DiceStickersRegular regular)
-            {
-                return regular.Sticker.StickerValue.Local.IsDownloadingCompleted;
-            }
-            else if (stickers is DiceStickersSlotMachine slotMachine)
-            {
-                return slotMachine.Background.StickerValue.Local.IsDownloadingCompleted
-                    && slotMachine.LeftReel.StickerValue.Local.IsDownloadingCompleted
-                    && slotMachine.CenterReel.StickerValue.Local.IsDownloadingCompleted
-                    && slotMachine.RightReel.StickerValue.Local.IsDownloadingCompleted
-                    && slotMachine.Lever.StickerValue.Local.IsDownloadingCompleted;
-            }
-
-            return false;
         }
 
         private void DownloadFile(MessageViewModel message, DiceStickers stickers)
