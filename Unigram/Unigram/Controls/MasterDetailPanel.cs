@@ -112,8 +112,8 @@ namespace Unigram.Controls
                 detailHeader.Measure(availableSize);
                 banner.Measure(availableSize);
 
-                master.Measure(new Size(availableSize.Width, availableSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height));
-                detail.Measure(new Size(availableSize.Width, availableSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height));
+                master.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - masterHeader.DesiredSize.Height)));
+                detail.Measure(new Size(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height - detailHeader.DesiredSize.Height)));
 
                 grip.Measure(new Size(0, 0));
             }
