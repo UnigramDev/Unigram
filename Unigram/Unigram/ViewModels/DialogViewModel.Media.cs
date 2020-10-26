@@ -13,12 +13,12 @@ using Unigram.Services.Factories;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -811,19 +811,14 @@ namespace Unigram.ViewModels
                     var bitmap = await package.GetBitmapAsync();
                     var media = new List<StorageFile>();
 
-                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.bmp", DateTime.Now);
+                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
                     var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
                     using (var stream = await bitmap.OpenReadAsync())
-                    using (var reader = new DataReader(stream.GetInputStreamAt(0)))
-                    using (var output = await cache.OpenAsync(FileAccessMode.ReadWrite))
                     {
-                        await reader.LoadAsync((uint)stream.Size);
-                        var buffer = reader.ReadBuffer(reader.UnconsumedBufferLength);
-                        await output.WriteAsync(buffer);
+                        var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
+                        media.Add(result);
                     }
-
-                    media.Add(cache);
 
                     var captionElements = new List<string>();
 
