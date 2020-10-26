@@ -661,6 +661,9 @@
   <data name="ActionUserScoredInGame" xml:space="preserve">
     <value>un1 scored {0} in un2</value>
   </data>
+  <data name="ActionUserWithinRadius" xml:space="preserve">
+    <value>un1 is now within {0} from you</value>
+  </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>You added un2</value>
   </data>
@@ -4739,6 +4742,9 @@ Duration: {1}</value>
   <data name="FontType" xml:space="preserve">
     <value>Font Type</value>
   </data>
+  <data name="Foots" xml:space="preserve">
+    <value>{0} ft</value>
+  </data>
   <data name="FootsAway" xml:space="preserve">
     <value>{0} ft away</value>
   </data>
@@ -5581,6 +5587,9 @@ All media will stay in the Telegram cloud and can be re-downloaded if you need i
   <data name="KickFromSupergroup" xml:space="preserve">
     <value>Restrict user</value>
   </data>
+  <data name="KMeters" xml:space="preserve">
+    <value>{0} km</value>
+  </data>
   <data name="KMetersAway" xml:space="preserve">
     <value>km away</value>
   </data>
@@ -6260,6 +6269,9 @@ Minimum length is 5 characters.</value>
   <data name="messagesZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Meters" xml:space="preserve">
+    <value>{0} m</value>
+  </data>
   <data name="MetersAway" xml:space="preserve">
     <value>m away</value>
   </data>
@@ -6286,6 +6298,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="MetersZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="Miles" xml:space="preserve">
+    <value>{0} mi</value>
   </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} mi away</value>
@@ -8454,6 +8469,9 @@ Please turn on location services to enable this feature.</value>
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinAlsoFor" xml:space="preserve">
+    <value>Also pin for {0}</value>
+  </data>
   <data name="PinFolderLimitReached" xml:space="preserve">
     <value>Sorry, you can't pin any more chats to the top.</value>
   </data>
@@ -8470,7 +8488,7 @@ Please turn on location services to enable this feature.</value>
     <value>Pin</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>Do you want to pin this message in this group?</value>
+    <value>Do you want to pin this message for all members in the group?</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>Do you want to pin this message in this channel?</value>
@@ -8513,6 +8531,9 @@ Please turn on location services to enable this feature.</value>
   </data>
   <data name="PinnedPoll" xml:space="preserve">
     <value>Pinned poll</value>
+  </data>
+  <data name="PinOldMessageAlert" xml:space="preserve">
+    <value>Do you want to pin an older message while leaving a more recent one pinned?</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Notify all members</value>

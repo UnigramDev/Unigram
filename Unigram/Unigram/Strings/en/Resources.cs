@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/22/2020 12:36:24
+// 	Generated: 10/25/2020 10:52:24
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2243,6 +2243,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ActionUserScoredInGame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 is now within {0} from you"
+        /// </summary>
+        public static string ActionUserWithinRadius
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionUserWithinRadius");
             }
         }
         
@@ -17005,6 +17016,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} ft"
+        /// </summary>
+        public static string Foots
+        {
+            get
+            {
+                return resourceLoader.GetString("Foots");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} ft away"
         /// </summary>
         public static string FootsAway
@@ -20079,6 +20101,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} km"
+        /// </summary>
+        public static string KMeters
+        {
+            get
+            {
+                return resourceLoader.GetString("KMeters");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "km away"
         /// </summary>
         public static string KMetersAway
@@ -22526,6 +22559,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} m"
+        /// </summary>
+        public static string Meters
+        {
+            get
+            {
+                return resourceLoader.GetString("Meters");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "m away"
         /// </summary>
         public static string MetersAway
@@ -22621,6 +22665,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MetersZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} mi"
+        /// </summary>
+        public static string Miles
+        {
+            get
+            {
+                return resourceLoader.GetString("Miles");
             }
         }
         
@@ -30472,6 +30527,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Also pin for {0}"
+        /// </summary>
+        public static string PinAlsoFor
+        {
+            get
+            {
+                return resourceLoader.GetString("PinAlsoFor");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, you can't pin any more chats to the top."
         /// </summary>
         public static string PinFolderLimitReached
@@ -30527,7 +30593,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to pin this message in this group?"
+        /// Localized resource similar to "Do you want to pin this message for all members in the group?"
         /// </summary>
         public static string PinMessageAlert
         {
@@ -30688,6 +30754,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PinnedPoll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to pin an older message while leaving a more recent one pinned?"
+        /// </summary>
+        public static string PinOldMessageAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PinOldMessageAlert");
             }
         }
         
