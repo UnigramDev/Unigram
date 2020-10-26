@@ -371,41 +371,45 @@ namespace Unigram.Views.Popups
 
         public async Task HandlePackageAsync(DataPackageView package)
         {
-            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+            try
             {
-                var bitmap = await package.GetBitmapAsync();
-
-                var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
-                var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
-
-                using (var stream = await bitmap.OpenReadAsync())
+                if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
                 {
-                    var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                    var photo = await StoragePhoto.CreateAsync(result);
-                    if (photo == null)
-                    {
-                        return;
-                    }
+                    var bitmap = await package.GetBitmapAsync();
 
-                    Items.Add(photo);
+                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                    var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+
+                    using (var stream = await bitmap.OpenReadAsync())
+                    {
+                        var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
+                        var photo = await StoragePhoto.CreateAsync(result);
+                        if (photo == null)
+                        {
+                            return;
+                        }
+
+                        Items.Add(photo);
+
+                        UpdateView();
+                        UpdatePanel();
+                    }
+                }
+                else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
+                {
+                    var items = await package.GetStorageItemsAsync();
+                    var results = await StorageMedia.CreateAsync(items);
+
+                    foreach (var item in results)
+                    {
+                        Items.Add(item);
+                    }
 
                     UpdateView();
                     UpdatePanel();
                 }
             }
-            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-            {
-                var items = await package.GetStorageItemsAsync();
-                var results = await StorageMedia.CreateAsync(items);
-
-                foreach (var item in results)
-                {
-                    Items.Add(item);
-                }
-
-                UpdateView();
-                UpdatePanel();
-            }
+            catch { }
         }
 
         private int _itemsState = -1;
