@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Unigram.Services
 
         private readonly ResourceLoader _loader;
 
-        private readonly Dictionary<string, Dictionary<string, string>> _languagePack = new Dictionary<string, Dictionary<string, string>>();
+        private readonly Dictionary<string, ConcurrentDictionary<string, string>> _languagePack = new Dictionary<string, ConcurrentDictionary<string, string>>();
         private string _languageCode;
         private string _languagePlural;
 
@@ -436,8 +437,8 @@ namespace Unigram.Services
                         values[value.Key + "Many"] = GetValue(pluralized.ManyValue);
                         values[value.Key + "Other"] = GetValue(pluralized.OtherValue);
                         break;
-                    case LanguagePackStringValueDeleted deleted:
-                        values.Remove(value.Key);
+                    case LanguagePackStringValueDeleted _:
+                        values.TryRemove(value.Key, out _);
                         break;
                 }
             }
@@ -445,14 +446,14 @@ namespace Unigram.Services
 
         #endregion
 
-        private Dictionary<string, string> GetLanguagePack(string key)
+        private ConcurrentDictionary<string, string> GetLanguagePack(string key)
         {
-            if (_languagePack.TryGetValue(key, out Dictionary<string, string> values))
+            if (_languagePack.TryGetValue(key, out ConcurrentDictionary<string, string> values))
             {
             }
             else
             {
-                values = _languagePack[key] = new Dictionary<string, string>();
+                values = _languagePack[key] = new ConcurrentDictionary<string, string>();
             }
 
             return values;
