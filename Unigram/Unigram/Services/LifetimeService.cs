@@ -144,7 +144,7 @@ namespace Unigram.Services
             return active;
         }
 
-        public void Destroy(ISessionService item)
+        public async void Destroy(ISessionService item)
         {
             ISessionService replace = null;
             if (item.IsActive)
@@ -158,28 +158,28 @@ namespace Unigram.Services
             item.Aggregator.Unsubscribe(item);
             //WindowContext.Unsubscribe(item);
 
-            foreach (var window in WindowContext.ActiveWrappers)
+            foreach (var window in WindowContext.ActiveWrappers.ToArray())
             {
-                if (window.Content is RootPage root && replace != null)
+                await window.Dispatcher.DispatchAsync(() =>
                 {
-                    window.Dispatcher.Dispatch(() =>
+                    if (window.Content is RootPage root && replace != null)
                     {
                         root.Switch(replace);
-                    });
-                }
+                    }
 
-                if (window.IsInMainView)
-                {
-                    window.NavigationServices.RemoveByFrameId($"{item.Id}");
-                    window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
-                }
-                else
-                {
-                    window.Close();
-                }
+                    if (window.IsInMainView)
+                    {
+                        window.NavigationServices.RemoveByFrameId($"{item.Id}");
+                        window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
+                    }
+                    else
+                    {
+                        window.Close();
+                    }
+                });
             }
 
-            Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(() =>
             {
                 try
                 {
