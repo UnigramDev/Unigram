@@ -661,8 +661,14 @@
   <data name="ActionUserScoredInGame" xml:space="preserve">
     <value>un1 scored {0} in un2</value>
   </data>
+  <data name="ActionUserWithinOtherRadius" xml:space="preserve">
+    <value>un1 is now within {0} from un2</value>
+  </data>
   <data name="ActionUserWithinRadius" xml:space="preserve">
     <value>un1 is now within {0} from you</value>
+  </data>
+  <data name="ActionUserWithinYouRadius" xml:space="preserve">
+    <value>You are now within {0} from un2</value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>You added un2</value>

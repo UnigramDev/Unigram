@@ -114,7 +114,7 @@ namespace Unigram.Converters
             return builder.ToString();
         }
 
-        public static string Distance(float distance)
+        public static string Distance(float distance, bool away = true)
         {
             var useImperialSystemType = false;
 
@@ -138,7 +138,7 @@ namespace Unigram.Converters
                 distance *= 3.28084f;
                 if (distance < 1000)
                 {
-                    return string.Format(Strings.Resources.FootsAway, string.Format("{0}", (int)Math.Max(1, distance)));
+                    return string.Format(away ? Strings.Resources.FootsAway : Strings.Resources.Foots, string.Format("{0}", (int)Math.Max(1, distance)));
                 }
                 else
                 {
@@ -151,14 +151,15 @@ namespace Unigram.Converters
                     {
                         arg = string.Format("{0:0.00}", distance / 5280.0f);
                     }
-                    return string.Format(Strings.Resources.MilesAway, arg);
+
+                    return string.Format(away ? Strings.Resources.MilesAway : Strings.Resources.Miles, arg);
                 }
             }
             else
             {
                 if (distance < 1000)
                 {
-                    return string.Format(Strings.Resources.MetersAway2, string.Format("{0}", (int)Math.Max(1, distance)));
+                    return string.Format(away ? Strings.Resources.MetersAway2 : Strings.Resources.Meters, string.Format("{0}", (int)Math.Max(1, distance)));
                 }
                 else
                 {
@@ -171,7 +172,8 @@ namespace Unigram.Converters
                     {
                         arg = string.Format("{0:0.00}", distance / 1000.0f);
                     }
-                    return string.Format(Strings.Resources.KMetersAway2, arg);
+
+                    return string.Format(away ? Strings.Resources.KMetersAway2 : Strings.Resources.KMeters, arg);
                 }
             }
         }

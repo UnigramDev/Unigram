@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/25/2020 10:52:24
+// 	Generated: 10/27/2020 10:42:00
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2247,6 +2247,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "un1 is now within {0} from un2"
+        /// </summary>
+        public static string ActionUserWithinOtherRadius
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionUserWithinOtherRadius");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "un1 is now within {0} from you"
         /// </summary>
         public static string ActionUserWithinRadius
@@ -2254,6 +2265,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ActionUserWithinRadius");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are now within {0} from un2"
+        /// </summary>
+        public static string ActionUserWithinYouRadius
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionUserWithinYouRadius");
             }
         }
         
