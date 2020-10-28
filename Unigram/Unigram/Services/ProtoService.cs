@@ -1340,13 +1340,6 @@ namespace Unigram.Services
                     _chatsMap[updateChatPhoto.Photo.Big.Id] = updateChatPhoto.ChatId;
                 }
             }
-            else if (update is UpdateChatPinnedMessage updateChatPinnedMessage)
-            {
-                if (_chats.TryGetValue(updateChatPinnedMessage.ChatId, out Chat value))
-                {
-                    value.PinnedMessageId = updateChatPinnedMessage.PinnedMessageId;
-                }
-            }
             else if (update is UpdateChatPosition updateChatPosition)
             {
                 if (_chats.TryGetValue(updateChatPosition.ChatId, out Chat value))
@@ -1497,6 +1490,10 @@ namespace Unigram.Services
             else if (update is UpdateMessageInteractionInfo updateMessageInteractionInfo)
             {
 
+            }
+            else if (update is UpdateMessageIsPinned updateMessageIsPinned)
+            {
+                _settings.SetChatPinnedMessage(updateMessageIsPinned.ChatId, 0);
             }
             else if (update is UpdateMessageMentionRead updateMessageMentionRead)
             {
