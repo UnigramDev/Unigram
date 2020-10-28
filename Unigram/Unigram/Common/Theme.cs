@@ -103,13 +103,18 @@ namespace Unigram.Common
                 {
                     flags = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
                 }
-                else if (line.Equals("!") || line.Equals("#"))
+                else if (line.Equals("!") || line.Equals("#") || string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
                 else
                 {
                     var split = line.Split(':');
+                    if (split.Length < 2)
+                    {
+                        continue;
+                    }
+
                     var key = split[0].Trim();
                     var value = split[1].Trim();
 
