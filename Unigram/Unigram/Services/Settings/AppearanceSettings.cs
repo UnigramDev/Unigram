@@ -139,7 +139,7 @@ namespace Unigram.Services.Settings
                 ? ElementTheme.Dark
                 : ElementTheme.Light;
 
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            foreach (TLWindowContext window in WindowContext.ActiveWrappers.ToArray())
             {
                 await window.Dispatcher.DispatchAsync(() =>
                 {

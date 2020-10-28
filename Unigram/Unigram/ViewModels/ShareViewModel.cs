@@ -177,7 +177,7 @@ namespace Unigram.ViewModels
                             items.Insert(1, chat);
                         }
                     }
-                    else
+                    else if (items.Count > 0)
                     {
                         items.Insert(1, chat);
                     }

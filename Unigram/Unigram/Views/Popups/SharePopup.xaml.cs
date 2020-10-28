@@ -837,11 +837,11 @@ namespace Unigram.Views.Popups
             {
                 return;
             }
-            else if (character != "\r" && char.IsControl(character[0]))
+            else if (/*character != "\r" &&*/ char.IsControl(character[0]))
             {
                 return;
             }
-            else if (character != "\r" && char.IsWhiteSpace(character[0]))
+            else if (/*character != "\r" &&*/ char.IsWhiteSpace(character[0]))
             {
                 return;
             }
@@ -849,11 +849,11 @@ namespace Unigram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
             {
-                if (IsPrimaryButtonEnabled && character == "\r")
-                {
-                    ViewModel.SendCommand.Execute();
-                }
-                else
+                //if (IsPrimaryButtonEnabled && character == "\r")
+                //{
+                //    ViewModel.SendCommand.Execute();
+                //}
+                //else
                 {
                     Search_Click(null, null);
                     SearchField.Text = character;

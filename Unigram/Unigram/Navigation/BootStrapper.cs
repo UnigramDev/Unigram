@@ -153,6 +153,7 @@ namespace Unigram.Navigation
         protected override sealed void OnShareTargetActivated(ShareTargetActivatedEventArgs args) { DebugWrite(); CallInternalActivatedAsync(args); }
 
         public IActivatedEventArgs OriginalActivatedArgs { get; private set; }
+        public bool PrelaunchActivated { get; private set; }
 
         private async void CallInternalActivatedAsync(IActivatedEventArgs e)
         {
@@ -180,7 +181,7 @@ namespace Unigram.Navigation
             }
 
             // onstart is shared with activate and launch
-            await CallOnStartAsync(true, StartKind.Activate);
+            await CallOnStartAsync(e, true, StartKind.Activate);
 
             // ensure active (this will hide any custom splashscreen)
             CallActivateWindow(WindowLogic.ActivateWindowSources.Activating);
@@ -198,7 +199,7 @@ namespace Unigram.Navigation
             CallInternalLaunchAsync(e);
         }
 
-        async void CallInternalLaunchAsync(ILaunchActivatedEventArgs e)
+        async void CallInternalLaunchAsync(LaunchActivatedEventArgs e)
         {
             CurrentState = States.BeforeLaunch;
             await InternalLaunchAsync(e);
@@ -210,11 +211,12 @@ namespace Unigram.Navigation
         /// This is private because it is a specialized prelude to OnStartAsync().
         /// OnStartAsync will not be called if state restore is determined
         /// </summary>
-        private async Task InternalLaunchAsync(ILaunchActivatedEventArgs e)
+        private async Task InternalLaunchAsync(LaunchActivatedEventArgs e)
         {
-            DebugWrite($"Previous:{e.PreviousExecutionState.ToString()}");
+            DebugWrite($"Previous:{e.PreviousExecutionState}");
 
             OriginalActivatedArgs = e;
+            PrelaunchActivated = e.PrelaunchActivated;
 
             if (e.PreviousExecutionState != ApplicationExecutionState.Running || Window.Current.Content == null)
             {
@@ -260,7 +262,7 @@ namespace Unigram.Navigation
             }
 
             // handle pre-launch
-            if ((e as LaunchActivatedEventArgs)?.PrelaunchActivated ?? false)
+            if (e.PrelaunchActivated)
             {
                 var runOnStartAsync = false;
                 _HasOnPrelaunchAsync = true;
@@ -272,7 +274,7 @@ namespace Unigram.Navigation
             if (!restored)
             {
                 var kind = e.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
-                await CallOnStartAsync(true, kind);
+                await CallOnStartAsync(e, true, kind);
             }
 
             CallActivateWindow(WindowLogic.ActivateWindowSources.Launching);
@@ -644,7 +646,7 @@ namespace Unigram.Navigation
             CurrentState = States.AfterInit;
         }
 
-        private async Task CallOnStartAsync(bool canRepeat, StartKind startKind)
+        private async Task CallOnStartAsync(IActivatedEventArgs args, bool canRepeat, StartKind startKind)
         {
             DebugWrite();
 
@@ -681,7 +683,7 @@ namespace Unigram.Navigation
                 {
                     OnResuming(sender, e, AppExecutionState.Prelaunch);
                     var kind = args?.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
-                    await CallOnStartAsync(false, kind);
+                    await CallOnStartAsync(args, false, kind);
                     CallActivateWindow(WindowLogic.ActivateWindowSources.Resuming);
                 }
                 else
@@ -724,7 +726,7 @@ namespace Unigram.Navigation
                 {
                     await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
                 }
-                await OnSuspendingAsync(sender, e, (OriginalActivatedArgs as LaunchActivatedEventArgs)?.PrelaunchActivated ?? false);
+                await OnSuspendingAsync(sender, e, PrelaunchActivated);
             }
             finally
             {
@@ -810,7 +812,7 @@ namespace Unigram.Navigation
 
                 //allow only main view NavigationService as others won't be able to use Dispatcher and processing will stuck
                 var services = WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
-                foreach (INavigationService nav in services)
+                foreach (INavigationService nav in services.ToArray())
                 {
                     try
                     {
@@ -818,7 +820,7 @@ namespace Unigram.Navigation
                         // date the cache (which marks the date/time it was suspended)
                         nav.FrameFacade.SetFrameState(CacheDateKey, DateTime.Now.ToString());
                         DebugWrite($"Nav.FrameId:{nav.FrameFacade.FrameId}");
-                        await (nav as INavigationService).GetDispatcherWrapper().DispatchAsync(async () => await nav.SuspendingAsync());
+                        await nav.GetDispatcherWrapper().DispatchAsync(async () => await nav.SuspendingAsync());
                     }
                     catch (Exception ex)
                     {
@@ -830,7 +832,7 @@ namespace Unigram.Navigation
 
         private class WindowLogic
         {
-            public enum ActivateWindowSources { Launching, Activating, SplashScreen, Resuming }
+            public enum ActivateWindowSources { Launching, Activating, Resuming }
             /// <summary>
             /// Override this method only if you (the developer) wants to programmatically
             /// control the means by which and when the Core Window is activated by Template 10.

@@ -18,6 +18,7 @@ using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -25,14 +26,20 @@ namespace Unigram.Controls
 {
     public class FormattedTextBox : RichEditBox
     {
+        private MenuFlyoutSubItem _proofingMenu;
+
         public FormattedTextBox()
         {
             DefaultStyleKey = typeof(FormattedTextBox);
 
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
+            _proofingMenu = new MenuFlyoutSubItem();
+            _proofingMenu.Text = "Spelling";
+
             ContextFlyout = new MenuFlyout();
             ContextFlyout.Opening += OnContextFlyoutOpening;
+            ContextFlyout.Closing += OnContextFlyoutClosing;
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
             {
@@ -176,19 +183,6 @@ namespace Unigram.Controls
 
             flyout.Items.Clear();
 
-            //if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
-            //{
-            //    var sub = new MenuFlyoutItem();
-            //    sub.Text = "Proofing";
-            //    sub.Click += (s, args) =>
-            //    {
-            //        proofing.ShowAt(this);
-            //    };
-
-            //    flyout.Items.Add(sub);
-            //    flyout.Items.Add(new MenuFlyoutSeparator());
-            //}
-
             var selection = Document.Selection;
             var format = Document.Selection.CharacterFormat;
 
@@ -225,37 +219,26 @@ namespace Unigram.Controls
             flyout.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
 
-            //if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout"))
-            //{
-            //    var proofingMenu = ProofingMenuFlyout as MenuFlyout;
-            //    if (proofingMenu == null || proofingMenu.Items.IsEmpty())
-            //    {
-            //        return;
-            //    }
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
+            {
+                flyout.CreateFlyoutSeparator();
+                //flyout.Items.Add(_proofingMenu);
 
-            //    RoutedEventHandler handler = (s, args) =>
-            //    {
-            //        flyout.Hide();
-            //    };
+                foreach (var item in proofing.Items)
+                {
+                    flyout.Items.Add(item);
+                }
+            }
+        }
 
-            //    foreach (var itemBase in proofingMenu.Items)
-            //    {
-            //        if (itemBase is MenuFlyoutItem item)
-            //        {
-            //            item.Click += handler;
-            //        }
-            //        else if (itemBase is ToggleMenuFlyoutItem toggle)
-            //        {
-            //            toggle.Click += handler;
-            //        }
-            //    }
+        private void OnContextFlyoutClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+        {
+            _proofingMenu.Items.Clear();
 
-            //    var proofing = new MenuFlyoutSubItem();
-            //    proofing.Text = "Proofing";
-            //    proofing.Items.AddRange(proofingMenu.Items);
-
-            //    flyout.Items.Add(proofing);
-            //}
+            if (sender is MenuFlyout flyout)
+            {
+                flyout.Items.Clear();
+            }
         }
 
         public void ToggleBold()

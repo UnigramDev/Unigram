@@ -23,7 +23,7 @@ namespace Unigram.Services.Factories
         Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, int ttl = 0, BitmapEditState editState = null);
         Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
         Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
-        Task<InputMessageFactory> CreateDocumentAsync(StorageFile file);
+        Task<InputMessageFactory> CreateDocumentAsync(StorageFile file, bool asFile);
     }
 
     public class MessageFactory : IMessageFactory
@@ -41,6 +41,11 @@ namespace Unigram.Services.Factories
 
         public MessageViewModel Create(IMessageDelegate delegato, Message message)
         {
+            if (message == null)
+            {
+                return null;
+            }
+
             return new MessageViewModel(_protoService, _playbackService, delegato, message);
         }
 
@@ -200,12 +205,12 @@ namespace Unigram.Services.Factories
             };
         }
 
-        public async Task<InputMessageFactory> CreateDocumentAsync(StorageFile file)
+        public async Task<InputMessageFactory> CreateDocumentAsync(StorageFile file, bool asFile)
         {
             var generated = await file.ToGeneratedAsync();
             var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);
 
-            if (file.FileType.Equals(".webp", StringComparison.OrdinalIgnoreCase))
+            if (!asFile && file.FileType.Equals(".webp", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
@@ -227,7 +232,11 @@ namespace Unigram.Services.Factories
                     // Not really a sticker, go on sending as a file
                 }
             }
-            else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
+            else if (!asFile && file.FileType.Equals(".tgs", StringComparison.OrdinalIgnoreCase))
+            {
+                // TODO
+            }
+            else if (!asFile && file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
             {
                 var props = await file.Properties.GetMusicPropertiesAsync();
                 var duration = (int)props.Duration.TotalSeconds;

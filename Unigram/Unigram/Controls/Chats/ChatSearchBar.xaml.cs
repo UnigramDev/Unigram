@@ -132,7 +132,7 @@ namespace Unigram.Controls.Chats
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel?.ProtoService, user, 36);
             }
             else if (args.Item is ChatSearchMediaFilter filter)
             {

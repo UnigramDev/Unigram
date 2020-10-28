@@ -25,17 +25,13 @@ namespace Unigram.ViewModels
          IHandle<UpdateUserFullInfo>,
          IHandle<UpdateFile>
     {
-        private readonly INotificationsService _pushService;
-        private readonly IContactsService _contactsService;
         private readonly ISettingsSearchService _searchService;
 
         public ISettingsDelegate Delegate { get; set; }
 
-        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, ISettingsSearchService searchService)
+        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ISettingsSearchService searchService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _pushService = pushService;
-            _contactsService = contactsService;
             _searchService = searchService;
 
             AskCommand = new RelayCommand(AskExecute);
