@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" xmlns:uap4="http://schemas.microsoft.com/appx/manifest/uap/windows10/4" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4" xmlns:iot2="http://schemas.microsoft.com/appx/manifest/iot/windows10/2" xmlns:uap6="http://schemas.microsoft.com/appx/manifest/uap/windows10/6" IgnorableNamespaces="uap uap3 uap4 uap5 mp rescap desktop desktop4 iot2 uap6">
-  <Identity Name="38833FF26BA1D.UnigramPreview" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="7.0.5345.0" />
+  <Identity Name="38833FF26BA1D.UnigramExperimental" Publisher="CN=D89C87B4-2758-402A-8F40-3571D00882AB" Version="7.2.5632.0" />
   <mp:PhoneIdentity PhoneProductId="bf16cc61-265a-4c8a-9ead-f4f77e6a0a97" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>Unigram - A Telegram universal experience</DisplayName>
+    <DisplayName>Unigram Experimental</DisplayName>
     <PublisherDisplayName>Unigram, Inc.</PublisherDisplayName>
     <Logo>Assets\Logos\StoreLogo.png</Logo>
   </Properties>
@@ -16,7 +16,7 @@
   <Applications>
     <!-- desktop4:SupportsMultipleInstances="true" -->
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Unigram.App">
-      <uap:VisualElements DisplayName="Unigram" Square150x150Logo="Assets\Logos\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo.png" Description="Unigram" BackgroundColor="#404040">
+      <uap:VisualElements DisplayName="Telegram" Square150x150Logo="Assets\Logos\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo.png" Description="Unigram" BackgroundColor="#404040">
         <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="Assets\Logos\LockScreenLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Logos\Wide310x150Logo.png" Square71x71Logo="Assets\Logos\Square71x71Logo.png" Square310x310Logo="Assets\Logos\Square310x310Logo.png">
           <uap:ShowNameOnTiles>
