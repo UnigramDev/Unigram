@@ -93,9 +93,9 @@ namespace Unigram.Views.Popups
             }
         }
 
-        private bool _wasAlbum;
+        private bool _wasAlbum = true;
 
-        private bool _isAlbum;
+        private bool _isAlbum = true;
         public bool IsAlbum
         {
             get { return _isAlbum; }
@@ -138,9 +138,6 @@ namespace Unigram.Views.Popups
             Items.CollectionChanged += OnCollectionChanged;
             IsMediaSelected = media && IsMediaOnly;
             IsFilesSelected = !IsMediaSelected;
-            IsAlbum = media;
-
-            _wasAlbum = media;
 
             UpdateView();
             UpdatePanel();
