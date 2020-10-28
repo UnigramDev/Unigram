@@ -35,7 +35,7 @@ namespace Unigram.Controls.Messages
             UpdateMessageState(message);
             UpdateMessageDate(message);
             UpdateMessageEdited(message);
-            UpdateMessagePinned(message);
+            UpdateMessageIsPinned(message);
             //ConvertInteractionInfo(message);
         }
 
@@ -113,7 +113,7 @@ namespace Unigram.Controls.Messages
             EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard) ? $"{Strings.Resources.EditedMessage}\u00A0\u2009" : string.Empty;
         }
 
-        private void UpdateMessagePinned(MessageViewModel message)
+        public void UpdateMessageIsPinned(MessageViewModel message)
         {
             if (message.IsPinned)
             {

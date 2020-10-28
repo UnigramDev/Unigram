@@ -27,6 +27,8 @@ namespace Unigram.ViewModels
         public IPlaybackService PlaybackService => _playbackService;
         public IMessageDelegate Delegate => _delegate;
 
+        public bool IsInitial { get; set; } = true;
+
         public bool IsFirst { get; set; } = true;
         public bool IsLast { get; set; } = true;
 
@@ -52,6 +54,7 @@ namespace Unigram.ViewModels
         public bool CanGetMessageThread => _message.CanGetMessageThread;
         public bool CanGetStatistics => _message.CanGetStatistics;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
+        public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
         public MessageSchedulingState SchedulingState => _message.SchedulingState;
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;
@@ -75,12 +78,15 @@ namespace Unigram.ViewModels
         public MessageContent GeneratedContent { get; set; }
         public bool GeneratedContentUnread { get; set; }
 
-        [Deprecated("Use ICacheService.TryGetUser instead", DeprecationType.Deprecate, 1)]
-        public User GetSenderUser()
+        public BaseObject GetSender()
         {
             if (_message.Sender is MessageSenderUser user)
             {
                 return ProtoService.GetUser(user.UserId);
+            }
+            else if (_message.Sender is MessageSenderChat chat)
+            {
+                return ProtoService.GetChat(chat.ChatId);
             }
 
             return null;
@@ -248,6 +254,11 @@ namespace Unigram.ViewModels
             return base.Equals(obj);
         }
 
+        public int AnimationHash()
+        {
+            return base.GetHashCode();
+        }
+
         public override int GetHashCode()
         {
             return Id.GetHashCode() ^ ChatId.GetHashCode();
@@ -276,6 +287,7 @@ namespace Unigram.ViewModels
             _message.Id = message.Id;
             _message.IsChannelPost = message.IsChannelPost;
             _message.IsOutgoing = message.IsOutgoing;
+            _message.IsPinned = message.IsPinned;
             _message.MessageThreadId = message.MessageThreadId;
             _message.MediaAlbumId = message.MediaAlbumId;
             _message.ReplyMarkup = message.ReplyMarkup;
@@ -292,21 +304,28 @@ namespace Unigram.ViewModels
             {
                 FormattedText caption = null;
 
-                foreach (var child in album.Messages)
+                if (album.IsMedia)
                 {
-                    var childCaption = child.Content?.GetCaption();
-                    if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))
+                    foreach (var child in album.Messages)
                     {
-                        if (caption == null || string.IsNullOrEmpty(caption.Text))
+                        var childCaption = child.Content?.GetCaption();
+                        if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))
                         {
-                            caption = childCaption;
-                        }
-                        else
-                        {
-                            caption = null;
-                            break;
+                            if (caption == null || string.IsNullOrEmpty(caption.Text))
+                            {
+                                caption = childCaption;
+                            }
+                            else
+                            {
+                                caption = null;
+                                break;
+                            }
                         }
                     }
+                }
+                else if (album.Messages.Count > 0)
+                {
+                    caption = album.Messages[album.Messages.Count - 1].Content.GetCaption();
                 }
 
                 album.Caption = caption ?? new FormattedText();

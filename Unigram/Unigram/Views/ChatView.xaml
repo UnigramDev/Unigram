@@ -376,7 +376,7 @@
                                     TextTrimming="CharacterEllipsis"
                                     MaxLines="1"
                                     Grid.Column="1"/>
-                                
+
                                 <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Grid.ColumnSpan="2" Grid.Row="1">
                                     <TextBlock x:Name="Subtitle"
                                                 Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"
@@ -593,7 +593,7 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        
+
         <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" x:DeferLoadStrategy="Lazy" Grid.RowSpan="5"/>
 
         <Grid Padding="0,0,0,8" VerticalAlignment="Bottom" Grid.RowSpan="4">
@@ -613,9 +613,10 @@
             <messages:MessagePinned
                 x:Name="PinnedMessage"
                 Click="Reply_Click"
-                HideCommand="{x:Bind ViewModel.UnpinMessageCommand}"
+                HideCommand="{x:Bind ViewModel.PinnedHideCommand}"
+                ListCommand="{x:Bind ViewModel.PinnedListCommand}"
                 Visibility="Collapsed"/>
-            
+
             <Grid 
                 x:Name="CallbackQueryAnswerPanel"
                 Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
@@ -639,7 +640,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid x:Name="ActionBarRoot">
-                    
+
                 </Grid>
 
                 <controls:GlyphButton Command="{x:Bind ViewModel.RemoveActionBarCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
@@ -1213,7 +1214,7 @@
                         VerticalAlignment="Bottom"
                         AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
                         Grid.Column="1"/>
-                        <!--ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"-->
+                    <!--ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"-->
 
                     <Grid x:Name="ButtonRecord" VerticalAlignment="Bottom" Grid.Column="2" Canvas.ZIndex="1000">
                         <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>

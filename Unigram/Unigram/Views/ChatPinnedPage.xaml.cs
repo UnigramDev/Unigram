@@ -7,18 +7,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatEventLogPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
+    public sealed partial class ChatPinnedPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
     {
-        public DialogEventLogViewModel ViewModel => DataContext as DialogEventLogViewModel;
+        public DialogPinnedViewModel ViewModel => DataContext as DialogPinnedViewModel;
         public ChatView View => Content as ChatView;
 
-        public ChatEventLogPage()
+        public ChatPinnedPage()
         {
             InitializeComponent();
 
             Transitions = ApiInfo.CreateSlideTransition();
 
-            Content = new ChatView(deleg => (DataContext = TLContainer.Current.Resolve<DialogEventLogViewModel, IDialogDelegate>(deleg)) as DialogEventLogViewModel);
+            Content = new ChatView(deleg => (DataContext = TLContainer.Current.Resolve<DialogPinnedViewModel, IDialogDelegate>(deleg)) as DialogPinnedViewModel);
             Header = View.Header;
             NavigationCacheMode = NavigationCacheMode.Required;
         }

@@ -18,7 +18,8 @@ namespace Unigram.ViewModels.Delegates
         void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);
         void UpdateChatOnlineMemberCount(Chat chat, int count);
 
-        void UpdatePinnedMessage(Chat chat, MessageViewModel message, bool loading);
+        void UpdatePinnedMessage();
+        void UpdatePinnedMessage(Chat chat, bool known);
         void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);
 
         void UpdateComposerHeader(Chat chat, MessageComposerHeader header);

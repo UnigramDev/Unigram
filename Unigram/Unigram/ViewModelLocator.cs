@@ -171,6 +171,7 @@ namespace Unigram
                 builder.RegisterType<ChatsViewModel>();
                 builder.RegisterType<DialogViewModel>();
                 builder.RegisterType<DialogThreadViewModel>();
+                builder.RegisterType<DialogPinnedViewModel>();
                 builder.RegisterType<DialogScheduledViewModel>();
                 builder.RegisterType<DialogEventLogViewModel>();
                 builder.RegisterType<AnimationDrawerViewModel>();

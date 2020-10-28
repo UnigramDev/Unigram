@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -14,6 +15,8 @@ namespace Unigram.Views
         public ChatThreadPage()
         {
             InitializeComponent();
+
+            Transitions = ApiInfo.CreateSlideTransition();
 
             Content = new ChatView(deleg => (DataContext = TLContainer.Current.Resolve<DialogThreadViewModel, IDialogDelegate>(deleg)) as DialogThreadViewModel);
             Header = View.Header;

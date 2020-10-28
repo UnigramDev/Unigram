@@ -1,4 +1,4 @@
-﻿<Grid
+﻿<local:MessageReferenceBase
     x:Class="Unigram.Controls.Messages.MessagePinned"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,35 +10,93 @@
     d:DesignHeight="300"
     d:DesignWidth="400"
     Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-    MinHeight="{ThemeResource AppBarThemeCompactHeight}">
+    MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+    HorizontalContentAlignment="Stretch"
+    VerticalContentAlignment="Stretch"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Top"
+    Padding="0"
+    Margin="0">
 
-    <Grid.ColumnDefinitions>
-        <ColumnDefinition/>
-        <ColumnDefinition Width="Auto"/>
-    </Grid.ColumnDefinitions>
+    <HyperlinkButton.Template>
+        <ControlTemplate TargetType="HyperlinkButton">
+            <Grid x:Name="RootGrid" Padding="{TemplateBinding Padding}">
+                <ContentPresenter x:Name="ContentPresenter"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  AutomationProperties.AccessibilityView="Raw" />
+            </Grid>
+        </ControlTemplate>
+    </HyperlinkButton.Template>
 
-    <Border
-        BorderThickness="2,0,0,0"
-        BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
-        Margin="12,6"/>
+    <Grid Padding="12,0,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-    <local:MessageReference
-        x:Name="Reference1"
-        Click="Reference_Click"
-        VerticalAlignment="Stretch"
-        BorderBrush="Transparent"
-        Margin="0"
-        Padding="12,6"/>
-    <local:MessageReference
-        x:Name="Reference2"
-        Click="Reference_Click"
-        VerticalAlignment="Stretch"
-        BorderBrush="Transparent"
-        Margin="0"
-        Padding="12,6"/>
+        <local:MessagePinnedLine
+            x:Name="Line"
+            Foreground="{ThemeResource PinnedMessageForegroundBrush}"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            BorderBrush="{ThemeResource PinnedMessageBorderBrush}"
+            Width="4"
+            Height="36"/>
+        <StackPanel Height="36" Orientation="Horizontal">
+            <Border BorderBrush="Transparent" BorderThickness="2,0,0,0"/>
+            <Border BorderBrush="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderThickness="2,0,0,0"/>
+        </StackPanel>
 
-    <controls:GlyphButton
-        x:Name="HideButton"
-        Glyph="&#xE10A;"
-        Grid.Column="1"/>
-</Grid>
+        <Border x:Name="ThumbRoot" x:DeferLoadStrategy="Lazy" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="36" Height="36" Margin="6,0,2,0" Grid.Column="1">
+            <Border x:Name="ThumbEllipse">
+                <Border.Background>
+                    <ImageBrush x:Name="ThumbImage" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                </Border.Background>
+            </Border>
+        </Border>
+
+        <Grid Margin="6,0,0,2" VerticalAlignment="Center" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    x:Name="TitleLabel"
+                    Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                    Style="{StaticResource ReplyBodyTextBlockStyle}"/>
+                <controls:NumericTextBlock
+                    x:Name="Number"
+                    Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                    VerticalAlignment="Top"/>
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <TextBlock x:Name="TextLabel1" MaxLines="1" Foreground="{ThemeResource MessageForegroundBrush}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource ReplyBodyTextBlockStyle}">
+                    <Run x:Name="ServiceLabel1" Foreground="{ThemeResource MessageSubtleForegroundBrush}"/><Run x:Name="MessageLabel1" Foreground="{ThemeResource MessageForegroundBrush}"/>
+                </TextBlock>
+                <TextBlock x:Name="TextLabel2" MaxLines="1" Foreground="{ThemeResource MessageForegroundBrush}" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource ReplyBodyTextBlockStyle}">
+                    <Run x:Name="ServiceLabel2" Foreground="{ThemeResource MessageSubtleForegroundBrush}"/><Run x:Name="MessageLabel2" Foreground="{ThemeResource MessageForegroundBrush}"/>
+                </TextBlock>
+            </Grid>
+        </Grid>
+
+        <controls:GlyphButton
+            x:Name="HideButton"
+            Glyph="&#xE10A;"
+            Grid.Column="3"/>
+        <controls:GlyphButton
+            x:Name="ListButton"
+            Glyph="&#xEA37;"
+            Grid.Column="3"/>
+    </Grid>
+</local:MessageReferenceBase>

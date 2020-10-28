@@ -22,10 +22,12 @@ namespace Unigram.Services
                 TelegramThemeType.Tinted, new Dictionary<string, Color>
                 {
                     { "PageTitleBackgroundBrush", ColorEx.FromHex(0xFF151D26) },
+                    { "PinnedMessageForegroundBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "PageHeaderHighlightBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "PageHeaderBackgroundBrush", ColorEx.FromHex(0xFF1C2733) },
                     { "PageSubHeaderBackgroundBrush", ColorEx.FromHex(0xFF1C2733) },
                     { "PageBackgroundDarkBrush", ColorEx.FromHex(0xFF151D26) },
+                    { "PinnedMessageBorderBrush", ColorEx.FromHex(0xFF151D26) },
                     { "SystemAccentColor", ColorEx.FromHex(0xFF5288C1) },
                     { "ApplicationPageBackgroundThemeBrush", ColorEx.FromHex(0xFF1C2733) },
                     { "TelegramSeparatorMediumBrush", ColorEx.FromHex(0xFF10171E) },
@@ -52,6 +54,7 @@ namespace Unigram.Services
             {
                 TelegramThemeType.Night, new Dictionary<string, Color>
                 {
+                    { "PinnedMessageForegroundBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "PageHeaderHighlightBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "SystemAccentColor", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatVerifiedBadgeBrush", ColorEx.FromHex(0xFF5288C1) },
@@ -76,6 +79,7 @@ namespace Unigram.Services
             {
                 TelegramThemeType.Day, new Dictionary<string, Color>
                 {
+                    { "PinnedMessageForegroundBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "PageHeaderHighlightBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "SystemAccentColor", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatVerifiedBadgeBrush", ColorEx.FromHex(0xFF5288C1) },

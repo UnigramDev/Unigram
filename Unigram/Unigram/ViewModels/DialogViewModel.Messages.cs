@@ -798,37 +798,76 @@ namespace Unigram.ViewModels
         private async void MessagePinExecute(MessageViewModel message)
         {
             var chat = message.GetChat();
+            if (chat == null)
+            {
+                return;
+            }
 
-            if (chat.PinnedMessageId == message.Id)
+            if (message.IsPinned)
             {
                 var confirm = await MessagePopup.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new UnpinChatMessage(chat.Id));
+                    ProtoService.Send(new UnpinChatMessage(chat.Id, message.Id));
                 }
             }
             else
             {
+                var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
+                var self = chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId;
+
+                var last = PinnedMessages.LastOrDefault();
+
                 var dialog = new MessagePopup();
-                dialog.Title = Strings.Resources.AppName;
-                dialog.Message = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
-                    ? Strings.Resources.PinMessageAlertChannel
-                    : chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId
-                    ? Strings.Resources.PinMessageAlertChat
-                    : Strings.Resources.PinMessageAlert;
+                dialog.Title = Strings.Resources.PinMessageAlertTitle;
+
+                if (last != null && last.Id > message.Id)
+                {
+                    dialog.Message = Strings.Resources.PinOldMessageAlert;
+                }
+                else if (channel)
+                {
+                    dialog.Message = Strings.Resources.PinMessageAlertChannel;
+                }
+                else if (chat.Type is ChatTypePrivate)
+                {
+                    dialog.Message = Strings.Resources.PinMessageAlertChat;
+                }
+                else
+                {
+                    dialog.Message = Strings.Resources.PinMessageAlert;
+                }
+
                 dialog.PrimaryButtonText = Strings.Resources.OK;
                 dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-                if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup super && !super.IsChannel)
+                if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup && !channel)
                 {
                     dialog.CheckBoxLabel = Strings.Resources.PinNotify;
                     dialog.IsChecked = true;
+                }
+                else if (chat.Type is ChatTypePrivate && !self)
+                {
+                    dialog.CheckBoxLabel = string.Format(Strings.Resources.PinAlsoFor, chat.Title);
+                    dialog.IsChecked = false;
                 }
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new PinChatMessage(chat.Id, message.Id, dialog.IsChecked == false));
+                    var disableNotification = false;
+                    var onlyForSelf = false;
+
+                    if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup && !channel)
+                    {
+                        disableNotification = dialog.IsChecked == false;
+                    }
+                    else if (chat.Type is ChatTypePrivate && !self)
+                    {
+                        onlyForSelf = dialog.IsChecked == false;
+                    }
+
+                    ProtoService.Send(new PinChatMessage(chat.Id, message.Id, disableNotification, onlyForSelf));
                 }
             }
         }
@@ -1443,7 +1482,11 @@ namespace Unigram.ViewModels
             }
             else if (message.Content is MessagePinMessage pinMessage && pinMessage.MessageId != 0)
             {
-                await LoadMessageSliceAsync(null, pinMessage.MessageId);
+                await LoadMessageSliceAsync(message.Id, pinMessage.MessageId);
+            }
+            else if (message.Content is MessageGameScore gameScore && gameScore.GameMessageId != 0)
+            {
+                await LoadMessageSliceAsync(message.Id, gameScore.GameMessageId);
             }
             else if (message.Content is MessageChatEvent chatEvent)
             {

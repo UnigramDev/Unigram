@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
@@ -19,7 +20,6 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatReadInbox>,
         //IHandle<UpdateChatDraftMessage>,
         IHandle<UpdateChatDefaultDisableNotification>,
-        IHandle<UpdateChatPinnedMessage>,
         IHandle<UpdateChatActionBar>,
         IHandle<UpdateChatHasScheduledMessages>,
 
@@ -34,6 +34,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateMessageMentionRead>,
         IHandle<UpdateMessageEdited>,
         IHandle<UpdateMessageInteractionInfo>,
+        IHandle<UpdateMessageIsPinned>,
         IHandle<UpdateMessageSendFailed>,
         IHandle<UpdateMessageSendSucceeded>,
 
@@ -213,14 +214,6 @@ namespace Unigram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatOnlineMemberCount(_chat, update.OnlineMemberCount));
-            }
-        }
-
-        public void Handle(UpdateChatPinnedMessage update)
-        {
-            if (update.ChatId == _chat?.Id)
-            {
-                BeginOnUIThread(() => ShowPinnedMessage(_chat));
             }
         }
 
@@ -408,12 +401,12 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id && !update.FromCache)
             {
+                var table = update.MessageIds.ToImmutableHashSet();
+
                 BeginOnUIThread(async () =>
                 {
                     using (await _insertLock.WaitAsync())
                     {
-                        var table = new HashSet<long>(update.MessageIds);
-
                         for (int i = 0; i < Items.Count; i++)
                         {
                             var message = Items[i];
@@ -525,13 +518,22 @@ namespace Unigram.ViewModels
                     {
                         bubble.UpdateMessageContent(message);
                         Delegate?.ViewVisibleMessages(false);
-
-                        if (_chat?.PinnedMessageId == message.Id)
-                        {
-                            Delegate?.UpdatePinnedMessage(_chat, message, false);
-                        }
                     }
                 });
+
+                //BeginOnUIThread(() =>
+                //{
+                //    for (int i = 0; i < PinnedMessages.Count; i++)
+                //    {
+                //        if (PinnedMessages[i].Id == update.MessageId)
+                //        {
+                //            PinnedMessages[i].Content = update.NewContent;
+                //            Delegate?.UpdatePinnedMessage();
+
+                //            break;
+                //        }
+                //    }
+                //});
             }
         }
 
@@ -594,6 +596,20 @@ namespace Unigram.ViewModels
                 {
                     message.InteractionInfo = update.InteractionInfo;
                 }, (bubble, message) => bubble.UpdateMessageInteractionInfo(message));
+            }
+        }
+
+        public void Handle(UpdateMessageIsPinned update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                _hasLoadedLastPinnedMessage = false;
+                BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId, VerticalAlignment.Center));
+
+                Handle(update.MessageId, message =>
+                {
+                    message.IsPinned = update.IsPinned;
+                }, (bubble, message) => bubble.UpdateMessageIsPinned(message));
             }
         }
 
@@ -878,6 +894,7 @@ namespace Unigram.ViewModels
                 {
                     var messageCommon = _messageFactory.Create(this, message);
                     messageCommon.GeneratedContentUnread = true;
+                    messageCommon.IsInitial = false;
 
                     var result = new List<MessageViewModel> { messageCommon };
                     await ProcessMessagesAsync(_chat, result);

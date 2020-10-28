@@ -1534,12 +1534,24 @@ namespace Unigram.Views
 
         private async void Reply_Click(object sender, RoutedEventArgs e)
         {
-            var reference = sender as MessageReference;
-            var message = reference.MessageId;
-
-            if (message != 0)
+            if (sender is MessageReferenceBase referenceBase)
             {
-                await ViewModel.LoadMessageSliceAsync(null, message);
+                var message = referenceBase.MessageId;
+
+                if (message != 0)
+                {
+                    await ViewModel.LoadMessageSliceAsync(null, message);
+                }
+            }
+            else
+            {
+                var reference = sender as MessageReference;
+                var message = reference.MessageId;
+
+                if (message != 0)
+                {
+                    await ViewModel.LoadMessageSliceAsync(null, message);
+                }
             }
         }
 
@@ -2012,7 +2024,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutSeparator();
 
                 // Manage
-                flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, chat.PinnedMessageId == message.Id ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = chat.PinnedMessageId == message.Id ? Icons.Unpin : Icons.Pin });
+                flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, message.IsPinned ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = message.IsPinned ? Icons.Unpin : Icons.Pin });
 
                 flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Forward });
                 flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.Report });
@@ -2140,7 +2152,7 @@ namespace Unigram.Views
             }
             else if (chat != null && chat.Type is ChatTypePrivate privata)
             {
-                return privata.UserId == ViewModel.CacheService.Options.MyId;
+                return true;
             }
 
             return false;
@@ -3370,9 +3382,9 @@ namespace Unigram.Views
             }
         }
 
-        public void UpdatePinnedMessage(Chat chat, MessageViewModel message, bool loading)
+        public void UpdatePinnedMessage(Chat chat, bool known)
         {
-            PinnedMessage.UpdateMessage(chat, chat.PinnedMessageId, message, loading, Strings.Resources.PinnedMessage);
+            PinnedMessage.UpdateMessage(chat, null, known, 0, 1, false);
         }
 
         public void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel message)
@@ -3857,7 +3869,11 @@ namespace Unigram.Views
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
         {
-            if (ViewModel.ProtoService.IsRepliesChat(chat))
+            if (ViewModel.Type == DialogType.Pinned)
+            {
+                ShowAction(Strings.Resources.UnpinAllMessages, true);
+            }
+            else if (ViewModel.ProtoService.IsRepliesChat(chat))
             {
                 ShowAction(ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0 ? Strings.Resources.ChannelUnmute : Strings.Resources.ChannelMute, true);
             }
@@ -3881,7 +3897,7 @@ namespace Unigram.Views
             }
 
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
-            VideoCall.Visibility = /*!secret &&*/ fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
+            VideoCall.Visibility = /*!secret &&*/ fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -3938,7 +3954,21 @@ namespace Unigram.Views
             }
             else
             {
-                ShowArea();
+                if (ViewModel.Type == DialogType.Pinned)
+                {
+                    if (group.CanPinMessages())
+                    {
+                        ShowAction(Strings.Resources.UnpinAllMessages, true);
+                    }
+                    else
+                    {
+                        ShowAction(Strings.Resources.HidePinnedMessages, true);
+                    }
+                }
+                else
+                {
+                    ShowArea();
+                }
 
                 TextField.PlaceholderText = Strings.Resources.TypeMessage;
 
@@ -3977,7 +4007,18 @@ namespace Unigram.Views
                 return;
             }
 
-            if (group.IsChannel)
+            if (ViewModel.Type == DialogType.Pinned)
+            {
+                if (group.CanPinMessages())
+                {
+                    ShowAction(Strings.Resources.UnpinAllMessages, true);
+                }
+                else
+                {
+                    ShowAction(Strings.Resources.HidePinnedMessages, true);
+                }
+            }
+            else if (group.IsChannel)
             {
                 if ((group.Status is ChatMemberStatusLeft && group.Username.Length > 0) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
@@ -4176,9 +4217,13 @@ namespace Unigram.Views
                     {
                         ViewVisibleMessages(false);
                     }
-                    else if (content is MessageDice && message.IsAnimatedStickerDownloadCompleted())
+                    else if (content is MessageDice dice)
                     {
-                        ViewVisibleMessages(false);
+                        var state = dice.GetState();
+                        if (state.IsDownloadingCompleted())
+                        {
+                            ViewVisibleMessages(false);
+                        }
                     }
                     else if (content is MessageText text && text.WebPage != null && file.Local.IsDownloadingCompleted)
                     {

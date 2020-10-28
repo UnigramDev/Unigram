@@ -24,6 +24,9 @@
 
             <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
 
+            <SolidColorBrush x:Key="PinnedMessageForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
+            <StaticResource x:Key="PinnedMessageBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
+
             <!-- Chats -->
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#89DF9E"/>
             <SolidColorBrush x:Key="ChatVerifiedBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
@@ -1250,6 +1253,9 @@
             <StaticResource x:Key="PageBackgroundDarkBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
 
             <StaticResource x:Key="TelegramSeparatorMediumBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush"/>
+
+            <SolidColorBrush x:Key="PinnedMessageForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
+            <StaticResource x:Key="PinnedMessageBorderBrush" ResourceKey="SystemControlBackgroundChromeMediumBrush"/>
 
             <!-- Chats -->
             <SolidColorBrush x:Key="ChatOnlineBadgeBrush" Color="#00B12C"/>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reactive.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -14,11 +15,14 @@ using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Gallery;
 using Windows.Foundation;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Views
@@ -117,20 +121,6 @@ namespace Unigram.Views
             {
                 Play(animations, ViewModel.Settings.IsAutoPlayAnimationsEnabled, false);
             }
-
-            var thread = ViewModel.Thread;
-            if (thread != null)
-            {
-                var message = ViewModel.CreateMessage(thread.Messages.LastOrDefault());
-                if (message == null || messages.Contains(message.Id))
-                {
-                    PinnedMessage.UpdateMessage(ViewModel.Chat, 0, null, false);
-                }
-                else
-                {
-                    PinnedMessage.UpdateMessage(ViewModel.Chat, message.Id, message, false);
-                }
-            }
         }
 
         private void UnloadVisibleMessages()
@@ -172,27 +162,27 @@ namespace Unigram.Views
             _oldStickers.Clear();
         }
 
+        public void UpdatePinnedMessage()
+        {
+            UpdateHeaderDate(false);
+        }
+
         private void UpdateHeaderDate(bool intermediate)
         {
             var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
-            if (panel == null || panel.FirstVisibleIndex < 0 || Messages.ScrollingHost.ScrollableHeight == 0)
+            if (panel == null || panel.FirstVisibleIndex < 0)
             {
                 return;
             }
 
-            var top = 0d;
-            var bottom = 0d;
+            var firstVisibleId = 0L;
+            var lastVisibleId = 0L;
 
-            var knockout = SettingsService.Current.Diagnostics.BubbleKnockout;
-            var start = knockout ? panel.FirstCacheIndex : panel.FirstVisibleIndex;
-            var end = knockout ? panel.LastCacheIndex : panel.LastVisibleIndex;
-
-            var minKnock = knockout;
             var minItem = true;
             var minDate = true;
-            var minDateIndex = start;
+            var minDateIndex = panel.FirstVisibleIndex;
 
-            for (int i = start; i <= end; i++)
+            for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
             {
                 var container = Messages.ContainerFromIndex(i) as SelectorItem;
                 if (container == null)
@@ -206,15 +196,13 @@ namespace Unigram.Views
                     continue;
                 }
 
-                if (minKnock)
+                if (firstVisibleId == 0)
                 {
-                    var negative = Messages.TransformToVisual(container);
-                    var relative = negative.TransformPoint(new Point());
-
-                    top = relative.Y;
-                    bottom = relative.Y + Messages.ActualHeight;
-
-                    minKnock = false;
+                    firstVisibleId = message.Id;
+                }
+                else if (message.Id != 0)
+                {
+                    lastVisibleId = message.Id;
                 }
 
                 if (minItem && i >= panel.FirstVisibleIndex)
@@ -277,19 +265,39 @@ namespace Unigram.Views
                 {
                     container.Opacity = 1;
                 }
-
-                if (knockout && container.ContentTemplateRoot is MessageBubble bubble)
-                {
-                    bubble.UpdateKnockout(top / container.ActualHeight, bottom / container.ActualHeight);
-                }
-
-                top -= container.ActualHeight;
-                bottom -= container.ActualHeight;
             }
 
             _dateHeaderTimer.Stop();
             _dateHeaderTimer.Start();
             ShowHideDateHeader(minDateIndex > 0, minDateIndex > 0 && minDateIndex < int.MaxValue);
+
+            var thread = ViewModel.Thread;
+            if (thread != null)
+            {
+                var message = thread.Messages.LastOrDefault();
+                if (message == null || (firstVisibleId <= message.Id && lastVisibleId >= message.Id))
+                {
+                    PinnedMessage.UpdateMessage(ViewModel.Chat, null, false, 0, 1, false);
+                }
+                else
+                {
+                    PinnedMessage.UpdateMessage(ViewModel.Chat, ViewModel.CreateMessage(message), false, 0, 1, false);
+                }
+            }
+            else if (ViewModel.PinnedMessages.Count > 0)
+            {
+                var currentPinned = ViewModel.PinnedMessages.LastOrDefault(x => x.Id <= lastVisibleId) ?? ViewModel.PinnedMessages.FirstOrDefault();
+                if (currentPinned != null)
+                {
+                    //PinnedMessage.UpdateIndex(ViewModel.PinnedMessages.IndexOf(currentPinned), ViewModel.PinnedMessages.Count, intermediate);
+                    PinnedMessage.UpdateMessage(ViewModel.Chat, currentPinned, false,
+                        ViewModel.PinnedMessages.IndexOf(currentPinned), ViewModel.PinnedMessages.Count, intermediate);
+                }
+                else
+                {
+                    PinnedMessage.UpdateMessage(ViewModel.Chat, null, false, 0, 1, false);
+                }
+            }
         }
 
         private bool _dateHeaderCollapsed = true;
