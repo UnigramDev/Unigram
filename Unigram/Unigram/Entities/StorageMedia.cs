@@ -200,6 +200,18 @@ namespace Unigram.Entities
                         results.Add(new StorageDocument(file));
                     }
                 }
+                else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
+                {
+                    var audio = await StorageAudio.CreateAsync(file);
+                    if (audio != null)
+                    {
+                        results.Add(audio);
+                    }
+                    else
+                    {
+                        results.Add(new StorageDocument(file));
+                    }
+                }
                 else
                 {
                     results.Add(new StorageDocument(file));

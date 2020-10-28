@@ -482,6 +482,7 @@
     <Compile Include="Controls\WalkthroughControl.cs" />
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Entities\StorageAudio.cs" />
     <Compile Include="Navigation\Services\FrameFacade.cs" />
     <Compile Include="Navigation\Services\INavigable.cs" />
     <Compile Include="Navigation\Services\NavigatedEventArgs.cs" />
