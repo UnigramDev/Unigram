@@ -623,7 +623,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                _fore.Offset = new Vector2(0, initial2);
+                _fore.Offset = new Vector2(0, final2);
             }
 
             batch.End();
