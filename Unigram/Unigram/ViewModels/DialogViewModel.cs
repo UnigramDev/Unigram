@@ -143,6 +143,7 @@ namespace Unigram.ViewModels
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
             MessagesCopyCommand = new RelayCommand(MessagesCopyExecute, MessagesCopyCanExecute);
             MessagesReportCommand = new RelayCommand(MessagesReportExecute, MessagesReportCanExecute);
+            MessagesUnselectCommand = new RelayCommand(MessagesUnselectExecute);
 
             MessageReplyPreviousCommand = new RelayCommand(MessageReplyPreviousExecute);
             MessageReplyNextCommand = new RelayCommand(MessageReplyNextExecute);
@@ -152,6 +153,7 @@ namespace Unigram.ViewModels
             MessageForwardCommand = new RelayCommand<MessageViewModel>(MessageForwardExecute);
             MessageShareCommand = new RelayCommand<MessageViewModel>(MessageShareExecute);
             MessageSelectCommand = new RelayCommand<MessageViewModel>(MessageSelectExecute);
+            MessageStatisticsCommand = new RelayCommand<MessageViewModel>(MessageStatisticsExecute);
             MessageCopyCommand = new RelayCommand<MessageViewModel>(MessageCopyExecute);
             MessageCopyMediaCommand = new RelayCommand<MessageViewModel>(MessageCopyMediaExecute);
             MessageCopyLinkCommand = new RelayCommand<MessageViewModel>(MessageCopyLinkExecute);
@@ -3713,8 +3715,7 @@ namespace Unigram.ViewModels
                 var previousPost = previous.IsChannelPost;
 
                 attach = !previousPost &&
-                         //!(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
-                         !(previous.IsService()) &&
+                         //!(previous.IsService()) &&
                          AreTogether(item, previous) &&
                          GetMessageDate(item) - GetMessageDate(previous) < 900;
             }
@@ -3723,12 +3724,17 @@ namespace Unigram.ViewModels
 
             if (previous != null)
             {
-                previous.IsLast = item.IsFirst || item.IsService();
+                previous.IsLast = item.IsFirst /*|| item.IsService()*/;
             }
         }
 
         private static bool AreTogether(MessageViewModel message1, MessageViewModel message2)
         {
+            if (message1.IsService())
+            {
+                return message2.IsService();
+            }
+
             var saved1 = message1.IsSaved();
             var saved2 = message2.IsSaved();
 

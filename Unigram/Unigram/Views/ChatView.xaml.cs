@@ -161,8 +161,6 @@ namespace Unigram.Views
 
             PinnedMessage.InitializeParent(Clipper);
 
-            Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
-
             _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
             _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
             _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
@@ -620,9 +618,9 @@ namespace Unigram.Views
                     bubble.UpdateAttach(message);
                     bubble.UpdateMessageHeader(message);
                 }
-                else if (content is MessageService service)
+                else if (content is MessageService && container.ContentTemplateRoot is FrameworkElement root)
                 {
-                    //service.UpdateAttach(item);
+                    //root.Margin = new Thickness(0, message.IsFirst ? 8 : 4, 0, 0);
                 }
             }
         }
@@ -636,107 +634,6 @@ namespace Unigram.Views
             else if (e.PropertyName.Equals("Search"))
             {
                 SearchMask.Update(ViewModel.Search);
-            }
-        }
-
-        private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
-            {
-                ShowHideManagePanel(false);
-            }
-            else
-            {
-                ShowHideManagePanel(true);
-            }
-        }
-
-        private void ShowHideManagePanel(bool show)
-        {
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
-            var info = ElementCompositionPreview.GetElementVisual(InfoPanel);
-
-            manage.StopAnimation("Offset");
-            manage.StopAnimation("Opacity");
-            info.StopAnimation("Offset");
-            info.StopAnimation("Opacity");
-
-            if ((show && InfoPanel.Visibility == Visibility.Collapsed) || (!show && ManagePanel.Visibility == Visibility.Collapsed))
-            {
-                return;
-            }
-
-            manage.Offset = new Vector3(show ? -32 : 0, 0, 0);
-            manage.Opacity = show ? 0 : 1;
-
-            info.Offset = new Vector3(show ? 0 : 32, 0, 0);
-            info.Opacity = show ? 1 : 0;
-
-            var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                manage.Offset = new Vector3(show ? 0 : -32, 0, 0);
-                manage.Opacity = show ? 1 : 0;
-
-                info.Offset = new Vector3(show ? 32 : 0, 0, 0);
-                info.Opacity = show ? 0 : 1;
-
-                if (show)
-                {
-                    InfoPanel.Visibility = Visibility.Collapsed;
-                    ManagePanel.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    InfoPanel.Visibility = Visibility.Visible;
-                    ManagePanel.Visibility = Visibility.Collapsed;
-
-                    ViewModel.SelectedItems = new List<MessageViewModel>();
-                }
-            };
-
-            var offset1 = manage.Compositor.CreateVector3KeyFrameAnimation();
-            offset1.InsertKeyFrame(show ? 0 : 1, new Vector3(-32, 0, 0));
-            offset1.InsertKeyFrame(show ? 1 : 0, new Vector3());
-
-            var opacity1 = manage.Compositor.CreateScalarKeyFrameAnimation();
-            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
-            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
-
-            var offset2 = manage.Compositor.CreateVector3KeyFrameAnimation();
-            offset2.InsertKeyFrame(show ? 0 : 1, new Vector3());
-            offset2.InsertKeyFrame(show ? 1 : 0, new Vector3(32, 0, 0));
-
-            var opacity2 = manage.Compositor.CreateScalarKeyFrameAnimation();
-            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
-            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
-
-            manage.StartAnimation("Offset", offset1);
-            manage.StartAnimation("Opacity", opacity1);
-            info.StartAnimation("Offset", offset2);
-            info.StartAnimation("Opacity", opacity2);
-
-            batch.End();
-
-            if (show)
-            {
-                ManagePanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                InfoPanel.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void Manage_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
-            {
-                ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
-            }
-            else
-            {
-                ViewModel.SelectionMode = ListViewSelectionMode.None;
             }
         }
 
@@ -1731,15 +1628,7 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
-            {
-                ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
-
-                //if (ViewModel.SelectedItems.IsEmpty())
-                //{
-                //    ViewModel.SelectionMode = ListViewSelectionMode.None;
-                //}
-            }
+            ViewModel.ExpandSelection(Messages.SelectedItems.Cast<MessageViewModel>());
 
             if (_selectionFromItemClick && Messages.SelectedItems.Count < 1)
             {
@@ -1954,7 +1843,29 @@ namespace Unigram.Views
                 message.UpdateWith(response as Message);
             }
 
-            if (message.SendingState is MessageSendingStateFailed || message.SendingState is MessageSendingStatePending)
+            var selected = ViewModel.SelectedItems;
+            if (selected.Count > 0)
+            {
+                if (selected.Contains(message))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.MessagesForwardCommand, "Forward Selected", new FontIcon { Glyph = Icons.Forward });
+
+                    if (chat.CanBeReported)
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.MessagesReportCommand, "Report Selected", new FontIcon { Glyph = Icons.Report });
+                    }
+
+                    flyout.CreateFlyoutItem(ViewModel.MessagesDeleteCommand, "Delete Selected", new FontIcon { Glyph = Icons.Delete });
+                    flyout.CreateFlyoutItem(ViewModel.MessagesUnselectCommand, "Clear Selection");
+                    flyout.CreateFlyoutSeparator();
+                    flyout.CreateFlyoutItem(ViewModel.MessagesCopyCommand, "Copy Selected as Text", new FontIcon { Glyph = Icons.Copy });
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Select });
+                }
+            }
+            else if (message.SendingState is MessageSendingStateFailed || message.SendingState is MessageSendingStatePending)
             {
                 if (message.SendingState is MessageSendingStateFailed)
                 {
@@ -1979,6 +1890,7 @@ namespace Unigram.Views
 
                 // Manage
                 flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, message.IsPinned ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = message.IsPinned ? Icons.Unpin : Icons.Pin });
+                //flyout.CreateFlyoutItem(MessageStatistics_Loaded, ViewModel.MessageStatisticsCommand, message, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.Statistics });
 
                 flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Forward });
                 flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.Report });
@@ -2257,6 +2169,11 @@ namespace Unigram.Views
             }
 
             return true;
+        }
+
+        private bool MessageStatistics_Loaded(MessageViewModel message)
+        {
+            return message.CanGetStatistics;
         }
 
         private bool MessageAddSticker_Loaded(MessageViewModel message)
@@ -3078,8 +2995,6 @@ namespace Unigram.Views
 
             TypeIcon.Text = chat.Type is ChatTypeSecret ? Icons.Secret : string.Empty;
             TypeIcon.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
-
-            Report.Visibility = chat.CanBeReported ? Visibility.Visible : Visibility.Collapsed;
 
             ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.History ? Visibility.Visible : Visibility.Collapsed;
             ButtonTimer.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;

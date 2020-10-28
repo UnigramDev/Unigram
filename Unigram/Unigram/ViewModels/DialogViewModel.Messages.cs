@@ -558,6 +558,26 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Unselect
+
+        public RelayCommand MessagesUnselectCommand { get; }
+        private void MessagesUnselectExecute()
+        {
+            SelectionMode = ListViewSelectionMode.None;
+        }
+
+        #endregion
+
+        #region Statistics
+
+        public RelayCommand<MessageViewModel> MessageStatisticsCommand { get; }
+        private void MessageStatisticsExecute(MessageViewModel message)
+        {
+
+        }
+
+        #endregion
+
         #region Retry
 
         public RelayCommand<MessageViewModel> MessageRetryCommand { get; }
