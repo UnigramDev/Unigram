@@ -133,14 +133,14 @@ namespace Unigram
                 if (passcode != null && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
                 {
                     passcode.Lock();
-                    ShowPasscode();
+                    ShowPasscode(false);
                 }
             });
         }
 
         [ThreadStatic]
         private static bool _passcodeShown;
-        public static async void ShowPasscode()
+        public static async void ShowPasscode(bool biometrics)
         {
             if (_passcodeShown)
             {
@@ -151,7 +151,7 @@ namespace Unigram
 
             Window.Current.Content.Visibility = Visibility.Collapsed;
 
-            var dialog = new PasscodePage();
+            var dialog = new PasscodePage(biometrics);
             TypedEventHandler<ContentDialog, ContentDialogClosingEventArgs> handler = null;
             handler = (s, args) =>
             {
@@ -177,7 +177,7 @@ namespace Unigram
 
             if (e.Visible && TLContainer.Current.Passcode.IsLockscreenRequired)
             {
-                ShowPasscode();
+                ShowPasscode(false);
             }
             else
             {
@@ -317,7 +317,7 @@ namespace Unigram
         {
             if (TLContainer.Current.Passcode.IsLockscreenRequired)
             {
-                ShowPasscode();
+                ShowPasscode(true);
             }
 
             if (startKind == StartKind.Activate)
@@ -362,7 +362,7 @@ namespace Unigram
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             var dispatcher = Window.Current.Dispatcher;
-            Task.Run(() => OnStartSync(dispatcher));
+            Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
         }
 
@@ -407,7 +407,7 @@ namespace Unigram
             return new TLNavigationService(TLContainer.Current.Resolve<IProtoService>(session), frame, session, id);
         }
 
-        private async void OnStartSync(CoreDispatcher dispatcher)
+        private async void OnStartSync()
         {
             //#if DEBUG
             //await VoIPConnection.Current.ConnectAsync();

@@ -378,7 +378,8 @@
                 Margin="0,0,0,24"
                 Style="{StaticResource TitleTextBlockStyle}"/>
 
-            <Grid HorizontalAlignment="Center"
+            <Grid x:Name="FieldPanel"
+                  HorizontalAlignment="Center"
                   VerticalAlignment="Center"
                   Margin="0,0,0,120"
                   Width="296">
@@ -402,6 +403,14 @@
             </Grid>
         </StackPanel>
 
-        <controls:GlyphButton x:Name="Biometrics" Click="OnLoaded" Visibility="Collapsed" Glyph="&#xE928;" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,24" Radius="24"/>
+        <controls:GlyphButton
+            x:Name="Biometrics"
+            Click="Biometrics_Click"
+            Visibility="Collapsed"
+            Glyph="&#xEB68;"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            Margin="0,24"
+            Radius="24"/>
     </Grid>
 </controls:ContentPopup>

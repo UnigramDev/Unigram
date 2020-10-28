@@ -18,14 +18,16 @@ namespace Unigram.Views
     public sealed partial class PasscodePage : ContentPopup
     {
         private readonly IPasscodeService _passcodeService;
+        private readonly bool _biometrics;
 
         private bool _accepted;
 
-        public PasscodePage()
+        public PasscodePage(bool biometrics)
         {
             InitializeComponent();
 
             _passcodeService = TLContainer.Current.Resolve<IPasscodeService>();
+            _biometrics = biometrics;
 
             _applicationView = ApplicationView.GetForCurrentView();
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
@@ -146,6 +148,47 @@ namespace Unigram.Views
             {
                 Biometrics.Visibility = Visibility.Visible;
 
+                if (_biometrics)
+                {
+                    Biometrics_Click(null, null);
+                }
+            }
+            else
+            {
+                Field.Focus(FocusState.Keyboard);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+        }
+
+        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            args.EnsuredFocusedElementInView = true;
+            FieldPanel.Margin = new Thickness(0, 0, 0, Math.Max(args.OccludedRect.Height + 8, 120));
+        }
+
+        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
+        {
+            args.EnsuredFocusedElementInView = true;
+            FieldPanel.Margin = new Thickness(0, 0, 0, 120);
+        }
+
+        private void Unlock()
+        {
+            _passcodeService.Unlock();
+            _accepted = true;
+
+            Hide();
+        }
+
+        private async void Biometrics_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
                 var windowContext = TLWindowContext.GetForCurrentView();
                 if (windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
                 {
@@ -168,36 +211,7 @@ namespace Unigram.Views
                     }
                 }
             }
-            else
-            {
-                Field.Focus(FocusState.Keyboard);
-            }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
-        }
-
-        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            args.EnsuredFocusedElementInView = true;
-            Field.Margin = new Thickness(0, 0, 0, Math.Max(args.OccludedRect.Height + 8, 120));
-        }
-
-        private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            args.EnsuredFocusedElementInView = true;
-            Field.Margin = new Thickness(0, 0, 0, 120);
-        }
-
-        private void Unlock()
-        {
-            _passcodeService.Unlock();
-            _accepted = true;
-
-            Hide();
+            catch { }
         }
     }
 }

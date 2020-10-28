@@ -2001,7 +2001,7 @@ namespace Unigram.Views
 
                 if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
                 {
-                    App.ShowPasscode();
+                    App.ShowPasscode(false);
                 }
 
                 Automation.SetToolTip(Lock, Strings.Resources.AccDescrPasscodeUnlock);
