@@ -25,8 +25,8 @@
                         Header="Minithumbnails"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.BubbleKnockout, Mode=TwoWay}"
-                        Header="Bubble knockout"
+                        IsOn="{x:Bind ViewModel.BubbleAnimations, Mode=TwoWay}"
+                        Header="Bubble animations"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
 

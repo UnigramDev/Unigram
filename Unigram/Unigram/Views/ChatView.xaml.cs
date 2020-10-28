@@ -1,5 +1,4 @@
-﻿using LinqToVisualTree;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -249,54 +248,6 @@ namespace Unigram.Views
             _textShadowVisual.IsVisible = false;
 
             //TextField.Language = Native.NativeUtils.GetCurrentCulture();
-
-            return;
-
-            if (ApiInformation.IsEventPresent("Windows.UI.Xaml.Input.FocusManager", "GettingFocus"))
-            {
-                FocusManager.GettingFocus += (s, args) =>
-                {
-                    // We want to apply this behavior when using mouse only
-                    if (args.InputDevice != FocusInputDeviceKind.Mouse)
-                    {
-                        return;
-                    }
-
-                    // We don't want to steal focus from text areas/keyboard navigation
-                    if (args.FocusState == FocusState.Keyboard || args.NewFocusedElement is TextBox || args.NewFocusedElement is RichEditBox)
-                    {
-                        return;
-                    }
-
-                    // We don't want to steal focus from popups
-                    if (VisualTreeHelper.GetOpenPopups(Window.Current).Any())
-                    {
-                        return;
-                    }
-
-                    // If new focused element supports programmatic focus (so it's a control)
-                    // then we can freely steal focus from it
-                    if (args.NewFocusedElement is Control)
-                    {
-                        if (args.FocusState == FocusState.Programmatic && args.OldFocusedElement is ChatTextBox)
-                        {
-                            args.TryCancel();
-                        }
-                        else if (args.FocusState == FocusState.Programmatic)
-                        {
-                            args.TrySetNewFocusedElement(TextField);
-                        }
-                        else if (args.OldFocusedElement is ChatTextBox)
-                        {
-                            args.TryCancel();
-                        }
-                        else if (args.NewFocusedElement is ChatListViewItem)
-                        {
-                            args.TrySetNewFocusedElement(TextField);
-                        }
-                    }
-                };
-            }
         }
 
         private void InitializeAutomation()
@@ -492,7 +443,7 @@ namespace Unigram.Views
             {
                 ViewModel.PropertyChanged -= OnPropertyChanged;
                 ViewModel.Items.AttachChanged = null;
-                //ViewModel.Items.CollectionChanged -= OnCollectionChanged;
+                ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
                 //ViewModel.Items.Dispose();
                 //ViewModel.Items.Clear();
@@ -524,8 +475,12 @@ namespace Unigram.Views
             SearchMask.Update(ViewModel.Search);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
-            //ViewModel.Items.CollectionChanged += OnCollectionChanged;
             ViewModel.Items.AttachChanged = OnAttachChanged;
+
+            if (ViewModel.Settings.Diagnostics.BubbleAnimations)
+            {
+                ViewModel.Items.CollectionChanged += OnCollectionChanged;
+            }
 
             //Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
 
@@ -541,6 +496,8 @@ namespace Unigram.Views
                 : Visibility.Collapsed;
         }
 
+        private MessageBubble _measurement;
+
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             var panel = Messages.ItemsStack;
@@ -551,18 +508,16 @@ namespace Unigram.Views
 
             if (args.Action == NotifyCollectionChangedAction.Remove && panel.FirstCacheIndex < args.OldStartingIndex && panel.LastCacheIndex >= args.OldStartingIndex)
             {
-                //var container = ContainerFromItem(args.OldItems[0]);
-                //if (container == null)
-                //{
-                //    return;
-                //}
+                // I don't want to play this animation for now
+                return;
 
-                var owner = panel.Descendants<SelectorItem>().FirstOrDefault(x => x is SelectorItem item && item.ContentTemplateRoot is FrameworkElement element && element.Tag == args.OldItems[0]) as SelectorItem;
+                var owner = _measurement;
                 if (owner == null)
                 {
-                    return;
+                    owner = _measurement = new MessageBubble();
                 }
 
+                owner.UpdateMessage(args.OldItems[0] as MessageViewModel);
                 owner.Measure(new Size(ActualWidth, ActualHeight));
 
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -583,9 +538,15 @@ namespace Unigram.Views
 
                 batch.End();
             }
-            else if (args.Action == NotifyCollectionChangedAction.Add && panel.LastVisibleIndex >= args.NewStartingIndex - 1)
+            else if (args.Action == NotifyCollectionChangedAction.Add && panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex - 1)
             {
-                await Messages.ItemsStack.UpdateLayoutAsync();
+                var message = args.NewItems[0] as MessageViewModel;
+                if (message.IsInitial)
+                {
+                    return;
+                }
+
+                await Messages.ItemsStack.UpdateLayoutAsync(false);
 
                 var owner = Messages.ContainerFromItem(args.NewItems[0]) as SelectorItem;
                 if (owner == null)
@@ -593,18 +554,21 @@ namespace Unigram.Views
                     return;
                 }
 
-                owner.Measure(new Size(ActualWidth, ActualHeight));
-
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
                 var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                anim.InsertKeyFrame(0, new Vector3(0, (float)owner.DesiredSize.Height, 0));
+                anim.InsertKeyFrame(0, new Vector3(0, (float)owner.ActualHeight, 0));
                 anim.InsertKeyFrame(1, new Vector3());
                 //anim.Duration = TimeSpan.FromSeconds(1);
 
                 for (int i = panel.FirstCacheIndex; i <= args.NewStartingIndex; i++)
                 {
                     var container = Messages.ContainerFromIndex(i) as SelectorItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+                    
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
 
                     var visual = ElementCompositionPreview.GetElementVisual(child);
@@ -614,16 +578,6 @@ namespace Unigram.Views
                 batch.End();
             }
         }
-
-
-        //private void DialogPage_LosingFocus(UIElement sender, LosingFocusEventArgs args)
-        //{
-        //    if (args.NewFocusedElement is DialogListViewItem && args.OldFocusedElement is BubbleTextBox)
-        //    {
-        //        args.Cancel = true;
-        //        args.Handled = true;
-        //    }
-        //}
 
         private void OnAttachChanged(IEnumerable<MessageViewModel> items)
         {

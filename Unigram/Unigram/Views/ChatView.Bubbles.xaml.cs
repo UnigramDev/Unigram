@@ -789,7 +789,13 @@ namespace Unigram.Views
 
                 if (test is MessageBubble bubbu)
                 {
+                    bubbu.UnregisterEvents();
                     bubbu.UpdateMessage(null);
+                }
+
+                if (_sizeChangedHandler != null)
+                {
+                    args.ItemContainer.SizeChanged -= _sizeChangedHandler;
                 }
 
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
@@ -926,8 +932,19 @@ namespace Unigram.Views
 
             if (content is MessageBubble bubble)
             {
+                bubble.UpdateQuery(ViewModel.Search?.Query);
+                bubble.UpdateSelectorItem(args.ItemContainer);
                 bubble.UpdateMessage(args.Item as MessageViewModel);
                 args.Handled = true;
+
+                if (ViewModel.Settings.Diagnostics.BubbleAnimations)
+                {
+                    args.RegisterUpdateCallback(2, (s, args) =>
+                    {
+                        args.ItemContainer.SizeChanged += _sizeChangedHandler ??= new SizeChangedEventHandler(Item_SizeChanged);
+                        bubble.RegisterEvents();
+                    });
+                }
             }
             else if (content is MessageService service)
             {
@@ -946,6 +963,7 @@ namespace Unigram.Views
         }
 
         private TypedEventHandler<UIElement, ContextRequestedEventArgs> _contextRequestedHandler;
+        private SizeChangedEventHandler _sizeChangedHandler;
 
         private SelectorItem CreateSelectorItem(string typeName)
         {
@@ -965,6 +983,68 @@ namespace Unigram.Views
             }
 
             return item;
+        }
+
+        private void Item_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var panel = Messages.ItemsStack;
+            if (panel == null || e.PreviousSize.Height == e.NewSize.Height)
+            {
+                return;
+            }
+
+            var selector = sender as SelectorItem;
+
+            var index = Messages.IndexFromContainer(selector);
+            if (index < panel.LastVisibleIndex && e.PreviousSize.Width < 1 && e.PreviousSize.Height < 1)
+            {
+                return;
+            }
+
+            var message = Messages.ItemFromContainer(selector) as MessageViewModel;
+            if (message == null || message.IsInitial)
+            {
+                if (message != null && e.PreviousSize.Width > 0 && e.PreviousSize.Height > 0)
+                {
+                    message.IsInitial = false;
+                }
+
+                return;
+            }
+
+            if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)
+            {
+                var diff = (float)e.NewSize.Height - (float)e.PreviousSize.Height;
+                if (Math.Abs(diff) < 2)
+                {
+                    return;
+                }
+
+                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+
+                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(0, new Vector3(0, (float)diff, 0));
+                anim.InsertKeyFrame(1, new Vector3());
+                //anim.Duration = TimeSpan.FromSeconds(5);
+
+                System.Diagnostics.Debug.WriteLine(diff);
+
+                for (int i = panel.FirstCacheIndex; i <= index; i++)
+                {
+                    var container = Messages.ContainerFromIndex(i) as SelectorItem;
+                    if (container == null)
+                    {
+                        continue;
+                    }
+
+                    var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
+
+                    var visual = ElementCompositionPreview.GetElementVisual(child);
+                    visual.StartAnimation("Offset", anim);
+                }
+
+                batch.End();
+            }
         }
 
         private string SelectTemplateCore(object item)

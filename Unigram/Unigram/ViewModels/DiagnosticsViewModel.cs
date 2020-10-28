@@ -119,12 +119,12 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool BubbleKnockout
+        public bool BubbleAnimations
         {
-            get => Settings.Diagnostics.BubbleKnockout;
+            get => Settings.Diagnostics.BubbleAnimations;
             set
             {
-                Settings.Diagnostics.BubbleKnockout = value;
+                Settings.Diagnostics.BubbleAnimations = value;
                 RaisePropertyChanged();
             }
         }

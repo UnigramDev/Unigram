@@ -15,6 +15,11 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var sticker = element.Tag as StickerViewModel;
 
+            if (sticker == null)
+            {
+                return;
+            }
+
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, (Sticker)sticker, Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Stickers });
 
@@ -49,6 +54,11 @@ namespace Unigram.Views
         {
             var element = sender as FrameworkElement;
             var animation = element.DataContext as Animation;
+
+            if (animation == null)
+            {
+                return;
+            }
 
             var flyout = new MenuFlyout();
 

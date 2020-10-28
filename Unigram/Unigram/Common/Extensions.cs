@@ -636,14 +636,6 @@ namespace Unigram.Common
             return GetHyperlink(parent.ElementStart.Parent as TextElement);
         }
 
-        public static void FocusMaybe2(this Control textBox, FocusState focusState)
-        {
-            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-            {
-                textBox.Focus(focusState);
-            }
-        }
-
         public static bool IsEmpty<T>(this IList<T> list)
         {
             return list.Count == 0;
@@ -763,7 +755,7 @@ namespace Unigram.Common
         }
 
 
-        public static async Task UpdateLayoutAsync(this FrameworkElement element)
+        public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = true)
         {
             var tcs = new TaskCompletionSource<object>();
 
@@ -771,7 +763,12 @@ namespace Unigram.Common
             try
             {
                 element.LayoutUpdated += layoutUpdated;
-                element.UpdateLayout();
+
+                if (update)
+                {
+                    element.UpdateLayout();
+                }
+
                 await tcs.Task;
             }
             finally
