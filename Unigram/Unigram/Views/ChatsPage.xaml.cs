@@ -111,11 +111,6 @@ namespace Unigram.Views
 
         private bool DialogMark_Loaded(Chat chat)
         {
-            if (ViewModel.CacheService.IsSavedMessages(chat))
-            {
-                return false;
-            }
-
             return true;
         }
 
