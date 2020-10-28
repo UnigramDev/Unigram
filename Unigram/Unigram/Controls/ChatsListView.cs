@@ -147,11 +147,11 @@ namespace Unigram.Controls
             args.ItemContainer.Tag = args.Item;
 
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
-            if (content != null)
+            if (content != null && args.Item is Chat chat)
             {
                 content.UpdateService(ViewModel.ProtoService, ViewModel);
-                content.UpdateViewState(args.Item as Chat, SelectedItem2 == args.Item && SelectionMode2 == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
-                content.UpdateChat(ViewModel.ProtoService, ViewModel, args.Item as Chat, ViewModel.Items.ChatList);
+                content.UpdateViewState(chat, SelectedItem2 == args.Item && SelectionMode2 == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
+                content.UpdateChat(ViewModel.ProtoService, ViewModel, chat, ViewModel.Items.ChatList);
                 content.SetSelectionMode(SelectionMode2, false);
                 args.Handled = true;
             }

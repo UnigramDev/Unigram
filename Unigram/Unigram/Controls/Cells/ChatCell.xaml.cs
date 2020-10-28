@@ -281,6 +281,11 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatLastMessage(Chat chat, ChatPosition position = null)
         {
+            if (chat == null)
+            {
+                return;
+            }
+
             if (position == null)
             {
                 position = chat.GetPosition(_chatList);
