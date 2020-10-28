@@ -195,8 +195,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (1UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = "SEARCH FILTERS, ANONYMOUS GROUP ADMINS, CHANNEL COMMENTS AND MORE\r\n\r\nSearch Filters\r\n• Search messages by type, date or source using the new filters in Global Search.\r\n• Use tabs to browse all media, links or documents you've ever sent or received.\r\n• Filter search results by date (like \"July 2015\" or \"Apr 4\") or source (people, groups, channels, bots).\r\n\r\nAnonymous Group Admins\r\n• Turn on \"Remain Anonymous\" in an admin's Permissions to let them post on behalf of the group and become invisible in the list of members.\r\n\r\nChannel Comments\r\n• Comment on posts in channels that have a discussion group.\r\n• Get notified about replies to your comments via the new Replies chat (if you are not a member in the discussion group).\r\n\r\nSilent Messages, now in Secret Chats\r\n• Send messages silently in Secret Chats by holding the Send button.";
+        public const ulong CurrentVersion = (7UL << 48) | (2UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = "PINNED MESSAGES 2.0, PLAYLISTS AND MORE\r\n\r\nMultiple Pinned Messages\r\n• Pin several messages in any chat, including one-on-one chats.\r\n• Jump between pinned messages or open them all on a separate page via the top bar.\r\n\r\nPlaylists and More\r\n• Send several music tracks as a playlist. \r\n• Send a :slot_machine: emoji to any chat to try your luck.";
 
         public int Session => _session;
 
