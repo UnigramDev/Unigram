@@ -886,6 +886,7 @@ namespace Unigram.Common
                 case MessageContactRegistered contactRegistered:
                 case MessageCustomServiceAction customServiceAction:
                 case MessageGameScore gameScore:
+                case MessageLiveLocationApproached liveLocationApproached:
                 case MessagePassportDataSent passportDataSent:
                 case MessagePaymentSuccessful paymentSuccessful:
                 case MessagePinMessage pinMessage:
