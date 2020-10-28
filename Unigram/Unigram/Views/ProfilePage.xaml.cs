@@ -214,14 +214,11 @@ namespace Unigram.Views
             if (user.Type is UserTypeBot)
             {
                 GetEntities(fullInfo.ShareText);
-
                 DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.ShareText) ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {
-                DescriptionSpan.Inlines.Clear();
-                DescriptionSpan.Inlines.Add(new Run { Text = fullInfo.Bio });
-
+                GetEntities(fullInfo.Bio);
                 DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
             }
 
