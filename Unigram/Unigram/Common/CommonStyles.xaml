@@ -2761,7 +2761,7 @@
 
     <Style x:Key="HeaderGlyphToggleButtonStyle" TargetType="controls:GlyphToggleButton">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource PageHeaderHighlightBrush}" />
+        <!--<Setter Property="Foreground" Value="{ThemeResource PageHeaderHighlightBrush}" />-->
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
@@ -2987,7 +2987,7 @@
 
     <Style x:Key="HeaderGlyphButtonStyle" TargetType="controls:GlyphButton">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource PageHeaderHighlightBrush}" />
+        <!--<Setter Property="Foreground" Value="{ThemeResource PageHeaderHighlightBrush}" />-->
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
