@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -17,6 +18,7 @@ using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -26,6 +28,7 @@ namespace Unigram.Controls.Messages
     public sealed partial class MessageBubble : StackPanel
     {
         private MessageViewModel _message;
+        private long _prevMessage;
 
         private bool _placeholder;
         private bool _placeholderVertical;
@@ -36,25 +39,11 @@ namespace Unigram.Controls.Messages
             InitializeComponent();
         }
 
-        public void UpdateKnockout(double top, double bottom)
-        {
-            var gradient = ContentPanel.Background as LinearGradientBrush;
-            if (gradient == null)
-            {
-                ContentPanel.Background = gradient = new LinearGradientBrush();
-                //gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF), Offset = 0 });
-                //gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xFF, 0xF8, 0xEA, 0x8F), Offset = 1 });
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0xea, 0x27, 0x39), Offset = 0d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0xdb, 0x3a, 0xd2), Offset = 1d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0x30, 0x51, 0xe3), Offset = 2d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0x49, 0xc5, 0xed), Offset = 3d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0x80, 0xc8, 0x64), Offset = 4d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0xfc, 0xde, 0x65), Offset = 5d / 6d });
-                gradient.GradientStops.Add(new GradientStop { Color = Color.FromArgb(0xff, 0xfc, 0x96, 0x4d), Offset = 6d / 6d });
-            }
+        private string _query;
 
-            gradient.StartPoint = new Point(0, top);
-            gradient.EndPoint = new Point(0, bottom);
+        public void UpdateQuery(string text)
+        {
+            _query = text;
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -260,10 +249,28 @@ namespace Unigram.Controls.Messages
                 ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
             }
 
-            Margin = new Thickness(0, message.IsFirst ? 2 : 1, 0, message.IsLast ? 2 : 1);
+            //if (_selectorItem != null)
+            //{
+            //    //_selectorItem.Margin = new Thickness(0, message.IsFirst ? 2 : 1, 0, message.IsLast ? 2 : 1);
+            //    //_selectorItem.Margin = new Thickness(0, message.IsFirst ? 3 : 1, 0, 1);
+            //    _selectorItem.Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
+            //}
+            //else
+            {
+                //Margin = new Thickness(0, message.IsFirst ? 2 : 1, 0, message.IsLast ? 2 : 1);
+                //Margin = new Thickness(0, message.IsFirst ? 3 : 1, 0, 1);
+                Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
+            }
 
 
             //UpdateMessageContent(message, true);
+        }
+
+        private SelectorItem _selectorItem;
+
+        public void UpdateSelectorItem(SelectorItem selectorItem)
+        {
+            _selectorItem = selectorItem;
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -1179,6 +1186,28 @@ namespace Unigram.Controls.Messages
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
             }
 
+            if (string.IsNullOrWhiteSpace(_query))
+            {
+                Message.TextHighlighters.Clear();
+            }
+            else
+            {
+                var find = text.IndexOf(_query, StringComparison.OrdinalIgnoreCase);
+                if (find != -1)
+                {
+                    var highligher = new TextHighlighter();
+                    highligher.Foreground = new SolidColorBrush(Colors.White);
+                    highligher.Background = new SolidColorBrush(Colors.Orange);
+                    highligher.Ranges.Add(new TextRange { StartIndex = find, Length = _query.Length });
+
+                    Message.TextHighlighters.Add(highligher);
+                }
+                else
+                {
+                    Message.TextHighlighters.Clear();
+                }
+            }
+
             if (AdjustEmojis(span, text))
             {
                 Message.FlowDirection = FlowDirection.LeftToRight;
@@ -1323,10 +1352,62 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        public void RegisterEvents()
+        {
+            ContentPanel.SizeChanged -= OnSizeChanged;
+            ContentPanel.SizeChanged += OnSizeChanged;
+        }
+
+        public void UnregisterEvents()
+        {
+            ContentPanel.SizeChanged -= OnSizeChanged;
+        }
+
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.PreviousSize.Width < 1 || e.PreviousSize.Height < 1)
+            {
+                return;
+            }
+
+            var message = _message;
+            if (message == null || message.Id != _prevMessage)
+            {
+                _prevMessage = message?.Id ?? 0;
+                return;
+            }
+
+            _prevMessage = message.Id;
+
+            var outgoing = message.IsOutgoing && !message.IsChannelPost;
+
+            var prev = e.PreviousSize.ToVector2();
+            var next = e.NewSize.ToVector2();
+
+            var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            anim.InsertKeyFrame(0, new Vector3(prev.X / next.X, prev.Y / next.Y, 1));
+            anim.InsertKeyFrame(1, Vector3.One);
+            //anim.Duration = TimeSpan.FromSeconds(1);
+
+            var visual = ElementCompositionPreview.GetElementVisual(ContentPanel);
+            visual.CenterPoint = new Vector3(outgoing ? next.X : 0, 0, 0);
+            visual.StartAnimation("Scale", anim);
+        }
+
+        private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.PreviousSize.Width > 0 && e.NewSize.Width != e.PreviousSize.Width)
+            {
+                InvalidateArrange();
+            }
+        }
+
+        private void UpdateMargins()
         {
             if (_placeholder)
             {
+                var maxWidth = _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right;
+
                 var footerWidth = Footer.ActualWidth - 5;
 
                 // For some reason ActualWidth isn't reporting the correct value:
@@ -1335,13 +1416,22 @@ namespace Unigram.Controls.Messages
                 var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
 
                 var diff = width - rect.Right;
+
+                maxWidth = Math.Truncate(maxWidth);
+                footerWidth = Math.Truncate(footerWidth);
+                width = Math.Truncate(width);
+                diff = Math.Truncate(diff);
+
                 if (diff < footerWidth /*|| _placeholderVertical*/)
                 {
+                    var right = Math.Truncate(rect.Right);
+                    var height = Math.Truncate(rect.Height);
+
                     // Sometimes rect.Right is slightly higher than width, because of layout rounding.
                     // This, in some (not so) rare conditions causes a layout cycle.
-                    width = Math.Max(width, rect.Right);
+                    width = Math.Max(width, right);
 
-                    if (Message.ActualHeight < rect.Height * 2 && width + footerWidth < _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right /*&& !_placeholderVertical*/)
+                    if (Message.ActualHeight < height * 2 && width + footerWidth < maxWidth /*&& !_placeholderVertical*/)
                     {
                         Message.Margin = new Thickness(0, 0, footerWidth, 0);
                     }
@@ -1904,6 +1994,13 @@ namespace Unigram.Controls.Messages
                 _maxWidth = Math.Max(96, width);
                 return base.MeasureOverride(new Size(Math.Max(96, width), availableSize.Height));
             }
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            base.ArrangeOverride(finalSize);
+            UpdateMargins();
+            return base.ArrangeOverride(finalSize);
         }
 
         private void Message_ContextMenuOpening(object sender, ContextMenuEventArgs e)

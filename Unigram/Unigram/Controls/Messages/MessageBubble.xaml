@@ -27,7 +27,6 @@
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="Footer.Stroke" Value="White"/>
                             <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
-                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
@@ -51,7 +50,6 @@
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="Footer.Stroke" Value="White"/>
                             <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
-                            <Setter Target="ContentPanel.BorderThickness" Value="0"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
@@ -74,7 +72,6 @@
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="Footer.Stroke" Value="White"/>
-                            <!--<Setter Target="ContentPanel.BorderThickness" Value="0"/>-->
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="HiddenState">
@@ -146,7 +143,6 @@
                 Style="{StaticResource BodyRichTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                SizeChanged="OnSizeChanged"
                 ContextMenuOpening="Message_ContextMenuOpening"
                 TextAlignment="DetectFromContent"
                 Grid.Column="1"
@@ -166,7 +162,7 @@
                 Stroke="{ThemeResource MessageSubtleLabelBrush}"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                SizeChanged="OnSizeChanged"
+                SizeChanged="Footer_SizeChanged"
                 Margin="-8,0,-6,-2"
                 Grid.Column="1"
                 Grid.Row="4"/>
@@ -194,7 +190,7 @@
                     <StackPanel
                         x:Name="RecentRepliers"
                         Orientation="Horizontal"
-                        Height="24"/>
+                        Height="28"/>
                     <TextBlock
                         x:Name="ThreadGlyph"
                         Text="&#xE8BD;"
