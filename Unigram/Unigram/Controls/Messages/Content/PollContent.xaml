@@ -13,7 +13,7 @@
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
 
-    <Grid>
+    <Grid Margin="10,0,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
@@ -71,36 +71,33 @@
     </Grid>
 
     <StackPanel
-        x:Name="Options"
-        Margin="-10,0"/>
+        x:Name="Options"/>
 
     <TextBlock
         x:Name="Votes"
         Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-        Style="{StaticResource CaptionTextBlockStyle}"
-        Margin="0,12,0,0"/>
+        TextAlignment="Center"
+        Margin="0,8,0,4"/>
 
     <Button
         x:Name="Submit"
         Style="{StaticResource EmptyButtonStyle}"
-        Click="Submit_Click"
-        Margin="0,0,0,-8">
+        Click="Submit_Click">
         <TextBlock
             Text="{CustomResource PollSubmitVotes}"
             Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Margin="0,12,0,8"/>
+            TextAlignment="Center"
+            Margin="0,8,0,4"/>
     </Button>
 
     <Button
         x:Name="View"
         Style="{StaticResource EmptyButtonStyle}"
-        Click="View_Click"
-        Margin="-10,0,-10,-8">
+        Click="View_Click">
         <TextBlock
             Text="{CustomResource PollViewResults}"
             Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Margin="10,12,10,8"/>
+            TextAlignment="Center"
+            Margin="0,8,10,4"/>
     </Button>
 </StackPanel>
