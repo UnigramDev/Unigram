@@ -1228,7 +1228,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            span.FontSize = (double)App.Current.Resources["MessageFontSize"];
+            span.FontSize = Theme.Current.MessageFontSize;
             return false;
         }
 

@@ -206,6 +206,23 @@ namespace Unigram.Common
 
         #region Settings
 
+        private int? _messageFontSize;
+        public int MessageFontSize
+        {
+            get
+            {
+                if (_messageFontSize == null)
+                    _messageFontSize = (int)GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d);
+
+                return _messageFontSize ?? 14;
+            }
+            set
+            {
+                _messageFontSize = value;
+                AddOrUpdateValue("MessageFontSize", (double)value);
+            }
+        }
+
         public bool AddOrUpdateColor(string key, Color value)
         {
             bool valueChanged = false;
