@@ -46,7 +46,7 @@ namespace Unigram.Controls.Messages
             _message = message;
             Tag = message;
 
-            Panel.Message = message;
+            Panel.Content = message?.Content;
 
             if (message != null)
             {
@@ -751,9 +751,9 @@ namespace Unigram.Controls.Messages
             else if (content is MessagePoll)
             {
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
-                Media.Margin = new Thickness(10, 0, 10, 6);
+                Media.Margin = new Thickness(0);
                 FooterToNormal();
-                Grid.SetRow(Footer, 3);
+                Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
                 Panel.Placeholder = false;
             }
@@ -1501,6 +1501,7 @@ namespace Unigram.Controls.Messages
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
+            Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
 
             Media.Margin = new Thickness(0);
             FooterToNormal();
@@ -1530,6 +1531,7 @@ namespace Unigram.Controls.Messages
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
+            Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
 
             Media.Margin = new Thickness(0);
             FooterToNormal();
@@ -1581,6 +1583,7 @@ namespace Unigram.Controls.Messages
             Reply.Mockup(sender, reply);
 
             Footer.Mockup(outgoing, date);
+            Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
 
             Media.Margin = new Thickness(0);
             FooterToNormal();
@@ -1611,8 +1614,9 @@ namespace Unigram.Controls.Messages
             Message.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
+            Panel.Content = content;
 
-            Media.Margin = new Thickness(0, 4, 0, 2);
+            Media.Margin = new Thickness(10, 4, 10, 2);
             FooterToNormal();
             Grid.SetRow(Footer, 3);
             Grid.SetRow(Message, 2);
@@ -1645,8 +1649,9 @@ namespace Unigram.Controls.Messages
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
+            Panel.Content = content;
 
-            Media.Margin = new Thickness(-10, -4, -10, 4);
+            Media.Margin = new Thickness(0, 0, 0, 4);
             FooterToNormal();
             Grid.SetRow(Footer, 4);
             Grid.SetRow(Message, 4);

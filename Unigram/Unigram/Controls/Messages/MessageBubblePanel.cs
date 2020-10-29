@@ -4,7 +4,6 @@ using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -15,7 +14,7 @@ namespace Unigram.Controls.Messages
     public class MessageBubblePanel : Panel
     {
         // Needed for Text CanvasTextLayout
-        public MessageViewModel Message { get; set; }
+        public MessageContent Content { get; set; }
 
         private bool _placeholder = true;
         public bool Placeholder
@@ -133,8 +132,8 @@ namespace Unigram.Controls.Messages
 
         private Rect ContentEnd(Vector2 size)
         {
-            var caption = Message?.Content?.GetCaption();
-            if (caption == null)
+            var caption = Content?.GetCaption();
+            if (string.IsNullOrEmpty(caption?.Text))
             {
                 return Rect.Empty;
             }
