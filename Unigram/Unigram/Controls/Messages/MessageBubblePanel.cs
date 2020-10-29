@@ -140,8 +140,10 @@ namespace Unigram.Controls.Messages
             }
 
             var text = Children[0] as RichTextBlock;
+            var width = size.X - (float)text.Margin.Left - (float)text.Margin.Right;
+
             using (CanvasTextFormat format = new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = (float)text.FontSize })
-            using (CanvasTextLayout textLayout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, format, size.X, size.Y))
+            using (CanvasTextLayout textLayout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, format, width, size.Y))
             {
                 foreach (var entity in caption.Entities)
                 {
