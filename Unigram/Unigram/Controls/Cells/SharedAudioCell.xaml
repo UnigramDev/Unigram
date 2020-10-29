@@ -25,11 +25,11 @@
     </Grid>
     <Grid
         x:Name="DownloadPanel"
-        Width="22"
-        Height="22"
-        CornerRadius="11"
-        Margin="0,0,-5,-3"
-        BorderThickness="1"
+        Width="24"
+        Height="24"
+        CornerRadius="12"
+        Margin="0,0,-6,-4"
+        BorderThickness="2"
         BorderBrush="{ThemeResource MessageBackgroundBrush}"
         Background="{ThemeResource MessageMediaBackgroundBrush}"
         HorizontalAlignment="Right"

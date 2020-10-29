@@ -124,6 +124,8 @@ namespace Unigram.Controls.Messages
             UpdateMessageReply(message);
         }
 
+        private static readonly CornerRadius _defaultRadius = new CornerRadius(2);
+
         private void UpdateThumbnail(MessageViewModel message, PhotoSize photoSize)
         {
             if (photoSize.Photo.Local.IsDownloadingCompleted)
@@ -375,8 +377,7 @@ namespace Unigram.Controls.Messages
                 if (ThumbRoot != null)
                     ThumbRoot.Visibility = Visibility.Visible;
 
-                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
-                //ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photoMedia, true);
+                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = _defaultRadius;
 
                 var small = photo.Photo.GetSmall();
                 if (small != null)
@@ -465,7 +466,7 @@ namespace Unigram.Controls.Messages
             ServiceLabel.Text = $"\uD83C\uDFAE {game.Game.Title}";
             MessageLabel.Text = string.Empty;
 
-            ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+            ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = _defaultRadius;
 
             var thumbnail = game.Game.Photo?.GetSmall();
             if (thumbnail != null)
@@ -557,36 +558,6 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetWebPageTemplate(MessageViewModel message, MessageText text, string title)
-        {
-            //var webPageMedia = message.Media as TLMessageMediaWebPage;
-            //if (webPageMedia != null)
-            //{
-            //    var webPage = webPageMedia.WebPage as TLWebPage;
-            //    if (webPage != null && webPage.Photo != null && webPage.Type != null)
-            //    {
-            //        Visibility = Visibility.Visible;
-
-            //        FindName(nameof(ThumbRoot));
-            //        if (ThumbRoot != null)
-            //            ThumbRoot.Visibility = Visibility.Visible;
-
-            //        TitleLabel.Text = GetFromLabel(message, title);
-            //        ServiceLabel.Text = string.Empty;
-            //        MessageLabel.Text = message.Message.Replace("\r\n", "\n").Replace('\n', ' ');
-
-            //        ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
-            //        ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(webPage.Photo, true);
-            //    }
-            //    else
-            //    {
-            //        return SetTextTemplate(message, title);
-            //    }
-            //}
-
-            return true;
-        }
-
         private bool SetVideoTemplate(MessageViewModel message, MessageVideo video, string title)
         {
             Visibility = Visibility.Visible;
@@ -606,7 +577,7 @@ namespace Unigram.Controls.Messages
                 if (ThumbRoot != null)
                     ThumbRoot.Visibility = Visibility.Visible;
 
-                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = _defaultRadius;
 
                 if (video.Video.Thumbnail != null)
                 {
@@ -663,7 +634,7 @@ namespace Unigram.Controls.Messages
                 MessageLabel.Text += animation.Caption.Text.Replace("\r\n", "\n").Replace('\n', ' ');
             }
 
-            ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+            ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = _defaultRadius;
 
             if (animation.Animation.Thumbnail != null)
             {
@@ -704,46 +675,6 @@ namespace Unigram.Controls.Messages
                 MessageLabel.Text += document.Caption.Text.Replace("\r\n", "\n").Replace('\n', ' ');
             }
 
-            return true;
-
-            //var documentMedia = message.Media as TLMessageMediaDocument;
-            //if (documentMedia != null)
-            //{
-            //    var document = documentMedia.Document as TLDocument;
-            //    if (document != null)
-            //    {
-            //        var photoSize = document.Thumb as TLPhotoSize;
-            //        var photoCachedSize = document.Thumb as TLPhotoCachedSize;
-            //        if (photoCachedSize != null || photoSize != null)
-            //        {
-            //            Visibility = Visibility.Visible;
-
-            //            FindName(nameof(ThumbRoot));
-            //            if (ThumbRoot != null)
-            //                ThumbRoot.Visibility = Visibility.Visible;
-
-            //            ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
-            //            ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
-            //        }
-            //        else
-            //        {
-            //            Visibility = Visibility.Visible;
-
-            //            if (ThumbRoot != null)
-            //                ThumbRoot.Visibility = Visibility.Collapsed;
-            //        }
-
-            //        TitleLabel.Text = GetFromLabel(message, title);
-            //        ServiceLabel.Text = document.FileName;
-            //        MessageLabel.Text = string.Empty;
-
-            //        if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
-            //        {
-            //            ServiceLabel.Text += ", ";
-            //            MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
-            //        }
-            //    }
-            //}
             return true;
         }
 

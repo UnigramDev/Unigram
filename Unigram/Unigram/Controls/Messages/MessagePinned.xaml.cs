@@ -284,6 +284,8 @@ namespace Unigram.Controls.Messages
 
         #region Overrides
 
+        private static readonly CornerRadius _defaultRadius = new CornerRadius(2);
+
         protected override void HideThumbnail()
         {
             if (ThumbRoot != null)
@@ -297,7 +299,7 @@ namespace Unigram.Controls.Messages
                 ThumbRoot.Visibility = Visibility.Visible;
 
             ThumbRoot.CornerRadius =
-                ThumbEllipse.CornerRadius = radius;
+                ThumbEllipse.CornerRadius = _defaultRadius;
         }
 
         protected override void SetThumbnail(ImageSource value)
