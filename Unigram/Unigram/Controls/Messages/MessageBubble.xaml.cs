@@ -742,7 +742,7 @@ namespace Unigram.Controls.Messages
             else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || (content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
             {
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
-                Media.Margin = new Thickness(10, -6, 10, 6);
+                Media.Margin = new Thickness(10, -6, 10, 0);
                 FooterToNormal();
                 Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
