@@ -241,7 +241,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageUnreadTemplate">
-            <Grid AutomationProperties.Name="{CustomResource UnreadMessages}" Margin="-12,4,-12,4" Background="{ThemeResource MessageBackgroundBrush}">
+            <Grid AutomationProperties.Name="{CustomResource UnreadMessages}" Margin="-12,8,-12,4" Background="{ThemeResource MessageBackgroundBrush}">
                 <TextBlock Text="{CustomResource UnreadMessages}" Padding="0" Margin="0,4" TextAlignment="Center" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
 
                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -275,7 +275,7 @@
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
                         VerticalAlignment="Bottom"
                         CornerRadius="15"
-                        Margin="8,0,0,2"
+                        Margin="8,0,0,0"
                         Grid.Column="2">
                     <controls:GlyphButton
                         Click="Action_Click"
@@ -301,7 +301,7 @@
                                          IsTabStop="False"
                                          HorizontalAlignment="Left"
                                          VerticalAlignment="Bottom"
-                                         Margin="0,0,0,2"
+                                         Margin="0,0,0,0"
                                          Width="30"
                                          Height="30"/>
                 <messages:MessageBubble x:Name="Bubble" Grid.Column="1"/>
@@ -310,7 +310,7 @@
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
                         VerticalAlignment="Bottom"
                         CornerRadius="15"
-                        Margin="8,0,0,2"
+                        Margin="8,0,0,0"
                         Grid.Column="2">
                     <controls:GlyphButton
                         Click="Action_Click"
