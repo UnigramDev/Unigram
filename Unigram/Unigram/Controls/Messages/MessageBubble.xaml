@@ -15,7 +15,7 @@
     <UserControl x:Name="LayoutRoot" IsTabStop="False">
         <Grid x:Name="ContentPanel"
               MinHeight="30"
-              Padding="{StaticResource MessageContentPadding}"
+              Padding="0,4,0,0"
               Background="{ThemeResource MessageBackgroundBrush}">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
@@ -35,7 +35,7 @@
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
-                            <Setter Target="Header.Margin" Value="-14,-4,14,0"/>
+                            <Setter Target="Header.Margin" Value="-4,0,4,0"/>
                             <Setter Target="Header.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Panel.(Grid.Column)" Value="2"/>
@@ -56,7 +56,7 @@
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
-                            <Setter Target="Header.Margin" Value="14,-4,-14,0"/>
+                            <Setter Target="Header.Margin" Value="4,0,-4,0"/>
                             <Setter Target="Header.HorizontalAlignment" Value="Left"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Left"/>
                             <Setter Target="Panel.(Grid.Column)" Value="0"/>
@@ -91,7 +91,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid x:Name="Header" Grid.Column="1">
+            <Grid x:Name="Header" Margin="10,0,10,0" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -146,6 +146,7 @@
                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
                     ContextMenuOpening="Message_ContextMenuOpening"
                     TextAlignment="DetectFromContent"
+                    Margin="10,0,10,6"
                     Grid.Column="1"
                     Grid.Row="2">
                     <Paragraph>
@@ -164,7 +165,7 @@
                     VerticalAlignment="Bottom"
                     HorizontalAlignment="Right"
                     SizeChanged="Footer_SizeChanged"
-                    Margin="-8,0,-6,-2"
+                    Margin="2,0,4,4"
                     Grid.Column="1"
                     Grid.Row="4"/>
             </local:MessageBubblePanel>
@@ -176,7 +177,7 @@
                 Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Margin="-10,4,-10,-6"
+                Margin="0,4,0,0"
                 Padding="0"
                 Grid.Column="1"
                 Grid.Row="5">

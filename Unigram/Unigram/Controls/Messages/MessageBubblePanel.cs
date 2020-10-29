@@ -109,7 +109,7 @@ namespace Unigram.Controls.Messages
             if (_placeholder)
             {
                 var maxWidth = size.X;
-                var footerWidth = footer.DesiredSize.Width - footer.Margin.Left - footer.Margin.Right;
+                var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
                 var width = text.DesiredSize.Width;
                 var rect = ContentEnd(size);

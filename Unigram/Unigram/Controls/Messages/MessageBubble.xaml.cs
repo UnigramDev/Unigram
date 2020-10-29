@@ -683,6 +683,7 @@ namespace Unigram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text && text.WebPage == null)
             {
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(0);
                 FooterToNormal();
                 Grid.SetRow(Footer, 2);
@@ -691,8 +692,8 @@ namespace Unigram.Controls.Messages
             }
             else if (IsFullMedia(content))
             {
-                var top = -4;
-                var bottom = -6;
+                var top = 0;
+                var bottom = 0;
 
                 var chat = message.GetChat();
                 if (message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
@@ -723,14 +724,16 @@ namespace Unigram.Controls.Messages
                     FooterToMedia();
                 }
 
-                Media.Margin = new Thickness(-10, top, -10, bottom);
+                ContentPanel.Padding = new Thickness(0, top, 0, 0);
+                Media.Margin = new Thickness(0, top, 0, bottom);
                 Grid.SetRow(Footer, caption ? 4 : 3);
                 Grid.SetRow(Message, caption ? 4 : 2);
                 Panel.Placeholder = caption;
             }
             else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
             {
-                Media.Margin = new Thickness(-10, -4, -10, -6);
+                ContentPanel.Padding = new Thickness(0);
+                Media.Margin = new Thickness(0);
                 FooterToLightMedia(message.IsOutgoing && !message.IsChannelPost);
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
@@ -738,7 +741,8 @@ namespace Unigram.Controls.Messages
             }
             else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || (content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
             {
-                Media.Margin = new Thickness(0);
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                Media.Margin = new Thickness(10, -6, 10, 6);
                 FooterToNormal();
                 Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
@@ -746,7 +750,8 @@ namespace Unigram.Controls.Messages
             }
             else if (content is MessagePoll)
             {
-                Media.Margin = new Thickness(0);
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                Media.Margin = new Thickness(10, 0, 10, 6);
                 FooterToNormal();
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
@@ -756,13 +761,14 @@ namespace Unigram.Controls.Messages
             {
                 var caption = invoice.Photo == null;
 
-                Media.Margin = new Thickness(0);
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                Media.Margin = new Thickness(10, 0, 10, 6);
                 FooterToNormal();
                 Grid.SetRow(Footer, caption ? 3 : 4);
                 Grid.SetRow(Message, 2);
                 Panel.Placeholder = caption;
             }
-            else /*if (IsInlineMedia(message.Media))*/
+            else
             {
                 var caption = content.HasCaption();
                 if (content is MessageCall)
@@ -774,7 +780,8 @@ namespace Unigram.Controls.Messages
                     FooterToNormal();
                 }
 
-                Media.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
+                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                Media.Margin = new Thickness(10, 4, 10, 8);
                 Grid.SetRow(Footer, caption ? 4 : 3);
                 Grid.SetRow(Message, caption ? 4 : 2);
                 Panel.Placeholder = caption;
@@ -1330,6 +1337,12 @@ namespace Unigram.Controls.Messages
         {
             var message = _message;
             if (message == null || e.PreviousSize.Width < 1 || e.PreviousSize.Height < 1)
+            {
+                return;
+            }
+
+            var content = message.GeneratedContent ?? message.Content;
+            if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
             {
                 return;
             }
