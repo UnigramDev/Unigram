@@ -3734,6 +3734,10 @@ namespace Unigram.ViewModels
             {
                 return message2.IsService();
             }
+            else if (message2.IsService())
+            {
+                return false;
+            }
 
             var saved1 = message1.IsSaved();
             var saved2 = message2.IsSaved();
