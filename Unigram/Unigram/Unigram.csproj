@@ -358,6 +358,7 @@
     <Compile Include="Controls\Messages\MessageBubble.xaml.cs">
       <DependentUpon>MessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\MessageBubblePanel.cs" />
     <Compile Include="Controls\Messages\MessageFooter.xaml.cs">
       <DependentUpon>MessageFooter.xaml</DependentUpon>
     </Compile>
