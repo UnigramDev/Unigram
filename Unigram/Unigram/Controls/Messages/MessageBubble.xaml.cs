@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Text;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -28,18 +30,13 @@ namespace Unigram.Controls.Messages
     public sealed partial class MessageBubble : StackPanel
     {
         private MessageViewModel _message;
-        private long _prevMessage;
 
-        private bool _placeholder;
-        private bool _placeholderVertical;
-        private double _maxWidth;
+        private string _query;
 
         public MessageBubble()
         {
             InitializeComponent();
         }
-
-        private string _query;
 
         public void UpdateQuery(string text)
         {
@@ -50,6 +47,8 @@ namespace Unigram.Controls.Messages
         {
             _message = message;
             Tag = message;
+
+            Panel.Message = message;
 
             if (message != null)
             {
@@ -692,10 +691,10 @@ namespace Unigram.Controls.Messages
                 display = text.Text.Text;
 
                 Media.Margin = new Thickness(0);
-                _placeholder = true;
                 FooterToNormal();
                 Grid.SetRow(Footer, 2);
                 Grid.SetRow(Message, 2);
+                Panel.Placeholder = true;
             }
             else if (IsFullMedia(content))
             {
@@ -734,43 +733,43 @@ namespace Unigram.Controls.Messages
                 }
 
                 Media.Margin = new Thickness(left, top, right, bottom);
-                _placeholder = caption;
                 Grid.SetRow(Footer, caption ? 4 : 3);
                 Grid.SetRow(Message, caption ? 4 : 2);
+                Panel.Placeholder = caption;
             }
             else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
             {
                 Media.Margin = new Thickness(-10, -4, -10, -6);
-                _placeholder = false;
                 FooterToLightMedia(message.IsOutgoing && !message.IsChannelPost);
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
+                Panel.Placeholder = false;
             }
             else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || (content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
             {
                 Media.Margin = new Thickness(0);
-                _placeholder = false;
                 FooterToNormal();
                 Grid.SetRow(Footer, 4);
                 Grid.SetRow(Message, 2);
+                Panel.Placeholder = false;
             }
             else if (content is MessagePoll)
             {
                 Media.Margin = new Thickness(0);
-                _placeholder = false;
                 FooterToNormal();
                 Grid.SetRow(Footer, 3);
                 Grid.SetRow(Message, 2);
+                Panel.Placeholder = false;
             }
             else if (content is MessageInvoice invoice)
             {
                 var caption = invoice.Photo == null;
 
                 Media.Margin = new Thickness(0);
-                _placeholder = caption;
                 FooterToNormal();
                 Grid.SetRow(Footer, caption ? 3 : 4);
                 Grid.SetRow(Message, 2);
+                Panel.Placeholder = caption;
             }
             else /*if (IsInlineMedia(message.Media))*/
             {
@@ -791,9 +790,9 @@ namespace Unigram.Controls.Messages
                 }
 
                 Media.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
-                _placeholder = caption;
                 Grid.SetRow(Footer, caption ? 4 : 3);
                 Grid.SetRow(Message, caption ? 4 : 2);
+                Panel.Placeholder = caption;
             }
 
             //if (display != null)
@@ -992,7 +991,6 @@ namespace Unigram.Controls.Messages
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
 
-            _placeholderVertical = adjust;
             if (adjust)
             {
                 Span.Inlines.Add(new LineBreak());
@@ -1365,19 +1363,11 @@ namespace Unigram.Controls.Messages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.PreviousSize.Width < 1 || e.PreviousSize.Height < 1)
-            {
-                return;
-            }
-
             var message = _message;
-            if (message == null || message.Id != _prevMessage)
+            if (message == null || e.PreviousSize.Width < 1 || e.PreviousSize.Height < 1)
             {
-                _prevMessage = message?.Id ?? 0;
                 return;
             }
-
-            _prevMessage = message.Id;
 
             var outgoing = message.IsOutgoing && !message.IsChannelPost;
 
@@ -1398,53 +1388,8 @@ namespace Unigram.Controls.Messages
         {
             if (e.PreviousSize.Width > 0 && e.NewSize.Width != e.PreviousSize.Width)
             {
-                InvalidateArrange();
+                Panel.InvalidateMeasure();
             }
-        }
-
-        private void UpdateMargins()
-        {
-            if (_placeholder)
-            {
-                var maxWidth = _maxWidth - ContentPanel.Padding.Left - ContentPanel.Padding.Right;
-
-                var footerWidth = Footer.ActualWidth - 5;
-
-                // For some reason ActualWidth isn't reporting the correct value:
-                // it seems instead to report the width of the inner text.
-                var width = Message.RenderSize.Width;
-                var rect = Message.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
-
-                var diff = width - rect.Right;
-
-                maxWidth = Math.Truncate(maxWidth);
-                footerWidth = Math.Truncate(footerWidth);
-                width = Math.Truncate(width);
-                diff = Math.Truncate(diff);
-
-                if (diff < footerWidth /*|| _placeholderVertical*/)
-                {
-                    var right = Math.Truncate(rect.Right);
-                    var height = Math.Truncate(rect.Height);
-
-                    // Sometimes rect.Right is slightly higher than width, because of layout rounding.
-                    // This, in some (not so) rare conditions causes a layout cycle.
-                    width = Math.Max(width, right);
-
-                    if (Message.ActualHeight < height * 2 && width + footerWidth < maxWidth /*&& !_placeholderVertical*/)
-                    {
-                        Message.Margin = new Thickness(0, 0, footerWidth, 0);
-                    }
-                    else
-                    {
-                        Message.Margin = new Thickness(0, 0, 0, Footer.ActualHeight);
-                    }
-
-                    return;
-                }
-            }
-
-            Message.Margin = new Thickness();
         }
 
         private SpriteVisual _highlight;
@@ -1580,10 +1525,10 @@ namespace Unigram.Controls.Messages
             Footer.Mockup(outgoing, date);
 
             Media.Margin = new Thickness(0);
-            _placeholder = true;
             FooterToNormal();
             Grid.SetRow(Footer, 2);
             Grid.SetRow(Message, 2);
+            Panel.Placeholder = true;
 
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
@@ -1609,10 +1554,10 @@ namespace Unigram.Controls.Messages
             Footer.Mockup(outgoing, date);
 
             Media.Margin = new Thickness(0);
-            _placeholder = true;
             FooterToNormal();
             Grid.SetRow(Footer, 2);
             Grid.SetRow(Message, 2);
+            Panel.Placeholder = true;
 
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
@@ -1660,10 +1605,10 @@ namespace Unigram.Controls.Messages
             Footer.Mockup(outgoing, date);
 
             Media.Margin = new Thickness(0);
-            _placeholder = true;
             FooterToNormal();
             Grid.SetRow(Footer, 2);
             Grid.SetRow(Message, 2);
+            Panel.Placeholder = true;
 
             Span.Inlines.Clear();
             Span.Inlines.Add(new Run { Text = message });
@@ -1690,10 +1635,10 @@ namespace Unigram.Controls.Messages
             Footer.Mockup(outgoing, date);
 
             Media.Margin = new Thickness(0, 4, 0, 2);
-            _placeholder = false;
             FooterToNormal();
             Grid.SetRow(Footer, 3);
             Grid.SetRow(Message, 2);
+            Panel.Placeholder = false;
 
             if (content is MessageVoiceNote voiceNote)
             {
@@ -1724,10 +1669,10 @@ namespace Unigram.Controls.Messages
             Footer.Mockup(outgoing, date);
 
             Media.Margin = new Thickness(-10, -4, -10, 4);
-            _placeholder = true;
             FooterToNormal();
             Grid.SetRow(Footer, 4);
             Grid.SetRow(Message, 4);
+            Panel.Placeholder = true;
 
             if (content is MessagePhoto photo)
             {
@@ -1964,13 +1909,6 @@ namespace Unigram.Controls.Messages
                 //goto Calculate;
             }
 
-            //if (constraint is MessageText)
-            //{
-            //    Message.Measure(new Size(availableSize.Width - 20, availableSize.Height));
-            //    return base.MeasureOverride(new Size(Message.DesiredSize.Width + 20, availableSize.Height));
-            //}
-
-            _maxWidth = maxWidth;
             return base.MeasureOverride(availableSize);
 
             Calculate:
@@ -1986,21 +1924,12 @@ namespace Unigram.Controls.Messages
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                _maxWidth = Math.Max(96, width * ratio);
                 return base.MeasureOverride(new Size(Math.Max(96, width * ratio), availableSize.Height));
             }
             else
             {
-                _maxWidth = Math.Max(96, width);
                 return base.MeasureOverride(new Size(Math.Max(96, width), availableSize.Height));
             }
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            base.ArrangeOverride(finalSize);
-            UpdateMargins();
-            return base.ArrangeOverride(finalSize);
         }
 
         private void Message_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -2025,6 +1954,164 @@ namespace Unigram.Controls.Messages
                 default:
                     return false;
             }
+        }
+    }
+
+    public class MessageBubblePanel : Panel
+    {
+        // Needed for Text CanvasTextLayout
+        public MessageViewModel Message { get; set; }
+
+        private bool _placeholder = true;
+        public bool Placeholder
+        {
+            get => _placeholder;
+            set
+            {
+                if (_placeholder != value)
+                {
+                    _placeholder = value;
+                    InvalidateMeasure();
+                }
+            }
+        }
+
+        private Size _margin;
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var text = Children[0] as RichTextBlock;
+            var media = Children[1] as FrameworkElement;
+            var footer = Children[2] as MessageFooter;
+
+            var textRow = Grid.GetRow(text);
+            var mediaRow = Grid.GetRow(media);
+            var footerRow = Grid.GetRow(footer);
+
+            text.Measure(availableSize);
+            media.Measure(availableSize);
+            footer.Measure(availableSize);
+
+            if (textRow == footerRow)
+            {
+                _margin = Margins(availableSize.ToVector2());
+            }
+            else if (mediaRow == footerRow)
+            {
+                _margin = new Size(0, 0);
+            }
+            else
+            {
+                _margin = new Size(0, footer.DesiredSize.Height);
+            }
+
+            var margin = _margin;
+            return new Size(media.DesiredSize.Width > 0 ? media.DesiredSize.Width : text.DesiredSize.Width + margin.Width,
+                text.DesiredSize.Height + media.DesiredSize.Height + margin.Height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var text = Children[0] as RichTextBlock;
+            var media = Children[1] as FrameworkElement;
+            var footer = Children[2] as MessageFooter;
+
+            var textRow = Grid.GetRow(text);
+            var mediaRow = Grid.GetRow(media);
+
+            var maxWidth = Math.Max(text.DesiredSize.Width, media.DesiredSize.Width);
+
+            if (textRow < mediaRow)
+            {
+                text.Arrange(new Rect(0, 0, finalSize.Width, text.DesiredSize.Height));
+                media.Arrange(new Rect(0, text.DesiredSize.Height, finalSize.Width, media.DesiredSize.Height));
+            }
+            else
+            {
+                media.Arrange(new Rect(0, 0, finalSize.Width, media.DesiredSize.Height));
+                text.Arrange(new Rect(0, media.DesiredSize.Height, finalSize.Width, text.DesiredSize.Height));
+            }
+
+            var margin = _margin;
+            var footerWidth = footer.DesiredSize.Width /*- footer.Margin.Right + footer.Margin.Left*/;
+            var footerHeight = footer.DesiredSize.Height /*- footer.Margin.Bottom + footer.Margin.Top*/;
+            footer.Arrange(new Rect(finalSize.Width - footerWidth,
+                text.DesiredSize.Height + media.DesiredSize.Height - footerHeight + margin.Height,
+                footer.DesiredSize.Width,
+                footer.DesiredSize.Height));
+
+            return finalSize;
+        }
+
+        private Size Margins(Vector2 size)
+        {
+            var text = Children[0] as RichTextBlock;
+            var footer = Children[2] as MessageFooter;
+
+            var marginLeft = 0d;
+            var marginBottom = 0d;
+
+            if (_placeholder)
+            {
+                var maxWidth = size.X;
+                var footerWidth = footer.DesiredSize.Width - footer.Margin.Left - footer.Margin.Right;
+
+                var width = text.DesiredSize.Width;
+                var rect = ContentEnd(size);
+
+                var diff = width - rect.Right;
+                if (diff < footerWidth /*|| _placeholderVertical*/)
+                {
+                    if (rect.Right + footerWidth < maxWidth /*&& !_placeholderVertical*/)
+                    {
+                        marginLeft = footerWidth - diff;
+                    }
+                    else
+                    {
+                        marginBottom = footer.DesiredSize.Height;
+                    }
+                }
+            }
+
+            return new Size(marginLeft, marginBottom);
+        }
+
+        private Rect ContentEnd(Vector2 size)
+        {
+            var caption = Message?.Content?.GetCaption();
+            if (caption == null)
+            {
+                return Rect.Empty;
+            }
+
+            var text = Children[0] as RichTextBlock;
+            using (CanvasTextFormat format = new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = (float)text.FontSize })
+            using (CanvasTextLayout textLayout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, format, size.X, size.Y))
+            {
+                foreach (var entity in caption.Entities)
+                {
+                    if (entity.Type is TextEntityTypeBold)
+                    {
+                        textLayout.SetFontWeight(entity.Offset, entity.Length, FontWeights.SemiBold);
+                    }
+                    else if (entity.Type is TextEntityTypeItalic)
+                    {
+                        textLayout.SetFontStyle(entity.Offset, entity.Length, FontStyle.Italic);
+                    }
+                    else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                    {
+                        textLayout.SetFontFamily(entity.Offset, entity.Length, "Consolas");
+                    }
+                }
+
+                var regions = textLayout.GetCharacterRegions(caption.Text.Length, 0);
+                if (regions.Length > 0)
+                {
+                    return regions[0].LayoutBounds;
+                }
+            }
+
+            return Rect.Empty;
         }
     }
 }

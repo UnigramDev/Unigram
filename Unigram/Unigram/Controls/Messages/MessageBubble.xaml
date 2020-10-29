@@ -31,16 +31,14 @@
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
-                            <Setter Target="Header.(Grid.Row)" Value="3"/>
+                            <Setter Target="Header.(Grid.Row)" Value="2"/>
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
                             <Setter Target="Header.Margin" Value="-14,-4,14,0"/>
                             <Setter Target="Header.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Right"/>
-                            <Setter Target="Message.(Grid.Column)" Value="2"/>
-                            <Setter Target="Media.(Grid.Column)" Value="2"/>
-                            <Setter Target="Footer.(Grid.Column)" Value="2"/>
+                            <Setter Target="Panel.(Grid.Column)" Value="2"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="LightState">
@@ -54,16 +52,14 @@
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
-                            <Setter Target="Header.(Grid.Row)" Value="3"/>
+                            <Setter Target="Header.(Grid.Row)" Value="2"/>
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
                             <Setter Target="Header.Margin" Value="14,-4,-14,0"/>
                             <Setter Target="Header.HorizontalAlignment" Value="Left"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Left"/>
-                            <Setter Target="Message.(Grid.Column)" Value="0"/>
-                            <Setter Target="Media.(Grid.Column)" Value="0"/>
-                            <Setter Target="Footer.(Grid.Column)" Value="0"/>
+                            <Setter Target="Panel.(Grid.Column)" Value="0"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="MediaState">
@@ -138,34 +134,40 @@
                     Grid.Row="1"/>
             </Grid>
 
-            <RichTextBlock
-                x:Name="Message"
-                Style="{StaticResource BodyRichTextBlockStyle}"
-                Foreground="{ThemeResource MessageForegroundBrush}"
-                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                ContextMenuOpening="Message_ContextMenuOpening"
-                TextAlignment="DetectFromContent"
+            <local:MessageBubblePanel
+                x:Name="Panel"
                 Grid.Column="1"
-                Grid.Row="2">
-                <Paragraph>
-                    <Span x:Name="Span"/>
-                </Paragraph>
-            </RichTextBlock>
+                Grid.Row="2"
+                Grid.RowSpan="3">
+                <RichTextBlock
+                    x:Name="Message"
+                    Style="{StaticResource BodyRichTextBlockStyle}"
+                    Foreground="{ThemeResource MessageForegroundBrush}"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                    ContextMenuOpening="Message_ContextMenuOpening"
+                    TextAlignment="DetectFromContent"
+                    Grid.Column="1"
+                    Grid.Row="2">
+                    <Paragraph>
+                        <Span x:Name="Span"/>
+                    </Paragraph>
+                </RichTextBlock>
 
-            <Border
-                x:Name="Media"
-                Grid.Column="1"
-                Grid.Row="3"/>
+                <Border
+                    x:Name="Media"
+                    Grid.Column="1"
+                    Grid.Row="3"/>
 
-            <local:MessageFooter
-                x:Name="Footer"
-                Stroke="{ThemeResource MessageSubtleLabelBrush}"
-                VerticalAlignment="Bottom"
-                HorizontalAlignment="Right"
-                SizeChanged="Footer_SizeChanged"
-                Margin="-8,0,-6,-2"
-                Grid.Column="1"
-                Grid.Row="4"/>
+                <local:MessageFooter
+                    x:Name="Footer"
+                    Stroke="{ThemeResource MessageSubtleLabelBrush}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    SizeChanged="Footer_SizeChanged"
+                    Margin="-8,0,-6,-2"
+                    Grid.Column="1"
+                    Grid.Row="4"/>
+            </local:MessageBubblePanel>
 
             <HyperlinkButton
                 x:Name="Thread"
