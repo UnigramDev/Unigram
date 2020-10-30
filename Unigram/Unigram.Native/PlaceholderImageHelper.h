@@ -41,6 +41,8 @@ namespace Unigram
 				}
 			}
 
+			void DrawWebP(_In_ Platform::String^ fileName, _In_ IRandomAccessStream^ randomAccessStream);
+
 			Windows::Foundation::Size DrawSvg(_In_ String^ path, _In_ Color foreground, IRandomAccessStream^ randomAccessStream);
 			void DrawQr(_In_ String^ data, _In_ Color foreground, _In_ Color background, IRandomAccessStream^ randomAccessStream);
 			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);

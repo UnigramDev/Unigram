@@ -475,7 +475,20 @@ namespace Unigram.Common
         {
             //return null;
             //return new BitmapImage(new Uri("file:///" + path));
-            return WebPImage.DecodeFromPath(path);
+            //return WebPImage.DecodeFromPath(path);
+
+            var bitmap = new BitmapImage();
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    PlaceholderImageHelper.Current.DrawWebP(path, stream);
+                    bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            return bitmap;
         }
 
         public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)

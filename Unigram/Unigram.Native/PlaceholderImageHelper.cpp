@@ -1,5 +1,8 @@
 #include "pch.h"
 #include <ShCore.h>
+#include <webp\decode.h>
+#include <webp\demux.h>
+
 #include "PlaceholderImageHelper.h"
 #include "Qr/QrCode.hpp"
 #include "SVG/nanosvg.h"
@@ -99,6 +102,122 @@ PlaceholderImageHelper^ PlaceholderImageHelper::GetForCurrentView()
 	s_windowContext[id] = result;
 
 	return instance;
+}
+
+void PlaceholderImageHelper::DrawWebP(String^ fileName, IRandomAccessStream^ randomAccessStream)
+{
+	FILE* file = _wfopen(fileName->Data(), L"rb");
+	if (file == NULL) {
+		return;
+	}
+
+	fseek(file, 0, SEEK_END);
+	size_t length = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	char* buffer = (char*)malloc(length);
+	fread(buffer, 1, length, file);
+	fclose(file);
+
+	WebPData webPData;
+	webPData.bytes = (uint8_t*)buffer;
+	webPData.size = length;
+
+	auto spDemuxer = std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)>
+	{
+		WebPDemux(&webPData),
+		WebPDemuxDelete
+	};
+	if (!spDemuxer)
+	{
+		//throw ref new InvalidArgumentException(ref new String(L"Failed to create demuxer"));
+		free(buffer);
+		return;
+	}
+
+	WebPIterator iter;
+	if (WebPDemuxGetFrame(spDemuxer.get(), 1, &iter))
+	{
+		WebPDecoderConfig config;
+		int ret = WebPInitDecoderConfig(&config);
+		if (!ret)
+		{
+			//throw ref new FailureException(ref new String(L"WebPInitDecoderConfig failed"));
+			free(buffer);
+			return;
+		}
+
+		ret = (WebPGetFeatures(iter.fragment.bytes, iter.fragment.size, &config.input) == VP8_STATUS_OK);
+		if (!ret)
+		{
+			//throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
+			free(buffer);
+			return;
+		}
+
+		int width = iter.width;
+		int height = iter.height;
+
+		if (iter.width > 256 || iter.height > 256)
+		{
+			auto ratioX = (double)256 / iter.width;
+			auto ratioY = (double)256 / iter.height;
+			auto ratio = std::min(ratioX, ratioY);
+
+			width = (int)(iter.width * ratio);
+			height = (int)(iter.height * ratio);
+		}
+
+		uint8_t* pixels = new uint8_t[(width * 4) * height];
+
+		config.options.scaled_width = width;
+		config.options.scaled_height = height;
+		config.options.use_scaling = 1;
+		config.options.no_fancy_upsampling = 1;
+		config.output.colorspace = MODE_bgrA;
+		config.output.is_external_memory = 1;
+		config.output.u.RGBA.rgba = pixels;
+		config.output.u.RGBA.stride = width * 4;
+		config.output.u.RGBA.size = (width * 4) * height;
+
+		ret = WebPDecode(iter.fragment.bytes, iter.fragment.size, &config);
+
+		if (ret != VP8_STATUS_OK)
+		{
+			//throw ref new FailureException(ref new String(L"Failed to decode frame"));
+			free(buffer);
+			return;
+		}
+
+		ComPtr<IWICImagingFactory> piFactory;
+		ComPtr<IWICBitmapEncoder> piEncoder;
+		ComPtr<IStream> piStream;
+
+		CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&piFactory));
+
+		HRESULT hr = CreateStreamOverRandomAccessStream(randomAccessStream, IID_PPV_ARGS(&piStream));
+
+		piFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, &piEncoder);
+		piEncoder->Initialize(piStream.Get(), WICBitmapEncoderNoCache);
+
+		ComPtr<IPropertyBag2> propertyBag;
+		ComPtr<IWICBitmapFrameEncode> frame;
+		piEncoder->CreateNewFrame(&frame, &propertyBag);
+
+		frame->Initialize(propertyBag.Get());
+		frame->SetSize(width, height);
+
+		WICPixelFormatGUID format = GUID_WICPixelFormat32bppPBGRA;
+		frame->SetPixelFormat(&format);
+		frame->WritePixels(height, width * 4, (width * 4) * height, pixels);
+
+		frame->Commit();
+		piEncoder->Commit();
+		piStream->Seek({ 0 }, STREAM_SEEK_SET, nullptr);
+
+		delete pixels;
+	}
+
+	free(buffer);
 }
 
 Windows::Foundation::Size PlaceholderImageHelper::DrawSvg(String^ path, _In_ Color foreground, IRandomAccessStream^ randomAccessStream)
