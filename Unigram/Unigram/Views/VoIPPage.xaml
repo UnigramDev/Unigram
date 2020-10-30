@@ -159,10 +159,10 @@
 
                 <Border x:Name="LargeEmojiLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,8">
                     <StackPanel x:Name="LargePanel" Tapped="LargeEmojiLabel_Tapped" Background="Transparent" Orientation="Horizontal">
-                        <Image x:Name="LargeEmoji0" Source="ms-appx:///Assets/Emojis/0030-20e3.png" Height="48" Width="48" Margin="0,0,4,0"/>
-                        <Image x:Name="LargeEmoji1" Source="ms-appx:///Assets/Emojis/0031-20e3.png" Height="48" Width="48" Margin="4,0"/>
-                        <Image x:Name="LargeEmoji2" Source="ms-appx:///Assets/Emojis/0032-20e3.png" Height="48" Width="48" Margin="4,0"/>
-                        <Image x:Name="LargeEmoji3" Source="ms-appx:///Assets/Emojis/0033-20e3.png" Height="48" Width="48" Margin="4,0,0,0"/>
+                        <TextBlock x:Name="LargeEmoji0" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="36" Height="48" Width="48" Margin="0,0,4,0"/>
+                        <TextBlock x:Name="LargeEmoji1" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="36" Height="48" Width="48" Margin="4,0"/>
+                        <TextBlock x:Name="LargeEmoji2" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="36" Height="48" Width="48" Margin="4,0"/>
+                        <TextBlock x:Name="LargeEmoji3" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="36" Height="48" Width="48" Margin="4,0,0,0"/>
                     </StackPanel>
                 </Border>
 

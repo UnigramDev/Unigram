@@ -36,7 +36,6 @@ namespace Unigram.Views
         private IVoipService _service;
 
         private VoipState _state;
-        private IList<string> _emojis;
 
         private int _debugTapped;
         private ContentDialog _debugDialog;
@@ -70,15 +69,6 @@ namespace Unigram.Views
             _debugTimer = new DispatcherTimer();
             _debugTimer.Interval = TimeSpan.FromMilliseconds(500);
             _debugTimer.Tick += DebugTimer_Tick;
-
-            #region Reset
-
-            LargeEmoji0.Source = null;
-            LargeEmoji1.Source = null;
-            LargeEmoji2.Source = null;
-            LargeEmoji3.Source = null;
-
-            #endregion
 
             #region Composition
 
@@ -421,14 +411,10 @@ namespace Unigram.Views
 
             if (call.State is CallStateReady ready)
             {
-                _emojis = ready.Emojis;
-
                 for (int i = 0; i < ready.Emojis.Count; i++)
                 {
-                    var imageLarge = FindName($"LargeEmoji{i}") as Image;
-                    var source = Emoji.BuildUri(_emojis[i]);
-
-                    imageLarge.Source = new BitmapImage(new Uri(source));
+                    var textLarge = FindName($"LargeEmoji{i}") as TextBlock;
+                    textLarge.Text = ready.Emojis[i];
                 }
             }
 
