@@ -112,8 +112,8 @@ namespace Unigram.ViewModels.Chats
 
                 var fromMessageId = item.Id;
 
-                var limit = 20;
-                var offset = _isMirrored ? -limit : 0;
+                var limit = 21;
+                var offset = _isMirrored ? -limit + 1 : 0;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
                 if (response is Messages messages)
@@ -149,8 +149,8 @@ namespace Unigram.ViewModels.Chats
 
                 var fromMessageId = item.Id;
 
-                var limit = 20;
-                var offset = _isMirrored ? 0 : -limit;
+                var limit = 21;
+                var offset = _isMirrored ? 0 : -limit + 1;
 
                 var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, null, fromMessageId, offset, limit, _filter, _threadId));
                 if (response is Messages messages)
