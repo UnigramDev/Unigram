@@ -895,6 +895,16 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        public Border GetPlaybackElement()
+        {
+            if (Media.Child is IContentWithPlayback content)
+            {
+                return content.GetPlaybackElement();
+            }
+
+            return null;
+        }
+
         public void UpdateFile(MessageViewModel message, File file)
         {
             if (Media.Child is IContentWithFile content)

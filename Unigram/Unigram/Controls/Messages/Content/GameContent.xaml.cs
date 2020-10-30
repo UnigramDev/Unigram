@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class GameContent : StackPanel, IContentWithFile
+    public sealed partial class GameContent : StackPanel, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -85,6 +85,16 @@ namespace Unigram.Controls.Messages.Content
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageGame;
+        }
+
+        public Border GetPlaybackElement()
+        {
+            if (Media.Child is IContentWithPlayback content)
+            {
+                return content.GetPlaybackElement();
+            }
+
+            return null;
         }
 
         #region Entities
