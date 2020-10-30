@@ -39,7 +39,7 @@ namespace Unigram.Controls.Gallery
 
             if (orientation == Orientation.Horizontal && alignment == SnapPointsAlignment.Near)
             {
-                return SnapPointWidth;
+                return MathF.Round(SnapPointWidth);
             }
 
             return 0;
