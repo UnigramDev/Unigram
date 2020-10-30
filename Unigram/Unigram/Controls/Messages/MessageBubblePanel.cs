@@ -48,7 +48,7 @@ namespace Unigram.Controls.Messages
 
             if (textRow == footerRow)
             {
-                _margin = Margins(availableSize.ToVector2());
+                _margin = Margins(availableSize.Width);
             }
             else if (mediaRow == footerRow)
             {
@@ -60,8 +60,11 @@ namespace Unigram.Controls.Messages
             }
 
             var margin = _margin;
-            return new Size(media.DesiredSize.Width > 0 ? media.DesiredSize.Width : text.DesiredSize.Width + margin.Width,
-                text.DesiredSize.Height + media.DesiredSize.Height + margin.Height);
+            var width = media.DesiredSize.Width == availableSize.Width
+                ? media.DesiredSize.Width
+                : Math.Max(media.DesiredSize.Width, text.DesiredSize.Width + margin.Width);
+
+            return new Size(width, text.DesiredSize.Height + media.DesiredSize.Height + margin.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -72,8 +75,6 @@ namespace Unigram.Controls.Messages
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
-
-            var maxWidth = Math.Max(text.DesiredSize.Width, media.DesiredSize.Width);
 
             if (textRow < mediaRow)
             {
@@ -97,7 +98,7 @@ namespace Unigram.Controls.Messages
             return finalSize;
         }
 
-        private Size Margins(Vector2 size)
+        private Size Margins(double availableWidth)
         {
             var text = Children[0] as RichTextBlock;
             var footer = Children[2] as MessageFooter;
@@ -107,11 +108,11 @@ namespace Unigram.Controls.Messages
 
             if (_placeholder)
             {
-                var maxWidth = size.X;
+                var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
                 var width = text.DesiredSize.Width;
-                var rect = ContentEnd(size);
+                var rect = ContentEnd(availableWidth);
 
                 var diff = width - rect.Right;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
@@ -130,7 +131,7 @@ namespace Unigram.Controls.Messages
             return new Size(marginLeft, marginBottom);
         }
 
-        private Rect ContentEnd(Vector2 size)
+        private Rect ContentEnd(double availableWidth)
         {
             var caption = Content?.GetCaption();
             if (string.IsNullOrEmpty(caption?.Text))
@@ -139,33 +140,37 @@ namespace Unigram.Controls.Messages
             }
 
             var text = Children[0] as RichTextBlock;
-            var width = size.X - (float)text.Margin.Left - (float)text.Margin.Right;
+            var width = (float)(availableWidth - text.Margin.Left - text.Margin.Right);
 
-            using (CanvasTextFormat format = new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = Theme.Current.MessageFontSize })
-            using (CanvasTextLayout textLayout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, format, width, size.Y))
+            try
             {
-                foreach (var entity in caption.Entities)
+                using (CanvasTextFormat format = new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = Theme.Current.MessageFontSize })
+                using (CanvasTextLayout textLayout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, format, width, float.PositiveInfinity))
                 {
-                    if (entity.Type is TextEntityTypeBold)
+                    foreach (var entity in caption.Entities)
                     {
-                        textLayout.SetFontWeight(entity.Offset, entity.Length, FontWeights.SemiBold);
+                        if (entity.Type is TextEntityTypeBold)
+                        {
+                            textLayout.SetFontWeight(entity.Offset, entity.Length, FontWeights.SemiBold);
+                        }
+                        else if (entity.Type is TextEntityTypeItalic)
+                        {
+                            textLayout.SetFontStyle(entity.Offset, entity.Length, FontStyle.Italic);
+                        }
+                        else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                        {
+                            textLayout.SetFontFamily(entity.Offset, entity.Length, "Consolas");
+                        }
                     }
-                    else if (entity.Type is TextEntityTypeItalic)
-                    {
-                        textLayout.SetFontStyle(entity.Offset, entity.Length, FontStyle.Italic);
-                    }
-                    else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
-                    {
-                        textLayout.SetFontFamily(entity.Offset, entity.Length, "Consolas");
-                    }
-                }
 
-                var regions = textLayout.GetCharacterRegions(caption.Text.Length, 0);
-                if (regions.Length > 0)
-                {
-                    return regions[0].LayoutBounds;
+                    var regions = textLayout.GetCharacterRegions(caption.Text.Length, 0);
+                    if (regions.Length > 0)
+                    {
+                        return regions[0].LayoutBounds;
+                    }
                 }
             }
+            catch { }
 
             return Rect.Empty;
         }
