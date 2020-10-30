@@ -16,6 +16,7 @@ using Unigram.Native.Tasks;
 using Unigram.Navigation;
 using Unigram.Views;
 using Windows.ApplicationModel.AppService;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
@@ -85,14 +86,22 @@ namespace Unigram.Services
 
         private void UpdateBadge(int count)
         {
-            //var tick = Environment.TickCount;
-            //if (tick < _tickCount + 500)
-            //{
-            //    return;
-            //}
+            try
+            {
+                var updater = BadgeUpdateManager.CreateBadgeUpdaterForApplication("App");
+                if (count == 0)
+                {
+                    updater.Clear();
+                    return;
+                }
 
-            //_tickCount = tick;
-            NotificationTask.UpdatePrimaryBadge(count);
+                var document = BadgeUpdateManager.GetTemplateContent(BadgeTemplateType.BadgeNumber);
+                var element = document.SelectSingleNode("/badge") as XmlElement;
+                element.SetAttribute("value", count.ToString());
+
+                updater.Update(new BadgeNotification(document));
+            }
+            catch { }
         }
 
         public async void Handle(UpdateTermsOfService update)
