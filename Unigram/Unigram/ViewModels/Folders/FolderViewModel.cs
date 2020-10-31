@@ -75,7 +75,7 @@ namespace Unigram.ViewModels.Folders
                 filter.IncludedChatIds.Add(includedChatId);
             }
 
-            _pinnedChatIds = filter.PinnedChatIds ?? new List<long>();
+            _pinnedChatIds = filter.PinnedChatIds;
 
             _iconPicked = !string.IsNullOrEmpty(filter.IconName);
 
@@ -181,6 +181,12 @@ namespace Unigram.ViewModels.Folders
 
         public async Task AddIncludeAsync()
         {
+            var filter = _filter;
+            if (filter == null)
+            {
+                return;
+            }
+
             var result = await SharePopup.AddExecute(true, Include.ToList());
             if (result != null)
             {
@@ -218,6 +224,12 @@ namespace Unigram.ViewModels.Folders
 
         public async Task AddExcludeAsync()
         {
+            var filter = _filter;
+            if (filter == null)
+            {
+                return;
+            }
+
             var result = await SharePopup.AddExecute(false, Exclude.ToList());
             if (result != null)
             {
