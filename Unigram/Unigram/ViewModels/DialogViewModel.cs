@@ -1077,6 +1077,7 @@ namespace Unigram.ViewModels
             var hidden = Settings.GetChatPinnedMessage(chat.Id);
             if (hidden != 0)
             {
+                Delegate?.UpdatePinnedMessage(chat, false);
                 return;
             }
 
