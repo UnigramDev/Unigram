@@ -1580,13 +1580,16 @@ namespace Unigram.Views
                     //await MessagePopup.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
-            else if (message.IsChannelPost)
+            if (ViewModel.CacheService.TryGetChat(message.Sender, out Chat senderChat))
             {
-                ViewModel.OpenChat(message.ChatId);
-            }
-            else if (message.Sender is MessageSenderChat senderChat)
-            {
-                ViewModel.OpenChat(senderChat.ChatId, true);
+                if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                {
+                    ViewModel.OpenChat(senderChat.Id);
+                }
+                else
+                {
+                    ViewModel.OpenChat(senderChat.Id, true);
+                }
             }
             else if (message.Sender is MessageSenderUser senderUser)
             {

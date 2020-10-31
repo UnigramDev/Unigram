@@ -46,8 +46,6 @@ namespace Unigram.Controls.Messages
             _message = message;
             Tag = message;
 
-            Panel.Content = message?.Content;
-
             if (message != null)
             {
                 UpdateAttach(message);
@@ -582,13 +580,16 @@ namespace Unigram.Controls.Messages
 
         private void From_Click(MessageViewModel message)
         {
-            if (message.IsChannelPost)
+            if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
             {
-                message.Delegate.OpenChat(message.ChatId);
-            }
-            else if (message.Sender is MessageSenderChat senderChat)
-            {
-                message.Delegate.OpenChat(senderChat.ChatId, true);
+                if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                {
+                    message.Delegate.OpenChat(senderChat.Id);
+                }
+                else
+                {
+                    message.Delegate.OpenChat(senderChat.Id, true);
+                }
             }
             else if (message.Sender is MessageSenderUser senderUser)
             {
@@ -680,6 +681,8 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageContent(MessageViewModel message)
         {
+            Panel.Content = message?.Content;
+
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text && text.WebPage == null)
             {
