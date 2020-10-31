@@ -184,6 +184,8 @@ void PlaceholderImageHelper::DrawWebP(String^ fileName, IRandomAccessStream^ ran
 		if (ret != VP8_STATUS_OK)
 		{
 			//throw ref new FailureException(ref new String(L"Failed to decode frame"));
+			delete[] pixels;
+
 			free(buffer);
 			return;
 		}
@@ -214,7 +216,7 @@ void PlaceholderImageHelper::DrawWebP(String^ fileName, IRandomAccessStream^ ran
 		piEncoder->Commit();
 		piStream->Seek({ 0 }, STREAM_SEEK_SET, nullptr);
 
-		delete pixels;
+		delete[] pixels;
 	}
 
 	free(buffer);

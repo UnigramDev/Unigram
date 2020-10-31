@@ -95,7 +95,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 				&bitmap_capacity);
 
 
-			m_impl->feedBytes(software_bitmap.PixelWidth(), software_bitmap.PixelHeight(), bitmap_content, bitmap_capacity);
+			//m_impl->feedBytes(software_bitmap.PixelWidth(), software_bitmap.PixelHeight(), bitmap_content, bitmap_capacity);
 		}
 	}
 

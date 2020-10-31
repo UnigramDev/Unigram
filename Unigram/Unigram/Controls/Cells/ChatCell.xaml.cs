@@ -16,6 +16,7 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -1514,8 +1515,29 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
+        private DispatcherTimer _clickTimer;
+
         private void OnClick(object sender, RoutedEventArgs e)
         {
+            //if (_clickTimer == null)
+            //{
+            //    _clickTimer = new DispatcherTimer();
+            //    _clickTimer.Interval = TimeSpan.FromMilliseconds(500);
+            //    _clickTimer.Tick += OnTick;
+            //}
+
+            //if (ClickMode == ClickMode.Press)
+            //{
+            //    _clickTimer.Stop();
+            //    ClickMode = ClickMode.Release;
+
+            //    _clickTimer.Start();
+            //}
+            //else if (ClickMode == ClickMode.Release)
+            //{
+            //    _clickTimer.Stop();
+            //    ClickMode = ClickMode.Press;
+
             if (_selectionMode != ListViewSelectionMode.Multiple)
             {
                 _delegate?.SetSelectedItem(_chat);
@@ -1524,6 +1546,28 @@ namespace Unigram.Controls.Cells
             {
                 _delegate?.SetSelectionMode(false);
             }
+            //}
+        }
+
+        private async void OnTick(object sender, object e)
+        {
+            _clickTimer.Stop();
+            ClickMode = ClickMode.Press;
+
+            var token = PointerCaptures.FirstOrDefault();
+            if (token == null)
+            {
+                return;
+            }
+
+            var pointer = PointerPoint.GetCurrentPoint(token.PointerId);
+            if (pointer == null)
+            {
+                return;
+            }
+
+            ReleasePointerCapture(token);
+            await StartDragAsync(pointer);
         }
 
         //protected override void OnPointerPressed(PointerRoutedEventArgs e)

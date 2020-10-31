@@ -250,6 +250,10 @@ namespace Unigram.ViewModels
             {
                 return Id == y.Id && ChatId == y.ChatId;
             }
+            else if (obj is MessageViewModel ym)
+            {
+                return Id == ym.Id && ChatId == ym.ChatId;
+            }
 
             return base.Equals(obj);
         }

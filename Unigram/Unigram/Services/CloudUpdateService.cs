@@ -15,8 +15,8 @@ namespace Unigram.Services
         CloudUpdate NextUpdate { get; }
 
         Task UpdateAsync(bool force);
-        Task<CloudUpdate> GetNextUpdateAsync();
-        Task<IList<CloudUpdate>> GetHistoryAsync();
+        //Task<CloudUpdate> GetNextUpdateAsync();
+        //Task<IList<CloudUpdate>> GetHistoryAsync();
     }
 
     public class CloudUpdateService : ICloudUpdateService, IHandle<UpdateFile>

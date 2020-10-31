@@ -229,15 +229,19 @@ namespace Unigram.Views
             var header = Header as FrameworkElement;
             var headerVisibility = header != null ? header.Visibility : Visibility.Visible;
 
-            //if (e.Items.Count > 1 || e.Items[0] is Chat chat && !chat.IsPinned || headerVisibility == Visibility.Visible || ChatsList.SelectionMode2 == ListViewSelectionMode.Multiple)
-            //{
-            //    ChatsList.CanReorderItems = false;
-            //    e.Cancel = true;
-            //}
-            //else
-            //{
-            //    ChatsList.CanReorderItems = true;
-            //}
+            if (e.Items[0] is Chat chat)
+            {
+                var position = chat.GetPosition(ViewModel.Items.ChatList);
+                if (position == null || !position.IsPinned || e.Items.Count > 1 || ChatsList.SelectionMode2 == ListViewSelectionMode.Multiple)
+                {
+                    ChatsList.CanReorderItems = false;
+                    e.Cancel = true;
+                }
+                else
+                {
+                    ChatsList.CanReorderItems = true;
+                }
+            }
         }
 
         private void Chats_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
@@ -257,19 +261,41 @@ namespace Unigram.Views
 
                 var compare = items[index > 0 ? index - 1 : index + 1];
 
-                //if (compare.Source != null && index > 0)
-                //{
-                //    compare = items[index + 1];
-                //}
+                var position = compare.GetPosition(ViewModel.Items.ChatList);
+                if (position == null)
+                {
+                    return;
+                }
 
-                //if (compare.IsPinned)
-                //{
-                //    ViewModel.ProtoService.Send(new SetPinnedChats(chatList, items.Where(x => x.IsPinned).Select(x => x.Id).ToList()));
-                //}
-                //else
-                //{
-                //    ViewModel.Items.Handle(chat.Id, chat.Order);
-                //}
+                if (position.Source != null && index > 0)
+                {
+                    position = items[index + 1].GetPosition(ViewModel.Items.ChatList);
+                }
+
+                if (position.IsPinned)
+                {
+                    //ViewModel.ProtoService.Send(new SetPinnedChats(chatList, items.Where(x => x.IsPinned).Select(x => x.Id).ToList()));
+                }
+                else
+                {
+                    var real = chat.GetPosition(ViewModel.Items.ChatList);
+                    if (real != null)
+                    {
+                        ViewModel.Items.Handle(chat.Id, real.Order);
+                    }
+                }
+            }
+        }
+
+        private void ChatsList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (ChatsList.SelectionMode2 != ListViewSelectionMode.Multiple)
+            {
+                ViewModel?.SetSelectedItem(e.ClickedItem as Chat);
+            }
+            else if (ViewModel.SelectedCount < 1)
+            {
+                ViewModel?.SetSelectionMode(false);
             }
         }
 

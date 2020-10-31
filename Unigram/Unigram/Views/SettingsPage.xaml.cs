@@ -55,10 +55,10 @@ namespace Unigram.Views
 
             if (version.Revision > 0)
             {
-                return string.Format("{0}.{1}.{3} ({2})", version.Major, version.Minor, version.Build, version.Revision);
+                return string.Format("{0}.{1}.{3} ({2}) {4}", version.Major, version.Minor, version.Build, version.Revision, packageId.Architecture);
             }
 
-            return string.Format("{0}.{1} ({2})", version.Major, version.Minor, version.Build, version.Revision);
+            return string.Format("{0}.{1} ({2}) {3}", version.Major, version.Minor, version.Build, packageId.Architecture);
         }
 
         private MasterDetailView _masterDetail;

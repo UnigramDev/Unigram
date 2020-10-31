@@ -207,8 +207,8 @@ namespace Unigram.Controls
                 return;
             }
 
-            var w = m_layoutRoot.ActualWidth;
-            var h = m_layoutRoot.ActualHeight;
+            var w = m_imageViewer.ActualWidth;
+            var h = m_imageViewer.ActualHeight;
 
             if (w == 0 || h == 0)
             {
@@ -241,7 +241,7 @@ namespace Unigram.Controls
             //    }
             //    else
             //    {
-            m_outerClip.Rect = new Rect(0, 0, m_layoutRoot.ActualWidth, m_layoutRoot.ActualHeight);
+            m_outerClip.Rect = new Rect(0, 0, m_imageViewer.ActualWidth, m_imageViewer.ActualHeight);
             //m_innerClip.Rect = new Rect(rect.Left * w, rect.Top * h, rect.Width * w, rect.Height * h);
             //    }
             //}

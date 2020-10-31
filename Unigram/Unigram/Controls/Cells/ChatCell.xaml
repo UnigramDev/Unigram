@@ -13,6 +13,7 @@
     Style="{StaticResource ChatListToggleButtonStyle}"
     AllowDrop="True"
     Click="OnClick">
+    <!--ClickMode="Press"-->
 
     <UserControl x:Name="LayoutRoot">
         <Grid Padding="0,8,12,0" Background="Transparent">

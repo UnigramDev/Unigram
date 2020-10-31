@@ -59,11 +59,16 @@ namespace Unigram.Controls
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (!IsConstrainedToRootBounds && KeyboardHelper.IsPointerGoBackGesture(e.GetCurrentPoint(this).Properties))
+            var pointer = e.GetCurrentPoint(this);
+            if (!IsConstrainedToRootBounds && KeyboardHelper.IsPointerGoBackGesture(pointer.Properties))
             {
                 var args = new HandledEventArgs();
                 OnBackRequested(args);
                 e.Handled = args.Handled;
+            }
+            else if (pointer.Properties.IsLeftButtonPressed && IsLightDismissEnabled)
+            {
+                OnBackRequestedOverride(this, new HandledEventArgs());
             }
 
             base.OnPointerPressed(e);
@@ -352,13 +357,23 @@ namespace Unigram.Controls
 
         private void Inside_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            if (e.OriginalSource == BackgroundElement && IsLightDismissEnabled)
+            {
+                Hide();
+            }
+
             e.Handled = true;
         }
 
         private void Outside_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            //Hide();
+            if (IsLightDismissEnabled)
+            {
+                Hide();
+            }
         }
+
+        public bool IsLightDismissEnabled { get; set; }
 
         private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {

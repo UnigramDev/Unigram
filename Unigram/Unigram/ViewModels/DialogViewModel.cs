@@ -65,6 +65,11 @@ namespace Unigram.ViewModels
 
                     i--;
                 }
+                else if (messages[i].Id == 0)
+                {
+                    messages.RemoveAt(i);
+                    i--;
+                }
             }
 
             SelectedItems = messages;

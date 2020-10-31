@@ -223,7 +223,7 @@
         <!-- Region Service -->
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
-            <StackPanel Margin="0,8,0,8">
+            <StackPanel Margin="0,8,0,4">
                 <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" Style="{StaticResource ServiceButtonStyle}">
                     <TextBlock Foreground="White" TextAlignment="Center" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>

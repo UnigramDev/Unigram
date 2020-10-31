@@ -978,6 +978,17 @@ namespace Unigram.Views
             var invoked = ViewModel.ShortcutService.Process(args);
             foreach (var command in invoked.Commands)
             {
+#if DEBUG
+                if (command == ShortcutCommand.Quit)
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+
+                    return;
+                }
+#endif
+
                 ProcessChatCommands(command, args);
                 ProcessFolderCommands(command, args);
                 ProcessAppCommands(command, args);

@@ -713,13 +713,6 @@ namespace Unigram.Services
         private void ApplicationView_Released(object sender, EventArgs e)
         {
             _callLifetime = null;
-
-            if (_callPage != null)
-            {
-                _callPage.Dispose();
-                _callPage = null;
-            }
-
             Aggregator.Publish(new UpdateCallDialog(_call, false));
         }
     }

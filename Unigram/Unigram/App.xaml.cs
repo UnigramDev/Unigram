@@ -85,12 +85,6 @@ namespace Unigram
                 {
                     Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
                 }
-
-                //try
-                //{
-                //    await new MessagePopup(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
-                //}
-                //catch { }
             };
 
 #if !DEBUG
@@ -98,14 +92,11 @@ namespace Unigram
                 typeof(Microsoft.AppCenter.Analytics.Analytics),
                 typeof(Microsoft.AppCenter.Crashes.Crashes));
 
-            string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
-            ulong version = ulong.Parse(deviceFamilyVersion);
-            ulong major = (version & 0xFFFF000000000000L) >> 48;
-            ulong minor = (version & 0x0000FFFF00000000L) >> 32;
-            ulong build = (version & 0x00000000FFFF0000L) >> 16;
-
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent($"{major}.{minor}.{build}");
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Windows",
+                new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily }
+                });
 #endif
         }
 

@@ -41,6 +41,9 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 
     ~VoipVideoRenderer() {
         m_disposed = true;
+
+        _canvasDevice = nullptr;
+        _surface = nullptr;
     }
 
     bool m_disposed{ false };

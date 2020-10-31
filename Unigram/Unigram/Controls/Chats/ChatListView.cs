@@ -306,7 +306,10 @@ namespace Unigram.Controls.Chats
             }
 
             // scroll to desired position with animation!
-            await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center);
+            if (scrollViewer.ScrollableHeight > 0)
+            {
+                await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center);
+            }
             //scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
         }
     }

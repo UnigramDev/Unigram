@@ -14,6 +14,7 @@
     d:DesignWidth="400"
     Background="{x:Null}"
     OverlayBrush="{x:Null}"
+    IsLightDismissEnabled="True"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     Loaded="OnLoaded"

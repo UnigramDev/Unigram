@@ -253,10 +253,16 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Dispose();
         }
 
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
             _debugTimer.Stop();
             _durationTimer.Stop();
@@ -281,6 +287,11 @@ namespace Unigram.Views
 
         public void Connect(VoipManager controller)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             //_controller = controller;
 
             controller.SetIncomingVideoOutput(BackgroundPanel);
@@ -304,6 +315,11 @@ namespace Unigram.Views
 
         public void Connect(VoipVideoCapture capturer)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             if (capturer != null && _capturerWasNull)
             {
                 _capturerWasNull = false;

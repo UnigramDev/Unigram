@@ -49,7 +49,14 @@ namespace Unigram.Views.Popups
 
             Loaded += async (s, args) =>
             {
-                await Cropper.SetSourceAsync(media.File, media.EditState.Rotation, media.EditState.Flip, mask == ImageCropperMask.Ellipse ? BitmapProportions.Square : media.EditState.Proportions, mask == ImageCropperMask.Ellipse ? new Rect?() : media.EditState.Rectangle);
+                if (mask == ImageCropperMask.Ellipse)
+                {
+                    await Cropper.SetSourceAsync(media.File, proportions: BitmapProportions.Square);
+                }
+                else
+                {
+                    await Cropper.SetSourceAsync(media.File, media.EditState.Rotation, media.EditState.Flip, media.EditState.Proportions, media.EditState.Rectangle);
+                }
             };
             Unloaded += (s, args) =>
             {
