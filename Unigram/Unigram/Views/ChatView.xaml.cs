@@ -1388,10 +1388,12 @@ namespace Unigram.Views
             if (sender is MessageReferenceBase referenceBase)
             {
                 var message = referenceBase.MessageId;
-
                 if (message != 0)
                 {
                     await ViewModel.LoadMessageSliceAsync(null, message);
+                    
+                    ViewModel.LockedPinnedMessageId = message;
+                    UpdatePinnedMessage();
                 }
             }
             else

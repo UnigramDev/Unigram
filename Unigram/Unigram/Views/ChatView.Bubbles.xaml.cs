@@ -240,6 +240,28 @@ namespace Unigram.Views
             _dateHeaderTimer.Start();
             ShowHideDateHeader(minDateIndex > 0, minDateIndex > 0 && minDateIndex < int.MaxValue);
 
+            // Read and play messages logic:
+            if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+            {
+                ViewModel.ProtoService.Send(new ViewMessages(chat.Id, ViewModel.ThreadId, messages, false));
+            }
+
+            if (animations.Count > 0 && !intermediate)
+            {
+                Play(animations, ViewModel.Settings.IsAutoPlayAnimationsEnabled, false);
+            }
+
+            // Pinned banner
+            if (firstVisibleId == 0 || lastVisibleId == 0)
+            {
+                return;
+            }
+
+            if (ViewModel.LockedPinnedMessageId < firstVisibleId)
+            {
+                ViewModel.LockedPinnedMessageId = 0;
+            }
+
             var thread = ViewModel.Thread;
             if (thread != null)
             {
@@ -255,7 +277,9 @@ namespace Unigram.Views
             }
             else if (ViewModel.PinnedMessages.Count > 0)
             {
-                var currentPinned = ViewModel.PinnedMessages.LastOrDefault(x => x.Id <= lastVisibleId) ?? ViewModel.PinnedMessages.FirstOrDefault();
+                var currentPinned = ViewModel.LockedPinnedMessageId != 0
+                    ? ViewModel.PinnedMessages.LastOrDefault(x => x.Id < firstVisibleId) ?? ViewModel.PinnedMessages.LastOrDefault()
+                    : ViewModel.PinnedMessages.LastOrDefault(x => x.Id <= lastVisibleId) ?? ViewModel.PinnedMessages.FirstOrDefault();
                 if (currentPinned != null)
                 {
                     //PinnedMessage.UpdateIndex(ViewModel.PinnedMessages.IndexOf(currentPinned), ViewModel.PinnedMessages.Count, intermediate);
@@ -266,17 +290,6 @@ namespace Unigram.Views
                 {
                     PinnedMessage.UpdateMessage(ViewModel.Chat, null, false, 0, 1, false);
                 }
-            }
-
-            // Read and play messages logic:
-            if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
-            {
-                ViewModel.ProtoService.Send(new ViewMessages(chat.Id, ViewModel.ThreadId, messages, false));
-            }
-
-            if (animations.Count > 0 && !intermediate)
-            {
-                Play(animations, ViewModel.Settings.IsAutoPlayAnimationsEnabled, false);
             }
         }
 
