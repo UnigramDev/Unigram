@@ -73,8 +73,8 @@ namespace Unigram.Controls.Messages
                     return UpdateCustomServiceAction(message, customServiceAction, active);
                 case MessageGameScore gameScore:
                     return UpdateGameScore(message, gameScore, active);
-                case MessageLiveLocationApproached liveLocationApproached:
-                    return UpdateLiveLocationApproached(message, liveLocationApproached, active);
+                case MessageProximityAlertTriggered proximityAlertTriggered:
+                    return UpdateProximityAlertTriggered(message, proximityAlertTriggered, active);
                 case MessagePassportDataSent passportDataSent:
                     return UpdatePassportDataSent(message, passportDataSent, active);
                 case MessagePaymentSuccessful paymentSuccessful:
@@ -796,31 +796,31 @@ namespace Unigram.Controls.Messages
         }
 
 
-        private static (string, IList<TextEntity>) UpdateLiveLocationApproached(MessageViewModel message, MessageLiveLocationApproached liveLocationApproached, bool active)
+        private static (string, IList<TextEntity>) UpdateProximityAlertTriggered(MessageViewModel message, MessageProximityAlertTriggered proximityAlertTriggered, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            User approacher;
-            User observer;
+            User traveler;
+            User watcher;
 
-            message.ProtoService.TryGetUser(liveLocationApproached.Approacher, out approacher);
-            message.ProtoService.TryGetUser(liveLocationApproached.Observer, out observer);
+            message.ProtoService.TryGetUser(proximityAlertTriggered.Traveler, out traveler);
+            message.ProtoService.TryGetUser(proximityAlertTriggered.Watcher, out watcher);
 
-            if (approacher != null && observer != null)
+            if (traveler != null && watcher != null)
             {
-                if (approacher.Id == message.ProtoService.Options.MyId)
+                if (traveler.Id == message.ProtoService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinYouRadius, BindConvert.Distance(liveLocationApproached.Distance, false)), "un2", observer, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinYouRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un2", watcher, ref entities);
                 }
-                else if (observer.Id == message.ProtoService.Options.MyId)
+                else if (watcher.Id == message.ProtoService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinRadius, BindConvert.Distance(liveLocationApproached.Distance, false)), "un1", approacher, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinOtherRadius, BindConvert.Distance(liveLocationApproached.Distance, false)), "un1", approacher, ref entities);
-                    content = ReplaceWithLink(content, "un2", observer, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinOtherRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
+                    content = ReplaceWithLink(content, "un2", watcher, ref entities);
                 }
             }
 

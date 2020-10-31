@@ -873,34 +873,34 @@ namespace Unigram.Common
         {
             switch (message.Content)
             {
-                case MessageBasicGroupChatCreate basicGroupChatCreate:
-                case MessageChatAddMembers chatAddMembers:
-                case MessageChatChangePhoto chatChangePhoto:
-                case MessageChatChangeTitle chatChangeTitle:
-                case MessageChatDeleteMember chatDeleteMember:
-                case MessageChatDeletePhoto chatDeletePhoto:
-                case MessageChatJoinByLink chatJoinByLink:
-                case MessageChatSetTtl chatSetTtl:
-                case MessageChatUpgradeFrom chatUpgradeFrom:
-                case MessageChatUpgradeTo chatUpgradeTo:
-                case MessageContactRegistered contactRegistered:
-                case MessageCustomServiceAction customServiceAction:
-                case MessageGameScore gameScore:
-                case MessageLiveLocationApproached liveLocationApproached:
-                case MessagePassportDataSent passportDataSent:
-                case MessagePaymentSuccessful paymentSuccessful:
-                case MessagePinMessage pinMessage:
-                case MessageScreenshotTaken screenshotTaken:
-                case MessageSupergroupChatCreate supergroupChatCreate:
-                case MessageWebsiteConnected websiteConnected:
+                case MessageBasicGroupChatCreate _:
+                case MessageChatAddMembers _:
+                case MessageChatChangePhoto _:
+                case MessageChatChangeTitle _:
+                case MessageChatDeleteMember _:
+                case MessageChatDeletePhoto _:
+                case MessageChatJoinByLink _:
+                case MessageChatSetTtl _:
+                case MessageChatUpgradeFrom _:
+                case MessageChatUpgradeTo _:
+                case MessageContactRegistered _:
+                case MessageCustomServiceAction _:
+                case MessageGameScore _:
+                case MessageProximityAlertTriggered _:
+                case MessagePassportDataSent _:
+                case MessagePaymentSuccessful _:
+                case MessagePinMessage _:
+                case MessageScreenshotTaken _:
+                case MessageSupergroupChatCreate _:
+                case MessageWebsiteConnected _:
                     return true;
-                case MessageExpiredPhoto expiredPhoto:
-                case MessageExpiredVideo expiredVideo:
+                case MessageExpiredPhoto _:
+                case MessageExpiredVideo _:
                     return true;
                 // Local types:
-                case MessageChatEvent chatEvent:
-                case MessageHeaderDate headerDate:
-                case MessageHeaderUnread headerUnread:
+                case MessageChatEvent _:
+                case MessageHeaderDate _:
+                case MessageHeaderUnread _:
                     return true;
                 default:
                     return false;
