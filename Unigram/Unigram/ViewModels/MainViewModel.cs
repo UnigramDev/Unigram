@@ -99,7 +99,7 @@ namespace Unigram.ViewModels
             Aggregator.Unsubscribe(Chats.Items);
             Aggregator.Unsubscribe(this);
 
-            if (Dispatcher.HasThreadAccess)
+            if (Dispatcher != null && Dispatcher.HasThreadAccess)
             {
                 ArchivedChats.Items.Clear();
                 Chats.Items.Clear();
