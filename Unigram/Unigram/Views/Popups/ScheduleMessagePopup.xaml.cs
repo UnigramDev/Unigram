@@ -35,7 +35,7 @@ namespace Unigram.Views.Popups
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            if (user != null && !(user.Status is UserStatusRecently) && !reminder)
+            if (user != null && user.Type is UserTypeRegular && !(user.Status is UserStatusRecently) && !reminder)
             {
                 Online.Content = string.Format(Strings.Resources.MessageScheduledUntilOnline, user.FirstName);
             }

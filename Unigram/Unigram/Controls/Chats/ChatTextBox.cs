@@ -684,6 +684,12 @@ namespace Unigram.Controls.Chats
 
         public async Task SendAsync(bool disableNotification = false)
         {
+            if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
+            {
+                await ScheduleAsync();
+                return;
+            }
+
             Sending?.Invoke(this, EventArgs.Empty);
 
             var options = new MessageSendOptions(disableNotification, false, null);
