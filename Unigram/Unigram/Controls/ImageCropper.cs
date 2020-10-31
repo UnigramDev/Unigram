@@ -659,11 +659,11 @@ namespace Unigram.Controls
             }
             if (rectangle.Right > 1)
             {
-                rectangle.Width = 1 - rectangle.X;
+                rectangle.X = 1 - rectangle.Width;
             }
             if (rectangle.Bottom > 1)
             {
-                rectangle.Height = 1 - rectangle.Y;
+                rectangle.Y = 1 - rectangle.Height;
             }
 
             m_current = rectangle;
@@ -685,20 +685,38 @@ namespace Unigram.Controls
 
             if (cropScale < proportionalCropScale)
             {
-                var cropHeight = ((m_rectangle.Width * m_imageSize.Width) / proportionalCropScale) / m_imageSize.Height;
+                var cropWidth = ((m_rectangle.Height * m_imageSize.Height) * proportionalCropScale) / m_imageSize.Width;
+                if (cropWidth > 1)
+                {
+                    var cropHeight = ((m_rectangle.Width * m_imageSize.Width) / proportionalCropScale) / m_imageSize.Height;
 
-                m_rectangle.Y = Math.Clamp(m_rectangle.Y + (m_rectangle.Height - cropHeight) / 2.0, 0.0, m_imageSize.Height - cropHeight);
-                m_rectangle.Height = cropHeight;
+                    m_rectangle.Y = Math.Clamp(m_rectangle.Y + (m_rectangle.Height - cropHeight) / 2.0, 0.0, m_imageSize.Height - cropHeight);
+                    m_rectangle.Height = cropHeight;
+                }
+                else
+                {
+                    m_rectangle.X = Math.Clamp(m_rectangle.X + (m_rectangle.Width - cropWidth) / 2.0, 0.0, m_imageSize.Width - cropWidth);
+                    m_rectangle.Width = cropWidth;
+                }
             }
             else
             {
-                var cropWidth = ((m_rectangle.Height * m_imageSize.Height) * proportionalCropScale) / m_imageSize.Width;
+                var cropHeight = ((m_rectangle.Width * m_imageSize.Width) / proportionalCropScale) / m_imageSize.Height;
+                if (cropHeight > 1)
+                {
+                    var cropWidth = ((m_rectangle.Height * m_imageSize.Height) * proportionalCropScale) / m_imageSize.Width;
 
-                m_rectangle.X = Math.Clamp(m_rectangle.X + (m_rectangle.Width - cropWidth) / 2.0, 0.0, m_imageSize.Width - cropWidth);
-                m_rectangle.Width = cropWidth;
+                    m_rectangle.X = Math.Clamp(m_rectangle.X + (m_rectangle.Width - cropWidth) / 2.0, 0.0, m_imageSize.Width - cropWidth);
+                    m_rectangle.Width = cropWidth;
+                }
+                else
+                {
+                    m_rectangle.Y = Math.Clamp(m_rectangle.Y + (m_rectangle.Height - cropHeight) / 2.0, 0.0, m_imageSize.Height - cropHeight);
+                    m_rectangle.Height = cropHeight;
+                }
             }
 
-            UpdateTutteCose(m_rectangle, animate);
+            SetRectangle(m_rectangle, animate);
         }
 
         private double GetProportionsFactor(BitmapProportions proportions, double defaultValue)
