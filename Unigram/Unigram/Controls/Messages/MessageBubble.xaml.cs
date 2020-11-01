@@ -17,6 +17,7 @@ using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -627,6 +628,8 @@ namespace Unigram.Controls.Messages
                     ThreadGlyph.Visibility = Visibility.Visible;
                     ThreadLabel.Text = Strings.Resources.ViewInChat;
 
+                    AutomationProperties.SetName(Thread, Strings.Resources.ViewInChat);
+
                     Thread.Visibility = Visibility.Visible;
                 }
                 else if (Thread != null)
@@ -675,6 +678,10 @@ namespace Unigram.Controls.Messages
                 ThreadLabel.Text = info.ReplyCount > 0
                     ? Locale.Declension("Comments", info.ReplyCount)
                     : Strings.Resources.LeaveAComment;
+
+                AutomationProperties.SetName(Thread, info.ReplyCount > 0
+                    ? Locale.Declension("Comments", info.ReplyCount)
+                    : Strings.Resources.LeaveAComment);
 
                 Thread.Visibility = Visibility.Visible;
             }
