@@ -568,7 +568,6 @@ namespace Unigram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
             {
-                // TODO: verify if this is sufficient
                 message.Delegate.OpenChat(fromChannel.ChatId, fromChannel.MessageId);
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
@@ -618,7 +617,20 @@ namespace Unigram.Controls.Messages
             var info = message.InteractionInfo?.ReplyInfo;
             if (info == null || !message.IsChannelPost || !message.CanGetMessageThread)
             {
-                if (Thread != null)
+                if (message.ChatId == message.ProtoService.Options.RepliesBotChatId)
+                {
+                    if (Thread == null)
+                    {
+                        FindName(nameof(Thread));
+                    }
+
+                    RecentRepliers.Children.Clear();
+                    ThreadGlyph.Visibility = Visibility.Visible;
+                    ThreadLabel.Text = Strings.Resources.ViewInChat;
+
+                    Thread.Visibility = Visibility.Visible;
+                }
+                else if (Thread != null)
                 {
                     Thread.Visibility = Visibility.Collapsed;
                 }

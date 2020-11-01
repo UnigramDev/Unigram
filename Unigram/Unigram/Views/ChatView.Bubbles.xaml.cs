@@ -810,7 +810,11 @@ namespace Unigram.Views
                     var button = action.Child as GlyphButton;
                     button.Tag = message;
 
-                    if (message.IsSaved())
+                    if (message.ChatId == ViewModel.CacheService.Options.RepliesBotChatId)
+                    {
+                        action.Visibility = Visibility.Collapsed;
+                    }
+                    else if (message.IsSaved())
                     {
                         if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
                         {

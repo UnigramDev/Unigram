@@ -1582,7 +1582,7 @@ namespace Unigram.Views
                     //await MessagePopup.ShowAsync(Strings.Resources.HidAccount, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
-            if (ViewModel.CacheService.TryGetChat(message.Sender, out Chat senderChat))
+            else if (ViewModel.CacheService.TryGetChat(message.Sender, out Chat senderChat))
             {
                 if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 {
