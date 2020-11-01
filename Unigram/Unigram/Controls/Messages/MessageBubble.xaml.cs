@@ -85,12 +85,13 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             var content = message.GeneratedContent ?? message.Content;
 
-            var sticker = content is MessageSticker;
-            var light = sticker || content is MessageDice || content is MessageVideoNote;
-
             var title = string.Empty;
 
-            if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
+            if (message.IsSaved())
+            {
+                title = message.ProtoService.GetTitle(message.ForwardInfo);
+            }
+            else
             {
                 if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
@@ -100,14 +101,6 @@ namespace Unigram.Controls.Messages
                 {
                     title = message.ProtoService.GetTitle(senderChat);
                 }
-            }
-            else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup)
-            {
-                title = message.ProtoService.GetTitle(chat);
-            }
-            else if (!light && message.IsFirst && message.IsSaved())
-            {
-                title = message.ProtoService.GetTitle(message.ForwardInfo);
             }
 
             var builder = new StringBuilder();
@@ -161,6 +154,12 @@ namespace Unigram.Controls.Messages
             else
             {
                 builder.Append(Strings.Resources.AccDescrMsgUnread);
+            }
+
+            if (message.InteractionInfo?.ViewCount > 0)
+            {
+                builder.Append(". ");
+                builder.Append(Locale.Declension("AccDescrNumberOfViews", message.InteractionInfo.ViewCount));
             }
 
             builder.Append(".");

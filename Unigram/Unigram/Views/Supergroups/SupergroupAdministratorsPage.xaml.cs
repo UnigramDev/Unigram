@@ -53,7 +53,7 @@ namespace Unigram.Views.Supergroups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new ListViewItem();
+                args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Member_ContextRequested;

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -56,7 +57,7 @@ namespace Unigram.Views.Settings
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new ListViewItem();
+                args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Language_ContextRequested;

@@ -467,6 +467,7 @@
     <Style TargetType="local:HeaderedControl">
         <Setter Property="Radius" Value="8"/>
         <Setter Property="Padding" Value="0,16,0,0"/>
+        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:HeaderedControl">
