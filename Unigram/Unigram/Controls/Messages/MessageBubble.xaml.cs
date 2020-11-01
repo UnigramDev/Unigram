@@ -943,7 +943,7 @@ namespace Unigram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
             {
-                result = ReplaceEntities(message, Span, text.Text, out adjust);
+                result = ReplaceEntities(message, Span, text.Text, out adjust, true);
             }
             else if (content is MessageAlbum album)
             {
@@ -1019,7 +1019,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private bool ReplaceEntities(MessageViewModel message, Span span, FormattedText text, out bool adjust)
+        private bool ReplaceEntities(MessageViewModel message, Span span, FormattedText text, out bool adjust, bool fontSize = false)
         {
             if (text == null)
             {
@@ -1027,10 +1027,10 @@ namespace Unigram.Controls.Messages
                 return false;
             }
 
-            return ReplaceEntities(message, span, text.Text, text.Entities, out adjust);
+            return ReplaceEntities(message, span, text.Text, text.Entities, out adjust, fontSize);
         }
 
-        private bool ReplaceEntities(MessageViewModel message, Span span, string text, IList<TextEntity> entities, out bool adjust)
+        private bool ReplaceEntities(MessageViewModel message, Span span, string text, IList<TextEntity> entities, out bool adjust, bool fontSize = false)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -1203,7 +1203,7 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            if (AdjustEmojis(span, text))
+            if (AdjustEmojis(span, text, fontSize))
             {
                 Message.FlowDirection = FlowDirection.LeftToRight;
                 adjust = (message.ReplyToMessageId == 0 || message.ReplyToMessageState == ReplyToMessageState.Hidden) && message.Content is MessageText;
@@ -1232,9 +1232,9 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool AdjustEmojis(Span span, string text)
+        private bool AdjustEmojis(Span span, string text, bool fontSize)
         {
-            if (SettingsService.Current.IsLargeEmojiEnabled && Emoji.TryCountEmojis(text, out int count, 3))
+            if (fontSize && SettingsService.Current.IsLargeEmojiEnabled && Emoji.TryCountEmojis(text, out int count, 3))
             {
                 switch (count)
                 {
