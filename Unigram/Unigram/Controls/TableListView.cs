@@ -124,5 +124,10 @@ namespace Unigram.Controls
         }
 
         #endregion
+
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new TextListViewItem();
+        }
     }
 }
