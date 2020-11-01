@@ -175,7 +175,7 @@ namespace Unigram.Common
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                return Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", ";
+                return Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", " + (voiceNote.IsListened ? "" : Strings.Resources.AccDescrMsgNotPlayed + ", ");
             }
             else if (message.Content is MessageVideo video)
             {
