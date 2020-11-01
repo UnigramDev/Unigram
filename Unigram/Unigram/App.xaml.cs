@@ -232,7 +232,10 @@ namespace Unigram
                         session = result;
                     }
 
-                    await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
+                    if (TLContainer.Current.TryResolve(session, out INotificationsService service))
+                    {
+                        await service.ProcessAsync(data);
+                    }
                 }
                 else if (args.TaskInstance.TriggerDetails is RawNotification notification)
                 {
@@ -260,14 +263,10 @@ namespace Unigram
                         return;
                     }
 
-                    var service = TLContainer.Current.Resolve<IProtoService>(session.Value);
-                    if (service == null)
+                    if (TLContainer.Current.TryResolve(session.Value, out IProtoService service))
                     {
-                        deferral.Complete();
-                        return;
+                        await service.SendAsync(new ProcessPushNotification(notification.Content));
                     }
-
-                    await service.SendAsync(new ProcessPushNotification(notification.Content));
                 }
 
                 deferral.Complete();

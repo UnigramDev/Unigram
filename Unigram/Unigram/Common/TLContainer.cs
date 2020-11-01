@@ -97,6 +97,24 @@ namespace Unigram.Views
             return result;
         }
 
+        public bool TryResolve<TService>(int session, out TService result)
+        {
+            if (session == int.MaxValue)
+            {
+                session = _lifetime.ActiveItem?.Id ?? 0;
+            }
+
+            result = default;
+            
+            //if (_containers.TryGetValue(account, out IContainer container))
+            if (_containers.TryGetValue(session, out IContainer container))
+            {
+                result = container.Resolve<TService>();
+            }
+
+            return result != null;
+        }
+
         public TService Resolve<TService, TDelegate>(TDelegate delegato, int session = int.MaxValue)
             where TService : IDelegable<TDelegate>
             where TDelegate : IViewModelDelegate
