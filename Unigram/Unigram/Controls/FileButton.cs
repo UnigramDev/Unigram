@@ -5,6 +5,7 @@ using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
@@ -109,25 +110,25 @@ namespace Unigram.Controls
             switch (state)
             {
                 case MessageContentState.Download:
-                    OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.Download, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.Download, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionDownload);
                     break;
                 case MessageContentState.Downloading:
-                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionCancelDownload);
                     break;
                 case MessageContentState.Uploading:
-                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionCancelDownload);
                     break;
                 case MessageContentState.Confirm:
-                    OnGlyphChanged(Icons.Confirm, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(Icons.Confirm, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionCancelDownload);
                     break;
                 case MessageContentState.Document:
-                    OnGlyphChanged(Icons.Document, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(Icons.Document, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
                     break;
                 case MessageContentState.Animation:
-                    OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionPlay);
                     break;
                 case MessageContentState.Photo:
-                    OnGlyphChanged(Icons.Photo, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(Icons.Photo, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
                     break;
                 case MessageContentState.Play:
                     //if (_state == MessageContentState.Pause && ApiInfo.CanUseDirectComposition)
@@ -136,7 +137,7 @@ namespace Unigram.Controls
                     //}
                     //else
                     {
-                        OnGlyphChanged(Icons.Play, Glyph, _state != state && _state != MessageContentState.None);
+                        OnGlyphChanged(Icons.Play, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionPlay);
                     }
                     break;
                 case MessageContentState.Pause:
@@ -146,14 +147,14 @@ namespace Unigram.Controls
                     //}
                     //else
                     {
-                        OnGlyphChanged(Icons.Pause, Glyph, _state != state && _state != MessageContentState.None);
+                        OnGlyphChanged(Icons.Pause, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionPause);
                     }
                     break;
                 case MessageContentState.Ttl:
-                    OnGlyphChanged(Icons.Ttl, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(Icons.Ttl, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
                     break;
                 case MessageContentState.Theme:
-                    OnGlyphChanged(Icons.Theme, Glyph, _state != state && _state != MessageContentState.None);
+                    OnGlyphChanged(Icons.Theme, Glyph, _state != state && _state != MessageContentState.None, Strings.Resources.AccActionOpenFile);
                     break;
             }
 
@@ -161,7 +162,7 @@ namespace Unigram.Controls
             _state = state;
         }
 
-        private void OnGlyphChanged(string newValue, string oldValue, bool animate)
+        private void OnGlyphChanged(string newValue, string oldValue, bool animate, string automation)
         {
             if (string.IsNullOrEmpty(oldValue) || string.IsNullOrEmpty(newValue))
             {
@@ -174,6 +175,7 @@ namespace Unigram.Controls
             }
 
             Glyph = newValue;
+            AutomationProperties.SetName(this, automation);
 
             if (_visual == null || _label == null)
             {
