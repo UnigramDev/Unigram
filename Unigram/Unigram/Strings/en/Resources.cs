@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/27/2020 10:42:00
+// 	Generated: 11/01/2020 18:35:05
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -516,6 +516,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrIVTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Notify when people sharing location are in range"
+        /// </summary>
+        public static string AccDescrLocationNotify
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrLocationNotify");
             }
         }
         
@@ -1565,6 +1576,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Pinned message list"
+        /// </summary>
+        public static string AccPinnedMessagesList
+        {
+            get
+            {
+                return resourceLoader.GetString("AccPinnedMessagesList");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Release for archive"
         /// </summary>
         public static string AccReleaseForArchive
@@ -2269,7 +2291,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You are now within {0} from un2"
+        /// Localized resource similar to "You are now within {0} from un1"
         /// </summary>
         public static string ActionUserWithinYouRadius
         {
@@ -4741,6 +4763,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} sharing with {1}"
+        /// </summary>
+        public static string AttachLiveLocationIsSharingChat
+        {
+            get
+            {
+                return resourceLoader.GetString("AttachLiveLocationIsSharingChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sharing with {1}"
+        /// </summary>
+        public static string AttachLiveLocationIsSharingChats
+        {
+            get
+            {
+                return resourceLoader.GetString("AttachLiveLocationIsSharingChats");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Location"
         /// </summary>
         public static string AttachLocation
@@ -4880,6 +4924,83 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AudioAutodownload");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File saved to music"
+        /// </summary>
+        public static string AudioSavedHint
+        {
+            get
+            {
+                return resourceLoader.GetString("AudioSavedHint");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string AudiosSavedHintFew
+        {
+            get
+            {
+                return resourceLoader.GetString("AudiosSavedHintFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string AudiosSavedHintMany
+        {
+            get
+            {
+                return resourceLoader.GetString("AudiosSavedHintMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File saved to music"
+        /// </summary>
+        public static string AudiosSavedHintOne
+        {
+            get
+            {
+                return resourceLoader.GetString("AudiosSavedHintOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} files saved to music"
+        /// </summary>
+        public static string AudiosSavedHintOther
+        {
+            get
+            {
+                return resourceLoader.GetString("AudiosSavedHintOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string AudiosSavedHintTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("AudiosSavedHintTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string AudiosSavedHintZero
+        {
+            get
+            {
+                return resourceLoader.GetString("AudiosSavedHintZero");
             }
         }
         
@@ -10512,6 +10633,72 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CommentsNoNumberFew
+        {
+            get
+            {
+                return resourceLoader.GetString("CommentsNoNumberFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CommentsNoNumberMany
+        {
+            get
+            {
+                return resourceLoader.GetString("CommentsNoNumberMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "comment"
+        /// </summary>
+        public static string CommentsNoNumberOne
+        {
+            get
+            {
+                return resourceLoader.GetString("CommentsNoNumberOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "comments"
+        /// </summary>
+        public static string CommentsNoNumberOther
+        {
+            get
+            {
+                return resourceLoader.GetString("CommentsNoNumberOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CommentsNoNumberTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("CommentsNoNumberTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CommentsNoNumberZero
+        {
+            get
+            {
+                return resourceLoader.GetString("CommentsNoNumberZero");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} Comment"
         /// </summary>
         public static string CommentsOne
@@ -15894,6 +16081,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "File saved to downloads"
+        /// </summary>
+        public static string FileSavedHint
+        {
+            get
+            {
+                return resourceLoader.GetString("FileSavedHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Files"
         /// </summary>
         public static string FilesDataUsage
@@ -15945,6 +16143,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FilesOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilesSavedHintFew
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesSavedHintFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilesSavedHintMany
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesSavedHintMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File saved to downloads"
+        /// </summary>
+        public static string FilesSavedHintOne
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesSavedHintOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} files saved to downloads"
+        /// </summary>
+        public static string FilesSavedHintOther
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesSavedHintOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilesSavedHintTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesSavedHintTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string FilesSavedHintZero
+        {
+            get
+            {
+                return resourceLoader.GetString("FilesSavedHintZero");
             }
         }
         
@@ -17038,17 +17302,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} ft"
-        /// </summary>
-        public static string Foots
-        {
-            get
-            {
-                return resourceLoader.GetString("Foots");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} ft away"
         /// </summary>
         public static string FootsAway
@@ -17067,6 +17320,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("FootsFromYou");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} ft"
+        /// </summary>
+        public static string FootsShort
+        {
+            get
+            {
+                return resourceLoader.GetString("FootsShort");
             }
         }
         
@@ -18255,6 +18519,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("GifCaption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "GIF saved to downloads"
+        /// </summary>
+        public static string GifSavedToDownloadsHint
+        {
+            get
+            {
+                return resourceLoader.GetString("GifSavedToDownloadsHint");
             }
         }
         
@@ -20123,13 +20398,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} km"
+        /// Localized resource similar to "km"
         /// </summary>
-        public static string KMeters
+        public static string Km
         {
             get
             {
-                return resourceLoader.GetString("KMeters");
+                return resourceLoader.GetString("Km");
             }
         }
         
@@ -20163,6 +20438,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("KMetersFromYou2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} km"
+        /// </summary>
+        public static string KMetersShort
+        {
+            get
+            {
+                return resourceLoader.GetString("KMetersShort");
             }
         }
         
@@ -21102,6 +21388,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Proximity alert"
+        /// </summary>
+        public static string LocationNotifiation
+        {
+            get
+            {
+                return resourceLoader.GetString("LocationNotifiation");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Notify me within {0}"
+        /// </summary>
+        public static string LocationNotifiationButton
+        {
+            get
+            {
+                return resourceLoader.GetString("LocationNotifiationButton");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Notify when someone is within {0}"
+        /// </summary>
+        public static string LocationNotifiationButtonGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("LocationNotifiationButtonGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Notify when {0} is within {1}"
+        /// </summary>
+        public static string LocationNotifiationButtonUser
+        {
+            get
+            {
+                return resourceLoader.GetString("LocationNotifiationButtonUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You are already closer than {0}"
+        /// </summary>
+        public static string LocationNotifiationCloser
+        {
+            get
+            {
+                return resourceLoader.GetString("LocationNotifiationCloser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "updated"
         /// </summary>
         public static string LocationUpdated
@@ -21755,6 +22096,72 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
+        public static string MediaSavedHintFew
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaSavedHintFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MediaSavedHintMany
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaSavedHintMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "One item saved to gallery"
+        /// </summary>
+        public static string MediaSavedHintOne
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaSavedHintOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} items saved to gallery"
+        /// </summary>
+        public static string MediaSavedHintOther
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaSavedHintOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MediaSavedHintTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaSavedHintTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MediaSavedHintZero
+        {
+            get
+            {
+                return resourceLoader.GetString("MediaSavedHintZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
         public static string MediaSelectedFew
         {
             get
@@ -22284,6 +22691,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Message pinned"
+        /// </summary>
+        public static string MessagePinnedHint
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePinnedHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Message Preview"
         /// </summary>
         public static string MessagePreview
@@ -22572,6 +22990,72 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to ""
         /// </summary>
+        public static string MessagesUnpinnedFew
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesUnpinnedFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesUnpinnedMany
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesUnpinnedMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "message unpinned"
+        /// </summary>
+        public static string MessagesUnpinnedOne
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesUnpinnedOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} messages unpinned"
+        /// </summary>
+        public static string MessagesUnpinnedOther
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesUnpinnedOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesUnpinnedTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesUnpinnedTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string MessagesUnpinnedZero
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagesUnpinnedZero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
         public static string messagesZero
         {
             get
@@ -22581,13 +23065,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} m"
+        /// Localized resource similar to "Message unpinned"
         /// </summary>
-        public static string Meters
+        public static string MessageUnpinnedHint
         {
             get
             {
-                return resourceLoader.GetString("Meters");
+                return resourceLoader.GetString("MessageUnpinnedHint");
             }
         }
         
@@ -22669,6 +23153,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} m"
+        /// </summary>
+        public static string MetersShort
+        {
+            get
+            {
+                return resourceLoader.GetString("MetersShort");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string MetersTwo
@@ -22691,13 +23186,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} mi"
+        /// Localized resource similar to "mi"
         /// </summary>
-        public static string Miles
+        public static string Mi
         {
             get
             {
-                return resourceLoader.GetString("Miles");
+                return resourceLoader.GetString("Mi");
             }
         }
         
@@ -22720,6 +23215,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MilesFromYou");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} mi"
+        /// </summary>
+        public static string MilesShort
+        {
+            get
+            {
+                return resourceLoader.GetString("MilesShort");
             }
         }
         
@@ -23369,6 +23875,39 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NewContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add contact"
+        /// </summary>
+        public static string NewContactAlertButton
+        {
+            get
+            {
+                return resourceLoader.GetString("NewContactAlertButton");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The phone number **{0}** is not in your contact list. Do you want to add it?"
+        /// </summary>
+        public static string NewContactAlertMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("NewContactAlertMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New contact"
+        /// </summary>
+        public static string NewContactAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("NewContactAlertTitle");
             }
         }
         
@@ -24420,6 +24959,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned a contact {1}"
+        /// </summary>
+        public static string NotificationActionPinnedContactUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedContactUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned a file in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedFile
@@ -24438,6 +24988,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationActionPinnedFileChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned a file"
+        /// </summary>
+        public static string NotificationActionPinnedFileUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedFileUser");
             }
         }
         
@@ -24486,6 +25047,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned a game score"
+        /// </summary>
+        public static string NotificationActionPinnedGameScoreUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedGameScoreUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned a game"
+        /// </summary>
+        public static string NotificationActionPinnedGameUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedGameUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned a map in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedGeo
@@ -24530,6 +25113,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned a live location"
+        /// </summary>
+        public static string NotificationActionPinnedGeoLiveUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedGeoLiveUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned a map"
+        /// </summary>
+        public static string NotificationActionPinnedGeoUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedGeoUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned a GIF in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedGif
@@ -24548,6 +25153,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationActionPinnedGifChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned a GIF"
+        /// </summary>
+        public static string NotificationActionPinnedGifUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedGifUser");
             }
         }
         
@@ -24574,6 +25190,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned an invoice"
+        /// </summary>
+        public static string NotificationActionPinnedInvoiceUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedInvoiceUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned an audio file in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedMusic
@@ -24592,6 +25219,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationActionPinnedMusicChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned an audio file"
+        /// </summary>
+        public static string NotificationActionPinnedMusicUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedMusicUser");
             }
         }
         
@@ -24618,6 +25256,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned a message"
+        /// </summary>
+        public static string NotificationActionPinnedNoTextUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedNoTextUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned a photo in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedPhoto
@@ -24636,6 +25285,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationActionPinnedPhotoChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned a photo"
+        /// </summary>
+        public static string NotificationActionPinnedPhotoUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedPhotoUser");
             }
         }
         
@@ -24684,6 +25344,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned a poll {1}"
+        /// </summary>
+        public static string NotificationActionPinnedPollUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedPollUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned the quiz "{2}" in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedQuiz2
@@ -24706,6 +25377,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned a quiz {1}"
+        /// </summary>
+        public static string NotificationActionPinnedQuizUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedQuizUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned a video message in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedRound
@@ -24724,6 +25406,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationActionPinnedRoundChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned a video message"
+        /// </summary>
+        public static string NotificationActionPinnedRoundUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedRoundUser");
             }
         }
         
@@ -24772,6 +25465,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned a {1} sticker"
+        /// </summary>
+        public static string NotificationActionPinnedStickerEmojiUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedStickerEmojiUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned a sticker"
+        /// </summary>
+        public static string NotificationActionPinnedStickerUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedStickerUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned "{1}" in the group {2}"
         /// </summary>
         public static string NotificationActionPinnedText
@@ -24790,6 +25505,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationActionPinnedTextChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned "{1}""
+        /// </summary>
+        public static string NotificationActionPinnedTextUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedTextUser");
             }
         }
         
@@ -24816,6 +25542,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} pinned a video"
+        /// </summary>
+        public static string NotificationActionPinnedVideoUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedVideoUser");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "{0} pinned a voice message in the group {1}"
         /// </summary>
         public static string NotificationActionPinnedVoice
@@ -24834,6 +25571,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationActionPinnedVoiceChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned a voice message"
+        /// </summary>
+        public static string NotificationActionPinnedVoiceUser
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationActionPinnedVoiceUser");
             }
         }
         
@@ -30109,6 +30857,19 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "To share your live location in this chat, Telegram needs access to your location all the time, including while the app is in the background.
+        ///
+        ///We will access your location only for the duration you choose, and you can stop sharing it any time. We won't use your location for any purpose other than sharing it in this chat."
+        /// </summary>
+        public static string PermissionBackgroundLocation
+        {
+            get
+            {
+                return resourceLoader.GetString("PermissionBackgroundLocation");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "To let you connect with friends across all your devices, your contacts will be continuously synced with Telegram's heavily encrypted cloud servers."
         /// </summary>
         public static string PermissionContacts
@@ -30417,6 +31178,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Photo saved to downloads"
+        /// </summary>
+        public static string PhotoSavedToDownloadsHint
+        {
+            get
+            {
+                return resourceLoader.GetString("PhotoSavedToDownloadsHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string PhotosFew
@@ -30457,6 +31229,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PhotosOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PhotosSavedHintFew
+        {
+            get
+            {
+                return resourceLoader.GetString("PhotosSavedHintFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PhotosSavedHintMany
+        {
+            get
+            {
+                return resourceLoader.GetString("PhotosSavedHintMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photo saved to gallery"
+        /// </summary>
+        public static string PhotosSavedHintOne
+        {
+            get
+            {
+                return resourceLoader.GetString("PhotosSavedHintOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} photos saved to gallery"
+        /// </summary>
+        public static string PhotosSavedHintOther
+        {
+            get
+            {
+                return resourceLoader.GetString("PhotosSavedHintOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PhotosSavedHintTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("PhotosSavedHintTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PhotosSavedHintZero
+        {
+            get
+            {
+                return resourceLoader.GetString("PhotosSavedHintZero");
             }
         }
         
@@ -30681,7 +31519,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} Pinned Messages"
+        /// Localized resource similar to ""
         /// </summary>
         public static string PinnedMessagesCountFew
         {
@@ -30692,7 +31530,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} Pinned Messages"
+        /// Localized resource similar to ""
         /// </summary>
         public static string PinnedMessagesCountMany
         {
@@ -30703,7 +31541,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} Pinned Message"
+        /// Localized resource similar to "Pinned Message"
         /// </summary>
         public static string PinnedMessagesCountOne
         {
@@ -30725,7 +31563,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} Pinned Messages"
+        /// Localized resource similar to ""
         /// </summary>
         public static string PinnedMessagesCountTwo
         {
@@ -30736,7 +31574,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} Pinned Messages"
+        /// Localized resource similar to ""
         /// </summary>
         public static string PinnedMessagesCountZero
         {
@@ -30758,7 +31596,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You will see the bar with pinned messages only if a new message is pinned."
+        /// Localized resource similar to "Pinned messages will be shown again if a new message is pinned."
         /// </summary>
         public static string PinnedMessagesHiddenInfo
         {
@@ -30780,17 +31618,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to pin an older message while leaving a more recent one pinned?"
-        /// </summary>
-        public static string PinOldMessageAlert
-        {
-            get
-            {
-                return resourceLoader.GetString("PinOldMessageAlert");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Notify all members"
         /// </summary>
         public static string PinNotify
@@ -30798,6 +31625,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PinNotify");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to pin an older message while leaving a more recent one pinned?"
+        /// </summary>
+        public static string PinOldMessageAlert
+        {
+            get
+            {
+                return resourceLoader.GetString("PinOldMessageAlert");
             }
         }
         
@@ -31227,6 +32065,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PreviewFeedback2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Previous Message"
+        /// </summary>
+        public static string PreviousPinnedMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("PreviousPinnedMessage");
             }
         }
         
@@ -31737,6 +32586,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Private Shares"
+        /// </summary>
+        public static string PrivateShares
+        {
+            get
+            {
+                return resourceLoader.GetString("PrivateShares");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Join Channel"
         /// </summary>
         public static string ProfileJoinChannel
@@ -31777,6 +32637,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ProfilePopupNotificationInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Alert when other members of the group are close"
+        /// </summary>
+        public static string ProximityTooltioGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("ProximityTooltioGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Alert when {0} is close"
+        /// </summary>
+        public static string ProximityTooltioUser
+        {
+            get
+            {
+                return resourceLoader.GetString("ProximityTooltioUser");
             }
         }
         
@@ -31975,6 +32857,83 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PublicPollCantForward");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Public Shares"
+        /// </summary>
+        public static string PublicShares
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicShares");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PublicSharesCountFew
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicSharesCountFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PublicSharesCountMany
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicSharesCountMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} public share"
+        /// </summary>
+        public static string PublicSharesCountOne
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicSharesCountOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} public shares"
+        /// </summary>
+        public static string PublicSharesCountOther
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicSharesCountOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PublicSharesCountTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicSharesCountTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string PublicSharesCountZero
+        {
+            get
+            {
+                return resourceLoader.GetString("PublicSharesCountZero");
             }
         }
         
@@ -36032,6 +36991,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Share"
+        /// </summary>
+        public static string ShareLocationAlertButton
+        {
+            get
+            {
+                return resourceLoader.GetString("ShareLocationAlertButton");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "For the alert to work, please share your live location in this chat."
+        /// </summary>
+        public static string ShareLocationAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("ShareLocationAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Share Location"
+        /// </summary>
+        public static string ShareLocationAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ShareLocationAlertTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Share my contact"
         /// </summary>
         public static string ShareMyContactInfo
@@ -36933,6 +37925,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("StatisticSearchUserHistory");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Views"
+        /// </summary>
+        public static string StatisticViews
+        {
+            get
+            {
+                return resourceLoader.GetString("StatisticViews");
             }
         }
         
@@ -40788,6 +41791,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "**{0}** promoted to admin"
+        /// </summary>
+        public static string UserSetAsAdminHint
+        {
+            get
+            {
+                return resourceLoader.GetString("UserSetAsAdminHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string UsersFew
@@ -41085,6 +42099,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Video saved to downloads"
+        /// </summary>
+        public static string VideoSavedToDownloadsHint
+        {
+            get
+            {
+                return resourceLoader.GetString("VideoSavedToDownloadsHint");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to ""
         /// </summary>
         public static string VideosFew
@@ -41125,6 +42150,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VideosOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string VideosSavedHintFew
+        {
+            get
+            {
+                return resourceLoader.GetString("VideosSavedHintFew");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string VideosSavedHintMany
+        {
+            get
+            {
+                return resourceLoader.GetString("VideosSavedHintMany");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video saved to gallery"
+        /// </summary>
+        public static string VideosSavedHintOne
+        {
+            get
+            {
+                return resourceLoader.GetString("VideosSavedHintOne");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} videos saved to gallery"
+        /// </summary>
+        public static string VideosSavedHintOther
+        {
+            get
+            {
+                return resourceLoader.GetString("VideosSavedHintOther");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string VideosSavedHintTwo
+        {
+            get
+            {
+                return resourceLoader.GetString("VideosSavedHintTwo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string VideosSavedHintZero
+        {
+            get
+            {
+                return resourceLoader.GetString("VideosSavedHintZero");
             }
         }
         
@@ -41217,6 +42308,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "View Channel Stats"
+        /// </summary>
+        public static string ViewChannelStats
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewChannelStats");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "VIEW CONTACT"
         /// </summary>
         public static string ViewContact
@@ -41279,6 +42381,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ViewingMembers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open Message"
+        /// </summary>
+        public static string ViewMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Message Statistics"
+        /// </summary>
+        public static string ViewMessageStatistic
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewMessageStatistic");
             }
         }
         
@@ -41422,6 +42546,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ViewsPerPost");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View Stats"
+        /// </summary>
+        public static string ViewStats
+        {
+            get
+            {
+                return resourceLoader.GetString("ViewStats");
             }
         }
         

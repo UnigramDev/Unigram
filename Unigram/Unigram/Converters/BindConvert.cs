@@ -138,7 +138,7 @@ namespace Unigram.Converters
                 distance *= 3.28084f;
                 if (distance < 1000)
                 {
-                    return string.Format(away ? Strings.Resources.FootsAway : Strings.Resources.Foots, string.Format("{0}", (int)Math.Max(1, distance)));
+                    return string.Format(away ? Strings.Resources.FootsAway : Strings.Resources.FootsShort, string.Format("{0}", (int)Math.Max(1, distance)));
                 }
                 else
                 {
@@ -152,14 +152,14 @@ namespace Unigram.Converters
                         arg = string.Format("{0:0.00}", distance / 5280.0f);
                     }
 
-                    return string.Format(away ? Strings.Resources.MilesAway : Strings.Resources.Miles, arg);
+                    return string.Format(away ? Strings.Resources.MilesAway : Strings.Resources.MilesShort, arg);
                 }
             }
             else
             {
                 if (distance < 1000)
                 {
-                    return string.Format(away ? Strings.Resources.MetersAway2 : Strings.Resources.Meters, string.Format("{0}", (int)Math.Max(1, distance)));
+                    return string.Format(away ? Strings.Resources.MetersAway2 : Strings.Resources.MetersShort, string.Format("{0}", (int)Math.Max(1, distance)));
                 }
                 else
                 {
@@ -173,7 +173,7 @@ namespace Unigram.Converters
                         arg = string.Format("{0:0.00}", distance / 1000.0f);
                     }
 
-                    return string.Format(away ? Strings.Resources.KMetersAway2 : Strings.Resources.KMeters, arg);
+                    return string.Format(away ? Strings.Resources.KMetersAway2 : Strings.Resources.KMetersShort, arg);
                 }
             }
         }

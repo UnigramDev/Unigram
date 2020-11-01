@@ -190,6 +190,9 @@
   <data name="AccDescrIVTitle" xml:space="preserve">
     <value>عنوان</value>
   </data>
+  <data name="AccDescrLocationNotify" xml:space="preserve">
+    <value>هنگامی که افرادی که موقعیت مکانی خود را به اشتراک گذاشته‌اند در محدوده قرار گرفتند، اطلاع‌رسانی شود</value>
+  </data>
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>رفتن به اشاره بعدی</value>
   </data>
@@ -475,6 +478,9 @@
   <data name="AccountSwitch" xml:space="preserve">
     <value>تغییر حساب کاربری</value>
   </data>
+  <data name="AccPinnedMessagesList" xml:space="preserve">
+    <value>فهرست پیام‌های سنجاق شده</value>
+  </data>
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>برای بایگانی رها کنید</value>
   </data>
@@ -661,6 +667,15 @@
   </data>
   <data name="ActionUserScoredInGame" xml:space="preserve">
     <value>⁨un1⁩ امتیاز ⁨{0}⁩ را در ⁨un2⁩ کسب کرد</value>
+  </data>
+  <data name="ActionUserWithinOtherRadius" xml:space="preserve">
+    <value>⁨un1⁩ اکنون در محدوده ⁨{0}⁩ ⁨un2⁩ قرار دارد</value>
+  </data>
+  <data name="ActionUserWithinRadius" xml:space="preserve">
+    <value>⁨un1⁩ اکنون در محدوده ⁨{0}⁩ شما قرار دارد</value>
+  </data>
+  <data name="ActionUserWithinYouRadius" xml:space="preserve">
+    <value>شما اکنون در محدوده ⁨{0}⁩ ⁨un1⁩ قرار دارید</value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>شما ⁨un2⁩ را اضافه کردید</value>
@@ -1336,6 +1351,12 @@
   <data name="AttachLiveLocationIsSharing" xml:space="preserve">
     <value>در حال اشتراک ⁨{0}⁩ با ⁨{1}⁩</value>
   </data>
+  <data name="AttachLiveLocationIsSharingChat" xml:space="preserve">
+    <value>در حال به اشتراک گذاری ⁨{0}⁩ با ⁨{1}⁩</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChats" xml:space="preserve">
+    <value>در حال به اشتراک گذاری ⁨{0}⁩ با ⁨{1}⁩ گفتگو</value>
+  </data>
   <data name="AttachLocation" xml:space="preserve">
     <value>موقعیت مکانی</value>
   </data>
@@ -1374,6 +1395,27 @@
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>پیام‌های صوتی</value>
+  </data>
+  <data name="AudioSavedHint" xml:space="preserve">
+    <value>فایل در موسیقی ذخیره شد</value>
+  </data>
+  <data name="AudiosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintOne" xml:space="preserve">
+    <value>فایل در موسیقی ذخیره شد</value>
+  </data>
+  <data name="AudiosSavedHintOther" xml:space="preserve">
+    <value>⁨{0}⁩ فایل در موسیقی ذخیره شد</value>
+  </data>
+  <data name="AudiosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="AudioTitle" xml:space="preserve">
     <value>موسیقی‌های اشتراکی</value>
@@ -1785,6 +1827,9 @@
   <data name="BlockUserMultiTitle" xml:space="preserve">
     <value>مسدود کردن کاربر</value>
   </data>
+  <data name="BlockUserReplyAlert" xml:space="preserve">
+    <value>آیا می‌خواهید پیام‌های **⁨{0}⁩** را مسدود کنید؟</value>
+  </data>
   <data name="BlockUsers" xml:space="preserve">
     <value>مسدود کردن کاربران</value>
   </data>
@@ -1824,8 +1869,17 @@
   <data name="BotInvite" xml:space="preserve">
     <value>افزودن به گروه</value>
   </data>
+  <data name="BotOwnershipTransfer" xml:space="preserve">
+    <value>انتقال مالکیت ربات</value>
+  </data>
+  <data name="BotOwnershipTransferAlertText" xml:space="preserve">
+    <value>شما فقط در صورت داشتن موارد زیر می‌توانید ربات را انتقال دهید:</value>
+  </data>
   <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
     <value>تغییر مالک</value>
+  </data>
+  <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
+    <value>این کار اختیارات **مالکیت کامل** ربات را به کاربر انتخاب شده انتفال می‌دهد.</value>
   </data>
   <data name="BotPermissionGameAlert" xml:space="preserve">
     <value>آیا به ⁨{0}⁩ اجازه می‌دهید تا نام و شناسه (نه شماره تلفن) شما را به صفحه‌ای که توسط این ربات باز کردید ارسال کند؟</value>
@@ -1886,6 +1940,9 @@
   </data>
   <data name="CallAgain" xml:space="preserve">
     <value>تماس مجدد</value>
+  </data>
+  <data name="CallAlert" xml:space="preserve">
+    <value>آیا از برقراری تماس با **⁨{0}⁩** اطمینان دارید؟</value>
   </data>
   <data name="CallAlertTitle" xml:space="preserve">
     <value>تماس صوتی</value>
@@ -2139,6 +2196,9 @@
   <data name="ChannelCantOpenBanned" xml:space="preserve">
     <value>متأسفانه شما از مشارکت در گروه‌های عمومی محروم شده‌اید.</value>
   </data>
+  <data name="ChannelCantOpenBannedByAdmin" xml:space="preserve">
+    <value>متأسفانه شما نمی‌توانید به این گفتگو دسترسی پیدا کنید، زیرا توسط یک مدیر مسدود شده‌اید.</value>
+  </data>
   <data name="ChannelCantOpenNa" xml:space="preserve">
     <value>متأسفانه این گفتگو دیگر قابل دسترسی نیست.</value>
   </data>
@@ -2300,6 +2360,9 @@
   </data>
   <data name="ChannelPhotoEditNotification" xml:space="preserve">
     <value>کانال ⁨{0}⁩ عکس خود را به‌روزرسانی کرد</value>
+  </data>
+  <data name="ChannelPostDeleted" xml:space="preserve">
+    <value>متأسفانه این پست از گروه بحث حذف شده است.</value>
   </data>
   <data name="ChannelPrivate" xml:space="preserve">
     <value>کانال خصوصی</value>
@@ -2898,6 +2961,24 @@
     <value/>
   </data>
   <data name="CommentsMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberOne" xml:space="preserve">
+    <value>دیدگاه</value>
+  </data>
+  <data name="CommentsNoNumberOther" xml:space="preserve">
+    <value>دیدگاه</value>
+  </data>
+  <data name="CommentsNoNumberTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberZero" xml:space="preserve">
     <value/>
   </data>
   <data name="CommentsOne" xml:space="preserve">
@@ -3578,11 +3659,17 @@
   <data name="DiscussionChannelGroupSetHelp" xml:space="preserve">
     <value>یک لینک به **⁨{0}⁩** برای همه مشترکین در پایین پنل نشان داده می‌شود.</value>
   </data>
+  <data name="DiscussionChannelGroupSetHelp2" xml:space="preserve">
+    <value>**⁨{0}⁩** به عنوان گروه میزبان دیدگاه‌های کانال شما انتخاب شده است.</value>
+  </data>
   <data name="DiscussionChannelHelp" xml:space="preserve">
     <value>یک گفتگوی گروهی را برای بحثی که در کانال شما نمایش داده خواهد شد، انتخاب کنید.</value>
   </data>
   <data name="DiscussionChannelHelp2" xml:space="preserve">
     <value>هر چیزی که در کانال ارسال کنید، به این گروه هدایت خواهد شد.</value>
+  </data>
+  <data name="DiscussionChannelHelp3" xml:space="preserve">
+    <value>گروهی را به عنوان میزبان دیدگاه‌های کانالتان انتخاب کنید.</value>
   </data>
   <data name="DiscussionCreateGroup" xml:space="preserve">
     <value>ایجاد گروه جدید</value>
@@ -4341,6 +4428,9 @@
   <data name="February" xml:space="preserve">
     <value>فوریه</value>
   </data>
+  <data name="FileSavedHint" xml:space="preserve">
+    <value>فایل در دانلودها ذخیره شد</value>
+  </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>فایل‌ها</value>
   </data>
@@ -4355,6 +4445,24 @@
   </data>
   <data name="FilesOther" xml:space="preserve">
     <value>⁨{0}⁩ فایل</value>
+  </data>
+  <data name="FilesSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintOne" xml:space="preserve">
+    <value>فایل در دانلودها ذخیره شد</value>
+  </data>
+  <data name="FilesSavedHintOther" xml:space="preserve">
+    <value>⁨{0}⁩ فایل در دانلودها ذخیره شد</value>
+  </data>
+  <data name="FilesSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="FilesTwo" xml:space="preserve">
     <value/>
@@ -4658,6 +4766,9 @@
   </data>
   <data name="FootsFromYou" xml:space="preserve">
     <value>⁨{0}⁩ فوت دورتر از شما</value>
+  </data>
+  <data name="FootsShort" xml:space="preserve">
+    <value>⁨{0}⁩ فوت</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>گذرواژه را فراموش کرده‌اید؟</value>
@@ -4983,6 +5094,9 @@
   <data name="GifCaption" xml:space="preserve">
     <value>عنوان گیف</value>
   </data>
+  <data name="GifSavedToDownloadsHint" xml:space="preserve">
+    <value>گیف در دانلودها ذخیره شد</value>
+  </data>
   <data name="GIFsFew" xml:space="preserve">
     <value/>
   </data>
@@ -5180,6 +5294,9 @@
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>پنهان کردن</value>
+  </data>
+  <data name="HidePinnedMessages" xml:space="preserve">
+    <value>پنهان کردن پیام‌های سنجاق شده</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>هایلایت‌ها</value>
@@ -5492,6 +5609,9 @@
   <data name="KickFromSupergroup" xml:space="preserve">
     <value>محدود کردن کاربر</value>
   </data>
+  <data name="Km" xml:space="preserve">
+    <value>کیلومتر</value>
+  </data>
   <data name="KMetersAway" xml:space="preserve">
     <value>کیلومتر دورتر</value>
   </data>
@@ -5500,6 +5620,9 @@
   </data>
   <data name="KMetersFromYou2" xml:space="preserve">
     <value>⁨{0}⁩ کیلومتر دورتر از شما</value>
+  </data>
+  <data name="KMetersShort" xml:space="preserve">
+    <value>⁨{0}⁩ کیلومتر</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>زبان</value>
@@ -5761,6 +5884,21 @@
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>متأسفانه کاربر موردنظر مالک تعداد زیادی گروه بر اساس موقعیت مکانی است. لطفاً ابتدا از او بخواهید تا یکی از گروه‌های موجود خود را حذف یا منتقل کند.</value>
   </data>
+  <data name="LocationNotifiation" xml:space="preserve">
+    <value>اعلان مجاورت</value>
+  </data>
+  <data name="LocationNotifiationButton" xml:space="preserve">
+    <value>هنگام قرار گرفتن در محدوده ⁨{0}⁩ به من اطلاع بده</value>
+  </data>
+  <data name="LocationNotifiationButtonGroup" xml:space="preserve">
+    <value>هنگامی که کسی در محدوده ⁨{0}⁩ قرار گرفت، اطلاع‌رسانی شود</value>
+  </data>
+  <data name="LocationNotifiationButtonUser" xml:space="preserve">
+    <value>هنگامی که ⁨{0}⁩ در محدوده ⁨{1}⁩ قرار گرفت، اطلاع‌رسانی شود</value>
+  </data>
+  <data name="LocationNotifiationCloser" xml:space="preserve">
+    <value>شما در حال حاضر نزدیک‌تر از ⁨{0}⁩ هستید</value>
+  </data>
   <data name="LocationUpdated" xml:space="preserve">
     <value>آخرین به‌روزرسانی</value>
   </data>
@@ -5940,6 +6078,24 @@
   <data name="MediaOther" xml:space="preserve">
     <value>⁨{0}⁩ رسانه</value>
   </data>
+  <data name="MediaSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintOne" xml:space="preserve">
+    <value>یک مورد در گالری ذخیره شد</value>
+  </data>
+  <data name="MediaSavedHintOther" xml:space="preserve">
+    <value>⁨{0}⁩ مورد در گالری ذخیره شد</value>
+  </data>
+  <data name="MediaSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MediaSelectedFew" xml:space="preserve">
     <value/>
   </data>
@@ -6088,6 +6244,9 @@
   <data name="MessageNotifications" xml:space="preserve">
     <value>اعلان‌های پیام</value>
   </data>
+  <data name="MessagePinnedHint" xml:space="preserve">
+    <value>پیام سنجاق شد</value>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>پیش‌نمایش پیام</value>
   </data>
@@ -6127,6 +6286,24 @@
   <data name="MessagesDataUsage" xml:space="preserve">
     <value>پیام‌ها و سایر داده‌ها</value>
   </data>
+  <data name="MessagesDeletedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedHintOne" xml:space="preserve">
+    <value>⁨{0}⁩ پیام پاک شد</value>
+  </data>
+  <data name="MessagesDeletedHintOther" xml:space="preserve">
+    <value>⁨{0}⁩ پیام پاک شدند</value>
+  </data>
+  <data name="MessagesDeletedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesDeletedHintZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="messagesFew" xml:space="preserve">
     <value/>
   </data>
@@ -6148,8 +6325,29 @@
   <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesUnpinnedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedOne" xml:space="preserve">
+    <value>سنجاق پیام برداشته شد</value>
+  </data>
+  <data name="MessagesUnpinnedOther" xml:space="preserve">
+    <value>سنجاق ⁨{0}⁩ پیام برداشته شد</value>
+  </data>
+  <data name="MessagesUnpinnedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="messagesZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageUnpinnedHint" xml:space="preserve">
+    <value>سنجاق پیام برداشته شد</value>
   </data>
   <data name="MetersAway" xml:space="preserve">
     <value>متر دورتر</value>
@@ -6172,17 +6370,26 @@
   <data name="MetersOther" xml:space="preserve">
     <value>⁨{0}⁩ متر</value>
   </data>
+  <data name="MetersShort" xml:space="preserve">
+    <value>⁨{0}⁩ متر</value>
+  </data>
   <data name="MetersTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Mi" xml:space="preserve">
+    <value>مایل</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>⁨{0}⁩ مایل دورتر</value>
   </data>
   <data name="MilesFromYou" xml:space="preserve">
     <value>⁨{0}⁩ مایل دورتر از شما</value>
+  </data>
+  <data name="MilesShort" xml:space="preserve">
+    <value>⁨{0}⁩ مایل</value>
   </data>
   <data name="MinutesBoldFew" xml:space="preserve">
     <value/>
@@ -6361,6 +6568,15 @@
   <data name="NewContact" xml:space="preserve">
     <value>مخاطب جدید</value>
   </data>
+  <data name="NewContactAlertButton" xml:space="preserve">
+    <value>افزودن مخاطب</value>
+  </data>
+  <data name="NewContactAlertMessage" xml:space="preserve">
+    <value>شماره تلفن **⁨{0}⁩** در فهرست مخاطبین شما نیست. آیا می‌خواهید آن را اضافه کنید؟</value>
+  </data>
+  <data name="NewContactAlertTitle" xml:space="preserve">
+    <value>مخاطب جدید</value>
+  </data>
   <data name="NewConversationShortcut" xml:space="preserve">
     <value>گفتگوی جدید</value>
   </data>
@@ -6500,7 +6716,7 @@
     <value>دعوت کردن دوستان به تلگرام</value>
   </data>
   <data name="NoContactsYetLine2" xml:space="preserve">
-    <value>پیدا کردن افراد نزدیک</value>
+    <value>پیدا کردن افراد نزدیک برای گفتگو</value>
   </data>
   <data name="NoContactsYetLine3" xml:space="preserve">
     <value>جستجوی افراد با نام کاربری</value>
@@ -6648,10 +6864,16 @@
   <data name="NotificationActionPinnedContactChannel2" xml:space="preserve">
     <value>⁨{0}⁩ یک مخاطب ⁨{1}⁩ را سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedContactUser" xml:space="preserve">
+    <value>⁨{0}⁩ مخاطب ⁨{1}⁩ را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
     <value>⁨{0}⁩ یک فایل را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedFileChannel" xml:space="preserve">
+    <value>⁨{0}⁩ یک فایل را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedFileUser" xml:space="preserve">
     <value>⁨{0}⁩ یک فایل را سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedGame" xml:space="preserve">
@@ -6666,6 +6888,12 @@
   <data name="NotificationActionPinnedGameScoreChannel" xml:space="preserve">
     <value>⁨{0}⁩ یک امتیاز بازی را سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedGameScoreUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک امتیاز بازی را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedGameUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک بازی را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
     <value>⁨{0}⁩ یک نقشه را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
@@ -6678,10 +6906,19 @@
   <data name="NotificationActionPinnedGeoLiveChannel" xml:space="preserve">
     <value>⁨{0}⁩ یک موقعیت مکانی لحظه‌ای را سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedGeoLiveUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک موقعیت مکانی لحظه‌ای را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedGeoUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک نقشه را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedGif" xml:space="preserve">
     <value>⁨{0}⁩ یک فایل گیف را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
+    <value>⁨{0}⁩ یک گیف را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedGifUser" xml:space="preserve">
     <value>⁨{0}⁩ یک گیف را سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedInvoice" xml:space="preserve">
@@ -6690,10 +6927,16 @@
   <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
     <value>⁨{0}⁩ یک صورت‌حساب سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedInvoiceUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک صورت‌حساب را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>⁨{0}⁩ یک فایل صوتی را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
+    <value>⁨{0}⁩ یک فایل صوتی را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedMusicUser" xml:space="preserve">
     <value>⁨{0}⁩ یک فایل صوتی را سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
@@ -6702,10 +6945,16 @@
   <data name="NotificationActionPinnedNoTextChannel" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedNoTextUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک پیام را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedPhoto" xml:space="preserve">
     <value>⁨{0}⁩ یک عکس را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
+    <value>⁨{0}⁩ یک عکس را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedPhotoUser" xml:space="preserve">
     <value>⁨{0}⁩ یک عکس را سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedPoll" xml:space="preserve">
@@ -6720,17 +6969,26 @@
   <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
     <value>⁨{0}⁩ یک نظرسنجی ⁨{1}⁩ را سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedPollUser" xml:space="preserve">
+    <value>⁨{0}⁩ نظرسنجی ⁨{1}⁩ را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
     <value>⁨{0}⁩ آزمون «⁨{2}⁩» را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
     <value>⁨{0}⁩ آزمون «⁨{1}⁩» را سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedQuizUser" xml:space="preserve">
+    <value>⁨{0}⁩ آزمون ⁨{1}⁩ را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام ویدیویی را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedRoundChannel" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام ویدیویی سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedRoundUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک پیام ویدیویی را سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedSticker" xml:space="preserve">
     <value>⁨{0}⁩ یک استیکر را در گروه ⁨{1}⁩ سنجاق کرد</value>
@@ -6744,10 +7002,19 @@
   <data name="NotificationActionPinnedStickerEmojiChannel" xml:space="preserve">
     <value>⁨{0}⁩ یک استیکر ⁨{1}⁩ را سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedStickerEmojiUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک استیکر ⁨{1}⁩ را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedStickerUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک استیکر را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
     <value>⁨{0}⁩ «⁨{1}⁩» را در گروه ⁨{2}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
+    <value>⁨{0}⁩ «⁨{1}⁩» را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedTextUser" xml:space="preserve">
     <value>⁨{0}⁩ «⁨{1}⁩» را سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
@@ -6756,10 +7023,16 @@
   <data name="NotificationActionPinnedVideoChannel" xml:space="preserve">
     <value>⁨{0}⁩ یک ویدیو را سنجاق کرد</value>
   </data>
+  <data name="NotificationActionPinnedVideoUser" xml:space="preserve">
+    <value>⁨{0}⁩ یک ویدیو را سنجاق کرد</value>
+  </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام صوتی را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedVoiceChannel" xml:space="preserve">
+    <value>⁨{0}⁩ یک پیام صوتی را سنجاق کرد</value>
+  </data>
+  <data name="NotificationActionPinnedVoiceUser" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام صوتی را سنجاق کرد</value>
   </data>
   <data name="NotificationContactJoined" xml:space="preserve">
@@ -7054,6 +7327,9 @@
   <data name="NotificationsMutedForHint" xml:space="preserve">
     <value>اعلان‌ها برای ⁨{0}⁩ بی‌صدا شدند</value>
   </data>
+  <data name="NotificationsMutedHint" xml:space="preserve">
+    <value>اعلان‌ها بی‌صدا شدند</value>
+  </data>
   <data name="NotificationsNewException" xml:space="preserve">
     <value>استثنای جدید</value>
   </data>
@@ -7116,6 +7392,9 @@
   </data>
   <data name="NotificationsUnmuted" xml:space="preserve">
     <value>صدادار</value>
+  </data>
+  <data name="NotificationsUnmutedHint" xml:space="preserve">
+    <value>اعلان‌ها صدادار شدند</value>
   </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
     <value>⁨{0}⁩،
@@ -8219,6 +8498,11 @@
   <data name="PeopleNearbyInfo2" xml:space="preserve">
     <value>اطلاعات تماستان را با افراد در نزدیکی خود به اشتراک بگذارید و دوستان جدیدی پیدا کنید.</value>
   </data>
+  <data name="PermissionBackgroundLocation" xml:space="preserve">
+    <value>برای به اشتراک گذاری موقعیت مکانی لحظه‌ای خود در این گفتگو، تلگرام باید در تمام مدت به موقعیت مکانی شما دسترسی داشته باشد، حتی هنگامی که برنامه در پیش‌زمینه است.
+
+ما فقط در مدت زمانی که شما انتخاب می‌کنید به موقعیت مکانی شما دسترسی خواهیم داشت، و شما می‌توانید هر زمان که بخواهید به اشتراک گذاری آن را متوقف کنید. ما از موقعیت مکانی شما برای هیچ هدفی جز به اشتراک گذاری آن در این گفتگو استفاده نمی‌کنیم.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>برای اینکه شما بتوانید در تمامی دستگاه‌های خود با دوستانتان ارتباط برقرار کنید، مخاطبین شما به طور مداوم با سرورهای اَبری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
   </data>
@@ -8303,6 +8587,9 @@
   <data name="PhotoSavedHint" xml:space="preserve">
     <value>عکس در گالری ذخیره شد</value>
   </data>
+  <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
+    <value>عکس در دانلودها ذخیره شد</value>
+  </data>
   <data name="PhotosFew" xml:space="preserve">
     <value/>
   </data>
@@ -8314,6 +8601,24 @@
   </data>
   <data name="PhotosOther" xml:space="preserve">
     <value>⁨{0}⁩ عکس</value>
+  </data>
+  <data name="PhotosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintOne" xml:space="preserve">
+    <value>عکس در گالری ذخیره شد</value>
+  </data>
+  <data name="PhotosSavedHintOther" xml:space="preserve">
+    <value>⁨{0}⁩ عکس در گالری ذخیره شد</value>
+  </data>
+  <data name="PhotosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PhotosSelectedFew" xml:space="preserve">
     <value/>
@@ -8339,6 +8644,9 @@
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinAlsoFor" xml:space="preserve">
+    <value>برای ⁨{0}⁩ نیز سنجاق شود</value>
+  </data>
   <data name="PinFolderLimitReached" xml:space="preserve">
     <value>متأسفانه شما نمی‌توانید گفتگوی دیگری را به بالای صفحه سنجاق کنید.</value>
   </data>
@@ -8355,7 +8663,7 @@
     <value>سنجاق کردن</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>آیا می‌خواهید این پیام را در این گروه سنجاق کنید؟</value>
+    <value>آیا می‌خواهید این پیام را برای تمامی اعضای این گروه سنجاق کنید؟</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>آیا می‌خواهید این پیام را در این کانال سنجاق کنید؟</value>
@@ -8372,11 +8680,38 @@
   <data name="PinnedMessages" xml:space="preserve">
     <value>پیام‌های سنجاق شده</value>
   </data>
+  <data name="PinnedMessagesCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountOne" xml:space="preserve">
+    <value>پیام سنجاق شده</value>
+  </data>
+  <data name="PinnedMessagesCountOther" xml:space="preserve">
+    <value>⁨{0}⁩ پیام سنجاق شده</value>
+  </data>
+  <data name="PinnedMessagesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesHidden" xml:space="preserve">
+    <value>پیام‌های سنجاق شده پنهان شدند</value>
+  </data>
+  <data name="PinnedMessagesHiddenInfo" xml:space="preserve">
+    <value>در صورتی که پیام جدیدی سنجاق شود، پیام‌های سنجاق شده مجدداً نمایش داده خواهند شد.</value>
+  </data>
   <data name="PinnedPoll" xml:space="preserve">
     <value>نظرسنجی سنجاق شده</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
     <value>به تمامی اعضا اطلاع داده شود</value>
+  </data>
+  <data name="PinOldMessageAlert" xml:space="preserve">
+    <value>آیا می‌خواهید در حالی که پیام جدیدتری سنجاق شده است، پیام قدیمی‌تری را سنجاق کنید؟</value>
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>سنجاق کردن به بالا</value>
@@ -8494,6 +8829,9 @@
   </data>
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>پیکربندی اشتباه است؟</value>
+  </data>
+  <data name="PreviousPinnedMessage" xml:space="preserve">
+    <value>پیام قبلی</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>حتی اگر دستگاه شما بر روی حالت مزاحم نشوید باشد اعلان‌های با اولویت بالا کار خواهند کرد.</value>
@@ -8633,6 +8971,9 @@
   <data name="PrivacyTitle" xml:space="preserve">
     <value>حریم خصوصی</value>
   </data>
+  <data name="PrivateShares" xml:space="preserve">
+    <value>به اشتراک گذاری‌های خصوصی</value>
+  </data>
   <data name="ProfileJoinChannel" xml:space="preserve">
     <value>پیوستن به کانال</value>
   </data>
@@ -8644,6 +8985,24 @@
   </data>
   <data name="ProfilePopupNotificationInfo" xml:space="preserve">
     <value>پیام‌های جدید این مخاطب هنگامی که از تلگرام استفاده نمی‌کنید روی صفحه‌ شما نمایش داده خواهند شد.</value>
+  </data>
+  <data name="ProximityAlertCancelled" xml:space="preserve">
+    <value>اعلان مجاورت لغو شد</value>
+  </data>
+  <data name="ProximityAlertSet" xml:space="preserve">
+    <value>تنظیم اعلان مجاورت</value>
+  </data>
+  <data name="ProximityAlertSetInfoGroup2" xml:space="preserve">
+    <value>هرگاه کسی در محدوده ⁨{0}⁩ شما قرار گرفت، به شما اطلاع خواهیم داد.</value>
+  </data>
+  <data name="ProximityAlertSetInfoUser" xml:space="preserve">
+    <value>هنگامی که ⁨{0}⁩ در محدوده ⁨{1}⁩ شما قرار گرفت، به شما اطلاع خواهیم داد</value>
+  </data>
+  <data name="ProximityTooltioGroup" xml:space="preserve">
+    <value>هنگامی که سایر اعضای گروه در نزدیکی هستند، اطلاع‌رسانی شود</value>
+  </data>
+  <data name="ProximityTooltioUser" xml:space="preserve">
+    <value>هنگامی که ⁨{0}⁩ در نزدیکی است، اطلاع‌رسانی شود</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>پروکسی</value>
@@ -8700,6 +9059,27 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="PublicPollCantForward" xml:space="preserve">
     <value>متأسفانه نظرسنجی‌ها با رأی‌های قابل مشاهده نمی‌توانند به کانال‌ها هدایت شوند.</value>
+  </data>
+  <data name="PublicShares" xml:space="preserve">
+    <value>به اشتراک گذاری‌های عمومی</value>
+  </data>
+  <data name="PublicSharesCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountOne" xml:space="preserve">
+    <value>⁨{0}⁩ به اشتراک گذاری عمومی</value>
+  </data>
+  <data name="PublicSharesCountOther" xml:space="preserve">
+    <value>⁨{0}⁩ به اشتراک گذاری عمومی</value>
+  </data>
+  <data name="PublicSharesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>بنفش</value>
@@ -9251,6 +9631,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SearchEmojiHint" xml:space="preserve">
     <value>جستجوی اموجی</value>
   </data>
+  <data name="SearchEmptyViewFilteredSubtitle2" xml:space="preserve">
+    <value>عبارت دیگری جستجو کنید.</value>
+  </data>
   <data name="SearchEmptyViewFilteredSubtitleFiles" xml:space="preserve">
     <value>فایل‌های مربوط به تمامی گفتگوهای شما، اینجا نمایش داده خواهند شد.</value>
   </data>
@@ -9267,6 +9650,9 @@ https://telegram.org/blog/coronavirus</value>
     <value>صداهای مربوط به تمامی گفتگوهای شما، اینجا نمایش داده خواهند شد.</value>
   </data>
   <data name="SearchEmptyViewTitle" xml:space="preserve">
+    <value>بدون نتیجه</value>
+  </data>
+  <data name="SearchEmptyViewTitle2" xml:space="preserve">
     <value>بدون نتیجه</value>
   </data>
   <data name="SearchForPeople" xml:space="preserve">
@@ -9787,6 +10173,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SharedPlace" xml:space="preserve">
     <value>مکان‌</value>
   </data>
+  <data name="SharedToPrivateMessagesAndGroups" xml:space="preserve">
+    <value>به پیام‌های خصوصی و گروه‌ها</value>
+  </data>
   <data name="SharedTwo" xml:space="preserve">
     <value/>
   </data>
@@ -9807,6 +10196,15 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ShareLocation" xml:space="preserve">
     <value>موقعیت مکانی</value>
+  </data>
+  <data name="ShareLocationAlertButton" xml:space="preserve">
+    <value>به اشتراک گذاشتن</value>
+  </data>
+  <data name="ShareLocationAlertText" xml:space="preserve">
+    <value>برای این که اطلاع‌رسانی انجام شود، لطفاً موقعیت مکانی لحظه‌ای خود را در این گفتگو به اشتراک بگذارید.</value>
+  </data>
+  <data name="ShareLocationAlertTitle" xml:space="preserve">
+    <value>به اشتراک گذاشتن موقعیت مکانی</value>
   </data>
   <data name="ShareMyContactInfo" xml:space="preserve">
     <value>به اشتراک گذاشتن اطلاعات تماس من</value>
@@ -9989,7 +10387,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>اعلان‌‌های هوشمند</value>
   </data>
   <data name="SmartNotificationsAlert" xml:space="preserve">
-    <value>تکرار زنگ هشدار</value>
+    <value>تکرار زنگ اعلان</value>
   </data>
   <data name="SmartNotificationsDetail" xml:space="preserve">
     <value>⁨{0}⁩ به مدت هر ⁨{1}⁩</value>
@@ -10056,6 +10454,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="StatisticSearchUserHistory" xml:space="preserve">
     <value>مشاهده پیام‌ها</value>
+  </data>
+  <data name="StatisticViews" xml:space="preserve">
+    <value>بازدیدها</value>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>استیکرها و ماسک‌ها</value>
@@ -10788,6 +11189,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UnofficialApp" xml:space="preserve">
     <value>برنامه غیر رسمی</value>
   </data>
+  <data name="UnpinAllMessages" xml:space="preserve">
+    <value>برداشتن سنجاق تمامی پیام‌ها</value>
+  </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>برداشتن سنجاق از بالا</value>
   </data>
@@ -11121,6 +11525,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UsersCountZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="UserSetAsAdminHint" xml:space="preserve">
+    <value>**⁨{0}⁩** به مدیر ارتقاء یافت</value>
+  </data>
   <data name="UsersFew" xml:space="preserve">
     <value/>
   </data>
@@ -11160,6 +11567,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VideoCall" xml:space="preserve">
     <value>تماس ویدیویی</value>
   </data>
+  <data name="VideoCallAlert" xml:space="preserve">
+    <value>آیا از برقراری تماس ویدیویی با **⁨{0}⁩** اطمینان دارید؟</value>
+  </data>
   <data name="VideoCallAlertTitle" xml:space="preserve">
     <value>تماس ویدیویی</value>
   </data>
@@ -11181,6 +11591,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VideoSavedHint" xml:space="preserve">
     <value>ویدیو در گالری ذخیره شد</value>
   </data>
+  <data name="VideoSavedToDownloadsHint" xml:space="preserve">
+    <value>ویدیو در دانلودها ذخیره شد</value>
+  </data>
   <data name="VideosFew" xml:space="preserve">
     <value/>
   </data>
@@ -11192,6 +11605,24 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VideosOther" xml:space="preserve">
     <value>⁨{0}⁩ ویدیو</value>
+  </data>
+  <data name="VideosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintOne" xml:space="preserve">
+    <value>ویدیو در گالری ذخیره شد</value>
+  </data>
+  <data name="VideosSavedHintOther" xml:space="preserve">
+    <value>⁨{0}⁩ ویدیو در گالری ذخیره شد</value>
+  </data>
+  <data name="VideosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VideosSelectedFew" xml:space="preserve">
     <value/>
@@ -11217,6 +11648,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VideosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ViewChannelStats" xml:space="preserve">
+    <value>مشاهده آمار کانال</value>
+  </data>
   <data name="ViewContact" xml:space="preserve">
     <value>مشاهده مخاطب</value>
   </data>
@@ -11234,6 +11668,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>اعضای بازدید کننده</value>
+  </data>
+  <data name="ViewMessage" xml:space="preserve">
+    <value>باز کردن پیام</value>
+  </data>
+  <data name="ViewMessageStatistic" xml:space="preserve">
+    <value>آمار پیام</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>مشاهده بسته</value>
@@ -11273,6 +11713,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
     <value>بازدید به ازای پست</value>
+  </data>
+  <data name="ViewStats" xml:space="preserve">
+    <value>مشاهده آمار</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>
@@ -11347,7 +11790,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>اتصال انجام نشد</value>
   </data>
   <data name="VoipFeedbackCommentHint" xml:space="preserve">
-    <value>یک نظر اختیاری اضافه کنید</value>
+    <value>یک دیدگاه اختیاری اضافه کنید</value>
   </data>
   <data name="VoipFlip" xml:space="preserve">
     <value>برگرداندن</value>

@@ -98,7 +98,7 @@
     <value>Rasmga olish</value>
   </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
-    <value>Nisbat</value>
+    <value>Tomonlar nisbati</value>
   </data>
   <data name="AccDescrAttachButton" xml:space="preserve">
     <value>Media biriktirish</value>
@@ -189,6 +189,9 @@
   </data>
   <data name="AccDescrIVTitle" xml:space="preserve">
     <value>Sarlavha</value>
+  </data>
+  <data name="AccDescrLocationNotify" xml:space="preserve">
+    <value>Yaqinlashish haqidagi ogohlantirishlar</value>
   </data>
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Keyingi eslatmaga oʻtish</value>
@@ -475,6 +478,9 @@
   <data name="AccountSwitch" xml:space="preserve">
     <value>Almashtirish</value>
   </data>
+  <data name="AccPinnedMessagesList" xml:space="preserve">
+    <value>Qadalgan xabarlar roʻyxati</value>
+  </data>
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Arxivni ochish uchun qoʻyib yuboring</value>
   </data>
@@ -485,7 +491,7 @@
     <value>{0} gacha aniqlikda</value>
   </data>
   <data name="ActionAddUser" xml:space="preserve">
-    <value>un1 buni qoʻshdi: un2</value>
+    <value>un1 un2ʼni qoʻshdi</value>
   </data>
   <data name="ActionAddUserSelf" xml:space="preserve">
     <value>un1 guruhga qaytib keldi</value>
@@ -660,6 +666,15 @@
   </data>
   <data name="ActionUserScoredInGame" xml:space="preserve">
     <value>un1 “un2”da {0} ball toʻpladi</value>
+  </data>
+  <data name="ActionUserWithinOtherRadius" xml:space="preserve">
+    <value>un1 endi un2ʼdan {0} uzoqlikda</value>
+  </data>
+  <data name="ActionUserWithinRadius" xml:space="preserve">
+    <value>un1 endi sizdan {0} uzoqlikda</value>
+  </data>
+  <data name="ActionUserWithinYouRadius" xml:space="preserve">
+    <value>Siz un1ʼdan {0} uzoqlikdasiz </value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>Siz buni qoʻshdingiz: un2</value>
@@ -1132,7 +1147,7 @@ Yana qoʻshganingizda foydalanilmagan toʻplamlar arxivlanadi.</value>
     <value>Haqiqatan **{0}**ni bloklamoqchimisiz?</value>
   </data>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
-    <value>Haqiqatan ham bulutdagi barcha qoralama xabarlar oʻchirilsinmi?</value>
+    <value>Haqiqatan ham bulutdagi barcha qoralama xabarlarni oʻchirib tashlamoqchimisiz?</value>
   </data>
   <data name="AreYouSureClearDraftsTitle" xml:space="preserve">
     <value>Bulut qoralamalarini oʻchirish</value>
@@ -1335,6 +1350,12 @@ Yodda tuting, agar akkauntingizdan chiqsangiz, barcha maxfiy chatlaringiz oʻchi
   <data name="AttachLiveLocationIsSharing" xml:space="preserve">
     <value>{0} {1} ta chatga ulashilmoqda</value>
   </data>
+  <data name="AttachLiveLocationIsSharingChat" xml:space="preserve">
+    <value>{0} quyidagiga ulashilmoqda: {1}</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChats" xml:space="preserve">
+    <value>{0} quyidagiga ulashilmoqda: {1}</value>
+  </data>
   <data name="AttachLocation" xml:space="preserve">
     <value>Joylashuv</value>
   </data>
@@ -1373,6 +1394,27 @@ Yodda tuting, agar akkauntingizdan chiqsangiz, barcha maxfiy chatlaringiz oʻchi
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Ovozli xabarlar</value>
+  </data>
+  <data name="AudioSavedHint" xml:space="preserve">
+    <value>Fayl musiqalarga saqlandi</value>
+  </data>
+  <data name="AudiosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintOne" xml:space="preserve">
+    <value>Fayl musiqalarga saqlandi</value>
+  </data>
+  <data name="AudiosSavedHintOther" xml:space="preserve">
+    <value>{0} ta fayl musiqalarga saqlandi</value>
+  </data>
+  <data name="AudiosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="AudioTitle" xml:space="preserve">
     <value>Ulashilgan musiqa</value>
@@ -2221,7 +2263,7 @@ Eslatma: agar kirish kodini unutsangiz, ilovani oʻchirishingiz va qaytadan oʻr
     <value>Haqiqatan **{0}** tark etilsinmi?</value>
   </data>
   <data name="ChannelLinkInfo" xml:space="preserve">
-    <value>Telegramda mavjud boʻlgan istalgan kishi ushbu havola orqali kanalingizga obuna boʻlishi mumkin.</value>
+    <value>Istalgan Telegram foydalanuvchisi ushbu havola orqali kanalingizga obuna boʻlishi mumkin.</value>
   </data>
   <data name="ChannelLinkTitle" xml:space="preserve">
     <value>Doimiy havola</value>
@@ -2920,6 +2962,24 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   <data name="CommentsMany" xml:space="preserve">
     <value/>
   </data>
+  <data name="CommentsNoNumberFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberOne" xml:space="preserve">
+    <value>ta fikr</value>
+  </data>
+  <data name="CommentsNoNumberOther" xml:space="preserve">
+    <value>ta fikr</value>
+  </data>
+  <data name="CommentsNoNumberTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="CommentsOne" xml:space="preserve">
     <value>{0} ta fikr</value>
   </data>
@@ -3270,7 +3330,7 @@ Istalgan vaqtda esa Telegramning odatiy mavzusiga ushbu joydan qaytishingiz mumk
     <value>Jurnallarni faolsizlantirish</value>
   </data>
   <data name="DebugMenuDisablePauseMusic" xml:space="preserve">
-    <value>Yozayotganda musiqani pauza qilishni faolsizlantirish</value>
+    <value>Yozayotganda musiqani pauzalashni faolsizlantirish</value>
   </data>
   <data name="DebugMenuDisableSmoothKeyboard" xml:space="preserve">
     <value>Klaviatura animatsiyasini faolsizlantirish</value>
@@ -3282,7 +3342,7 @@ Istalgan vaqtda esa Telegramning odatiy mavzusiga ushbu joydan qaytishingiz mumk
     <value>Loglarni yoqish</value>
   </data>
   <data name="DebugMenuEnablePauseMusic" xml:space="preserve">
-    <value>Yozayotganda musiqani pauza qilishni yoqish</value>
+    <value>Yozayotganda musiqani pauzalashni yoqish</value>
   </data>
   <data name="DebugMenuEnableSmoothKeyboard" xml:space="preserve">
     <value>Klaviatura animatsiyasini yoqish</value>
@@ -3736,7 +3796,7 @@ Kanalning barcha aʼzolari ushbu guruh xabarlarini koʻrish imkoniga ega boʻlad
     <value>Maxsus nom</value>
   </data>
   <data name="EditAdminRankInfo" xml:space="preserve">
-    <value>Maxsus sarlavha {0} dan tashqari barcha a'zolarga ko'rinadi.</value>
+    <value> Barcha aʼzolarga “{0}” oʻrniga maxsus nom koʻrsatiladi.</value>
   </data>
   <data name="EditAdminRemoveAdmin" xml:space="preserve">
     <value>Adminni olib tashlash</value>
@@ -3745,7 +3805,7 @@ Kanalning barcha aʼzolari ushbu guruh xabarlarini koʻrish imkoniga ega boʻlad
     <value>Admin huquqlarini oʻzgartirish</value>
   </data>
   <data name="EditAdminSendAnonymously" xml:space="preserve">
-    <value>Anomim sifatida yuborish</value>
+    <value>Anonim sifatida yuborish</value>
   </data>
   <data name="EditAdminTransferAlertText" xml:space="preserve">
     <value>Guruh adminligini **{0}**ga berish uchun quyidagi talablarga javob berishingiz kerak:</value>
@@ -4015,7 +4075,7 @@ Mavzu nomini kiriting:</value>
     <value>Oxirgi amallar</value>
   </data>
   <data name="EventLogAdded" xml:space="preserve">
-    <value>un1 buni qoʻshdi: un2</value>
+    <value>un1 un2ʼni qoʻshdi</value>
   </data>
   <data name="EventLogAllAdmins" xml:space="preserve">
     <value>Barcha adminlar</value>
@@ -4054,7 +4114,7 @@ Mavzu nomini kiriting:</value>
     <value>{0}ni blokdan chiqardi</value>
   </data>
   <data name="EventLogDefaultPermissions" xml:space="preserve">
-    <value>odatiy ruxsatnomalar o'zgartirildi</value>
+    <value>odatiy ruxsatlar oʻzgartirildi</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
     <value>un1 bu xabarni oʻchirdi:</value>
@@ -4154,7 +4214,7 @@ Soʻrovingizga mos keluvchi hech qanday oxirgi amallar topilmadi.</value>
     <value>Bu guruh aʼzolari hamda administratorlar 48 soat mobaynida amalga oshirgan barcha xizmat harakatlarining roʻyxati.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
-    <value>Bu kanal adminlarining oxirgi 48 soat davomida bajargan xizmat amallari roʻyxati.</value>
+    <value>Bu kanal administratorlarining oxirgi 48 soat davomida bajargan xizmat amallari roʻyxati.</value>
   </data>
   <data name="EventLogInfoTitle" xml:space="preserve">
     <value>Oxirgi amallar bu nima?</value>
@@ -4365,6 +4425,9 @@ Muddati: {1}</value>
   <data name="February" xml:space="preserve">
     <value>Fevral</value>
   </data>
+  <data name="FileSavedHint" xml:space="preserve">
+    <value>Fayl yuklanmalarga saqlandi</value>
+  </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Fayllar</value>
   </data>
@@ -4379,6 +4442,24 @@ Muddati: {1}</value>
   </data>
   <data name="FilesOther" xml:space="preserve">
     <value>{0} ta fayl</value>
+  </data>
+  <data name="FilesSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintOne" xml:space="preserve">
+    <value>Fayl yuklanmalarga saqlandi</value>
+  </data>
+  <data name="FilesSavedHintOther" xml:space="preserve">
+    <value>{0} ta fayl yuklanmalarga saqlandi</value>
+  </data>
+  <data name="FilesSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="FilesTwo" xml:space="preserve">
     <value/>
@@ -4682,6 +4763,9 @@ Muddati: {1}</value>
   </data>
   <data name="FootsFromYou" xml:space="preserve">
     <value>Sizdan {0} fut uzoqlikda</value>
+  </data>
+  <data name="FootsShort" xml:space="preserve">
+    <value>{0} ft</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Parolni unutdingizmi?</value>
@@ -5007,6 +5091,9 @@ Muddati: {1}</value>
   <data name="GifCaption" xml:space="preserve">
     <value>GIF izohi</value>
   </data>
+  <data name="GifSavedToDownloadsHint" xml:space="preserve">
+    <value>GIF yuklanmalarga saqlandi</value>
+  </data>
   <data name="GIFsFew" xml:space="preserve">
     <value/>
   </data>
@@ -5204,6 +5291,9 @@ Unutmang, u qora roʻyxatda boʻlmasa, guruhning taklif havolasi orqali qayta qo
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Berkitish</value>
+  </data>
+  <data name="HidePinnedMessages" xml:space="preserve">
+    <value>QADALGAN XABARLARNI BERKITISH</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Yoritilish</value>
@@ -5516,6 +5606,9 @@ Barcha mediafayllar Telegram bulutida saqlanadi va agar u sizga yana kerak boʻl
   <data name="KickFromSupergroup" xml:space="preserve">
     <value>Foydalanuvchini cheklash</value>
   </data>
+  <data name="Km" xml:space="preserve">
+    <value>km</value>
+  </data>
   <data name="KMetersAway" xml:space="preserve">
     <value>km uzoqlikda</value>
   </data>
@@ -5524,6 +5617,9 @@ Barcha mediafayllar Telegram bulutida saqlanadi va agar u sizga yana kerak boʻl
   </data>
   <data name="KMetersFromYou2" xml:space="preserve">
     <value>Sizdan {0}  km uzoqlikda</value>
+  </data>
+  <data name="KMetersShort" xml:space="preserve">
+    <value>{0} km</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Til</value>
@@ -5786,6 +5882,21 @@ Tozalash bir necha daqiqa vaqt talab qilishi mumkin.</value>
     <value>Kechirasiz, ushbu foydalanuvchi ko'plab mahalliy guruhlar egasi.
 Iltimos, ularni o'chirishni yoki birortasini berishini so'rang.</value>
   </data>
+  <data name="LocationNotifiation" xml:space="preserve">
+    <value>Ogohlantirish</value>
+  </data>
+  <data name="LocationNotifiationButton" xml:space="preserve">
+    <value>{0} radiusda ogohlantirish</value>
+  </data>
+  <data name="LocationNotifiationButtonGroup" xml:space="preserve">
+    <value>Kimdir {0} uzoqlikda ekanligida ogohlantirish</value>
+  </data>
+  <data name="LocationNotifiationButtonUser" xml:space="preserve">
+    <value>{0} {1} uzoqlikda ekanligida ogohlantirish</value>
+  </data>
+  <data name="LocationNotifiationCloser" xml:space="preserve">
+    <value>Siz allaqachon {0} dan yaqinroqsiz </value>
+  </data>
   <data name="LocationUpdated" xml:space="preserve">
     <value>yangilangan</value>
   </data>
@@ -5820,7 +5931,7 @@ Iltimos, ularni o'chirishni yoki birortasini berishini so'rang.</value>
     <value>Uzun</value>
   </data>
   <data name="LoopAnimatedStickers" xml:space="preserve">
-    <value>Animatsiyali Stikerlar</value>
+    <value>Animatsiyali stikerlarni takrorlash</value>
   </data>
   <data name="LoopAnimatedStickersInfo" xml:space="preserve">
     <value>Animatsiyali stikerlar chatlarda davomiy ijro etiladi.</value>
@@ -5965,6 +6076,24 @@ Iltimos, ularni o'chirishni yoki birortasini berishini so'rang.</value>
   <data name="MediaOther" xml:space="preserve">
     <value>
 {0} ta mediafayl</value>
+  </data>
+  <data name="MediaSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintOne" xml:space="preserve">
+    <value>Bitta element galereyaga saqlandi</value>
+  </data>
+  <data name="MediaSavedHintOther" xml:space="preserve">
+    <value>{0} ta element galereyaga saqlandi</value>
+  </data>
+  <data name="MediaSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="MediaSelectedFew" xml:space="preserve">
     <value/>
@@ -6113,6 +6242,9 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   <data name="MessageNotifications" xml:space="preserve">
     <value>Xabar bildirishnomalari</value>
   </data>
+  <data name="MessagePinnedHint" xml:space="preserve">
+    <value>Xabar qadaldi</value>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Xabar matnini koʻrsatish</value>
   </data>
@@ -6126,7 +6258,7 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
     <value>Kechirasiz, siz 100 tadan ortiq xabarlarni rejalashtira olmaysiz.</value>
   </data>
   <data name="MessageScheduledOn" xml:space="preserve">
-    <value>{0}ga rejalashtirilgan</value>
+    <value>Rejalashtirilgan vaqti: {0}</value>
   </data>
   <data name="MessageScheduledReminderNotification" xml:space="preserve">
     <value>📅 Eslatma</value>
@@ -6191,8 +6323,29 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesUnpinnedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedOne" xml:space="preserve">
+    <value>xabar olib tashlandi</value>
+  </data>
+  <data name="MessagesUnpinnedOther" xml:space="preserve">
+    <value>{0} ta xabar olib tashlandi</value>
+  </data>
+  <data name="MessagesUnpinnedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="messagesZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageUnpinnedHint" xml:space="preserve">
+    <value>Xabar olib tashlandi</value>
   </data>
   <data name="MetersAway" xml:space="preserve">
     <value>m uzoqlikda</value>
@@ -6215,17 +6368,26 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
   <data name="MetersOther" xml:space="preserve">
     <value>{0} metr</value>
   </data>
+  <data name="MetersShort" xml:space="preserve">
+    <value>{0} m</value>
+  </data>
   <data name="MetersTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Mi" xml:space="preserve">
+    <value>ml</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} mil uzoqlikda</value>
   </data>
   <data name="MilesFromYou" xml:space="preserve">
     <value>Sizdan {0} mil uzoqlikda</value>
+  </data>
+  <data name="MilesShort" xml:space="preserve">
+    <value>{0} ml</value>
   </data>
   <data name="MinutesBoldFew" xml:space="preserve">
     <value/>
@@ -6402,6 +6564,15 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
     <value>Notanish foydalanuvchilardan yangi chatlar</value>
   </data>
   <data name="NewContact" xml:space="preserve">
+    <value>Yangi kontakt</value>
+  </data>
+  <data name="NewContactAlertButton" xml:space="preserve">
+    <value>Kontakt qoʻshish</value>
+  </data>
+  <data name="NewContactAlertMessage" xml:space="preserve">
+    <value>**{0}** telefon raqami kontaktlar roʻyxatingizda emas. Uni qoʻshishni xohlaysizmi?</value>
+  </data>
+  <data name="NewContactAlertTitle" xml:space="preserve">
     <value>Yangi kontakt</value>
   </data>
   <data name="NewConversationShortcut" xml:space="preserve">
@@ -6650,7 +6821,7 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
     <value>Bu chatdan musiqalar shu yerda koʻrsatiladi.</value>
   </data>
   <data name="NoSharedFiles" xml:space="preserve">
-    <value>Fayl va hujjatlarni bu suhbatda ulashing va istalgan qurilmangizdan ularga kiring.</value>
+    <value>Fayl va hujjatlarni ushbu suhbatda ulashing va istalgan qurilmangizdan ularga kiring.</value>
   </data>
   <data name="NoSharedFilesSecret" xml:space="preserve">
     <value>Bu suhbatdagi fayl va hujjatlar shu yerda koʻrsatiladi.</value>
@@ -6691,10 +6862,16 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
   <data name="NotificationActionPinnedContactChannel2" xml:space="preserve">
     <value>{0} {1} kontaktini qadadi</value>
   </data>
+  <data name="NotificationActionPinnedContactUser" xml:space="preserve">
+    <value>{0} {1} kontaktini qadadi</value>
+  </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
     <value>{0} “{1}” guruhida faylni qadadi</value>
   </data>
   <data name="NotificationActionPinnedFileChannel" xml:space="preserve">
+    <value>{0} faylni qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedFileUser" xml:space="preserve">
     <value>{0} faylni qadadi</value>
   </data>
   <data name="NotificationActionPinnedGame" xml:space="preserve">
@@ -6709,6 +6886,12 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
   <data name="NotificationActionPinnedGameScoreChannel" xml:space="preserve">
     <value>{0} oʻyin natijasini qadadi</value>
   </data>
+  <data name="NotificationActionPinnedGameScoreUser" xml:space="preserve">
+    <value>{0} oʻyin natijasini qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedGameUser" xml:space="preserve">
+    <value>{0} oʻyinni qadadi</value>
+  </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
     <value>{0} “{1}” guruhida xaritani qadadi</value>
   </data>
@@ -6721,10 +6904,19 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
   <data name="NotificationActionPinnedGeoLiveChannel" xml:space="preserve">
     <value>{0} jonli joylashuvni qadadi</value>
   </data>
+  <data name="NotificationActionPinnedGeoLiveUser" xml:space="preserve">
+    <value>{0} jonli joylashuvni qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedGeoUser" xml:space="preserve">
+    <value>{0} xaritani qadadi</value>
+  </data>
   <data name="NotificationActionPinnedGif" xml:space="preserve">
     <value>{0} “{1}” guruhida GIFni qadadi</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
+    <value>{0} GIFni qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedGifUser" xml:space="preserve">
     <value>{0} GIFni qadadi</value>
   </data>
   <data name="NotificationActionPinnedInvoice" xml:space="preserve">
@@ -6733,10 +6925,16 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
   <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
     <value>{0} invoysni qadadi</value>
   </data>
+  <data name="NotificationActionPinnedInvoiceUser" xml:space="preserve">
+    <value>{0} invoysni qadadi</value>
+  </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0} {1} guruhida audio yozuvni biriktirdi</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
+    <value>{0} audiofaylni qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedMusicUser" xml:space="preserve">
     <value>{0} audiofaylni qadadi</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
@@ -6745,10 +6943,16 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
   <data name="NotificationActionPinnedNoTextChannel" xml:space="preserve">
     <value>{0} xabarni qadadi</value>
   </data>
+  <data name="NotificationActionPinnedNoTextUser" xml:space="preserve">
+    <value>{0} xabarni qadadi</value>
+  </data>
   <data name="NotificationActionPinnedPhoto" xml:space="preserve">
     <value>{0} “{1}” guruhida rasmni qadadi</value>
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
+    <value>{0} rasmni qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedPhotoUser" xml:space="preserve">
     <value>{0} rasmni qadadi</value>
   </data>
   <data name="NotificationActionPinnedPoll" xml:space="preserve">
@@ -6763,16 +6967,25 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
   <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
     <value>{0} “{1}” soʻrovnomasini qadadi</value>
   </data>
+  <data name="NotificationActionPinnedPollUser" xml:space="preserve">
+    <value>{0} {1} soʻrovnomasini qadadi</value>
+  </data>
   <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
     <value>{0} {1} guruhida “{2}” viktorinasini yubordi</value>
   </data>
   <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
     <value>{0} “{1}” viktorinasini qadadi</value>
   </data>
+  <data name="NotificationActionPinnedQuizUser" xml:space="preserve">
+    <value>{0} {1} testini qadadi</value>
+  </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0}  {1} guruhga video xabar biriktirdi</value>
   </data>
   <data name="NotificationActionPinnedRoundChannel" xml:space="preserve">
+    <value>{0} videoxabarni qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedRoundUser" xml:space="preserve">
     <value>{0} videoxabarni qadadi</value>
   </data>
   <data name="NotificationActionPinnedSticker" xml:space="preserve">
@@ -6787,11 +7000,20 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
   <data name="NotificationActionPinnedStickerEmojiChannel" xml:space="preserve">
     <value>{0} {1} stikerini qadadi</value>
   </data>
+  <data name="NotificationActionPinnedStickerEmojiUser" xml:space="preserve">
+    <value>{0} {1} stikerini qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedStickerUser" xml:space="preserve">
+    <value>{0} stikerni qadadi</value>
+  </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
     <value>{0} “{2}” guruhida “{1}”ni qadadi</value>
   </data>
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
     <value>{0} “{1}”ni qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedTextUser" xml:space="preserve">
+    <value>{0} “{1}” xabarini qadadi</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
     <value>{0} “{1}” guruhida videoni qadadi</value>
@@ -6799,10 +7021,16 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
   <data name="NotificationActionPinnedVideoChannel" xml:space="preserve">
     <value>{0} videoni qadadi</value>
   </data>
+  <data name="NotificationActionPinnedVideoUser" xml:space="preserve">
+    <value>{0} videoni qadadi</value>
+  </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
     <value>{0} “{1}” guruhida ovozli xabarni qadadi</value>
   </data>
   <data name="NotificationActionPinnedVoiceChannel" xml:space="preserve">
+    <value>{0} ovozli xabarni qadadi</value>
+  </data>
+  <data name="NotificationActionPinnedVoiceUser" xml:space="preserve">
     <value>{0} ovozli xabarni qadadi</value>
   </data>
   <data name="NotificationContactJoined" xml:space="preserve">
@@ -7130,7 +7358,7 @@ Istalgan chat uchun bildirishnoma sozlamalarini ushbu chat profilidagi "BIldiris
     <value>Yuqori</value>
   </data>
   <data name="NotificationsPriorityMedium" xml:space="preserve">
-    <value>O‘rtacha</value>
+    <value>Oʻrtacha</value>
   </data>
   <data name="NotificationsPrioritySettings" xml:space="preserve">
     <value>Sozlamalardagi kabi</value>
@@ -8264,6 +8492,11 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
   <data name="PeopleNearbyInfo2" xml:space="preserve">
     <value>Yaqin-atrofdagi odamlar bilan kontakt maʼlumotini almashish va yangi doʻstlarni topishingiz mumkin.</value>
   </data>
+  <data name="PermissionBackgroundLocation" xml:space="preserve">
+    <value>Bu chatda jonli joylashuvingizni ulashish uchun Telegram har doim, jumladan,  ilova fonda ishlayotganida joylashuv axborotingizdan foydalanishi kerak.
+
+Biz joylashuv axborotingizdan siz tanlagan muddat davomida foydalanamiz va istalgan paytda uni ulashishni toʻxtatishingiz mumkin. Biz joylashuv axborotingizdan ushbu chatda uni ulashishdan boshqa hech qanday maqsadda foydalanmaymiz.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>Doʻstlaringiz bilan barcha qurilmalaringiz orqali muloqot qilishingiz uchun, kontaktlaringiz Telegramning kuchli shifrlanadigan bulut serverlari bilan muntazam ravishda sinxronlanadi.</value>
   </data>
@@ -8348,6 +8581,9 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
   <data name="PhotoSavedHint" xml:space="preserve">
     <value>Rasm galereyaga saqlandi</value>
   </data>
+  <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
+    <value>Rasm yuklanmalarga saqlandi</value>
+  </data>
   <data name="PhotosFew" xml:space="preserve">
     <value/>
   </data>
@@ -8359,6 +8595,24 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
   </data>
   <data name="PhotosOther" xml:space="preserve">
     <value>{0} ta rasm</value>
+  </data>
+  <data name="PhotosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintOne" xml:space="preserve">
+    <value>Rasm galereyaga saqlandi</value>
+  </data>
+  <data name="PhotosSavedHintOther" xml:space="preserve">
+    <value>{0} ta rasm galereyaga saqlandi</value>
+  </data>
+  <data name="PhotosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PhotosSelectedFew" xml:space="preserve">
     <value/>
@@ -8384,6 +8638,9 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinAlsoFor" xml:space="preserve">
+    <value>{0} uchun ham qadash</value>
+  </data>
   <data name="PinFolderLimitReached" xml:space="preserve">
     <value>Kechirasiz, yuqoriga boshqa chatlarni qaday olmaysiz.</value>
   </data>
@@ -8400,7 +8657,7 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
     <value>Qadash</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>Bu xabarni ushbu guruhda qadashni istaysizmi?</value>
+    <value>Bu xabarni ushbu guruhdagi barcha aʼzolar uchun qadashni xohlaysizmi?</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>Bu xabarni ushbu kanalda qadamoqchimisiz?</value>
@@ -8417,11 +8674,38 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
   <data name="PinnedMessages" xml:space="preserve">
     <value>Qadalgan xabarlar</value>
   </data>
+  <data name="PinnedMessagesCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountOne" xml:space="preserve">
+    <value>Qadalgan xabar</value>
+  </data>
+  <data name="PinnedMessagesCountOther" xml:space="preserve">
+    <value>{0} ta qadalgan xabar</value>
+  </data>
+  <data name="PinnedMessagesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesHidden" xml:space="preserve">
+    <value>Qadalgan xabarlar berkitildi</value>
+  </data>
+  <data name="PinnedMessagesHiddenInfo" xml:space="preserve">
+    <value>Agar yangi xabar qadalsa, qadalgan xabarlar yana chiqariladi.</value>
+  </data>
   <data name="PinnedPoll" xml:space="preserve">
     <value>Qadalgan soʻrovnoma</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Barcha aʼzolarga xabar berish</value>
+  </data>
+  <data name="PinOldMessageAlert" xml:space="preserve">
+    <value>Yangiroq xabarni qadalgan holda qoldirib, eskiroq xabarni qadashni xohlaysizmi? </value>
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Tepaga qadash</value>
@@ -8539,6 +8823,9 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
   </data>
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Prevyuda xato bormi?</value>
+  </data>
+  <data name="PreviousPinnedMessage" xml:space="preserve">
+    <value>Oldingi xabar</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Telefoningiz "Bezovta qilinmasin" rejimida bo‘lsa ham, yuqori ustunlikdagi bildirishnomalar ishlaydi.</value>
@@ -8678,6 +8965,9 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Maxfiylik</value>
   </data>
+  <data name="PrivateShares" xml:space="preserve">
+    <value>Shaxsiy ulashishlar</value>
+  </data>
   <data name="ProfileJoinChannel" xml:space="preserve">
     <value>Kanalga qoʻshilish</value>
   </data>
@@ -8689,6 +8979,24 @@ Bu funksiyani yoqish uchun joylashuv xizmatlarini yoqing.</value>
   </data>
   <data name="ProfilePopupNotificationInfo" xml:space="preserve">
     <value>Telegramdan foydalanmaganda ushbu kontaktdan yangi xabarlar ekranda ko'rinadi.</value>
+  </data>
+  <data name="ProximityAlertCancelled" xml:space="preserve">
+    <value>Ogohlantirish bekor qilindi</value>
+  </data>
+  <data name="ProximityAlertSet" xml:space="preserve">
+    <value>Ogohlantirish sozlandi</value>
+  </data>
+  <data name="ProximityAlertSetInfoGroup2" xml:space="preserve">
+    <value>Kimdir sizdan {0} uzoqlikda ekanligida sizni ogohlantiramiz.</value>
+  </data>
+  <data name="ProximityAlertSetInfoUser" xml:space="preserve">
+    <value>{0} sizdan {1} uzoqlikda ekanligida sizni xabardor qilamiz.</value>
+  </data>
+  <data name="ProximityTooltioGroup" xml:space="preserve">
+    <value>Guruhning boshqa aʼzolari yaqinlashganida ogohlantirish</value>
+  </data>
+  <data name="ProximityTooltioUser" xml:space="preserve">
+    <value>{0} yaqin kelganida ogohlantirish</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Proksi</value>
@@ -8745,6 +9053,27 @@ Bu tashabbus tafsilotlarini bilish uchun quyidagi manzilga kiring: https://teleg
   </data>
   <data name="PublicPollCantForward" xml:space="preserve">
     <value>Kechirasiz, berilgan ovozlari koʻrinadigan soʻrovnomalarni kanallarga uzatib boʻlmaydi.</value>
+  </data>
+  <data name="PublicShares" xml:space="preserve">
+    <value>Ommaviy ulashishlar</value>
+  </data>
+  <data name="PublicSharesCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountOne" xml:space="preserve">
+    <value>{0} ta ommaviy ulashish</value>
+  </data>
+  <data name="PublicSharesCountOther" xml:space="preserve">
+    <value>{0} ta ommaviy ulashish</value>
+  </data>
+  <data name="PublicSharesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Siyohrang</value>
@@ -9707,7 +10036,7 @@ Chaqiruvga javob bermang, Telegram barchasini avtomatik amalga oshiradi.</value>
     <value>Tiklash emailini oʻrnatish</value>
   </data>
   <data name="SetReminder" xml:space="preserve">
-    <value>Eslatma qoʻshish</value>
+    <value>Eslatma belgilash</value>
   </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Taymer boʻyicha oʻchirish</value>
@@ -9865,6 +10194,15 @@ Chaqiruvga javob bermang, Telegram barchasini avtomatik amalga oshiradi.</value>
   <data name="ShareLocation" xml:space="preserve">
     <value>Joylashuv</value>
   </data>
+  <data name="ShareLocationAlertButton" xml:space="preserve">
+    <value>Ulashish</value>
+  </data>
+  <data name="ShareLocationAlertText" xml:space="preserve">
+    <value>Ogohlantirish ishlashi uchun ushbu chatda jonli joylashuvingizni ulashing.</value>
+  </data>
+  <data name="ShareLocationAlertTitle" xml:space="preserve">
+    <value>Joylashuvni ulashish</value>
+  </data>
   <data name="ShareMyContactInfo" xml:space="preserve">
     <value>Kontaktimni ulashish</value>
   </data>
@@ -9965,7 +10303,7 @@ Chaqiruvga javob bermang, Telegram barchasini avtomatik amalga oshiradi.</value>
     <value>Quyidagidan bildirishnomalarni ko‘rsatish</value>
   </data>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
-    <value>Faqat ayni vaqtda foydalanayotgan hisobingizdan bildirishnomalarni qabul qilishni xohlasangiz, buni faolsizlantiring.</value>
+    <value>Faqat ayni paytda foydalanayotgan hisobingizdan bildirishnomalarni olishni xohlasangiz, buni faolsizlantiring.</value>
   </data>
   <data name="ShowStickers" xml:space="preserve">
     <value>Stikerlarni koʻrsatish</value>
@@ -10112,6 +10450,9 @@ Sekin rejim yoqilgan. Siz birdaniga bittadan ortiq xabar yubora olmaysiz.</value
   </data>
   <data name="StatisticSearchUserHistory" xml:space="preserve">
     <value>Xabarlarni koʻrish</value>
+  </data>
+  <data name="StatisticViews" xml:space="preserve">
+    <value>Koʻrishlar</value>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Stiker va niqoblar</value>
@@ -10844,6 +11185,9 @@ Agar minimal muhim maʼlumotlarni taqdim etishga tayyor boʻlmasangiz, biz Teleg
   <data name="UnofficialApp" xml:space="preserve">
     <value>norasmiy ilova</value>
   </data>
+  <data name="UnpinAllMessages" xml:space="preserve">
+    <value>BARCHA XABARLARNI OLIB TASHLASH</value>
+  </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>Tepadan olib tashlash</value>
   </data>
@@ -11178,6 +11522,9 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   <data name="UsersCountZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="UserSetAsAdminHint" xml:space="preserve">
+    <value>**{0}** administrator qilib tayinlandi</value>
+  </data>
   <data name="UsersFew" xml:space="preserve">
     <value/>
   </data>
@@ -11241,6 +11588,9 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   <data name="VideoSavedHint" xml:space="preserve">
     <value>Video galereyaga saqlandi</value>
   </data>
+  <data name="VideoSavedToDownloadsHint" xml:space="preserve">
+    <value>Video yuklanmalarga saqlandi</value>
+  </data>
   <data name="VideosFew" xml:space="preserve">
     <value/>
   </data>
@@ -11252,6 +11602,24 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   </data>
   <data name="VideosOther" xml:space="preserve">
     <value>{0} ta video</value>
+  </data>
+  <data name="VideosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintOne" xml:space="preserve">
+    <value>Video galereyaga saqlandi</value>
+  </data>
+  <data name="VideosSavedHintOther" xml:space="preserve">
+    <value>{0} ta video galereyaga saqlandi</value>
+  </data>
+  <data name="VideosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VideosSelectedFew" xml:space="preserve">
     <value/>
@@ -11278,6 +11646,9 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   <data name="VideosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ViewChannelStats" xml:space="preserve">
+    <value>Kanal statistikasini ochish</value>
+  </data>
   <data name="ViewContact" xml:space="preserve">
     <value>KONTAKTNI KOʻRISH</value>
   </data>
@@ -11295,6 +11666,12 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Oʻqimoqda</value>
+  </data>
+  <data name="ViewMessage" xml:space="preserve">
+    <value>Xabarni ochish</value>
+  </data>
+  <data name="ViewMessageStatistic" xml:space="preserve">
+    <value>Xabarlar statistikasi</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Toʻplamni koʻrish</value>
@@ -11334,6 +11711,9 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
     <value>Postning koʻrishlar soni</value>
+  </data>
+  <data name="ViewStats" xml:space="preserve">
+    <value>Statistikani ochish</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>
@@ -11568,7 +11948,7 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
     <value>Iliqlik</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
-    <value>Telegram orqali kirilgan xizmatlar</value>
+    <value>Telegram orqali kirilgan</value>
   </data>
   <data name="WeeksFew" xml:space="preserve">
     <value/>

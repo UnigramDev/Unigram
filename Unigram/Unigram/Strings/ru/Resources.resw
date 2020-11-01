@@ -190,6 +190,9 @@
   <data name="AccDescrIVTitle" xml:space="preserve">
     <value>Заголовок</value>
   </data>
+  <data name="AccDescrLocationNotify" xml:space="preserve">
+    <value>Уведомление о приближении</value>
+  </data>
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Перейти к следующему упоминанию</value>
   </data>
@@ -475,6 +478,9 @@
   <data name="AccountSwitch" xml:space="preserve">
     <value>Переключиться</value>
   </data>
+  <data name="AccPinnedMessagesList" xml:space="preserve">
+    <value>Список закрепленных сообщений</value>
+  </data>
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Отпустите для вывода архива</value>
   </data>
@@ -660,6 +666,15 @@
   </data>
   <data name="ActionUserScoredInGame" xml:space="preserve">
     <value>un1 набрал(а) {0} в игре un2</value>
+  </data>
+  <data name="ActionUserWithinOtherRadius" xml:space="preserve">
+    <value>un1 находится в {0} от un2</value>
+  </data>
+  <data name="ActionUserWithinRadius" xml:space="preserve">
+    <value>un1 находится в {0} от Вас</value>
+  </data>
+  <data name="ActionUserWithinYouRadius" xml:space="preserve">
+    <value>Вы находитесь в {0} от un1</value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>Вы добавили un2</value>
@@ -1334,7 +1349,13 @@
     <value>Трансляция геопозиции</value>
   </data>
   <data name="AttachLiveLocationIsSharing" xml:space="preserve">
-    <value>{0} доступна {1}</value>
+    <value>{0} для {1}</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChat" xml:space="preserve">
+    <value>{0} в {1}</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChats" xml:space="preserve">
+    <value>{0} в {1}</value>
   </data>
   <data name="AttachLocation" xml:space="preserve">
     <value>Геопозиция</value>
@@ -1374,6 +1395,27 @@
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Голосовые сообщения</value>
+  </data>
+  <data name="AudioSavedHint" xml:space="preserve">
+    <value>Файл сохранён в музыку</value>
+  </data>
+  <data name="AudiosSavedHintFew" xml:space="preserve">
+    <value>{0} файла сохранено в музыку</value>
+  </data>
+  <data name="AudiosSavedHintMany" xml:space="preserve">
+    <value>{0} файлов сохранено в музыку</value>
+  </data>
+  <data name="AudiosSavedHintOne" xml:space="preserve">
+    <value>{0} файл сохранён в музыку</value>
+  </data>
+  <data name="AudiosSavedHintOther" xml:space="preserve">
+    <value>{0} файла сохранено в музыку</value>
+  </data>
+  <data name="AudiosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="AudioTitle" xml:space="preserve">
     <value>Общая музыка</value>
@@ -2899,11 +2941,47 @@
   <data name="Comment" xml:space="preserve">
     <value>Комментарий</value>
   </data>
+  <data name="CommentsCountFew" xml:space="preserve">
+    <value>{0} комментария</value>
+  </data>
+  <data name="CommentsCountMany" xml:space="preserve">
+    <value>{0} комментариев</value>
+  </data>
+  <data name="CommentsCountOne" xml:space="preserve">
+    <value>{0} комментарий</value>
+  </data>
+  <data name="CommentsCountOther" xml:space="preserve">
+    <value>{0} комментария</value>
+  </data>
+  <data name="CommentsCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsCountZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="CommentsFew" xml:space="preserve">
     <value>{0} комментария</value>
   </data>
   <data name="CommentsMany" xml:space="preserve">
     <value>{0} комментариев</value>
+  </data>
+  <data name="CommentsNoNumberFew" xml:space="preserve">
+    <value>комментария</value>
+  </data>
+  <data name="CommentsNoNumberMany" xml:space="preserve">
+    <value>комментариев</value>
+  </data>
+  <data name="CommentsNoNumberOne" xml:space="preserve">
+    <value>комментарий</value>
+  </data>
+  <data name="CommentsNoNumberOther" xml:space="preserve">
+    <value>комментария</value>
+  </data>
+  <data name="CommentsNoNumberTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="CommentsOne" xml:space="preserve">
     <value>{0} комментарий</value>
@@ -3731,7 +3809,7 @@
     <value>Изменить права админа</value>
   </data>
   <data name="EditAdminSendAnonymously" xml:space="preserve">
-    <value>Отправить анонимно</value>
+    <value>Анонимность</value>
   </data>
   <data name="EditAdminTransferAlertText" xml:space="preserve">
     <value>Вы сможете передать права на группу **{0}**, если:</value>
@@ -4230,7 +4308,7 @@
     <value>Должность</value>
   </data>
   <data name="EventLogPromotedSendAnonymously" xml:space="preserve">
-    <value>Отправить анонимно</value>
+    <value>Анонимность</value>
   </data>
   <data name="EventLogPromotedTitle" xml:space="preserve">
     <value>Должность: {0}</value>
@@ -4405,6 +4483,9 @@
   <data name="February" xml:space="preserve">
     <value>Февраль</value>
   </data>
+  <data name="FileSavedHint" xml:space="preserve">
+    <value>Файл сохранён в загрузки</value>
+  </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Файлы</value>
   </data>
@@ -4419,6 +4500,24 @@
   </data>
   <data name="FilesOther" xml:space="preserve">
     <value>{0} файлов</value>
+  </data>
+  <data name="FilesSavedHintFew" xml:space="preserve">
+    <value>{0} файла сохранено в загрузки</value>
+  </data>
+  <data name="FilesSavedHintMany" xml:space="preserve">
+    <value>{0} файлов сохранено в загрузки</value>
+  </data>
+  <data name="FilesSavedHintOne" xml:space="preserve">
+    <value>{0} файл сохранён в загрузки</value>
+  </data>
+  <data name="FilesSavedHintOther" xml:space="preserve">
+    <value>{0} файла сохранено в загрузки</value>
+  </data>
+  <data name="FilesSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="FilesTwo" xml:space="preserve">
     <value/>
@@ -4722,6 +4821,9 @@
   </data>
   <data name="FootsFromYou" xml:space="preserve">
     <value>{0} футах от Вас</value>
+  </data>
+  <data name="FootsShort" xml:space="preserve">
+    <value>{0} фт</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Забыли пароль?</value>
@@ -5047,6 +5149,9 @@
   <data name="GifCaption" xml:space="preserve">
     <value>Подпись к GIF</value>
   </data>
+  <data name="GifSavedToDownloadsHint" xml:space="preserve">
+    <value>GIF сохранён в загрузки</value>
+  </data>
   <data name="GIFsFew" xml:space="preserve">
     <value>
 {0} GIF</value>
@@ -5245,6 +5350,9 @@
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Скрыть</value>
+  </data>
+  <data name="HidePinnedMessages" xml:space="preserve">
+    <value>Скрыть закреплённые сообщения</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Свет</value>
@@ -5557,6 +5665,9 @@
   <data name="KickFromSupergroup" xml:space="preserve">
     <value>Ограничить пользователя</value>
   </data>
+  <data name="Km" xml:space="preserve">
+    <value>км</value>
+  </data>
   <data name="KMetersAway" xml:space="preserve">
     <value>км отсюда</value>
   </data>
@@ -5565,6 +5676,9 @@
   </data>
   <data name="KMetersFromYou2" xml:space="preserve">
     <value>{0} км от вас</value>
+  </data>
+  <data name="KMetersShort" xml:space="preserve">
+    <value>{0} км</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Язык</value>
@@ -5829,6 +5943,21 @@
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>У этого пользователя максимальное число групп с геопозицией. Пожалуйста, предложите ему сперва удалить или передать кому-либо одну из его групп.</value>
   </data>
+  <data name="LocationNotifiation" xml:space="preserve">
+    <value>Уведомление</value>
+  </data>
+  <data name="LocationNotifiationButton" xml:space="preserve">
+    <value>Оповестить в радиусе {0}</value>
+  </data>
+  <data name="LocationNotifiationButtonGroup" xml:space="preserve">
+    <value>Оповестить, если кто-либо находится в радиусе {0}</value>
+  </data>
+  <data name="LocationNotifiationButtonUser" xml:space="preserve">
+    <value>Оповестить, если {0} ближе {1}</value>
+  </data>
+  <data name="LocationNotifiationCloser" xml:space="preserve">
+    <value>Вы уже находитесь ближе, чем {0}</value>
+  </data>
   <data name="LocationUpdated" xml:space="preserve">
     <value>обновлена</value>
   </data>
@@ -6008,6 +6137,24 @@
   <data name="MediaOther" xml:space="preserve">
     <value>{0} медиафайлов</value>
   </data>
+  <data name="MediaSavedHintFew" xml:space="preserve">
+    <value>{0} медиафайла сохранено в галерею</value>
+  </data>
+  <data name="MediaSavedHintMany" xml:space="preserve">
+    <value>{0} медиафайлов сохранено в галерею</value>
+  </data>
+  <data name="MediaSavedHintOne" xml:space="preserve">
+    <value>{0} медиафайл сохранён в галерею</value>
+  </data>
+  <data name="MediaSavedHintOther" xml:space="preserve">
+    <value>{0} медиафайла сохранено в галерею</value>
+  </data>
+  <data name="MediaSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MediaSelectedFew" xml:space="preserve">
     <value>выбраны {0} медиафайла</value>
   </data>
@@ -6154,6 +6301,9 @@
   <data name="MessageNotifications" xml:space="preserve">
     <value>Сообщения</value>
   </data>
+  <data name="MessagePinnedHint" xml:space="preserve">
+    <value>Сообщение закреплено</value>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Показывать текст</value>
   </data>
@@ -6232,8 +6382,29 @@
   <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesUnpinnedFew" xml:space="preserve">
+    <value>{0} сообщения откреплено</value>
+  </data>
+  <data name="MessagesUnpinnedMany" xml:space="preserve">
+    <value>{0} сообщений откреплено</value>
+  </data>
+  <data name="MessagesUnpinnedOne" xml:space="preserve">
+    <value>{0} сообщение откреплено</value>
+  </data>
+  <data name="MessagesUnpinnedOther" xml:space="preserve">
+    <value>{0} сообщений откреплено</value>
+  </data>
+  <data name="MessagesUnpinnedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="messagesZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageUnpinnedHint" xml:space="preserve">
+    <value>Сообщение откреплено</value>
   </data>
   <data name="MetersAway" xml:space="preserve">
     <value>м отсюда</value>
@@ -6256,17 +6427,26 @@
   <data name="MetersOther" xml:space="preserve">
     <value>{0} метров</value>
   </data>
+  <data name="MetersShort" xml:space="preserve">
+    <value>{0} м</value>
+  </data>
   <data name="MetersTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Mi" xml:space="preserve">
+    <value>мл</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} мл отсюда</value>
   </data>
   <data name="MilesFromYou" xml:space="preserve">
     <value>{0} милях от Вас</value>
+  </data>
+  <data name="MilesShort" xml:space="preserve">
+    <value>{0} мл</value>
   </data>
   <data name="MinutesBoldFew" xml:space="preserve">
     <value>**{0}** минуты</value>
@@ -6443,6 +6623,15 @@
     <value>Новые чаты с незнакомцами</value>
   </data>
   <data name="NewContact" xml:space="preserve">
+    <value>Новый контакт</value>
+  </data>
+  <data name="NewContactAlertButton" xml:space="preserve">
+    <value>Добавить контакт</value>
+  </data>
+  <data name="NewContactAlertMessage" xml:space="preserve">
+    <value>Номер телефона {0} отсутствует в Вашем списке контактов. Добавить его?</value>
+  </data>
+  <data name="NewContactAlertTitle" xml:space="preserve">
     <value>Новый контакт</value>
   </data>
   <data name="NewConversationShortcut" xml:space="preserve">
@@ -6732,10 +6921,16 @@
   <data name="NotificationActionPinnedContactChannel2" xml:space="preserve">
     <value>{0} закрепил(а) контакт {1}</value>
   </data>
+  <data name="NotificationActionPinnedContactUser" xml:space="preserve">
+    <value>{0} закрепил(а) контакт {1}</value>
+  </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
     <value>{0} закрепил(а) файл в группе {1}</value>
   </data>
   <data name="NotificationActionPinnedFileChannel" xml:space="preserve">
+    <value>{0} закрепил(а) файл</value>
+  </data>
+  <data name="NotificationActionPinnedFileUser" xml:space="preserve">
     <value>{0} закрепил(а) файл</value>
   </data>
   <data name="NotificationActionPinnedGame" xml:space="preserve">
@@ -6750,6 +6945,12 @@
   <data name="NotificationActionPinnedGameScoreChannel" xml:space="preserve">
     <value>{0} закрепил(а) очки в игре</value>
   </data>
+  <data name="NotificationActionPinnedGameScoreUser" xml:space="preserve">
+    <value>{0} закрепил(а) очки в игре</value>
+  </data>
+  <data name="NotificationActionPinnedGameUser" xml:space="preserve">
+    <value>{0} закрепил(а) игру</value>
+  </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
     <value>{0} закрепил(а) карту в группе {1}</value>
   </data>
@@ -6762,10 +6963,19 @@
   <data name="NotificationActionPinnedGeoLiveChannel" xml:space="preserve">
     <value>%1$@ закрепил(а) трансляцию геопозиции</value>
   </data>
+  <data name="NotificationActionPinnedGeoLiveUser" xml:space="preserve">
+    <value>{0} закрепил(а) трансляцию геопозиции</value>
+  </data>
+  <data name="NotificationActionPinnedGeoUser" xml:space="preserve">
+    <value>{0} закрепил(а) карту</value>
+  </data>
   <data name="NotificationActionPinnedGif" xml:space="preserve">
     <value>{0} закрепил(а) GIF в группе {1}</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
+    <value>{0} закрепил(а) GIF</value>
+  </data>
+  <data name="NotificationActionPinnedGifUser" xml:space="preserve">
     <value>{0} закрепил(а) GIF</value>
   </data>
   <data name="NotificationActionPinnedInvoice" xml:space="preserve">
@@ -6774,10 +6984,16 @@
   <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
     <value>{0} закрепил(а) счёт</value>
   </data>
+  <data name="NotificationActionPinnedInvoiceUser" xml:space="preserve">
+    <value>{0} закрепил(а) счёт</value>
+  </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0} закрепил(а) аудиофайл в группе {1}</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
+    <value>{0} закрепил(а) аудиофайл</value>
+  </data>
+  <data name="NotificationActionPinnedMusicUser" xml:space="preserve">
     <value>{0} закрепил(а) аудиофайл</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
@@ -6786,10 +7002,16 @@
   <data name="NotificationActionPinnedNoTextChannel" xml:space="preserve">
     <value>{0} закрепил(а) сообщение</value>
   </data>
+  <data name="NotificationActionPinnedNoTextUser" xml:space="preserve">
+    <value>{0} закрепил(а) сообщение</value>
+  </data>
   <data name="NotificationActionPinnedPhoto" xml:space="preserve">
     <value>{0} закрепил(а) фото в группе {1}</value>
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
+    <value>{0} закрепил(а) фото</value>
+  </data>
+  <data name="NotificationActionPinnedPhotoUser" xml:space="preserve">
     <value>{0} закрепил(а) фото</value>
   </data>
   <data name="NotificationActionPinnedPoll" xml:space="preserve">
@@ -6804,16 +7026,25 @@
   <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
     <value>{0} закрепил(а) опрос {1}</value>
   </data>
+  <data name="NotificationActionPinnedPollUser" xml:space="preserve">
+    <value>{0} закрепил(а) опрос {1}</value>
+  </data>
   <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
     <value>{0} закрепил(а) викторину «{2}» в группе «{1}»</value>
   </data>
   <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
     <value>{0} закрепил(а) викторину «{1}»</value>
   </data>
+  <data name="NotificationActionPinnedQuizUser" xml:space="preserve">
+    <value>{0} закрепил(а) викторину {1}</value>
+  </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0} закрепил(а) видеосообщение в группе {1}</value>
   </data>
   <data name="NotificationActionPinnedRoundChannel" xml:space="preserve">
+    <value>{0} закрепил(а) видеосообщение</value>
+  </data>
+  <data name="NotificationActionPinnedRoundUser" xml:space="preserve">
     <value>{0} закрепил(а) видеосообщение</value>
   </data>
   <data name="NotificationActionPinnedSticker" xml:space="preserve">
@@ -6828,11 +7059,20 @@
   <data name="NotificationActionPinnedStickerEmojiChannel" xml:space="preserve">
     <value>{0} закрепил(а) стикер {1}</value>
   </data>
+  <data name="NotificationActionPinnedStickerEmojiUser" xml:space="preserve">
+    <value>{0} закрепил(а) стикер {1}</value>
+  </data>
+  <data name="NotificationActionPinnedStickerUser" xml:space="preserve">
+    <value>{0} закрепил(а) стикер</value>
+  </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
     <value>{0} закрепил(а) «{1}» в группе {2}</value>
   </data>
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
     <value>{0} закрепил(а) «{1}»</value>
+  </data>
+  <data name="NotificationActionPinnedTextUser" xml:space="preserve">
+    <value>{0} закрепила(а) "{1}"</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
     <value>{0} закрепил(а) видео в группе {1}</value>
@@ -6840,10 +7080,16 @@
   <data name="NotificationActionPinnedVideoChannel" xml:space="preserve">
     <value>{0} закрепил(а) видео</value>
   </data>
+  <data name="NotificationActionPinnedVideoUser" xml:space="preserve">
+    <value>{0} закрепил(а) видео</value>
+  </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
     <value>{0} закрепил(а) голосовое сообщение в группе {1}</value>
   </data>
   <data name="NotificationActionPinnedVoiceChannel" xml:space="preserve">
+    <value>{0} закрепил(а) голосовое сообщение</value>
+  </data>
+  <data name="NotificationActionPinnedVoiceUser" xml:space="preserve">
     <value>{0} закрепил(а) голосовое сообщение</value>
   </data>
   <data name="NotificationContactJoined" xml:space="preserve">
@@ -7298,6 +7544,9 @@
   </data>
   <data name="OpenGroup" xml:space="preserve">
     <value>ПЕРЕЙТИ В ГРУППУ</value>
+  </data>
+  <data name="OpenGroup2" xml:space="preserve">
+    <value>Открыть группу</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>ОТКРЫТЬ В...</value>
@@ -8302,6 +8551,11 @@
   <data name="PeopleNearbyInfo2" xml:space="preserve">
     <value>Вы можете быстро обменяться контактами с пользователями поблизости или найти новых друзей.</value>
   </data>
+  <data name="PermissionBackgroundLocation" xml:space="preserve">
+    <value>Telegram требуется доступ к геопозиции в фоновом режиме, чтобы Вы могли транслировать её в этот чат в реальном времени.
+
+Приложение будет иметь доступ к геопозиции только на выбранный Вами период времени, и Вы можете отозвать доступ в любой момент. Информация будет использоваться только для трансляции геопозиции в этот чат.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>Актуальная информация о Ваших контактах будет храниться зашифрованной в облаке Telegram, чтобы Вы могли связаться с друзьями с любого устройства.</value>
   </data>
@@ -8386,6 +8640,9 @@
   <data name="PhotoSavedHint" xml:space="preserve">
     <value>Фото сохранено в галерею</value>
   </data>
+  <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
+    <value>Фото сохранено в загрузки</value>
+  </data>
   <data name="PhotosFew" xml:space="preserve">
     <value>{0} фото</value>
   </data>
@@ -8397,6 +8654,24 @@
   </data>
   <data name="PhotosOther" xml:space="preserve">
     <value>{0} фото</value>
+  </data>
+  <data name="PhotosSavedHintFew" xml:space="preserve">
+    <value>{0} фотографии сохранены в галерею</value>
+  </data>
+  <data name="PhotosSavedHintMany" xml:space="preserve">
+    <value>{0} фотографий сохранено в галерею</value>
+  </data>
+  <data name="PhotosSavedHintOne" xml:space="preserve">
+    <value>{0} фотография сохранена в галерею</value>
+  </data>
+  <data name="PhotosSavedHintOther" xml:space="preserve">
+    <value>{0} фотографии сохранено в галерею</value>
+  </data>
+  <data name="PhotosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PhotosSelectedFew" xml:space="preserve">
     <value>выбраны {0} фотографии</value>
@@ -8422,6 +8697,9 @@
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinAlsoFor" xml:space="preserve">
+    <value>Также закрепить для {0}</value>
+  </data>
   <data name="PinFolderLimitReached" xml:space="preserve">
     <value>У Вас закреплено максимальное число чатов.</value>
   </data>
@@ -8438,7 +8716,7 @@
     <value>Закрепить</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>Хотите закрепить это сообщение в группе?</value>
+    <value>Закрепить сообщение для всех участников группы?</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>Хотите закрепить это сообщение в канале?</value>
@@ -8455,11 +8733,38 @@
   <data name="PinnedMessages" xml:space="preserve">
     <value>Закреплённые сообщения</value>
   </data>
+  <data name="PinnedMessagesCountFew" xml:space="preserve">
+    <value>{0} закрепленных сообщения</value>
+  </data>
+  <data name="PinnedMessagesCountMany" xml:space="preserve">
+    <value>{0} закрепленных сообщений</value>
+  </data>
+  <data name="PinnedMessagesCountOne" xml:space="preserve">
+    <value>{0} закрепленное сообщение</value>
+  </data>
+  <data name="PinnedMessagesCountOther" xml:space="preserve">
+    <value>{0} закрепленных сообщения</value>
+  </data>
+  <data name="PinnedMessagesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesHidden" xml:space="preserve">
+    <value>Панель скрыта</value>
+  </data>
+  <data name="PinnedMessagesHiddenInfo" xml:space="preserve">
+    <value>Вы снова увидите её, если будет закреплено новое сообщение.</value>
+  </data>
   <data name="PinnedPoll" xml:space="preserve">
     <value>Закреплённый опрос</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Уведомление всем участникам</value>
+  </data>
+  <data name="PinOldMessageAlert" xml:space="preserve">
+    <value>Закрепить более старое сообщение, сохранив закрепленным более новое?</value>
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Закрепить</value>
@@ -8577,6 +8882,9 @@
   </data>
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Ошибка в превью?</value>
+  </data>
+  <data name="PreviousPinnedMessage" xml:space="preserve">
+    <value>Предыдущее сообщение</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Уведомления с максимальным приоритетом будут срабатывать, даже когда устройство в режиме «Не беспокоить»</value>
@@ -8716,6 +9024,9 @@
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Конфиденциальность</value>
   </data>
+  <data name="PrivateShares" xml:space="preserve">
+    <value>Поделились непублично</value>
+  </data>
   <data name="ProfileJoinChannel" xml:space="preserve">
     <value>Присоединиться</value>
   </data>
@@ -8727,6 +9038,24 @@
   </data>
   <data name="ProfilePopupNotificationInfo" xml:space="preserve">
     <value>Новые сообщения от этого контакта будут всплывать поверх экрана, когда Вы не в приложении.</value>
+  </data>
+  <data name="ProximityAlertCancelled" xml:space="preserve">
+    <value>Оповещение отменено</value>
+  </data>
+  <data name="ProximityAlertSet" xml:space="preserve">
+    <value>Оповещение установлено</value>
+  </data>
+  <data name="ProximityAlertSetInfoGroup2" xml:space="preserve">
+    <value>Вы получите оповещение, когда кто-то из участников будет в {0} от Вас.</value>
+  </data>
+  <data name="ProximityAlertSetInfoUser" xml:space="preserve">
+    <value>Вы получите оповещение, когда {0} будет в {1} от Вас.</value>
+  </data>
+  <data name="ProximityTooltioGroup" xml:space="preserve">
+    <value>Уведомление о приближении других участников</value>
+  </data>
+  <data name="ProximityTooltioUser" xml:space="preserve">
+    <value>Уведомление о приближении {0}</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Прокси</value>
@@ -8781,6 +9110,27 @@
   </data>
   <data name="PublicPollCantForward" xml:space="preserve">
     <value>Опросы с открытым списком результатов нельзя пересылать в каналы.</value>
+  </data>
+  <data name="PublicShares" xml:space="preserve">
+    <value>Поделились публично</value>
+  </data>
+  <data name="PublicSharesCountFew" xml:space="preserve">
+    <value>{0} поделились публично</value>
+  </data>
+  <data name="PublicSharesCountMany" xml:space="preserve">
+    <value>{0} поделились публично</value>
+  </data>
+  <data name="PublicSharesCountOne" xml:space="preserve">
+    <value>{0} поделились публично</value>
+  </data>
+  <data name="PublicSharesCountOther" xml:space="preserve">
+    <value>{0} поделились публично</value>
+  </data>
+  <data name="PublicSharesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Фиолетовый</value>
@@ -9514,7 +9864,7 @@
     <value>Отправить</value>
   </data>
   <data name="SendAnonymously" xml:space="preserve">
-    <value>Отправить анонимно</value>
+    <value>Анонимное сообщение</value>
   </data>
   <data name="SendAsFile" xml:space="preserve">
     <value>Как файл</value>
@@ -9899,6 +10249,15 @@
   <data name="ShareLocation" xml:space="preserve">
     <value>Геопозиция</value>
   </data>
+  <data name="ShareLocationAlertButton" xml:space="preserve">
+    <value>Поделиться</value>
+  </data>
+  <data name="ShareLocationAlertText" xml:space="preserve">
+    <value>Чтобы получить уведомление, необходимо поделиться геопозицией в этом чате.</value>
+  </data>
+  <data name="ShareLocationAlertTitle" xml:space="preserve">
+    <value>Поделиться геопозицией</value>
+  </data>
   <data name="ShareMyContactInfo" xml:space="preserve">
     <value>Отправить свой телефон</value>
   </data>
@@ -10122,7 +10481,7 @@
     <value>По умолчанию</value>
   </data>
   <data name="SoundMuted" xml:space="preserve">
-    <value>Уведомления выключены</value>
+    <value>Звук отключён</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Начать</value>
@@ -10147,6 +10506,9 @@
   </data>
   <data name="StatisticSearchUserHistory" xml:space="preserve">
     <value>Посмотреть сообщения</value>
+  </data>
+  <data name="StatisticViews" xml:space="preserve">
+    <value>Просмотры</value>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Стикеры и маски</value>
@@ -10884,6 +11246,9 @@
   <data name="UnofficialApp" xml:space="preserve">
     <value>неофициальное приложение</value>
   </data>
+  <data name="UnpinAllMessages" xml:space="preserve">
+    <value>Открепить все сообщения</value>
+  </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>Открепить</value>
   </data>
@@ -11217,6 +11582,9 @@
   <data name="UsersCountZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="UserSetAsAdminHint" xml:space="preserve">
+    <value>**{0}** назначен(а) администратором</value>
+  </data>
   <data name="UsersFew" xml:space="preserve">
     <value>{0} пользователя</value>
   </data>
@@ -11298,6 +11666,9 @@
   <data name="VideoSavedHint" xml:space="preserve">
     <value>Видео сохранено в галерею</value>
   </data>
+  <data name="VideoSavedToDownloadsHint" xml:space="preserve">
+    <value>Видео сохранено в загрузки</value>
+  </data>
   <data name="VideosFew" xml:space="preserve">
     <value>{0} видео</value>
   </data>
@@ -11309,6 +11680,24 @@
   </data>
   <data name="VideosOther" xml:space="preserve">
     <value>{0} видео</value>
+  </data>
+  <data name="VideosSavedHintFew" xml:space="preserve">
+    <value>{0} видео сохранено в галерею</value>
+  </data>
+  <data name="VideosSavedHintMany" xml:space="preserve">
+    <value>{0} видео сохранено в галерею</value>
+  </data>
+  <data name="VideosSavedHintOne" xml:space="preserve">
+    <value>{0} видео сохранено в галерею</value>
+  </data>
+  <data name="VideosSavedHintOther" xml:space="preserve">
+    <value>{0} видео сохранено в галерею</value>
+  </data>
+  <data name="VideosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VideosSelectedFew" xml:space="preserve">
     <value>выбрано {0} видео</value>
@@ -11334,6 +11723,9 @@
   <data name="VideosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ViewChannelStats" xml:space="preserve">
+    <value>Просмотр статистики канала</value>
+  </data>
   <data name="ViewContact" xml:space="preserve">
     <value>ПРОСМОТР КОНТАКТА</value>
   </data>
@@ -11351,6 +11743,12 @@
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Читают</value>
+  </data>
+  <data name="ViewMessage" xml:space="preserve">
+    <value>Открыть сообщение</value>
+  </data>
+  <data name="ViewMessageStatistic" xml:space="preserve">
+    <value>Статистика сообщения</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Посмотреть набор</value>
@@ -11390,6 +11788,9 @@
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
     <value>Просмотры постов</value>
+  </data>
+  <data name="ViewStats" xml:space="preserve">
+    <value>Просмотр статистики</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>

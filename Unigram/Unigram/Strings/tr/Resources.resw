@@ -190,6 +190,9 @@
   <data name="AccDescrIVTitle" xml:space="preserve">
     <value>Başlık</value>
   </data>
+  <data name="AccDescrLocationNotify" xml:space="preserve">
+    <value>Konum paylaşan kişiler yakın olduklarında bildir</value>
+  </data>
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Sonraki bahsetmeye git</value>
   </data>
@@ -475,6 +478,9 @@
   <data name="AccountSwitch" xml:space="preserve">
     <value>Değiştir</value>
   </data>
+  <data name="AccPinnedMessagesList" xml:space="preserve">
+    <value>Sabitlenmiş mesaj listesi</value>
+  </data>
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Arşivi görmek için bırakın</value>
   </data>
@@ -581,7 +587,7 @@
     <value>Davet bağlantısı aracılığıyla gruba katıldınız</value>
   </data>
   <data name="ActionKickUser" xml:space="preserve">
-    <value>un2, un1 tarafından çıkarıldı</value>
+    <value>un1 tarafından un2 çıkarıldı.</value>
   </data>
   <data name="ActionKickUserYou" xml:space="preserve">
     <value>un1 sizi çıkardı</value>
@@ -660,6 +666,15 @@
   </data>
   <data name="ActionUserScoredInGame" xml:space="preserve">
     <value>un1, un2 oyununda {0} skoruna ulaştı</value>
+  </data>
+  <data name="ActionUserWithinOtherRadius" xml:space="preserve">
+    <value>un1 şu anda un2 kişisine {0} uzaklıkta</value>
+  </data>
+  <data name="ActionUserWithinRadius" xml:space="preserve">
+    <value>un1 şu an sizden {0} uzaklıkta</value>
+  </data>
+  <data name="ActionUserWithinYouRadius" xml:space="preserve">
+    <value>Şu anda un1 kişine {0} uzaklıktasınız</value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>un2 kişisini eklediniz</value>
@@ -1333,7 +1348,13 @@ Birçok sorunun cevabına ve <![CDATA[<a href="https://telegram.org/faq/tr#sorun
     <value>Canlı Konum</value>
   </data>
   <data name="AttachLiveLocationIsSharing" xml:space="preserve">
-    <value>{0} bilgini {1} ile paylaşıyorsun</value>
+    <value>{0}, {1} ile paylaşılıyor</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChat" xml:space="preserve">
+    <value>{0}, {1} ile paylaşıyor</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChats" xml:space="preserve">
+    <value>{0}, {1} ile paylaşıyor</value>
   </data>
   <data name="AttachLocation" xml:space="preserve">
     <value>Konum</value>
@@ -1373,6 +1394,27 @@ Birçok sorunun cevabına ve <![CDATA[<a href="https://telegram.org/faq/tr#sorun
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Sesli mesajlar</value>
+  </data>
+  <data name="AudioSavedHint" xml:space="preserve">
+    <value>Dosya müziğe kaydedildi</value>
+  </data>
+  <data name="AudiosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintOne" xml:space="preserve">
+    <value>Dosya müziğe kaydedildi</value>
+  </data>
+  <data name="AudiosSavedHintOther" xml:space="preserve">
+    <value>{0} dosya müziğe kaydedildi</value>
+  </data>
+  <data name="AudiosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="AudioTitle" xml:space="preserve">
     <value>Paylaşılan Müzik</value>
@@ -2919,6 +2961,24 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="CommentsMany" xml:space="preserve">
     <value/>
   </data>
+  <data name="CommentsNoNumberFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberOne" xml:space="preserve">
+    <value>yorum</value>
+  </data>
+  <data name="CommentsNoNumberOther" xml:space="preserve">
+    <value>yorum</value>
+  </data>
+  <data name="CommentsNoNumberTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="CommentsOne" xml:space="preserve">
     <value>{0} Yorum</value>
   </data>
@@ -3009,13 +3069,13 @@ Uzunluk en az 5 karakterdir.</value>
     <value>KİŞİYİ PAYLAŞ</value>
   </data>
   <data name="ContactShortcutMessage" xml:space="preserve">
-    <value>{0} kişisine mesaj</value>
+    <value>Mesaj {0}</value>
   </data>
   <data name="ContactShortcutVideoCall" xml:space="preserve">
-    <value>{0} kişisiyle görüntülü arama</value>
+    <value>Görüntülü arama {0}</value>
   </data>
   <data name="ContactShortcutVoiceCall" xml:space="preserve">
-    <value>{0} kişisiyle sesli arama</value>
+    <value>Sesli arama {0}</value>
   </data>
   <data name="ContactsPermissionAlert" xml:space="preserve">
     <value>**Telegram**, tüm cihazlarınızda arkadaşlarınızla bağlantı kurabilmeniz için kişilerinize erişmelidir. Kişileriniz Telegram'ın yoğun şifreli bulut sunucuları ile sürekli olarak eşitlenecektir.</value>
@@ -3336,7 +3396,7 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
     <value>Hesabımı bu kadar uzaksam sil</value>
   </data>
   <data name="DeleteAccountIfAwayFor3" xml:space="preserve">
-    <value>Eğer uzaktaysam</value>
+    <value>Bu kadar süre uzaktaysam</value>
   </data>
   <data name="DeleteAccountTitle" xml:space="preserve">
     <value>Hesabın kendini yok etmesi</value>
@@ -3606,7 +3666,7 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
     <value>Kanalda gönderdiğiniz her şey bu gruba iletilir.</value>
   </data>
   <data name="DiscussionChannelHelp3" xml:space="preserve">
-    <value>Kanalınızdaki yorumların barındıracağı bir grup sohbetini seçin.</value>
+    <value>Kanalınızdaki yorumların barındırılacağı bir grup sohbeti seçin.</value>
   </data>
   <data name="DiscussionCreateGroup" xml:space="preserve">
     <value>Yeni bir grup oluştur</value>
@@ -4366,6 +4426,9 @@ Süre: {1}</value>
   <data name="February" xml:space="preserve">
     <value>Şubat</value>
   </data>
+  <data name="FileSavedHint" xml:space="preserve">
+    <value>Dosya indirilenlere kaydedildi</value>
+  </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Dosyalar</value>
   </data>
@@ -4380,6 +4443,24 @@ Süre: {1}</value>
   </data>
   <data name="FilesOther" xml:space="preserve">
     <value>{0} dosya</value>
+  </data>
+  <data name="FilesSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintOne" xml:space="preserve">
+    <value>Dosya indirilenlere kaydedildi</value>
+  </data>
+  <data name="FilesSavedHintOther" xml:space="preserve">
+    <value>{0} dosya indirilenlere kaydedildi</value>
+  </data>
+  <data name="FilesSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="FilesTwo" xml:space="preserve">
     <value/>
@@ -4683,6 +4764,9 @@ Süre: {1}</value>
   </data>
   <data name="FootsFromYou" xml:space="preserve">
     <value>sizden {0} fit uzakta</value>
+  </data>
+  <data name="FootsShort" xml:space="preserve">
+    <value>{0} feet</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Şifrenizi mi unuttunuz?</value>
@@ -5008,6 +5092,9 @@ Süre: {1}</value>
   <data name="GifCaption" xml:space="preserve">
     <value>GIF Başlığı</value>
   </data>
+  <data name="GifSavedToDownloadsHint" xml:space="preserve">
+    <value>GIF indirilenlere kaydedildi</value>
+  </data>
   <data name="GIFsFew" xml:space="preserve">
     <value/>
   </data>
@@ -5205,6 +5292,9 @@ Not: Çıkarılan Kullanıcılar listesinde bulunmadıkları sürece grubun dave
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Gizle</value>
+  </data>
+  <data name="HidePinnedMessages" xml:space="preserve">
+    <value>SABİTLENMİŞ MESAJLARI GİZLE</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Parlak alanlar</value>
@@ -5501,7 +5591,7 @@ Not: Çıkarılan Kullanıcılar listesinde bulunmadıkları sürece grubun dave
     <value>Medyayı Sakla</value>
   </data>
   <data name="KeepMediaForever" xml:space="preserve">
-    <value>Her zaman</value>
+    <value>Süresiz</value>
   </data>
   <data name="KeepMediaInfo" xml:space="preserve">
     <value>Bulut sohbet ortamındaki fotoğraflar, videolar ve diğer dosyalar **erişmediğiniz** bu sürede cihazınızın hafızasında yer açmak için cihazınızdan silinecektir. 
@@ -5517,6 +5607,9 @@ Tüm medya dosyalarınız Telegram bulut sisteminde duracaktır ve istediğiniz 
   <data name="KickFromSupergroup" xml:space="preserve">
     <value>Kullanıcıyı kısıtla</value>
   </data>
+  <data name="Km" xml:space="preserve">
+    <value>km</value>
+  </data>
   <data name="KMetersAway" xml:space="preserve">
     <value>km uzakta</value>
   </data>
@@ -5525,6 +5618,9 @@ Tüm medya dosyalarınız Telegram bulut sisteminde duracaktır ve istediğiniz 
   </data>
   <data name="KMetersFromYou2" xml:space="preserve">
     <value>sizden {0} km uzakta</value>
+  </data>
+  <data name="KMetersShort" xml:space="preserve">
+    <value>{0} km</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Dil</value>
@@ -5786,6 +5882,21 @@ Bu işlemin tamamlanması birkaç dakika sürebilir.</value>
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>Üzgünüz, hedef kullanıcı çok fazla sayıda konum tabanlı gruba sahip. Lütfen ondan öncelikle var olanı silmesini veya aktarmasını isteyin.</value>
   </data>
+  <data name="LocationNotifiation" xml:space="preserve">
+    <value>Yakınlık uyarısı</value>
+  </data>
+  <data name="LocationNotifiationButton" xml:space="preserve">
+    <value>{0} içinde bana bildir</value>
+  </data>
+  <data name="LocationNotifiationButtonGroup" xml:space="preserve">
+    <value>Birisi {0} yakında olduğunda bildir</value>
+  </data>
+  <data name="LocationNotifiationButtonUser" xml:space="preserve">
+    <value>{0}, {1} yakında olduğunda bildir</value>
+  </data>
+  <data name="LocationNotifiationCloser" xml:space="preserve">
+    <value>Zaten {0}'den daha yakınsın</value>
+  </data>
   <data name="LocationUpdated" xml:space="preserve">
     <value>güncellendi: </value>
   </data>
@@ -5965,6 +6076,24 @@ Telefon numaranız gizli kalacaktır.</value>
   <data name="MediaOther" xml:space="preserve">
     <value>{0} medya</value>
   </data>
+  <data name="MediaSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintOne" xml:space="preserve">
+    <value>Galeriye bir öğe kaydedildi</value>
+  </data>
+  <data name="MediaSavedHintOther" xml:space="preserve">
+    <value>Galeriye {0} öğe kaydedildi</value>
+  </data>
+  <data name="MediaSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="MediaSelectedFew" xml:space="preserve">
     <value/>
   </data>
@@ -6112,6 +6241,9 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="MessageNotifications" xml:space="preserve">
     <value>Mesaj bildirimleri</value>
   </data>
+  <data name="MessagePinnedHint" xml:space="preserve">
+    <value>Mesaj sabitlendi</value>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Mesaj Önizlemesi</value>
   </data>
@@ -6190,8 +6322,29 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesUnpinnedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedOne" xml:space="preserve">
+    <value>mesajın sabitlemesi kaldırıldı</value>
+  </data>
+  <data name="MessagesUnpinnedOther" xml:space="preserve">
+    <value>{0} mesajın sabitlemesi kaldırıldı</value>
+  </data>
+  <data name="MessagesUnpinnedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="messagesZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageUnpinnedHint" xml:space="preserve">
+    <value>Mesaj sabitlemesi kaldırıldı</value>
   </data>
   <data name="MetersAway" xml:space="preserve">
     <value>m uzakta</value>
@@ -6214,17 +6367,26 @@ Uzunluk en az 5 karakterdir.</value>
   <data name="MetersOther" xml:space="preserve">
     <value>{0} metre</value>
   </data>
+  <data name="MetersShort" xml:space="preserve">
+    <value>{0} mt</value>
+  </data>
   <data name="MetersTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Mi" xml:space="preserve">
+    <value>mil</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} mi uzakta</value>
   </data>
   <data name="MilesFromYou" xml:space="preserve">
     <value>sizden {0} mil uzakta</value>
+  </data>
+  <data name="MilesShort" xml:space="preserve">
+    <value>{0} mil</value>
   </data>
   <data name="MinutesBoldFew" xml:space="preserve">
     <value/>
@@ -6320,10 +6482,10 @@ Uzunluk en az 5 karakterdir.</value>
     <value>Müzik dosyaları göndermek için</value>
   </data>
   <data name="MuteDisable" xml:space="preserve">
-    <value>Sonsuza kadar sessiz</value>
+    <value>Sonsuza kadar sessize al</value>
   </data>
   <data name="MuteFor" xml:space="preserve">
-    <value>{0} için sessiz</value>
+    <value>{0} için sessize al</value>
   </data>
   <data name="MuteNotifications" xml:space="preserve">
     <value>Bildirimleri kapat</value>
@@ -6402,6 +6564,15 @@ Uzunluk en az 5 karakterdir.</value>
   </data>
   <data name="NewContact" xml:space="preserve">
     <value>Yeni Kişi</value>
+  </data>
+  <data name="NewContactAlertButton" xml:space="preserve">
+    <value>Kişiyi ekle</value>
+  </data>
+  <data name="NewContactAlertMessage" xml:space="preserve">
+    <value>**{0}** telefon numarası kişi listenizde değil. Eklemek istiyor musunuz?</value>
+  </data>
+  <data name="NewContactAlertTitle" xml:space="preserve">
+    <value>Yeni kişi</value>
   </data>
   <data name="NewConversationShortcut" xml:space="preserve">
     <value>Yeni sohbet</value>
@@ -6688,12 +6859,18 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
     <value>{0} bir bağlantıyı sabitledi</value>
   </data>
   <data name="NotificationActionPinnedContactChannel2" xml:space="preserve">
-    <value>{0} bir {1} kişisini sabitledi</value>
+    <value>{0}, {1} kişisini sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedContactUser" xml:space="preserve">
+    <value>{0}, {1} kişisini sabitledi</value>
   </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
     <value>{0}, {1} grubunda bir dosya sabitledi</value>
   </data>
   <data name="NotificationActionPinnedFileChannel" xml:space="preserve">
+    <value>{0} bir dosyayı sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedFileUser" xml:space="preserve">
     <value>{0} bir dosyayı sabitledi</value>
   </data>
   <data name="NotificationActionPinnedGame" xml:space="preserve">
@@ -6708,6 +6885,12 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
   <data name="NotificationActionPinnedGameScoreChannel" xml:space="preserve">
     <value>{0} bir oyun skorunu sabitledi</value>
   </data>
+  <data name="NotificationActionPinnedGameScoreUser" xml:space="preserve">
+    <value>{0} bir oyun skorunu sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedGameUser" xml:space="preserve">
+    <value>{0} bir oyunu sabitledi</value>
+  </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
     <value>{0}, {1} grubunda bir harita sabitledi</value>
   </data>
@@ -6720,10 +6903,19 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
   <data name="NotificationActionPinnedGeoLiveChannel" xml:space="preserve">
     <value>{0} bir canlı konumu sabitledi</value>
   </data>
+  <data name="NotificationActionPinnedGeoLiveUser" xml:space="preserve">
+    <value>{0} canlı konumu sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedGeoUser" xml:space="preserve">
+    <value>{0} bir haritayı sabitledi</value>
+  </data>
   <data name="NotificationActionPinnedGif" xml:space="preserve">
     <value>{0}, {1} grubunda bir GIF sabitledi</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
+    <value>{0} bir GIF'i sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedGifUser" xml:space="preserve">
     <value>{0} bir GIF'i sabitledi</value>
   </data>
   <data name="NotificationActionPinnedInvoice" xml:space="preserve">
@@ -6732,10 +6924,16 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
   <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
     <value>{0} bir faturayı sabitledi</value>
   </data>
+  <data name="NotificationActionPinnedInvoiceUser" xml:space="preserve">
+    <value>{0} bir faturayı sabitledi</value>
+  </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0}, {1} grubunda bir ses dosyası sabitledi</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
+    <value>{0} bir ses dosyasını sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedMusicUser" xml:space="preserve">
     <value>{0} bir ses dosyasını sabitledi</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
@@ -6744,10 +6942,16 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
   <data name="NotificationActionPinnedNoTextChannel" xml:space="preserve">
     <value>{0} bir mesajı sabitledi</value>
   </data>
+  <data name="NotificationActionPinnedNoTextUser" xml:space="preserve">
+    <value>{0} bir mesajı sabitledi</value>
+  </data>
   <data name="NotificationActionPinnedPhoto" xml:space="preserve">
     <value>{0}, {1} grubunda bir fotoğraf sabitledi</value>
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
+    <value>{0} bir fotoğrafı sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedPhotoUser" xml:space="preserve">
     <value>{0} bir fotoğrafı sabitledi</value>
   </data>
   <data name="NotificationActionPinnedPoll" xml:space="preserve">
@@ -6762,11 +6966,17 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
   <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
     <value>{0} bir {1} anketini sabitledi</value>
   </data>
+  <data name="NotificationActionPinnedPollUser" xml:space="preserve">
+    <value>{0}, {1} anketini sabitledi</value>
+  </data>
   <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
     <value>{0}, {1} grubuna "{2}" testini sabitledi</value>
   </data>
   <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
     <value>{0}, "{1}" testini sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedQuizUser" xml:space="preserve">
+    <value>{0}, {1} testini sabitledi</value>
   </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0}, {1} grubunda görüntülü mesaj sabitledi</value>
@@ -6774,8 +6984,11 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
   <data name="NotificationActionPinnedRoundChannel" xml:space="preserve">
     <value>{0} bir görüntülü mesajı sabitledi</value>
   </data>
+  <data name="NotificationActionPinnedRoundUser" xml:space="preserve">
+    <value>{0} bir görüntülü mesajı sabitledi</value>
+  </data>
   <data name="NotificationActionPinnedSticker" xml:space="preserve">
-    <value>{0}, {1} grubunda bir çıkartma sabitledi</value>
+    <value>{0}, {1} grubunda bir çıkartmayı sabitledi</value>
   </data>
   <data name="NotificationActionPinnedStickerChannel" xml:space="preserve">
     <value>{0} bir çıkartmayı sabitledi</value>
@@ -6784,7 +6997,13 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
     <value>{0}, {1} grubunda {2} çıkartmasını sabitledi</value>
   </data>
   <data name="NotificationActionPinnedStickerEmojiChannel" xml:space="preserve">
-    <value>{0} bir {1} çıkartmasını sabitledi</value>
+    <value>{0}, {1} çıkartmasını sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedStickerEmojiUser" xml:space="preserve">
+    <value>{0}, {1} çıkartmasını sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedStickerUser" xml:space="preserve">
+    <value>{0} bir çıkartmayı sabitledi</value>
   </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
     <value>{0}, {2} grubunda "{1}" mesajını sabitledi</value>
@@ -6792,16 +7011,25 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
     <value>{0} sabitledi: "{1}" </value>
   </data>
+  <data name="NotificationActionPinnedTextUser" xml:space="preserve">
+    <value>{0} sabitledi: "{1}"</value>
+  </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
     <value>{0}, {1} grubunda bir video sabitledi</value>
   </data>
   <data name="NotificationActionPinnedVideoChannel" xml:space="preserve">
     <value>{0} bir videoyu sabitledi</value>
   </data>
+  <data name="NotificationActionPinnedVideoUser" xml:space="preserve">
+    <value>{0} bir videoyu sabitledi</value>
+  </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
     <value>{0}, {1} grubunda bir sesli mesaj sabitledi</value>
   </data>
   <data name="NotificationActionPinnedVoiceChannel" xml:space="preserve">
+    <value>{0} bir sesli mesajı sabitledi</value>
+  </data>
+  <data name="NotificationActionPinnedVoiceUser" xml:space="preserve">
     <value>{0} bir sesli mesajı sabitledi</value>
   </data>
   <data name="NotificationContactJoined" xml:space="preserve">
@@ -8267,6 +8495,11 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   <data name="PeopleNearbyInfo2" xml:space="preserve">
     <value>Yakındaki kişilerle iletişim bilgilerinizi takas edin ve yeni arkadaşlar bulun.</value>
   </data>
+  <data name="PermissionBackgroundLocation" xml:space="preserve">
+    <value>Canlı konumunuzu bu sohbette paylaşmak için, Telegram'ın uygulama arka plandayken de dahil olmak üzere her zaman konumunuza erişmesi gerekir.
+
+Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zaman konumunuzu paylaşmayı durdurabilirsiniz. Konumunuzu bu sohbette paylaşmak dışında başka bir amaç için kullanmayacağız.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>Kişileriniz, tüm cihazlarınızda arkadaşlarınızla bağlantı kurmanız için Telegram'ın yoğun şifreli bulut sunucularıyla sürekli eşitlenecektir.</value>
   </data>
@@ -8351,6 +8584,9 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   <data name="PhotoSavedHint" xml:space="preserve">
     <value>Fotoğraf galeriye kaydedildi</value>
   </data>
+  <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
+    <value>Fotoğraf indirilenlere kaydedildi</value>
+  </data>
   <data name="PhotosFew" xml:space="preserve">
     <value/>
   </data>
@@ -8362,6 +8598,24 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   </data>
   <data name="PhotosOther" xml:space="preserve">
     <value>{0} fotoğraf</value>
+  </data>
+  <data name="PhotosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintOne" xml:space="preserve">
+    <value>Fotoğraf galeriye kaydedildi</value>
+  </data>
+  <data name="PhotosSavedHintOther" xml:space="preserve">
+    <value>{0} fotoğraf galeriye kaydedildi</value>
+  </data>
+  <data name="PhotosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PhotosSelectedFew" xml:space="preserve">
     <value/>
@@ -8387,6 +8641,9 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinAlsoFor" xml:space="preserve">
+    <value>Ayrıca {0} için de sabitle</value>
+  </data>
   <data name="PinFolderLimitReached" xml:space="preserve">
     <value>Üzgünüz, daha fazla sohbeti başa sabitleyemezsiniz.</value>
   </data>
@@ -8403,7 +8660,7 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
     <value>Sabitle</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>Bu mesajı bu gruba sabitlemek ister misiniz?</value>
+    <value>Bu mesajı, gruptaki tüm üyeler için sabitlemek istiyor musunuz?</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>Bu mesajı bu kanalda sabitlemek istiyor musunuz?</value>
@@ -8420,11 +8677,38 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   <data name="PinnedMessages" xml:space="preserve">
     <value>Sabitlenen Mesajlar</value>
   </data>
+  <data name="PinnedMessagesCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountOne" xml:space="preserve">
+    <value>Sabitlenmiş Mesaj</value>
+  </data>
+  <data name="PinnedMessagesCountOther" xml:space="preserve">
+    <value>{0} Sabitlenmiş Mesaj</value>
+  </data>
+  <data name="PinnedMessagesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesHidden" xml:space="preserve">
+    <value>Sabitlenmiş mesajlar gizlendi</value>
+  </data>
+  <data name="PinnedMessagesHiddenInfo" xml:space="preserve">
+    <value>Yeni bir mesaj sabitlenirse, sabitlenen mesajlar yeniden gösterilecektir.</value>
+  </data>
   <data name="PinnedPoll" xml:space="preserve">
     <value>Sabitlenen anket</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Tüm üyelere bildir</value>
+  </data>
+  <data name="PinOldMessageAlert" xml:space="preserve">
+    <value>Daha yeni bir mesajı sabitlenmiş halde bırakırken daha eski bir mesajı sabitlemek ister misiniz?</value>
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Başa sabitle</value>
@@ -8542,6 +8826,9 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   </data>
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Yerleşim yanlış mı?</value>
+  </data>
+  <data name="PreviousPinnedMessage" xml:space="preserve">
+    <value>Önceki Mesaj</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Yüksek öncelikli bildirimler telefonunuz Rahatsız Etme modundayken bile çalışır.</value>
@@ -8681,6 +8968,9 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Gizlilik</value>
   </data>
+  <data name="PrivateShares" xml:space="preserve">
+    <value>Özel Paylaşımlar</value>
+  </data>
   <data name="ProfileJoinChannel" xml:space="preserve">
     <value>Kanala Katıl</value>
   </data>
@@ -8692,6 +8982,24 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   </data>
   <data name="ProfilePopupNotificationInfo" xml:space="preserve">
     <value>Telegram'ı kullanmadığınızda bu kişiden gelen yeni mesajlar ekranınızda görüntülenecektir.</value>
+  </data>
+  <data name="ProximityAlertCancelled" xml:space="preserve">
+    <value>Yakınlık uyarısı iptal edildi</value>
+  </data>
+  <data name="ProximityAlertSet" xml:space="preserve">
+    <value>Yakınlık uyarısı ayarla</value>
+  </data>
+  <data name="ProximityAlertSetInfoGroup2" xml:space="preserve">
+    <value>Birisi sizden {0} uzaklıktaysa sizi bilgilendireceğiz.</value>
+  </data>
+  <data name="ProximityAlertSetInfoUser" xml:space="preserve">
+    <value>{0} sizden {1} uzaklıkta olduğunda sizi bilgilendireceğiz.</value>
+  </data>
+  <data name="ProximityTooltioGroup" xml:space="preserve">
+    <value>Grubun diğer üyeleri yakın olduğunda bildir</value>
+  </data>
+  <data name="ProximityTooltioUser" xml:space="preserve">
+    <value>{0} yaklaştığında bildir</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Vekil sunucu</value>
@@ -8746,6 +9054,27 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
   </data>
   <data name="PublicPollCantForward" xml:space="preserve">
     <value>Üzgünüz, görünür oy kullanılan anketler kanallara iletilemez.</value>
+  </data>
+  <data name="PublicShares" xml:space="preserve">
+    <value>Genel Paylaşımlar</value>
+  </data>
+  <data name="PublicSharesCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountOne" xml:space="preserve">
+    <value>{0} genel paylaşım</value>
+  </data>
+  <data name="PublicSharesCountOther" xml:space="preserve">
+    <value>{0} genel paylaşım</value>
+  </data>
+  <data name="PublicSharesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Mor</value>
@@ -8808,7 +9137,7 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
     <value>Kendi sesimi duydum</value>
   </data>
   <data name="RateCallInterruptions" xml:space="preserve">
-    <value>Karşı taraf kaybolmaya devam etti</value>
+    <value>Karşı taraf ortadan kayboldu</value>
   </data>
   <data name="RateCallNoise" xml:space="preserve">
     <value>Arka plan gürültüsü duydum</value>
@@ -8820,7 +9149,7 @@ Bu özelliği kullanmak için lütfen konum hizmetlerini açın.</value>
     <value>Karşı taraf beni duyamadı</value>
   </data>
   <data name="RateCallVideoDistorted" xml:space="preserve">
-    <value>Görüntü bozuk</value>
+    <value>Görüntü bozuldu</value>
   </data>
   <data name="RateCallVideoPixelated" xml:space="preserve">
     <value>Görüntü piksellendi</value>
@@ -9864,6 +10193,15 @@ Cevaplamayın, Telegram herşeyi otomatik olarak yapacak.</value>
   <data name="ShareLocation" xml:space="preserve">
     <value>Konum</value>
   </data>
+  <data name="ShareLocationAlertButton" xml:space="preserve">
+    <value>Paylaş</value>
+  </data>
+  <data name="ShareLocationAlertText" xml:space="preserve">
+    <value>Uyarının çalışması için lütfen canlı konumunuzu bu sohbette paylaşın.</value>
+  </data>
+  <data name="ShareLocationAlertTitle" xml:space="preserve">
+    <value>Konumu Paylaş</value>
+  </data>
   <data name="ShareMyContactInfo" xml:space="preserve">
     <value>İletişim bilgimi paylaş</value>
   </data>
@@ -10111,6 +10449,9 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="StatisticSearchUserHistory" xml:space="preserve">
     <value>Mesajları Görüntüle</value>
+  </data>
+  <data name="StatisticViews" xml:space="preserve">
+    <value>Görüntülemeler</value>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Çıkartmalar ve Maskeler</value>
@@ -10846,6 +11187,9 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="UnofficialApp" xml:space="preserve">
     <value>resmi olmayan uygulama</value>
   </data>
+  <data name="UnpinAllMessages" xml:space="preserve">
+    <value>TÜM MESAJLARIN SABİTLENMESİNİ KALDIR</value>
+  </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>Başa sabitlemeyi kaldır</value>
   </data>
@@ -11142,7 +11486,7 @@ Uzunluk en az **5** karakterdir.</value>
     <value>Şu zamana kadar kısıtla</value>
   </data>
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
-    <value>Sonsuza kadar</value>
+    <value>Süresiz</value>
   </data>
   <data name="UsersCountFew" xml:space="preserve">
     <value/>
@@ -11179,6 +11523,9 @@ Uzunluk en az **5** karakterdir.</value>
   </data>
   <data name="UsersCountZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="UserSetAsAdminHint" xml:space="preserve">
+    <value>**{0}** yöneticiliğe yükseltildi</value>
   </data>
   <data name="UsersFew" xml:space="preserve">
     <value/>
@@ -11243,6 +11590,9 @@ Uzunluk en az **5** karakterdir.</value>
   <data name="VideoSavedHint" xml:space="preserve">
     <value>Video galeriye kaydedildi</value>
   </data>
+  <data name="VideoSavedToDownloadsHint" xml:space="preserve">
+    <value>Video indirilenlere kaydedildi</value>
+  </data>
   <data name="VideosFew" xml:space="preserve">
     <value/>
   </data>
@@ -11254,6 +11604,24 @@ Uzunluk en az **5** karakterdir.</value>
   </data>
   <data name="VideosOther" xml:space="preserve">
     <value>{0} video</value>
+  </data>
+  <data name="VideosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintOne" xml:space="preserve">
+    <value>Video galeriye kaydedildi</value>
+  </data>
+  <data name="VideosSavedHintOther" xml:space="preserve">
+    <value>{0} video galeriye kaydedildi</value>
+  </data>
+  <data name="VideosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VideosSelectedFew" xml:space="preserve">
     <value/>
@@ -11279,6 +11647,9 @@ Uzunluk en az **5** karakterdir.</value>
   <data name="VideosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ViewChannelStats" xml:space="preserve">
+    <value>Kanal İstatistiklerini Görüntüle</value>
+  </data>
   <data name="ViewContact" xml:space="preserve">
     <value>KİŞİYİ GÖRÜNTÜLE</value>
   </data>
@@ -11296,6 +11667,12 @@ Uzunluk en az **5** karakterdir.</value>
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Üyeleri Görüntüleme</value>
+  </data>
+  <data name="ViewMessage" xml:space="preserve">
+    <value>Mesajı Aç</value>
+  </data>
+  <data name="ViewMessageStatistic" xml:space="preserve">
+    <value>Mesaj İstatistikleri</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Paketi Görüntüle</value>
@@ -11335,6 +11712,9 @@ Uzunluk en az **5** karakterdir.</value>
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
     <value>Gönderi Başına Görüntüleme</value>
+  </data>
+  <data name="ViewStats" xml:space="preserve">
+    <value>İstatistikleri Görüntüle</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>

@@ -190,6 +190,9 @@
   <data name="AccDescrIVTitle" xml:space="preserve">
     <value>Загаловак</value>
   </data>
+  <data name="AccDescrLocationNotify" xml:space="preserve">
+    <value>Апавяшчаць, калі знаходзіцца ў межах</value>
+  </data>
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Перайсці да наступнай згадкі</value>
   </data>
@@ -266,7 +269,7 @@
     <value>Прагляд фота</value>
   </data>
   <data name="AccDescrPipMode" xml:space="preserve">
-    <value>Рэжым «Picture-in-Picture»</value>
+    <value>Рэжым відарыса ў відарысе</value>
   </data>
   <data name="AccDescrPlayerDuration" xml:space="preserve">
     <value>{0} з {1}</value>
@@ -287,7 +290,7 @@
     <value>Атрымана {0}</value>
   </data>
   <data name="AccDescrRepeatList" xml:space="preserve">
-    <value>Паўтарэнне, плэйліст</value>
+    <value>Паўтарэнне, плэй-ліст</value>
   </data>
   <data name="AccDescrRepeatOff" xml:space="preserve">
     <value>Паўтарэнне, выкл.</value>
@@ -416,7 +419,7 @@
     <value>Зрабіць яшчэ адзін здымак</value>
   </data>
   <data name="AccDescrUploadProgress" xml:space="preserve">
-    <value>Загружана {0} з {1}</value>
+    <value>Запампавана {0} з {1}</value>
   </data>
   <data name="AccDescrUserOptions" xml:space="preserve">
     <value>Параметры карыстальніка</value>
@@ -474,6 +477,9 @@
   </data>
   <data name="AccountSwitch" xml:space="preserve">
     <value>Пераключыцца</value>
+  </data>
+  <data name="AccPinnedMessagesList" xml:space="preserve">
+    <value>Спіс замацаваных паведамленняў</value>
   </data>
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Адпусціце, каб паказаць архіў</value>
@@ -661,6 +667,15 @@
   <data name="ActionUserScoredInGame" xml:space="preserve">
     <value>un1 набраў(-ла) {0} у un2</value>
   </data>
+  <data name="ActionUserWithinOtherRadius" xml:space="preserve">
+    <value>un1 знаходзіцца ў межах {0} ад un2</value>
+  </data>
+  <data name="ActionUserWithinRadius" xml:space="preserve">
+    <value>un1 знаходзіцца ў межах {0} ад вас</value>
+  </data>
+  <data name="ActionUserWithinYouRadius" xml:space="preserve">
+    <value>Вы знаходзіцеся ў межах {0} ад un1</value>
+  </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>Вы дадалі un2</value>
   </data>
@@ -794,7 +809,7 @@
     <value>Шукаць людзей паблізу</value>
   </data>
   <data name="AddPhoto" xml:space="preserve">
-    <value>Прызначыць новае фота</value>
+    <value>Задаць новы аватар</value>
   </data>
   <data name="AddProxy" xml:space="preserve">
     <value>Дадаць проксі</value>
@@ -1334,6 +1349,12 @@
   <data name="AttachLiveLocationIsSharing" xml:space="preserve">
     <value>{0} ў {1}</value>
   </data>
+  <data name="AttachLiveLocationIsSharingChat" xml:space="preserve">
+    <value>{0} ў {1}</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChats" xml:space="preserve">
+    <value>{0} ў {1}</value>
+  </data>
   <data name="AttachLocation" xml:space="preserve">
     <value>Месцазнаходжанне</value>
   </data>
@@ -1373,6 +1394,30 @@
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Галасавыя паведамленні</value>
   </data>
+  <data name="AudioSavedHint" xml:space="preserve">
+    <value>Файл захаваны ў музыку</value>
+  </data>
+  <data name="AudiosSavedHintFew" xml:space="preserve">
+    <value>
+{0} файлы захаваны ў музыку</value>
+  </data>
+  <data name="AudiosSavedHintMany" xml:space="preserve">
+    <value>
+{0} файлаў захаваны ў музыку</value>
+  </data>
+  <data name="AudiosSavedHintOne" xml:space="preserve">
+    <value>{0} файл захаваны ў музыку</value>
+  </data>
+  <data name="AudiosSavedHintOther" xml:space="preserve">
+    <value>
+{0} файла захавана ў музыку</value>
+  </data>
+  <data name="AudiosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="AudioTitle" xml:space="preserve">
     <value>Абагуленая музыка</value>
   </data>
@@ -1392,7 +1437,7 @@
     <value>https://desktop.telegram.org/</value>
   </data>
   <data name="AuthAnotherClientInfo1" xml:space="preserve">
-    <value>Спампаваць Telegram на ваш камп'ютар з *desktop.telegram.org*.</value>
+    <value>Спампуйце Telegram на ваш камп'ютар з *desktop.telegram.org*.</value>
   </data>
   <data name="AuthAnotherClientInfo2" xml:space="preserve">
     <value>Запусціце Telegram Desktop каб атрымаць QR-код.</value>
@@ -1505,7 +1550,7 @@
     <value>Аўтаспампоўванне фота</value>
   </data>
   <data name="AutoDownloadPm" xml:space="preserve">
-    <value>ПЧ</value>
+    <value>Прыватныя чаты</value>
   </data>
   <data name="AutoDownloadPreloadMusic" xml:space="preserve">
     <value>Папярэдне загружаць наступны трэк</value>
@@ -2488,7 +2533,7 @@
     <value>Чат выдалены</value>
   </data>
   <data name="ChatDistanceToPeer" xml:space="preserve">
-    <value>{0} {1}</value>
+    <value>{0} за {1}</value>
   </data>
   <data name="ChatDocument" xml:space="preserve">
     <value>Файл</value>
@@ -2551,10 +2596,10 @@
     <value>Людзі змогуць знайсці вашу групу праз раздзел «Людзі паблізу».</value>
   </data>
   <data name="ChatSetNewPhoto" xml:space="preserve">
-    <value>Прызначыць новае фота</value>
+    <value>Задаць новае фота</value>
   </data>
   <data name="ChatSetPhotoOrVideo" xml:space="preserve">
-    <value>Прызначыць фота або відэа</value>
+    <value>Задаць фота або відэа</value>
   </data>
   <data name="ChatSetThisLocation" xml:space="preserve">
     <value>Задаць гэта месцазнаходжанне</value>
@@ -2919,6 +2964,24 @@
   <data name="CommentsMany" xml:space="preserve">
     <value>{0} каментарыяў</value>
   </data>
+  <data name="CommentsNoNumberFew" xml:space="preserve">
+    <value>каментарыі</value>
+  </data>
+  <data name="CommentsNoNumberMany" xml:space="preserve">
+    <value>каментарыяў</value>
+  </data>
+  <data name="CommentsNoNumberOne" xml:space="preserve">
+    <value>каментарый</value>
+  </data>
+  <data name="CommentsNoNumberOther" xml:space="preserve">
+    <value>каментарыя</value>
+  </data>
+  <data name="CommentsNoNumberTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="CommentsOne" xml:space="preserve">
     <value>{0} каментарый</value>
   </data>
@@ -3059,7 +3122,7 @@
 • Новыя ўдзельнікі бачаць усю гісторыю паведамленняў
 • Выдаленыя паведамленні знікаюць для ўсіх удзельнікаў
 • Кіраўнікі могуць дадаваць апісанне суполкі
-• Стваральнік можа прызначыць публічную спасылку на суполку</value>
+• Стваральнік можа задаваць публічную спасылку на суполку</value>
   </data>
   <data name="ConvertGroupInfo2" xml:space="preserve">
     <value>**У суперсуполках:**
@@ -3067,7 +3130,7 @@
 • Новыя ўдзельнікі бачаць усю гісторыю паведамленняў
 • Паведамленні выдаляюцца для ўсіх карыстальнікаў
 • Кіраўнікі могуць дадаваць апісанне суполкі
-• Стваральнік можа прызначыць публічную спасылку на суполку</value>
+• Стваральнік можа задаваць публічную спасылку на суполку</value>
   </data>
   <data name="ConvertGroupInfo3" xml:space="preserve">
     <value>**Увага:** гэта дзеянне немагчыма адрабіць.</value>
@@ -4369,6 +4432,9 @@
   <data name="February" xml:space="preserve">
     <value>Люты</value>
   </data>
+  <data name="FileSavedHint" xml:space="preserve">
+    <value>Файл захаваны ў спампоўкі</value>
+  </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>Файлы</value>
   </data>
@@ -4383,6 +4449,27 @@
   </data>
   <data name="FilesOther" xml:space="preserve">
     <value>{0} файлаў</value>
+  </data>
+  <data name="FilesSavedHintFew" xml:space="preserve">
+    <value>
+{0} файлы захаваны ў спампоўкі</value>
+  </data>
+  <data name="FilesSavedHintMany" xml:space="preserve">
+    <value>
+{0} файлаў захаваны ў спампоўкі</value>
+  </data>
+  <data name="FilesSavedHintOne" xml:space="preserve">
+    <value>{0} файл захаваны ў спампоўкі</value>
+  </data>
+  <data name="FilesSavedHintOther" xml:space="preserve">
+    <value>
+{0} файла захавана ў спампоўкі</value>
+  </data>
+  <data name="FilesSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="FilesTwo" xml:space="preserve">
     <value/>
@@ -4409,7 +4496,7 @@
     <value>Дадаць у папку</value>
   </data>
   <data name="FilterAddToAlertFullText" xml:space="preserve">
-    <value>Выбачайце, вы не можаце выключыць больш за 100 чатаў у папцы.</value>
+    <value>Выбачайце, вы не можаце выключыць больш за 100 чатаў з папкі.</value>
   </data>
   <data name="FilterAddToAlertFullTitle" xml:space="preserve">
     <value>Ліміт дасягнуты</value>
@@ -4565,10 +4652,10 @@
     <value>Выдаліць чаты</value>
   </data>
   <data name="FilterRemoveExclusionChatText" xml:space="preserve">
-    <value>Вы упэўнены, што хочаце выдаліць "{0}" са спіса заўсёды выключаных чатаў?</value>
+    <value>Вы ўпэўнены, што хочаце выдаліць "{0}" са спіса заўсёды выключаных чатаў?</value>
   </data>
   <data name="FilterRemoveExclusionText" xml:space="preserve">
-    <value>Вы упэўнены, што хочаце выдаліць "{0}" са спіса заўсёды выключаных чатаў?</value>
+    <value>Вы ўпэўнены, што хочаце выдаліць "{0}" са спіса заўсёды выключаных чатаў?</value>
   </data>
   <data name="FilterRemoveExclusionTitle" xml:space="preserve">
     <value>Выдаліць выключэнне</value>
@@ -4583,16 +4670,16 @@
     <value>Выбачайце, вы не можаце дадаваць больш за 100 чатаў у папку.</value>
   </data>
   <data name="FilterRemoveInclusionChatText" xml:space="preserve">
-    <value>Вы упэўнены, што хочаце выдаліць "{0}" са спіса заўсёды ўключаных чатаў?</value>
+    <value>Вы ўпэўнены, што хочаце выдаліць "{0}" са спіса заўсёды ўключаных чатаў?</value>
   </data>
   <data name="FilterRemoveInclusionText" xml:space="preserve">
-    <value>Вы упэўнены, што хочаце выдаліць "{0}" са спіса заўсёды ўключаных чатаў?</value>
+    <value>Вы ўпэўнены, што хочаце выдаліць "{0}" са спіса заўсёды ўключаных чатаў?</value>
   </data>
   <data name="FilterRemoveInclusionTitle" xml:space="preserve">
     <value>Выдаліць выключэнне</value>
   </data>
   <data name="FilterRemoveInclusionUserText" xml:space="preserve">
-    <value>Вы упэўнены, што хочаце выдаліць "{0}" са спіса заўсёды ўключаных чатаў?</value>
+    <value>Вы ўпэўнены, што хочаце выдаліць "{0}" са спіса заўсёды ўключаных чатаў?</value>
   </data>
   <data name="FilterReorder" xml:space="preserve">
     <value>Змяніць парадак</value>
@@ -4631,10 +4718,10 @@
     <value>Непрачытанае</value>
   </data>
   <data name="FilterUserAddedToExisting" xml:space="preserve">
-    <value>**{0}** дададзены да **{1}**</value>
+    <value>**{0}** дададзены(-а) да **{1}**</value>
   </data>
   <data name="FilterUserRemovedFrom" xml:space="preserve">
-    <value>**{0}** выдалены з **{1}**</value>
+    <value>**{0}** выдалены(-а) з **{1}**</value>
   </data>
   <data name="FinalResults" xml:space="preserve">
     <value>Канчатковыя вынікі</value>
@@ -4685,7 +4772,10 @@
     <value>{0} футаў ад вас</value>
   </data>
   <data name="FootsFromYou" xml:space="preserve">
-    <value>у {0} футах ад вас</value>
+    <value>за {0} футаў ад вас</value>
+  </data>
+  <data name="FootsShort" xml:space="preserve">
+    <value>{0} футы</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Забыліся на пароль?</value>
@@ -5011,6 +5101,9 @@
   <data name="GifCaption" xml:space="preserve">
     <value>Подпіс пад анімацыяй</value>
   </data>
+  <data name="GifSavedToDownloadsHint" xml:space="preserve">
+    <value>Анімацыя захавана ў спампоўкі</value>
+  </data>
   <data name="GIFsFew" xml:space="preserve">
     <value>{0} анімацыі</value>
   </data>
@@ -5207,6 +5300,9 @@
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Схаваць</value>
+  </data>
+  <data name="HidePinnedMessages" xml:space="preserve">
+    <value>СХАВАЦЬ ЗАМАЦАВАНЫЯ ПАВЕДАМЛЕННІ</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Зоны святла</value>
@@ -5519,6 +5615,9 @@
   <data name="KickFromSupergroup" xml:space="preserve">
     <value>Абмежаваць карыстальніка</value>
   </data>
+  <data name="Km" xml:space="preserve">
+    <value>км</value>
+  </data>
   <data name="KMetersAway" xml:space="preserve">
     <value>км ад вас</value>
   </data>
@@ -5526,17 +5625,20 @@
     <value>{0} кіламетраў ад вас</value>
   </data>
   <data name="KMetersFromYou2" xml:space="preserve">
-    <value>у {0} км ад вас</value>
+    <value>за {0} км ад вас</value>
+  </data>
+  <data name="KMetersShort" xml:space="preserve">
+    <value>{0} км</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Мова</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Вы збірайцеся ўжыць моўны пакет (**{0}**), які скончаны на {1}%.
+    <value>Вы збіраецеся дастаcаваць моўны пакет (**{0}**), які скончаны на {1}%.
 
-Гэта дзеянне перакладзе ўвесь інтэрфейс. Вы можаце прапапнаваць выпраўленні праз [платформу перакладаў].
+Гэта дзеянне перакладзе ўвесь інтэрфейс. Вы можаце прапанаваць выпраўленні праз [платформу перакладаў].
 
-Вы можаце змяніць мову у любы час праз Налады.</value>
+Вы можаце змяніць мову ў любы час праз Налады.</value>
   </data>
   <data name="LanguageCode" xml:space="preserve">
     <value>be</value>
@@ -5545,11 +5647,11 @@
     <value>Карыстальніцкая</value>
   </data>
   <data name="LanguageCustomAlert" xml:space="preserve">
-    <value>Вы збірайцеся ўжыць моўны пакет (**{0}**) які скончаны на {1}%.
+    <value>Вы збіраецеся дастаcаваць моўны пакет (**{0}**) які скончаны на {1}%.
 
 Гэта дзеянне перакладзе ўвесь інтэрфейс. Вы можаце прапанаваць выпраўленні праз [платформу перакладаў].
 
-Вы можаце змяніць мову у любы час праз Налады.</value>
+Вы можаце змяніць мову ў любы час праз Налады.</value>
   </data>
   <data name="LanguageName" xml:space="preserve">
     <value>Беларуская</value>
@@ -5657,7 +5759,7 @@
     <value>«{0}» даступная.</value>
   </data>
   <data name="LinkChecking" xml:space="preserve">
-    <value>Праверка назвы... </value>
+    <value>Праверка назвы…</value>
   </data>
   <data name="LinkCopied" xml:space="preserve">
     <value>Спасылка скапіявана ў буфер абмену</value>
@@ -5788,6 +5890,21 @@
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>Выбачайце, але ў гэтага карыстальніка ўжо занадта шмат суполак з месцазнаходжаннем. Папрасіце яго выдаліць ці перадаць адну з ужо існуючых такіх суполак.</value>
   </data>
+  <data name="LocationNotifiation" xml:space="preserve">
+    <value>Абвестка аб збліжэнні</value>
+  </data>
+  <data name="LocationNotifiationButton" xml:space="preserve">
+    <value>Апавясціць мяне ў межах {0}</value>
+  </data>
+  <data name="LocationNotifiationButtonGroup" xml:space="preserve">
+    <value>Апавяшчаць, калі хтосьці знаходзіцца ў межах {0}</value>
+  </data>
+  <data name="LocationNotifiationButtonUser" xml:space="preserve">
+    <value>Апавяшчаць, калі {0} знаходзіцца ў межах {1} ад мяне</value>
+  </data>
+  <data name="LocationNotifiationCloser" xml:space="preserve">
+    <value>Вы ўжо бліжэй за {0}</value>
+  </data>
   <data name="LocationUpdated" xml:space="preserve">
     <value>абноўлена</value>
   </data>
@@ -5840,22 +5957,22 @@
     <value>Выдаляць старэйшыя за</value>
   </data>
   <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
-    <value>Гэта асноўнае фота канала на дадзены момант.</value>
+    <value>Цяпер гэта асноўнае фота канала.</value>
   </data>
   <data name="MainChannelProfileVideoSetHint" xml:space="preserve">
-    <value>Гэта асноўнае відэа канала на дадзены момант.</value>
+    <value>Цяпер гэта асноўнае відэа канала.</value>
   </data>
   <data name="MainGroupProfilePhotoSetHint" xml:space="preserve">
-    <value>Гэта асноўнае фота суполкі на дадзены момант.</value>
+    <value>Цяпер гэта асноўнае фота суполкі.</value>
   </data>
   <data name="MainGroupProfileVideoSetHint" xml:space="preserve">
-    <value>Гэта асноўнае відэа суполкі на дадзены момант.</value>
+    <value>Цяпер гэта асноўнае відэа суполкі.</value>
   </data>
   <data name="MainProfilePhotoSetHint" xml:space="preserve">
-    <value>Гэта асноўнае фота вашага профілю на дадзены момант.</value>
+    <value>Цяпер гэта асноўнае фота вашага профілю.</value>
   </data>
   <data name="MainProfileVideoSetHint" xml:space="preserve">
-    <value>Гэта асноўнае відэа вашага профілю на дадзены момант.</value>
+    <value>Цяпер гэта асноўнае відэа вашага профілю.</value>
   </data>
   <data name="MakeAdmin" xml:space="preserve">
     <value>ПРЫЗНАЧЫЦЬ КІРАЎНІКОМ</value>
@@ -5966,6 +6083,27 @@
   </data>
   <data name="MediaOther" xml:space="preserve">
     <value>{0} медыя</value>
+  </data>
+  <data name="MediaSavedHintFew" xml:space="preserve">
+    <value>
+{0} элементы захаваны ў галерэю</value>
+  </data>
+  <data name="MediaSavedHintMany" xml:space="preserve">
+    <value>
+{0} элементаў захаваны ў галерэю</value>
+  </data>
+  <data name="MediaSavedHintOne" xml:space="preserve">
+    <value>{0} элемент захаваны ў галерэю</value>
+  </data>
+  <data name="MediaSavedHintOther" xml:space="preserve">
+    <value>
+{0} элемента захавана ў галерэю</value>
+  </data>
+  <data name="MediaSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="MediaSelectedFew" xml:space="preserve">
     <value>выбрана {0} медыя</value>
@@ -6114,6 +6252,9 @@
   <data name="MessageNotifications" xml:space="preserve">
     <value>Апавяшчэнні аб паведамленнях</value>
   </data>
+  <data name="MessagePinnedHint" xml:space="preserve">
+    <value>Паведамленне замацавана</value>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Перадпрагляд паведамлення</value>
   </data>
@@ -6192,8 +6333,29 @@
   <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesUnpinnedFew" xml:space="preserve">
+    <value>{0} паведамленні адмацаваны</value>
+  </data>
+  <data name="MessagesUnpinnedMany" xml:space="preserve">
+    <value>{0} паведамленняў адмацаваны</value>
+  </data>
+  <data name="MessagesUnpinnedOne" xml:space="preserve">
+    <value>{0} паведамленне адмацавана</value>
+  </data>
+  <data name="MessagesUnpinnedOther" xml:space="preserve">
+    <value>{0} паведамлення адмацавана</value>
+  </data>
+  <data name="MessagesUnpinnedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="messagesZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageUnpinnedHint" xml:space="preserve">
+    <value>Паведамленне адмацавана</value>
   </data>
   <data name="MetersAway" xml:space="preserve">
     <value>м ад вас</value>
@@ -6205,7 +6367,7 @@
     <value>{0} метраў</value>
   </data>
   <data name="MetersFromYou2" xml:space="preserve">
-    <value>у {0} м ад вас</value>
+    <value>за {0} м ад вас</value>
   </data>
   <data name="MetersMany" xml:space="preserve">
     <value>{0} метраў</value>
@@ -6216,17 +6378,26 @@
   <data name="MetersOther" xml:space="preserve">
     <value>{0} метраў</value>
   </data>
+  <data name="MetersShort" xml:space="preserve">
+    <value>{0} м</value>
+  </data>
   <data name="MetersTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Mi" xml:space="preserve">
+    <value>мілі</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>{0} міль ад вас</value>
   </data>
   <data name="MilesFromYou" xml:space="preserve">
-    <value>у {0} мілях ад вас</value>
+    <value>за {0} міль ад вас</value>
+  </data>
+  <data name="MilesShort" xml:space="preserve">
+    <value>{0} мілі</value>
   </data>
   <data name="MinutesBoldFew" xml:space="preserve">
     <value>**{0}** хвіліны</value>
@@ -6340,10 +6511,10 @@
     <value>Калі вы створыце нязвязаную з гэтым месцам суполку, вы можаце страціць магчымасць стварэння суполак на аснове месцазнаходжання.</value>
   </data>
   <data name="NearbyPeopleGreetingsDescription" xml:space="preserve">
-    <value>Адпраўце паведамленне ці выберыце прывітанне ўнізе, каб паказаць, што вы гатовы паразмаўляць.</value>
+    <value>Адпраўце паведамленне або выберыце прывітанне ўнізе, каб паказаць, што вы гатовыя паразмаўляць.</value>
   </data>
   <data name="NearbyPeopleGreetingsMessage" xml:space="preserve">
-    <value>{0} {1}</value>
+    <value>{0} за {1}</value>
   </data>
   <data name="NearbyPlaces" xml:space="preserve">
     <value>Або выберыце месца</value>
@@ -6403,6 +6574,15 @@
     <value>Новыя чаты ад невядомых карыстальнікаў</value>
   </data>
   <data name="NewContact" xml:space="preserve">
+    <value>Новы кантакт</value>
+  </data>
+  <data name="NewContactAlertButton" xml:space="preserve">
+    <value>Дадаць кантакт</value>
+  </data>
+  <data name="NewContactAlertMessage" xml:space="preserve">
+    <value>Нумар тэлефона **{0}** не ў вашым спісе кантактаў. Хочаце дадаць?</value>
+  </data>
+  <data name="NewContactAlertTitle" xml:space="preserve">
     <value>Новы кантакт</value>
   </data>
   <data name="NewConversationShortcut" xml:space="preserve">
@@ -6693,10 +6873,16 @@
   <data name="NotificationActionPinnedContactChannel2" xml:space="preserve">
     <value>{0} замацаваў(-ла) кантакт {1}</value>
   </data>
+  <data name="NotificationActionPinnedContactUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) кантакт {1}</value>
+  </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
     <value>{0} замацаваў(-ла) файл у суполцы {1}</value>
   </data>
   <data name="NotificationActionPinnedFileChannel" xml:space="preserve">
+    <value>{0} замацаваў(-ла) файл</value>
+  </data>
+  <data name="NotificationActionPinnedFileUser" xml:space="preserve">
     <value>{0} замацаваў(-ла) файл</value>
   </data>
   <data name="NotificationActionPinnedGame" xml:space="preserve">
@@ -6711,6 +6897,12 @@
   <data name="NotificationActionPinnedGameScoreChannel" xml:space="preserve">
     <value>{0} замацаваў(-ла) гульнявы лік</value>
   </data>
+  <data name="NotificationActionPinnedGameScoreUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) гульнявы лік</value>
+  </data>
+  <data name="NotificationActionPinnedGameUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) гульню</value>
+  </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
     <value>{0} замацаваў(-ла) карту ў суполцы {1}</value>
   </data>
@@ -6723,16 +6915,28 @@
   <data name="NotificationActionPinnedGeoLiveChannel" xml:space="preserve">
     <value>{0} замацаваў(-ла) трансляцыю месцазнаходжання</value>
   </data>
+  <data name="NotificationActionPinnedGeoLiveUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) трансляцыю месцазнаходжання</value>
+  </data>
+  <data name="NotificationActionPinnedGeoUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) карту</value>
+  </data>
   <data name="NotificationActionPinnedGif" xml:space="preserve">
     <value>{0} замацаваў(-ла) анімацыю ў суполцы {1}</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
     <value>{0} замацаваў(-ла) анімацыю</value>
   </data>
+  <data name="NotificationActionPinnedGifUser" xml:space="preserve">
+    <value> {0} замацаваў(-ла) анімацыю</value>
+  </data>
   <data name="NotificationActionPinnedInvoice" xml:space="preserve">
     <value>{0} замацаваў(-ла) рахунак у суполцы {1}</value>
   </data>
   <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
+    <value>{0} замацаваў(-ла) рахунак</value>
+  </data>
+  <data name="NotificationActionPinnedInvoiceUser" xml:space="preserve">
     <value>{0} замацаваў(-ла) рахунак</value>
   </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
@@ -6741,16 +6945,25 @@
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
     <value>{0} замацаваў(-ла) аўдыяфайл</value>
   </data>
+  <data name="NotificationActionPinnedMusicUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) аўдыяфайл</value>
+  </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
     <value>{0} замацаваў(-ла) паведамленне ў суполцы {1}</value>
   </data>
   <data name="NotificationActionPinnedNoTextChannel" xml:space="preserve">
     <value>{0} замацаваў(-ла) паведамленне</value>
   </data>
+  <data name="NotificationActionPinnedNoTextUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) паведамленне</value>
+  </data>
   <data name="NotificationActionPinnedPhoto" xml:space="preserve">
     <value>{0} замацаваў(-ла) фота ў суполцы {1}</value>
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
+    <value>{0} замацаваў(-ла) фота</value>
+  </data>
+  <data name="NotificationActionPinnedPhotoUser" xml:space="preserve">
     <value>{0} замацаваў(-ла) фота</value>
   </data>
   <data name="NotificationActionPinnedPoll" xml:space="preserve">
@@ -6765,16 +6978,25 @@
   <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
     <value>{0} замацаваў(-ла) апытанне {1}</value>
   </data>
+  <data name="NotificationActionPinnedPollUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) апытанне {1}</value>
+  </data>
   <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
     <value>{0} замацаваў(-ла) віктарыну «{2}» у суполцы {1}</value>
   </data>
   <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
     <value>{0} замацаваў(-ла) віктарыну «{1}»</value>
   </data>
+  <data name="NotificationActionPinnedQuizUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) віктарыну {1}</value>
+  </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0} замацаваў(-ла) відэапаведамленне ў суполцы {1}</value>
   </data>
   <data name="NotificationActionPinnedRoundChannel" xml:space="preserve">
+    <value>{0} замацаваў(-ла) відэапаведамленне</value>
+  </data>
+  <data name="NotificationActionPinnedRoundUser" xml:space="preserve">
     <value>{0} замацаваў(-ла) відэапаведамленне</value>
   </data>
   <data name="NotificationActionPinnedSticker" xml:space="preserve">
@@ -6789,11 +7011,20 @@
   <data name="NotificationActionPinnedStickerEmojiChannel" xml:space="preserve">
     <value>{0} замацаваў(-ла) {1} стыкер</value>
   </data>
+  <data name="NotificationActionPinnedStickerEmojiUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) {1} стыкер</value>
+  </data>
+  <data name="NotificationActionPinnedStickerUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) стыкер</value>
+  </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
     <value>{0} замацаваў(-ла) "{1}" у суполцы {2}</value>
   </data>
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
     <value>{0} замацаваў(-ла) "{1}"</value>
+  </data>
+  <data name="NotificationActionPinnedTextUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) «{1}»</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
     <value>{0} замацаваў(-ла) відэа ў суполцы {1}</value>
@@ -6801,10 +7032,16 @@
   <data name="NotificationActionPinnedVideoChannel" xml:space="preserve">
     <value>{0} замацаваў(-ла) відэа</value>
   </data>
+  <data name="NotificationActionPinnedVideoUser" xml:space="preserve">
+    <value>{0} замацаваў(-ла) відэа</value>
+  </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
     <value>{0} замацаваў(-ла) галасавое паведамленне ў суполцы {1}</value>
   </data>
   <data name="NotificationActionPinnedVoiceChannel" xml:space="preserve">
+    <value>{0} замацаваў(-ла) галасавое паведамленне</value>
+  </data>
+  <data name="NotificationActionPinnedVoiceUser" xml:space="preserve">
     <value>{0} замацаваў(-ла) галасавое паведамленне</value>
   </data>
   <data name="NotificationContactJoined" xml:space="preserve">
@@ -7422,7 +7659,7 @@
     <value>У рамцы</value>
   </data>
   <data name="PaintMarker" xml:space="preserve">
-    <value>Маркер</value>
+    <value>Маркёр</value>
   </data>
   <data name="PaintNeon" xml:space="preserve">
     <value>Неон</value>
@@ -7644,7 +7881,7 @@
     <value>Запампуйце ваш сканаваны пашпарт або іншы дакумент, які пацвярджае асобу</value>
   </data>
   <data name="PassportIdentityDriverLicence" xml:space="preserve">
-    <value>Запампуйуце ваша сканаванае вадзіцельскае пасведчанне</value>
+    <value>Запампуйце ваша сканаванае вадзіцельскае пасведчанне</value>
   </data>
   <data name="PassportIdentityID" xml:space="preserve">
     <value>Запампуйце вашу сканаваную ID-картку</value>
@@ -8268,6 +8505,11 @@
   <data name="PeopleNearbyInfo2" xml:space="preserve">
     <value>Абменьвайцеся кантактнымі данымі з людзьмі паблізу і знаходзьце новых сяброў.</value>
   </data>
+  <data name="PermissionBackgroundLocation" xml:space="preserve">
+    <value>Для трансляцыі вашага месцазнаходжання ў гэты чат, Telegram патрэбны пастаянны доступ да вашага месцазнаходжання, нават калі праграма знаходзіцца ў фонавым рэжыме.
+
+Мы будзем мець доступ да вашага месцазнаходжання толькі на той час, які вы выбераце, і вы зможаце спыніць трансляцыю ў любы момант. Мы не будзем выкарыстоўваць ваша месцазнаходжанне ні для якіх іншых мэт, а толькі для трансляцыі ў гэтым чаце.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>Каб вы маглі звязацца з сябрамі з усіх вашых прылад, вашы кантакты будуць пастаянна сінхранізвацца з моцна зашыфраванымі воблачнымі серверамі Telegram.</value>
   </data>
@@ -8353,6 +8595,9 @@
   <data name="PhotoSavedHint" xml:space="preserve">
     <value>Фота захавана ў галерэю</value>
   </data>
+  <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
+    <value>Фота захавана ў спампоўкі</value>
+  </data>
   <data name="PhotosFew" xml:space="preserve">
     <value>{0} фота</value>
   </data>
@@ -8364,6 +8609,24 @@
   </data>
   <data name="PhotosOther" xml:space="preserve">
     <value>{0} фота</value>
+  </data>
+  <data name="PhotosSavedHintFew" xml:space="preserve">
+    <value>{0} фота захаваны ў галерэю</value>
+  </data>
+  <data name="PhotosSavedHintMany" xml:space="preserve">
+    <value>{0} фота захаваны ў галерэю</value>
+  </data>
+  <data name="PhotosSavedHintOne" xml:space="preserve">
+    <value>{0} фота захавана ў галерэю</value>
+  </data>
+  <data name="PhotosSavedHintOther" xml:space="preserve">
+    <value>{0} фота захавана ў галерэю</value>
+  </data>
+  <data name="PhotosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PhotosSelectedFew" xml:space="preserve">
     <value>выбрана {0} фота</value>
@@ -8389,6 +8652,9 @@
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinAlsoFor" xml:space="preserve">
+    <value>Таксама замацаваць для {0}</value>
+  </data>
   <data name="PinFolderLimitReached" xml:space="preserve">
     <value>Выбачайце, вы не можаце замацаваць больш чатаў.</value>
   </data>
@@ -8405,7 +8671,7 @@
     <value>Замацаваць</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>Хочаце замацаваць гэта паведамленне ў гэтай суполцы?</value>
+    <value>Хочаце замацаваць гэта паведамленне для ўсіх удзельнікаў у гэтай суполцы?</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>Хочаце замацаваць гэта паведамленне ў гэтым канале?</value>
@@ -8422,11 +8688,38 @@
   <data name="PinnedMessages" xml:space="preserve">
     <value>Замацаваныя паведамленні</value>
   </data>
+  <data name="PinnedMessagesCountFew" xml:space="preserve">
+    <value>{0} замацаваныя паведамленні</value>
+  </data>
+  <data name="PinnedMessagesCountMany" xml:space="preserve">
+    <value>{0} замацаваных паведамленняў</value>
+  </data>
+  <data name="PinnedMessagesCountOne" xml:space="preserve">
+    <value>{0} замацаванае паведамленне</value>
+  </data>
+  <data name="PinnedMessagesCountOther" xml:space="preserve">
+    <value>{0} замацаванае паведамленне</value>
+  </data>
+  <data name="PinnedMessagesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesHidden" xml:space="preserve">
+    <value>Замацаваныя паведамленні схаваны</value>
+  </data>
+  <data name="PinnedMessagesHiddenInfo" xml:space="preserve">
+    <value>Вы ўбачыце панэль з замацаванымі паведамленнямі толькі пры замацаванні новага.</value>
+  </data>
   <data name="PinnedPoll" xml:space="preserve">
     <value>Замацаванае апытанне</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Апавясціць усіх удзельнікаў</value>
+  </data>
+  <data name="PinOldMessageAlert" xml:space="preserve">
+    <value>Вы хочаце замацаваць старое паведамленне, пакінуўшы ў замацаваных навейшае?</value>
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Замацаваць зверху</value>
@@ -8544,6 +8837,9 @@
   </data>
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Памылковы макет?</value>
+  </data>
+  <data name="PreviousPinnedMessage" xml:space="preserve">
+    <value>Папярэдняе паведамленне</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Апавяшчэнні з высокім прыярытэтам будуць працаваць нават тады, калі ваш тэлефон знаходзіцца ў рэжыме «Не турбаваць».</value>
@@ -8683,6 +8979,9 @@
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Прыватнасць</value>
   </data>
+  <data name="PrivateShares" xml:space="preserve">
+    <value>Прыватныя абагульванні</value>
+  </data>
   <data name="ProfileJoinChannel" xml:space="preserve">
     <value>Далучыцца да канала</value>
   </data>
@@ -8694,6 +8993,24 @@
   </data>
   <data name="ProfilePopupNotificationInfo" xml:space="preserve">
     <value>Новыя паведамленні ад гэтага кантакту будуць з’яўляцца на экране нават тады, калі вы не карыстаецеся Telegram.</value>
+  </data>
+  <data name="ProximityAlertCancelled" xml:space="preserve">
+    <value>Абвестка аб збліжэнні скасавана</value>
+  </data>
+  <data name="ProximityAlertSet" xml:space="preserve">
+    <value>Абвестка аб збліжэнні зададзена</value>
+  </data>
+  <data name="ProximityAlertSetInfoGroup2" xml:space="preserve">
+    <value>Мы паведамім вам, калі хтосьці знаходзіцца ў межах {0} ад вас.</value>
+  </data>
+  <data name="ProximityAlertSetInfoUser" xml:space="preserve">
+    <value>Мы паведамім вам, калі {0} знаходзіцца ў межах {1} ад вас.</value>
+  </data>
+  <data name="ProximityTooltioGroup" xml:space="preserve">
+    <value>Апавяшчаць, калі іншыя ўдзельнікі суполкі знаходзяцца побач</value>
+  </data>
+  <data name="ProximityTooltioUser" xml:space="preserve">
+    <value>Апавяшчаць, калі {0} знаходзіцца побач</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Проксі</value>
@@ -8717,7 +9034,8 @@
     <value>Схаваць чат</value>
   </data>
   <data name="PsaInfo_covid" xml:space="preserve">
-    <value>Гэта абвяшчэнне дзяржаўнай службы, якое датычыцца бягучай пандэміі COVID-19. Даведайцеся больш аб гэтай ініцыятыве на сайце https://telegram.org/blog/coronavirus</value>
+    <value>Гэта паведамленне падаецца вам службай саціяльнай рэкламы. Даведайцеся больш аб гэтай ініцыятыве па спасылцы 
+https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="PsaInfoDefault" xml:space="preserve">
     <value>Праверка абвяшчэння</value>
@@ -8729,7 +9047,7 @@
     <value>Важнае апавяшчэнне</value>
   </data>
   <data name="PsaMessageInfo_covid" xml:space="preserve">
-    <value>Гэта паведамленне ўтрымлівае сацыяльную рэкламу аб пандэміі COVID-19, якая працягваецца. Даведайцеся больш аб гэтай ініцыятыве па спасылцы 
+    <value>Гэта паведамленне падаецца вам службай саціяльнай рэкламы. Даведайцеся больш аб гэтай ініцыятыве па спасылцы 
 https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="PsaMessageInfoDefault" xml:space="preserve">
@@ -8749,6 +9067,30 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="PublicPollCantForward" xml:space="preserve">
     <value>Выбачайце, апытанні з бачнымі галасамі не могуць быць перасланы ў каналы.</value>
+  </data>
+  <data name="PublicShares" xml:space="preserve">
+    <value>Публічныя абагульванні</value>
+  </data>
+  <data name="PublicSharesCountFew" xml:space="preserve">
+    <value>
+{0} публічныя абагульванні</value>
+  </data>
+  <data name="PublicSharesCountMany" xml:space="preserve">
+    <value>
+{0} публічных абагульванняў</value>
+  </data>
+  <data name="PublicSharesCountOne" xml:space="preserve">
+    <value>{0} публічнае абагульванне</value>
+  </data>
+  <data name="PublicSharesCountOther" xml:space="preserve">
+    <value>
+{0} публічнага абагульвання</value>
+  </data>
+  <data name="PublicSharesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Ліловы</value>
@@ -9146,7 +9488,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Праблемы з доступам да электроннай пошты {0}?</value>
   </data>
   <data name="RestoreEmailTroubleNoEmail" xml:space="preserve">
-    <value>Не маеце доступу да гэтага email?</value>
+    <value>Не маеце доступу да гэтай электроннай пошты?</value>
   </data>
   <data name="RestoreEmailTroubleText" xml:space="preserve">
     <value>Калі вы не можаце аднавіць доступ да вашага адраса электроннай пошты, вам застаецца толькі ўспомніць свой пароль або скінуць свой уліковы запіс.</value>
@@ -9194,7 +9536,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Вы ўпэўнены, што хочаце змяніць гэту спасылку? Пасля таго, як вы гэта зробіце, ніхто не зможа далучыцца да суполкі па ёй.</value>
   </data>
   <data name="RevokeAlertNewLink" xml:space="preserve">
-    <value>Папярэдняя запрашальная спасылка цяпер неактыўная. Была згенеравана новая спасылка.</value>
+    <value>Папярэдняя запрашальная спасылка цяпер неактыўная. Была згенерыравана новая спасылка.</value>
   </data>
   <data name="RevokeButton" xml:space="preserve">
     <value>Змяніць</value>
@@ -9425,7 +9767,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Telegram</value>
   </data>
   <data name="SecretChatTimerDays" xml:space="preserve">
-    <value>д</value>
+    <value>сут</value>
   </data>
   <data name="SecretChatTimerHours" xml:space="preserve">
     <value>гадз</value>
@@ -9437,7 +9779,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>с</value>
   </data>
   <data name="SecretChatTimerWeeks" xml:space="preserve">
-    <value>т</value>
+    <value>тыд</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
     <value>Ці хочаце ўключыць пашыраны перадпрагляд спасылак у сакрэтных чатах? Звярніце ўвагу, што перадпрагляд ствараецца на серверах Telegram.</value>
@@ -9446,7 +9788,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Перадпрагляд спасылак</value>
   </data>
   <data name="SecretWebPageInfo" xml:space="preserve">
-    <value>Перадпрагляд спасылкі генеруецца на серверах Тelegram. Мы не захоўваем даныя аб спасылках, якія вы адпраўляеце.</value>
+    <value>Перадпрагляд спасылкі генерыруецца на серверах Тelegram. Мы не захоўваем даныя аб спасылках, якія вы адпраўляеце.</value>
   </data>
   <data name="SecurityTitle" xml:space="preserve">
     <value>Бяспека</value>
@@ -9491,7 +9833,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Адправіць як файлы</value>
   </data>
   <data name="SendByEnter" xml:space="preserve">
-    <value>Адпраўляць па націсканню на Enter</value>
+    <value>Адпраўляць па націсканні на Enter</value>
   </data>
   <data name="SendContactTo" xml:space="preserve">
     <value>Адправіць кантакт {0}?</value>
@@ -9557,7 +9899,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Адправіць {0}</value>
   </data>
   <data name="SendLiveLocation" xml:space="preserve">
-    <value>Трансліраваць месцазнаходжанне для...</value>
+    <value>Трансліраваць месцазнаходжанне</value>
   </data>
   <data name="SendLiveLocationFor15m" xml:space="preserve">
     <value>15 хвілін</value>
@@ -9688,7 +10030,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Прызначыць кіраўніком</value>
   </data>
   <data name="SetAsMain" xml:space="preserve">
-    <value>Прызначыць асноўным</value>
+    <value>Задаць асноўным</value>
   </data>
   <data name="SetBackground" xml:space="preserve">
     <value>ЗАДАЦЬ ФОН</value>
@@ -9703,7 +10045,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Заблакіраваць праграму кодам доступу, каб іншыя не маглі адкрыць яе.</value>
   </data>
   <data name="SetProfilePhoto" xml:space="preserve">
-    <value>Прызначыць фота профілю</value>
+    <value>Задаць аватар профілю</value>
   </data>
   <data name="SetRecoveryEmail" xml:space="preserve">
     <value>Задаць эл. пошту для аднаўлення</value>
@@ -9867,6 +10209,15 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ShareLocation" xml:space="preserve">
     <value>Месцазнаходжанне</value>
   </data>
+  <data name="ShareLocationAlertButton" xml:space="preserve">
+    <value>Абагуліць</value>
+  </data>
+  <data name="ShareLocationAlertText" xml:space="preserve">
+    <value>Каб абвестка працавала, трансліруйце ваша месцазнаходжанне ў гэты чат.</value>
+  </data>
+  <data name="ShareLocationAlertTitle" xml:space="preserve">
+    <value>Абагуліць месцазнаходжанне</value>
+  </data>
   <data name="ShareMyContactInfo" xml:space="preserve">
     <value>Абагуліць мой кантакт</value>
   </data>
@@ -10012,8 +10363,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Павольны рэжым</value>
   </data>
   <data name="SlowModeHint" xml:space="preserve">
-    <value>Уключаны павольны рэжым. Вы зможаце
-адправіць наступнае паведамленне праз {0}</value>
+    <value>Уключаны павольны рэжым. Вы зможаце напісаць праз {0}</value>
   </data>
   <data name="SlowmodeHours" xml:space="preserve">
     <value>{0} гадз</value>
@@ -10051,7 +10401,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Частата гукавых апавяшчэнняў</value>
   </data>
   <data name="SmartNotificationsDetail" xml:space="preserve">
-    <value>{0} у {1}</value>
+    <value>{0} за {1}</value>
   </data>
   <data name="SmartNotificationsDisabled" xml:space="preserve">
     <value>Адключана</value>
@@ -10115,6 +10465,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="StatisticSearchUserHistory" xml:space="preserve">
     <value>Праглядзець паведамленні</value>
+  </data>
+  <data name="StatisticViews" xml:space="preserve">
+    <value>Прагляды</value>
   </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Стыкеры і маскі</value>
@@ -10849,6 +11202,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UnofficialApp" xml:space="preserve">
     <value>неафіцыяльная праграма</value>
   </data>
+  <data name="UnpinAllMessages" xml:space="preserve">
+    <value>АДМАЦАВАЦЬ УСЕ ПАВЕДАМЛЕННІ</value>
+  </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>Адмацаваць</value>
   </data>
@@ -11182,6 +11538,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="UsersCountZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="UserSetAsAdminHint" xml:space="preserve">
+    <value>**{0}** прызначаны(-а) кіраўніком</value>
+  </data>
   <data name="UsersFew" xml:space="preserve">
     <value>{0} карыстальнікі</value>
   </data>
@@ -11245,6 +11604,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VideoSavedHint" xml:space="preserve">
     <value>Відэа захавана ў галерэю</value>
   </data>
+  <data name="VideoSavedToDownloadsHint" xml:space="preserve">
+    <value>Відэа захавана ў спампоўкі</value>
+  </data>
   <data name="VideosFew" xml:space="preserve">
     <value>{0} відэа</value>
   </data>
@@ -11256,6 +11618,27 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VideosOther" xml:space="preserve">
     <value>{0} відэа</value>
+  </data>
+  <data name="VideosSavedHintFew" xml:space="preserve">
+    <value>
+{0} відэа захаваны ў галерэю</value>
+  </data>
+  <data name="VideosSavedHintMany" xml:space="preserve">
+    <value>
+{0} відэа захаваны ў галерэю</value>
+  </data>
+  <data name="VideosSavedHintOne" xml:space="preserve">
+    <value>{0} відэа захавана ў галерэю</value>
+  </data>
+  <data name="VideosSavedHintOther" xml:space="preserve">
+    <value>
+{0} відэа захавана ў галерэю</value>
+  </data>
+  <data name="VideosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VideosSelectedFew" xml:space="preserve">
     <value>выбрана {0} відэа</value>
@@ -11281,6 +11664,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VideosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ViewChannelStats" xml:space="preserve">
+    <value>Праглядзець статыстыку канала</value>
+  </data>
   <data name="ViewContact" xml:space="preserve">
     <value>ПРАГЛЕДЗЕЦЬ КАНТАКТ</value>
   </data>
@@ -11298,6 +11684,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Удзельнікі, якія праглядаюць суполку</value>
+  </data>
+  <data name="ViewMessage" xml:space="preserve">
+    <value>Адкрыць паведамленне</value>
+  </data>
+  <data name="ViewMessageStatistic" xml:space="preserve">
+    <value>Статыстыка паведамленняў</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Праглядзець набор</value>
@@ -11337,6 +11729,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
     <value>Праглядаў на допіс</value>
+  </data>
+  <data name="ViewStats" xml:space="preserve">
+    <value>Статыстыка праглядаў</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>

@@ -811,7 +811,7 @@ namespace Unigram.Controls.Messages
             {
                 if (traveler.Id == message.ProtoService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinYouRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un2", watcher, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinYouRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, ref entities);
                 }
                 else if (watcher.Id == message.ProtoService.Options.MyId)
                 {

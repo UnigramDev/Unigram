@@ -190,6 +190,9 @@
   <data name="AccDescrIVTitle" xml:space="preserve">
     <value>Titolo</value>
   </data>
+  <data name="AccDescrLocationNotify" xml:space="preserve">
+    <value>Notifica quando le persone che condividono la posizione sono nelle vicinanze</value>
+  </data>
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Vai alla menzione successiva</value>
   </data>
@@ -407,7 +410,7 @@
     <value>Set di sticker</value>
   </data>
   <data name="AccDescrStopLiveLocation" xml:space="preserve">
-    <value>Termina condivisione posizione attuale</value>
+    <value>Termina condivisione posizione in tempo reale</value>
   </data>
   <data name="AccDescrSwitchCamera" xml:space="preserve">
     <value>Cambia fotocamera</value>
@@ -474,6 +477,9 @@
   </data>
   <data name="AccountSwitch" xml:space="preserve">
     <value>Cambia</value>
+  </data>
+  <data name="AccPinnedMessagesList" xml:space="preserve">
+    <value>Elenco messaggi fissati</value>
   </data>
   <data name="AccReleaseForArchive" xml:space="preserve">
     <value>Rilascia per l’archivio</value>
@@ -608,7 +614,7 @@
     <value>un1 ha fissato una posizione</value>
   </data>
   <data name="ActionPinnedGeoLive" xml:space="preserve">
-    <value>un1 ha fissato una posizione attuale</value>
+    <value>un1 ha fissato una posizione in tempo reale</value>
   </data>
   <data name="ActionPinnedGif" xml:space="preserve">
     <value>un1 ha fissato una GIF</value>
@@ -660,6 +666,15 @@
   </data>
   <data name="ActionUserScoredInGame" xml:space="preserve">
     <value>un1 ha totalizzato {0} a un2</value>
+  </data>
+  <data name="ActionUserWithinOtherRadius" xml:space="preserve">
+    <value>un1 ora è a {0} da un2</value>
+  </data>
+  <data name="ActionUserWithinRadius" xml:space="preserve">
+    <value>un1 ora è a {0} da te</value>
+  </data>
+  <data name="ActionUserWithinYouRadius" xml:space="preserve">
+    <value>Ora sei a {0} da un1</value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>Hai aggiunto un2</value>
@@ -1333,9 +1348,15 @@ Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-gener
     <value>Gli amministratori di questo gruppo ti hanno vietato di inviare contenuti inline qui.</value>
   </data>
   <data name="AttachLiveLocation" xml:space="preserve">
-    <value>Posizione attuale</value>
+    <value>Posizione in tempo reale</value>
   </data>
   <data name="AttachLiveLocationIsSharing" xml:space="preserve">
+    <value>{0} condivisa con {1}</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChat" xml:space="preserve">
+    <value>{0} condivisa con {1}</value>
+  </data>
+  <data name="AttachLiveLocationIsSharingChats" xml:space="preserve">
     <value>{0} condivisa con {1}</value>
   </data>
   <data name="AttachLocation" xml:space="preserve">
@@ -1376,6 +1397,27 @@ Dai un'occhiata alle <![CDATA[<a href="https://telegram.org/faq/it#domande-gener
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Messaggi vocali</value>
+  </data>
+  <data name="AudioSavedHint" xml:space="preserve">
+    <value>File salvato nella musica</value>
+  </data>
+  <data name="AudiosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintOne" xml:space="preserve">
+    <value>File salvato nella musica</value>
+  </data>
+  <data name="AudiosSavedHintOther" xml:space="preserve">
+    <value>{0} file salvati nella musica</value>
+  </data>
+  <data name="AudiosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="AudiosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="AudioTitle" xml:space="preserve">
     <value>Musica condivisa</value>
@@ -2259,7 +2301,7 @@ Nota: se ti dimentichi il codice, dovrai eliminare e reinstallare l'app. Tutte l
     <value>{0} ha pubblicato una GIF</value>
   </data>
   <data name="ChannelMessageLiveLocation" xml:space="preserve">
-    <value>{0} ha pubblicato una posizione attuale</value>
+    <value>{0} ha pubblicato una posizione in tempo reale</value>
   </data>
   <data name="ChannelMessageMap" xml:space="preserve">
     <value>{0} ha pubblicato una posizione</value>
@@ -2922,6 +2964,24 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="CommentsMany" xml:space="preserve">
     <value/>
   </data>
+  <data name="CommentsNoNumberFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberOne" xml:space="preserve">
+    <value>commento</value>
+  </data>
+  <data name="CommentsNoNumberOther" xml:space="preserve">
+    <value>commenti</value>
+  </data>
+  <data name="CommentsNoNumberTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CommentsNoNumberZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="CommentsOne" xml:space="preserve">
     <value>{0} commento</value>
   </data>
@@ -3574,7 +3634,7 @@ Cancella i log</value>
     <value>Scartare le modifiche?</value>
   </data>
   <data name="DiscardVideoMessageDescription" xml:space="preserve">
-    <value>Sei sicuro di voler arrestare la registrazione e scartare il tuo videomessaggio?</value>
+    <value>Sei sicuro di voler terminare la registrazione e scartare il tuo videomessaggio?</value>
   </data>
   <data name="DiscardVideoMessageTitle" xml:space="preserve">
     <value>Scarta videomessaggio</value>
@@ -3583,7 +3643,7 @@ Cancella i log</value>
     <value>Scarta</value>
   </data>
   <data name="DiscardVoiceMessageDescription" xml:space="preserve">
-    <value>Sei sicuro di voler arrestare la registrazione e scartare il tuo messaggio vocale?</value>
+    <value>Sei sicuro di voler terminare la registrazione e scartare il tuo messaggio vocale?</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>Scarta messaggio vocale</value>
@@ -4424,6 +4484,9 @@ Durata: {1}</value>
   <data name="February" xml:space="preserve">
     <value>Febbraio</value>
   </data>
+  <data name="FileSavedHint" xml:space="preserve">
+    <value>File salvato nei download</value>
+  </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>File</value>
   </data>
@@ -4438,6 +4501,24 @@ Durata: {1}</value>
   </data>
   <data name="FilesOther" xml:space="preserve">
     <value>{0} file</value>
+  </data>
+  <data name="FilesSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintOne" xml:space="preserve">
+    <value>File salvato nei download</value>
+  </data>
+  <data name="FilesSavedHintOther" xml:space="preserve">
+    <value>{0} file salvati nei download</value>
+  </data>
+  <data name="FilesSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="FilesSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="FilesTwo" xml:space="preserve">
     <value/>
@@ -4741,6 +4822,9 @@ Durata: {1}</value>
   </data>
   <data name="FootsFromYou" xml:space="preserve">
     <value>{0} ft da te</value>
+  </data>
+  <data name="FootsShort" xml:space="preserve">
+    <value>{0} ft</value>
   </data>
   <data name="ForgotPassword" xml:space="preserve">
     <value>Password dimenticata?</value>
@@ -5066,6 +5150,9 @@ Durata: {1}</value>
   <data name="GifCaption" xml:space="preserve">
     <value>Didascalia GIF</value>
   </data>
+  <data name="GifSavedToDownloadsHint" xml:space="preserve">
+    <value>GIF salvata nei download</value>
+  </data>
   <data name="GIFsFew" xml:space="preserve">
     <value/>
   </data>
@@ -5263,6 +5350,9 @@ Tieni presente che può comunque partecipare tramite link di invito del gruppo p
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Nascondi</value>
+  </data>
+  <data name="HidePinnedMessages" xml:space="preserve">
+    <value>NASCONDI I MESSAGGI FISSATI</value>
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Alte luci</value>
@@ -5575,6 +5665,9 @@ Tutti i media rimarranno nel cloud Telegram e potranno essere riscaricati ogni v
   <data name="KickFromSupergroup" xml:space="preserve">
     <value>Limita utente</value>
   </data>
+  <data name="Km" xml:space="preserve">
+    <value>km</value>
+  </data>
   <data name="KMetersAway" xml:space="preserve">
     <value>km</value>
   </data>
@@ -5583,6 +5676,9 @@ Tutti i media rimarranno nel cloud Telegram e potranno essere riscaricati ogni v
   </data>
   <data name="KMetersFromYou2" xml:space="preserve">
     <value>{0} km da te</value>
+  </data>
+  <data name="KMetersShort" xml:space="preserve">
+    <value>{0} km</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Lingua</value>
@@ -5780,16 +5876,16 @@ Questo link funzionerà solo per i membri di questa chat.</value>
     <value/>
   </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
-    <value>Scegli per quanto tempo le persone in questa chat vedranno la tua posizione attuale.</value>
+    <value>Scegli per quanto le persone in questa chat vedranno la tua posizione in tempo reale.</value>
   </data>
   <data name="LiveLocationAlertPrivate" xml:space="preserve">
-    <value>Scegli per quanto tempo {0} vedrà la tua posizione precisa.</value>
+    <value>Scegli per quanto {0} vedrà la tua posizione precisa.</value>
   </data>
   <data name="LiveLocationContext" xml:space="preserve">
-    <value>Posizione attuale</value>
+    <value>Posizione in tempo reale</value>
   </data>
   <data name="LiveLocations" xml:space="preserve">
-    <value>Posizioni attuali</value>
+    <value>Posizioni in tempo reale</value>
   </data>
   <data name="Loading" xml:space="preserve">
     <value>Carico...</value>
@@ -5846,6 +5942,21 @@ Questa operazione può richiedere alcuni minuti.</value>
   </data>
   <data name="LocatedChannelsTooMuch" xml:space="preserve">
     <value>Spiacenti, l'utente in oggetto ha già troppi gruppi basati sulla posizione. Per favore chiedigli di eliminare o trasferire prima uno di quelli.</value>
+  </data>
+  <data name="LocationNotifiation" xml:space="preserve">
+    <value>Notifica di prossimità</value>
+  </data>
+  <data name="LocationNotifiationButton" xml:space="preserve">
+    <value>Notificami entro {0}</value>
+  </data>
+  <data name="LocationNotifiationButtonGroup" xml:space="preserve">
+    <value>Notifica quando qualcuno è a {0}</value>
+  </data>
+  <data name="LocationNotifiationButtonUser" xml:space="preserve">
+    <value>Notifica quando {0} è a {1}</value>
+  </data>
+  <data name="LocationNotifiationCloser" xml:space="preserve">
+    <value>Sei già più vicino di {0}</value>
   </data>
   <data name="LocationUpdated" xml:space="preserve">
     <value>aggiornata</value>
@@ -5946,7 +6057,7 @@ Il tuo numero di telefono rimarrà nascosto.</value>
     <value>Mappa</value>
   </data>
   <data name="MapPreviewProvider" xml:space="preserve">
-    <value>Fornitore anteprima mappa</value>
+    <value>Anteprima mappa</value>
   </data>
   <data name="MapPreviewProviderGoogle" xml:space="preserve">
     <value>Google</value>
@@ -5958,7 +6069,7 @@ Il tuo numero di telefono rimarrà nascosto.</value>
     <value>Telegram</value>
   </data>
   <data name="MapPreviewProviderTitle" xml:space="preserve">
-    <value>Fornitore anteprima mappa</value>
+    <value>Anteprima mappa</value>
   </data>
   <data name="MapPreviewProviderYandex" xml:space="preserve">
     <value>Yandex</value>
@@ -6025,6 +6136,24 @@ Il tuo numero di telefono rimarrà nascosto.</value>
   </data>
   <data name="MediaOther" xml:space="preserve">
     <value>{0} media</value>
+  </data>
+  <data name="MediaSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintOne" xml:space="preserve">
+    <value>Un oggetto salvato nella galleria</value>
+  </data>
+  <data name="MediaSavedHintOther" xml:space="preserve">
+    <value>{0} oggetti salvati nella galleria</value>
+  </data>
+  <data name="MediaSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MediaSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="MediaSelectedFew" xml:space="preserve">
     <value/>
@@ -6173,6 +6302,9 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="MessageNotifications" xml:space="preserve">
     <value>Notifiche messaggio</value>
   </data>
+  <data name="MessagePinnedHint" xml:space="preserve">
+    <value>Messaggio fissato</value>
+  </data>
   <data name="MessagePreview" xml:space="preserve">
     <value>Anteprima messaggio</value>
   </data>
@@ -6251,8 +6383,29 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="messagesTwo" xml:space="preserve">
     <value/>
   </data>
+  <data name="MessagesUnpinnedFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedOne" xml:space="preserve">
+    <value>messaggio tolto</value>
+  </data>
+  <data name="MessagesUnpinnedOther" xml:space="preserve">
+    <value>{0} messaggi tolti</value>
+  </data>
+  <data name="MessagesUnpinnedTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MessagesUnpinnedZero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="messagesZero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="MessageUnpinnedHint" xml:space="preserve">
+    <value>Messaggio tolto</value>
   </data>
   <data name="MetersAway" xml:space="preserve">
     <value>m</value>
@@ -6275,17 +6428,26 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="MetersOther" xml:space="preserve">
     <value>{0} metri</value>
   </data>
+  <data name="MetersShort" xml:space="preserve">
+    <value>{0} m</value>
+  </data>
   <data name="MetersTwo" xml:space="preserve">
     <value/>
   </data>
   <data name="MetersZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Mi" xml:space="preserve">
+    <value>mi</value>
+  </data>
   <data name="MilesAway" xml:space="preserve">
     <value>distante {0} miglia</value>
   </data>
   <data name="MilesFromYou" xml:space="preserve">
     <value>{0} mi da te</value>
+  </data>
+  <data name="MilesShort" xml:space="preserve">
+    <value>{0} mi</value>
   </data>
   <data name="MinutesBoldFew" xml:space="preserve">
     <value/>
@@ -6462,6 +6624,15 @@ La lunghezza minima è 5 caratteri.</value>
     <value>Nuove chat da utenti sconosciuti</value>
   </data>
   <data name="NewContact" xml:space="preserve">
+    <value>Nuovo contatto</value>
+  </data>
+  <data name="NewContactAlertButton" xml:space="preserve">
+    <value>Aggiungi contatto</value>
+  </data>
+  <data name="NewContactAlertMessage" xml:space="preserve">
+    <value>Il numero di telefono **{0}** non è tra i tuoi contatti. Vuoi aggiungerlo?</value>
+  </data>
+  <data name="NewContactAlertTitle" xml:space="preserve">
     <value>Nuovo contatto</value>
   </data>
   <data name="NewConversationShortcut" xml:space="preserve">
@@ -6751,10 +6922,16 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
   <data name="NotificationActionPinnedContactChannel2" xml:space="preserve">
     <value>{0} ha fissato un contatto {1}</value>
   </data>
+  <data name="NotificationActionPinnedContactUser" xml:space="preserve">
+    <value>{0} ha fissato un contatto {1}</value>
+  </data>
   <data name="NotificationActionPinnedFile" xml:space="preserve">
     <value>{0} ha fissato un file nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedFileChannel" xml:space="preserve">
+    <value>{0} ha fissato un file</value>
+  </data>
+  <data name="NotificationActionPinnedFileUser" xml:space="preserve">
     <value>{0} ha fissato un file</value>
   </data>
   <data name="NotificationActionPinnedGame" xml:space="preserve">
@@ -6769,6 +6946,12 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
   <data name="NotificationActionPinnedGameScoreChannel" xml:space="preserve">
     <value>{0} ha fissato un punteggio</value>
   </data>
+  <data name="NotificationActionPinnedGameScoreUser" xml:space="preserve">
+    <value>{0} ha fissato un punteggio</value>
+  </data>
+  <data name="NotificationActionPinnedGameUser" xml:space="preserve">
+    <value>{0} ha fissato un gioco</value>
+  </data>
   <data name="NotificationActionPinnedGeo" xml:space="preserve">
     <value>{0} ha fissato una posizione nel gruppo {1}</value>
   </data>
@@ -6776,15 +6959,24 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>{0} ha fissato una posizione</value>
   </data>
   <data name="NotificationActionPinnedGeoLive" xml:space="preserve">
-    <value>{0} ha fissato una posizione attuale nel gruppo {1}</value>
+    <value>{0} ha fissato una posizione in tempo reale nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedGeoLiveChannel" xml:space="preserve">
-    <value>{0} ha fissato una posizione attuale</value>
+    <value>{0} ha fissato una posizione in tempo reale</value>
+  </data>
+  <data name="NotificationActionPinnedGeoLiveUser" xml:space="preserve">
+    <value>{0} ha fissato una posizione in tempo reale</value>
+  </data>
+  <data name="NotificationActionPinnedGeoUser" xml:space="preserve">
+    <value>{0} ha fissato una mappa</value>
   </data>
   <data name="NotificationActionPinnedGif" xml:space="preserve">
     <value>{0} ha fissato una GIF nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedGifChannel" xml:space="preserve">
+    <value>{0} ha fissato una GIF</value>
+  </data>
+  <data name="NotificationActionPinnedGifUser" xml:space="preserve">
     <value>{0} ha fissato una GIF</value>
   </data>
   <data name="NotificationActionPinnedInvoice" xml:space="preserve">
@@ -6793,10 +6985,16 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
   <data name="NotificationActionPinnedInvoiceChannel" xml:space="preserve">
     <value>{0} ha fissato una fattura</value>
   </data>
+  <data name="NotificationActionPinnedInvoiceUser" xml:space="preserve">
+    <value>{0} ha fissato una fattura</value>
+  </data>
   <data name="NotificationActionPinnedMusic" xml:space="preserve">
     <value>{0} ha fissato un file audio nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedMusicChannel" xml:space="preserve">
+    <value>{0} ha fissato un file audio</value>
+  </data>
+  <data name="NotificationActionPinnedMusicUser" xml:space="preserve">
     <value>{0} ha fissato un file audio</value>
   </data>
   <data name="NotificationActionPinnedNoText" xml:space="preserve">
@@ -6805,10 +7003,16 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
   <data name="NotificationActionPinnedNoTextChannel" xml:space="preserve">
     <value>{0} ha fissato un messaggio</value>
   </data>
+  <data name="NotificationActionPinnedNoTextUser" xml:space="preserve">
+    <value>{0} ha fissato un messaggio</value>
+  </data>
   <data name="NotificationActionPinnedPhoto" xml:space="preserve">
     <value>{0} ha fissato una foto nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedPhotoChannel" xml:space="preserve">
+    <value>{0} ha fissato una foto</value>
+  </data>
+  <data name="NotificationActionPinnedPhotoUser" xml:space="preserve">
     <value>{0} ha fissato una foto</value>
   </data>
   <data name="NotificationActionPinnedPoll" xml:space="preserve">
@@ -6823,16 +7027,25 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
   <data name="NotificationActionPinnedPollChannel2" xml:space="preserve">
     <value>{0} ha fissato un sondaggio {1}</value>
   </data>
+  <data name="NotificationActionPinnedPollUser" xml:space="preserve">
+    <value>{0} ha fissato un sondaggio {1}</value>
+  </data>
   <data name="NotificationActionPinnedQuiz2" xml:space="preserve">
     <value>{0} ha fissato il quiz "{2}" nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedQuizChannel2" xml:space="preserve">
     <value>{0} ha fissato il quiz "{1}"</value>
   </data>
+  <data name="NotificationActionPinnedQuizUser" xml:space="preserve">
+    <value>{0} ha fissato un quiz {1}</value>
+  </data>
   <data name="NotificationActionPinnedRound" xml:space="preserve">
     <value>{0} ha fissato un videomessaggio nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedRoundChannel" xml:space="preserve">
+    <value>{0} ha fissato un videomessaggio</value>
+  </data>
+  <data name="NotificationActionPinnedRoundUser" xml:space="preserve">
     <value>{0} ha fissato un videomessaggio</value>
   </data>
   <data name="NotificationActionPinnedSticker" xml:space="preserve">
@@ -6847,10 +7060,19 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
   <data name="NotificationActionPinnedStickerEmojiChannel" xml:space="preserve">
     <value>{0} ha fissato uno {1} sticker</value>
   </data>
+  <data name="NotificationActionPinnedStickerEmojiUser" xml:space="preserve">
+    <value>{0} ha fissato uno {1} sticker</value>
+  </data>
+  <data name="NotificationActionPinnedStickerUser" xml:space="preserve">
+    <value>{0} ha fissato uno sticker</value>
+  </data>
   <data name="NotificationActionPinnedText" xml:space="preserve">
     <value>{0} ha fissato "{1}" nel gruppo {2}</value>
   </data>
   <data name="NotificationActionPinnedTextChannel" xml:space="preserve">
+    <value>{0} ha fissato "{1}"</value>
+  </data>
+  <data name="NotificationActionPinnedTextUser" xml:space="preserve">
     <value>{0} ha fissato "{1}"</value>
   </data>
   <data name="NotificationActionPinnedVideo" xml:space="preserve">
@@ -6859,10 +7081,16 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
   <data name="NotificationActionPinnedVideoChannel" xml:space="preserve">
     <value>{0} ha fissato un video</value>
   </data>
+  <data name="NotificationActionPinnedVideoUser" xml:space="preserve">
+    <value>{0} ha fissato un video</value>
+  </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
     <value>{0} ha fissato un messaggio vocale nel gruppo {1}</value>
   </data>
   <data name="NotificationActionPinnedVoiceChannel" xml:space="preserve">
+    <value>{0} ha fissato un messaggio vocale</value>
+  </data>
+  <data name="NotificationActionPinnedVoiceUser" xml:space="preserve">
     <value>{0} ha fissato un messaggio vocale</value>
   </data>
   <data name="NotificationContactJoined" xml:space="preserve">
@@ -6980,7 +7208,7 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>{0} ha inviato una fattura nel gruppo {1} per {2}</value>
   </data>
   <data name="NotificationMessageGroupLiveLocation" xml:space="preserve">
-    <value>{0} ha condiviso una posizione attuale nel gruppo {1}</value>
+    <value>{0} ha condiviso una posizione in tempo reale nel gruppo {1}</value>
   </data>
   <data name="NotificationMessageGroupMap" xml:space="preserve">
     <value>{0} ha inviato una posizione nel gruppo {1}</value>
@@ -7022,7 +7250,7 @@ Puoi personalizzare le notifiche per una chat aprendo il suo profilo e scegliend
     <value>{0} ti ha inviato una fattura per {1}</value>
   </data>
   <data name="NotificationMessageLiveLocation" xml:space="preserve">
-    <value>{0} ti ha inviato una posizione attuale</value>
+    <value>{0} ti ha inviato una posizione in tempo reale</value>
   </data>
   <data name="NotificationMessageMap" xml:space="preserve">
     <value>{0} ti ha inviato una posizione</value>
@@ -7309,7 +7537,7 @@ il team di Telegram</value>
     <value>VISUALIZZA SFONDO</value>
   </data>
   <data name="OpenChannel" xml:space="preserve">
-    <value>APRI CANALE</value>
+    <value>VISUALIZZA CANALE</value>
   </data>
   <data name="OpenChannel2" xml:space="preserve">
     <value>Apri canale</value>
@@ -7318,7 +7546,10 @@ il team di Telegram</value>
     <value>APRI FILE</value>
   </data>
   <data name="OpenGroup" xml:space="preserve">
-    <value>APRI GRUPPO</value>
+    <value>VISUALIZZA GRUPPO</value>
+  </data>
+  <data name="OpenGroup2" xml:space="preserve">
+    <value>Apri gruppo</value>
   </data>
   <data name="OpenInBrowser" xml:space="preserve">
     <value>APRI IN...</value>
@@ -7330,7 +7561,7 @@ il team di Telegram</value>
     <value>Apri in...</value>
   </data>
   <data name="OpenMessage" xml:space="preserve">
-    <value>APRI MESSAGGIO</value>
+    <value>VISUALIZZA MESSAGGIO</value>
   </data>
   <data name="OpenProfile" xml:space="preserve">
     <value>Apri profilo</value>
@@ -8326,6 +8557,11 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   <data name="PeopleNearbyInfo2" xml:space="preserve">
     <value>Scambia info di contatto con le persone vicine e trova nuovi amici.</value>
   </data>
+  <data name="PermissionBackgroundLocation" xml:space="preserve">
+    <value>Per condividere la posizione in tempo reale in questa chat, Telegram ha bisogno di accedere alla tua posizione in qualsiasi momento, anche quando l'applicazione è in background.
+
+Accederemo alla tua posizione solo per la durata da te scelta, e potrai smettere di condividerla in qualsiasi momento. Non useremo la tua posizione per nessun altro scopo se non quello di condividerla in questa chat.</value>
+  </data>
   <data name="PermissionContacts" xml:space="preserve">
     <value>Per farti connettere con i tuoi amici su tutti i tuoi dispositivi, i tuoi contatti saranno sincronizzati di continuo con i server cloud fortemente criptati di Telegram.</value>
   </data>
@@ -8410,6 +8646,9 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   <data name="PhotoSavedHint" xml:space="preserve">
     <value>Foto salvata nella galleria</value>
   </data>
+  <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
+    <value>Foto salvata nei download</value>
+  </data>
   <data name="PhotosFew" xml:space="preserve">
     <value/>
   </data>
@@ -8421,6 +8660,24 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   </data>
   <data name="PhotosOther" xml:space="preserve">
     <value>{0} foto</value>
+  </data>
+  <data name="PhotosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintOne" xml:space="preserve">
+    <value>Foto salvata nella galleria</value>
+  </data>
+  <data name="PhotosSavedHintOther" xml:space="preserve">
+    <value>{0} foto salvate nella galleria</value>
+  </data>
+  <data name="PhotosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PhotosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PhotosSelectedFew" xml:space="preserve">
     <value/>
@@ -8446,6 +8703,9 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   <data name="PhotosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="PinAlsoFor" xml:space="preserve">
+    <value>Fissa anche per {0}</value>
+  </data>
   <data name="PinFolderLimitReached" xml:space="preserve">
     <value>Spiacenti, non puoi fissare in alto altre chat.</value>
   </data>
@@ -8462,7 +8722,7 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
     <value>Fissa</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>Vuoi fissare questo messaggio in questo gruppo?</value>
+    <value>Vuoi fissare questo messaggio per tutti i membri del gruppo?</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>Vuoi fissare questo messaggio in questo canale?</value>
@@ -8479,11 +8739,38 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   <data name="PinnedMessages" xml:space="preserve">
     <value>Messaggi fissati</value>
   </data>
+  <data name="PinnedMessagesCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountOne" xml:space="preserve">
+    <value>Messaggio fissato</value>
+  </data>
+  <data name="PinnedMessagesCountOther" xml:space="preserve">
+    <value>{0} messaggi fissati</value>
+  </data>
+  <data name="PinnedMessagesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesCountZero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PinnedMessagesHidden" xml:space="preserve">
+    <value>Messaggi fissati nascosti</value>
+  </data>
+  <data name="PinnedMessagesHiddenInfo" xml:space="preserve">
+    <value>Rivedrai i messaggi fissati solo se ne sarà fissato uno nuovo.</value>
+  </data>
   <data name="PinnedPoll" xml:space="preserve">
     <value>Sondaggio fissato</value>
   </data>
   <data name="PinNotify" xml:space="preserve">
     <value>Notifica tutti i membri</value>
+  </data>
+  <data name="PinOldMessageAlert" xml:space="preserve">
+    <value>Vuoi fissare un vecchio messaggio lasciandone fissato uno più recente?</value>
   </data>
   <data name="PinToTop" xml:space="preserve">
     <value>Fissa in alto</value>
@@ -8601,6 +8888,9 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   </data>
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Layout errato?</value>
+  </data>
+  <data name="PreviousPinnedMessage" xml:space="preserve">
+    <value>Messaggio precedente</value>
   </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Le notifiche con priorità più alta funzioneranno anche se il telefono è in modalità Non disturbare.</value>
@@ -8740,6 +9030,9 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   <data name="PrivacyTitle" xml:space="preserve">
     <value>Privacy</value>
   </data>
+  <data name="PrivateShares" xml:space="preserve">
+    <value>Condivisioni private</value>
+  </data>
   <data name="ProfileJoinChannel" xml:space="preserve">
     <value>Unisciti al canale</value>
   </data>
@@ -8751,6 +9044,24 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   </data>
   <data name="ProfilePopupNotificationInfo" xml:space="preserve">
     <value>I nuovi messaggi da questo contatto appariranno sul tuo schermo quando non stai usando Telegram.</value>
+  </data>
+  <data name="ProximityAlertCancelled" xml:space="preserve">
+    <value>Notifica di prossimità annullata</value>
+  </data>
+  <data name="ProximityAlertSet" xml:space="preserve">
+    <value>Notifica di prossimità impostata</value>
+  </data>
+  <data name="ProximityAlertSetInfoGroup2" xml:space="preserve">
+    <value>Ti notificheremo quando qualcuno sarà a {0} da te.</value>
+  </data>
+  <data name="ProximityAlertSetInfoUser" xml:space="preserve">
+    <value>Ti notificheremo quando {0} sarà a {1} da te.</value>
+  </data>
+  <data name="ProximityTooltioGroup" xml:space="preserve">
+    <value>Avvisa quando gli altri membri del gruppo sono vicini</value>
+  </data>
+  <data name="ProximityTooltioUser" xml:space="preserve">
+    <value>Avvisa quando {0} è vicino</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Proxy</value>
@@ -8805,6 +9116,27 @@ Per favore attiva i servizi di localizzazione per abilitare questa funzione.</va
   </data>
   <data name="PublicPollCantForward" xml:space="preserve">
     <value>Spiacenti, i sondaggi con voti visibili non possono essere inoltrati nei canali.</value>
+  </data>
+  <data name="PublicShares" xml:space="preserve">
+    <value>Condivisioni pubbliche</value>
+  </data>
+  <data name="PublicSharesCountFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountOne" xml:space="preserve">
+    <value>{0} condivisione pubblica</value>
+  </data>
+  <data name="PublicSharesCountOther" xml:space="preserve">
+    <value>{0} condivisioni pubbliche</value>
+  </data>
+  <data name="PublicSharesCountTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PublicSharesCountZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Viola</value>
@@ -9613,7 +9945,7 @@ Potrebbe essere necessario riavviare l'applicazione affinché questo abbia effet
     <value>Invia {0}</value>
   </data>
   <data name="SendLiveLocation" xml:space="preserve">
-    <value>Condividi posizione attuale per...</value>
+    <value>Posizione in tempo reale...</value>
   </data>
   <data name="SendLiveLocationFor15m" xml:space="preserve">
     <value>per 15 minuti</value>
@@ -9625,13 +9957,13 @@ Potrebbe essere necessario riavviare l'applicazione affinché questo abbia effet
     <value>per 8 ore</value>
   </data>
   <data name="SendLiveLocationInfo" xml:space="preserve">
-    <value>Aggiornata in tempo reale</value>
+    <value>Aggiornata mentre ti muovi</value>
   </data>
   <data name="SendLiveLocationMenu" xml:space="preserve">
-    <value>Condividi posizione attuale</value>
+    <value>Invia posizione in tempo reale</value>
   </data>
   <data name="SendLocation" xml:space="preserve">
-    <value>Invia la mia posizione corrente</value>
+    <value>Invia la mia posizione attuale</value>
   </data>
   <data name="SendMessage" xml:space="preserve">
     <value>Invia messaggio</value>
@@ -9923,6 +10255,15 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
   <data name="ShareLocation" xml:space="preserve">
     <value>Posizione</value>
   </data>
+  <data name="ShareLocationAlertButton" xml:space="preserve">
+    <value>Condividi</value>
+  </data>
+  <data name="ShareLocationAlertText" xml:space="preserve">
+    <value>Per far funzionare l'avviso, condividi la posizione in tempo reale in questa chat.</value>
+  </data>
+  <data name="ShareLocationAlertTitle" xml:space="preserve">
+    <value>Condividi posizione</value>
+  </data>
   <data name="ShareMyContactInfo" xml:space="preserve">
     <value>Condividi il mio contatto</value>
   </data>
@@ -9963,7 +10304,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>Condividi tema</value>
   </data>
   <data name="ShareYouLocationInfo" xml:space="preserve">
-    <value>Questo invierà la tua posizione corrente al bot.</value>
+    <value>Questo invierà la tua posizione attuale al bot.</value>
   </data>
   <data name="ShareYouLocationInline" xml:space="preserve">
     <value>Questo bot vorrebbe sapere la tua posizione ogni volta che invii una richiesta. Questo può essere usato per fornire risultati specifici in base alla posizione.</value>
@@ -9972,7 +10313,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>Condividere la tua posizione?</value>
   </data>
   <data name="ShareYouLocationUnable" xml:space="preserve">
-    <value>L'app non è riuscita a determinare la tua posizione corrente</value>
+    <value>L'app non è riuscita a determinare la tua posizione attuale</value>
   </data>
   <data name="ShareYouLocationUnableManually" xml:space="preserve">
     <value>Scegli manualmente</value>
@@ -9981,7 +10322,7 @@ Non rispondere alla chiamata, Telegram farà tutto in automatico.</value>
     <value>Condividere il tuo numero di telefono?</value>
   </data>
   <data name="SharingLiveLocationTitle" xml:space="preserve">
-    <value>Stai condividendo la tua posizione attuale in {0}</value>
+    <value>Posizione in tempo reale condivisa con {0}</value>
   </data>
   <data name="SharingYouAndOtherName" xml:space="preserve">
     <value>Tu e {0}</value>
@@ -10075,7 +10416,7 @@ il prossimo messaggio tra {0}</value>
     <value>{0}h</value>
   </data>
   <data name="SlowmodeInfoOff" xml:space="preserve">
-    <value>Scegli quanto tempo ciascun membro deve attendere prima di inviare il messaggio successivo.</value>
+    <value>Scegli quanto dovranno aspettare i membri prima di inviare il messaggio successivo.</value>
   </data>
   <data name="SlowmodeInfoSelected" xml:space="preserve">
     <value>I membri potranno inviare solo un messaggio ogni {0}.</value>
@@ -10172,6 +10513,9 @@ La modalità lenta è attiva. Non puoi inviare più di un messaggio alla volta.<
   <data name="StatisticSearchUserHistory" xml:space="preserve">
     <value>Visualizza messaggi</value>
   </data>
+  <data name="StatisticViews" xml:space="preserve">
+    <value>Visualizzazioni</value>
+  </data>
   <data name="StickersAndMasks" xml:space="preserve">
     <value>Sticker e maschere</value>
   </data>
@@ -10251,7 +10595,7 @@ La modalità lenta è attiva. Non puoi inviare più di un messaggio alla volta.<
     <value>Arresta</value>
   </data>
   <data name="StopAllLocationSharings" xml:space="preserve">
-    <value>ARRESTA TUTTO</value>
+    <value>TERMINA TUTTO</value>
   </data>
   <data name="StopDownload" xml:space="preserve">
     <value>Arresta download</value>
@@ -10260,28 +10604,28 @@ La modalità lenta è attiva. Non puoi inviare più di un messaggio alla volta.<
     <value>Termina condivisione</value>
   </data>
   <data name="StopLiveLocationAlertAll" xml:space="preserve">
-    <value>Sei sicuro di voler terminare la condivisione della tua posizione attuale?</value>
+    <value>Sei sicuro di voler terminare la condivisione della posizione in tempo reale?</value>
   </data>
   <data name="StopLiveLocationAlertAllText" xml:space="preserve">
-    <value>Vuoi interrompere la condivisione della tua posizione attuale?</value>
+    <value>Vuoi terminare la condivisione della posizione in tempo reale?</value>
   </data>
   <data name="StopLiveLocationAlertToGroup" xml:space="preserve">
-    <value>Sei sicuro di voler terminare la condivisione della posizione attuale con {0}?</value>
+    <value>Sei sicuro di voler terminare la condivisione della posizione in tempo reale con {0}?</value>
   </data>
   <data name="StopLiveLocationAlertToGroupText" xml:space="preserve">
-    <value>Vuoi interrompere la condivisione della tua posizione attuale con **{0}**?</value>
+    <value>Vuoi terminare la condivisione della posizione in tempo reale con **{0}**?</value>
   </data>
   <data name="StopLiveLocationAlertToTitle" xml:space="preserve">
     <value>Termina condivisione posizione</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
-    <value>Sei sicuro di voler terminare la condivisione della posizione attuale con {0}?</value>
+    <value>Sei sicuro di voler terminare la condivisione della posizione in tempo reale con {0}?</value>
   </data>
   <data name="StopLiveLocationAlertToUserText" xml:space="preserve">
-    <value>Vuoi interrompere la condivisione della tua posizione attuale con **{0}**?</value>
+    <value>Vuoi terminare la condivisione della posizione in tempo reale con **{0}**?</value>
   </data>
   <data name="StopLoading" xml:space="preserve">
-    <value>Arrestare il caricamento?</value>
+    <value>Terminare il caricamento?</value>
   </data>
   <data name="StopPoll" xml:space="preserve">
     <value>Termina sondaggio</value>
@@ -10305,7 +10649,7 @@ La modalità lenta è attiva. Non puoi inviare più di un messaggio alla volta.<
     <value>Interrompi visibilità</value>
   </data>
   <data name="StopVerification" xml:space="preserve">
-    <value>Vuoi arrestare il processo di verifica?</value>
+    <value>Vuoi terminare il processo di verifica?</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Utilizzo archivio</value>
@@ -10903,6 +11247,9 @@ Ma se in genere non sei d'accordo con le modeste esigenze di Telegram, non sarà
   <data name="UnofficialApp" xml:space="preserve">
     <value>app non ufficiale</value>
   </data>
+  <data name="UnpinAllMessages" xml:space="preserve">
+    <value>TOGLI TUTTI I MESSAGGI</value>
+  </data>
   <data name="UnpinFromTop" xml:space="preserve">
     <value>Togli dall'alto</value>
   </data>
@@ -11237,6 +11584,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   <data name="UsersCountZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="UserSetAsAdminHint" xml:space="preserve">
+    <value>**{0}** promosso ad amministratore</value>
+  </data>
   <data name="UsersFew" xml:space="preserve">
     <value/>
   </data>
@@ -11300,6 +11650,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   <data name="VideoSavedHint" xml:space="preserve">
     <value>Video salvato nella galleria</value>
   </data>
+  <data name="VideoSavedToDownloadsHint" xml:space="preserve">
+    <value>Video salvato nei download</value>
+  </data>
   <data name="VideosFew" xml:space="preserve">
     <value/>
   </data>
@@ -11311,6 +11664,24 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   </data>
   <data name="VideosOther" xml:space="preserve">
     <value>{0} video</value>
+  </data>
+  <data name="VideosSavedHintFew" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintMany" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintOne" xml:space="preserve">
+    <value>Video salvato nella galleria</value>
+  </data>
+  <data name="VideosSavedHintOther" xml:space="preserve">
+    <value>{0} video salvati nella galleria</value>
+  </data>
+  <data name="VideosSavedHintTwo" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="VideosSavedHintZero" xml:space="preserve">
+    <value/>
   </data>
   <data name="VideosSelectedFew" xml:space="preserve">
     <value/>
@@ -11336,6 +11707,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   <data name="VideosZero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ViewChannelStats" xml:space="preserve">
+    <value>Visualizza statistiche canale</value>
+  </data>
   <data name="ViewContact" xml:space="preserve">
     <value>VISUALIZZA CONTATTO</value>
   </data>
@@ -11353,6 +11727,12 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   </data>
   <data name="ViewingMembers" xml:space="preserve">
     <value>Membri che visualizzano</value>
+  </data>
+  <data name="ViewMessage" xml:space="preserve">
+    <value>Apri messaggio</value>
+  </data>
+  <data name="ViewMessageStatistic" xml:space="preserve">
+    <value>Statistiche messaggio</value>
   </data>
   <data name="ViewPackPreview" xml:space="preserve">
     <value>Visualizza pacchetto</value>
@@ -11392,6 +11772,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   </data>
   <data name="ViewsPerPost" xml:space="preserve">
     <value>Visualizzazioni per post</value>
+  </data>
+  <data name="ViewStats" xml:space="preserve">
+    <value>Visualizza statistiche</value>
   </data>
   <data name="ViewsTwo" xml:space="preserve">
     <value/>
@@ -11583,7 +11966,7 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
     <value>Attiva</value>
   </data>
   <data name="VoipUseLessData" xml:space="preserve">
-    <value>Usa meno dati per le chiamate</value>
+    <value>Usa meno dati per chiamare</value>
   </data>
   <data name="VoipUserCameraIsOff" xml:space="preserve">
     <value>La videocamera di {0} è spenta</value>
