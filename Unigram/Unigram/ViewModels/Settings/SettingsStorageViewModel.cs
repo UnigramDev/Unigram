@@ -143,8 +143,8 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var types = dialog.SelectedItems ?? new FileType[0];
-            if (types.IsEmpty())
+            var types = dialog.SelectedItems;
+            if (types == null || types.IsEmpty())
             {
                 return;
             }
