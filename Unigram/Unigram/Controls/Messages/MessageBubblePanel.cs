@@ -1,7 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using System;
-using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Windows.Foundation;
@@ -164,7 +163,7 @@ namespace Unigram.Controls.Messages
                     }
 
                     var regions = textLayout.GetCharacterRegions(caption.Text.Length, 0);
-                    if (regions.Length > 0)
+                    if (regions.Length > 0 && regions[0].LayoutBounds.Bottom < text.DesiredSize.Height)
                     {
                         return regions[0].LayoutBounds;
                     }
@@ -172,7 +171,7 @@ namespace Unigram.Controls.Messages
             }
             catch { }
 
-            return Rect.Empty;
+            return new Rect(0, 0, int.MaxValue, 0);
         }
     }
 }
