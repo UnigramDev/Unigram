@@ -98,6 +98,7 @@
             Grid.Column="3"/>
         <controls:GlyphButton
             x:Name="ListButton"
+            AutomationProperties.Name="{CustomResource AccPinnedMessagesList}"
             Glyph="&#xEA37;"
             Grid.Column="3"/>
     </Grid>
