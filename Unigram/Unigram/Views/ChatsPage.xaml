@@ -16,16 +16,16 @@
     IsItemClickEnabled="False"
     SelectionMode="None"
     AllowDrop="True"
+    CanDragItems="True"
+    CanReorderItems="False"
     DragItemsStarting="Chats_DragItemsStarting"
     DragItemsCompleted="Chats_DragItemsCompleted"
     ChoosingItemContainer="ChatsList_ChoosingItemContainer">
-    <!--CanDragItems="True"
-    CanReorderItems="False"
+    <!--
     ItemClick="ChatsList_ItemClick"-->
 
     <ListView.ItemContainerStyle>
         <Style TargetType="ListViewItem">
-            <Setter Property="IsTabStop" Value="False"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Padding" Value="0"/>
             <Setter Property="MinHeight" Value="0"/>
@@ -51,7 +51,6 @@
                     Margin="12,8,12,8"
                     Grid.Column="1"
                     Grid.Row="2"/>
-
             </Border>
         </Border>
     </ListView.Footer>

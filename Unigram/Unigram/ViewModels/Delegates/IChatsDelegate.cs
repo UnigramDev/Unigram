@@ -12,7 +12,7 @@ namespace Unigram.ViewModels.Delegates
         void SetSelectionMode(bool enabled);
 
         void SetSelectedItem(Chat chat);
-        void SetSelectedItems();
+        void SetSelectedItems(IList<Chat> chats);
 
         bool IsItemSelected(Chat chat);
 
@@ -24,18 +24,6 @@ namespace Unigram.ViewModels.Delegates
 
     public interface IChatListDelegate
     {
-        void SetSelectedItem(Chat chat);
-        void SetSelectedItems(IList<Chat> chats);
-
-        void AddSelectedItem(Chat chat);
-        void RemoveSelectedItem(Chat chat);
-
-        bool IsItemSelected(Chat chat);
-
         long? SelectedItem { get; set; }
-
-        int SelectedCount { get; }
-
-        void SetSelectionMode(bool enabled);
     }
 }

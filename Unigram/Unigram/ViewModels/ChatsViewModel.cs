@@ -89,59 +89,6 @@ namespace Unigram.ViewModels
             set { Set(ref _selectionMode, value); }
         }
 
-        public int SelectedCount => _selectedItems.Count;
-
-        public void SetSelectionMode(bool enabled)
-        {
-            Delegate?.SetSelectionMode(enabled);
-        }
-
-        public void SetSelectedItem(Chat chat)
-        {
-            if (SelectionMode != ListViewSelectionMode.Multiple)
-            {
-                Delegate?.Navigate(chat);
-                //ChatsList.SelectedItem = chat;
-            }
-        }
-
-        public void SetSelectedItems(IList<Chat> chats)
-        {
-            //if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
-            //{
-            //    foreach (var item in chats)
-            //    {
-            //        if (!ChatsList.SelectedItems.Contains(item))
-            //        {
-            //            ChatsList.SelectedItems.Add(item);
-            //        }
-            //    }
-
-            //    foreach (Chat item in ChatsList.SelectedItems)
-            //    {
-            //        if (!chats.Contains(item))
-            //        {
-            //            ChatsList.SelectedItems.Remove(item);
-            //        }
-            //    }
-            //}
-        }
-
-        public void AddSelectedItem(Chat chat)
-        {
-            SelectedItems.Add(chat);
-        }
-
-        public void RemoveSelectedItem(Chat chat)
-        {
-            SelectedItems.Remove(chat);
-        }
-
-        public bool IsItemSelected(Chat chat)
-        {
-            return SelectedItems.Contains(chat);
-        }
-
         #endregion
 
         public ItemsCollection Items { get; private set; }
@@ -527,7 +474,7 @@ namespace Unigram.ViewModels
             SelectedItems.ReplaceWith(new[] { chat });
             SelectionMode = ListViewSelectionMode.Multiple;
 
-            //Delegate?.SetSelectedItems(_selectedItems);
+            Delegate?.SetSelectedItems(_selectedItems);
         }
 
         #endregion
@@ -730,7 +677,7 @@ namespace Unigram.ViewModels
                         _hasMoreItems = chats.ChatIds.Count > 0;
                         _aggregator.Subscribe(this);
 
-                        _viewModel.Delegate?.SetSelectedItems();
+                        _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
 
                         if (_hasMoreItems == false)
                         {
@@ -822,7 +769,7 @@ namespace Unigram.ViewModels
                             }
                             if (_viewModel.SelectedItems.Contains(chat))
                             {
-                                _viewModel.Delegate?.SetSelectedItems();
+                                _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                             }
                         }
                         else if (lastMessage)
@@ -845,7 +792,7 @@ namespace Unigram.ViewModels
                     if (_viewModel.SelectedItems.Contains(chat))
                     {
                         _viewModel.SelectedItems.Remove(chat);
-                        _viewModel.Delegate?.SetSelectedItems();
+                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                     }
 
                     if (!_hasMoreItems)

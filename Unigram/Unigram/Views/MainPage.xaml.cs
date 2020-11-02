@@ -89,9 +89,7 @@ namespace Unigram.Views
             SettingsView.DataContext = ViewModel.Settings;
             ViewModel.Settings.Delegate = SettingsView;
             ViewModel.Chats.Delegate = this;
-            ViewModel.Chats.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
             ViewModel.ArchivedChats.Delegate = this;
-            ViewModel.ArchivedChats.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 
             NavigationCacheMode = NavigationCacheMode.Disabled;
 
@@ -120,7 +118,7 @@ namespace Unigram.Views
                 SettingsFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
             }
 
-            ChatsList.RegisterPropertyChangedCallback(ChatsListView.SelectionMode2Property, List_SelectionModeChanged);
+            ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
             var header = ElementCompositionPreview.GetElementVisual(PageHeader);
             header.Clip = header.Compositor.CreateInsetClip();
@@ -1364,8 +1362,8 @@ namespace Unigram.Views
             {
                 if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
                 {
-                    ViewModel.Chats.SelectedItem = null;
-                    ViewModel.Chats.SelectionMode = ListViewSelectionMode.None;
+                    ChatsList.SelectedItem = null;
+                    ChatsList.SelectionMode = ListViewSelectionMode.None;
                 }
 
                 Separator.BorderThickness = new Thickness(0);
@@ -1379,13 +1377,8 @@ namespace Unigram.Views
             {
                 if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
                 {
-                    if (ChatsList.SelectedItem2 is Chat chat)
-                    {
-                        ViewModel.Chats.SelectedItem = chat.Id;
-                    }
-
-                    ViewModel.Chats.SelectionMode = ListViewSelectionMode.Single;
-                    //ViewModel.Chats.SelectedItem = ViewModel.Chats.SelectedItem;
+                    ChatsList.SelectionMode = ListViewSelectionMode.Single;
+                    ChatsList.SelectedItem = ViewModel.Chats.SelectedItem;
                 }
 
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
@@ -1403,7 +1396,7 @@ namespace Unigram.Views
 
         private void UpdatePaneToggleButtonVisibility()
         {
-            if (BackButton.Visibility == Visibility.Visible || SearchField.Visibility == Visibility.Visible || ChatsList.SelectionMode2 == ListViewSelectionMode.Multiple || FolderList?.SelectionMode2 == ListViewSelectionMode.Multiple)
+            if (BackButton.Visibility == Visibility.Visible || SearchField.Visibility == Visibility.Visible || ChatsList.SelectionMode == ListViewSelectionMode.Multiple || FolderList?.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
             }
@@ -1436,7 +1429,7 @@ namespace Unigram.Views
             var dialog = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == chatId);
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                ChatsList.SelectedItem2 = dialog;
+                ChatsList.SelectedItem = dialog;
             }
 
             var folder = ViewModel.Folder;
@@ -1450,7 +1443,7 @@ namespace Unigram.Views
             dialog = folder.Items.FirstOrDefault(x => x.Id == chatId);
             if (folder.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                FolderList.SelectedItem2 = dialog;
+                FolderList.SelectedItem = dialog;
             }
         }
 
@@ -2913,32 +2906,30 @@ namespace Unigram.Views
         {
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                ChatsList.SelectedItem2 = chat;
+                ChatsList.SelectedItem = chat;
             }
         }
 
-        public void SetSelectedItems()
+        public void SetSelectedItems(IList<Chat> chats)
         {
-            ChatsList.SetSelectedItems();
+            if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                foreach (var item in chats)
+                {
+                    if (!ChatsList.SelectedItems.Contains(item))
+                    {
+                        ChatsList.SelectedItems.Add(item);
+                    }
+                }
 
-            //if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
-            //{
-            //    foreach (var item in chats)
-            //    {
-            //        if (!ChatsList.SelectedItems.Contains(item))
-            //        {
-            //            ChatsList.SelectedItems.Add(item);
-            //        }
-            //    }
-
-            //    foreach (Chat item in ChatsList.SelectedItems)
-            //    {
-            //        if (!chats.Contains(item))
-            //        {
-            //            ChatsList.SelectedItems.Remove(item);
-            //        }
-            //    }
-            //}
+                foreach (Chat item in ChatsList.SelectedItems)
+                {
+                    if (!chats.Contains(item))
+                    {
+                        ChatsList.SelectedItems.Remove(item);
+                    }
+                }
+            }
         }
 
         public bool IsItemSelected(Chat chat)

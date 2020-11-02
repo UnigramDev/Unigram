@@ -789,11 +789,13 @@
                                     <!--IsItemClickEnabled="True"
                                                             SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
                                     <local:ChatsPage x:Name="ChatsList"
+                                                     ItemClick="ListView_ItemClick"
+                                                     IsItemClickEnabled="True"
                                                      AutomationProperties.LandmarkType="Main"
                                                      Main="{x:Bind ViewModel}"
                                                      DataContext="{x:Bind ViewModel.Chats}"
                                                      ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
-                                                     SelectionMode2="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
+                                                     SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
                                                      AllowSelection="True"
                                                      Grid.Row="1">
                                         <ListView.Header>
@@ -801,7 +803,6 @@
                                                 <Border x:Name="ArchivedChatsPanel">
                                                     <cells:ChatCell
                                                         x:Name="ArchivedChats"
-                                                        Click="ArchivedChats_Click"
                                                         ContextRequested="ArchivedChats_ContextRequested"
                                                         Visibility="Collapsed"
                                                         Stroke="{ThemeResource ChatLastMessageStateBrush}"
@@ -810,12 +811,11 @@
                                                 </Border>
                                                 <Border VerticalAlignment="Bottom">
                                                     <Border x:Name="ArchivedChatsCompactPanel" Background="{ThemeResource PageBackgroundDarkBrush}">
-                                                        <cells:ChatCell
+                                                        <!--<cells:ChatCell
                                                             Content="{CustomResource ArchivedChats}"
-                                                            Click="ArchivedChats_Click"
                                                             ContextRequested="ArchivedChats_ContextRequested"
                                                             Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
-                                                            Padding="12,6"/>
+                                                            Padding="12,6"/>-->
                                                     </Border>
                                                 </Border>
                                             </Grid>
@@ -832,7 +832,7 @@
                                         Main="{x:Bind ViewModel}"
                                         DataContext="{x:Bind ViewModel.Folder, Mode=OneWay}"
                                         ItemsSource="{x:Bind ViewModel.Folder.Items, Mode=OneWay}"
-                                        SelectionMode2="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"/>
+                                        SelectionMode="{x:Bind ViewModel.Folder.SelectionMode, Mode=TwoWay}"/>
                                 </Grid>
 
                                 <Grid

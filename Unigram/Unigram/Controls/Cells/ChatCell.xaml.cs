@@ -16,11 +16,8 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.UI;
 using Windows.UI.Composition;
-using Windows.UI.Input;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -37,7 +34,7 @@ namespace Unigram.Controls.Cells
         Read
     }
 
-    public sealed partial class ChatCell : ToggleButton
+    public sealed partial class ChatCell : UserControl, IMultipleElement
     {
         private Chat _chat;
         private ChatList _chatList;
@@ -61,11 +58,6 @@ namespace Unigram.Controls.Cells
             _onlineBadge.CenterPoint = new Vector3(6.5f);
             _onlineBadge.Opacity = 0;
             _onlineBadge.Scale = new Vector3(0);
-        }
-
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new ChatCellAutomationPeer(this);
         }
 
         public void UpdateService(IProtoService protoService, IChatListDelegate delegato)
@@ -134,7 +126,7 @@ namespace Unigram.Controls.Cells
 
             MinithumbnailPanel.Visibility = Visibility.Collapsed;
 
-            VisualStateManager.GoToState(LayoutRoot, "Muted", false);
+            VisualStateManager.GoToState(this, "Muted", false);
 
             UpdateTicks(null);
 
@@ -335,7 +327,7 @@ namespace Unigram.Controls.Cells
         public void UpdateNotificationSettings(Chat chat)
         {
             var muted = _protoService.GetNotificationSettingsMuteFor(chat) > 0;
-            VisualStateManager.GoToState(LayoutRoot, muted ? "Muted" : "Unmuted", false);
+            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -457,9 +449,9 @@ namespace Unigram.Controls.Cells
 
         public void UpdateViewState(Chat chat, bool selected, bool compact, bool threeLines)
         {
-            VisualStateManager.GoToState(LayoutRoot, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
-            VisualStateManager.GoToState(LayoutRoot, compact ? "Compact" : "Expanded", false);
-            VisualStateManager.GoToState(LayoutRoot, threeLines ? "ThreeLines" : "Default", false);
+            VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
+            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
+            VisualStateManager.GoToState(this, threeLines ? "ThreeLines" : "Default", false);
 
             if (threeLines != _expanded && _protoService != null)
             {
@@ -475,9 +467,9 @@ namespace Unigram.Controls.Cells
 
         public void UpdateViewState(ChatList chatList, bool selected, bool compact, bool threeLines)
         {
-            VisualStateManager.GoToState(LayoutRoot, selected ? "Selected" : "Normal", false);
-            VisualStateManager.GoToState(LayoutRoot, compact ? "Compact" : "Expanded", false);
-            VisualStateManager.GoToState(LayoutRoot, threeLines ? "ThreeLines" : "Default", false);
+            VisualStateManager.GoToState(this, selected ? "Selected" : "Normal", false);
+            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
+            VisualStateManager.GoToState(this, threeLines ? "ThreeLines" : "Default", false);
 
             if (threeLines != _expanded && _protoService != null)
             {
@@ -1035,7 +1027,7 @@ namespace Unigram.Controls.Cells
             TypeIcon.Visibility = type is ChatTypeSupergroup ? Visibility.Visible : Visibility.Collapsed;
 
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
-            VisualStateManager.GoToState(LayoutRoot, muted ? "Muted" : "Unmuted", false);
+            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
 
             VerifiedIcon.Visibility = Visibility.Collapsed;
 
@@ -1198,27 +1190,9 @@ namespace Unigram.Controls.Cells
             _selectionOutline.Opacity = 0;
         }
 
-        protected override void OnToggle()
+        public void UpdateState(bool selected, bool animate)
         {
-            if (_selectionMode == ListViewSelectionMode.Multiple)
-            {
-                OnSelectionChanged(IsChecked != true, true);
-                base.OnToggle();
-
-                if (IsChecked == true)
-                {
-                    _delegate?.AddSelectedItem(_chat);
-                }
-                else
-                {
-                    _delegate?.RemoveSelectedItem(_chat);
-                }
-            }
-        }
-
-        private void OnSelectionChanged(bool selected, bool animate)
-        {
-            if (animate && selected != (IsChecked == true))
+            if (animate)
             {
                 var compositor = Window.Current.Compositor;
 
@@ -1269,29 +1243,6 @@ namespace Unigram.Controls.Cells
                 _selectionOutline.Scale = new Vector3(selected ? 1 : 40f / 48f);
                 _selectionOutline.Opacity = selected ? 1 : 0;
             }
-        }
-
-        private ListViewSelectionMode _selectionMode;
-
-        public void SetSelectionMode(ListViewSelectionMode mode, bool animate)
-        {
-            if (mode == ListViewSelectionMode.Multiple && _delegate?.IsItemSelected(_chat) == true)
-            {
-                OnSelectionChanged(true, animate);
-                IsChecked = true;
-            }
-            else if (mode == ListViewSelectionMode.Single && _delegate?.SelectedItem == _chat.Id)
-            {
-                OnSelectionChanged(false, _selectionMode == ListViewSelectionMode.Multiple && IsChecked == true);
-                IsChecked = null;
-            }
-            else
-            {
-                OnSelectionChanged(false, animate);
-                IsChecked = false;
-            }
-
-            _selectionMode = mode;
         }
 
         #endregion
@@ -1516,88 +1467,5 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        private DispatcherTimer _clickTimer;
-
-        private void OnClick(object sender, RoutedEventArgs e)
-        {
-            //if (_clickTimer == null)
-            //{
-            //    _clickTimer = new DispatcherTimer();
-            //    _clickTimer.Interval = TimeSpan.FromMilliseconds(500);
-            //    _clickTimer.Tick += OnTick;
-            //}
-
-            //if (ClickMode == ClickMode.Press)
-            //{
-            //    _clickTimer.Stop();
-            //    ClickMode = ClickMode.Release;
-
-            //    _clickTimer.Start();
-            //}
-            //else if (ClickMode == ClickMode.Release)
-            //{
-            //    _clickTimer.Stop();
-            //    ClickMode = ClickMode.Press;
-
-            if (_selectionMode != ListViewSelectionMode.Multiple)
-            {
-                _delegate?.SetSelectedItem(_chat);
-            }
-            else if (_delegate.SelectedCount < 1)
-            {
-                _delegate?.SetSelectionMode(false);
-            }
-            //}
-        }
-
-        private async void OnTick(object sender, object e)
-        {
-            _clickTimer.Stop();
-            ClickMode = ClickMode.Press;
-
-            var token = PointerCaptures.FirstOrDefault();
-            if (token == null)
-            {
-                return;
-            }
-
-            var pointer = PointerPoint.GetCurrentPoint(token.PointerId);
-            if (pointer == null)
-            {
-                return;
-            }
-
-            ReleasePointerCapture(token);
-            await StartDragAsync(pointer);
-        }
-
-        //protected override void OnPointerPressed(PointerRoutedEventArgs e)
-        //{
-        //    if (_selectionMode == ListViewSelectionMode.Multiple)
-        //    {
-        //        base.OnPointerPressed(e);
-        //    }
-        //}
-    }
-
-    public class ChatCellAutomationPeer : ToggleButtonAutomationPeer
-    {
-        private ChatCell _owner;
-
-        public ChatCellAutomationPeer(ChatCell owner)
-            : base(owner)
-        {
-            _owner = owner;
-        }
-
-        protected override string GetNameCore()
-        {
-            return _owner.GetAutomationName();
-        }
-
-        protected override AutomationControlType GetAutomationControlTypeCore()
-        {
-            return AutomationControlType.ListItem;
-        }
     }
 }

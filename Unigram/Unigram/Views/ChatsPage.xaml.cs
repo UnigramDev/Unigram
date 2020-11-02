@@ -27,7 +27,7 @@ namespace Unigram.Views
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new ChatsListViewItem();
+                args.ItemContainer = new ChatsListViewItem(this);
                 args.ItemContainer.Style = ChatsList.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
                 args.ItemContainer.ContextRequested += Chat_ContextRequested;
@@ -232,7 +232,7 @@ namespace Unigram.Views
             if (e.Items[0] is Chat chat)
             {
                 var position = chat.GetPosition(ViewModel.Items.ChatList);
-                if (position == null || !position.IsPinned || e.Items.Count > 1 || ChatsList.SelectionMode2 == ListViewSelectionMode.Multiple)
+                if (position == null || !position.IsPinned || e.Items.Count > 1 || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
                 {
                     ChatsList.CanReorderItems = false;
                     e.Cancel = true;
@@ -284,18 +284,6 @@ namespace Unigram.Views
                         ViewModel.Items.Handle(chat.Id, real.Order);
                     }
                 }
-            }
-        }
-
-        private void ChatsList_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            if (ChatsList.SelectionMode2 != ListViewSelectionMode.Multiple)
-            {
-                ViewModel?.SetSelectedItem(e.ClickedItem as Chat);
-            }
-            else if (ViewModel.SelectedCount < 1)
-            {
-                ViewModel?.SetSelectionMode(false);
             }
         }
 
