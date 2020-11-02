@@ -803,10 +803,13 @@ namespace Unigram.Views.Popups
             var selectedItems = ViewModel.SelectedItems;
 
             var index = items.IndexOf(chat);
-            if (index > 0)
+            if (index >= 0)
             {
-                items.Remove(chat);
-                items.Insert(1, chat);
+                if (index > 0)
+                {
+                    items.Remove(chat);
+                    items.Insert(1, chat);
+                }
             }
             else if (items.Count > 0)
             {
