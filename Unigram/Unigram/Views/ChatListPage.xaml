@@ -24,13 +24,6 @@
     <!--
     ItemClick="ChatsList_ItemClick"-->
 
-    <ListView.ItemContainerStyle>
-        <Style TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="MinHeight" Value="0"/>
-        </Style>
-    </ListView.ItemContainerStyle>
     <ListView.ItemTemplate>
         <DataTemplate>
             <cells:ChatCell

@@ -28,7 +28,7 @@ namespace Unigram.Views
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new ChatListListViewItem(this);
-                args.ItemContainer.Style = ChatsList.ItemContainerStyle;
+                //args.ItemContainer.Style = ChatsList.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
                 args.ItemContainer.ContextRequested += Chat_ContextRequested;
             }

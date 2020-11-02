@@ -788,16 +788,17 @@
 
                                     <!--IsItemClickEnabled="True"
                                                             SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
-                                    <local:ChatListPage x:Name="ChatsList"
-                                                     ItemClick="ListView_ItemClick"
-                                                     IsItemClickEnabled="True"
-                                                     AutomationProperties.LandmarkType="Main"
-                                                     Main="{x:Bind ViewModel}"
-                                                     DataContext="{x:Bind ViewModel.Chats}"
-                                                     ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
-                                                     SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
-                                                     AllowSelection="True"
-                                                     Grid.Row="1">
+                                    <local:ChatListPage
+                                        x:Name="ChatsList"
+                                        ItemClick="ListView_ItemClick"
+                                        IsItemClickEnabled="True"
+                                        AutomationProperties.LandmarkType="Main"
+                                        Main="{x:Bind ViewModel}"
+                                        DataContext="{x:Bind ViewModel.Chats}"
+                                        ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
+                                        SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
+                                        AllowSelection="True"
+                                        Grid.Row="1">
                                         <ListView.Header>
                                             <Grid x:Name="ArchivedChatsPresenter">
                                                 <Button

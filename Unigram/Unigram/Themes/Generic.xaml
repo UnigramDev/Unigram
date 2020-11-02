@@ -5199,7 +5199,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:MultipleListViewItem">
+    <Style x:Key="MultipleListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="BorderBrush" Value="{x:Null}" />
@@ -5208,17 +5208,17 @@
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="TabNavigation" Value="Local" />
         <Setter Property="IsHoldingEnabled" Value="True" />
-        <Setter Property="Padding" Value="12,0,12,0" />
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}" />
-        <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}" />
+        <Setter Property="MinHeight" Value="0" />
         <Setter Property="AllowDrop" Value="False" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:MultipleListViewItem">
+                <ControlTemplate TargetType="ListViewItem">
                     <Grid x:Name="ContentBorder"
                               Control.IsTemplateFocusTarget="True"
                               FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
@@ -5651,4 +5651,11 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:MultipleListViewItem" BasedOn="{StaticResource MultipleListViewItemStyle}"/>
+    <Style TargetType="local:ChatListListViewItem" BasedOn="{StaticResource MultipleListViewItemStyle}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="MinHeight" Value="0"/>
+    </Style>
+    
 </ResourceDictionary>
