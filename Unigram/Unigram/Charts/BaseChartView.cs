@@ -1246,6 +1246,11 @@ namespace Unigram.Charts
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs args)
         {
+            if (chartData == null)
+            {
+                return;
+            }
+
             // TODO: multi touch?
             // pickerDelegate.capture(x, y, @event.getActionIndex());
 
@@ -1280,6 +1285,11 @@ namespace Unigram.Charts
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs args)
         {
+            if (chartData == null)
+            {
+                return;
+            }
+
             var point = args.GetCurrentPoint(this);
 
             int x = (int)point.Position.X;
@@ -1351,6 +1361,11 @@ namespace Unigram.Charts
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs args)
         {
+            if (chartData == null)
+            {
+                return;
+            }
+
             // TODO: multi-touch?
             //pickerDelegate.uncapture(@event, @event.getActionIndex());
 
