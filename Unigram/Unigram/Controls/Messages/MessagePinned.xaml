@@ -48,6 +48,7 @@
             Foreground="{ThemeResource PinnedMessageForegroundBrush}"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             BorderBrush="{ThemeResource PinnedMessageBorderBrush}"
+            IsTabStop="False"
             Width="4"
             Height="36"/>
         <StackPanel Height="36" Orientation="Horizontal">
@@ -77,7 +78,8 @@
                 <controls:NumericTextBlock
                     x:Name="Number"
                     Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                    VerticalAlignment="Top"/>
+                    VerticalAlignment="Top"
+                    IsTabStop="False"/>
             </StackPanel>
 
             <Grid Grid.Row="1">
