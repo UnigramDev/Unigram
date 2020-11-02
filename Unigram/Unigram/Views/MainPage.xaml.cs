@@ -89,7 +89,6 @@ namespace Unigram.Views
             SettingsView.DataContext = ViewModel.Settings;
             ViewModel.Settings.Delegate = SettingsView;
             ViewModel.Chats.Delegate = this;
-            ViewModel.ArchivedChats.Delegate = this;
 
             NavigationCacheMode = NavigationCacheMode.Disabled;
 
@@ -109,9 +108,6 @@ namespace Unigram.Views
 
             var updateShadow = DropShadowEx.Attach(UpdateShadow, 20, 0.25f);
             updateShadow.RelativeSizeAdjustment = Vector2.One;
-
-            var folderShadow = DropShadowEx.Attach(FolderShadow, 20, 0.25f);
-            folderShadow.RelativeSizeAdjustment = Vector2.One;
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
@@ -141,8 +137,6 @@ namespace Unigram.Views
                     viewModel.Settings.Delegate = null;
                     viewModel.Chats.Delegate = null;
                     viewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
-                    viewModel.ArchivedChats.Delegate = null;
-                    viewModel.ArchivedChats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
 
                     viewModel.Aggregator.Unsubscribe(this);
                     viewModel.Dispose();
@@ -588,7 +582,7 @@ namespace Unigram.Views
             if (element == null)
             {
                 // Too early, no animation needed
-                ChatsList.Margin = new Thickness();
+                DialogsPanel.Margin = new Thickness();
 
                 if (show)
                 {
@@ -603,14 +597,10 @@ namespace Unigram.Views
             }
 
             ChatTabs.Visibility = Visibility.Visible;
-            ChatsList.Margin = new Thickness(0, 0, 0, -40);
+            DialogsPanel.Margin = new Thickness(0, 0, 0, -40);
 
-            var parent = ElementCompositionPreview.GetElementVisual(ChatsList);
-
-            var visual = ElementCompositionPreview.GetElementVisual(element);
+            var visual = ElementCompositionPreview.GetElementVisual(DialogsPanel);
             var header = ElementCompositionPreview.GetElementVisual(ChatTabsView);
-
-            parent.Clip = null;
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -618,7 +608,7 @@ namespace Unigram.Views
                 header.Offset = new Vector3();
                 visual.Offset = new Vector3();
 
-                ChatsList.Margin = new Thickness();
+                DialogsPanel.Margin = new Thickness();
 
                 if (show)
                 {
@@ -772,12 +762,7 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
-            else if (FolderPanel.Visibility == Visibility.Visible)
-            {
-                SetFolder(new ChatListMain());
-                args.Handled = true;
-            }
-            else if (ViewModel.Chats.Items.ChatList is ChatListFilter)
+            else if (ViewModel.Chats.Items.ChatList is ChatListFilter || ViewModel.Chats.Items.ChatList is ChatListArchive)
             {
                 ViewModel.SelectedFilter = ChatFilterViewModel.Main;
                 args.Handled = true;
@@ -799,18 +784,6 @@ namespace Unigram.Views
             if (main != null)
             {
                 return ChatsList;
-            }
-
-            var folder = ViewModel.Folder?.Items.ChatList;
-            if (folder == null)
-            {
-                return null;
-            }
-
-            var position = chat.GetPosition(folder);
-            if (position != null)
-            {
-                return FolderList;
             }
 
             return null;
@@ -1178,11 +1151,6 @@ namespace Unigram.Views
 
         public void ScrollFolder(int offset, bool navigate)
         {
-            if (FolderPanel.Visibility == Visibility.Visible)
-            {
-                SetFolder(new ChatListMain());
-            }
-
             var already = ViewModel.SelectedFilter;
             if (already == null)
             {
@@ -1396,7 +1364,7 @@ namespace Unigram.Views
 
         private void UpdatePaneToggleButtonVisibility()
         {
-            if (BackButton.Visibility == Visibility.Visible || SearchField.Visibility == Visibility.Visible || ChatsList.SelectionMode == ListViewSelectionMode.Multiple || FolderList?.SelectionMode == ListViewSelectionMode.Multiple)
+            if (BackButton.Visibility == Visibility.Visible || SearchField.Visibility == Visibility.Visible || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 Root?.SetPaneToggleButtonVisibility(Visibility.Collapsed);
             }
@@ -1412,7 +1380,7 @@ namespace Unigram.Views
 
         private void UpdateBackButtonVisibility()
         {
-            if (rpMasterTitlebar.SelectedIndex != 0 || FolderPanel.Visibility == Visibility.Visible || SearchField.Visibility == Visibility.Visible)
+            if (rpMasterTitlebar.SelectedIndex != 0 || ViewModel.Chats.Items.ChatList is ChatListArchive || SearchField.Visibility == Visibility.Visible)
             {
                 BackButton.Visibility = Visibility.Visible;
             }
@@ -1430,20 +1398,6 @@ namespace Unigram.Views
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 ChatsList.SelectedItem = dialog;
-            }
-
-            var folder = ViewModel.Folder;
-            if (folder == null)
-            {
-                return;
-            }
-
-            folder.SelectedItem = chatId;
-
-            dialog = folder.Items.FirstOrDefault(x => x.Id == chatId);
-            if (folder.SelectionMode != ListViewSelectionMode.Multiple)
-            {
-                FolderList.SelectedItem = dialog;
             }
         }
 
@@ -1569,12 +1523,6 @@ namespace Unigram.Views
             if (item is Chat chat)
             {
                 ViewModel.Chats.SelectedItem = chat.Id;
-
-                var folder = ViewModel.Folder;
-                if (folder != null)
-                {
-                    folder.SelectedItem = chat.Id;
-                }
 
                 MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                 MasterDetail.NavigationService.GoBackAt(0, false);
@@ -1882,7 +1830,7 @@ namespace Unigram.Views
                     ViewModel.Chats.TopChats = null;
                 }
 
-                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, FolderPanel.Visibility == Visibility.Collapsed ? null : new ChatListArchive());
+                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, ViewModel.Chats.Items.ChatList);
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
             }
@@ -1940,7 +1888,7 @@ namespace Unigram.Views
                         e.Handled = true;
                         ViewModel.Chats.SearchFilters.RemoveAt(ViewModel.Chats.SearchFilters.Count - 1);
 
-                        var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, FolderPanel.Visibility == Visibility.Collapsed ? null : new ChatListArchive());
+                        var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, ViewModel.Chats.Items.ChatList);
                         await items.LoadMoreItemsAsync(0);
                         await items.LoadMoreItemsAsync(1);
                         await items.LoadMoreItemsAsync(2);
@@ -2471,7 +2419,7 @@ namespace Unigram.Views
 
         private ChatFilterViewModel ConvertFilter(ChatFilterViewModel filter)
         {
-            ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
+            ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0 && !(filter.ChatList is ChatListArchive));
             ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
             ShowHideArchive(filter == null || filter.ChatList is ChatListMain);
 
@@ -2483,78 +2431,17 @@ namespace Unigram.Views
 
         private void ConvertFilterBack(object obj)
         {
-            if (obj is ChatFilterViewModel filter)
+            if (obj is ChatFilterViewModel filter && !(ViewModel.Chats.Items.ChatList is ChatListArchive))
             {
                 ViewModel.SelectedFilter = filter;
                 ConvertFilter(filter);
             }
         }
 
-        private void SetFolder(ChatList chatList)
-        {
-            var hide = chatList is ChatListMain || chatList == null;
-            var show = !hide;
-
-            ViewModel.SetFolder(chatList);
-
-            if (chatList is ChatListMain || chatList == null)
-            {
-                rpMasterTitlebar.IsLocked = false;
-                ChatTabsSearch.Content = Strings.Resources.Search;
-            }
-            else if (chatList is ChatListArchive)
-            {
-                rpMasterTitlebar.IsLocked = true;
-                ChatTabsSearch.Content = Strings.Resources.ArchivedChats;
-            }
-
-            FolderPanel.Visibility = Visibility.Visible;
-
-            UpdateBackButtonVisibility();
-            UpdateHeader();
-            UpdatePaneToggleButtonVisibility();
-
-            var chats = ElementCompositionPreview.GetElementVisual(ChatsPanel);
-            var folder = ElementCompositionPreview.GetElementVisual(FolderList);
-            var shadow = ElementCompositionPreview.GetElementVisual(FolderShadow);
-
-            var anim1 = chats.Compositor.CreateScalarKeyFrameAnimation();
-            anim1.InsertKeyFrame(show ? 0 : 1, 0);
-            anim1.InsertKeyFrame(show ? 1 : 0, -(float)(DialogsPanel.ActualWidth / 3));
-
-            var anim2 = chats.Compositor.CreateScalarKeyFrameAnimation();
-            anim2.InsertKeyFrame(show ? 0 : 1, (float)DialogsPanel.ActualWidth);
-            anim2.InsertKeyFrame(show ? 1 : 0, 0);
-
-            var anim3 = chats.Compositor.CreateScalarKeyFrameAnimation();
-            anim3.InsertKeyFrame(show ? 0 : 1, 0);
-            anim3.InsertKeyFrame(show ? 1 : 0, 1);
-
-            var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                FolderPanel.Visibility = show
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-
-                chats.Offset = new Vector3();
-                folder.Offset = new Vector3();
-                shadow.Opacity = 0;
-
-                UpdateBackButtonVisibility();
-                UpdateHeader();
-                UpdatePaneToggleButtonVisibility();
-            };
-
-            chats.StartAnimation("Offset.X", anim1);
-            folder.StartAnimation("Offset.X", anim2);
-            shadow.StartAnimation("Opacity", anim3);
-            batch.End();
-        }
-
         public void ArchivedChats_Click(object sender, RoutedEventArgs e)
         {
-            SetFolder(new ChatListArchive());
+            ViewModel.SelectedFilter = ChatFilterViewModel.Archive;
+            ConvertFilter(ChatFilterViewModel.Archive);
         }
 
         private void ChatFilter_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -2775,9 +2662,10 @@ namespace Unigram.Views
             {
                 rpMasterTitlebar.SelectedIndex = 0;
             }
-            else if (FolderPanel.Visibility == Visibility.Visible)
+            else if (ViewModel.Chats.Items.ChatList is ChatListArchive)
             {
-                SetFolder(new ChatListMain());
+                ViewModel.SelectedFilter = ChatFilterViewModel.Main;
+                ConvertFilter(ChatFilterViewModel.Main);
             }
         }
 
@@ -3091,7 +2979,7 @@ namespace Unigram.Views
                 ViewModel.Chats.SearchFilters.Add(filter);
                 SearchField.Text = string.Empty;
 
-                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, FolderPanel.Visibility == Visibility.Collapsed ? null : new ChatListArchive());
+                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, ViewModel.Chats.Items.ChatList);
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
                 await items.LoadMoreItemsAsync(2);

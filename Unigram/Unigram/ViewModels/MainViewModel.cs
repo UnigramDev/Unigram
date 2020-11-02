@@ -61,7 +61,6 @@ namespace Unigram.ViewModels
             Filters = new ChatFilterCollection();
 
             Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
-            ArchivedChats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListArchive());
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
             Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, settingsSearchService);
@@ -73,7 +72,6 @@ namespace Unigram.ViewModels
             Children.Add(Settings);
 
             // Any additional child
-            Children.Add(ArchivedChats);
             Children.Add(_voipService as TLViewModelBase);
 
             aggregator.Subscribe(this);
@@ -95,13 +93,11 @@ namespace Unigram.ViewModels
 
         public void Dispose()
         {
-            Aggregator.Unsubscribe(ArchivedChats.Items);
             Aggregator.Unsubscribe(Chats.Items);
             Aggregator.Unsubscribe(this);
 
             if (Dispatcher != null && Dispatcher.HasThreadAccess)
             {
-                ArchivedChats.Items.Clear();
                 Chats.Items.Clear();
             }
 
@@ -390,29 +386,10 @@ namespace Unigram.ViewModels
         }
 
         public ChatsViewModel Chats { get; private set; }
-        public ChatsViewModel ArchivedChats { get; private set; }
         public ContactsViewModel Contacts { get; private set; }
         public CallsViewModel Calls { get; private set; }
         public SettingsViewModel Settings { get; private set; }
 
-        public ChatsViewModel Folder { get; private set; }
-
-        public void SetFolder(ChatList chatList)
-        {
-            if (chatList is ChatListMain || chatList == null)
-            {
-                return;
-            }
-
-            Folder = ArchivedChats;
-            RaisePropertyChanged(() => Folder);
-            return;
-
-            Folder = new ChatsViewModel(ProtoService, CacheService, base.Settings, Aggregator, _pushService, chatList);
-            Folder.Dispatcher = Dispatcher;
-            Folder.NavigationService = NavigationService;
-            RaisePropertyChanged(() => Folder);
-        }
 
 
 
@@ -490,10 +467,16 @@ namespace Unigram.ViewModels
 
     public class ChatFilterViewModel : BindableBase
     {
-        public static ChatFilterViewModel Main => new ChatFilterViewModel
+        public static ChatFilterViewModel Main => new ChatFilterViewModel(new ChatListMain())
         {
             ChatFilterId = Constants.ChatListMain,
             Title = Strings.Resources.FilterAllChats
+        };
+
+        public static ChatFilterViewModel Archive => new ChatFilterViewModel(new ChatListArchive())
+        {
+            ChatFilterId = Constants.ChatListArchive,
+            Title = Strings.Resources.ArchivedChats
         };
 
         public ChatFilterViewModel(ChatFilterInfo info)
@@ -501,6 +484,10 @@ namespace Unigram.ViewModels
             if (info.Id == Constants.ChatListMain)
             {
                 ChatList = new ChatListMain();
+            }
+            else if (info.Id == Constants.ChatListArchive)
+            {
+                ChatList = new ChatListArchive();
             }
             else
             {
@@ -514,9 +501,9 @@ namespace Unigram.ViewModels
             _iconUri = new Uri($"ms-appx:///Assets/Filters/{_icon}.png");
         }
 
-        private ChatFilterViewModel()
+        private ChatFilterViewModel(ChatList list)
         {
-            ChatList = new ChatListMain();
+            ChatList = list;
         }
 
         public void Update(ChatFilterInfo info)
