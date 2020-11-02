@@ -619,7 +619,7 @@ namespace Unigram.Services
             }
             else if (_callLifetime != null)
             {
-                _callLifetime = await _viewService.OpenAsync(control => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, this), _call.Id, 720, 540, ApplicationViewMode.Default);
+                _callLifetime = await _viewService.OpenAsync(control => _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this), _call.Id, 720, 540, ApplicationViewMode.Default);
                 _callLifetime.Released -= ApplicationView_Released;
                 _callLifetime.Released += ApplicationView_Released;
             }
@@ -633,7 +633,7 @@ namespace Unigram.Services
             {
                 if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
                 {
-                    _callLifetime = await _viewService.OpenAsync(control => _callPage = _callPage ?? new VoIPPage(ProtoService, CacheService, Aggregator, this), call.Id, 720, 540, ApplicationViewMode.Default);
+                    _callLifetime = await _viewService.OpenAsync(control => _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this), call.Id, 720, 540, ApplicationViewMode.Default);
                     _callLifetime.Released -= ApplicationView_Released;
                     _callLifetime.Released += ApplicationView_Released;
                 }
@@ -712,6 +712,7 @@ namespace Unigram.Services
 
         private void ApplicationView_Released(object sender, EventArgs e)
         {
+            _callPage = null;
             _callLifetime = null;
             Aggregator.Publish(new UpdateCallDialog(_call, false));
         }
