@@ -505,6 +505,7 @@
     <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
     <Compile Include="ViewModels\DialogPinnedViewModel.cs" />
     <Compile Include="ViewModels\DialogThreadViewModel.cs" />
+    <Compile Include="ViewModels\Chats\MessageStatisticsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
@@ -523,6 +524,9 @@
     </Compile>
     <Compile Include="Views\ChatThreadPage.xaml.cs">
       <DependentUpon>ChatThreadPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\MessageStatisticsPage.xaml.cs">
+      <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
@@ -1734,6 +1738,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Chats\MessageStatisticsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\SelectColorPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2348,6 +2356,10 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\Messages\" />
+    <Folder Include="Views\Messages\" />
   </ItemGroup>
   <!--<ItemGroup>
     <Reference Include="Unigram.Native.Calls">

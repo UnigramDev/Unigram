@@ -195,6 +195,7 @@ namespace Unigram
                 builder.RegisterType<SupergroupMembersViewModel>();
                 builder.RegisterType<ChatSharedMediaViewModel>();
                 builder.RegisterType<ChatStatisticsViewModel>();
+                builder.RegisterType<MessageStatisticsViewModel>();
                 builder.RegisterType<ChannelCreateStep1ViewModel>();
                 builder.RegisterType<ChannelCreateStep2ViewModel>();
                 builder.RegisterType<BasicGroupCreateStep1ViewModel>();

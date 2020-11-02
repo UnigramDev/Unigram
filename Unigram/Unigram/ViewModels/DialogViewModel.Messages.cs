@@ -10,6 +10,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Views;
+using Unigram.Views.Chats;
 using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
@@ -573,7 +574,7 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageStatisticsCommand { get; }
         private void MessageStatisticsExecute(MessageViewModel message)
         {
-
+            NavigationService.Navigate(typeof(MessageStatisticsPage), $"{message.ChatId};{message.Id}");
         }
 
         #endregion
