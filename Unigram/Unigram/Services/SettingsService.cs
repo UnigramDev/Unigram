@@ -28,6 +28,7 @@ namespace Unigram.Services
         DiagnosticsSettings Diagnostics { get; }
 
         int UserId { get; set; }
+        long PushReceiverId { get; set; }
 
         string FilesDirectory { get; set; }
 
@@ -71,8 +72,7 @@ namespace Unigram.Services
         string LanguagePluralId { get; set; }
         string LanguageShownId { get; set; }
 
-        string NotificationsToken { get; set; }
-        int[] NotificationsIds { get; set; }
+        string PushToken { get; set; }
 
         VoipDataSaving UseLessData { get; set; }
 
@@ -400,6 +400,24 @@ namespace Unigram.Services
                 _userId = value;
                 AddOrUpdateValue(_local, $"User{value}", Session);
                 AddOrUpdateValue(_own, "UserId", value);
+            }
+        }
+
+        private long? _pushReceiverId;
+        public long PushReceiverId
+        {
+            get
+            {
+                if (_pushReceiverId == null)
+                    _pushReceiverId = GetValueOrDefault(_own, "PushReceiverId", 0L);
+
+                return _pushReceiverId ?? 0L;
+            }
+            set
+            {
+                _pushReceiverId = value;
+                AddOrUpdateValue(_local, $"PushReceiverId{value}", Session);
+                AddOrUpdateValue(_own, "PushReceiverId", value);
             }
         }
 
@@ -970,47 +988,20 @@ namespace Unigram.Services
             }
         }
 
-        private string _notificationsToken;
-        public string NotificationsToken
+        private string _pushToken;
+        public string PushToken
         {
             get
             {
-                if (_notificationsToken == null)
-                    _notificationsToken = GetValueOrDefault<string>(_local, "ChannelUri", null);
+                if (_pushToken == null)
+                    _pushToken = GetValueOrDefault<string>("ChannelUri", null);
 
-                return _notificationsToken;
+                return _pushToken;
             }
             set
             {
-                _notificationsToken = value;
-                AddOrUpdateValue(_local, "ChannelUri", value);
-            }
-        }
-
-        private int[] _notificationsIds;
-        public int[] NotificationsIds
-        {
-            get
-            {
-                if (_notificationsIds == null)
-                {
-                    var value = GetValueOrDefault<string>(_local, "NotificationsIds", null);
-                    if (value == null)
-                    {
-                        _notificationsIds = new int[0];
-                    }
-                    else
-                    {
-                        _notificationsIds = value.Split(',').Select(x => int.Parse(x)).ToArray();
-                    }
-                }
-
-                return _notificationsIds;
-            }
-            set
-            {
-                _notificationsIds = value;
-                AddOrUpdateValue(_local, "NotificationsIds", string.Join(",", value));
+                _pushToken = value;
+                AddOrUpdateValue("ChannelUri", value);
             }
         }
 

@@ -424,7 +424,7 @@ namespace Unigram.Services
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
 
-            Update(chat, async () =>
+            await UpdateAsync(chat, async () =>
             {
                 await NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, $"{_sessionService.Id}", sound, launch, tag, group, picture, string.Empty, date, loc_key);
             });
@@ -435,21 +435,21 @@ namespace Unigram.Services
             }
         }
 
-        private void Update(Chat chat, Action action)
+        private async Task UpdateAsync(Chat chat, Func<Task> action)
         {
             try
             {
                 var active = TLWindowContext.ActiveWindow;
                 if (active == null)
                 {
-                    action();
+                    await action();
                     return;
                 }
 
                 var service = active.NavigationServices?.GetByFrameId($"Main{_protoService.SessionId}");
                 if (service == null)
                 {
-                    action();
+                    await action();
                     return;
                 }
 
@@ -458,11 +458,11 @@ namespace Unigram.Services
                     return;
                 }
 
-                action();
+                await action();
             }
             catch
             {
-                action();
+                await action();
             }
         }
 
@@ -556,28 +556,40 @@ namespace Unigram.Services
                     return;
                 }
 
-                if (_alreadyRegistered) return;
+                if (_alreadyRegistered)
+                {
+                    return;
+                }
+
                 _alreadyRegistered = true;
 
                 try
                 {
-                    var oldUri = _settings.NotificationsToken;
-                    var ids = _settings.NotificationsIds.ToList();
                     var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                    if (channel.Uri != oldUri || !ids.Contains(userId))
+                    if (channel.Uri != _settings.PushToken)
                     {
-                        ids.Remove(userId);
+                        var ids = new List<int>();
+
+                        foreach (var settings in TLContainer.Current.ResolveAll<ISettingsService>())
+                        {
+                            if (settings.UseTestDC != _settings.UseTestDC || settings.UserId == _settings.UserId)
+                            {
+                                continue;
+                            }
+
+                            ids.Add(settings.UserId);
+                        }
 
                         var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), ids));
-                        if (result is Ok)
+                        if (result is PushReceiverId receiverId)
                         {
-                            ids.Add(userId);
-                            _settings.NotificationsIds = ids.ToArray();
-                            _settings.NotificationsToken = channel.Uri;
+                            _settings.PushReceiverId = receiverId.Id;
+                            _settings.PushToken = channel.Uri;
                         }
                         else
                         {
-                            _settings.NotificationsToken = null;
+                            _settings.PushReceiverId = 0;
+                            _settings.PushToken = null;
                         }
                     }
 
@@ -586,7 +598,7 @@ namespace Unigram.Services
                 catch (Exception)
                 {
                     _alreadyRegistered = false;
-                    _settings.NotificationsToken = null;
+                    _settings.PushToken = null;
                 }
             }
         }
@@ -630,13 +642,13 @@ namespace Unigram.Services
 
         public async Task UnregisterAsync()
         {
-            var channel = _settings.NotificationsToken;
+            var channel = _settings.PushToken;
             //var response = await _protoService.UnregisterDeviceAsync(8, channel);
             //if (response.IsSucceeded)
             //{
             //}
 
-            _settings.NotificationsToken = null;
+            _settings.PushToken = null;
         }
 
         public async Task CloseAsync()
