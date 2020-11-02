@@ -798,6 +798,7 @@ namespace Unigram.Views.Popups
 
             chat = ViewModel.Items.FirstOrDefault(x => x.Id == chat.Id) ?? chat;
             SearchField.Text = string.Empty;
+            Search_TextChanged(null, null);
 
             var items = ViewModel.Items;
             var selectedItems = ViewModel.SelectedItems;
