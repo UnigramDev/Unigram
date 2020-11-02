@@ -13,7 +13,7 @@
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
 
-    <Grid Margin="10,0,0,0">
+    <Grid Margin="10,0,10,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
@@ -44,7 +44,7 @@
             x:Name="TimeoutLabel"
             Orientation="Horizontal"
             VerticalAlignment="Bottom"
-            Margin="0,0,0,4"
+            Margin="10,0,0,4"
             Grid.Column="1">
             <TextBlock
                 x:Name="Timeout"
