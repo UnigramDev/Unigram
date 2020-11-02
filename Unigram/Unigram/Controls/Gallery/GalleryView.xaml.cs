@@ -1126,8 +1126,8 @@ namespace Unigram.Controls.Gallery
 
             _mediaPlayerElement.SetMediaPlayer(null);
 
-            var width = 340d;
-            var height = 200d;
+            var width = 360d;
+            var height = 225d;
 
             var constraint = item.Constraint;
             if (constraint is MessageAnimation messageAnimation)
@@ -1150,10 +1150,10 @@ namespace Unigram.Controls.Gallery
                 height = video.Height;
             }
 
-            if (width > 500 || height > 500)
+            if (width > 360 || height > 360)
             {
-                var ratioX = 500d / width;
-                var ratioY = 500d / height;
+                var ratioX = 360d / width;
+                var ratioY = 360d / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
                 width *= ratio;
