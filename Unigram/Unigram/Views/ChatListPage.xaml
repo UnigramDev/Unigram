@@ -55,6 +55,13 @@
         </Border>
     </ListView.Footer>
     <ListView.ItemContainerTransitions>
-        <TransitionCollection/>
+        <TransitionCollection>
+            <!-- Reordering items for some reason requires AddDeleteThemeTransition. -->
+            <!-- https://github.com/microsoft/microsoft-ui-xaml/issues/3543 -->
+            <!--<AddDeleteThemeTransition />
+            <ContentThemeTransition />
+            <ReorderThemeTransition />
+            <EntranceThemeTransition IsStaggeringEnabled="False" />-->
+        </TransitionCollection>
     </ListView.ItemContainerTransitions>
 </controls:ChatListListView>

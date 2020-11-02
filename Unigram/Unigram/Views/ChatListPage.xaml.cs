@@ -261,7 +261,7 @@ namespace Unigram.Views
 
                 var compare = items[index > 0 ? index - 1 : index + 1];
 
-                var position = compare.GetPosition(ViewModel.Items.ChatList);
+                var position = compare.GetPosition(items.ChatList);
                 if (position == null)
                 {
                     return;
@@ -269,19 +269,30 @@ namespace Unigram.Views
 
                 if (position.Source != null && index > 0)
                 {
-                    position = items[index + 1].GetPosition(ViewModel.Items.ChatList);
+                    position = items[index + 1].GetPosition(items.ChatList);
                 }
 
                 if (position.IsPinned)
                 {
-                    //ViewModel.ProtoService.Send(new SetPinnedChats(chatList, items.Where(x => x.IsPinned).Select(x => x.Id).ToList()));
+                    var pinned = items.Where(x =>
+                    {
+                        var position = x.GetPosition(items.ChatList);
+                        if (position == null)
+                        {
+                            return false;
+                        }
+
+                        return position.IsPinned;
+                    }).Select(x => x.Id).ToArray();
+
+                    ViewModel.ProtoService.Send(new SetPinnedChats(chatList, pinned));
                 }
                 else
                 {
-                    var real = chat.GetPosition(ViewModel.Items.ChatList);
+                    var real = chat.GetPosition(items.ChatList);
                     if (real != null)
                     {
-                        ViewModel.Items.Handle(chat.Id, real.Order);
+                        items.Handle(chat.Id, real.Order);
                     }
                 }
             }
