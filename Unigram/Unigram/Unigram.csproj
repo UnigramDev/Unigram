@@ -274,7 +274,7 @@
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ChatsListView.cs" />
+    <Compile Include="Controls\ChatListListView.cs" />
     <Compile Include="Controls\ChatStatisticsOverview.xaml.cs">
       <DependentUpon>ChatStatisticsOverview.xaml</DependentUpon>
     </Compile>
@@ -500,12 +500,17 @@
     <Compile Include="Services\CallsService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
+    <Compile Include="ViewModels\ChatListViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
     <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
     <Compile Include="ViewModels\DialogPinnedViewModel.cs" />
     <Compile Include="ViewModels\DialogThreadViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatListPage.xaml.cs">
+      <DependentUpon>ChatListPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatPinnedPage.xaml.cs">
       <DependentUpon>ChatPinnedPage.xaml</DependentUpon>
@@ -648,7 +653,6 @@
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
     <Compile Include="ViewModels\ChatsNearbyViewModel.cs" />
-    <Compile Include="ViewModels\ChatsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -658,7 +662,6 @@
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IBackgroundDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IBasicAndSupergroupDelegate.cs" />
-    <Compile Include="ViewModels\Delegates\IChatsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Delegates\IGalleryDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
@@ -787,9 +790,6 @@
     </Compile>
     <Compile Include="Views\ChatScheduledPage.xaml.cs">
       <DependentUpon>ChatScheduledPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ChatsPage.xaml.cs">
-      <DependentUpon>ChatsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
       <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
@@ -1714,6 +1714,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ChatListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ChatPinnedPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1787,10 +1791,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ChatScheduledPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ChatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

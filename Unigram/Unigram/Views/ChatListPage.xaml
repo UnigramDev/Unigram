@@ -1,5 +1,5 @@
-﻿<controls:ChatsListView
-    x:Class="Unigram.Views.ChatsPage"
+﻿<controls:ChatListListView
+    x:Class="Unigram.Views.ChatListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
@@ -57,4 +57,4 @@
     <ListView.ItemContainerTransitions>
         <TransitionCollection/>
     </ListView.ItemContainerTransitions>
-</controls:ChatsListView>
+</controls:ChatListListView>

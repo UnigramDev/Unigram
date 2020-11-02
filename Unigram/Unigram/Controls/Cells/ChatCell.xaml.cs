@@ -13,7 +13,6 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.ViewModels.Delegates;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -40,7 +39,6 @@ namespace Unigram.Controls.Cells
         private ChatList _chatList;
 
         private IProtoService _protoService;
-        private IChatListDelegate _delegate;
 
         private Visual _onlineBadge;
 
@@ -60,24 +58,21 @@ namespace Unigram.Controls.Cells
             _onlineBadge.Scale = new Vector3(0);
         }
 
-        public void UpdateService(IProtoService protoService, IChatListDelegate delegato)
+        public void UpdateService(IProtoService protoService)
         {
             _protoService = protoService;
-            _delegate = delegato;
         }
 
-        public void UpdateChat(IProtoService protoService, IChatListDelegate delegato, Chat chat, ChatList chatList)
+        public void UpdateChat(IProtoService protoService, Chat chat, ChatList chatList)
         {
             _protoService = protoService;
-            _delegate = delegato;
 
             Update(chat, chatList);
         }
 
-        public void UpdateMessage(IProtoService protoService, IChatListDelegate delegato, Message message)
+        public void UpdateMessage(IProtoService protoService, Message message)
         {
             _protoService = protoService;
-            _delegate = delegato;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -103,10 +98,9 @@ namespace Unigram.Controls.Cells
             UpdateMinithumbnail(message);
         }
 
-        public async void UpdateChatList(IProtoService protoService, IChatListDelegate delegato, ChatList chatList)
+        public async void UpdateChatList(IProtoService protoService, ChatList chatList)
         {
             _protoService = protoService;
-            _delegate = delegato;
 
             TitleLabel.Text = Strings.Resources.ArchivedChats;
             Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
@@ -475,7 +469,7 @@ namespace Unigram.Controls.Cells
             {
                 _expanded = threeLines;
 
-                UpdateChatList(_protoService, _delegate, chatList);
+                UpdateChatList(_protoService, chatList);
             }
         }
 

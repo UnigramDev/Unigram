@@ -20,15 +20,15 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.ViewModels
 {
-    public class ChatsViewModel : TLViewModelBase, IDelegable<IChatsDelegate>, IChatListDelegate
+    public class ChatListViewModel : TLViewModelBase, IDelegable<IChatListDelegate>
     {
         private readonly INotificationsService _notificationsService;
 
         private readonly Dictionary<long, bool> _deletedChats = new Dictionary<long, bool>();
 
-        public IChatsDelegate Delegate { get; set; }
+        public IChatListDelegate Delegate { get; set; }
 
-        public ChatsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList)
+        public ChatListViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService notificationsService, ChatList chatList)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _notificationsService = notificationsService;
@@ -610,7 +610,7 @@ namespace Unigram.ViewModels
 
             private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
 
-            private readonly ChatsViewModel _viewModel;
+            private readonly ChatListViewModel _viewModel;
 
             private readonly ChatList _chatList;
 
@@ -624,7 +624,7 @@ namespace Unigram.ViewModels
 
             public ChatList ChatList => _chatList;
 
-            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatsViewModel viewModel, ChatList chatList)
+            public ItemsCollection(IProtoService protoService, IEventAggregator aggregator, ChatListViewModel viewModel, ChatList chatList)
             {
                 _protoService = protoService;
                 _aggregator = aggregator;

@@ -788,7 +788,7 @@
 
                                     <!--IsItemClickEnabled="True"
                                                             SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"-->
-                                    <local:ChatsPage x:Name="ChatsList"
+                                    <local:ChatListPage x:Name="ChatsList"
                                                      ItemClick="ListView_ItemClick"
                                                      IsItemClickEnabled="True"
                                                      AutomationProperties.LandmarkType="Main"
@@ -825,7 +825,7 @@
                                                 </Border>
                                             </Grid>
                                         </ListView.Header>
-                                    </local:ChatsPage>
+                                    </local:ChatListPage>
                                 </Grid>
 
                                 <Grid

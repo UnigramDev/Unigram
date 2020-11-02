@@ -8,13 +8,13 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class ChatsListView : ListView
+    public class ChatListListView : ListView
     {
-        public ChatsViewModel ViewModel => DataContext as ChatsViewModel;
+        public ChatListViewModel ViewModel => DataContext as ChatListViewModel;
 
         public MasterDetailState _viewState;
 
-        public ChatsListView()
+        public ChatListListView()
         {
             ContainerContentChanging += OnContainerContentChanging;
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
@@ -32,9 +32,9 @@ namespace Unigram.Controls
             var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
             if (content != null && args.Item is Chat chat)
             {
-                content.UpdateService(ViewModel.ProtoService, ViewModel);
+                content.UpdateService(ViewModel.ProtoService);
                 content.UpdateViewState(chat, SelectedItem == args.Item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
-                content.UpdateChat(ViewModel.ProtoService, ViewModel, chat, ViewModel.Items.ChatList);
+                content.UpdateChat(ViewModel.ProtoService, chat, ViewModel.Items.ChatList);
                 args.Handled = true;
             }
         }
@@ -76,9 +76,9 @@ namespace Unigram.Controls
         }
     }
 
-    public class ChatsListViewItem : MultipleListViewItem
+    public class ChatListListViewItem : MultipleListViewItem
     {
-        private ChatsListView _list;
+        private ChatListListView _list;
 
         //public ChatsListViewItem()
         //{
@@ -87,10 +87,10 @@ namespace Unigram.Controls
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
-            return new ChatsListViewItemAutomationPeer(this);
+            return new ChatListListViewItemAutomationPeer(this);
         }
 
-        public ChatsListViewItem(ChatsListView list)
+        public ChatListListViewItem(ChatListListView list)
         {
             _list = list;
             RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
@@ -106,11 +106,11 @@ namespace Unigram.Controls
         }
     }
 
-    public class ChatsListViewItemAutomationPeer : ListViewItemAutomationPeer
+    public class ChatListListViewItemAutomationPeer : ListViewItemAutomationPeer
     {
-        private ChatsListViewItem _owner;
+        private ChatListListViewItem _owner;
 
-        public ChatsListViewItemAutomationPeer(ChatsListViewItem owner)
+        public ChatListListViewItemAutomationPeer(ChatListListViewItem owner)
             : base(owner)
         {
             _owner = owner;

@@ -12,11 +12,11 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatsPage : ChatsListView
+    public sealed partial class ChatListPage : ChatListListView
     {
         public MainViewModel Main { get; set; }
 
-        public ChatsPage()
+        public ChatListPage()
         {
             InitializeComponent();
         }
@@ -27,7 +27,7 @@ namespace Unigram.Views
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new ChatsListViewItem(this);
+                args.ItemContainer = new ChatListListViewItem(this);
                 args.ItemContainer.Style = ChatsList.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
                 args.ItemContainer.ContextRequested += Chat_ContextRequested;
