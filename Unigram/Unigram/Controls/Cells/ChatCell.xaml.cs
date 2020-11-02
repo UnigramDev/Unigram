@@ -98,8 +98,6 @@ namespace Unigram.Controls.Cells
             UpdateChatType(chat);
             UpdateNotificationSettings(chat);
 
-            UpdateMinithumbnail(message);
-
             PinnedIcon.Visibility = Visibility.Collapsed;
             UnreadBadge.Visibility = Visibility.Collapsed;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
@@ -109,6 +107,8 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat, message, true, false);
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
+
+            UpdateMinithumbnail(message);
         }
 
         public async void UpdateChatList(IProtoService protoService, IChatListDelegate delegato, ChatList chatList)
@@ -502,13 +502,14 @@ namespace Unigram.Controls.Cells
                 var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
                 var bytes = thumbnail.Data.ToArray();
 
-                var stream = new System.IO.MemoryStream(bytes);
-                var random = System.IO.WindowsRuntimeStreamExtensions.AsRandomAccessStream(stream);
+                using (var stream = new System.IO.MemoryStream(bytes))
+                {
+                    var random = System.IO.WindowsRuntimeStreamExtensions.AsRandomAccessStream(stream);
+                    await bitmap.SetSourceAsync(random);
+                }
 
                 Minithumbnail.Source = bitmap;
                 MinithumbnailPanel.Visibility = Visibility.Visible;
-
-                await bitmap.SetSourceAsync(random);
             }
             else
             {

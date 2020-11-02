@@ -127,6 +127,7 @@ namespace Unigram.Charts
 
                 paint.A = (byte)(255 * transitionAlpha);
                 paint.StrokeWidth = lineWidth;
+                paint.StrokeCap = Microsoft.Graphics.Canvas.Geometry.CanvasCapStyle.Flat;
                 canvas.DrawLines(line.linesPath, 0, line.linesPathBottomSize, paint);
             }
 

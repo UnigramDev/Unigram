@@ -169,12 +169,12 @@ namespace Unigram.Charts
             return (color.R << 16) + (color.G << 8) + color.B;
         }
 
-        public static int ToTimestamp(this DateTime dateTime)
+        public static long ToTimestamp(this DateTime dateTime)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
             DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
 
-            return (int)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
+            return (long)(dateTime.ToUniversalTime() - dtDateTime).TotalSeconds;
         }
     }
 }

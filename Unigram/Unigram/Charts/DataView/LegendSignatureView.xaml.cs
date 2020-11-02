@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using Unigram.Common;
+using Unigram.Converters;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+
+// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Charts.DataView
 {
-    public class LegendSignatureView : Control
+    public sealed partial class LegendSignatureView : StackPanel
     {
+        public LegendSignatureView()
+        {
+            this.InitializeComponent();
+        }
 
         public bool isTopHourChart;
         //LinearLayout content;
         Holder[] holdes;
-        //TextView time;
-        //TextView hourTime;
         //Drawable background;
         //public ImageView chevron;
         //private RadialProgressView progressView;
@@ -45,8 +54,10 @@ namespace Unigram.Charts.DataView
         //    }
         //};
 
-        public LegendSignatureView()
+        public void aLegendSignatureView()
         {
+            HorizontalAlignment = HorizontalAlignment.Left;
+            VerticalAlignment = VerticalAlignment.Top;
             //super(context);
             //setPadding(AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8));
             //content = new LinearLayout(getContext());
@@ -93,12 +104,13 @@ namespace Unigram.Charts.DataView
         public void setSize(int n)
         {
             //content.removeAllViews();
-            //holdes = new Holder[n];
-            //for (int i = 0; i < n; i++)
-            //{
-            //    holdes[i] = new Holder();
-            //    content.addView(holdes[i].root);
-            //}
+            Lines.Children.Clear();
+            holdes = new Holder[n];
+            for (int i = 0; i < n; i++)
+            {
+                holdes[i] = new Holder(showPercentage);
+                Lines.Children.Add(holdes[i]);
+            }
         }
 
 
@@ -119,67 +131,53 @@ namespace Unigram.Charts.DataView
             //    }
             //}
 
-            //if (isTopHourChart)
-            //{
-            //    time.setText(String.format(Locale.ENGLISH, "%02d:00", date));
-            //}
-            //else
-            //{
-            //    time.setText(formatData(new Date(date)));
-            //    if (useHour) hourTime.setText(hourFormat.format(date));
-            //}
+            if (isTopHourChart)
+            {
+                Time.Text = string.Format(CultureInfo.InvariantCulture, "{0:00}:00", date);
+            }
+            else
+            {
+                Time.Text = formatData(Utils.UnixTimestampToDateTime(date / 1000));
+                //if (useHour) hourTime.Text = hourFormat.format(date);
+            }
 
-            //int sum = 0;
+            int sum = 0;
 
-            //for (int i = 0; i < n; i++)
-            //{
-            //    if (lines[i].enabled) sum += lines[i].line.y[index];
-            //}
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].enabled) sum += lines[i].line.y[index];
+            }
 
-            //for (int i = 0; i < n; i++)
-            //{
-            //    Holder h = holdes[i];
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (!lines[i].enabled)
+                {
+                    holdes[i].Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    var l = lines[i].line;
 
-            //    if (!lines[i].enabled)
-            //    {
-            //        h.root.setVisibility(View.GONE);
-            //    }
-            //    else
-            //    {
-            //        ChartData.Line l = lines[i].line;
-            //        if (h.root.getMeasuredHeight() == 0)
-            //        {
-            //            h.root.requestLayout();
-            //        }
-            //        h.root.setVisibility(View.VISIBLE);
-            //        h.value.setText(formatWholeNumber(l.y[index]));
-            //        h.signature.setText(l.name);
-            //        if (l.colorKey != null && Theme.hasThemeKey(l.colorKey))
-            //        {
-            //            h.value.setTextColor(Theme.getColor(l.colorKey));
-            //        }
-            //        else
-            //        {
-            //            h.value.setTextColor(Theme.getCurrentTheme().isDark() ? l.colorDark : l.color);
-            //        }
-            //        h.signature.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+                    holdes[i].Visibility = Visibility.Visible;
 
-            //        if (showPercentage && h.percentage != null)
-            //        {
-            //            h.percentage.setVisibility(VISIBLE);
-            //            h.percentage.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
-            //            float v = lines.get(i).line.y[index] / (float)sum;
-            //            if (v < 0.1f && v != 0f)
-            //            {
-            //                h.percentage.setText(String.format(Locale.ENGLISH, "%.1f%s", (100f * v), "%"));
-            //            }
-            //            else
-            //            {
-            //                h.percentage.setText(String.format(Locale.ENGLISH, "%d%s", Math.round(100 * v), "%"));
-            //            }
-            //        }
-            //    }
-            //}
+                    holdes[i].Signature = l.name;
+                    holdes[i].Value = formatWholeNumber(l.y[index]);
+                    holdes[i].Foreground = new SolidColorBrush(l.color);
+
+                    if (showPercentage)
+                    {
+                        float v = l.y[index] / (float)sum;
+                        if (v < 0.1f && v != 0f)
+                        {
+                            holdes[i].Percentage = string.Format(CultureInfo.InvariantCulture, "{0:0.0}%", (100f * v));
+                        }
+                        else
+                        {
+                            holdes[i].Percentage = string.Format(CultureInfo.InvariantCulture, "{0:0}%", Math.Round(100 * v));
+                        }
+                    }
+                }
+            }
 
             //if (zoomEnabled)
             //{
@@ -193,11 +191,12 @@ namespace Unigram.Charts.DataView
             //}
         }
 
-        //private String formatData(Date date)
-        //{
-        //    if (useHour) return capitalize(format2.format(date));
-        //    return capitalize(format.format(date)) + capitalize(format2.format(date));
-        //}
+        private String formatData(DateTime date)
+        {
+            //if (useHour) return capitalize(format2.format(date));
+            //return capitalize(format.format(date)) + capitalize(format2.format(date));
+            return BindConvert.Current.DayMonthFullYear.Format(date);
+        }
 
         private String capitalize(String s)
         {
@@ -254,45 +253,102 @@ namespace Unigram.Charts.DataView
             //}
         }
 
-        class Holder
+        class Holder : Grid
         {
-            //final TextView value;
+            private readonly TextBlock _value;
+            private readonly TextBlock signature;
+            private readonly TextBlock percentage;
             //final TextView signature;
             //TextView percentage;
             //final LinearLayout root;
 
-            //public Holder()
-            //{
-            //    root = new LinearLayout(getContext());
-            //    root.setPadding(AndroidUtilities.dp(4), AndroidUtilities.dp(2), AndroidUtilities.dp(4), AndroidUtilities.dp(2));
+            public string Value
+            {
+                get => _value.Text;
+                set => _value.Text = value;
+            }
 
-            //    if (showPercentage)
-            //    {
-            //        root.addView(percentage = new TextView(getContext()));
-            //        percentage.getLayoutParams().width = AndroidUtilities.dp(36);
-            //        percentage.setVisibility(GONE);
-            //        percentage.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            //        percentage.setTextSize(13);
-            //    }
+            public Brush Foreground
+            {
+                get => _value.Foreground;
+                set => _value.Foreground = value;
+            }
 
-            //    root.addView(signature = new TextView(getContext()));
-            //    signature.getLayoutParams().width = showPercentage ? AndroidUtilities.dp(80) : AndroidUtilities.dp(96);
-            //    root.addView(value = new TextView(getContext()), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+            public string Signature
+            {
+                get => signature.Text;
+                set => signature.Text = value;
+            }
 
-            //    signature.setGravity(Gravity.START);
-            //    value.setGravity(Gravity.END);
+            public string Percentage
+            {
+                get => percentage.Text;
+                set => percentage.Text = value;
+            }
 
-            //    value.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            //    value.setTextSize(13);
-            //    value.setMinEms(4);
-            //    value.setMaxEms(4);
-            //    signature.setTextSize(13);
-            //}
+            public Holder(bool showPercentage)
+            {
+                //root = new LinearLayout(getContext());
+                //root.setPadding(AndroidUtilities.dp(4), AndroidUtilities.dp(2), AndroidUtilities.dp(4), AndroidUtilities.dp(2));
+
+                if (showPercentage)
+                {
+                    ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(36, GridUnitType.Pixel) });
+
+                    percentage = new TextBlock();
+                    percentage.Margin = new Thickness(0, 2, 8, 0);
+                    //percentage.getLayoutParams().width = AndroidUtilities.dp(36);
+                    //percentage.setVisibility(GONE);
+                    //percentage.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                    //percentage.setTextSize(13);
+                    Children.Add(percentage);
+                }
+                else
+                {
+                    ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(0, GridUnitType.Pixel) });
+                }
+
+                ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+
+                signature = new TextBlock();
+                signature.Margin = new Thickness(0, 2, 0, 0);
+                SetColumn(signature, 1);
+                Children.Add(signature);
+
+                _value = new TextBlock();
+                _value.Margin = new Thickness(8, 2, 0, 0);
+                _value.Style = App.Current.Resources["BaseTextBlockStyle"] as Style;
+                _value.HorizontalAlignment = HorizontalAlignment.Right;
+                SetColumn(_value, 2);
+                Children.Add(_value);
+
+                //root.addView(signature = new TextView(getContext()));
+                //signature.getLayoutParams().width = showPercentage ? AndroidUtilities.dp(80) : AndroidUtilities.dp(96);
+                //root.addView(value = new TextView(getContext()), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
+                //signature.setGravity(Gravity.START);
+                //value.setGravity(Gravity.END);
+
+                //value.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+                //value.setTextSize(13);
+                //value.setMinEms(4);
+                //value.setMaxEms(4);
+                //signature.setTextSize(13);
+            }
         }
 
-        internal void setVisibility(object gONE)
+        internal void setVisibility(Visibility visibility)
         {
             //throw new NotImplementedException();
+            if (Dispatcher.HasThreadAccess)
+            {
+                Visibility = visibility;
+            }
+            else
+            {
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Visibility = visibility);
+            }
         }
     }
 }

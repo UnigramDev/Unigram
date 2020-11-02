@@ -90,30 +90,6 @@ namespace Unigram.Converters
             return Current.DayMonthFull.Format(date);
         }
 
-        public static string Grams(long value, bool gem)
-        {
-            var sign = value < 0 ? "-" : string.Empty;
-            var builder = new StringBuilder(string.Format("{0}{1}.{2:000000000}", sign, Math.Abs(value / 1000000000L), Math.Abs(value % 1000000000)));
-            while (builder.Length > 1 && builder[builder.Length - 1] == '0' && builder[builder.Length - 2] != '.')
-            {
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            if (gem)
-            {
-                var culture = NativeUtils.GetCurrentCulture();
-                var info = new CultureInfo(culture);
-                if (info.NumberFormat.CurrencyPositivePattern == 0 || info.NumberFormat.CurrencyPositivePattern == 2)
-                {
-                    return string.Format("\uD83D\uDC8E {0}", builder);
-                }
-
-                return string.Format("{0} \uD83D\uDC8E", builder);
-            }
-
-            return builder.ToString();
-        }
-
         public static string Distance(float distance, bool away = true)
         {
             var useImperialSystemType = false;
@@ -306,6 +282,12 @@ namespace Unigram.Converters
         public DateTime DateTime(int value)
         {
             return Utils.UnixTimestampToDateTime(value);
+        }
+
+        public static string DateAt(int value)
+        {
+            var date = Current.DateTime(value);
+            return string.Format(Strings.Resources.formatDateAtTime, Current.ShortDate.Format(date), Current.ShortTime.Format(date));
         }
 
         public static string ShortNumber(int number)

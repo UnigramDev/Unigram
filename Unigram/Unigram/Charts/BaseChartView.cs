@@ -9,6 +9,9 @@ using System.Numerics;
 using System.Threading;
 using Unigram.Charts.Data;
 using Unigram.Charts.DataView;
+using Unigram.Common;
+using Unigram.Controls;
+using Unigram.Converters;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -50,6 +53,15 @@ namespace Unigram.Charts
         public static FastOutSlowInInterpolator INTERPOLATOR = new FastOutSlowInInterpolator();
 
         public abstract void onCheckChanged();
+
+        public LegendSignatureView legendSignatureView;
+
+        protected HeaderedControl chartHeaderView;
+
+        public void setHeader(HeaderedControl chartHeaderView)
+        {
+            this.chartHeaderView = chartHeaderView;
+        }
     }
 
     public abstract class BaseChartView<T, L> : BaseChartView, ChartPickerDelegate.Listener where T : ChartData where L : LineViewData
@@ -66,7 +78,7 @@ namespace Unigram.Charts
         private const float LINE_WIDTH = 1;
         private const float SELECTED_LINE_WIDTH = 1.5f;
         private const float SIGNATURE_TEXT_SIZE = 12;
-        public const int SIGNATURE_TEXT_HEIGHT = 18;
+        public const int SIGNATURE_TEXT_HEIGHT = 24;
         private const int BOTTOM_SIGNATURE_TEXT_HEIGHT = 14;
         public const int BOTTOM_SIGNATURE_START_ALPHA = 10;
         protected const int PICKER_PADDING = 16;
@@ -153,7 +165,6 @@ namespace Unigram.Charts
         protected int selectedIndex = -1;
         protected float selectedCoordinate = -1;
 
-        public LegendSignatureView legendSignatureView;
         public bool legendShowing = false;
 
         public float selectionA = 0f;
@@ -287,6 +298,8 @@ namespace Unigram.Charts
         private CanvasControl canvas;
         private Timer timer;
 
+        private object drawLock = new object();
+
         //protected override bool paused { get => canvas.Paused; set => canvas.Paused = value; }
 
         protected virtual void init()
@@ -311,15 +324,22 @@ namespace Unigram.Charts
                 //    paused = _animators.Count < 1;
                 //}
 
-                onDraw(args.DrawingSession);
+                lock (drawLock)
+                {
+                    onDraw(args.DrawingSession);
+                }
             };
             canvas.SizeChanged += (s, args) =>
             {
-                onMeasure(0, 0);
+                lock (drawLock)
+                {
+                    onMeasure(0, 0);
+                }
             };
 
             timer = new Timer(new TimerCallback(state =>
             {
+                lock (drawLock)
                 lock (_animatorsLock)
                 {
                     foreach (var animator in _animators.ToArray())
@@ -815,15 +835,16 @@ namespace Unigram.Charts
             int chartHeight = getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT;
 
             var format = new CanvasTextFormat { FontSize = signaturePaint.TextSize ?? 0 };
-            var layout = new CanvasTextLayout(canvas, a.valuesStr[1], format, 0, 0);
+            var layout = new CanvasTextLayout(canvas, a.valuesStr[1], format, float.PositiveInfinity, 0);
 
-            int textOffset = (int)(4 + layout.DrawBounds.Bottom);
+            int textOffset = 18;
+            //int textOffset = (int)(4 + layout.DrawBounds.Bottom);
             //int textOffset = (int)(SIGNATURE_TEXT_HEIGHT - signaturePaintFormat.FontSize);
             format.Dispose();
             layout.Dispose();
             for (int i = useMinHeight ? 0 : 1; i < n; i++)
             {
-                int y = (int)((getMeasuredHeight() - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
+                float y = ((getMeasuredHeight() - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
                 canvas.DrawText(a.valuesStr[i], HORIZONTAL_PADDING, y - textOffset, signaturePaint);
             }
         }
@@ -1426,18 +1447,18 @@ namespace Unigram.Charts
 
         public void moveLegend(float offset)
         {
-#if LEGEND
             if (chartData == null || selectedIndex == -1 || !legendShowing) return;
-            legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], (List<LineViewData>)lines, false);
-            legendSignatureView.setVisibility(VISIBLE);
-            legendSignatureView.measure(
-                    MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.AT_MOST),
-                    MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.AT_MOST)
-            );
-            float lXPoint = chartData.xPercentage[selectedIndex] * chartFullWidth - offset;
+            legendSignatureView.setData(selectedIndex, chartData.x[selectedIndex], lines.Cast<LineViewData>().ToList(), false);
+            legendSignatureView.setVisibility(Visibility.Visible);
+            //legendSignatureView.measure(
+            //        MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.AT_MOST),
+            //        MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.AT_MOST)
+            //);
+            legendSignatureView.Measure(new Size(getMeasuredWidth(), getMeasuredHeight()));
+            double lXPoint = chartData.xPercentage[selectedIndex] * chartFullWidth - offset;
             if (lXPoint > (chartStart + chartWidth) >> 1)
             {
-                lXPoint -= (legendSignatureView.getWidth() + DP_5);
+                lXPoint -= (legendSignatureView.DesiredSize.Width + DP_5);
             }
             else
             {
@@ -1447,14 +1468,14 @@ namespace Unigram.Charts
             {
                 lXPoint = 0;
             }
-            else if (lXPoint + legendSignatureView.getMeasuredWidth() > getMeasuredWidth())
+            else if (lXPoint + legendSignatureView.DesiredSize.Width > getMeasuredWidth())
             {
-                lXPoint = getMeasuredWidth() - legendSignatureView.getMeasuredWidth();
+                lXPoint = getMeasuredWidth() - legendSignatureView.DesiredSize.Width;
             }
-            legendSignatureView.setTranslationX(
-                    lXPoint
-            );
-#endif
+            //legendSignatureView.setTranslationX(
+            //        lXPoint
+            //);
+            legendSignatureView.Margin = new Thickness(lXPoint, 28, -lXPoint, 0);
         }
 
         public virtual int findMaxValue(int startXIndex, int endXIndex)
@@ -1652,10 +1673,22 @@ namespace Unigram.Charts
             if (chartData == null) return;
             startXIndex = chartData.findStartIndex(Math.Max(pickerDelegate.pickerStart, 0f));
             endXIndex = chartData.findEndIndex(startXIndex, Math.Min(pickerDelegate.pickerEnd, 1f));
-            //if (chartHeaderView != null)
-            //{
-            //    chartHeaderView.setDates(chartData.x[startXIndex], chartData.x[endXIndex]);
-            //}
+            if (chartHeaderView != null)
+            {
+                //chartHeaderView.setDates(chartData.x[startXIndex], chartData.x[endXIndex]);
+
+                var start = Utils.UnixTimestampToDateTime(chartData.x[startXIndex] / 1000);
+                var end = Utils.UnixTimestampToDateTime(chartData.x[endXIndex] / 1000);
+
+                if (chartHeaderView.Dispatcher.HasThreadAccess)
+                {
+                    chartHeaderView.Footer = string.Format("{0} - {1}", BindConvert.Current.ShortDate.Format(start), BindConvert.Current.ShortDate.Format(end));
+                }
+                else
+                {
+                    _ = chartHeaderView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => chartHeaderView.Footer = string.Format("{0} - {1}", BindConvert.Current.ShortDate.Format(start), BindConvert.Current.ShortDate.Format(end)));
+                }
+            }
             updateLineSignature();
         }
 
@@ -1850,13 +1883,6 @@ namespace Unigram.Charts
         //        outState.putBooleanArray("chart_line_enabled", bArray);
 
         //    }
-        //}
-
-        //ChartHeaderView chartHeaderView;
-
-        //public void setHeader(ChartHeaderView chartHeaderView)
-        //{
-        //    this.chartHeaderView = chartHeaderView;
         //}
 
         public long getSelectedDate()

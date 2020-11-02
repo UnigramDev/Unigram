@@ -710,7 +710,7 @@ namespace Unigram.Common
             return null;
         }
 
-        public static Minithumbnail GetMinithumbnail(this Message message, bool secret)
+        public static Minithumbnail GetMinithumbnail(this Message message, bool secret = false)
         {
             switch (message.Content)
             {

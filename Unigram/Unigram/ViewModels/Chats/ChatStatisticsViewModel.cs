@@ -31,6 +31,7 @@ namespace Unigram.ViewModels.Chats
 
             TopSendersCommand = new RelayCommand(TopSendersExecute);
             OpenProfileCommand = new RelayCommand<int>(OpenProfileExecute);
+            OpenPostCommand = new RelayCommand<Message>(OpenPostExecute);
         }
 
         private Chat _chat;
@@ -88,6 +89,12 @@ namespace Unigram.ViewModels.Chats
             {
                 NavigationService.Navigate(typeof(ProfilePage), chat.Id);
             }
+        }
+
+        public RelayCommand<Message> OpenPostCommand { get; }
+        private void OpenPostExecute(Message message)
+        {
+            NavigationService.NavigateToChat(message.ChatId, message.Id);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -155,6 +162,11 @@ namespace Unigram.ViewModels.Chats
                     stats.Add(ChartViewData.create(groupStats.ActionGraph, Strings.Resources.ActionsChartTitle, 1));
                     stats.Add(ChartViewData.create(groupStats.DayGraph, Strings.Resources.TopHoursChartTitle, /*0*/5));
                     stats.Add(ChartViewData.create(groupStats.WeekGraph, Strings.Resources.TopDaysOfWeekChartTitle, 4));
+
+                    if (stats[7] != null)
+                    {
+                        stats[7].useWeekFormat = true;
+                    }
 
                     Interactions.Clear();
                     TopInviters.ReplaceWith(groupStats.TopInviters);
@@ -235,8 +247,10 @@ namespace Unigram.ViewModels.Chats
         public readonly int graphType;
         public readonly String title;
 
-        bool loading;
-        bool isEmpty;
+        public bool loading;
+        public bool isEmpty;
+        public bool isLanguages;
+        public bool useWeekFormat;
 
         public ChartViewData(String title, int grahType)
         {
