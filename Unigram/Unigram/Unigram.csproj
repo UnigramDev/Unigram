@@ -117,7 +117,9 @@
     <Compile Include="Charts\DataView\BarViewData.cs" />
     <Compile Include="Charts\DataView\ChartBottomSignatureData.cs" />
     <Compile Include="Charts\DataView\ChartHorizontalLinesData.cs" />
-    <Compile Include="Charts\DataView\LegendSignatureView.cs" />
+    <Compile Include="Charts\DataView\LegendSignatureView.xaml.cs">
+      <DependentUpon>LegendSignatureView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Charts\DataView\LineViewData.cs" />
     <Compile Include="Charts\DataView\PieChartViewData.cs" />
     <Compile Include="Charts\DataView\StackBarViewData.cs" />
@@ -247,6 +249,9 @@
     </Compile>
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\ChatShareCell.xaml.cs">
+      <DependentUpon>ChatShareCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\SessionCell.xaml.cs">
       <DependentUpon>SessionCell.xaml</DependentUpon>
@@ -419,6 +424,7 @@
       <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MosaicLayout.cs" />
+    <Compile Include="Controls\MultipleListView.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
@@ -1472,6 +1478,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Include="Charts\DataView\LegendSignatureView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\CallCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1479,6 +1489,10 @@
     <Page Include="Controls\Cells\ChatCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\ChatShareCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\SessionCell.xaml">
       <SubType>Designer</SubType>

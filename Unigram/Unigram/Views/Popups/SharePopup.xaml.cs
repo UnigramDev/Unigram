@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -467,7 +468,7 @@ namespace Unigram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new MultipleListViewItem();
                 args.ItemContainer.Style = ChatsPanel.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsPanel.ItemTemplate;
             }
@@ -482,10 +483,10 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var content = args.ItemContainer.ContentTemplateRoot as ChatShareCell;
             var chat = args.Item as Chat;
 
-            var photo = content.Children[0] as ProfilePicture;
+            var photo = content.Photo;
             var title = content.Children[1] as TextBlock;
 
             photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
@@ -748,6 +749,20 @@ namespace Unigram.Views.Popups
             CommentPanel.Visibility = ViewModel.SelectedItems.Count > 0 && ViewModel.IsCommentEnabled ? Visibility.Visible : Visibility.Collapsed;
 
             IsPrimaryButtonEnabled = ViewModel.AllowEmptySelection || ViewModel.SelectedItems.Count > 0;
+        }
+
+        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is Chat chat && ViewModel.CacheService.IsSavedMessages(chat))
+            {
+                if (ViewModel.SelectedItems.IsEmpty())
+                {
+                    ViewModel.SelectedItems = new MvxObservableCollection<Chat>(new[] { chat });
+                    ViewModel.SendCommand.Execute();
+
+                    Hide();
+                }
+            }
         }
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
