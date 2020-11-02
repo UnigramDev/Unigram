@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -12,7 +11,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
-using Unigram.Native.Tasks;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Views;
 using Windows.ApplicationModel.AppService;
@@ -314,23 +313,12 @@ namespace Unigram.Services
             // as they're the result of update difference on sync.
             if (_suppress == null && update.HaveDelayedNotifications && update.HaveUnreceivedNotifications)
             {
-                _suppress = true;
+                //_suppress = true;
             }
             else if (_suppress == true && !update.HaveDelayedNotifications && !update.HaveUnreceivedNotifications)
             {
-                _suppress = false;
+                //_suppress = false;
             }
-
-            //_suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
-
-            //if (_suppress == null)
-            //{
-            //    _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
-            //}
-            //else if (!update.HaveDelayedNotifications && !update.HaveUnreceivedNotifications)
-            //{
-            //    _suppress = false;
-            //}
         }
 
         public async void Handle(UpdateNotificationGroup update)
@@ -420,13 +408,14 @@ namespace Unigram.Services
             var group = $"{gId}";
             var picture = GetPhoto(chat);
             var date = BindConvert.Current.DateTime(message.Date).ToUniversalTime().ToString("s") + "Z";
-            var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
+            var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
+            var attribution = user?.GetFullName() ?? string.Empty;
 
             await UpdateAsync(chat, async () =>
             {
-                await NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, $"{_sessionService.Id}", sound, launch, tag, group, picture, string.Empty, date, loc_key);
+                await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, tag, group, picture, date, canReply);
             });
 
             if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)

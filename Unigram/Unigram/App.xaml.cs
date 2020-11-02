@@ -140,14 +140,25 @@ namespace Unigram
 
             _passcodeShown = true;
 
-            Window.Current.Content.Visibility = Visibility.Collapsed;
+            // This is a rare case, but it can happen.
+            var content = Window.Current.Content;
+            if (content != null)
+            {
+                content.Visibility = Visibility.Collapsed;
+            }
 
             var dialog = new PasscodePage(biometrics);
             TypedEventHandler<ContentDialog, ContentDialogClosingEventArgs> handler = null;
             handler = (s, args) =>
             {
                 dialog.Closing -= handler;
-                Window.Current.Content.Visibility = Visibility.Visible;
+
+                // This is a rare case, but it can happen.
+                var content = Window.Current.Content;
+                if (content != null)
+                {
+                    content.Visibility = Visibility.Visible;
+                }
             };
 
             dialog.Closing += handler;
@@ -202,18 +213,18 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
-            {
-                Connection = appService.AppServiceConnection;
-                Deferral = args.TaskInstance.GetDeferral();
+            //if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
+            //{
+            //    Connection = appService.AppServiceConnection;
+            //    Deferral = args.TaskInstance.GetDeferral();
 
-                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
-                args.TaskInstance.Canceled += (s, e) =>
-                {
-                    Deferral.Complete();
-                };
-            }
-            else
+            //    appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+            //    args.TaskInstance.Canceled += (s, e) =>
+            //    {
+            //        Deferral.Complete();
+            //    };
+            //}
+            //else
             {
                 var deferral = args.TaskInstance.GetDeferral();
 
@@ -265,7 +276,12 @@ namespace Unigram
 
                     if (TLContainer.Current.TryResolve(session.Value, out IProtoService service))
                     {
-                        await service.SendAsync(new ProcessPushNotification(notification.Content));
+                        var response = await service.SendAsync(new ProcessPushNotification(notification.Content));
+                        if (response is Error error && error.Code == 406)
+                        {
+                            // xd memes
+                            await Task.Delay(5000);
+                        }
                     }
                 }
 

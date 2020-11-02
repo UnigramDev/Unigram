@@ -2327,10 +2327,6 @@
       <Project>{3adbf08f-0550-4a1c-9794-fea30cf69e3a}</Project>
       <Name>Unigram.Native.Media</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.Native.Tasks\Unigram.Native.Tasks.vcxproj">
-      <Project>{ca0c2cc0-3d83-4556-a9a3-0923ece8c1d3}</Project>
-      <Name>Unigram.Native.Tasks</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj">
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
       <Name>Unigram.Native</Name>
