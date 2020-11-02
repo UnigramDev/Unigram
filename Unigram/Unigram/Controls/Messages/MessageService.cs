@@ -124,7 +124,7 @@ namespace Unigram.Controls.Messages
                         case ChatEventSlowModeDelayChanged slowModeDelayChanged:
                             return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
                         default:
-                            return (null, null);
+                            return (string.Empty, null);
                     }
                 case MessageHeaderDate headerDate:
                     return UpdateHeaderDate(message, headerDate, active);
@@ -747,7 +747,7 @@ namespace Unigram.Controls.Messages
                 return (string.Format(Strings.Resources.NotificationContactJoined, senderUser.GetFullName()), null);
             }
 
-            return (null, null);
+            return (string.Empty, null);
         }
 
         private static (string, IList<TextEntity>) UpdateCustomServiceAction(MessageViewModel message, MessageCustomServiceAction customServiceAction, bool active)
