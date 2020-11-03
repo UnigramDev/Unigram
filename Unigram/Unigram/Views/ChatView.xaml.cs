@@ -2019,7 +2019,14 @@ namespace Unigram.Views
                     return false;
                 }
 
-                return supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages));
+                if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator admin && (admin.CanPinMessages || supergroup.IsChannel && admin.CanEditMessages)))
+                {
+                    return true;
+                }
+                else if (supergroup.Status is ChatMemberStatusRestricted restricted)
+                {
+                    return restricted.Permissions.CanPinMessages;
+                }
             }
             else if (chat != null && chat.Type is ChatTypeBasicGroup basicGroupType)
             {
@@ -2029,11 +2036,19 @@ namespace Unigram.Views
                     return false;
                 }
 
-                return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator admin;
+                if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator admin && admin.CanPinMessages))
+                {
+                    return true;
+                }
             }
             else if (chat != null && chat.Type is ChatTypePrivate privata)
             {
                 return true;
+            }
+
+            if (chat != null)
+            {
+                return chat.Permissions.CanPinMessages;
             }
 
             return false;
