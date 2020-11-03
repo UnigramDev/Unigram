@@ -116,7 +116,7 @@
 
                 <controls:ChatStatisticsOverview
                     Title="{CustomResource EnabledNotifications}"
-                    Value="{x:Bind EnabledNotificationsPercentage}"
+                    Percentage="{x:Bind EnabledNotificationsPercentage}"
                     Grid.Column="1"/>
 
                 <controls:ChatStatisticsOverview

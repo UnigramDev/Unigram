@@ -6,8 +6,10 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Chats
@@ -20,6 +22,11 @@ namespace Unigram.Views.Chats
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<MessageStatisticsViewModel, IChatDelegate>(this);
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
+            }
         }
 
         #region Delegate

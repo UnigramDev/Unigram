@@ -6,6 +6,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Chats;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
@@ -19,6 +20,7 @@ namespace Unigram.ViewModels.Chats
         public MessageStatisticsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            OpenChannelCommand = new RelayCommand(OpenChannelExecute);
             OpenPostCommand = new RelayCommand<Message>(OpenPostExecute);
         }
 
@@ -48,6 +50,18 @@ namespace Unigram.ViewModels.Chats
         {
             get => _items;
             set => Set(ref _items, value);
+        }
+
+        public RelayCommand OpenChannelCommand { get; }
+        private void OpenChannelExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChatStatisticsPage), chat.Id);
         }
 
         public RelayCommand<Message> OpenPostCommand { get; }
