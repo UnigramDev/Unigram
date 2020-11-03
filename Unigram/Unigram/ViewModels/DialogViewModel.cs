@@ -3777,6 +3777,10 @@ namespace Unigram.ViewModels
                 {
                     return fromChannel1.ChatId == fromChannel2.ChatId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
                 }
+                else if (message1.ForwardInfo?.Origin is MessageForwardOriginHiddenUser hiddenUser1 && message2.ForwardInfo?.Origin is MessageForwardOriginHiddenUser hiddenUser2)
+                {
+                    return hiddenUser1.SenderName == hiddenUser2.SenderName;
+                }
             }
             else if (saved1 || saved2)
             {
