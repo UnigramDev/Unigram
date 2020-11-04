@@ -60,6 +60,8 @@ namespace Unigram.Controls
         private LoopThread _threadUI;
         private bool _subscribed;
 
+        private bool _unloaded;
+
         public LottieView()
             : this(CompositionCapabilities.GetForCurrentView().AreEffectsFast())
         {
@@ -79,7 +81,7 @@ namespace Unigram.Controls
         //    Dispose();
         //}
 
-        public bool IsUnloaded { get; private set; }
+        public bool IsUnloaded => _unloaded;
 
         protected override void OnApplyTemplate()
         {
@@ -103,8 +105,7 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            IsUnloaded = true;
-
+            _unloaded = true;
             Subscribe(false);
 
             _canvas.CreateResources -= OnCreateResources;
@@ -168,7 +169,7 @@ namespace Unigram.Controls
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            if (_bitmap == null || !_subscribed)
+            if (_bitmap == null || _unloaded)
             {
                 return;
             }
@@ -185,7 +186,7 @@ namespace Unigram.Controls
         public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _animationIsCaching || _canvas == null || _bitmap == null || !_subscribed)
+            if (animation == null || _animationIsCaching || _canvas == null || _bitmap == null || _unloaded)
             {
                 return;
             }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Native;
+using Unigram.Views;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
 using Windows.Storage;
@@ -18,7 +19,7 @@ namespace Unigram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     [TemplatePart(Name = "Thumbnail", Type = typeof(Image))]
-    public class AnimationView : Control
+    public class AnimationView : Control, IPlayerView
     {
         private CanvasControl _canvas;
         private CanvasBitmap _bitmap;
@@ -36,6 +37,8 @@ namespace Unigram.Controls
         private LoopThread _thread = LoopThreadPool.Animations.Get();
         private bool _subscribed;
 
+        private bool _unloaded;
+
         public AnimationView()
         {
             DefaultStyleKey = typeof(AnimationView);
@@ -46,7 +49,7 @@ namespace Unigram.Controls
         //    Dispose();
         //}
 
-        public bool IsUnloaded { get; private set; }
+        public bool IsUnloaded => _unloaded;
 
         protected override void OnApplyTemplate()
         {
@@ -70,8 +73,7 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            IsUnloaded = true;
-
+            _unloaded = true;
             Subscribe(false);
 
             _canvas.CreateResources -= OnCreateResources;
@@ -141,7 +143,7 @@ namespace Unigram.Controls
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            if (_animation == null || !_subscribed)
+            if (_animation == null || _unloaded)
             {
                 return;
             }
@@ -182,7 +184,7 @@ namespace Unigram.Controls
         public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _canvas == null || _bitmap == null || !_subscribed)
+            if (animation == null || _canvas == null || _bitmap == null || _unloaded)
             {
                 return;
             }
