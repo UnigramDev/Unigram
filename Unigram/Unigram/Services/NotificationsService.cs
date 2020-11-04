@@ -413,6 +413,15 @@ namespace Unigram.Services
             var user = _protoService.GetUser(_protoService.Options.MyId);
             var attribution = user?.GetFullName() ?? string.Empty;
 
+            if (TLContainer.Current.Passcode.IsLockscreenRequired)
+            {
+                caption = Strings.Resources.AppName;
+                content = Strings.Resources.YouHaveNewMessage;
+                picture = string.Empty;
+
+                canReply = false;
+            }
+
             await UpdateAsync(chat, async () =>
             {
                 await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, tag, group, picture, date, canReply);
