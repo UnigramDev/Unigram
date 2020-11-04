@@ -60,8 +60,6 @@ namespace Unigram.Controls
         private LoopThread _threadUI;
         private bool _subscribed;
 
-        private ICanvasResourceCreator _device;
-
         public LottieView()
             : this(CompositionCapabilities.GetForCurrentView().AreEffectsFast())
         {
@@ -103,18 +101,6 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        public void Dispose()
-        {
-            //if (_animation is IDisposable disposable)
-            //{
-            //    Debug.WriteLine("Disposing animation for: " + Path.GetFileName(_source));
-            //    disposable.Dispose();
-            //}
-
-            //_animation = null;
-            _source = null;
-        }
-
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             IsUnloaded = true;
@@ -127,13 +113,13 @@ namespace Unigram.Controls
             _canvas.RemoveFromVisualTree();
             _canvas = null;
 
-            Dispose();
-
-            //_animation?.Dispose();
-            _animation = null;
+            _source = null;
 
             //_bitmap?.Dispose();
             _bitmap = null;
+
+            //_animation?.Dispose();
+            _animation = null;
         }
 
         private void OnTick(object sender, EventArgs args)
@@ -166,7 +152,11 @@ namespace Unigram.Controls
                 }
             }
 
-            _device = sender;
+            if (_bitmap != null)
+            {
+                _bitmap.Dispose();
+            }
+
             _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
@@ -178,24 +168,24 @@ namespace Unigram.Controls
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            _device = args.DrawingSession.Device;
-
-            if (_bitmap != null)
+            if (_bitmap == null || !_subscribed)
             {
-                args.DrawingSession.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+                return;
+            }
 
-                if (_hideThumbnail && _thumbnail != null)
-                {
-                    _hideThumbnail = false;
-                    _thumbnail.Opacity = 0;
-                }
+            args.DrawingSession.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+
+            if (_hideThumbnail && _thumbnail != null)
+            {
+                _hideThumbnail = false;
+                _thumbnail.Opacity = 0;
             }
         }
 
         public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _animationIsCaching || _canvas == null || _bitmap == null)
+            if (animation == null || _animationIsCaching || _canvas == null || _bitmap == null || !_subscribed)
             {
                 return;
             }
@@ -317,8 +307,6 @@ namespace Unigram.Controls
                 //canvas.Paused = true;
                 //canvas.ResetElapsedTime();
                 Subscribe(false);
-
-                Dispose();
                 return;
             }
 

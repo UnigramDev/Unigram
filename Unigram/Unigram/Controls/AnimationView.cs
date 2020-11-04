@@ -36,8 +36,6 @@ namespace Unigram.Controls
         private LoopThread _thread = LoopThreadPool.Animations.Get();
         private bool _subscribed;
 
-        private ICanvasResourceCreator _device;
-
         public AnimationView()
         {
             DefaultStyleKey = typeof(AnimationView);
@@ -47,6 +45,8 @@ namespace Unigram.Controls
         //{
         //    Dispose();
         //}
+
+        public bool IsUnloaded { get; private set; }
 
         protected override void OnApplyTemplate()
         {
@@ -68,20 +68,10 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        public void Dispose()
-        {
-            //if (_animation is IDisposable disposable)
-            //{
-            //    Debug.WriteLine("Disposing animation for: " + Path.GetFileName(_source));
-            //    disposable.Dispose();
-            //}
-
-            //_animation = null;
-            _source = null;
-        }
-
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            IsUnloaded = true;
+
             Subscribe(false);
 
             _canvas.CreateResources -= OnCreateResources;
@@ -90,16 +80,13 @@ namespace Unigram.Controls
             _canvas.RemoveFromVisualTree();
             _canvas = null;
 
-            Dispose();
+            _source = null;
 
-            _device = null;
+            //_bitmap?.Dispose();
+            _bitmap = null;
 
             //_animation?.Dispose();
             _animation = null;
-
-            //_bitmap?.Dispose();
-            //_bitmap?.Dispose();
-            _bitmap = null;
         }
 
         private void OnTick(object sender, EventArgs args)
@@ -142,17 +129,19 @@ namespace Unigram.Controls
                     }
                 }
 
+                if (_bitmap != null)
+                {
+                    _bitmap.Dispose();
+                }
+
                 _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
-                _device = sender;
 
             }).AsAsyncAction());
         }
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            _device = args.DrawingSession.Device;
-
-            if (_animation == null)
+            if (_animation == null || !_subscribed)
             {
                 return;
             }
@@ -193,7 +182,7 @@ namespace Unigram.Controls
         public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _canvas == null || _bitmap == null)
+            if (animation == null || _canvas == null || _bitmap == null || !_subscribed)
             {
                 return;
             }
@@ -225,8 +214,6 @@ namespace Unigram.Controls
                 //canvas.Paused = true;
                 //canvas.ResetElapsedTime();
                 Subscribe(false);
-
-                Dispose();
                 return;
             }
 
