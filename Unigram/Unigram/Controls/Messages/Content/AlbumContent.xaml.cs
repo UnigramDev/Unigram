@@ -189,6 +189,7 @@ namespace Unigram.Controls.Messages.Content
                 paragraph.Inlines.Add(span);
 
                 var rich = new RichTextBlock();
+                rich.Style = App.Current.Resources["EmojiRichTextBlockStyle"] as Style;
                 rich.Blocks.Add(paragraph);
                 rich.Margin = new Thickness(0, 0, 0, 8);
 
