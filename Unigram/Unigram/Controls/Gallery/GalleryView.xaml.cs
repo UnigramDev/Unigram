@@ -50,6 +50,8 @@ namespace Unigram.Controls.Gallery
         private RemoteFileStream _fileStream;
         private Grid _surface;
 
+        private Visual _layout;
+
         private Visual _layer;
         private Visual _bottom;
 
@@ -58,6 +60,8 @@ namespace Unigram.Controls.Gallery
         private GalleryView()
         {
             InitializeComponent();
+
+            _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
 
             _layer = ElementCompositionPreview.GetElementVisual(Layer);
             _bottom = ElementCompositionPreview.GetElementVisual(BottomPanel);
@@ -76,8 +80,6 @@ namespace Unigram.Controls.Gallery
             _inactivityTimer.Start();
 
             Transport.Visibility = Visibility.Collapsed;
-
-            Initialize();
         }
 
         private void OnTick(object sender, object e)
@@ -1168,138 +1170,6 @@ namespace Unigram.Controls.Gallery
 
             _compactLifetime = await viewService.OpenAsync(control => new GalleryCompactView(aggregator, control, mediaPlayer, fileStream), "PIP", width, height);
             OnBackRequestedOverride(this, new HandledEventArgs());
-        }
-
-        #endregion
-
-        #region Swipe to close
-
-        private Visual _layout;
-
-        private void Initialize()
-        {
-            _layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
-
-#if !GALLERY_EXPERIMENTAL
-            void Register(Grid presenter)
-            {
-                presenter.ManipulationMode =
-                    //ManipulationModes.TranslateX |
-                    ManipulationModes.TranslateY |
-                    //ManipulationModes.TranslateRailsX |
-                    ManipulationModes.TranslateRailsY |
-                    ManipulationModes.TranslateInertia |
-                    ManipulationModes.System;
-                presenter.ManipulationDelta += LayoutRoot_ManipulationDelta;
-                presenter.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
-            }
-
-            Register(Element2.Presenter);
-            Register(Element0.Presenter);
-            Register(Element1.Presenter);
-#else
-            LayoutRoot.ManipulationMode =
-                //ManipulationModes.TranslateX |
-                ManipulationModes.TranslateY |
-                //ManipulationModes.TranslateRailsX |
-                ManipulationModes.TranslateRailsY |
-                ManipulationModes.TranslateInertia |
-                ManipulationModes.System;
-            LayoutRoot.ManipulationDelta += LayoutRoot_ManipulationDelta;
-            LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
-#endif
-
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.MediaTransportControls", "ShowAndHideAutomatically"))
-            {
-                Transport.ShowAndHideAutomatically = false;
-            }
-        }
-
-        private void LayoutRoot_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            if (e.IsInertial)
-            {
-                e.Complete();
-                return;
-            }
-
-            var height = (float)ActualHeight;
-            var offset = _layout.Offset;
-
-            if (Math.Abs(e.Cumulative.Translation.Y) > Math.Abs(e.Cumulative.Translation.X))
-            {
-                offset.Y = Math.Max(-height, Math.Min(height, offset.Y + (float)e.Delta.Translation.Y));
-
-                var opacity = Math.Abs((offset.Y - -height) / height);
-                if (opacity > 1)
-                {
-                    opacity = 2 - opacity;
-                }
-
-                _layer.Opacity = opacity;
-                _bottom.Opacity = opacity;
-            }
-
-            _layout.Offset = offset;
-            e.Handled = true;
-        }
-
-        private void LayoutRoot_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            var height = (float)ActualHeight;
-            var offset = _layout.Offset;
-
-            if (Math.Abs(e.Cumulative.Translation.Y) > Math.Abs(e.Cumulative.Translation.X))
-            {
-                var current = 0;
-                var delta = -(offset.Y - current) / height;
-
-                var maximum = current - height;
-                var minimum = current + height;
-
-                var direction = 0;
-
-                var animation = _layout.Compositor.CreateScalarKeyFrameAnimation();
-                animation.InsertKeyFrame(0, offset.Y);
-
-                if (delta < 0 && e.Velocities.Linear.Y > 1.5)
-                {
-                    // previous
-                    direction--;
-                    animation.InsertKeyFrame(1, minimum);
-                }
-                else if (delta > 0 && e.Velocities.Linear.Y < -1.5)
-                {
-                    // next
-                    direction++;
-                    animation.InsertKeyFrame(1, maximum);
-                }
-                else
-                {
-                    // back
-                    animation.InsertKeyFrame(1, current);
-                }
-
-                if (direction != 0)
-                {
-                    _layer.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
-                    _bottom.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
-
-                    Unload();
-
-                    Dispose();
-                    Hide();
-                }
-                else
-                {
-                    _layer.StartAnimation("Opacity", CreateScalarAnimation(_layer.Opacity, 1));
-                    _bottom.StartAnimation("Opacity", CreateScalarAnimation(_bottom.Opacity, 1));
-                }
-
-                _layout.StartAnimation("Offset.Y", animation);
-            }
-
-            e.Handled = true;
         }
 
         #endregion
