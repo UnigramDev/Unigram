@@ -1445,7 +1445,6 @@
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Icons\Toast\Send.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-16.png" />
