@@ -377,17 +377,11 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                for (int i = 0; i < ViewModel.Chats.Items.Count; i++)
+                if (update.File.Local.IsDownloadingCompleted && ViewModel.ProtoService.TryGetChatForFileId(update.File.Id, out Chat chat))
                 {
-                    var chat = ViewModel.Chats.Items[i];
-                    if (chat.UpdateFile(update.File))
+                    var container = ChatsList.ContainerFromItem(chat) as SelectorItem;
+                    if (container != null)
                     {
-                        var container = ChatsList.ContainerFromIndex(i) as ListViewItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
                         var chatView = container.ContentTemplateRoot as ChatCell;
                         if (chatView != null)
                         {
@@ -396,17 +390,11 @@ namespace Unigram.Views
                     }
                 }
 
-                for (int i = 0; i < ViewModel.Contacts.Items.Count; i++)
+                if (update.File.Local.IsDownloadingCompleted && ViewModel.ProtoService.TryGetUserForFileId(update.File.Id, out User user))
                 {
-                    var user = ViewModel.Contacts.Items[i];
-                    if (user.UpdateFile(update.File))
+                    var container = ChatsList.ContainerFromItem(user) as SelectorItem;
+                    if (container != null)
                     {
-                        var container = UsersListView.ContainerFromIndex(i) as ListViewItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
                         var content = container.ContentTemplateRoot as Grid;
 
                         var photo = content.Children[0] as ProfilePicture;

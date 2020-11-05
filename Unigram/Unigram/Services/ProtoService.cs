@@ -103,6 +103,9 @@ namespace Unigram.Services
         SupergroupFullInfo GetSupergroupFull(int id);
         SupergroupFullInfo GetSupergroupFull(Chat chat);
 
+        bool TryGetChatForFileId(int fileId, out Chat chat);
+        bool TryGetUserForFileId(int fileId, out User user);
+
         bool IsAnimationSaved(int id);
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
@@ -568,7 +571,7 @@ namespace Unigram.Services
             return -1;
         }
 
-        private bool TryGetChatForFileId(int fileId, out Chat chat)
+        public bool TryGetChatForFileId(int fileId, out Chat chat)
         {
             if (_chatsMap.TryGetValue(fileId, out long chatId))
             {
@@ -580,7 +583,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private bool TryGetUserForFileId(int fileId, out User user)
+        public bool TryGetUserForFileId(int fileId, out User user)
         {
             if (_usersMap.TryGetValue(fileId, out int userId))
             {
@@ -1431,21 +1434,11 @@ namespace Unigram.Services
                 if (TryGetChatForFileId(updateFile.File.Id, out Chat chat))
                 {
                     chat.UpdateFile(updateFile.File);
-
-                    if (updateFile.File.Local.IsDownloadingCompleted && updateFile.File.Remote.IsUploadingCompleted)
-                    {
-                        _chatsMap.Remove(updateFile.File.Id);
-                    }
                 }
 
                 if (TryGetUserForFileId(updateFile.File.Id, out User user))
                 {
                     user.UpdateFile(updateFile.File);
-
-                    if (updateFile.File.Local.IsDownloadingCompleted && updateFile.File.Remote.IsUploadingCompleted)
-                    {
-                        _usersMap.Remove(updateFile.File.Id);
-                    }
                 }
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)

@@ -67,14 +67,6 @@ namespace Unigram.Services
         readonly List<Handler> handlers = new List<Handler>();
 
         /// <summary>
-        ///   Gets or sets the default publication thread marshaller.
-        /// </summary>
-        /// <value>
-        ///   The default publication thread marshaller.
-        /// </value>
-        public Action<System.Action> PublicationThreadMarshaller { get; set; }
-
-        /// <summary>
         /// Searches the subscribed handlers to check if we have a handler for
         /// the message type supplied.
         /// </summary>
