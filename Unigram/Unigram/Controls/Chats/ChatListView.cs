@@ -252,8 +252,8 @@ namespace Unigram.Controls.Chats
             {
                 Logs.Logger.Debug(Logs.Target.Chat, "position.Y is negative, let's wait for layout");
 
-                // call task-based ScrollIntoViewAsync to realize the item
-                await this.ScrollIntoViewAsync(item, direction);
+                // call task-based UpdateLayoutAsync to realize the item
+                await this.UpdateLayoutAsync(false);
 
                 // this time the item shouldn't be null again
                 selectorItem = ContainerFromItem(item) as SelectorItem;
