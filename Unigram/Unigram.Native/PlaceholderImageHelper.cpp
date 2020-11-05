@@ -173,7 +173,7 @@ void PlaceholderImageHelper::DrawWebP(String^ fileName, IRandomAccessStream^ ran
 		config.options.scaled_height = height;
 		config.options.use_scaling = 1;
 		config.options.no_fancy_upsampling = 1;
-		config.output.colorspace = MODE_bgrA;
+		config.output.colorspace = MODE_BGRA;
 		config.output.is_external_memory = 1;
 		config.output.u.RGBA.rgba = pixels;
 		config.output.u.RGBA.stride = width * 4;
