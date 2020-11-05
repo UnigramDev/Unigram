@@ -134,6 +134,21 @@ namespace Unigram.Common
                 return MessageService.GetText(new ViewModels.MessageViewModel(protoService, null, null, message)) + ", ";
             }
 
+            if (message.Content is MessageAlbum album)
+            {
+                if (album.IsMedia)
+                {
+                    return Locale.Declension("Photos", album.Messages.Count) + ", ";
+                }
+                else if (album.Messages.Count > 0 && album.Messages[0].Content is MessageAudio)
+                {
+                    return Locale.Declension("MusicFiles", album.Messages.Count) + ", ";
+                }
+                else
+                {
+                    return Locale.Declension("Files", album.Messages.Count) + ", ";
+                }
+            }
             if (message.Content is MessageText text)
             {
                 return text.Text.Text + ", ";
