@@ -159,7 +159,7 @@ namespace Unigram.Controls.Chats
                     if (_request == null)
                     {
                         _request = new DisplayRequest();
-                        _request.GetType();
+                        _request.RequestActive();
                     }
                 }
                 catch { }
