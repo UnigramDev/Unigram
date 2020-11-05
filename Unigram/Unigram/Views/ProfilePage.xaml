@@ -187,7 +187,7 @@
                                 <controls:GlyphButton
                                     Glyph="&#xE8BD;"
                                     Command="{x:Bind ViewModel.SendMessageCommand}"
-                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                     AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
                                     ToolTipService.ToolTip="{CustomResource AccDescrOpenChat}"
                                     Style="{StaticResource RoundGlyphButtonStyle}"
