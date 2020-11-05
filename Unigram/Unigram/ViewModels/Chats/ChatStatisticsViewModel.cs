@@ -188,30 +188,14 @@ namespace Unigram.ViewModels.Chats
                     stats = null;
                 }
 
-                for (int i = 0; i < stats.Count; i++)
+                if (stats != null)
                 {
-                    if (i == Views.Chats.ChatStatisticsPage._loadIndex && stats[i].token != null)
-                    {
-                        var resp = await ProtoService.SendAsync(new GetStatisticsGraph(chatId, stats[i].token, 0));
-                        if (resp is StatisticsGraphData data)
-                        {
-                            if (stats[i].title == Strings.Resources.LanguagesChartTitle)
-                            {
-                                System.Diagnostics.Debugger.Break();
-                            }
-
-                            stats[i] = ChartViewData.create(data, stats[i].title, stats[i].graphType);
-                        }
-                    }
+                    Items.ReplaceWith(stats.Where(x => x != null));
                 }
-
-                Items.ReplaceWith(stats);
-
-
-                //foreach (var item in stats)
-                //{
-                //    var model =
-                //}
+                else
+                {
+                    Items.Clear();
+                }
             }
 
             IsLoading = false;
@@ -318,16 +302,16 @@ namespace Unigram.ViewModels.Chats
             return null;
         }
 
-        public async Task LoadAsync(IProtoService protoService, long chatId)
+        public async Task<bool> LoadAsync(IProtoService protoService, long chatId)
         {
             var graph = await protoService.SendAsync(new GetStatisticsGraph(chatId, token, 0)) as StatisticsGraph;
             var viewData = this;
 
             if (graph == null || graph is StatisticsGraphError)
             {
-                return;
+                return false;
             }
-            if (graph is StatisticsGraphData data)
+            else if (graph is StatisticsGraphData data)
             {
                 String json = data.JsonData;
                 try
@@ -344,12 +328,16 @@ namespace Unigram.ViewModels.Chats
                         viewData.childChartData = new StackLinearChartData(viewData.chartData, x);
                         viewData.activeZoom = x;
                     }
+
+                    return true;
                 }
                 catch (Exception e)
                 {
                     //e.printStackTrace();
                 }
             }
+
+            return false;
         }
 
         //public void load(int accountId, int classGuid, int dc, RecyclerListView recyclerListView, Adapter adapter, DiffUtilsCallback difCallback)

@@ -85,6 +85,8 @@ namespace Unigram.Views.Chats
             var border = root.Items[0] as AspectView;
             var checks = root.Items[1] as WrapPanel;
 
+            border.Constraint = data;
+
             if (args.Phase < 2)
             {
                 root.Header = data.title;
@@ -94,16 +96,19 @@ namespace Unigram.Views.Chats
                 return;
             }
 
-            border.Constraint = data;
-
             if (data.token != null)
             {
-                if (data.title == Strings.Resources.LanguagesChartTitle)
+                if (data.title == Strings.Resources.IVInteractionsChartTitle)
                 {
                     System.Diagnostics.Debugger.Break();
                 }
-                await data.LoadAsync(ViewModel.ProtoService, ViewModel.Chat.Id);
+                
+                var result = await data.LoadAsync(ViewModel.ProtoService, ViewModel.Chat.Id);
 
+                if (!result)
+                {
+                    return;
+                }
             }
 
             //if (args.ItemIndex != _loadIndex)
