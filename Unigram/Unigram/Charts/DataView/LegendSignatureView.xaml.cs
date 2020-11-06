@@ -162,7 +162,7 @@ namespace Unigram.Charts.DataView
 
                     holdes[i].Signature = l.name;
                     holdes[i].Value = formatWholeNumber(l.y[index]);
-                    holdes[i].Foreground = new SolidColorBrush(l.color);
+                    holdes[i].Foreground = new SolidColorBrush(lines[i].lineColor);
 
                     if (showPercentage)
                     {

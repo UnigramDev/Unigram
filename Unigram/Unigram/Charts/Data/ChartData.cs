@@ -86,7 +86,7 @@ namespace Unigram.Charts.Data
                         String key = matcher.Groups[1].Value;
                         if (key != null)
                         {
-                            line.colorKey = "statisticChartLine_" + matcher.Groups[1].Value;
+                            line.colorKey = "StatisticChartLine_" + matcher.Groups[1].Value;
                         }
 
                         line.color = matcher.Groups[2].Value.ToColor();

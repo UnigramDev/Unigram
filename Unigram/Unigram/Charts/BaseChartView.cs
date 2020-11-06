@@ -17,6 +17,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -336,6 +337,11 @@ namespace Unigram.Charts
                     onMeasure(0, 0);
                 }
             };
+            canvas.ActualThemeChanged += (s, args) =>
+            {
+                updateColors();
+                canvas.Invalidate();
+            };
 
             timer = new Timer(new TimerCallback(state =>
             {
@@ -392,36 +398,88 @@ namespace Unigram.Charts
             return new LegendSignatureView();
         }
 
-        protected static Dictionary<string, Color> _colors = new Dictionary<string, Color>
+        private static readonly Dictionary<string, Color> _colorsLight = new Dictionary<string, Color>
         {
-            { "key_statisticChartSignatureAlpha", Color.FromArgb(0x7f, 0x25, 0x25, 0x29) },
-            { "key_statisticChartSignature", Color.FromArgb(0x7f, 0x25, 0x25, 0x29) },
-            { "key_statisticChartHintLine", Color.FromArgb(0x1a, 0x18, 0x2D, 0x3B) },
-            { "key_statisticChartActiveLine", Color.FromArgb(0x33, 0x00, 0x00, 0x00) },
-            { "key_statisticChartActivePickerChart", Color.FromArgb(0xd8, 0xba, 0xcc, 0xd9) },
-            { "key_statisticChartInactivePickerChart", Color.FromArgb(0x99, 0xe2, 0xee, 0xf9) },
-            { "key_windowBackgroundWhite", Colors.White },
-            { "key_statisticChartRipple", Color.FromArgb(0x2c, 0x7e, 0x9d, 0xb7) },
+            { "StatisticChartSignature", ColorEx.FromHex(0x7f252529) },
+            { "StatisticChartSignatureAlpha", ColorEx.FromHex(0x7f252529) },
+            { "StatisticChartHintLine", ColorEx.FromHex(0x1a182D3B) },
+            { "StatisticChartActiveLine", ColorEx.FromHex(0x33000000) },
+            { "StatisticChartInactivePickerChart", ColorEx.FromHex(0x99e2eef9) },
+            { "StatisticChartActivePickerChart", ColorEx.FromHex(0xd8baccd9) },
+
+            { "StatisticChartRipple", ColorEx.FromHex(0x2c7e9db7) },
+            { "StatisticChartBackZoomColor", ColorEx.FromHex(0xff108BE3) },
+            { "StatisticChartCheckboxInactive", ColorEx.FromHex(0xffBDBDBD) },
+            { "StatisticChartNightIconColor", ColorEx.FromHex(0xff8E8E93) },
+            { "StatisticChartChevronColor", ColorEx.FromHex(0xffD2D5D7) },
+            { "StatisticChartHighlightColor", ColorEx.FromHex(0x20ececec) },
         };
+
+        private static readonly Dictionary<string, Color> _colorsDark = new Dictionary<string, Color>
+        {
+            { "StatisticChartSignature", ColorEx.FromHex(0xB7A3B1C2) },
+            { "StatisticChartSignatureAlpha", ColorEx.FromHex(0x8BFFFFFF) },
+            { "StatisticChartHintLine", ColorEx.FromHex(0x1AFFFFFF) },
+            { "StatisticChartActiveLine", ColorEx.FromHex(0x32FFFFFF) },
+            { "StatisticChartInactivePickerChart", ColorEx.FromHex(0xD8313A43) },
+            { "StatisticChartActivePickerChart", ColorEx.FromHex(0xD8596879) },
+
+            { "StatisticChartRipple", ColorEx.FromHex(0x2CA4BDD2) },
+            { "StatisticChartBackZoomColor", ColorEx.FromHex(0xFF46AAEE) },
+            { "StatisticChartCheckboxInactive", ColorEx.FromHex(0xFF9B9B9B) },
+            { "StatisticChartNightIconColor", ColorEx.FromHex(0xff8E8E93) },
+            { "StatisticChartChevronColor", ColorEx.FromHex(0xFF767C85) },
+            { "StatisticChartHighlightColor", ColorEx.FromHex(0x86FFFFFF) },
+        };
+
+        protected Color GetColor(string key)
+        {
+            IDictionary<string, Color> colors;
+            if (ActualTheme == ElementTheme.Dark)
+            {
+                colors = _colorsDark;
+            }
+            else
+            {
+                colors = _colorsLight;
+            }
+
+            if (colors.TryGetValue(key, out Color value))
+            {
+                return value;
+            }
+
+            return default;
+        }
+
+        protected Color GetBackgroundColor()
+        {
+            if (App.Current.Resources.TryGet("ApplicationPageBackgroundThemeBrush", out SolidColorBrush brush))
+            {
+                return brush.Color;
+            }
+
+            return default;
+        }
 
         public void updateColors()
         {
             if (useAlphaSignature)
             {
-                signaturePaint.Color = _colors["key_statisticChartSignatureAlpha"];
+                signaturePaint.Color = GetColor("StatisticChartSignatureAlpha");
             }
             else
             {
-                signaturePaint.Color = _colors["key_statisticChartSignature"];
+                signaturePaint.Color = GetColor("StatisticChartSignature");
             }
 
-            bottomSignaturePaint.Color = _colors["key_statisticChartSignature"];
-            linePaint.Color = _colors["key_statisticChartHintLine"];
-            selectedLinePaint.Color = _colors["key_statisticChartActiveLine"];
-            pickerSelectorPaint.Color = _colors["key_statisticChartActivePickerChart"];
-            unactiveBottomChartPaint.Color = _colors["key_statisticChartInactivePickerChart"];
-            selectionBackgroundPaint.Color = _colors["key_windowBackgroundWhite"];
-            ripplePaint.Color = _colors["key_statisticChartRipple"];
+            bottomSignaturePaint.Color = GetColor("StatisticChartSignature");
+            linePaint.Color = GetColor("StatisticChartHintLine");
+            selectedLinePaint.Color = GetColor("StatisticChartActiveLine");
+            pickerSelectorPaint.Color = GetColor("StatisticChartActivePickerChart");
+            unactiveBottomChartPaint.Color = GetColor("StatisticChartInactivePickerChart");
+            selectionBackgroundPaint.Color = GetBackgroundColor();
+            ripplePaint.Color = GetColor("StatisticChartRipple");
             legendSignatureView.recolor();
 
             hintLinePaintAlpha = linePaint.A;
@@ -429,10 +487,9 @@ namespace Unigram.Charts
             signaturePaintAlpha = signaturePaint.A / 255f;
             bottomSignaturePaintAlpha = bottomSignaturePaint.A / 255f;
 
-
             foreach (LineViewData l in lines)
             {
-                l.updateColors();
+                l.updateColors(ActualTheme);
             }
 
             if (legendShowing && selectedIndex < chartData.x.Length)

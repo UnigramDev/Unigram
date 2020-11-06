@@ -338,7 +338,7 @@ namespace Unigram.Charts
                 {
                     if (a.valuesStr2 == null || lines.Count < 2)
                     {
-                        signaturePaint.Color = _colors["key_statisticChartSignature"];
+                        signaturePaint.Color = GetColor("StatisticChartSignature");
                         signaturePaint.A = (byte)(a.alpha * signaturePaintAlpha * transitionAlpha * additionalOutAlpha);
                     }
                     else

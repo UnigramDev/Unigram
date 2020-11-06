@@ -1,6 +1,9 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
+using System.Collections.Generic;
 using Unigram.Charts.Data;
+using Unigram.Common;
 using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace Unigram.Charts.DataView
 {
@@ -58,11 +61,61 @@ namespace Unigram.Charts.DataView
             linesPath = new float[line.y.Length << 2];
             linesPathBottom = new float[line.y.Length << 2];
 
-            updateColors();
+            updateColors(ElementTheme.Default);
         }
 
-        public virtual void updateColors()
+        private static readonly Dictionary<string, Color> _colorsLight = new Dictionary<string, Color>
         {
+            { "StatisticChartLine_blue", ColorEx.FromHex(0xff327FE5) },
+            { "StatisticChartLine_green", ColorEx.FromHex(0xff61C752) },
+            { "StatisticChartLine_red", ColorEx.FromHex(0xffE05356) },
+            { "StatisticChartLine_golden", ColorEx.FromHex(0xffDEBA08) },
+            { "StatisticChartLine_lightblue", ColorEx.FromHex(0xff58A8ED) },
+            { "StatisticChartLine_lightgreen", ColorEx.FromHex(0xff8FCF39) },
+            { "StatisticChartLine_orange", ColorEx.FromHex(0xffE3B727) },
+            { "StatisticChartLine_indigo", ColorEx.FromHex(0xff7F79F3) },
+            { "StatisticChartLineEmpty", ColorEx.FromHex(0xFFEEEEEE) },
+
+        };
+
+        private static readonly Dictionary<string, Color> _colorsDark = new Dictionary<string, Color>
+        {
+            { "StatisticChartLine_blue", ColorEx.FromHex(0xFF529FFF) },
+            { "StatisticChartLine_green", ColorEx.FromHex(0xFF3DC23F) },
+            { "StatisticChartLine_red", ColorEx.FromHex(0xFFF34C44) },
+            { "StatisticChartLine_golden", ColorEx.FromHex(0xFFDEAC1F) },
+            { "StatisticChartLine_lightblue", ColorEx.FromHex(0xFF3C78EC) },
+            { "StatisticChartLine_lightgreen", ColorEx.FromHex(0xFF8FCF39) },
+            { "StatisticChartLine_orange", ColorEx.FromHex(0xFFE9C41A) },
+            { "StatisticChartLine_indigo", ColorEx.FromHex(0xFF875CE5) },
+            { "StatisticChartLineEmpty", ColorEx.FromHex(0xFFEEEEEE) },
+        };
+
+        public virtual void updateColors(ElementTheme theme)
+        {
+            IDictionary<string, Color> colors;
+            if (theme == ElementTheme.Dark)
+            {
+                colors = _colorsDark;
+            }
+            else
+            {
+                colors = _colorsLight;
+            }
+
+            if (line.colorKey != null && colors.TryGetValue(line.colorKey, out Color color))
+            {
+                lineColor = color;
+            }
+            else
+            {
+                lineColor = line.color;
+            }
+
+            paint.Color = lineColor;
+            bottomLinePaint.Color = lineColor;
+            selectionPaint.Color = lineColor;
+
             //if (line.colorKey != null && Theme.hasThemeKey(line.colorKey))
             //{
             //    lineColor = Theme.getColor(line.colorKey);
