@@ -308,33 +308,24 @@ namespace Unigram.Controls.Messages
                 ThumbImage.ImageSource = value;
         }
 
-        protected override void SetTitle(string value)
+        protected override void SetText(string title, string service, string message)
         {
-            TitleLabel.Text = value;
+            TitleLabel.Text = title;
+
+            var serviceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
+            serviceShow.Text = service;
+
+            var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
+            messageShow.Text = message;
         }
 
-        protected override void SetService(string value)
+        protected override void AppendText(string service, string message)
         {
-            var referenceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
-            referenceShow.Text = value;
-        }
+            var serviceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
+            serviceShow.Text += service;
 
-        protected override void SetMessage(string value)
-        {
-            var referenceShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            referenceShow.Text = value;
-        }
-
-        protected override void AppendService(string value)
-        {
-            var referenceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
-            referenceShow.Text += value;
-        }
-
-        protected override void AppendMessage(string value)
-        {
-            var referenceShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            referenceShow.Text += value;
+            var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
+            messageShow.Text += message;
         }
 
         #endregion
