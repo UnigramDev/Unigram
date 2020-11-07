@@ -2,6 +2,7 @@
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -15,7 +16,7 @@ namespace Unigram.Controls.Messages
 {
     public sealed partial class MessageFooter : ContentPresenter
     {
-        private bool _ticksState;
+        private MessageTicksState _ticksState;
 
         private MessageViewModel _mesage;
 
@@ -25,7 +26,10 @@ namespace Unigram.Controls.Messages
 
             // Due to an UWP bug we can't have composition geometries here due to Pointer*ThemeAnimations:
             // https://github.com/microsoft/WindowsCompositionSamples/issues/329
-            // InitializeAnimation();
+            //if (ApiInfo.IsBuildOrGreater(19041))
+            //{
+            //    InitializeTicks();
+            //}
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -127,6 +131,11 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageState(MessageViewModel message)
         {
+            StateLabel.Text = UpdateStateIcon(message);
+        }
+
+        private string UpdateStateIcon(MessageViewModel message)
+        {
             if (message.IsOutgoing && !message.IsChannelPost && !message.IsSaved())
             {
                 var maxId = 0L;
@@ -141,38 +150,36 @@ namespace Unigram.Controls.Messages
                 {
                     UpdateTicks(null);
 
-                    _ticksState = false;
-                    StateLabel.Text = "\u00A0\u00A0failed";
+                    _ticksState = MessageTicksState.Failed;
+
+                    // TODO: 
+                    return "\u00A0\u00A0failed"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
                     UpdateTicks(null);
 
-                    _ticksState = false;
-                    StateLabel.Text = "\u00A0\u00A0\uE600";
+                    _ticksState = MessageTicksState.Pending;
+                    return "\u00A0\u00A0\uE600"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
-                    UpdateTicks(true, _ticksState);
+                    UpdateTicks(true, _ticksState == MessageTicksState.Sent);
 
-                    _ticksState = false;
-                    StateLabel.Text = _container != null ? "\u00A0\u00A0\uE603" : "\u00A0\u00A0\uE601";
+                    _ticksState = MessageTicksState.Read;
+                    return _container != null ? "\u00A0\u00A0\uE603" : "\u00A0\u00A0\uE601"; // Read
                 }
-                else
-                {
-                    UpdateTicks(false);
 
-                    _ticksState = true;
-                    StateLabel.Text = _container != null ? "\u00A0\u00A0\uE603" : "\u00A0\u00A0\uE602";
-                }
-            }
-            else
-            {
-                UpdateTicks(null);
+                UpdateTicks(false, _ticksState == MessageTicksState.Pending);
 
-                _ticksState = false;
-                StateLabel.Text = string.Empty;
+                _ticksState = MessageTicksState.Sent;
+                return _container != null ? "\u00A0\u00A0\uE603" : "\u00A0\u00A0\uE602"; // Unread
             }
+
+            UpdateTicks(null);
+
+            _ticksState = MessageTicksState.None;
+            return string.Empty;
         }
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
@@ -251,10 +258,11 @@ namespace Unigram.Controls.Messages
 
         private CompositionGeometry _line21;
         private CompositionGeometry _line22;
+        private ShapeVisual _visual2;
 
         private CompositionSpriteShape[] _shapes;
 
-        private ContainerVisual _container;
+        private SpriteVisual _container;
 
         #region Stroke
 
@@ -288,7 +296,7 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
-        private void InitializeAnimation()
+        private void InitializeTicks()
         {
             if (!ApiInfo.CanUseDirectComposition)
             {
@@ -330,8 +338,8 @@ namespace Unigram.Controls.Messages
             var visual1 = Window.Current.Compositor.CreateShapeVisual();
             visual1.Shapes.Add(shape12);
             visual1.Shapes.Add(shape11);
-            visual1.Size = new Vector2(18, 10);
-            visual1.CenterPoint = new Vector3(18, 5, 0);
+            visual1.Size = new Vector2(width, height);
+            visual1.CenterPoint = new Vector3(width, height / 2f, 0);
 
 
             var line21 = Window.Current.Compositor.CreateLineGeometry();
@@ -354,13 +362,13 @@ namespace Unigram.Controls.Messages
             var visual2 = Window.Current.Compositor.CreateShapeVisual();
             visual2.Shapes.Add(shape22);
             visual2.Shapes.Add(shape21);
-            visual2.Size = new Vector2(18, 10);
+            visual2.Size = new Vector2(width, height);
 
 
-            var container = Window.Current.Compositor.CreateContainerVisual();
+            var container = Window.Current.Compositor.CreateSpriteVisual();
             container.Children.InsertAtTop(visual2);
             container.Children.InsertAtTop(visual1);
-            container.Size = new Vector2(18, 10);
+            container.Size = new Vector2(width, height);
 
             ElementCompositionPreview.SetElementChildVisual(Label, container);
 
@@ -370,6 +378,7 @@ namespace Unigram.Controls.Messages
             _line22 = line22;
             _shapes = new[] { shape11, shape12, shape21, shape22 };
             _visual1 = visual1;
+            _visual2 = visual2;
             _container = container;
         }
 
@@ -384,9 +393,9 @@ namespace Unigram.Controls.Messages
             {
                 _container.IsVisible = false;
             }
-            else if (read == true && animate)
+            else if (animate)
             {
-                AnimateTicks();
+                AnimateTicks(read == true);
             }
             else
             {
@@ -399,7 +408,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        private void AnimateTicks()
+        private void AnimateTicks(bool read)
         {
             _container.IsVisible = true;
 
@@ -424,16 +433,9 @@ namespace Unigram.Controls.Messages
             var anim12 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             anim12.InsertKeyFrame(0, 0);
             anim12.InsertKeyFrame(1, 1);
+            anim12.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             anim12.DelayTime = anim11.Duration;
             anim12.Duration = TimeSpan.FromMilliseconds(400);
-
-            _line11.StartAnimation("TrimEnd", anim11);
-            _line12.StartAnimation("TrimEnd", anim12);
-
-            var anim21 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            anim21.InsertKeyFrame(0, 0);
-            anim21.InsertKeyFrame(1, 1, linear);
-            anim11.Duration = TimeSpan.FromMilliseconds(duration);
 
             var anim22 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             anim22.InsertKeyFrame(0, new Vector3(1));
@@ -441,8 +443,30 @@ namespace Unigram.Controls.Messages
             anim22.InsertKeyFrame(1, new Vector3(1));
             anim22.Duration = anim11.Duration + anim12.Duration;
 
-            _line21.StartAnimation("TrimStart", anim21);
-            _visual1.StartAnimation("Scale", anim22);
+            if (read)
+            {
+                _line11.StartAnimation("TrimEnd", anim11);
+                _line12.StartAnimation("TrimEnd", anim12);
+                _visual1.StartAnimation("Scale", anim22);
+
+                var anim21 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                anim21.InsertKeyFrame(0, 0);
+                anim21.InsertKeyFrame(1, 1, linear);
+                anim11.Duration = TimeSpan.FromMilliseconds(duration);
+
+                _line21.StartAnimation("TrimStart", anim21);
+            }
+            else
+            {
+                _line11.TrimEnd = 0;
+                _line12.TrimEnd = 0;
+
+                _line21.TrimStart = 0;
+
+                _line21.StartAnimation("TrimEnd", anim11);
+                _line22.StartAnimation("TrimEnd", anim12);
+                _visual2.StartAnimation("Scale", anim22);
+            }
         }
 
         protected override Size ArrangeOverride(Size finalSize)
