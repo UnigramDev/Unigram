@@ -137,13 +137,18 @@ namespace Unigram.Controls
 
         internal void OnPointerMoved(LazoListViewItem item, PointerRoutedEventArgs e)
         {
+            if (!_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
             var child = ItemFromContainer(item);
             if (child == null)
             {
                 return;
             }
 
-            if ((_firstItem != null && _firstItem != child) || !_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            if (_firstItem != null && _firstItem != child)
             {
                 return;
             }
@@ -158,7 +163,7 @@ namespace Unigram.Controls
 
             if (_firstItem == null)
             {
-                _firstItem = ItemFromContainer(item);
+                _firstItem = child;
                 _ranges = SelectedRanges.ToArray();
                 _operation = !item.IsSelected;
 
