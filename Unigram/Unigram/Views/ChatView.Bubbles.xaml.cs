@@ -241,7 +241,7 @@ namespace Unigram.Views
             ShowHideDateHeader(minDateIndex > 0, minDateIndex > 0 && minDateIndex < int.MaxValue);
 
             // Read and play messages logic:
-            if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+            if (messages.Count > 0 && !intermediate && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 ViewModel.ProtoService.Send(new ViewMessages(chat.Id, ViewModel.ThreadId, messages, false));
             }
@@ -266,7 +266,7 @@ namespace Unigram.Views
             if (thread != null)
             {
                 var message = thread.Messages.LastOrDefault();
-                if (message == null || (firstVisibleId <= message.Id && lastVisibleId >= message.Id))
+                if (message == null || (firstVisibleId <= message.Id && lastVisibleId >= message.Id) || Messages.ScrollingHost.ScrollableHeight == 0)
                 {
                     PinnedMessage.UpdateMessage(ViewModel.Chat, null, false, 0, 1, false);
                 }
@@ -511,20 +511,20 @@ namespace Unigram.Views
                 return;
             }
 
-            foreach (var item in next.Keys.Except(_old.Keys).ToList())
+            foreach (var item in next)
             {
-                if (_old.ContainsKey(item))
+                if (_old.ContainsKey(item.Key))
                 {
                     continue;
                 }
 
-                if (next.TryGetValue(item, out MediaPlayerItem data) && data.Element != null && data.Element.Child == null)
+                if (item.Value.Element != null && item.Value.Element.Child == null)
                 {
                     var presenter = new AnimationView();
                     presenter.AutoPlay = true;
                     presenter.IsLoopingEnabled = true;
                     presenter.IsHitTestVisible = false;
-                    presenter.Source = UriEx.GetLocal(data.File.Local.Path);
+                    presenter.Source = UriEx.GetLocal(item.Value.File.Local.Path);
 
                     //if (data.Clip && ApiInformation.IsTypePresent("Windows.UI.Composition.CompositionGeometricClip"))
                     //{
@@ -542,14 +542,14 @@ namespace Unigram.Views
                     //    visual.Clip = clip;
                     //}
 
-                    data.Player = presenter;
+                    item.Value.Player = presenter;
                     //container.Children.Insert(news[item].Watermark ? 2 : 2, presenter);
                     //container.Children.Add(presenter);
 
-                    data.Element.Child = presenter;
+                    item.Value.Element.Child = presenter;
                 }
 
-                _old[item] = next[item];
+                _old[item.Key] = item.Value;
             }
         }
 
@@ -630,19 +630,19 @@ namespace Unigram.Views
                 _oldStickers.Remove(item);
             }
 
-            foreach (var item in next.Keys.Except(_oldStickers.Keys).ToList())
+            foreach (var item in next)
             {
-                if (_oldStickers.ContainsKey(item))
+                //if (_oldStickers.ContainsKey(item))
+                //{
+                //    continue;
+                //}
+
+                if (item.Value.Player != null)
                 {
-                    continue;
+                    item.Value.Player.Play();
                 }
 
-                if (next.TryGetValue(item, out LottieViewItem data) && data.Player != null)
-                {
-                    data.Player.Play();
-                }
-
-                _oldStickers[item] = next[item];
+                _oldStickers[item.Key] = item.Value;
             }
         }
 
