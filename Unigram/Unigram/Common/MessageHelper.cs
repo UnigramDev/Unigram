@@ -1100,7 +1100,11 @@ namespace Unigram.Common
 
             if (TryCreateUri(entity, out Uri uri))
             {
-                await Launcher.LaunchUriAsync(uri);
+                try
+                {
+                    await Launcher.LaunchUriAsync(uri);
+                }
+                catch { }
             }
         }
 
