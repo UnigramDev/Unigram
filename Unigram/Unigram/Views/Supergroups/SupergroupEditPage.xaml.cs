@@ -5,16 +5,12 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Entities;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Unigram.Views.Popups;
-using Windows.Foundation.Metadata;
-using Windows.Media.Capture;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.Views.Supergroups
 {
@@ -28,28 +24,6 @@ namespace Unigram.Views.Supergroups
             DataContext = TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(this);
         }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
-        {
-            var flyout = FlyoutBase.GetAttachedFlyout(sender as FrameworkElement);
-            if (flyout == null)
-            {
-                return;
-            }
-
-            DeletePhoto.Visibility = DeletePhotoSeparator.Visibility = ViewModel.Chat.Photo != null
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-
-            if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
-            {
-                flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
-            }
-            else
-            {
-                flyout.ShowAt(sender as FrameworkElement);
-            }
-        }
-
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
             var picker = new FileOpenPicker();
@@ -60,27 +34,6 @@ namespace Unigram.Views.Supergroups
             var media = await picker.PickSingleMediaAsync();
             if (media != null)
             {
-                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
-
-                var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    ViewModel.EditPhotoCommand.Execute(media);
-                }
-            }
-        }
-
-        private async void EditCamera_Click(object sender, RoutedEventArgs e)
-        {
-            var capture = new CameraCaptureUI();
-            capture.PhotoSettings.AllowCropping = false;
-            capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
-            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
-
-            var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
-            if (file != null)
-            {
-                var media = await StorageMedia.CreateAsync(file);
                 var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();

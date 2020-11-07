@@ -3,7 +3,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Gallery;
-using Unigram.Entities;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Users;
@@ -11,12 +10,9 @@ using Unigram.Views.Folders;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
-using Windows.Foundation.Metadata;
-using Windows.Media.Capture;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
@@ -33,11 +29,6 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
 
             Diagnostics.Text = $"Unigram " + GetVersion();
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                PhotoFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
         }
 
         public void Dispose()
@@ -230,27 +221,6 @@ namespace Unigram.Views
             var media = await picker.PickSingleMediaAsync();
             if (media != null)
             {
-                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
-
-                var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    ViewModel.EditPhotoCommand.Execute(media);
-                }
-            }
-        }
-
-        private async void EditCamera_Click(object sender, RoutedEventArgs e)
-        {
-            var capture = new CameraCaptureUI();
-            capture.PhotoSettings.AllowCropping = false;
-            capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
-            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
-
-            var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
-            if (file != null)
-            {
-                var media = await StorageMedia.CreateAsync(file);
                 var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
