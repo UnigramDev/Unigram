@@ -1238,10 +1238,6 @@
     <Content Include="Assets\Filters\unmuted.png" />
     <Content Include="Assets\Filters\unread.png" />
     <Content Include="Assets\Filters\work.png" />
-    <Content Include="Assets\Fonts\CamMDL2.ttf" />
-    <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
-    <Content Include="Assets\Fonts\SegMVR2.ttf" />
-    <Content Include="Assets\Fonts\SEGMDL2.TTF" />
     <Content Include="Assets\Emoji\apple.ttf" />
     <Content Include="Assets\Animations\SendingGrams.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupDone.tgs" />

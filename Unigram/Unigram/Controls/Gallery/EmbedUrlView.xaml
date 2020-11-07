@@ -35,8 +35,8 @@
             <controls:GlyphButton x:Name="ButtonCompact"
                                   Click="Compact_Click"
                                   Height="{ThemeResource AppBarThemeCompactHeight}"
-                                  FontFamily="ms-appx:///Assets/Fonts/SegMVR2.ttf#Segoe MVR MDL2 Assets"
-                                  Glyph="&#xEE49;"
+                                  FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                  Glyph="&#xE92C;"
                                   FontSize="16"
                                   Grid.Column="1"/>
 
