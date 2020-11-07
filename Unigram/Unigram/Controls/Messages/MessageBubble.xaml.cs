@@ -56,7 +56,7 @@ namespace Unigram.Controls.Messages
                 UpdateMessageInteractionInfo(message);
 
                 Footer.UpdateMessage(message);
-                Markup.Update(message, message.ReplyMarkup);
+                UpdateMessageReplyMarkup(message);
             }
             else
             {
@@ -87,6 +87,7 @@ namespace Unigram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
 
             var title = string.Empty;
+            var senderBot = false;
 
             if (message.IsSaved())
             {
@@ -96,6 +97,7 @@ namespace Unigram.Controls.Messages
             {
                 if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
+                    senderBot = senderUser.Type is UserTypeBot;
                     title = senderUser.GetFullName();
                 }
                 else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
@@ -123,6 +125,11 @@ namespace Unigram.Controls.Messages
             }
 
             builder.Append(Automation.GetSummary(message.ProtoService, message.Get()));
+
+            if (message.EditDate != 0 && message.ViaBotUserId == 0 && !senderBot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard))
+            {
+                builder.Append($"{Strings.Resources.EditedMessage}, ");
+            }
 
             var date = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
             if (message.IsOutgoing)
@@ -233,7 +240,10 @@ namespace Unigram.Controls.Messages
                     ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, small, small);
                 }
 
-                Markup.CornerRadius = new CornerRadius(small, small, bottomRight, bottomLeft);
+                if (Markup != null)
+                {
+                    Markup.CornerRadius = new CornerRadius(small, small, bottomRight, bottomLeft);
+                }
             }
             else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
             {
@@ -604,7 +614,27 @@ namespace Unigram.Controls.Messages
         public void UpdateMessageEdited(MessageViewModel message)
         {
             Footer.UpdateMessageEdited(message);
-            Markup.Update(message, message.ReplyMarkup);
+            UpdateMessageReplyMarkup(message);
+        }
+
+        private void UpdateMessageReplyMarkup(MessageViewModel message)
+        {
+            if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
+            {
+                if (Markup == null)
+                {
+                    FindName(nameof(Markup));
+                }
+
+                Markup.Update(message, message.ReplyMarkup);
+            }
+            else
+            {
+                if (Markup != null)
+                {
+                    UnloadObject(Markup);
+                }
+            }
         }
 
         public void UpdateMessageIsPinned(MessageViewModel message)
@@ -1773,8 +1803,6 @@ namespace Unigram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var maxWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, MaxWidth));
-
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
@@ -1825,6 +1853,10 @@ namespace Unigram.Controls.Messages
             else if (constraint is MessageVideoNote videoNoteMessage)
             {
                 constraint = videoNoteMessage.VideoNote;
+            }
+            else if (constraint is MessageVoiceNote voiceNoteMessage)
+            {
+                constraint = voiceNoteMessage.VoiceNote;
             }
             else if (constraint is MessageChatChangePhoto chatChangePhoto)
             {
@@ -1921,6 +1953,13 @@ namespace Unigram.Controls.Messages
                 //height = 200;
 
                 //goto Calculate;
+            }
+            else if (constraint is VoiceNote voiceNote)
+            {
+                width = Math.Min(Math.Max(4, voiceNote.Duration), 30) / 30d * availableSize.Width;
+                height = 48;
+
+                //return base.MeasureOverride(new Size(width, availableSize.Height));
             }
 
             return base.MeasureOverride(availableSize);

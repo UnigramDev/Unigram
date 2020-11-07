@@ -218,7 +218,10 @@
         </Grid>
     </UserControl>
 
-    <controls:ReplyMarkupPanel x:Name="Markup" InlineButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,0"/>
+    <controls:ReplyMarkupPanel
+        x:Name="Markup"
+        x:Load="False"
+        InlineButtonClick="ReplyMarkup_ButtonClick"/>
 
 </StackPanel>
     
