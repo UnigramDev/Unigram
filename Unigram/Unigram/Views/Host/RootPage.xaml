@@ -148,13 +148,18 @@
                 </Button>
             </controls:NavigationView.PaneHeader>
             <controls:NavigationView.PaneFooter>
-                <ListView x:Name="NavigationViewList"
-                            ItemClick="OnItemClick"
-                            IsItemClickEnabled="True"
-                            SelectionMode="None"
-                          ChoosingItemContainer="OnChoosingItemContainer"
-                            ContainerContentChanging="OnContainerContentChanging"
-                            Grid.Row="1">
+                <ListView
+                    x:Name="NavigationViewList"
+                    ItemClick="OnItemClick"
+                    IsItemClickEnabled="True"
+                    SelectionMode="None"
+                    AllowDrop="True"
+                    CanDragItems="True"
+                    CanReorderItems="False"
+                    DragItemsStarting="OnDragItemsStarting"
+                    DragItemsCompleted="OnDragItemsCompleted"
+                    ChoosingItemContainer="OnChoosingItemContainer"
+                    ContainerContentChanging="OnContainerContentChanging">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
