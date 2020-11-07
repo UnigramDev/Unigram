@@ -1,5 +1,6 @@
 ﻿using Unigram.Native;
 using Windows.Foundation.Metadata;
+using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -30,6 +31,21 @@ namespace Unigram.Common
 
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => (_isMediaSupported = _isMediaSupported ?? NativeUtils.IsMediaSupported()) ?? true;
+
+        private static ulong? _build;
+        public static bool IsBuildOrGreater(ulong compare)
+        {
+            if (_build == null)
+            {
+                string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
+                ulong version = ulong.Parse(deviceFamilyVersion);
+                ulong build = (version & 0x00000000FFFF0000L) >> 16;
+
+                _build = build;
+            }
+
+            return _build >= compare;
+        }
 
         public static TransitionCollection CreateSlideTransition()
         {
