@@ -9,14 +9,19 @@ namespace Unigram.ViewModels.Gallery
         private readonly object _from;
         private readonly ChatPhoto _photo;
 
-        public GalleryChatPhoto(IProtoService protoService, object from, ChatPhoto photo)
+        private readonly long _messageId;
+
+        public GalleryChatPhoto(IProtoService protoService, object from, ChatPhoto photo, long messageId = 0)
             : base(protoService)
         {
             _from = from;
             _photo = photo;
+            _messageId = messageId;
         }
 
         public long Id => _photo.Id;
+
+        public long MessageId => _messageId;
 
         public override File GetFile()
         {

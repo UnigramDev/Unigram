@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Gallery
         public IFileDelegate Delegate { get; set; }
 
         public GalleryViewModelBase(IProtoService protoService, IEventAggregator aggregator)
-            : base(protoService, null, null, aggregator)
+            : base(protoService, protoService, null, aggregator)
         {
             StickersCommand = new RelayCommand(StickersExecute);
             ViewCommand = new RelayCommand(ViewExecute);
