@@ -293,7 +293,7 @@ namespace Unigram.Charts.DataView
 
                 if (showPercentage)
                 {
-                    ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(36, GridUnitType.Pixel) });
+                    ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(48, GridUnitType.Pixel) });
 
                     percentage = new TextBlock();
                     percentage.Margin = new Thickness(0, 2, 8, 0);

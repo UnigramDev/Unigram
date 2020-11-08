@@ -120,8 +120,9 @@ namespace Unigram.Views.Chats
                 return;
             }
 
-            var border = root.Items[0] as AspectView;
-            var checks = root.Items[1] as WrapPanel;
+            var header = root.Items[0] as ChartHeaderView;
+            var border = root.Items[1] as AspectView;
+            var checks = root.Items[2] as WrapPanel;
 
             border.Constraint = data;
 
@@ -190,7 +191,7 @@ namespace Unigram.Views.Chats
             border.Children.Add(chartView.legendSignatureView);
             checks.Children.Clear();
 
-            chartView.setHeader(chartView.legendSignatureView.isTopHourChart ? null : root);
+            chartView.SetHeader(chartView.legendSignatureView.isTopHourChart ? null : header);
             chartView.Loaded += (s, args) =>
             {
                 chartView.SetDataPublic(data.chartData);
@@ -232,14 +233,14 @@ namespace Unigram.Views.Chats
                     line.enabled = false;
                     check.IsChecked = false;
 
-                    chartView.onCheckChanged();
+                    chartView.OnCheckChanged();
                 }
                 else if (!line.enabled)
                 {
                     line.enabled = true;
                     check.IsChecked = true;
 
-                    chartView.onCheckChanged();
+                    chartView.OnCheckChanged();
                 }
                 else
                 {

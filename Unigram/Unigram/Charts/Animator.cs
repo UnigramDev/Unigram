@@ -5,6 +5,66 @@ using System.Threading;
 
 namespace Unigram.Charts
 {
+    public class AnimatorLoopThread
+    {
+        public static object DrawLock = new object();
+
+        protected readonly List<Animator> _animators = new List<Animator>();
+        protected readonly object _animatorsLock = new object();
+
+        private readonly Timer _timer;
+        private bool _looping = true;
+
+        public AnimatorLoopThread()
+        {
+            _timer = new Timer(OnTick, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1000 / 60));
+        }
+
+        private static AnimatorLoopThread _current;
+        public static AnimatorLoopThread Current => _current ??= new AnimatorLoopThread();
+
+        private void OnTick(object state)
+        {
+            lock (DrawLock)
+            {
+                lock (_animatorsLock)
+                {
+                    foreach (var animator in _animators.ToArray())
+                    {
+                        animator.Tick();
+                    }
+                }
+            }
+        }
+
+        public void Change(Animator animator, bool enable)
+        {
+            lock (_animatorsLock)
+            {
+                if (enable)
+                {
+                    _animators.Add(animator);
+
+                    if (_animators.Count > 0 && !_looping)
+                    {
+                        _looping = true;
+                        _timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(1000 / 60));
+                    }
+                }
+                else
+                {
+                    _animators.Remove(animator);
+
+                    if (_animators.Count < 1 && _looping)
+                    {
+                        _looping = false;
+                        _timer.Change(Timeout.Infinite, Timeout.Infinite);
+                    }
+                }
+            }
+        }
+    }
+
     public abstract class Animator
     {
         protected readonly List<AnimatorUpdateListener> _listeners = new List<AnimatorUpdateListener>();
@@ -12,18 +72,18 @@ namespace Unigram.Charts
 
         protected readonly object _listenersLock = new object();
 
-        protected readonly ChartPickerDelegate.Listener _listener;
+        protected readonly Action<Animator, bool> _listener;
 
-        public Animator(ChartPickerDelegate.Listener listener)
+        public Animator()
         {
-            _listener = listener;
+            _listener = AnimatorLoopThread.Current.Change;
         }
 
-        internal abstract void cancel();
+        internal abstract void Cancel();
 
-        internal abstract void start();
+        internal abstract void Start();
 
-        internal void addUpdateListener(AnimatorUpdateListener l)
+        internal void AddUpdateListener(AnimatorUpdateListener l)
         {
             lock (_listenersLock)
             {
@@ -31,7 +91,7 @@ namespace Unigram.Charts
             }
         }
 
-        internal void addListener(AnimatorUpdateListener l)
+        internal void AddListener(AnimatorUpdateListener l)
         {
             lock (_listenersLock)
             {
@@ -39,7 +99,7 @@ namespace Unigram.Charts
             }
         }
 
-        internal void removeAllListeners()
+        internal void RemoveAllListeners()
         {
             lock (_listenersLock)
             {
@@ -48,24 +108,24 @@ namespace Unigram.Charts
             }
         }
 
-        internal virtual object getAnimatedValue()
+        internal virtual object GetAnimatedValue()
         {
             return null;
         }
 
-        internal abstract bool tick();
+        internal abstract bool Tick();
     }
 
     public class AnimatorSet : Animator
     {
         private readonly List<Animator> _animators = new List<Animator>();
 
-        public AnimatorSet(ChartPickerDelegate.Listener listener)
-            : base(listener)
+        public AnimatorSet()
+            : base()
         {
         }
 
-        internal void playTogether(params Animator[] valueAnimator)
+        internal void PlayTogether(params Animator[] valueAnimator)
         {
             foreach (var animator in valueAnimator)
             {
@@ -73,28 +133,28 @@ namespace Unigram.Charts
             }
         }
 
-        internal override void start()
+        internal override void Start()
         {
             foreach (var animator in _animators)
             {
-                animator.start();
+                animator.Start();
             }
         }
 
-        internal override void cancel()
+        internal override void Cancel()
         {
             foreach (var animator in _animators)
             {
-                animator.cancel();
+                animator.Cancel();
             }
         }
 
-        internal override bool tick()
+        internal override bool Tick()
         {
             var completed = true;
             foreach (var animator in _animators)
             {
-                if (!animator.tick())
+                if (!animator.Tick())
                 {
                     completed = false;
                 }
@@ -109,8 +169,6 @@ namespace Unigram.Charts
         private readonly float _f1;
         private readonly float _f2;
 
-        //private readonly Timer _timer;
-
         private int _begin;
         private int _duration = 300;
 
@@ -118,18 +176,14 @@ namespace Unigram.Charts
 
         private FastOutSlowInInterpolator _interpolator;
 
-        public ValueAnimator(ChartPickerDelegate.Listener listener, float f1, float f2)
-            : base(listener)
+        public ValueAnimator(float f1, float f2)
+            : base()
         {
             _f1 = _result = f1;
             _f2 = f2;
-
-            //_timer = new Timer(OnTick, null, Timeout.Infinite, Timeout.Infinite);
-            //_timer.Interval = TimeSpan.FromMilliseconds(1000d / 30d);
-            //_timer.Tick += OnTick;
         }
 
-        internal override void start()
+        internal override void Start()
         {
             if (_f1 == _f2)
             {
@@ -137,15 +191,13 @@ namespace Unigram.Charts
             }
 
             _begin = Environment.TickCount;
-            _listener.change(this, true);
-            //_timer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(1000d / 30d));
+            _listener(this, true);
         }
 
-        internal override void cancel()
+        internal override void Cancel()
         {
             _begin = Timeout.Infinite;
-            _listener.change(this, false);
-            //_timer.Change(Timeout.Infinite, Timeout.Infinite);
+            _listener(this, false);
 
             lock (_listenersLock)
             {
@@ -156,16 +208,14 @@ namespace Unigram.Charts
             }
         }
 
-        internal override bool tick()
+        internal override bool Tick()
         {
             var tick = Environment.TickCount;
             if (tick >= _begin + _duration)
             {
-                //System.Diagnostics.Debug.WriteLine($"_f1: {_f1}; _f2: {_f2}; _result: {_result} -> timeout");
-
                 _result = _f2;
 
-                complete();
+                Complete();
                 return true;
             }
 
@@ -192,11 +242,9 @@ namespace Unigram.Charts
                 _result = Math.Max(_f2, value);
             }
 
-            //System.Diagnostics.Debug.WriteLine($"_f1: {_f1}; _f2: {_f2}; _result: {_result}");
-
             if ((_f2 > _f1 && _result >= _f2) || (_f2 < _f1 && _result <= _f2))
             {
-                complete();
+                Complete();
                 return true;
             }
             else
@@ -213,15 +261,13 @@ namespace Unigram.Charts
             return false;
         }
 
-        private void complete()
+        private void Complete()
         {
             _begin = Timeout.Infinite;
-            _listener.change(this, false);
-            //_timer.Change(Timeout.Infinite, Timeout.Infinite);
+            _listener(this, false);
 
             lock (_listenersLock)
             {
-                //foreach (var l in _updateListeners.Union(_listeners))
                 foreach (var l in _listeners.Union(_updateListeners))
                 {
                     l.Action(this);
@@ -229,12 +275,12 @@ namespace Unigram.Charts
             }
         }
 
-        internal static ValueAnimator ofFloat(ChartPickerDelegate.Listener listener, float f1, float f2)
+        internal static ValueAnimator OfFloat(float f1, float f2)
         {
-            return new ValueAnimator(listener, f1, f2);
+            return new ValueAnimator(f1, f2);
         }
 
-        internal ValueAnimator setDuration(int duration)
+        internal ValueAnimator SetDuration(int duration)
         {
             _duration = duration;
             return this;
@@ -246,15 +292,14 @@ namespace Unigram.Charts
             return this;
         }
 
-        internal bool isRunning()
+        internal bool IsRunning()
         {
             return _begin != Timeout.Infinite;
         }
 
-        internal override object getAnimatedValue()
+        internal override object GetAnimatedValue()
         {
             return _result;
-            return _f2;
         }
     }
 

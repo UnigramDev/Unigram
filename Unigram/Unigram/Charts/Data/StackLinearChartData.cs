@@ -83,12 +83,12 @@ namespace Unigram.Charts.Data
             }
 
             timeStep = 86400000L;
-            measure();
+            Measure();
         }
 
-        protected override void measure()
+        protected override void Measure()
         {
-            base.measure();
+            base.Measure();
             simplifiedSize = 0;
             int n = xPercentage.Length;
             int nl = lines.Count;

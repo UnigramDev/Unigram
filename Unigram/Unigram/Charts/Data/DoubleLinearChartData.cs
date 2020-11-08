@@ -11,9 +11,9 @@ namespace Unigram.Charts.Data
         {
         }
 
-        protected override void measure()
+        protected override void Measure()
         {
-            base.measure();
+            base.Measure();
             int n = lines.Count;
             int max = 0;
             for (int i = 0; i < n; i++)

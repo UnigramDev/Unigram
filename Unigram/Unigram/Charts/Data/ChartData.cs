@@ -67,7 +67,7 @@ namespace Unigram.Charts.Data
                 {
                     timeStep = 86400000L;
                 }
-                measure();
+                Measure();
             }
 
             JsonObject colors = jsonObject.GetNamedObject("colors");
@@ -103,7 +103,7 @@ namespace Unigram.Charts.Data
         }
 
 
-        protected virtual void measure()
+        protected virtual void Measure()
         {
             int n = x.Length;
             if (n == 0)
@@ -168,12 +168,12 @@ namespace Unigram.Charts.Data
             oneDayPercentage = timeStep / (float)(x[x.Length - 1] - x[0]);
         }
 
-        public String getDayString(int i)
+        public String GetDayString(int i)
         {
             return daysLookup[(int)((x[i] - x[0]) / timeStep)];
         }
 
-        public int findStartIndex(float v)
+        public int FindStartIndex(float v)
         {
             if (v == 0) return 0;
             int n = xPercentage.Length;
@@ -209,7 +209,7 @@ namespace Unigram.Charts.Data
             return left;
         }
 
-        public int findEndIndex(int left, float v)
+        public int FindEndIndex(int left, float v)
         {
             int n = xPercentage.Length;
             if (v == 1f) return n - 1;
@@ -239,7 +239,7 @@ namespace Unigram.Charts.Data
         }
 
 
-        public int findIndex(int left, int right, float v)
+        public int FindIndex(int left, int right, float v)
         {
 
             int n = xPercentage.Length;

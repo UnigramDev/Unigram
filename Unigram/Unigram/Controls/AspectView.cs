@@ -66,7 +66,7 @@ namespace Unigram.Controls
             else if (Constraint is ViewModels.Chats.ChartViewData)
             {
                 width = 640;
-                height = 520;
+                height = 420;
             }
 
             #region MessageContent

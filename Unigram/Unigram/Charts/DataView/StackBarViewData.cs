@@ -26,9 +26,9 @@ namespace Unigram.Charts.DataView
         //    super.updateColors();
         //}
 
-        public override void updateColors(ElementTheme theme)
+        public override void UpdateColors(ElementTheme theme)
         {
-            base.updateColors(theme);
+            base.UpdateColors(theme);
 
             if (App.Current.Resources.TryGet("ApplicationPageBackgroundThemeBrush", out SolidColorBrush brush))
             {

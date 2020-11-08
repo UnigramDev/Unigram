@@ -5,21 +5,19 @@ using System.Numerics;
 using Unigram.Charts.Data;
 using Unigram.Charts.DataView;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Charts
 {
     public class LinearChartView : BaseChartView<ChartData, LineViewData>
     {
         protected bool drawSteps = false;
 
-        protected override void init()
+        protected override void InitializeComponent()
         {
             useMinHeight = true;
-            base.init();
+            base.InitializeComponent();
         }
 
-        protected override void drawChart(CanvasDrawingSession canvas)
+        protected override void DrawChart(CanvasDrawingSession canvas)
         {
             if (chartData != null)
             {
@@ -57,7 +55,7 @@ namespace Unigram.Charts
                         float xPoint = chartData.xPercentage[i] * fullWidth - offset;
                         float yPercentage = ((float)y[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
                         float padding = line.paint.StrokeWidth / 2f;
-                        float yPoint = getMeasuredHeight() - chartBottom - padding - (yPercentage) * (getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
+                        float yPoint = MeasuredHeight - chartBottom - padding - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
 
                         if (USE_LINES)
                         {
@@ -152,10 +150,10 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void drawPickerChart(CanvasDrawingSession canvas)
+        protected override void DrawPickerChart(CanvasDrawingSession canvas)
         {
-            int bottom = getMeasuredHeight() - PICKER_PADDING;
-            int top = getMeasuredHeight() - pikerHeight - PICKER_PADDING;
+            int bottom = MeasuredHeight - PICKER_PADDING;
+            int top = MeasuredHeight - pickerHeight - PICKER_PADDING;
 
             int nl = lines.Count;
 
@@ -191,7 +189,7 @@ namespace Unigram.Charts
                         float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
                         float hMin = ANIMATE_PICKER_SIZES ? pickerMinHeight : chartData.minValue;
                         float yPercentage = (y[i] - hMin) / (h - hMin);
-                        float yPoint = (1f - yPercentage) * pikerHeight;
+                        float yPoint = (1f - yPercentage) * pickerHeight;
 
                         if (USE_LINES)
                         {
@@ -250,7 +248,7 @@ namespace Unigram.Charts
             }
         }
 
-        public override LineViewData createLineViewData(ChartData.Line line)
+        public override LineViewData CreateLineViewData(ChartData.Line line)
         {
             return new LineViewData(line);
         }

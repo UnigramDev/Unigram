@@ -6,6 +6,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:dataView="using:Unigram.Charts.DataView"
+    xmlns:charts="using:Unigram.Charts"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:td="using:Telegram.Td.Api"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -427,6 +428,7 @@
                                     Header="xxx"
                                     DataContextChanged="OnElementPrepared"
                                     Style="{StaticResource FooteredControlStyle}">
+                                    <charts:ChartHeaderView/>
                                     <controls:AspectView/>
                                     <controls:WrapPanel
                                         Orientation="Horizontal"/>

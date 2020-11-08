@@ -17,7 +17,7 @@ namespace Unigram.Charts
             useAlphaSignature = true;
         }
 
-        public override StackBarViewData createLineViewData(ChartData.Line line)
+        public override StackBarViewData CreateLineViewData(ChartData.Line line)
         {
             return new StackBarViewData(line);
         }
@@ -97,14 +97,14 @@ namespace Unigram.Charts
                     float xPoint = p / 2 + chartData.xPercentage[i] * (fullWidth - p) - offset;
                     float yPercentage = (float)y[i] / currentMaxHeight;
 
-                    float height = (yPercentage) * (getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
-                    float yPoint = getMeasuredHeight() - chartBottom - height;
+                    float height = (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
+                    float yPoint = MeasuredHeight - chartBottom - height;
 
                     line.linesPath[line.linesPathBottomSize++] = xPoint;
                     line.linesPath[line.linesPathBottomSize++] = yPoint - stackOffset;
 
                     line.linesPath[line.linesPathBottomSize++] = xPoint;
-                    line.linesPath[line.linesPathBottomSize++] = getMeasuredHeight() - chartBottom - stackOffset;
+                    line.linesPath[line.linesPathBottomSize++] = MeasuredHeight - chartBottom - stackOffset;
 
                     stackOffset += height;
                 }
@@ -146,13 +146,13 @@ namespace Unigram.Charts
                     float xPoint = p / 2 + chartData.xPercentage[selectedIndex] * (fullWidth - p) - offset;
                     float yPercentage = (float)y[selectedIndex] / currentMaxHeight;
 
-                    float height = (yPercentage) * (getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
-                    float yPoint = getMeasuredHeight() - chartBottom - height;
+                    float height = (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
+                    float yPoint = MeasuredHeight - chartBottom - height;
 
                     line.paint.StrokeWidth = lineWidth;
                     line.paint.A = (byte)(255 * transitionAlpha);
                     canvas.DrawLine(xPoint, yPoint - stackOffset,
-                            xPoint, getMeasuredHeight() - chartBottom - stackOffset, line.paint);
+                            xPoint, MeasuredHeight - chartBottom - stackOffset, line.paint);
 
                     stackOffset += height;
                 }
@@ -161,7 +161,7 @@ namespace Unigram.Charts
 
         }
 
-        protected override void selectXOnChart(int x, int y)
+        protected override void SelectXOnChart(int x, int y)
         {
             if (chartData == null) return;
             float offset = chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
@@ -188,22 +188,22 @@ namespace Unigram.Charts
             }
             else
             {
-                selectedIndex = chartData.findIndex(startXIndex, endXIndex, xP);
+                selectedIndex = chartData.FindIndex(startXIndex, endXIndex, xP);
                 if (selectedIndex > endXIndex) selectedIndex = endXIndex;
                 if (selectedIndex < startXIndex) selectedIndex = startXIndex;
             }
 
             legendShowing = true;
-            animateLegend(true);
-            moveLegend(offset);
+            AnimateLegend(true);
+            MoveLegend(offset);
             if (dateSelectionListener != null)
             {
-                dateSelectionListener.onDateSelected(getSelectedDate());
+                dateSelectionListener.OnDateSelected(GetSelectedDate());
             }
-            invalidate();
+            Invalidate();
         }
 
-        protected override void drawPickerChart(CanvasDrawingSession canvas)
+        protected override void DrawPickerChart(CanvasDrawingSession canvas)
         {
             if (chartData != null)
             {
@@ -245,14 +245,14 @@ namespace Unigram.Charts
 
                             float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
                             float yPercentage = (float)yMaxPoints[k] / h * line.alpha;
-                            float yPoint = (yPercentage) * (pikerHeight);
+                            float yPoint = (yPercentage) * (pickerHeight);
 
 
                             line.linesPath[line.linesPathBottomSize++] = xPoint;
-                            line.linesPath[line.linesPathBottomSize++] = pikerHeight - yPoint - stackOffset;
+                            line.linesPath[line.linesPathBottomSize++] = pickerHeight - yPoint - stackOffset;
 
                             line.linesPath[line.linesPathBottomSize++] = xPoint;
-                            line.linesPath[line.linesPathBottomSize++] = pikerHeight - stackOffset;
+                            line.linesPath[line.linesPathBottomSize++] = pickerHeight - stackOffset;
 
                             stackOffset += yPoint;
 
@@ -281,7 +281,7 @@ namespace Unigram.Charts
             }
         }
 
-        public override void onCheckChanged()
+        public override void OnCheckChanged()
         {
             int n = chartData.lines[0].y.Length;
             int k = chartData.lines.Count;
@@ -297,21 +297,21 @@ namespace Unigram.Charts
             }
 
             chartData.ySumSegmentTree = new SegmentTree(chartData.ySum);
-            base.onCheckChanged();
+            base.OnCheckChanged();
         }
 
-        protected override void drawSelection(CanvasDrawingSession canvas)
+        protected override void DrawSelection(CanvasDrawingSession canvas)
         {
 
         }
 
-        public override int findMaxValue(int startXIndex, int endXIndex)
+        public override int FindMaxValue(int startXIndex, int endXIndex)
         {
-            return chartData.findMax(startXIndex, endXIndex);
+            return chartData.FindMax(startXIndex, endXIndex);
         }
 
 
-        protected override void updatePickerMinMaxHeight()
+        protected override void UpdatePickerMinMaxHeight()
         {
             if (!ANIMATE_PICKER_SIZES) return;
             int max = 0;
@@ -333,23 +333,23 @@ namespace Unigram.Charts
             if (max > 0 && max != animatedToPickerMaxHeight)
             {
                 animatedToPickerMaxHeight = max;
-                if (pickerAnimator != null) pickerAnimator.cancel();
+                if (pickerAnimator != null) pickerAnimator.Cancel();
 
-                pickerAnimator = createAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
+                pickerAnimator = CreateAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
                 {
-                    pickerMaxHeight = (float)animation.getAnimatedValue();
+                    pickerMaxHeight = (float)animation.GetAnimatedValue();
                     invalidatePickerChart = true;
-                    invalidate();
+                    Invalidate();
                 }));
-                pickerAnimator.start();
+                pickerAnimator.Start();
             }
 
 
         }
 
-        protected override void initPickerMaxHeight()
+        protected override void InitPickerMaxHeight()
         {
-            base.initPickerMaxHeight();
+            base.InitPickerMaxHeight();
             pickerMaxHeight = 0;
             int n = chartData.x.Length;
             int nl = lines.Count;
@@ -365,25 +365,25 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void onDraw(CanvasDrawingSession canvas)
+        protected override void OnDraw(CanvasDrawingSession canvas)
         {
-            tick();
+            Tick();
             drawChart(canvas);
-            drawBottomLine(canvas);
+            DrawBottomLine(canvas);
             int tmpN = horizontalLines.Count;
             for (int tmpI = 0; tmpI < tmpN; tmpI++)
             {
-                drawHorizontalLines(canvas, horizontalLines[tmpI]);
-                drawSignaturesToHorizontalLines(canvas, horizontalLines[tmpI]);
+                DrawHorizontalLines(canvas, horizontalLines[tmpI]);
+                DrawSignaturesToHorizontalLines(canvas, horizontalLines[tmpI]);
             }
-            drawBottomSignature(canvas);
-            drawPicker(canvas);
-            drawSelection(canvas);
+            DrawBottomSignature(canvas);
+            DrawPicker(canvas);
+            DrawSelection(canvas);
 
-            base.onDraw(canvas);
+            base.OnDraw(canvas);
         }
 
-        protected override float getMinDistance()
+        protected override float GetMinDistance()
         {
             return 0.1f;
         }

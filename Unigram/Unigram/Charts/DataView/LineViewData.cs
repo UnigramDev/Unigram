@@ -61,7 +61,7 @@ namespace Unigram.Charts.DataView
             linesPath = new float[line.y.Length << 2];
             linesPathBottom = new float[line.y.Length << 2];
 
-            updateColors(ElementTheme.Default);
+            UpdateColors(ElementTheme.Default);
         }
 
         private static readonly Dictionary<string, Color> _colorsLight = new Dictionary<string, Color>
@@ -91,7 +91,7 @@ namespace Unigram.Charts.DataView
             { "StatisticChartLineEmpty", ColorEx.FromHex(0xFFEEEEEE) },
         };
 
-        public virtual void updateColors(ElementTheme theme)
+        public virtual void UpdateColors(ElementTheme theme)
         {
             IDictionary<string, Color> colors;
             if (theme == ElementTheme.Dark)

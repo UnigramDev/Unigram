@@ -112,6 +112,9 @@
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />
+    <Compile Include="Charts\ChartHeaderView.xaml.cs">
+      <DependentUpon>ChartHeaderView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Charts\ChartPickerDelegate.cs" />
     <Compile Include="Charts\CubicBezierInterpolator.cs" />
     <Compile Include="Charts\DataView\BarViewData.cs" />
@@ -210,6 +213,9 @@
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\ChartCell.xaml.cs">
+      <DependentUpon>ChartCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
@@ -1441,6 +1447,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Include="Charts\ChartHeaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Charts\DataView\LegendSignatureView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1448,6 +1458,10 @@
     <Page Include="Controls\Cells\CallCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\ChartCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\ChatCell.xaml">
       <Generator>MSBuild:Compile</Generator>

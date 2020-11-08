@@ -7,7 +7,7 @@
             drawSteps = true;
         }
 
-        protected override float getMinDistance()
+        protected override float GetMinDistance()
         {
             return 0.1f;
         }

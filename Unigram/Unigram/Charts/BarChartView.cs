@@ -14,7 +14,7 @@ namespace Unigram.Charts
             useAlphaSignature = true;
         }
 
-        protected override void drawChart(CanvasDrawingSession canvas)
+        protected override void DrawChart(CanvasDrawingSession canvas)
         {
             if (chartData != null)
             {
@@ -28,9 +28,9 @@ namespace Unigram.Charts
                     end = chartData.lines[0].y.Length - 1;
 
                 //canvas.save();
-                //canvas.clipRect(chartStart, 0, chartEnd, getMeasuredHeight() - chartBottom);
+                //canvas.clipRect(chartStart, 0, chartEnd, MeasuredHeight - chartBottom);
                 var transform = canvas.Transform;
-                var clip = canvas.CreateLayer(1, createRect(chartStart, 0, chartEnd, getMeasuredHeight() - chartBottom));
+                var clip = canvas.CreateLayer(1, CreateRect(chartStart, 0, chartEnd, MeasuredHeight - chartBottom));
 
                 float transitionAlpha = 1f;
                 //canvas.save();
@@ -84,7 +84,7 @@ namespace Unigram.Charts
                         float xPoint = p / 2 + chartData.xPercentage[i] * fullWidth - offset;
                         float yPercentage = y[i] / currentMaxHeight * a;
 
-                        float yPoint = getMeasuredHeight() - chartBottom - (yPercentage) * (getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT);
+                        float yPoint = MeasuredHeight - chartBottom - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
 
                         if (i == selectedIndex && legendShowing)
                         {
@@ -98,7 +98,7 @@ namespace Unigram.Charts
                         line.linesPath[j++] = yPoint;
 
                         line.linesPath[j++] = xPoint;
-                        line.linesPath[j++] = getMeasuredHeight() - chartBottom;
+                        line.linesPath[j++] = MeasuredHeight - chartBottom;
                     }
 
                     Paint paint = selected || postTransition ? line.unselectedPaint : line.paint;
@@ -128,10 +128,10 @@ namespace Unigram.Charts
                         line.paint.StrokeWidth = p;
                         line.paint.A = (byte)(transitionAlpha * 255);
                         //canvas.drawLine(selectedX, selectedY,
-                        //        selectedX, getMeasuredHeight() - chartBottom,
+                        //        selectedX, MeasuredHeight - chartBottom,
                         //        line.paint
                         //);
-                        canvas.DrawLine(selectedX, selectedY, selectedX, getMeasuredHeight() - chartBottom, line.paint);
+                        canvas.DrawLine(selectedX, selectedY, selectedX, MeasuredHeight - chartBottom, line.paint);
                         line.paint.A = 255;
                     }
 
@@ -145,10 +145,10 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void drawPickerChart(CanvasDrawingSession canvas)
+        protected override void DrawPickerChart(CanvasDrawingSession canvas)
         {
-            int bottom = getMeasuredHeight() - PICKER_PADDING;
-            int top = getMeasuredHeight() - pikerHeight - PICKER_PADDING;
+            int bottom = MeasuredHeight - PICKER_PADDING;
+            int top = MeasuredHeight - pickerHeight - PICKER_PADDING;
 
             int nl = lines.Count;
             if (chartData != null)
@@ -188,7 +188,7 @@ namespace Unigram.Charts
                         line.linesPath[j++] = yPoint;
 
                         line.linesPath[j++] = xPoint;
-                        line.linesPath[j++] = getMeasuredHeight() - chartBottom;
+                        line.linesPath[j++] = MeasuredHeight - chartBottom;
                     }
 
                     //line.paint.setStrokeWidth(p + 2);
@@ -199,35 +199,35 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void drawSelection(CanvasDrawingSession canvas)
+        protected override void DrawSelection(CanvasDrawingSession canvas)
         {
 
         }
 
-        public override BarViewData createLineViewData(ChartData.Line line)
+        public override BarViewData CreateLineViewData(ChartData.Line line)
         {
             return new BarViewData(line);
         }
 
-        protected override void onDraw(CanvasDrawingSession canvas)
+        protected override void OnDraw(CanvasDrawingSession canvas)
         {
-            tick();
-            drawChart(canvas);
-            drawBottomLine(canvas);
+            Tick();
+            DrawChart(canvas);
+            DrawBottomLine(canvas);
             int tmpN = horizontalLines.Count;
             for (int tmpI = 0; tmpI < tmpN; tmpI++)
             {
-                drawHorizontalLines(canvas, horizontalLines[tmpI]);
-                drawSignaturesToHorizontalLines(canvas, horizontalLines[tmpI]);
+                DrawHorizontalLines(canvas, horizontalLines[tmpI]);
+                DrawSignaturesToHorizontalLines(canvas, horizontalLines[tmpI]);
             }
-            drawBottomSignature(canvas);
-            drawPicker(canvas);
-            drawSelection(canvas);
+            DrawBottomSignature(canvas);
+            DrawPicker(canvas);
+            DrawSelection(canvas);
 
-            base.onDraw(canvas);
+            base.OnDraw(canvas);
         }
 
-        protected override float getMinDistance()
+        protected override float GetMinDistance()
         {
             return 0.1f;
         }

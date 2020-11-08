@@ -16,13 +16,13 @@ namespace Unigram.Charts
         {
         }
 
-        protected override void init()
+        protected override void InitializeComponent()
         {
             useMinHeight = true;
-            base.init();
+            base.InitializeComponent();
         }
 
-        protected override void drawChart(CanvasDrawingSession canvas)
+        protected override void DrawChart(CanvasDrawingSession canvas)
         {
             if (chartData != null)
             {
@@ -91,7 +91,7 @@ namespace Unigram.Charts
                         float xPoint = chartData.xPercentage[i] * fullWidth - offset;
                         float yPercentage = ((float)y[i] * chartData.linesK[k] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
                         float padding = line.paint.StrokeWidth / 2f;
-                        float yPoint = getMeasuredHeight() - chartBottom - padding - (yPercentage) * (getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
+                        float yPoint = MeasuredHeight - chartBottom - padding - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
 
                         if (USE_LINES)
                         {
@@ -159,10 +159,10 @@ namespace Unigram.Charts
 
         }
 
-        protected override void drawPickerChart(CanvasDrawingSession canvas)
+        protected override void DrawPickerChart(CanvasDrawingSession canvas)
         {
-            int bottom = getMeasuredHeight() - PICKER_PADDING;
-            int top = getMeasuredHeight() - pikerHeight - PICKER_PADDING;
+            int bottom = MeasuredHeight - PICKER_PADDING;
+            int top = MeasuredHeight - pickerHeight - PICKER_PADDING;
 
             int nl = lines.Count;
             if (chartData != null)
@@ -259,7 +259,7 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void drawSelection(CanvasDrawingSession canvas)
+        protected override void DrawSelection(CanvasDrawingSession canvas)
         {
             if (selectedIndex < 0 || !legendShowing) return;
 
@@ -280,7 +280,7 @@ namespace Unigram.Charts
                 LineViewData line = lines[tmpI];
                 if (!line.enabled && line.alpha == 0) continue;
                 float yPercentage = ((float)line.line.y[selectedIndex] * chartData.linesK[tmpI] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
-                float yPoint = getMeasuredHeight() - chartBottom - (yPercentage) * (getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT);
+                float yPoint = MeasuredHeight - chartBottom - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
 
                 line.selectionPaint.A = (byte)(255 * line.alpha * selectionA);
                 selectionBackgroundPaint.A = (byte)(255 * line.alpha * selectionA);
@@ -290,7 +290,7 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void drawSignaturesToHorizontalLines(CanvasDrawingSession canvas, ChartHorizontalLinesData a)
+        protected override void DrawSignaturesToHorizontalLines(CanvasDrawingSession canvas, ChartHorizontalLinesData a)
         {
             int n = a.values.Length;
             int rightIndex = chartData.linesK[0] == 1 ? 1 : 0;
@@ -322,7 +322,7 @@ namespace Unigram.Charts
 
 
             linePaint.A = (byte)(a.alpha * 0.1f * transitionAlpha);
-            int chartHeight = getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT;
+            int chartHeight = MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT;
 
             var format = new CanvasTextFormat { FontSize = signaturePaint.TextSize ?? 0 };
             var layout = new CanvasTextLayout(canvas, "0", format, 0, 0);
@@ -333,7 +333,7 @@ namespace Unigram.Charts
             layout.Dispose();
             for (int i = 0; i < n; i++)
             {
-                int y = (int)((getMeasuredHeight() - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
+                int y = (int)((MeasuredHeight - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
                 if (a.valuesStr != null && lines.Count > 0)
                 {
                     if (a.valuesStr2 == null || lines.Count < 2)
@@ -353,17 +353,17 @@ namespace Unigram.Charts
                 {
                     signaturePaint2.Color = lines[rightIndex].lineColor;
                     signaturePaint2.A = (byte)(a.alpha * lines[rightIndex].alpha * transitionAlpha * additionalOutAlpha);
-                    canvas.DrawText(a.valuesStr2[i], getMeasuredWidth() - HORIZONTAL_PADDING, y - textOffset, signaturePaint2);
+                    canvas.DrawText(a.valuesStr2[i], MeasuredWidth - HORIZONTAL_PADDING, y - textOffset, signaturePaint2);
                 }
             }
         }
 
-        public override LineViewData createLineViewData(ChartData.Line line)
+        public override LineViewData CreateLineViewData(ChartData.Line line)
         {
             return new LineViewData(line);
         }
 
-        public override int findMaxValue(int startXIndex, int endXIndex)
+        public override int FindMaxValue(int startXIndex, int endXIndex)
         {
             if (lines.Count < 1)
             {
@@ -379,7 +379,7 @@ namespace Unigram.Charts
             return max;
         }
 
-        public override int findMinValue(int startXIndex, int endXIndex)
+        public override int FindMinValue(int startXIndex, int endXIndex)
         {
             if (lines.Count < 1)
             {
@@ -395,12 +395,12 @@ namespace Unigram.Charts
             return min;
         }
 
-        protected override void updatePickerMinMaxHeight()
+        protected override void UpdatePickerMinMaxHeight()
         {
             if (!ANIMATE_PICKER_SIZES) return;
             if (lines[0].enabled)
             {
-                base.updatePickerMinMaxHeight();
+                base.UpdatePickerMinMaxHeight();
                 return;
             }
 
@@ -417,19 +417,19 @@ namespace Unigram.Charts
             if (max > 0 && max != animatedToPickerMaxHeight)
             {
                 animatedToPickerMaxHeight = max;
-                if (pickerAnimator != null) pickerAnimator.cancel();
+                if (pickerAnimator != null) pickerAnimator.Cancel();
 
-                pickerAnimator = createAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
+                pickerAnimator = CreateAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
                 {
-                    pickerMaxHeight = (float)animation.getAnimatedValue();
+                    pickerMaxHeight = (float)animation.GetAnimatedValue();
                     invalidatePickerChart = true;
-                    invalidate();
+                    Invalidate();
                 }));
-                pickerAnimator.start();
+                pickerAnimator.Start();
             }
         }
 
-        protected override ChartHorizontalLinesData createHorizontalLinesData(int newMaxHeight, int newMinHeight)
+        protected override ChartHorizontalLinesData CreateHorizontalLinesData(int newMaxHeight, int newMinHeight)
         {
             float k;
             if (chartData.linesK.Length < 2)
