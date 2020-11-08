@@ -224,9 +224,9 @@ namespace Unigram.ViewModels.Chats
         public long activeZoom;
         public bool viewShowed;
         public ChartData chartData;
-        ChartData childChartData;
+        public ChartData childChartData;
         public String token;
-        String zoomToken;
+        public String zoomToken;
 
         public readonly int graphType;
         public readonly String title;
@@ -239,7 +239,7 @@ namespace Unigram.ViewModels.Chats
         public ChartViewData(String title, int grahType)
         {
             this.title = title;
-            this.graphType = grahType;
+            graphType = grahType;
         }
 
         public static ChartViewData create(StatisticsGraph graph, String title, int graphType)

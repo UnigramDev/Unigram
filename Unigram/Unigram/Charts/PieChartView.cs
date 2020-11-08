@@ -26,8 +26,7 @@ namespace Unigram.Charts
 
         float MIN_TEXT_SIZE = 9;
         float MAX_TEXT_SIZE = 13;
-
-        String[] lookupTable = new String[101];
+        readonly String[] lookupTable = new String[101];
 
         //PieLegendView pieLegendView;
 
@@ -50,7 +49,10 @@ namespace Unigram.Charts
 
         protected override void DrawChart(CanvasDrawingSession canvas)
         {
-            if (chartData == null) return;
+            if (chartData == null)
+            {
+                return;
+            }
 
             int transitionAlpha = 255;
 
@@ -128,7 +130,11 @@ namespace Unigram.Charts
             }
             for (int i = 0; i < n; i++)
             {
-                if (lines[i].alpha <= 0 && !lines[i].enabled) continue;
+                if (lines[i].alpha <= 0 && !lines[i].enabled)
+                {
+                    continue;
+                }
+
                 lines[i].paint.A = (byte)transitionAlpha;
 
                 float currentPercent = lines[i].drawingPart / localSum * lines[i].alpha;
@@ -212,9 +218,13 @@ namespace Unigram.Charts
 
                 for (int i = 0; i < n; i++)
                 {
-                    if (lines[i].alpha <= 0 && !lines[i].enabled) continue;
+                    if (lines[i].alpha <= 0 && !lines[i].enabled)
+                    {
+                        continue;
+                    }
+
                     float currentPercent = (lines[i].drawingPart * lines[i].alpha / localSum);
-                    
+
                     //canvas.save();
                     float textAngle = -90 + a + (currentPercent / 2f) * 360f;
 
@@ -286,7 +296,11 @@ namespace Unigram.Charts
                     for (int k = 0; k < nl; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
+
                         float v = line.line.y[i] * line.alpha;
                         sum += v;
                         if (v > 0)
@@ -302,7 +316,10 @@ namespace Unigram.Charts
                     for (int k = 0; k < nl; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
 
                         int[] y = line.line.y;
 
@@ -403,11 +420,19 @@ namespace Unigram.Charts
 
         protected override void SelectXOnChart(int x, int y)
         {
-            if (chartData == null || isEmpty) return;
+            if (chartData == null || isEmpty)
+            {
+                return;
+            }
+
             double theta = Math.Atan2(chartArea.centerY() + 16 - y, chartArea.centerX() - x);
 
             float a = (float)(MathEx.ToDegrees(theta) - 90);
-            if (a < 0) a += 360f;
+            if (a < 0)
+            {
+                a += 360f;
+            }
+
             a /= 360;
 
             float p = 0;
@@ -445,7 +470,10 @@ namespace Unigram.Charts
                     rectF.centerX() + r * Math.Cos(MathEx.ToRadians(((selectionStartA * 360f) - 90f)))
                 );
 
-                if (xl < 0) xl = 0;
+                if (xl < 0)
+                {
+                    xl = 0;
+                }
 
                 int yl = (int)Math.Min(
                     (rectF.centerY() + r * Math.Sin(MathEx.ToRadians((selectionStartA * 360f) - 90f))),
@@ -485,7 +513,11 @@ namespace Unigram.Charts
                         if (lines[i].selectionA < 1f)
                         {
                             lines[i].selectionA += 0.1f;
-                            if (lines[i].selectionA > 1f) lines[i].selectionA = 1f;
+                            if (lines[i].selectionA > 1f)
+                            {
+                                lines[i].selectionA = 1f;
+                            }
+
                             Invalidate();
                         }
                     }
@@ -494,7 +526,11 @@ namespace Unigram.Charts
                         if (lines[i].selectionA > 0)
                         {
                             lines[i].selectionA -= 0.1f;
-                            if (lines[i].selectionA < 0) lines[i].selectionA = 0;
+                            if (lines[i].selectionA < 0)
+                            {
+                                lines[i].selectionA = 0;
+                            }
+
                             Invalidate();
                         }
                     }
@@ -532,7 +568,10 @@ namespace Unigram.Charts
 
             for (int i = 0; i < n; i++)
             {
-                if (startOfDay >= chartData.x[i]) startIndex = i;
+                if (startOfDay >= chartData.x[i])
+                {
+                    startIndex = i;
+                }
             }
 
             float p;
@@ -649,7 +688,11 @@ namespace Unigram.Charts
                 for (int i = 0; i < nl; i++)
                 {
                     PieChartViewData line = lines[i];
-                    if (line.animator != null) line.animator.Cancel();
+                    if (line.animator != null)
+                    {
+                        line.animator.Cancel();
+                    }
+
                     float animateTo;
                     if (sum == 0)
                     {
@@ -686,7 +729,11 @@ namespace Unigram.Charts
 
         public override void OnPickerJumpTo(float start, float end, bool force)
         {
-            if (chartData == null) return;
+            if (chartData == null)
+            {
+                return;
+            }
+
             if (force)
             {
                 updateCharValues(start, end, false);

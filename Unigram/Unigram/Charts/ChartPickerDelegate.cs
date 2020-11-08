@@ -39,27 +39,45 @@ namespace Unigram.Charts
         public CapturesData GetMiddleCaptured()
         {
             if (capturedStates[0] != null && capturedStates[0].state == CAPTURE_MIDDLE)
+            {
                 return capturedStates[0];
+            }
+
             if (capturedStates[1] != null && capturedStates[1].state == CAPTURE_MIDDLE)
+            {
                 return capturedStates[1];
+            }
+
             return null;
         }
 
         public CapturesData GetLeftCaptured()
         {
             if (capturedStates[0] != null && capturedStates[0].state == CAPTURE_LEFT)
+            {
                 return capturedStates[0];
+            }
+
             if (capturedStates[1] != null && capturedStates[1].state == CAPTURE_LEFT)
+            {
                 return capturedStates[1];
+            }
+
             return null;
         }
 
         public CapturesData GetRightCaptured()
         {
             if (capturedStates[0] != null && capturedStates[0].state == CAPTURE_RIGHT)
+            {
                 return capturedStates[0];
+            }
+
             if (capturedStates[1] != null && capturedStates[1].state == CAPTURE_RIGHT)
+            {
                 return capturedStates[1];
+            }
+
             return null;
         }
 
@@ -74,7 +92,7 @@ namespace Unigram.Charts
             public float end;
 
             ValueAnimator a;
-            ValueAnimator jumpToAnimator;
+            readonly ValueAnimator jumpToAnimator;
             public float aValue = 0f;
 
             public CapturesData(IListener view, int state)
@@ -98,8 +116,15 @@ namespace Unigram.Charts
 
             public void uncapture()
             {
-                if (a != null) a.Cancel();
-                if (jumpToAnimator != null) jumpToAnimator.Cancel();
+                if (a != null)
+                {
+                    a.Cancel();
+                }
+
+                if (jumpToAnimator != null)
+                {
+                    jumpToAnimator.Cancel();
+                }
             }
         }
 
@@ -115,7 +140,11 @@ namespace Unigram.Charts
             {
                 if (leftPickerArea.Contains(new Point(x, y)))
                 {
-                    if (capturedStates[0] != null) capturedStates[1] = capturedStates[0];
+                    if (capturedStates[0] != null)
+                    {
+                        capturedStates[1] = capturedStates[0];
+                    }
+
                     capturedStates[0] = new CapturesData(view, CAPTURE_LEFT);
                     capturedStates[0].start = pickerStart;
                     capturedStates[0].capturedX = x;
@@ -131,14 +160,22 @@ namespace Unigram.Charts
 
                 if (rightPickerArea.Contains(new Point(x, y)))
                 {
-                    if (capturedStates[0] != null) capturedStates[1] = capturedStates[0];
+                    if (capturedStates[0] != null)
+                    {
+                        capturedStates[1] = capturedStates[0];
+                    }
+
                     capturedStates[0] = new CapturesData(view, CAPTURE_RIGHT);
                     capturedStates[0].end = pickerEnd;
                     capturedStates[0].capturedX = x;
                     capturedStates[0].lastMovingX = x;
                     capturedStates[0].captured();
 
-                    if (moveToAnimator != null) moveToAnimator.Cancel();
+                    if (moveToAnimator != null)
+                    {
+                        moveToAnimator.Cancel();
+                    }
+
                     return true;
                 }
 
@@ -151,7 +188,11 @@ namespace Unigram.Charts
                     capturedStates[0].capturedX = x;
                     capturedStates[0].lastMovingX = x;
                     capturedStates[0].captured();
-                    if (moveToAnimator != null) moveToAnimator.Cancel();
+                    if (moveToAnimator != null)
+                    {
+                        moveToAnimator.Cancel();
+                    }
+
                     return true;
                 }
 
@@ -175,9 +216,15 @@ namespace Unigram.Charts
             }
             else if (pointerIndex == 1)
             {
-                if (capturedStates[0] == null) return false;
-                if (capturedStates[0].state == CAPTURE_MIDDLE) return false;
+                if (capturedStates[0] == null)
+                {
+                    return false;
+                }
 
+                if (capturedStates[0].state == CAPTURE_MIDDLE)
+                {
+                    return false;
+                }
 
                 if (leftPickerArea.Contains(new Point(x, y)) && capturedStates[0].state != CAPTURE_LEFT)
                 {
@@ -186,19 +233,31 @@ namespace Unigram.Charts
                     capturedStates[1].capturedX = x;
                     capturedStates[1].lastMovingX = x;
                     capturedStates[1].captured();
-                    if (moveToAnimator != null) moveToAnimator.Cancel();
+                    if (moveToAnimator != null)
+                    {
+                        moveToAnimator.Cancel();
+                    }
+
                     return true;
                 }
 
                 if (rightPickerArea.Contains(new Point(x, y)))
                 {
-                    if (capturedStates[0].state == CAPTURE_RIGHT) return false;
+                    if (capturedStates[0].state == CAPTURE_RIGHT)
+                    {
+                        return false;
+                    }
+
                     capturedStates[1] = new CapturesData(view, CAPTURE_RIGHT);
                     capturedStates[1].end = pickerEnd;
                     capturedStates[1].capturedX = x;
                     capturedStates[1].lastMovingX = x;
                     capturedStates[1].captured();
-                    if (moveToAnimator != null) moveToAnimator.Cancel();
+                    if (moveToAnimator != null)
+                    {
+                        moveToAnimator.Cancel();
+                    }
+
                     return true;
                 }
             }
@@ -217,7 +276,11 @@ namespace Unigram.Charts
                 return false;
             }
             CapturesData d = capturedStates[pointer];
-            if (d == null) return false;
+            if (d == null)
+            {
+                return false;
+            }
+
             int capturedState = d.state;
             float capturedStart = d.start;
             float capturedEnd = d.end;
@@ -228,16 +291,32 @@ namespace Unigram.Charts
             if (capturedState == CAPTURE_LEFT)
             {
                 pickerStart = capturedStart - (capturedX - x) / (float)pickerWidth;
-                if (pickerStart < 0f) pickerStart = 0f;
-                if (pickerEnd - pickerStart < minDistance) pickerStart = pickerEnd - minDistance;
+                if (pickerStart < 0f)
+                {
+                    pickerStart = 0f;
+                }
+
+                if (pickerEnd - pickerStart < minDistance)
+                {
+                    pickerStart = pickerEnd - minDistance;
+                }
+
                 notifyPicker = true;
             }
 
             if (capturedState == CAPTURE_RIGHT)
             {
                 pickerEnd = capturedEnd - (capturedX - x) / (float)pickerWidth;
-                if (pickerEnd > 1f) pickerEnd = 1f;
-                if (pickerEnd - pickerStart < minDistance) pickerEnd = pickerStart + minDistance;
+                if (pickerEnd > 1f)
+                {
+                    pickerEnd = 1f;
+                }
+
+                if (pickerEnd - pickerStart < minDistance)
+                {
+                    pickerEnd = pickerStart + minDistance;
+                }
+
                 notifyPicker = true;
             }
 
@@ -259,7 +338,11 @@ namespace Unigram.Charts
 
                 notifyPicker = true;
             }
-            if (notifyPicker) view.OnPickerDataChanged();
+            if (notifyPicker)
+            {
+                view.OnPickerDataChanged();
+            }
+
             return true;
         }
 
@@ -310,7 +393,11 @@ namespace Unigram.Charts
                     return true;
                 }
 
-                if (capturedStates[0] != null) capturedStates[0].uncapture();
+                if (capturedStates[0] != null)
+                {
+                    capturedStates[0].uncapture();
+                }
+
                 capturedStates[0] = null;
                 if (capturedStates[1] != null)
                 {
@@ -320,7 +407,11 @@ namespace Unigram.Charts
             }
             else
             {
-                if (capturedStates[1] != null) capturedStates[1].uncapture();
+                if (capturedStates[1] != null)
+                {
+                    capturedStates[1].uncapture();
+                }
+
                 capturedStates[1] = null;
             }
             return false;
@@ -328,8 +419,16 @@ namespace Unigram.Charts
 
         public void Uncapture()
         {
-            if (capturedStates[0] != null) capturedStates[0].uncapture();
-            if (capturedStates[1] != null) capturedStates[1].uncapture();
+            if (capturedStates[0] != null)
+            {
+                capturedStates[0].uncapture();
+            }
+
+            if (capturedStates[1] != null)
+            {
+                capturedStates[1].uncapture();
+            }
+
             capturedStates[0] = null;
             capturedStates[1] = null;
         }

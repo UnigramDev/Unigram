@@ -9,7 +9,7 @@ namespace Unigram.Controls
     {
         public ProxyStatusControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public ConnectionStatus Status

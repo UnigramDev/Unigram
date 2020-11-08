@@ -265,8 +265,15 @@ namespace Unigram.Common
         /// <exception cref="InvalidOperationException"></exception>
         public static String MakeRelativePath(String fromPath, String toPath)
         {
-            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
-            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+            if (String.IsNullOrEmpty(fromPath))
+            {
+                throw new ArgumentNullException("fromPath");
+            }
+
+            if (String.IsNullOrEmpty(toPath))
+            {
+                throw new ArgumentNullException("toPath");
+            }
 
             Uri fromUri = new Uri(fromPath);
             Uri toUri = new Uri(toPath);
@@ -514,9 +521,13 @@ namespace Unigram.Common
             {
                 string[] parts = token.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 2)
+                {
                     queryDict[parts[0].Trim()] = WebUtility.UrlDecode(parts[1]).Trim();
+                }
                 else
+                {
                     queryDict[parts[0].Trim()] = "";
+                }
             }
             return queryDict;
         }

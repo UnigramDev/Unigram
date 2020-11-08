@@ -38,7 +38,7 @@ namespace Unigram.Navigation
         public DispatcherContext(CoreDispatcher dispatcher)
         {
             DebugWrite(caller: "Constructor");
-            this._dispatcher = dispatcher;
+            _dispatcher = dispatcher;
         }
 
         public bool HasThreadAccess => _dispatcher.HasThreadAccess;

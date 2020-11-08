@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Native;
@@ -20,7 +19,9 @@ namespace Unigram.Converters
             get
             {
                 if (_current == null)
+                {
                     _current = new BindConvert();
+                }
 
                 return _current;
             }
@@ -225,7 +226,7 @@ namespace Unigram.Converters
         //}
 
 
-        private Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
+        private readonly Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
 
         public string FormatAmount(long amount, string currency)
         {

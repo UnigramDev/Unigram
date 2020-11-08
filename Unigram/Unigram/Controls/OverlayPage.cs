@@ -41,7 +41,7 @@ namespace Unigram.Controls
 
         protected Border Container;
         protected Border BackgroundElement;
-        private AppViewBackButtonVisibility BackButtonVisibility;
+        private readonly AppViewBackButtonVisibility BackButtonVisibility;
 
         public event EventHandler Closing;
 
@@ -194,7 +194,7 @@ namespace Unigram.Controls
                         _popupHost.ShouldConstrainToRootBounds = false;
                     }
 
-                    this.Unloaded += PopupHost_Unloaded;
+                    Unloaded += PopupHost_Unloaded;
                 }
 
                 // Cool down
@@ -237,8 +237,8 @@ namespace Unigram.Controls
             var width = sender.WorkAreaSize.Width / scaleFactor;
             var height = sender.WorkAreaSize.Height / scaleFactor;
 
-            this.Width = width;
-            this.Height = height;
+            Width = width;
+            Height = height;
 
             _popupHost.Margin = new Thickness(-x, -y, 0, 0);
             _popupHost.Width = width;

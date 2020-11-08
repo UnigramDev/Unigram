@@ -39,12 +39,12 @@ namespace Unigram.Views
         public IEventAggregator Aggregator => throw new NotImplementedException();
 
         private readonly string _injectedJs;
-        private ScrollViewer _scrollingHost;
+        private readonly ScrollViewer _scrollingHost;
 
-        private FileContext<Tuple<IContentWithFile, MessageViewModel>> _filesMap = new FileContext<Tuple<IContentWithFile, MessageViewModel>>();
-        private FileContext<Image> _iconsMap = new FileContext<Image>();
+        private readonly FileContext<Tuple<IContentWithFile, MessageViewModel>> _filesMap = new FileContext<Tuple<IContentWithFile, MessageViewModel>>();
+        private readonly FileContext<Image> _iconsMap = new FileContext<Image>();
 
-        private List<(AnimationContent, AnimationView)> _animations = new List<(AnimationContent, AnimationView)>();
+        private readonly List<(AnimationContent, AnimationView)> _animations = new List<(AnimationContent, AnimationView)>();
 
         public InstantPage()
         {
@@ -253,12 +253,12 @@ namespace Unigram.Views
             }
         }
 
-        private long _webpageId;
+        private readonly long _webpageId;
 
         //private Stack<Panel> _containers = new Stack<Panel>();
-        private double _padding = 12;
+        private readonly double _padding = 12;
 
-        private Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
+        private readonly Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
 
         private FrameworkElement ProcessBlock(PageBlock block)
         {
@@ -818,7 +818,10 @@ namespace Unigram.Views
 
 
             var text = ProcessText(block, false);
-            if (text != null) element.Children.Add(text);
+            if (text != null)
+            {
+                element.Children.Add(text);
+            }
 
             return element;
         }
@@ -870,10 +873,16 @@ namespace Unigram.Views
             var element = new StackPanel { Style = Resources["BlockBlockquoteStyle"] as Style };
 
             var text = ProcessText(block, false);
-            if (text != null) element.Children.Add(text);
+            if (text != null)
+            {
+                element.Children.Add(text);
+            }
 
             var caption = ProcessText(block, true);
-            if (caption != null) element.Children.Add(caption);
+            if (caption != null)
+            {
+                element.Children.Add(caption);
+            }
 
             return element;
         }
@@ -883,10 +892,16 @@ namespace Unigram.Views
             var element = new StackPanel { Style = Resources["BlockPullquoteStyle"] as Style };
 
             var text = ProcessText(block, false);
-            if (text != null) element.Children.Add(text);
+            if (text != null)
+            {
+                element.Children.Add(text);
+            }
 
             var caption = ProcessText(block, true);
-            if (caption != null) element.Children.Add(caption);
+            if (caption != null)
+            {
+                element.Children.Add(caption);
+            }
 
             return element;
         }

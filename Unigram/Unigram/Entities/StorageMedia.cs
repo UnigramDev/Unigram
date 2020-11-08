@@ -31,7 +31,9 @@ namespace Unigram.Entities
             get
             {
                 if (_thumbnail == null)
+                {
                     LoadThumbnail();
+                }
 
                 return _thumbnail;
             }
@@ -43,7 +45,9 @@ namespace Unigram.Entities
             get
             {
                 if (_bitmap == null)
+                {
                     Refresh();
+                }
 
                 return _bitmap;
             }
@@ -55,7 +59,9 @@ namespace Unigram.Entities
             get
             {
                 if (_preview == null)
+                {
                     Refresh();
+                }
 
                 return _preview;
             }

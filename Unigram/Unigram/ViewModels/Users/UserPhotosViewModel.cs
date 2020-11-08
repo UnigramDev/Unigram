@@ -65,7 +65,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public override MvxObservableCollection<GalleryContent> Group => this.Items;
+        public override MvxObservableCollection<GalleryContent> Group => Items;
 
         public override bool CanDelete => _user != null && _user.Id == ProtoService.Options.MyId;
 

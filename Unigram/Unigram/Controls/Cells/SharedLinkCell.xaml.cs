@@ -15,7 +15,7 @@ namespace Unigram.Controls.Cells
 {
     public sealed partial class SharedLinkCell : UserControl
     {
-        private Message _message;
+        private readonly Message _message;
         private IProtoService _protoService;
         private INavigationService _navigationService;
 

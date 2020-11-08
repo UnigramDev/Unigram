@@ -33,7 +33,10 @@ namespace Unigram.Common
         public RelayCommand(Action execute, Func<bool> canexecute = null)
         {
             if (execute == null)
+            {
                 throw new ArgumentNullException(nameof(execute));
+            }
+
             _execute = execute;
             _canExecute = canexecute ?? (() => true);
         }
@@ -48,7 +51,10 @@ namespace Unigram.Common
         public void Execute(object p = null)
         {
             if (!CanExecute(p))
+            {
                 return;
+            }
+
             try { _execute(); }
             catch { Debugger.Break(); }
         }
@@ -68,7 +74,10 @@ namespace Unigram.Common
         public RelayCommand(Action<T> execute, Func<T, bool> canexecute = null)
         {
             if (execute == null)
+            {
                 throw new ArgumentNullException(nameof(execute));
+            }
+
             _execute = execute;
             _canExecute = canexecute ?? (e => true);
         }
@@ -82,8 +91,11 @@ namespace Unigram.Common
 
         public void Execute(object p)
         {
-            if (!this.CanExecute(p))
+            if (!CanExecute(p))
+            {
                 return;
+            }
+
             _execute(ConvertParameterValue(p));
         }
 

@@ -38,7 +38,7 @@ namespace Unigram.Services
         private string _languageCode;
         private string _languagePlural;
 
-        private string _languagePath;
+        private readonly string _languagePath;
 
         public LocaleService()
         {

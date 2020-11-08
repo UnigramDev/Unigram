@@ -77,7 +77,9 @@ namespace Unigram.Services.Keyboard
             // Ignore button chords with the left, right, and middle buttons
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
                 properties.IsMiddleButtonPressed)
+            {
                 return;
+            }
 
             // If back or foward are pressed (but not both) navigate appropriately
             bool backPressed = properties.IsXButton1Pressed;
@@ -85,8 +87,15 @@ namespace Unigram.Services.Keyboard
             if (backPressed ^ forwardPressed)
             {
                 e.Handled = true;
-                if (backPressed) RaisePointerGoBackGestured();
-                if (forwardPressed) RaisePointerGoForwardGestured();
+                if (backPressed)
+                {
+                    RaisePointerGoBackGestured();
+                }
+
+                if (forwardPressed)
+                {
+                    RaisePointerGoForwardGestured();
+                }
             }
         }
 
@@ -95,7 +104,9 @@ namespace Unigram.Services.Keyboard
             // Ignore button chords with the left, right, and middle buttons
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
                 properties.IsMiddleButtonPressed)
+            {
                 return false;
+            }
 
             // If back or foward are pressed (but not both) navigate appropriately
             bool backPressed = properties.IsXButton1Pressed;

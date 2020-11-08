@@ -13,7 +13,9 @@
             get
             {
                 if (_inputDevice == null)
+                {
                     _inputDevice = GetValueOrDefault("InputDevice", "default");
+                }
 
                 return _inputDevice ?? "default";
             }
@@ -30,7 +32,9 @@
             get
             {
                 if (_outputDevice == null)
+                {
                     _outputDevice = GetValueOrDefault("OutputDevice", "default");
+                }
 
                 return _outputDevice ?? "default";
             }
@@ -47,7 +51,9 @@
             get
             {
                 if (_videoDevice == null)
+                {
                     _videoDevice = GetValueOrDefault("VideoDevice", "default");
+                }
 
                 return _videoDevice ?? "default";
             }

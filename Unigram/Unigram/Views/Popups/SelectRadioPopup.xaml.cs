@@ -10,7 +10,7 @@ namespace Unigram.Views.Popups
     {
         public SelectRadioPopup(params SelectRadioItem[] options)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             for (int i = 0; i < options.Length; i++)
             {

@@ -12,7 +12,7 @@ namespace LinqToVisualTree
     /// </summary>
     public class VisualTreeAdapter : ILinqTree<DependencyObject>
     {
-        private DependencyObject _item;
+        private readonly DependencyObject _item;
 
         public VisualTreeAdapter(DependencyObject item)
         {
@@ -130,11 +130,17 @@ namespace LinqToVisualTree
         public static IEnumerable<DependencyObject> ElementsBeforeSelf(this DependencyObject item)
         {
             if (item.Ancestors().FirstOrDefault() == null)
+            {
                 yield break;
+            }
+
             foreach (var child in item.Ancestors().First().Elements())
             {
                 if (child.Equals(item))
+                {
                     break;
+                }
+
                 yield return child;
             }
         }
@@ -145,15 +151,22 @@ namespace LinqToVisualTree
         public static IEnumerable<DependencyObject> ElementsAfterSelf(this DependencyObject item)
         {
             if (item.Ancestors().FirstOrDefault() == null)
+            {
                 yield break;
+            }
+
             bool afterSelf = false;
             foreach (var child in item.Ancestors().First().Elements())
             {
                 if (afterSelf)
+                {
                     yield return child;
+                }
 
                 if (child.Equals(item))
+                {
                     afterSelf = true;
+                }
             }
         }
 

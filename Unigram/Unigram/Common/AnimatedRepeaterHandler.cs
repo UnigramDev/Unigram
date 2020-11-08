@@ -179,7 +179,7 @@ namespace Unigram.Common
             public AnimationView Presenter { get; set; }
         }
 
-        private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
+        private readonly Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
 
         private void Play(IEnumerable<(Button Contaner, T Sticker)> items, bool auto)
         {

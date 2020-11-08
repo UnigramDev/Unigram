@@ -100,10 +100,14 @@ namespace Unigram.Controls
                 Children.Add(inline);
 
                 if (_textBox == null)
+                {
                     _textBox = this.Ancestors<TagsTextBox>().FirstOrDefault() as TagsTextBox;
+                }
 
                 if (_textBox != null)
+                {
                     _textBox.Initialize(inline);
+                }
             }
 
             // Variables tracking the size of the current line, the total size
@@ -354,7 +358,7 @@ namespace Unigram.Controls
         /// <summary>
         /// The orientation of the structure.
         /// </summary>
-        private Orientation _orientation;
+        private readonly Orientation _orientation;
 
         /// <summary>
         /// Gets the orientation of the structure.

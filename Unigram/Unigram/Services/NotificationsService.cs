@@ -389,7 +389,7 @@ namespace Unigram.Services
 
         private void ProcessNewPushMessage(int group, int id, long chatId, NotificationTypeNewPushMessage newPushMessage)
         {
-            UpdateFromLabel(_protoService.GetChat(chatId), newPushMessage);
+            //UpdateFromLabel(_protoService.GetChat(chatId), newPushMessage);
         }
 
         private async void ProcessNewMessage(int gId, int id, Message message)
@@ -413,7 +413,7 @@ namespace Unigram.Services
             var user = _protoService.GetUser(_protoService.Options.MyId);
             var attribution = user?.GetFullName() ?? string.Empty;
 
-            if (TLContainer.Current.Passcode.IsLockscreenRequired)
+            if (chat.Type is ChatTypeSecret || TLContainer.Current.Passcode.IsLockscreenRequired)
             {
                 caption = Strings.Resources.AppName;
                 content = Strings.Resources.YouHaveNewMessage;
@@ -462,34 +462,6 @@ namespace Unigram.Services
             {
                 await action();
             }
-        }
-
-        private ConcurrentDictionary<int, Message> _files = new ConcurrentDictionary<int, Message>();
-
-        private string GetPhoto(Message message)
-        {
-            if (message.Content is MessagePhoto photo)
-            {
-                var small = photo.Photo.GetBig();
-                if (small == null || !small.Photo.Local.IsDownloadingCompleted)
-                {
-                    _files[small.Photo.Id] = message;
-                    _protoService.DownloadFile(small.Photo.Id, 1, 0);
-                    return string.Empty;
-                }
-
-                var file = new Uri(small.Photo.Local.Path);
-                var folder = new Uri(ApplicationData.Current.LocalFolder.Path + "\\");
-
-                var relativePath = Uri.UnescapeDataString(
-                                        folder.MakeRelativeUri(file)
-                                              .ToString()
-                                        );
-
-                return "ms-appdata:///local/" + relativePath;
-            }
-
-            return string.Empty;
         }
 
         private string GetTag(Message message)
@@ -662,7 +634,7 @@ namespace Unigram.Services
             }
         }
 
-        private TaskCompletionSource<AuthorizationState> _authorizationStateTask = new TaskCompletionSource<AuthorizationState>();
+        private readonly TaskCompletionSource<AuthorizationState> _authorizationStateTask = new TaskCompletionSource<AuthorizationState>();
 
         public void Handle(UpdateAuthorizationState update)
         {

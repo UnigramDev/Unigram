@@ -31,11 +31,11 @@ namespace Unigram.Views.Host
 {
     public sealed partial class RootPage : Page
     {
-        private ILifetimeService _lifetime;
+        private readonly ILifetimeService _lifetime;
         private NavigationService _navigationService;
 
         private RootDestination _navigationViewSelected;
-        private MvxObservableCollection<object> _navigationViewItems;
+        private readonly MvxObservableCollection<object> _navigationViewItems;
 
         public RootPage(NavigationService service)
         {

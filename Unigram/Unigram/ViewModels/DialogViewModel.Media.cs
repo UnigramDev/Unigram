@@ -468,73 +468,77 @@ namespace Unigram.ViewModels
             //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.SignificantOther);
             //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Website);
 
-            var picked = await picker.PickContactAsync();
-            if (picked != null)
+            try
             {
-                Telegram.Td.Api.Contact contact = null;
-                string vcard = string.Empty;
-
-                var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
-                var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-                if (store != null && annotationStore != null)
+                var picked = await picker.PickContactAsync();
+                if (picked != null)
                 {
-                    var full = await store.GetContactAsync(picked.Id);
-                    if (full != null)
+                    Telegram.Td.Api.Contact contact = null;
+                    string vcard = string.Empty;
+
+                    var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
+                    var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+                    if (store != null && annotationStore != null)
                     {
-                        var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
-
-                        //var vcardStream = await ContactManager.ConvertContactToVCardAsync(full, 2000);
-                        //using (var stream = await vcardStream.OpenReadAsync())
-                        //{
-                        //    using (var dataReader = new DataReader(stream.GetInputStreamAt(0)))
-                        //    {
-                        //        await dataReader.LoadAsync((uint)stream.Size);
-                        //        vcard = dataReader.ReadString(dataReader.UnconsumedBufferLength);
-                        //    }
-                        //}
-
-                        var first = annotations.FirstOrDefault();
-                        if (first != null)
+                        var full = await store.GetContactAsync(picked.Id);
+                        if (full != null)
                         {
-                            var remote = first.RemoteId;
-                            if (int.TryParse(remote.Substring(1), out int userId))
+                            var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+
+                            //var vcardStream = await ContactManager.ConvertContactToVCardAsync(full, 2000);
+                            //using (var stream = await vcardStream.OpenReadAsync())
+                            //{
+                            //    using (var dataReader = new DataReader(stream.GetInputStreamAt(0)))
+                            //    {
+                            //        await dataReader.LoadAsync((uint)stream.Size);
+                            //        vcard = dataReader.ReadString(dataReader.UnconsumedBufferLength);
+                            //    }
+                            //}
+
+                            var first = annotations.FirstOrDefault();
+                            if (first != null)
                             {
-                                var user = ProtoService.GetUser(userId);
-                                if (user != null)
+                                var remote = first.RemoteId;
+                                if (int.TryParse(remote.Substring(1), out int userId))
                                 {
-                                    contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, vcard, user.Id);
+                                    var user = ProtoService.GetUser(userId);
+                                    if (user != null)
+                                    {
+                                        contact = new Telegram.Td.Api.Contact(user.PhoneNumber, user.FirstName, user.LastName, vcard, user.Id);
+                                    }
                                 }
                             }
-                        }
 
-                        //contact = full;
+                            //contact = full;
 
-                        if (contact == null)
-                        {
-                            var phone = full.Phones.FirstOrDefault();
-                            if (phone == null)
+                            if (contact == null)
                             {
-                                return;
-                            }
+                                var phone = full.Phones.FirstOrDefault();
+                                if (phone == null)
+                                {
+                                    return;
+                                }
 
-                            contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, vcard, 0);
+                                contact = new Telegram.Td.Api.Contact(phone.Number, picked.FirstName, picked.LastName, vcard, 0);
+                            }
                         }
                     }
-                }
 
-                if (contact == null)
-                {
-                    return;
-                }
+                    if (contact == null)
+                    {
+                        return;
+                    }
 
-                var options = await PickMessageSendOptionsAsync();
-                if (options == null)
-                {
-                    return;
-                }
+                    var options = await PickMessageSendOptionsAsync();
+                    if (options == null)
+                    {
+                        return;
+                    }
 
-                await SendContactAsync(contact, options);
+                    await SendContactAsync(contact, options);
+                }
             }
+            catch { }
         }
 
         public async Task<BaseObject> SendContactAsync(Telegram.Td.Api.Contact contact, MessageSendOptions options)
@@ -759,7 +763,7 @@ namespace Unigram.ViewModels
                 {
                     if (item == items.Last())
                     {
-                        firstCaption = caption; 
+                        firstCaption = caption;
                     }
 
                     var factory = await _messageFactory.CreateDocumentAsync(item.File, !audio);

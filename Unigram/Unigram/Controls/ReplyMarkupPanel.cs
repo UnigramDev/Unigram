@@ -191,7 +191,7 @@ namespace Unigram.Controls
                         }
 
                         button.Radius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
-                        
+
                         panel.Children.Add(button);
                     }
 

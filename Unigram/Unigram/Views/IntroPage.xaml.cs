@@ -19,11 +19,11 @@ namespace Unigram.Views
         private TLIntroRenderer _renderer;
 #endif
 
-        private Visual _layoutVisual;
+        private readonly Visual _layoutVisual;
         private int _selectedIndex;
         private bool _selecting;
 
-        private DispatcherTimer _timer;
+        private readonly DispatcherTimer _timer;
         private bool _timedOut;
 
         public IntroPage()

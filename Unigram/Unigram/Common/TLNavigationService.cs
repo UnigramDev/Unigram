@@ -22,7 +22,7 @@ namespace Unigram.Common
         private readonly IProtoService _protoService;
         private readonly IPasscodeService _passcodeService;
 
-        private Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
+        private readonly Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
 
         public TLNavigationService(IProtoService protoService, Frame frame, int session, string id)
             : base(frame, session, id)

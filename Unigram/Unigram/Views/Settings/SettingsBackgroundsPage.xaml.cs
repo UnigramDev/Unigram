@@ -18,7 +18,7 @@ namespace Unigram.Views.Settings
     {
         public SettingsBackgroundsViewModel ViewModel => DataContext as SettingsBackgroundsViewModel;
 
-        private FileContext<Background> _backgrounds = new FileContext<Background>();
+        private readonly FileContext<Background> _backgrounds = new FileContext<Background>();
 
         public SettingsBackgroundsPage()
         {

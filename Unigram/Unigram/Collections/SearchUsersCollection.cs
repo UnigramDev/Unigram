@@ -16,8 +16,8 @@ namespace Unigram.Collections
 
         private readonly List<int> _users = new List<int>();
 
-        private KeyedList<string, object> _local;
-        private KeyedList<string, object> _remote;
+        private readonly KeyedList<string, object> _local;
+        private readonly KeyedList<string, object> _remote;
 
         public SearchUsersCollection(IProtoService protoService, string query)
         {

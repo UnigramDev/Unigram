@@ -20,8 +20,8 @@ namespace Unigram.Controls.Messages
     {
         private UIElement _parent;
 
-        private Visual _textVisual1;
-        private Visual _textVisual2;
+        private readonly Visual _textVisual1;
+        private readonly Visual _textVisual2;
 
         private Visual _textVisual;
 
@@ -66,7 +66,7 @@ namespace Unigram.Controls.Messages
             //Line.UpdateIndex(value, maximum, intermediate);
         }
 
-        private Queue<(Chat, MessageViewModel, bool, int, int)> _queue = new Queue<(Chat, MessageViewModel, bool, int, int)>();
+        private readonly Queue<(Chat, MessageViewModel, bool, int, int)> _queue = new Queue<(Chat, MessageViewModel, bool, int, int)>();
         private bool _playing;
 
         public void UpdateMessage(Chat chat, MessageViewModel message, bool known, int value, int maximum, bool intermediate)
@@ -289,14 +289,18 @@ namespace Unigram.Controls.Messages
         protected override void HideThumbnail()
         {
             if (ThumbRoot != null)
+            {
                 ThumbRoot.Visibility = Visibility.Collapsed;
+            }
         }
 
         protected override void ShowThumbnail(CornerRadius radius = default)
         {
             FindName(nameof(ThumbRoot));
             if (ThumbRoot != null)
+            {
                 ThumbRoot.Visibility = Visibility.Visible;
+            }
 
             ThumbRoot.CornerRadius =
                 ThumbEllipse.CornerRadius = _defaultRadius;
@@ -305,7 +309,9 @@ namespace Unigram.Controls.Messages
         protected override void SetThumbnail(ImageSource value)
         {
             if (ThumbImage != null)
+            {
                 ThumbImage.ImageSource = value;
+            }
         }
 
         protected override void SetText(string title, string service, string message)
@@ -333,11 +339,11 @@ namespace Unigram.Controls.Messages
 
     public class MessagePinnedLine : Control
     {
-        private CompositionSpriteShape _back;
-        private CompositionSpriteShape _fore;
-        private CompositionRectangleGeometry _forePath;
-        private CompositionSpriteShape _mask;
-        private CompositionPathGeometry _maskPath;
+        private readonly CompositionSpriteShape _back;
+        private readonly CompositionSpriteShape _fore;
+        private readonly CompositionRectangleGeometry _forePath;
+        private readonly CompositionSpriteShape _mask;
+        private readonly CompositionPathGeometry _maskPath;
 
         public MessagePinnedLine()
         {
@@ -424,13 +430,13 @@ namespace Unigram.Controls.Messages
             return Window.Current.Compositor.CreateColorBrush(Colors.White);
         }
 
-        private int _oldMaximum = 4;
-        private float _oldHeight = 12;
+        private readonly int _oldMaximum = 4;
+        private readonly float _oldHeight = 12;
 
         private int _prevValue;
         private int _nextValue;
 
-        private Queue<(int, int, int)> _queue = new Queue<(int, int, int)>();
+        private readonly Queue<(int, int, int)> _queue = new Queue<(int, int, int)>();
         private bool _playing;
 
         public void UpdateIndex(int value, int maximum, int direction, bool intermediate)

@@ -36,7 +36,6 @@ namespace Unigram.ViewModels.Supergroups
             EditLinkedChatCommand = new RelayCommand(EditLinkedChatExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
             EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
-            DeletePhotoCommand = new RelayCommand(DeletePhotoExecute);
 
             RevokeCommand = new RelayCommand(RevokeExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
@@ -364,22 +363,6 @@ namespace Unigram.ViewModels.Supergroups
             {
                 var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
                 var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoStatic(generated)));
-            }
-        }
-
-        public RelayCommand DeletePhotoCommand { get; }
-        private async void DeletePhotoExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, null));
-            if (response is Error)
-            {
-                // TODO:
             }
         }
 

@@ -11,7 +11,7 @@ namespace Unigram.Controls
     public class QrCode : Control
     {
         private Image Canvas;
-        private string CanvasPartName = "Canvas";
+        private const string CanvasPartName = "Canvas";
 
         private string _text;
 

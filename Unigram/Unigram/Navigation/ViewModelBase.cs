@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Navigation.Services;
 using Windows.UI.Xaml.Navigation;
@@ -24,13 +23,10 @@ namespace Unigram.Navigation
 
         }
 
-        [JsonIgnore]
         public virtual INavigationService NavigationService { get; set; }
 
-        [JsonIgnore]
         public virtual IDispatcherContext Dispatcher { get; set; }
 
-        [JsonIgnore]
         public virtual IDictionary<string, object> SessionState { get; set; }
     }
 }

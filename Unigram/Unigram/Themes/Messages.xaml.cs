@@ -8,7 +8,7 @@ namespace Unigram.Themes
     {
         public Messages()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
     }
 }

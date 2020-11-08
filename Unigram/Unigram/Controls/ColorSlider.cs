@@ -14,7 +14,7 @@ namespace Unigram.Controls
 {
     public class ColorSlider : Control
     {
-        private Dictionary<uint, Point> m_pointerPositions;
+        private readonly Dictionary<uint, Point> m_pointerPositions;
 
         private FrameworkElement _layoutRoot;
         private FrameworkElement _container;
@@ -299,7 +299,7 @@ namespace Unigram.Controls
             return Color.FromArgb(0xFF, (byte)(r * 255), (byte)(g * 255), (byte)(b * 255));
         }
 
-        private Color[] _colors = new[]
+        private readonly Color[] _colors = new[]
         {
             Color.FromArgb(0xff, 0xea, 0x27, 0x39),
             Color.FromArgb(0xff, 0xdb, 0x3a, 0xd2),
@@ -312,7 +312,7 @@ namespace Unigram.Controls
             Color.FromArgb(0xff, 0xff, 0xff, 0xff)
         };
 
-        private double[] _offsets = new[]
+        private readonly double[] _offsets = new[]
         {
             0.0,  //red
             0.14, //pink

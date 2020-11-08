@@ -16,7 +16,7 @@ namespace Unigram.Common
 {
     public static class PlaceholderHelper
     {
-        private static Color[] _colors = new Color[7]
+        private static readonly Color[] _colors = new Color[7]
         {
             Color.FromArgb(0xFF, 0xE5, 0x65, 0x55),
             Color.FromArgb(0xFF, 0xF2, 0x8C, 0x48),

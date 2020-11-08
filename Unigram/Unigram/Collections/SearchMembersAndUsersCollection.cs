@@ -18,9 +18,9 @@ namespace Unigram.Collections
 
         private readonly List<int> _users = new List<int>();
 
-        private KeyedList<string, object> _chat;
-        private KeyedList<string, object> _local;
-        private KeyedList<string, object> _remote;
+        private readonly KeyedList<string, object> _chat;
+        private readonly KeyedList<string, object> _local;
+        private readonly KeyedList<string, object> _remote;
 
         public SearchMembersAndUsersCollection(IProtoService protoService, long chatId, ChatMembersFilter filter, string query)
         {

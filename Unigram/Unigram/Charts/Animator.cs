@@ -305,8 +305,8 @@ namespace Unigram.Charts
 
     public class AnimatorUpdateListener
     {
-        private Action<Animator> _update;
-        private Action<Animator> _end;
+        private readonly Action<Animator> _update;
+        private readonly Action<Animator> _end;
 
         public AnimatorUpdateListener(Action<Animator> update = null, Action<Animator> end = null)
         {

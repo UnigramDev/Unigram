@@ -11,8 +11,8 @@ namespace Unigram.Controls
 {
     public class ScrollViewerBackground : Control
     {
-        private Compositor _compositor;
-        private SpriteVisual _visual;
+        private readonly Compositor _compositor;
+        private readonly SpriteVisual _visual;
         private ExpressionAnimation _animation;
 
         public ScrollViewerBackground()

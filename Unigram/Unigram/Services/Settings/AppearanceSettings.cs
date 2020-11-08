@@ -174,12 +174,14 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_emojiSet == null)
+                {
                     _emojiSet = new InstalledEmojiSet
                     {
                         Id = GetValueOrDefault(_container, "EmojiSetId", "apple"),
                         Title = GetValueOrDefault(_container, "EmojiSet", "Apple"),
                         Version = GetValueOrDefault(_container, "EmojiSetVersion", 1),
                     };
+                }
 
                 return _emojiSet;
             }
@@ -263,7 +265,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_requestedTheme == null)
+                {
                     _requestedTheme = (TelegramTheme)GetValueOrDefault(_container, "Theme", (int)GetSystemTheme());
+                }
 
                 return _requestedTheme ?? GetSystemTheme();
             }
@@ -280,7 +284,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_nightMode == null)
+                {
                     _nightMode = (NightMode)GetValueOrDefault(_container, "NightMode", (int)NightMode.Disabled);
+                }
 
                 return _nightMode ?? NightMode.Disabled;
             }
@@ -298,7 +304,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_isLocationBased == null)
+                {
                     _isLocationBased = GetValueOrDefault(_container, "IsLocationBased", false);
+                }
 
                 return _isLocationBased ?? false;
             }
@@ -359,7 +367,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_location == null)
+                {
                     _location = new Location { Latitude = GetValueOrDefault("Latitude", 0d), Longitude = GetValueOrDefault("Longitude", 0d) };
+                }
 
                 return _location ?? new Location();
             }
@@ -377,7 +387,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_town == null)
+                {
                     _town = GetValueOrDefault("Town", string.Empty);
+                }
 
                 return _town;
             }
@@ -394,7 +406,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_threshold == null)
+                {
                     _threshold = GetValueOrDefault("Threshold", 0.25f);
+                }
 
                 return _threshold ?? 0.25f;
             }
@@ -428,7 +442,9 @@ namespace Unigram.Services.Settings
 
                 // see if start comes before end
                 if (start < end)
+                {
                     return start <= now && now <= end;
+                }
 
                 // start is after end, so do the inverse comparison
                 return !(end < now && now < start);
@@ -507,7 +523,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_bubbleRadius == null)
+                {
                     _bubbleRadius = GetValueOrDefault("BubbleRadius", 15);
+                }
 
                 return _bubbleRadius ?? 15;
             }
@@ -591,7 +609,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_custom == null)
+                {
                     _custom = GetValueOrDefault(_container, $"ThemeCustom{_prefix}", string.Empty);
+                }
 
                 return _custom ?? string.Empty;
             }

@@ -19,7 +19,10 @@ namespace Unigram.Charts.Data
             for (int i = 0; i < n; i++)
             {
                 int m = lines[i].maxValue;
-                if (m > max) max = m;
+                if (m > max)
+                {
+                    max = m;
+                }
             }
 
             linesK = new float[n];

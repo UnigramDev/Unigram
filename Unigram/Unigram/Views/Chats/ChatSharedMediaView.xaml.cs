@@ -57,11 +57,11 @@ namespace Unigram.Views.Chats
         }
 
         private readonly ObservableCollection<ChatSharedMediaTab> _tabs;
-        private ChatSharedMediaTab _mediaHeader;
-        private ChatSharedMediaTab _filesHeader;
-        private ChatSharedMediaTab _linksHeader;
-        private ChatSharedMediaTab _musicHeader;
-        private ChatSharedMediaTab _voiceHeader;
+        private readonly ChatSharedMediaTab _mediaHeader;
+        private readonly ChatSharedMediaTab _filesHeader;
+        private readonly ChatSharedMediaTab _linksHeader;
+        private readonly ChatSharedMediaTab _musicHeader;
+        private readonly ChatSharedMediaTab _voiceHeader;
 
         private bool _isLocked = false;
 

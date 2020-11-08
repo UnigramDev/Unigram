@@ -9,7 +9,7 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class JoinChatPopup : ContentPopup
     {
-        private IProtoService _protoService;
+        private readonly IProtoService _protoService;
 
         public JoinChatPopup(IProtoService protoService, ChatInviteLinkInfo info)
         {

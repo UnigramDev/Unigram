@@ -188,7 +188,7 @@ namespace Unigram.Common
             public LottieView Presenter { get; set; }
         }
 
-        private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
+        private readonly Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
 
         private void Play(IEnumerable<(SelectorItem Contaner, T Sticker)> items, bool auto)
         {

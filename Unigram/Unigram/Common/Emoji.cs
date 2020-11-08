@@ -77,7 +77,7 @@ namespace Unigram.Common
 
     public class EmojiSkinData : EmojiData, INotifyPropertyChanged
     {
-        private string _value;
+        private readonly string _value;
 
         public EmojiSkinData(string value, EmojiSkinTone tone)
         {

@@ -177,7 +177,9 @@ namespace Unigram.ViewModels
             get
             {
                 if (_displayType == null)
+                {
                     _displayType = GetDisplayType();
+                }
 
                 return _displayType;
             }

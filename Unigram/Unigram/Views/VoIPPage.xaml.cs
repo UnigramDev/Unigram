@@ -1,6 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -14,18 +13,17 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Views
 {
     public sealed partial class VoIPPage : Page, IDisposable
     {
-        private Visual _descriptionVisual;
-        private Visual _largeVisual;
-        private SpriteVisual _blurVisual;
-        private CompositionEffectBrush _blurBrush;
-        private Compositor _compositor;
+        private readonly Visual _descriptionVisual;
+        private readonly Visual _largeVisual;
+        private readonly SpriteVisual _blurVisual;
+        private readonly CompositionEffectBrush _blurBrush;
+        private readonly Compositor _compositor;
 
         private bool _collapsed = true;
 
@@ -33,20 +31,20 @@ namespace Unigram.Views
         private readonly ICacheService _cacheService;
         private readonly IEventAggregator _aggregator;
 
-        private IVoipService _service;
+        private readonly IVoipService _service;
 
         private VoipState _state;
 
         private int _debugTapped;
         private ContentDialog _debugDialog;
 
-        private DispatcherTimer _debugTimer;
-        private DispatcherTimer _durationTimer;
+        private readonly DispatcherTimer _debugTimer;
+        private readonly DispatcherTimer _durationTimer;
 
         private bool _viewfinderPressed;
         private Vector2 _viewfinderDelta;
         private Vector2 _viewfinderOffset = Vector2.One;
-        private Visual _viewfinder;
+        private readonly Visual _viewfinder;
 
         private bool _disposed;
 

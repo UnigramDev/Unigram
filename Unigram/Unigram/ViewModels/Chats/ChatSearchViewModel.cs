@@ -229,6 +229,7 @@ namespace Unigram.ViewModels.Chats
                 }
 
                 var collection = new SearchChatMessagesCollection(ProtoService, chat.Id, _dialog.ThreadId, query, from, fromMessageId, filter);
+
                 var result = await collection.LoadMoreItemsAsync(100);
                 if (result.Count > 0)
                 {

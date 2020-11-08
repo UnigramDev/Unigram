@@ -24,7 +24,11 @@ namespace Unigram.Charts
 
         protected void drawChart(CanvasDrawingSession canvas)
         {
-            if (chartData == null) return;
+            if (chartData == null)
+            {
+                return;
+            }
+
             float fullWidth = (chartWidth / (pickerDelegate.pickerEnd - pickerDelegate.pickerStart));
             float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
 
@@ -84,12 +88,18 @@ namespace Unigram.Charts
             for (int i = localStart; i <= localEnd; i++)
             {
                 float stackOffset = 0;
-                if (selectedIndex == i && selected) continue;
+                if (selectedIndex == i && selected)
+                {
+                    continue;
+                }
+
                 for (int k = 0; k < lines.Count; k++)
                 {
                     LineViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
-
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
 
                     int[] y = line.line.y;
 
@@ -137,8 +147,10 @@ namespace Unigram.Charts
                 for (int k = 0; k < lines.Count; k++)
                 {
                     LineViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
-
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
 
                     int[] y = line.line.y;
 
@@ -163,7 +175,11 @@ namespace Unigram.Charts
 
         protected override void SelectXOnChart(int x, int y)
         {
-            if (chartData == null) return;
+            if (chartData == null)
+            {
+                return;
+            }
+
             float offset = chartFullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
             float p;
             if (chartData.xPercentage.Length < 2)
@@ -189,8 +205,15 @@ namespace Unigram.Charts
             else
             {
                 selectedIndex = chartData.FindIndex(startXIndex, endXIndex, xP);
-                if (selectedIndex > endXIndex) selectedIndex = endXIndex;
-                if (selectedIndex < startXIndex) selectedIndex = startXIndex;
+                if (selectedIndex > endXIndex)
+                {
+                    selectedIndex = endXIndex;
+                }
+
+                if (selectedIndex < startXIndex)
+                {
+                    selectedIndex = startXIndex;
+                }
             }
 
             legendShowing = true;
@@ -231,9 +254,16 @@ namespace Unigram.Charts
                     for (int k = 0; k < nl; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
+
                         int y = line.line.y[i];
-                        if (y > yMaxPoints[k]) yMaxPoints[k] = y;
+                        if (y > yMaxPoints[k])
+                        {
+                            yMaxPoints[k] = y;
+                        }
                     }
 
                     if (i % step == 0)
@@ -241,7 +271,10 @@ namespace Unigram.Charts
                         for (int k = 0; k < nl; k++)
                         {
                             LineViewData line = lines[k];
-                            if (!line.enabled && line.alpha == 0) continue;
+                            if (!line.enabled && line.alpha == 0)
+                            {
+                                continue;
+                            }
 
                             float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
                             float yPercentage = (float)yMaxPoints[k] / h * line.alpha;
@@ -292,7 +325,10 @@ namespace Unigram.Charts
                 chartData.ySum[i] = 0;
                 for (int j = 0; j < k; j++)
                 {
-                    if (lines[j].enabled) chartData.ySum[i] += chartData.lines[j].y[i];
+                    if (lines[j].enabled)
+                    {
+                        chartData.ySum[i] += chartData.lines[j].y[i];
+                    }
                 }
             }
 
@@ -313,7 +349,11 @@ namespace Unigram.Charts
 
         protected override void UpdatePickerMinMaxHeight()
         {
-            if (!ANIMATE_PICKER_SIZES) return;
+            if (!ANIMATE_PICKER_SIZES)
+            {
+                return;
+            }
+
             int max = 0;
 
             int n = chartData.x.Length;
@@ -324,16 +364,25 @@ namespace Unigram.Charts
                 for (int k = 0; k < nl; k++)
                 {
                     StackBarViewData l = lines[k];
-                    if (l.enabled) h += l.line.y[i];
+                    if (l.enabled)
+                    {
+                        h += l.line.y[i];
+                    }
                 }
-                if (h > max) max = h;
+                if (h > max)
+                {
+                    max = h;
+                }
             }
 
 
             if (max > 0 && max != animatedToPickerMaxHeight)
             {
                 animatedToPickerMaxHeight = max;
-                if (pickerAnimator != null) pickerAnimator.Cancel();
+                if (pickerAnimator != null)
+                {
+                    pickerAnimator.Cancel();
+                }
 
                 pickerAnimator = CreateAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
                 {
@@ -359,9 +408,15 @@ namespace Unigram.Charts
                 for (int k = 0; k < nl; k++)
                 {
                     StackBarViewData l = lines[k];
-                    if (l.enabled) h += l.line.y[i];
+                    if (l.enabled)
+                    {
+                        h += l.line.y[i];
+                    }
                 }
-                if (h > pickerMaxHeight) pickerMaxHeight = h;
+                if (h > pickerMaxHeight)
+                {
+                    pickerMaxHeight = h;
+                }
             }
         }
 

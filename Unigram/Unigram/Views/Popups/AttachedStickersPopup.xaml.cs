@@ -30,7 +30,7 @@ namespace Unigram.Views.Popups
             //};
         }
 
-        private static Dictionary<int, WeakReference<AttachedStickersPopup>> _windowContext = new Dictionary<int, WeakReference<AttachedStickersPopup>>();
+        private static readonly Dictionary<int, WeakReference<AttachedStickersPopup>> _windowContext = new Dictionary<int, WeakReference<AttachedStickersPopup>>();
         public static AttachedStickersPopup GetForCurrentView()
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);

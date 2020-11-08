@@ -48,7 +48,7 @@ namespace Unigram.Views
 
         #region Bounds
 
-        private ApplicationView _applicationView;
+        private readonly ApplicationView _applicationView;
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {

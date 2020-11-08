@@ -62,7 +62,10 @@ namespace Unigram.Charts
                 for (int k = 0; k < lines.Count; k++)
                 {
                     LineViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
 
                     int j = 0;
 
@@ -87,7 +90,11 @@ namespace Unigram.Charts
 
                     for (int i = localStart; i <= localEnd; i++)
                     {
-                        if (y[i] < 0) continue;
+                        if (y[i] < 0)
+                        {
+                            continue;
+                        }
+
                         float xPoint = chartData.xPercentage[i] * fullWidth - offset;
                         float yPercentage = ((float)y[i] * chartData.linesK[k] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
                         float padding = line.paint.StrokeWidth / 2f;
@@ -149,7 +156,10 @@ namespace Unigram.Charts
                         line.paint.StrokeCap = CanvasCapStyle.Round;
                     }
                     line.paint.A = (byte)(255 * line.alpha * transitionAlpha);
-                    if (!USE_LINES) canvas.DrawGeometry(CanvasGeometry.CreatePath(line.chartPath), line.paint);
+                    if (!USE_LINES)
+                    {
+                        canvas.DrawGeometry(CanvasGeometry.CreatePath(line.chartPath), line.paint);
+                    }
                     //else canvas.drawLines(line.linesPath, 0, j, line.paint);
                 }
 
@@ -170,7 +180,10 @@ namespace Unigram.Charts
                 for (int k = 0; k < nl; k++)
                 {
                     LineViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
 
                     line.bottomLinePath = new CanvasPathBuilder(canvas);
 
@@ -192,7 +205,10 @@ namespace Unigram.Charts
                     //line.chartPath.reset();
                     for (int i = 0; i < n; i++)
                     {
-                        if (y[i] < 0) continue;
+                        if (y[i] < 0)
+                        {
+                            continue;
+                        }
 
                         float xPoint = chartData.xPercentage[i] * pickerWidth;
                         float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
@@ -248,7 +264,11 @@ namespace Unigram.Charts
                     line.linesPathBottomSize = j;
 
 
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
+
                     line.bottomLinePaint.A = (byte)(255 * line.alpha);
                     //if (USE_LINES)
                     //    canvas.drawLines(line.linesPathBottom, 0, line.linesPathBottomSize, line.bottomLinePaint);
@@ -261,7 +281,10 @@ namespace Unigram.Charts
 
         protected override void DrawSelection(CanvasDrawingSession canvas)
         {
-            if (selectedIndex < 0 || !legendShowing) return;
+            if (selectedIndex < 0 || !legendShowing)
+            {
+                return;
+            }
 
             byte alpha = (byte)(chartActiveLineAlpha * selectionA);
 
@@ -278,7 +301,11 @@ namespace Unigram.Charts
             for (int tmpI = 0; tmpI < tmpN; tmpI++)
             {
                 LineViewData line = lines[tmpI];
-                if (!line.enabled && line.alpha == 0) continue;
+                if (!line.enabled && line.alpha == 0)
+                {
+                    continue;
+                }
+
                 float yPercentage = ((float)line.line.y[selectedIndex] * chartData.linesK[tmpI] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
                 float yPoint = MeasuredHeight - chartBottom - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
 
@@ -374,7 +401,10 @@ namespace Unigram.Charts
             for (int i = 0; i < n; i++)
             {
                 int localMax = lines[i].enabled ? (int)(chartData.lines[i].segmentTree.rMaxQ(startXIndex, endXIndex) * chartData.linesK[i]) : 0;
-                if (localMax > max) max = localMax;
+                if (localMax > max)
+                {
+                    max = localMax;
+                }
             }
             return max;
         }
@@ -390,14 +420,21 @@ namespace Unigram.Charts
             for (int i = 0; i < n; i++)
             {
                 int localMin = lines[i].enabled ? (int)(chartData.lines[i].segmentTree.rMinQ(startXIndex, endXIndex) * chartData.linesK[i]) : int.MaxValue;
-                if (localMin < min) min = localMin;
+                if (localMin < min)
+                {
+                    min = localMin;
+                }
             }
             return min;
         }
 
         protected override void UpdatePickerMinMaxHeight()
         {
-            if (!ANIMATE_PICKER_SIZES) return;
+            if (!ANIMATE_PICKER_SIZES)
+            {
+                return;
+            }
+
             if (lines[0].enabled)
             {
                 base.UpdatePickerMinMaxHeight();
@@ -407,7 +444,10 @@ namespace Unigram.Charts
             int max = 0;
             foreach (LineViewData l in lines)
             {
-                if (l.enabled && l.line.maxValue > max) max = l.line.maxValue;
+                if (l.enabled && l.line.maxValue > max)
+                {
+                    max = l.line.maxValue;
+                }
             }
             if (lines.Count > 1)
             {
@@ -417,7 +457,10 @@ namespace Unigram.Charts
             if (max > 0 && max != animatedToPickerMaxHeight)
             {
                 animatedToPickerMaxHeight = max;
-                if (pickerAnimator != null) pickerAnimator.Cancel();
+                if (pickerAnimator != null)
+                {
+                    pickerAnimator.Cancel();
+                }
 
                 pickerAnimator = CreateAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
                 {

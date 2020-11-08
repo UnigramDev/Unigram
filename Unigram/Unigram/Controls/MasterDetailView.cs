@@ -213,8 +213,6 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
-
             VisualStateManager.GoToState(this, "ResetState", false);
 
             MasterPresenter = (ContentPresenter)GetTemplateChild("MasterFrame");

@@ -6,7 +6,6 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
-using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -148,11 +147,7 @@ namespace Unigram.Common
         {
             // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
             // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
-            string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
-            ulong version = ulong.Parse(deviceFamilyVersion);
-            ulong build = (version & 0x00000000FFFF0000L) >> 16;
-
-            if (build < 17763)
+            if (!ApiInfo.IsBuildOrGreater(17763))
             {
                 ThemeDictionaries.Clear();
             }
@@ -212,7 +207,9 @@ namespace Unigram.Common
             get
             {
                 if (_messageFontSize == null)
+                {
                     _messageFontSize = (int)GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d);
+                }
 
                 return _messageFontSize ?? 14;
             }

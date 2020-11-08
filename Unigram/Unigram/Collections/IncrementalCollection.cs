@@ -105,7 +105,7 @@ namespace Unigram.Collections
         {
             foreach (T item in result)
             {
-                this.Add(item);
+                Add(item);
             }
         }
 

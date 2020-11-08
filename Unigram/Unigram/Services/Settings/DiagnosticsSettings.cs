@@ -1,6 +1,4 @@
-﻿using Windows.ApplicationModel;
-
-namespace Unigram.Services.Settings
+﻿namespace Unigram.Services.Settings
 {
     public class DiagnosticsSettings : SettingsServiceBase
     {
@@ -15,9 +13,11 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_bubbleAnimations == null)
-                    _bubbleAnimations = GetValueOrDefault("BubbleAnimations", Package.Current.SignatureKind != PackageSignatureKind.Store);
+                {
+                    _bubbleAnimations = GetValueOrDefault("BubbleAnimations", true);
+                }
 
-                return _bubbleAnimations ?? Package.Current.SignatureKind != PackageSignatureKind.Store;
+                return _bubbleAnimations ?? true;
             }
             set
             {
@@ -32,7 +32,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_minithumbnails == null)
+                {
                     _minithumbnails = GetValueOrDefault("Minithumbnails", true);
+                }
 
                 return _minithumbnails ?? true;
             }

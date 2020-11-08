@@ -23,9 +23,9 @@ namespace Unigram.Controls
             var results = poll.IsClosed || poll.Options.Any(x => x.IsChosen);
             var correct = poll.Type is PollTypeQuiz quiz && quiz.CorrectOptionId == poll.Options.IndexOf(option);
 
-            this.IsThreeState = results;
-            this.IsChecked = results ? null : new bool?(false);
-            this.Tag = option;
+            IsThreeState = results;
+            IsChecked = results ? null : new bool?(false);
+            Tag = option;
 
             _allowToggle = poll.Type is PollTypeRegular regular && regular.AllowMultipleAnswers && !results;
 

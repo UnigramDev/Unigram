@@ -22,18 +22,18 @@ namespace Unigram.Controls.Gallery
     {
         private Func<FrameworkElement> _closing;
 
-        private DisplayRequest _request;
-        private MediaPlayerElement _mediaPlayerElement;
+        private readonly DisplayRequest _request;
+        private readonly MediaPlayerElement _mediaPlayerElement;
         private WebView _surface;
         private AppWindow _window;
 
         private WebPage _webPage;
 
-        private Visual _layer;
+        private readonly Visual _layer;
 
         public EmbedUrlView()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             //            var w = webPage.EmbedWidth ?? 340;
             //            var h = webPage.EmbedHeight ?? 200;
@@ -44,7 +44,7 @@ namespace Unigram.Controls.Gallery
 
         }
 
-        private static Dictionary<int, WeakReference<EmbedUrlView>> _windowContext = new Dictionary<int, WeakReference<EmbedUrlView>>();
+        private static readonly Dictionary<int, WeakReference<EmbedUrlView>> _windowContext = new Dictionary<int, WeakReference<EmbedUrlView>>();
         public static EmbedUrlView GetForCurrentView()
         {
             return new EmbedUrlView();

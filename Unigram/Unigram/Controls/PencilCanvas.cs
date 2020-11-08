@@ -17,8 +17,8 @@ namespace Unigram.Controls
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     public class PencilCanvas : Control
     {
-        private static Color? ERASING_STROKE = null;
-        private static float ERASING_STROKE_THICKNESS = 20;
+        private static readonly Color? ERASING_STROKE = null;
+        private static readonly float ERASING_STROKE_THICKNESS = 20;
 
         private CanvasRenderTarget _renderTarget;
 
@@ -27,7 +27,7 @@ namespace Unigram.Controls
         private List<SmoothPathBuilder> _drawing;
 
         private List<SmoothPathBuilder> _strokes = new List<SmoothPathBuilder>();
-        private List<SmoothPathBuilder> _history = new List<SmoothPathBuilder>();
+        private readonly List<SmoothPathBuilder> _history = new List<SmoothPathBuilder>();
 
         private PencilCanvasMode _mode;
 

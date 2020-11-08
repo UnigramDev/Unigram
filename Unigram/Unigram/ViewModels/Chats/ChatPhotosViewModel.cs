@@ -157,7 +157,7 @@ namespace Unigram.ViewModels.Chats
 
         public override int Position => TotalItems - (Items.Count - base.Position);
 
-        public override MvxObservableCollection<GalleryContent> Group => this.Items;
+        public override MvxObservableCollection<GalleryContent> Group => Items;
     }
 
     //public class GalleryChatPhotoItem : GalleryItem

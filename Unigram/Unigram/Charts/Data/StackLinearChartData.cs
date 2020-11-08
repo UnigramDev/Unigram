@@ -6,8 +6,8 @@ namespace Unigram.Charts.Data
 {
     public class StackLinearChartData : ChartData
     {
-        int[] ySum;
-        SegmentTree ySumSegmentTree;
+        readonly int[] ySum;
+        readonly SegmentTree ySumSegmentTree;
 
         public int[][] simplifiedY;
         public int simplifiedSize;
@@ -108,7 +108,10 @@ namespace Unigram.Charts.Data
                 for (int k = 0; k < nl; k++)
                 {
                     ChartData.Line line = lines[k];
-                    if (line.y[i] > max[k]) max[k] = line.y[i];
+                    if (line.y[i] > max[k])
+                    {
+                        max[k] = line.y[i];
+                    }
                 }
                 if (i % step == 0)
                 {

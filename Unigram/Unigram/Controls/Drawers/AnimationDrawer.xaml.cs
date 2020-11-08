@@ -24,10 +24,10 @@ namespace Unigram.Controls.Drawers
         public Action<Animation> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
-        private AnimatedRepeaterHandler<Animation> _handler;
-        private ZoomableRepeaterHandler _zoomer;
+        private readonly AnimatedRepeaterHandler<Animation> _handler;
+        private readonly ZoomableRepeaterHandler _zoomer;
 
-        private FileContext<Animation> _animations = new FileContext<Animation>();
+        private readonly FileContext<Animation> _animations = new FileContext<Animation>();
 
         private bool _isActive;
 

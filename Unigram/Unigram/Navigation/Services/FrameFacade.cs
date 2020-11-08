@@ -136,7 +136,7 @@ namespace Unigram.Navigation.Services
 
         public void ClearPageState(Type type)
         {
-            this.FrameStateSettingsService().Remove(GetPageStateKey(FrameId, type, BackStackDepth, null));
+            FrameStateSettingsService().Remove(GetPageStateKey(FrameId, type, BackStackDepth, null));
         }
 
         #endregion
@@ -178,8 +178,14 @@ namespace Unigram.Navigation.Services
             NavigationModeHint = NavigationMode.Back;
             if (CanGoBack)
             {
-                if (infoOverride == null) Frame.GoBack();
-                else Frame.GoBack(infoOverride);
+                if (infoOverride == null)
+                {
+                    Frame.GoBack();
+                }
+                else
+                {
+                    Frame.GoBack(infoOverride);
+                }
             }
         }
 
@@ -260,7 +266,10 @@ namespace Unigram.Navigation.Services
             DebugWrite($"CanGoForward {CanGoForward}");
 
             NavigationModeHint = NavigationMode.Forward;
-            if (CanGoForward) Frame.GoForward();
+            if (CanGoForward)
+            {
+                Frame.GoForward();
+            }
         }
 
         public object Content => Frame.Content;
@@ -276,8 +285,20 @@ namespace Unigram.Navigation.Services
         readonly List<EventHandler<NavigatedEventArgs>> _navigatedEventHandlers = new List<EventHandler<NavigatedEventArgs>>();
         public event EventHandler<NavigatedEventArgs> Navigated
         {
-            add { if (!_navigatedEventHandlers.Contains(value)) _navigatedEventHandlers.Add(value); }
-            remove { if (_navigatedEventHandlers.Contains(value)) _navigatedEventHandlers.Remove(value); }
+            add
+            {
+                if (!_navigatedEventHandlers.Contains(value))
+                {
+                    _navigatedEventHandlers.Add(value);
+                }
+            }
+            remove
+            {
+                if (_navigatedEventHandlers.Contains(value))
+                {
+                    _navigatedEventHandlers.Remove(value);
+                }
+            }
         }
         void FacadeNavigatedEventHandler(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
@@ -296,7 +317,9 @@ namespace Unigram.Navigation.Services
             var args = new NavigatedEventArgs(e, Content as Page);
 
             if (NavigationModeHint != NavigationMode.New)
+            {
                 args.NavigationMode = NavigationModeHint;
+            }
 
             NavigationModeHint = NavigationMode.New;
 
@@ -309,8 +332,20 @@ namespace Unigram.Navigation.Services
         readonly List<EventHandler<NavigatingEventArgs>> _navigatingEventHandlers = new List<EventHandler<NavigatingEventArgs>>();
         public event EventHandler<NavigatingEventArgs> Navigating
         {
-            add { if (!_navigatingEventHandlers.Contains(value)) _navigatingEventHandlers.Add(value); }
-            remove { if (_navigatingEventHandlers.Contains(value)) _navigatingEventHandlers.Remove(value); }
+            add
+            {
+                if (!_navigatingEventHandlers.Contains(value))
+                {
+                    _navigatingEventHandlers.Add(value);
+                }
+            }
+            remove
+            {
+                if (_navigatingEventHandlers.Contains(value))
+                {
+                    _navigatingEventHandlers.Remove(value);
+                }
+            }
         }
         private void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
         {
@@ -325,7 +360,9 @@ namespace Unigram.Navigation.Services
             var args = new NavigatingEventArgs(e, Content as Page, e.SourcePageType, parameter, e.Parameter);
 
             if (NavigationModeHint != NavigationMode.New)
+            {
                 args.NavigationMode = NavigationModeHint;
+            }
 
             NavigationModeHint = NavigationMode.New;
 

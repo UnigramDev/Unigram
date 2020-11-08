@@ -12,7 +12,7 @@ namespace Unigram.Views.Popups
     {
         public DeleteMessagesPopup(ICacheService cacheService, IList<Message> messages)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             Title = messages.Count == 1 ? Strings.Resources.DeleteSingleMessagesTitle : string.Format(Strings.Resources.DeleteMessagesTitle, Locale.Declension("messages", messages.Count));
             PrimaryButtonText = Strings.Resources.OK;

@@ -14,17 +14,21 @@ namespace Unigram.Navigation
         public virtual bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (object.Equals(storage, value))
+            {
                 return false;
+            }
 
             storage = value;
-            this.RaisePropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName);
             return true;
         }
 
         public virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
                 return;
+            }
 
             var handler = PropertyChanged;
             if (!object.Equals(handler, null))
@@ -58,7 +62,9 @@ namespace Unigram.Navigation
         public virtual bool Set<T>(Expression<Func<T>> propertyExpression, ref T field, T newValue)
         {
             if (object.Equals(field, newValue))
+            {
                 return false;
+            }
 
             field = newValue;
             RaisePropertyChanged(propertyExpression);
@@ -68,7 +74,9 @@ namespace Unigram.Navigation
         public virtual void RaisePropertyChanged<T>(Expression<Func<T>> propertyExpression)
         {
             if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
                 return;
+            }
 
             var handler = PropertyChanged;
             if (!object.Equals(handler, null))

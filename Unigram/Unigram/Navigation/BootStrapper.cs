@@ -264,7 +264,9 @@ namespace Unigram.Navigation
                 _HasOnPrelaunchAsync = true;
                 await OnPrelaunchAsync(e, out runOnStartAsync);
                 if (!runOnStartAsync)
+                {
                     return;
+                }
             }
 
             if (!restored)
@@ -319,7 +321,9 @@ namespace Unigram.Navigation
             var args = new HandledEventArgs();
             BackRequested?.Invoke(null, args);
             if (handled = args.Handled)
+            {
                 return;
+            }
 
             var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
             foreach (var popup in popups)
@@ -329,7 +333,9 @@ namespace Unigram.Navigation
                     page.OnBackRequested(args);
 
                     if (handled = args.Handled)
+                    {
                         return;
+                    }
                 }
                 else if (popup.Child is ContentDialog dialog)
                 {
@@ -348,7 +354,9 @@ namespace Unigram.Navigation
                 frame.RaiseBackRequested(args);
 
                 if (handled = args.Handled)
+                {
                     return;
+                }
             }
 
             if (NavigationService?.CanGoBack ?? false)
@@ -367,12 +375,17 @@ namespace Unigram.Navigation
             var args = new HandledEventArgs();
             ForwardRequested?.Invoke(null, args);
             if (args.Handled)
+            {
                 return;
+            }
+
             foreach (var frame in WindowContext.GetForCurrentView().NavigationServices.Select(x => x.FrameFacade))
             {
                 frame.RaiseForwardRequested(args);
                 if (args.Handled)
+                {
                     return;
+                }
             }
 
             NavigationService?.GoForward();
@@ -518,7 +531,9 @@ namespace Unigram.Navigation
             foreach (var nav in WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices))
             {
                 if (nav.FrameFacade.Frame.Equals(frame))
+                {
                     return nav as INavigationService;
+                }
             }
 
             var navigationService = CreateNavigationService(frame, session, id, root);
@@ -587,7 +602,8 @@ namespace Unigram.Navigation
                 _currentState = value;
             }
         }
-        Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
+
+        readonly Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
 
         private async Task InitializeFrameAsync(IActivatedEventArgs e)
         {
@@ -613,7 +629,7 @@ namespace Unigram.Navigation
 
         #endregion
 
-        WindowLogic _WindowLogic = new WindowLogic();
+        readonly WindowLogic _WindowLogic = new WindowLogic();
         private void CallActivateWindow(WindowLogic.ActivateWindowSources source)
         {
             _WindowLogic.ActivateWindow(source);
@@ -635,7 +651,9 @@ namespace Unigram.Navigation
             DebugWrite();
 
             if (!canRepeat && CurrentStateHistory.ContainsValue(States.BeforeInit))
+            {
                 return;
+            }
 
             CurrentState = States.BeforeInit;
             await OnInitializeAsync(e);
@@ -647,7 +665,9 @@ namespace Unigram.Navigation
             DebugWrite();
 
             if (!canRepeat && CurrentStateHistory.ContainsValue(States.BeforeStart))
+            {
                 return;
+            }
 
             CurrentState = States.BeforeStart;
             while (!CurrentStateHistory.ContainsValue(States.AfterInit))
@@ -666,7 +686,8 @@ namespace Unigram.Navigation
         public bool AutoRestoreAfterTerminated { get; set; } = true;
         public bool AutoExtendExecutionSession { get; set; } = true;
         public bool AutoSuspendAllFrames { get; set; } = true;
-        LifecycleLogic _LifecycleLogic = new LifecycleLogic();
+
+        readonly LifecycleLogic _LifecycleLogic = new LifecycleLogic();
 
         private void CallResuming(object sender, object e)
         {
@@ -698,7 +719,10 @@ namespace Unigram.Navigation
         private async Task<bool> CallAutoRestoreAsync(ILaunchActivatedEventArgs e, bool restored)
         {
             if (!AutoRestoreAfterTerminated)
+            {
                 return false;
+            }
+
             return await _LifecycleLogic.AutoRestoreAsync(e, NavigationService);
         }
 

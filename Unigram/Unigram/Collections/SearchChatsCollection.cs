@@ -23,12 +23,12 @@ namespace Unigram.Collections
         private readonly List<long> _chats = new List<long>();
         private readonly List<int> _users = new List<int>();
 
-        private IList<ISearchChatsFilter> _internal;
-        private MvxObservableCollection<ISearchChatsFilter> _filters;
+        private readonly IList<ISearchChatsFilter> _internal;
+        private readonly MvxObservableCollection<ISearchChatsFilter> _filters;
 
-        private KeyedList<string, object> _local;
-        private KeyedList<string, object> _remote;
-        private KeyedList<string, object> _messages;
+        private readonly KeyedList<string, object> _local;
+        private readonly KeyedList<string, object> _remote;
+        private readonly KeyedList<string, object> _messages;
 
         public MvxObservableCollection<ISearchChatsFilter> Filters => _filters;
 
@@ -305,7 +305,7 @@ namespace Unigram.Collections
 
     public class SearchChatsFilterContent : ISearchChatsFilter
     {
-        private SearchMessagesFilter _filter;
+        private readonly SearchMessagesFilter _filter;
 
         public SearchChatsFilterContent(SearchMessagesFilter filter)
         {

@@ -177,7 +177,7 @@ namespace Unigram.Services.ViewService
 
             lock (syncObject)
             {
-                releasedCopy = this.released;
+                releasedCopy = released;
                 if (!released)
                 {
                     refCountCopy = ++refCount;
@@ -202,7 +202,7 @@ namespace Unigram.Services.ViewService
 
             lock (syncObject)
             {
-                releasedCopy = this.released;
+                releasedCopy = released;
                 if (!released)
                 {
                     refCountCopy = --refCount;

@@ -83,7 +83,7 @@ namespace Unigram.Controls
 
     public class ChatListListViewItem : MultipleListViewItem
     {
-        private ChatListListView _list;
+        private readonly ChatListListView _list;
 
         public ChatListListViewItem()
         {
@@ -108,14 +108,14 @@ namespace Unigram.Controls
             var content = ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, this.IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact, SettingsService.Current.UseThreeLinesLayout);
+                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact, SettingsService.Current.UseThreeLinesLayout);
             }
         }
     }
 
     public class ChatListListViewItemAutomationPeer : ListViewItemAutomationPeer
     {
-        private ChatListListViewItem _owner;
+        private readonly ChatListListViewItem _owner;
 
         public ChatListListViewItemAutomationPeer(ChatListListViewItem owner)
             : base(owner)

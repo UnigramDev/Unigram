@@ -119,7 +119,11 @@ namespace Unigram.Charts
                     for (int k = 0; k < lines.Count; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
+
                         if (line.line.y[i] > 0)
                         {
                             sum += line.line.y[i] * line.alpha;
@@ -131,7 +135,11 @@ namespace Unigram.Charts
                     for (int k = 0; k < lines.Count; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
+
                         int[] y = line.line.y;
 
                         float yPercentage;
@@ -228,13 +236,19 @@ namespace Unigram.Charts
 
                                 xPoint = mapPoints.X;
                                 yPoint = mapPoints.Y;
-                                if (xPoint < cX) xPoint = cX;
+                                if (xPoint < cX)
+                                {
+                                    xPoint = cX;
+                                }
 
                                 mapPoints.X = xPointZero;
                                 mapPoints.Y = yPointZero;
                                 mapPoints = PostRotate(transitionParams.progress * angle, cX, cY, mapPoints);
                                 yPointZero = mapPoints.Y;
-                                if (xPointZero < cX) xPointZero = cX;
+                                if (xPointZero < cX)
+                                {
+                                    xPointZero = cX;
+                                }
                             }
                             else
                             {
@@ -509,7 +523,11 @@ namespace Unigram.Charts
                     for (int k = 0; k < lines.Count; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
+
                         if (chartData.simplifiedY[k][i] > 0)
                         {
                             sum += chartData.simplifiedY[k][i] * line.alpha;
@@ -522,7 +540,11 @@ namespace Unigram.Charts
                     for (int k = 0; k < lines.Count; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
+
                         float yPercentage;
 
                         if (drawingLinesCount == 1)
@@ -672,7 +694,11 @@ namespace Unigram.Charts
                 for (int k = 0; k < lines.Count; k++)
                 {
                     LineViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
+
                     if (line.line.y[i] > 0)
                     {
                         sum += line.line.y[i] * line.alpha;
@@ -683,7 +709,11 @@ namespace Unigram.Charts
                 for (int k = 0; k < lines.Count; k++)
                 {
                     LineViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
+
                     int[] y = line.line.y;
 
                     float yPercentage;

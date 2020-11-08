@@ -353,8 +353,8 @@ namespace Unigram.Views
             public IPlayerView Player { get; set; }
         }
 
-        private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
-        private Dictionary<long, LottieViewItem> _oldStickers = new Dictionary<long, LottieViewItem>();
+        private readonly Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
+        private readonly Dictionary<long, LottieViewItem> _oldStickers = new Dictionary<long, LottieViewItem>();
 
         public async void PlayMessage(MessageViewModel message, FrameworkElement target)
         {
@@ -658,8 +658,8 @@ namespace Unigram.Views
 
 
 
-        private Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
-        private Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
+        private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
+        private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {

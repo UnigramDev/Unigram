@@ -65,11 +65,11 @@ namespace Unigram.Services
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        private MediaPlayer _mediaPlayer;
+        private readonly MediaPlayer _mediaPlayer;
 
-        private SystemMediaTransportControls _transport;
+        private readonly SystemMediaTransportControls _transport;
 
-        private Dictionary<string, PlaybackItem> _mapping;
+        private readonly Dictionary<string, PlaybackItem> _mapping;
 
         private readonly FileContext<RemoteFileStream> _streams = new FileContext<RemoteFileStream>();
 

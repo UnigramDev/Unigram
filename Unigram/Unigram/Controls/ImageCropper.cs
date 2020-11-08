@@ -52,7 +52,7 @@ namespace Unigram.Controls
 
     public class ImageCropper : ContentControl
     {
-        private Dictionary<uint, Point> m_pointerPositions;
+        private readonly Dictionary<uint, Point> m_pointerPositions;
 
         private StorageFile m_imageSource;
         private Size m_imageSize;

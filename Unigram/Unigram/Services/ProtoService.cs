@@ -70,8 +70,8 @@ namespace Unigram.Services
 
         bool TryGetChat(long chatId, out Chat chat);
         bool TryGetChat(MessageSender sender, out Chat value);
-        bool TryGetChatFromUser(int userId, out Chat chat);
-        bool TryGetChatFromSecret(int secretId, out Chat chat);
+        //bool TryGetChatFromUser(int userId, out Chat chat);
+        //bool TryGetChatFromSecret(int secretId, out Chat chat);
 
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChat(Chat chat);
@@ -135,6 +135,9 @@ namespace Unigram.Services
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
         private readonly ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>>();
 
+        //private readonly Dictionary<int, long> _userToChat = new Dictionary<int, long>();
+        //private readonly Dictionary<int, long> _secretChatToChat = new Dictionary<int, long>();
+
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
         private readonly Dictionary<int, User> _users = new Dictionary<int, User>();
@@ -153,8 +156,8 @@ namespace Unigram.Services
         private readonly FlatFileContext<long> _chatsMap = new FlatFileContext<long>();
         private readonly FlatFileContext<int> _usersMap = new FlatFileContext<int>();
 
-        private StickerSet[] _animatedSet = new StickerSet[2] { null, null };
-        private TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
+        private readonly StickerSet[] _animatedSet = new StickerSet[2] { null, null };
+        private readonly TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
 
         private IList<string> _diceEmojis;
 
@@ -475,7 +478,7 @@ namespace Unigram.Services
 
 
 
-        private ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
+        private readonly ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
 
         public async Task<StorageFile> GetFileAsync(File file)
         {
@@ -790,17 +793,27 @@ namespace Unigram.Services
             return false;
         }
 
-        public bool TryGetChatFromUser(int userId, out Chat chat)
-        {
-            chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == userId);
-            return chat != null;
-        }
+        //public bool TryGetChatFromUser(int userId, out Chat chat)
+        //{
+        //    if (_userToChat.TryGetValue(userId, out long chatId))
+        //    {
+        //        return TryGetChat(chatId, out chat);
+        //    }
 
-        public bool TryGetChatFromSecret(int secretId, out Chat chat)
-        {
-            chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypeSecret secret && secret.SecretChatId == secretId);
-            return chat != null;
-        }
+        //    chat = null;
+        //    return false;
+        //}
+
+        //public bool TryGetChatFromSecret(int secretId, out Chat chat)
+        //{
+        //    if (_secretChatToChat.TryGetValue(secretId, out long chatId))
+        //    {
+        //        return TryGetChat(chatId, out chat);
+        //    }
+
+        //    chat = null;
+        //    return false;
+        //}
 
 
         public IList<Chat> GetChats(IList<long> ids)
@@ -1527,6 +1540,15 @@ namespace Unigram.Services
                         _chatsMap[updateNewChat.Chat.Photo.Big.Id] = updateNewChat.Chat.Id;
                     }
                 }
+
+                //if (updateNewChat.Chat.Type is ChatTypePrivate privata)
+                //{
+                //    _userToChat[privata.UserId] = updateNewChat.Chat.Id;
+                //}
+                //else if (updateNewChat.Chat.Type is ChatTypeSecret secret)
+                //{
+                //    _secretChatToChat[secret.SecretChatId] = updateNewChat.Chat.Id;
+                //}
             }
             else if (update is UpdateNewMessage updateNewMessage)
             {
@@ -1783,7 +1805,7 @@ namespace Unigram.Services
 
     class TdHandler : ClientResultHandler
     {
-        private Action<BaseObject> _callback;
+        private readonly Action<BaseObject> _callback;
 
         public TdHandler(Action<BaseObject> callback)
         {

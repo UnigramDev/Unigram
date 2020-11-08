@@ -22,10 +22,16 @@ namespace Unigram.Charts
                 float offset = fullWidth * (pickerDelegate.pickerStart) - HORIZONTAL_PADDING;
 
                 int start = startXIndex - 1;
-                if (start < 0) start = 0;
+                if (start < 0)
+                {
+                    start = 0;
+                }
+
                 int end = endXIndex + 1;
                 if (end > chartData.lines[0].y.Length - 1)
+                {
                     end = chartData.lines[0].y.Length - 1;
+                }
 
                 //canvas.save();
                 //canvas.clipRect(chartStart, 0, chartEnd, MeasuredHeight - chartBottom);
@@ -61,7 +67,10 @@ namespace Unigram.Charts
                 for (int k = 0; k < lines.Count; k++)
                 {
                     BarViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
 
                     float p;
                     if (chartData.xPercentage.Length < 2)
@@ -156,7 +165,10 @@ namespace Unigram.Charts
                 for (int k = 0; k < nl; k++)
                 {
                     BarViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
 
                     //line.bottomLinePath.reset();
 
@@ -178,7 +190,11 @@ namespace Unigram.Charts
 
                     for (int i = 0; i < n; i++)
                     {
-                        if (y[i] < 0) continue;
+                        if (y[i] < 0)
+                        {
+                            continue;
+                        }
+
                         float xPoint = chartData.xPercentage[i] * pickerWidth;
                         float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
                         float yPercentage = (float)y[i] / h * a;

@@ -17,7 +17,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_repeatMode == null)
+                {
                     _repeatMode = GetValueOrDefault("RepeatMode", 0);
+                }
 
                 return (MediaPlaybackAutoRepeatMode)(_repeatMode ?? 0);
             }

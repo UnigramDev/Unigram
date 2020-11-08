@@ -23,8 +23,8 @@ namespace Unigram.Views.Popups
     {
         public StorageMedia ResultMedia { get; private set; }
 
-        private StorageFile _file;
-        private StorageMedia _media;
+        private readonly StorageFile _file;
+        private readonly StorageMedia _media;
 
         private BitmapRotation _rotation = BitmapRotation.None;
         private BitmapFlip _flip = BitmapFlip.None;
@@ -75,13 +75,13 @@ namespace Unigram.Views.Popups
 
         public bool IsCropEnabled
         {
-            get { return this.Cropper.IsCropEnabled; }
-            set { this.Cropper.IsCropEnabled = value; }
+            get { return Cropper.IsCropEnabled; }
+            set { Cropper.IsCropEnabled = value; }
         }
 
         public Rect CropRectangle
         {
-            get { return this.Cropper.CropRectangle; }
+            get { return Cropper.CropRectangle; }
         }
 
         private async void InitializeVideo(StorageFile file)
@@ -389,9 +389,14 @@ namespace Unigram.Views.Popups
             BasicToolbar.Visibility = Visibility.Collapsed;
 
             if (DrawToolbar == null)
+            {
                 FindName(nameof(DrawToolbar));
+            }
+
             if (DrawSlider == null)
+            {
                 FindName(nameof(DrawSlider));
+            }
 
             DrawToolbar.Visibility = Visibility.Visible;
             DrawSlider.Visibility = Visibility.Visible;
@@ -493,7 +498,7 @@ namespace Unigram.Views.Popups
     public sealed class SmoothPathBuilder
     {
         private List<Vector2> _controlPoints;
-        private List<Vector2> _path;
+        private readonly List<Vector2> _path;
 
         private Vector2 _beginPoint;
 

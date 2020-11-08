@@ -16,11 +16,11 @@ namespace Unigram.Controls
 {
     public class NumericTextBlock : Control
     {
-        private ShapeVisual _shape;
+        private readonly ShapeVisual _shape;
         private CompositionBrush _foreground;
 
-        private float _nineRight;
-        private float _nineBottom;
+        private readonly float _nineRight;
+        private readonly float _nineBottom;
 
         public NumericTextBlock()
         {

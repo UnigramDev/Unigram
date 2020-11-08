@@ -25,8 +25,8 @@ namespace Unigram.Controls
         private INavigationService _navigationService;
         private IEventAggregator _aggregator;
 
-        private Visual _visual1;
-        private Visual _visual2;
+        private readonly Visual _visual1;
+        private readonly Visual _visual2;
 
         private Visual _visual;
 

@@ -96,7 +96,11 @@ namespace Unigram.Charts.DataView
 
                 values = new int[n];
                 valuesStr = new String[n];
-                if (k > 0) valuesStr2 = new String[n];
+                if (k > 0)
+                {
+                    valuesStr2 = new String[n];
+                }
+
                 bool skipFloatValues = step / k < 1;
                 for (int i = 0; i < n; i++)
                 {
@@ -147,7 +151,11 @@ namespace Unigram.Charts.DataView
             }
             float num_ = v;
             int count = 0;
-            if (dif == 0) dif = v;
+            if (dif == 0)
+            {
+                dif = v;
+            }
+
             if (dif < 1000)
             {
                 return formatCount(v);
@@ -180,13 +188,22 @@ namespace Unigram.Charts.DataView
         private static int round(int maxValue)
         {
             float k = maxValue / 5;
-            if (k % 10 == 0) return maxValue;
-            else return ((maxValue / 10 + 1) * 10);
+            if (k % 10 == 0)
+            {
+                return maxValue;
+            }
+            else
+            {
+                return ((maxValue / 10 + 1) * 10);
+            }
         }
 
         public static String formatCount(int count)
         {
-            if (count < 1000) return count.ToString();
+            if (count < 1000)
+            {
+                return count.ToString();
+            }
 
             List<String> strings = new List<String>();
             while (count != 0)

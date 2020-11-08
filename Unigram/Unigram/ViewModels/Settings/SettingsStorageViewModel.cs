@@ -45,8 +45,6 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        private static string[] ExcludedFileNames = new[] { Constants.WallpaperFileName };
-
         public int FilesTtl
         {
             get

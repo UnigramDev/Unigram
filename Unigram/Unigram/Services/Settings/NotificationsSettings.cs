@@ -16,7 +16,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_inAppPreview == null)
+                {
                     _inAppPreview = GetValueOrDefault("InAppPreview", true);
+                }
 
                 return _inAppPreview ?? true;
             }
@@ -33,7 +35,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_inAppVibrate == null)
+                {
                     _inAppVibrate = GetValueOrDefault("InAppVibrate", true);
+                }
 
                 return _inAppVibrate ?? true;
             }
@@ -50,7 +54,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_inAppFlash == null)
+                {
                     _inAppFlash = GetValueOrDefault("InAppFlash", true);
+                }
 
                 return _inAppFlash ?? true;
             }
@@ -67,7 +73,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_inAppSounds == null)
+                {
                     _inAppSounds = GetValueOrDefault("InAppSounds", true);
+                }
 
                 return _inAppSounds ?? true;
             }
@@ -84,7 +92,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_includeMutedChats == null)
+                {
                     _includeMutedChats = GetValueOrDefault("IncludeMutedChats", false);
+                }
 
                 return _includeMutedChats ?? false;
             }
@@ -101,7 +111,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_countUnreadMessages == null)
+                {
                     _countUnreadMessages = GetValueOrDefault("CountUnreadMessages", true);
+                }
 
                 return _countUnreadMessages ?? true;
             }
@@ -118,7 +130,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_isPinnedEnabled == null)
+                {
                     _isPinnedEnabled = GetValueOrDefault("IsPinnedEnabled", true);
+                }
 
                 return _isPinnedEnabled ?? true;
             }
@@ -135,7 +149,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_isContactEnabled == null)
+                {
                     _isContactEnabled = GetValueOrDefault("IsContactEnabled", true);
+                }
 
                 return _isContactEnabled ?? true;
             }

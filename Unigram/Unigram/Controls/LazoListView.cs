@@ -22,7 +22,7 @@ namespace Unigram.Controls
         private bool _pressed;
         private Point _position;
 
-        private GestureRecognizer _recognizer;
+        private readonly GestureRecognizer _recognizer;
 
         public LazoListView()
         {

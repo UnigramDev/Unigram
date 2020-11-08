@@ -78,7 +78,7 @@ namespace Unigram.Views.Popups
 
         #region Show
 
-        private static Dictionary<int, WeakReference<SharePopup>> _windowContext = new Dictionary<int, WeakReference<SharePopup>>();
+        private static readonly Dictionary<int, WeakReference<SharePopup>> _windowContext = new Dictionary<int, WeakReference<SharePopup>>();
         public static SharePopup GetForCurrentView()
         {
             return new SharePopup();
@@ -486,6 +486,8 @@ namespace Unigram.Views.Popups
             var content = args.ItemContainer.ContentTemplateRoot as ChatShareCell;
             var chat = args.Item as Chat;
 
+            content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple && args.ItemContainer.IsSelected, false);
+
             var photo = content.Photo;
             var title = content.Children[1] as TextBlock;
 
@@ -658,7 +660,7 @@ namespace Unigram.Views.Popups
                 MainHeader.Visibility = Visibility.Visible;
                 SearchField.Visibility = Visibility.Collapsed;
 
-                this.Focus(FocusState.Programmatic);
+                Focus(FocusState.Programmatic);
             }
 
             Search_TextChanged(null, null);

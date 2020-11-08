@@ -21,8 +21,6 @@ namespace Unigram.Views
             InitializeComponent();
         }
 
-        public bool AllowSelection { get; set; }
-
         private void ChatsList_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             if (args.ItemContainer == null)
@@ -100,7 +98,7 @@ namespace Unigram.Views
             flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
             flyout.CreateFlyoutItem(DialogDelete_Loaded, viewModel.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
 
-            if (AllowSelection && viewModel.SelectionMode != ListViewSelectionMode.Multiple)
+            if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Additional.Select, new FontIcon { Glyph = Icons.Select });
@@ -226,9 +224,6 @@ namespace Unigram.Views
 
         private void Chats_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            var header = Header as FrameworkElement;
-            var headerVisibility = header != null ? header.Visibility : Visibility.Visible;
-
             if (e.Items[0] is Chat chat)
             {
                 var position = chat.GetPosition(ViewModel.Items.ChatList);

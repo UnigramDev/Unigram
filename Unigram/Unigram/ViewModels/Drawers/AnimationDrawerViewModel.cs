@@ -33,7 +33,7 @@ namespace Unigram.ViewModels.Drawers
             Aggregator.Subscribe(this);
         }
 
-        private static Dictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, AnimationDrawerViewModel>>();
+        private static readonly Dictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, AnimationDrawerViewModel>>();
         public static AnimationDrawerViewModel GetForCurrentView(int sessionId)
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);

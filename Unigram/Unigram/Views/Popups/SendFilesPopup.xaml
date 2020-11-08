@@ -180,7 +180,7 @@
                     <controls:GlyphToggleButton
                         x:Name="Crop"
                         Click="Crop_Click" 
-                        Glyph="&#xE7A8;"
+                        Glyph="&#xEE56;"
                         CheckedGlyph="&#xE7A8;"
                         CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                         Tag="{x:Bind}"

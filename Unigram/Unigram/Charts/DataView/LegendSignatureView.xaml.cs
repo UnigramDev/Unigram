@@ -7,15 +7,13 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
-
 namespace Unigram.Charts.DataView
 {
     public sealed partial class LegendSignatureView : StackPanel
     {
         public LegendSignatureView()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public bool isTopHourChart;
@@ -145,7 +143,10 @@ namespace Unigram.Charts.DataView
 
             for (int i = 0; i < lines.Count; i++)
             {
-                if (lines[i].enabled) sum += lines[i].line.y[index];
+                if (lines[i].enabled)
+                {
+                    sum += lines[i].line.y[index];
+                }
             }
 
             for (int i = 0; i < lines.Count; i++)
@@ -201,7 +202,10 @@ namespace Unigram.Charts.DataView
         private String capitalize(String s)
         {
             if (s.Length > 0)
+            {
                 return char.ToUpper(s[0]) + s.Substring(1);
+            }
+
             return s;
         }
 

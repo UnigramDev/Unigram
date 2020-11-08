@@ -19,7 +19,7 @@ namespace Unigram.Controls.Chats
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
 
-        private DisposableMutex _loadMoreLock = new DisposableMutex();
+        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private bool _loadingMore = false;
 
         public ChatListView()

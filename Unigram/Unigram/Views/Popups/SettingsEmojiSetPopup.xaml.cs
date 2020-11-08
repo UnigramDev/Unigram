@@ -30,7 +30,7 @@ namespace Unigram.Views.Popups
 
         public SettingsEmojiSetPopup(IProtoService protoService, IEmojiSetService emojiSetService, IEventAggregator aggregator)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             _protoService = protoService;
             _aggregator = aggregator;

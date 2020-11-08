@@ -19,8 +19,8 @@ namespace Unigram.Views.Popups
     {
         public StickerSetViewModel ViewModel => DataContext as StickerSetViewModel;
 
-        private AnimatedListHandler<Sticker> _handler;
-        private ZoomableListHandler _zoomer;
+        private readonly AnimatedListHandler<Sticker> _handler;
+        private readonly ZoomableListHandler _zoomer;
 
         private StickerSetPopup()
         {
@@ -63,7 +63,7 @@ namespace Unigram.Views.Popups
 
         #region Show
 
-        private static Dictionary<int, WeakReference<StickerSetPopup>> _windowContext = new Dictionary<int, WeakReference<StickerSetPopup>>();
+        private static readonly Dictionary<int, WeakReference<StickerSetPopup>> _windowContext = new Dictionary<int, WeakReference<StickerSetPopup>>();
         public static StickerSetPopup GetForCurrentView()
         {
             return new StickerSetPopup();

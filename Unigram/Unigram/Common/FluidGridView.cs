@@ -29,7 +29,9 @@ namespace Unigram.Common
         private static void SetActive(FluidGridViewTriggerCollection triggers)
         {
             if (triggers.Owner.ItemsPanelRoot == null)
+            {
                 return;
+            }
 
             var owner = triggers.Owner;
             var reference = GetReference(owner);
@@ -51,7 +53,9 @@ namespace Unigram.Common
             foreach (var child in triggers)
             {
                 if (child.MaybeActive(parentLength))
+                {
                     trigger = child;
+                }
             }
 
             if (trigger != null)
@@ -60,17 +64,25 @@ namespace Unigram.Common
                 var itemLength = trigger.GetItemLength(parentLength);
 
                 if (reference.Orientation == Orientation.Horizontal)
+                {
                     reference.ItemWidth = itemLength;
+                }
                 else
+                {
                     reference.ItemHeight = itemLength;
+                }
 
                 var orientationOnly = GetOrientationOnly(owner);
                 if (!orientationOnly)
                 {
                     if (reference.Orientation == Orientation.Horizontal)
+                    {
                         reference.ItemHeight = itemLength;
+                    }
                     else
+                    {
                         reference.ItemWidth = itemLength;
+                    }
                 }
             }
         }
@@ -151,11 +163,17 @@ namespace Unigram.Common
                 get
                 {
                     if (Owner is WrapGrid)
+                    {
                         return (Owner as WrapGrid).Orientation;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         return (Owner as ItemsWrapGrid).Orientation;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         return (Owner as VariableSizedWrapGrid).Orientation;
+                    }
 
                     throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
                 }
@@ -166,22 +184,34 @@ namespace Unigram.Common
                 get
                 {
                     if (Owner is WrapGrid)
+                    {
                         return (Owner as WrapGrid).ItemWidth;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         return (Owner as ItemsWrapGrid).ItemWidth;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         return (Owner as VariableSizedWrapGrid).ItemWidth;
+                    }
 
                     throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
                 }
                 set
                 {
                     if (Owner is WrapGrid)
+                    {
                         (Owner as WrapGrid).ItemWidth = value;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         (Owner as ItemsWrapGrid).ItemWidth = value;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         (Owner as VariableSizedWrapGrid).ItemWidth = value;
+                    }
                 }
             }
 
@@ -190,22 +220,34 @@ namespace Unigram.Common
                 get
                 {
                     if (Owner is WrapGrid)
+                    {
                         return (Owner as WrapGrid).ItemHeight;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         return (Owner as ItemsWrapGrid).ItemHeight;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         return (Owner as VariableSizedWrapGrid).ItemHeight;
+                    }
 
                     throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
                 }
                 set
                 {
                     if (Owner is WrapGrid)
+                    {
                         (Owner as WrapGrid).ItemHeight = value;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         (Owner as ItemsWrapGrid).ItemHeight = value;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         (Owner as VariableSizedWrapGrid).ItemHeight = value;
+                    }
                 }
             }
 

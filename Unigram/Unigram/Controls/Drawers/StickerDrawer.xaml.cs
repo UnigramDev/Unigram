@@ -35,8 +35,8 @@ namespace Unigram.Controls.Drawers
 
         private readonly AnimatedListHandler<StickerSetViewModel> _toolbarHandler;
 
-        private FileContext<StickerViewModel> _stickers = new FileContext<StickerViewModel>();
-        private FileContext<StickerSetViewModel> _stickerSets = new FileContext<StickerSetViewModel>();
+        private readonly FileContext<StickerViewModel> _stickers = new FileContext<StickerViewModel>();
+        private readonly FileContext<StickerSetViewModel> _stickerSets = new FileContext<StickerSetViewModel>();
 
         private bool _isActive;
 

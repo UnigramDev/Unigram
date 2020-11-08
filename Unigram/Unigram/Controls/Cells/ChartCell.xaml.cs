@@ -1,22 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Charts;
 using Unigram.Charts.Data;
 using Unigram.Charts.DataView;
 using Unigram.Common;
 using Unigram.ViewModels.Chats;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Cells
 {
@@ -289,7 +280,10 @@ namespace Unigram.Controls.Cells
 
             long d = chartView.GetSelectedDate();
             var childData = data.childChartData;
-            if (childData == null) return;
+            if (childData == null)
+            {
+                return;
+            }
 
             if (!skipTransition || zoomedChartView.Visibility != Visibility.Visible)
             {
@@ -315,7 +309,11 @@ namespace Unigram.Controls.Cells
                             zoomedLines[j].alpha = check ? 1f : 0f;
                             //checkBoxes.get(i).checkBox.enabled = true;
                             //checkBoxes.get(i).checkBox.animate().alpha(1).start();
-                            if (check) enabledCount++;
+                            if (check)
+                            {
+                                enabledCount++;
+                            }
+
                             found = true;
                             break;
                         }
@@ -493,9 +491,14 @@ namespace Unigram.Controls.Cells
             for (int i = 0; i < data.chartData.lines.Count; i++)
             {
                 if (data.chartData.lines[i].y[dateIndex] > max)
+                {
                     max = data.chartData.lines[i].y[dateIndex];
+                }
+
                 if (data.chartData.lines[i].y[dateIndex] < min)
+                {
                     min = data.chartData.lines[i].y[dateIndex];
+                }
             }
             float pYPercentage = (((float)min + (max - min)) - chartView.currentMinHeight) / (chartView.currentMaxHeight - chartView.currentMinHeight);
 

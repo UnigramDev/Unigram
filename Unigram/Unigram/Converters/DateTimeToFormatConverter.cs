@@ -9,8 +9,15 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (value == null) value = DateTime.Now; // TEST;
-            if (value is DateTimeOffset) value = ((DateTimeOffset)value).DateTime;
+            if (value == null)
+            {
+                value = DateTime.Now; // TEST;
+            }
+
+            if (value is DateTimeOffset)
+            {
+                value = ((DateTimeOffset)value).DateTime;
+            }
 
             var format = (string)parameter;
             if (format.StartsWith("unigram"))

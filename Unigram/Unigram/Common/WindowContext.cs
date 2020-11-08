@@ -48,7 +48,7 @@ namespace Unigram.Common
             window.Activated += OnActivated;
         }
 
-        private static object _activeLock = new object();
+        private static readonly object _activeLock = new object();
         public static TLWindowContext ActiveWindow { get; private set; }
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)

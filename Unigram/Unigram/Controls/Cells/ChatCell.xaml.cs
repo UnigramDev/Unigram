@@ -40,7 +40,7 @@ namespace Unigram.Controls.Cells
 
         private IProtoService _protoService;
 
-        private Visual _onlineBadge;
+        private readonly Visual _onlineBadge;
 
         private bool _expanded = false;
 
@@ -962,7 +962,9 @@ namespace Unigram.Controls.Cells
             if (_protoService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
             {
                 if (DropVisual == null)
+                {
                     FindName(nameof(DropVisual));
+                }
 
                 DropVisual.Visibility = Visibility.Visible;
                 e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
@@ -970,7 +972,9 @@ namespace Unigram.Controls.Cells
             else
             {
                 if (DropVisual != null)
+                {
                     DropVisual.Visibility = Visibility.Collapsed;
+                }
 
                 e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
             }
@@ -981,7 +985,9 @@ namespace Unigram.Controls.Cells
         protected override void OnDragLeave(DragEventArgs e)
         {
             if (DropVisual != null)
+            {
                 DropVisual.Visibility = Visibility.Collapsed;
+            }
 
             base.OnDragLeave(e);
         }
@@ -989,7 +995,9 @@ namespace Unigram.Controls.Cells
         protected override void OnDrop(DragEventArgs e)
         {
             if (DropVisual != null)
+            {
                 DropVisual.Visibility = Visibility.Collapsed;
+            }
 
             if (e.DataView.AvailableFormats.Count == 0)
             {

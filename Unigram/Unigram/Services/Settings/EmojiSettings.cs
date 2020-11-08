@@ -16,8 +16,8 @@ namespace Unigram.Services.Settings
             "\uD83C\uDFFF" /* emoji modifier fitzpatrick type-6 */
         };
 
-        private Dictionary<string, int> _emojiUseHistory = new Dictionary<string, int>();
-        private List<string> _recentEmoji = new List<string>();
+        private readonly Dictionary<string, int> _emojiUseHistory = new Dictionary<string, int>();
+        private readonly List<string> _recentEmoji = new List<string>();
         private bool _recentEmojiLoaded;
 
         private const int MAX_RECENT_EMOJI_COUNT = 35;

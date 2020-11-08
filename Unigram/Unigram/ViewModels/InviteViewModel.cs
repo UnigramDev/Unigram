@@ -10,7 +10,7 @@ namespace Unigram.ViewModels
 {
     public class InviteViewModel : TLViewModelBase
     {
-        private IContactsService _contactsService;
+        private readonly IContactsService _contactsService;
 
         public InviteViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService)
             : base(protoService, cacheService, settingsService, aggregator)

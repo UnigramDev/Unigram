@@ -11,7 +11,7 @@ namespace Unigram.Navigation.Services
             var service = GetByFrameId(frameId);
             if (service != null)
             {
-                this.Remove(service);
+                Remove(service);
                 return service;
             }
 
@@ -24,7 +24,7 @@ namespace Unigram.Navigation.Services
             {
                 if (service.SessionId == session)
                 {
-                    this.Remove(service);
+                    Remove(service);
                 }
             }
         }

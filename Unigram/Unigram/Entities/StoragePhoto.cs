@@ -8,7 +8,7 @@ namespace Unigram.Entities
 {
     public class StoragePhoto : StorageMedia
     {
-        private BasicProperties _basic;
+        private readonly BasicProperties _basic;
 
         public StoragePhoto(StorageFile file, BasicProperties basic, ImageProperties props)
             : base(file, basic)

@@ -54,8 +54,15 @@ namespace Unigram.Charts.Data
                     for (uint j = 0; j < len; j++)
                     {
                         l.y[j] = (int)a.GetNumberAt(j + 1);
-                        if (l.y[j] > l.maxValue) l.maxValue = l.y[j];
-                        if (l.y[j] < l.minValue) l.minValue = l.y[j];
+                        if (l.y[j] > l.maxValue)
+                        {
+                            l.maxValue = l.y[j];
+                        }
+
+                        if (l.y[j] < l.minValue)
+                        {
+                            l.minValue = l.y[j];
+                        }
                     }
                 }
 
@@ -128,8 +135,15 @@ namespace Unigram.Charts.Data
 
             for (int i = 0; i < lines.Count; i++)
             {
-                if (lines[i].maxValue > maxValue) maxValue = lines[i].maxValue;
-                if (lines[i].minValue < minValue) minValue = lines[i].minValue;
+                if (lines[i].maxValue > maxValue)
+                {
+                    maxValue = lines[i].maxValue;
+                }
+
+                if (lines[i].minValue < minValue)
+                {
+                    minValue = lines[i].minValue;
+                }
 
                 lines[i].segmentTree = new SegmentTree(lines[i].y);
             }
@@ -175,7 +189,11 @@ namespace Unigram.Charts.Data
 
         public int FindStartIndex(float v)
         {
-            if (v == 0) return 0;
+            if (v == 0)
+            {
+                return 0;
+            }
+
             int n = xPercentage.Length;
 
             if (n < 2)
@@ -212,7 +230,11 @@ namespace Unigram.Charts.Data
         public int FindEndIndex(int left, float v)
         {
             int n = xPercentage.Length;
-            if (v == 1f) return n - 1;
+            if (v == 1f)
+            {
+                return n - 1;
+            }
+
             int right = n - 1;
 
             while (left <= right)

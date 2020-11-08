@@ -18,7 +18,7 @@ namespace Unigram.Collections
         private long _lastMaxId;
         private bool _hasMore;
 
-        private FileContext<Message> _filesMap = new FileContext<Message>();
+        private readonly FileContext<Message> _filesMap = new FileContext<Message>();
 
         public MediaCollection(IProtoService protoService, long chatId, SearchMessagesFilter filter, string query = null)
         {
@@ -292,7 +292,7 @@ namespace Unigram.Collections
         private readonly long _chatId;
         private readonly string _query;
 
-        private FileContext<Message> _filesMap = new FileContext<Message>();
+        private readonly FileContext<Message> _filesMap = new FileContext<Message>();
 
         private long _lastMaxId;
         private bool _hasMore;

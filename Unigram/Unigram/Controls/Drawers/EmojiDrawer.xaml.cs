@@ -29,7 +29,7 @@ namespace Unigram.Controls.Drawers
 
         public EmojiDrawer()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
@@ -258,7 +258,7 @@ namespace Unigram.Controls.Drawers
 
         #region Recycle
 
-        private Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
+        private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {

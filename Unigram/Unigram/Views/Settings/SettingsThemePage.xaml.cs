@@ -24,7 +24,7 @@ namespace Unigram.Views.Settings
 
         public SettingsThemePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {

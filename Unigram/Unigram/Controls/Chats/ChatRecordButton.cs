@@ -32,8 +32,8 @@ namespace Unigram.Controls.Chats
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private DispatcherTimer _timer;
-        private Recorder _recorder;
+        private readonly DispatcherTimer _timer;
+        private readonly Recorder _recorder;
 
         private DateTime _start;
 
@@ -399,7 +399,7 @@ namespace Unigram.Controls.Chats
             return true;
         }
 
-        private bool _hasRecordVideo = false;
+        private readonly bool _hasRecordVideo = false;
 
         private bool _calledRecordRunnable;
         private bool _recordAudioVideoRunnableStarted;
@@ -470,7 +470,7 @@ namespace Unigram.Controls.Chats
             private static Recorder _current;
             public static Recorder Current => _current = _current ?? new Recorder();
 
-            private ConcurrentQueueWorker _recordQueue;
+            private readonly ConcurrentQueueWorker _recordQueue;
 
             private OpusRecorder _recorder;
             private StorageFile _file;
@@ -686,9 +686,9 @@ namespace Unigram.Controls.Chats
             {
                 #region fields
 
-                private bool m_isVideo;
+                private readonly bool m_isVideo;
 
-                private StorageFile m_file;
+                private readonly StorageFile m_file;
                 private IMediaExtension m_opusSink;
                 private LowLagMediaRecording m_lowLag;
                 public MediaCapture m_mediaCapture;
@@ -698,8 +698,8 @@ namespace Unigram.Controls.Chats
                 public bool _mirroringPreview;
                 public bool _externalCamera;
 
-                // Rotation Helper to simplify handling rotation compensation for the camera streams
-                public CameraRotationHelper _rotationHelper;
+                //// Rotation Helper to simplify handling rotation compensation for the camera streams
+                //public CameraRotationHelper _rotationHelper;
 
                 #endregion
 
@@ -752,8 +752,8 @@ namespace Unigram.Controls.Chats
                     if (m_isVideo)
                     {
                         var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
-                        var rotationAngle = CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(Windows.Devices.Sensors.SimpleOrientation.NotRotated); // _rotationHelper.GetCameraCaptureOrientation());
-                        profile.Video.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), PropertyValue.CreateInt32(rotationAngle));
+                        //var rotationAngle = CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(Windows.Devices.Sensors.SimpleOrientation.NotRotated); // _rotationHelper.GetCameraCaptureOrientation());
+                        //profile.Video.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), PropertyValue.CreateInt32(rotationAngle));
 
                         m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
 
@@ -820,14 +820,17 @@ namespace Unigram.Controls.Chats
 
                 public async Task SetPreviewRotationAsync()
                 {
-                    // Only need to update the orientation if the camera is mounted on the device
-                    if (_externalCamera || _rotationHelper == null || m_mediaCapture == null) return;
+                    //// Only need to update the orientation if the camera is mounted on the device
+                    //if (_externalCamera || _rotationHelper == null || m_mediaCapture == null)
+                    //{
+                    //    return;
+                    //}
 
-                    // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
-                    var rotation = _rotationHelper.GetCameraPreviewOrientation();
-                    var props = m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
-                    props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(rotation));
-                    await m_mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
+                    //// Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
+                    //var rotation = _rotationHelper.GetCameraPreviewOrientation();
+                    //var props = m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
+                    //props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(rotation));
+                    //await m_mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
                 }
             }
         }

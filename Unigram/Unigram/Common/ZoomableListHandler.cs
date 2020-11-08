@@ -21,8 +21,8 @@ namespace Unigram.Common
         private Control _element;
         private Pointer _pointer;
 
-        private ZoomableMediaPopup _popupPanel;
-        private Popup _popupHost;
+        private readonly ZoomableMediaPopup _popupPanel;
+        private readonly Popup _popupHost;
         private object _popupContent;
 
         public ZoomableListHandler(ListViewBase listView)

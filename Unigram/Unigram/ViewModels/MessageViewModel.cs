@@ -2,7 +2,6 @@
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
-using Windows.Foundation.Metadata;
 
 namespace Unigram.ViewModels
 {

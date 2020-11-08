@@ -274,7 +274,7 @@ namespace Unigram.Services
                     : Strings.Resources.PermissionNoAudioVideo
                     : Strings.Resources.PermissionNoCamera;
 
-                this.BeginOnUIThread(async () =>
+                BeginOnUIThread(async () =>
                 {
                     var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
                     if (confirm == ContentDialogResult.Primary)

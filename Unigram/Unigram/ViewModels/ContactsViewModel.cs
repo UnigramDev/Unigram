@@ -194,7 +194,7 @@ namespace Unigram.ViewModels
 
     public class UserComparer : IComparer<User>
     {
-        private bool _epoch;
+        private readonly bool _epoch;
 
         public UserComparer(bool epoch)
         {

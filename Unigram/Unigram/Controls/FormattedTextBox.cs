@@ -26,7 +26,7 @@ namespace Unigram.Controls
 {
     public class FormattedTextBox : RichEditBox
     {
-        private MenuFlyoutSubItem _proofingMenu;
+        private readonly MenuFlyoutSubItem _proofingMenu;
 
         public FormattedTextBox()
         {

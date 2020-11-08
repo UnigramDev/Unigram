@@ -22,8 +22,14 @@ namespace Unigram.Collections
         protected override void InsertItem(int index, T item)
         {
             index = Array.BinarySearch(Items.ToArray(), item, _comparer);
-            if (index >= 0) ; /*throw new ArgumentException("Cannot insert duplicated items");*/
-            else base.InsertItem(~index, item);
+            if (index >= 0)
+            {
+                ; /*throw new ArgumentException("Cannot insert duplicated items");*/
+            }
+            else
+            {
+                base.InsertItem(~index, item);
+            }
         }
     }
 }

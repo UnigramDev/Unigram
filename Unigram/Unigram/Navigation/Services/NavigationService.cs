@@ -110,7 +110,9 @@ namespace Unigram.Navigation.Services
             FrameFacade.Navigating += async (s, e) =>
             {
                 if (e.Suspending)
+                {
                     return;
+                }
 
                 var page = FrameFacade.Content as Page;
                 if (page != null)
@@ -147,7 +149,9 @@ namespace Unigram.Navigation.Services
                 try
                 {
                     if (currentContent == FrameFacade.Frame.Content)
+                    {
                         await NavigateToAsync(e.NavigationMode, parameter, FrameFacade.Frame.Content).ConfigureAwait(false);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -265,15 +269,21 @@ namespace Unigram.Navigation.Services
             DebugWrite($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
 
             if (page == null)
+            {
                 throw new ArgumentNullException(nameof(page));
+            }
 
             // use CurrentPageType/Param instead of LastNavigationType/Parameter to avoid new navigation to the current
             // page in some race conditions.
             if ((page.FullName == CurrentPageType?.FullName) && (parameter == CurrentPageParam))
+            {
                 return false;
+            }
 
             if ((page.FullName == CurrentPageType?.FullName) && (parameter?.Equals(CurrentPageParam) ?? false))
+            {
                 return false;
+            }
 
             if (state != null)
             {
@@ -303,11 +313,16 @@ namespace Unigram.Navigation.Services
             DebugWrite($"Frame: {FrameFacade.FrameId}");
 
             if (CurrentPageType == null)
+            {
                 return;
+            }
+
             var args = new CancelEventArgs<Type>(FrameFacade.CurrentPageType);
             BeforeSavingNavigation?.Invoke(this, args);
             if (args.Cancel)
+            {
                 return;
+            }
 
             var state = FrameFacade.PageStateSettingsService(GetType().ToString());
             if (state == null)
@@ -357,7 +372,10 @@ namespace Unigram.Navigation.Services
 
         public void GoBack(NavigationTransitionInfo infoOverride = null)
         {
-            if (FrameFacade.CanGoBack) FrameFacade.GoBack(infoOverride);
+            if (FrameFacade.CanGoBack)
+            {
+                FrameFacade.GoBack(infoOverride);
+            }
         }
 
         public bool CanGoBack => FrameFacade.CanGoBack;
@@ -379,9 +397,13 @@ namespace Unigram.Navigation.Services
             else
             {
                 if (FrameFacade.Frame.BackStackDepth == 0)
+                {
                     FrameFacade.Frame.CacheSize = 1;
+                }
                 else
+                {
                     FrameFacade.Frame.CacheSize = FrameFacade.Frame.BackStackDepth;
+                }
             }
 
             FrameFacade.Frame.CacheSize = currentSize;
