@@ -36,13 +36,13 @@ namespace winrt::Unigram::Native::Calls::implementation
 		winrt::Windows::Foundation::Collections::IVector<uint8_t> EncryptionKey();
 		void EncryptionKey(winrt::Windows::Foundation::Collections::IVector<uint8_t> value);
 
-        bool m_isOutgoing;
-        bool IsOutgoing();
-        void IsOutgoing(bool value);
+		bool m_isOutgoing;
+		bool IsOutgoing();
+		void IsOutgoing(bool value);
 
-        bool m_enableP2p;
-        bool EnableP2p();
-        void EnableP2p(bool value);
+		bool m_enableP2p;
+		bool EnableP2p();
+		void EnableP2p(bool value);
 
 		hstring m_audioInputId{ L"" };
 		hstring AudioInputId();
