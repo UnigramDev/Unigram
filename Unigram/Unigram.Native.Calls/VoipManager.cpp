@@ -64,7 +64,7 @@ namespace winrt::Unigram::Native::Calls::implementation
             /*double initializationTimeout =*/ m_descriptor.InitializationTimeout(),
             /*double receiveTimeout =*/ m_descriptor.ReceiveTimeout(),
             /*DataSaving dataSaving =*/ tgcalls::DataSaving::Never,
-            /*bool enableP2P =*/ false,
+            /*bool enableP2P =*/ m_descriptor.EnableP2p(),
             /*bool allowTCP =*/ false,
             /*bool enableStunMarking =*/ false,
             /*bool enableAEC =*/ true,

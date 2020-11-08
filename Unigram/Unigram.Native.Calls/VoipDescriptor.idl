@@ -14,6 +14,7 @@ namespace Unigram.Native.Calls
         Windows.Foundation.Collections.IVector<VoipServer> Servers;
         Windows.Foundation.Collections.IVector<byte> EncryptionKey;
         Boolean IsOutgoing;
+        Boolean EnableP2p;
         String AudioInputId;
         String AudioOutputId;
         VoipVideoCapture VideoCapture;

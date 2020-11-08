@@ -348,7 +348,7 @@ namespace Unigram.Services
             }
         }
 
-        public async void Handle(UpdateCall update)
+        public void Handle(UpdateCall update)
         {
             if (_call != null && _call.Id != update.Call.Id)
             {
@@ -415,14 +415,26 @@ namespace Unigram.Services
                 {
                     if (server.Type is CallServerTypeWebrtc webRtc)
                     {
-                        servers.Add(new VoipServer
+                        if (webRtc.SupportsStun)
                         {
-                            Host = server.IpAddress,
-                            Port = (ushort)server.Port,
-                            Login = webRtc.Username,
-                            Password = webRtc.Password,
-                            IsTurn = webRtc.SupportsTurn
-                        });
+                            servers.Add(new VoipServer
+                            {
+                                Host = server.IpAddress,
+                                Port = (ushort)server.Port,
+                                IsTurn = false
+                            });
+                        }
+                        else
+                        {
+                            servers.Add(new VoipServer
+                            {
+                                Host = server.IpAddress,
+                                Port = (ushort)server.Port,
+                                Login = webRtc.Username,
+                                Password = webRtc.Password,
+                                IsTurn = true
+                            });
+                        }
                     }
                 }
 
@@ -437,6 +449,7 @@ namespace Unigram.Services
                     Servers = servers,
                     EncryptionKey = ready.EncryptionKey,
                     IsOutgoing = update.Call.IsOutgoing,
+                    EnableP2p = ready.Protocol.UdpP2p && ready.AllowP2p,
                     VideoCapture = _capturer,
                     AudioInputId = SettingsService.Current.VoIP.InputDevice,
                     AudioOutputId = SettingsService.Current.VoIP.OutputDevice

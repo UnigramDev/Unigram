@@ -69,6 +69,14 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_isOutgoing = value;
 	}
 
+	bool VoipDescriptor::EnableP2p() {
+		return m_enableP2p;
+	}
+
+	void VoipDescriptor::EnableP2p(bool value) {
+		m_enableP2p = value;
+	}
+
 	hstring VoipDescriptor::AudioInputId() {
 		return m_audioInputId;
 	}
