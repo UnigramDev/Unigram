@@ -1812,7 +1812,7 @@ namespace Unigram.Views
                     ViewModel.Chats.TopChats = null;
                 }
 
-                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, ViewModel.Chats.Items.ChatList);
+                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters);
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
             }
@@ -1870,7 +1870,7 @@ namespace Unigram.Views
                         e.Handled = true;
                         ViewModel.Chats.SearchFilters.RemoveAt(ViewModel.Chats.SearchFilters.Count - 1);
 
-                        var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, ViewModel.Chats.Items.ChatList);
+                        var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters);
                         await items.LoadMoreItemsAsync(0);
                         await items.LoadMoreItemsAsync(1);
                         await items.LoadMoreItemsAsync(2);
@@ -2956,7 +2956,7 @@ namespace Unigram.Views
                 ViewModel.Chats.SearchFilters.Add(filter);
                 SearchField.Text = string.Empty;
 
-                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters, ViewModel.Chats.Items.ChatList);
+                var items = ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, ViewModel.Chats.SearchFilters);
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
                 await items.LoadMoreItemsAsync(2);

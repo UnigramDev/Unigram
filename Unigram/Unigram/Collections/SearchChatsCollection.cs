@@ -38,11 +38,12 @@ namespace Unigram.Collections
         public KeyedList<string, object> Remote => _remote;
         public KeyedList<string, object> Messages => _messages;
 
-        public SearchChatsCollection(IProtoService protoService, string query, IList<ISearchChatsFilter> filters, ChatList chatList = null, SearchChatsType type = SearchChatsType.All)
+        public SearchChatsCollection(IProtoService protoService, string query, IList<ISearchChatsFilter> filters/*, ChatList chatList = null*/, SearchChatsType type = SearchChatsType.All)
         {
             _protoService = protoService;
             _query = query;
-            _chatList = chatList;
+            //_chatList = chatList;
+            _chatList = null;
             _type = type;
 
             _internal = filters;
