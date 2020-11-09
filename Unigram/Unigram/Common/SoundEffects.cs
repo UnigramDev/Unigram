@@ -2,12 +2,26 @@
 using Windows.Media.Audio;
 using Windows.Media.Render;
 using Windows.Storage;
+using Telegram.Td.Api;
 
 namespace Unigram.Common
 {
     public static class SoundEffects
     {
         public static async void Play(SoundEffect effect)
+        {
+            Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3")));
+        }
+
+        public static async void Play(File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                Play(await StorageFile.GetFileFromPathAsync(file.Local.Path));
+            }
+        }
+
+        private static async void Play(StorageFile file)
         {
             try
             {
@@ -20,8 +34,6 @@ namespace Unigram.Common
                 {
                     return;
                 }
-
-                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3"));
 
                 var fileInputNodeResult = await result.Graph.CreateFileInputNodeAsync(file);
                 if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)

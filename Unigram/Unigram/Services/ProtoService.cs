@@ -1,7 +1,13 @@
-﻿using System;
+﻿using Microsoft.Toolkit.HighPerformance.Buffers;
+using Microsoft.Toolkit.HighPerformance.Extensions;
+using System;
+using System.Buffers;
+using System.Buffers.Text;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td;
@@ -118,6 +124,8 @@ namespace Unigram.Services
 
         Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type);
         bool IsDiceEmoji(string text, out string dice);
+
+        File GetEmojiSound(string emoji);
     }
 
     public partial class ProtoService : IProtoService, ClientResultHandler
@@ -158,6 +166,9 @@ namespace Unigram.Services
 
         private readonly StickerSet[] _animatedSet = new StickerSet[2] { null, null };
         private readonly TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
+
+        private readonly Dictionary<string, File> _animatedSounds = new Dictionary<string, File>();
+        private readonly FlatFileContext<string> _animatedSoundsMap = new FlatFileContext<string>();
 
         private IList<string> _diceEmojis;
 
@@ -327,7 +338,7 @@ namespace Unigram.Services
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
-                _client.Send(new GetApplicationConfig(), result => UpdateConfig(result));
+                _client.Send(new GetApplicationConfig(), UpdateConfig);
                 _client.Run();
             });
         }
@@ -362,11 +373,125 @@ namespace Unigram.Services
             UpdateVersion();
         }
 
-        private void UpdateConfig(BaseObject value)
+        private async void UpdateConfig(BaseObject value)
         {
             if (value is JsonValueObject obj)
             {
                 _config = obj;
+
+                // This is a temporary solution until sounds aren't provided
+                // through standard API.
+                var sounds = obj.GetNamedObject("emojies_sounds");
+                if (sounds != null)
+                {
+                    foreach (var member in sounds.Members)
+                    {
+                        if (member.Value is JsonValueObject sound)
+                        {
+                            try
+                            {
+                                var id = sound.GetNamedString("id", null);
+                                var access_hash = sound.GetNamedString("access_hash", null);
+                                var file_reference_base64 = sound.GetNamedString("file_reference_base64", null);
+
+                                var base64 = EncodeToBase64(id, access_hash, file_reference_base64);
+
+                                var response = await _client.SendAsync(new GetRemoteFile(base64, new FileTypeVoiceNote()));
+                                if (response is File file)
+                                {
+                                    _animatedSounds[member.Key] = file;
+                                    _animatedSoundsMap[file.Id] = member.Key;
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static unsafe string EncodeToBase64(string id, string accessHash, string fileReferenceBase64)
+        {
+            using var bufferWriter = new ArrayPoolBufferWriter<byte>();
+
+            int fileType = 3 | (1 << 25);
+            int dcId = 2;
+            long id_ = long.Parse(id);
+            long access_hash_ = long.Parse(accessHash);
+
+            bufferWriter.Write(fileType);
+            bufferWriter.Write(dcId);
+
+            var maxUtf8Length = Encoding.UTF8.GetMaxByteCount(fileReferenceBase64.Length);
+
+            using (var utf8Buffer = SpanOwner<byte>.Allocate(maxUtf8Length))
+            {
+                int utf8BytesCount;
+
+                fixed (char* pSource = fileReferenceBase64)
+                fixed (byte* pDestination = &utf8Buffer.DangerousGetReference())
+                {
+                    utf8BytesCount = Encoding.UTF8.GetBytes(pSource, fileReferenceBase64.Length, pDestination, utf8Buffer.Length);
+                }
+
+                if (utf8BytesCount <= 253)
+                {
+                    bufferWriter.Write((byte)utf8BytesCount);
+                }
+                else
+                {
+                    bufferWriter.Write((byte)254);
+                    bufferWriter.Write((byte)utf8BytesCount);
+                    bufferWriter.Write((byte)(utf8BytesCount >> 8));
+                    bufferWriter.Write((byte)(utf8BytesCount >> 16));
+                }
+
+                bufferWriter.Write<byte>(utf8Buffer.Span.Slice(0, utf8BytesCount));
+
+                int j = utf8BytesCount <= 253 ? 1 : 4;
+                while ((utf8BytesCount + j) % 4 != 0)
+                {
+                    bufferWriter.Write((byte)0);
+                    j++;
+                }
+            }
+
+            bufferWriter.Write(id_);
+            bufferWriter.Write(access_hash_);
+
+            bufferWriter.Write((byte)30);
+            bufferWriter.Write((byte)4);
+
+            var bytes = bufferWriter.WrittenSpan;
+            using var resultBuffer = new ArrayPoolBufferWriter<byte>(bytes.Length);
+
+            for (int n = bytes.Length, i = 0; i < n; i++)
+            {
+                resultBuffer.Write(bytes[i]);
+                if (bytes[i] == 0)
+                {
+                    byte cnt = 1;
+                    while (cnt < 250 && i + cnt < n && bytes[i + cnt] == bytes[i])
+                    {
+                        cnt++;
+                    }
+
+                    resultBuffer.Write(cnt);
+                    i += cnt - 1;
+                }
+            }
+
+            var maxBase64Length = Base64.GetMaxEncodedToUtf8Length(resultBuffer.WrittenCount);
+
+            using (var utf8Buffer = SpanOwner<byte>.Allocate(maxBase64Length))
+            {
+                Base64.EncodeToUtf8(resultBuffer.WrittenSpan, utf8Buffer.Span, out _, out int bytesWritten);
+
+                fixed (byte* p = utf8Buffer.Span)
+                {
+                    return Encoding.UTF8.GetString(p, bytesWritten)
+                        .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+                }
             }
         }
 
@@ -1227,6 +1352,16 @@ namespace Unigram.Services
             return _diceEmojis.Contains(text);
         }
 
+        public File GetEmojiSound(string emoji)
+        {
+            if (_animatedSounds.TryGetValue(Emoji.RemoveModifiers(emoji, false), out File value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
         #endregion
 
 
@@ -1452,6 +1587,11 @@ namespace Unigram.Services
                 if (TryGetUserForFileId(updateFile.File.Id, out User user))
                 {
                     user.UpdateFile(updateFile.File);
+                }
+
+                if (_animatedSoundsMap.TryGetValue(updateFile.File.Id, out string emoji))
+                {
+                    _animatedSounds[emoji].Update(updateFile.File);
                 }
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)
