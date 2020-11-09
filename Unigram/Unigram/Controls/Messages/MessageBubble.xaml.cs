@@ -49,7 +49,6 @@ namespace Unigram.Controls.Messages
 
             if (message != null)
             {
-                UpdateAttach(message);
                 UpdateMessageHeader(message);
                 UpdateMessageReply(message);
                 UpdateMessageContent(message);
@@ -57,6 +56,8 @@ namespace Unigram.Controls.Messages
 
                 Footer.UpdateMessage(message);
                 UpdateMessageReplyMarkup(message);
+
+                UpdateAttach(message);
             }
             else
             {
@@ -441,7 +442,9 @@ namespace Unigram.Controls.Messages
             if (message.ForwardInfo != null && !sticker && !message.IsSaved())
             {
                 if (paragraph.Inlines.Count > 0)
+                {
                     paragraph.Inlines.Add(new LineBreak());
+                }
 
                 if (message.ForwardInfo.PublicServiceAnnouncementType.Length > 0)
                 {
@@ -1967,7 +1970,9 @@ namespace Unigram.Controls.Messages
             Calculate:
 
             if (Footer.DesiredSize.IsEmpty)
+            {
                 Footer.Measure(availableSize);
+            }
 
             width = Math.Max(Footer.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96));
 
