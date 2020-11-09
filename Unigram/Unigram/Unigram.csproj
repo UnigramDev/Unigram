@@ -185,7 +185,6 @@
     <Compile Include="Common\ThemeColorizer.cs" />
     <Compile Include="Common\TitleBar.cs" />
     <Compile Include="Common\TLContainer.cs" />
-    <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\Locale.cs" />
     <Compile Include="Common\MosaicMedia.cs" />
@@ -455,9 +454,6 @@
       <DependentUpon>UndoView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\VideoRangeSlider.cs" />
-    <Compile Include="Controls\VideoTimelineControl.xaml.cs">
-      <DependentUpon>VideoTimelineControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\RatingBar.cs" />
     <Compile Include="Controls\ScrollViewerBackground.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
@@ -513,15 +509,10 @@
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\ChatTtlConverter.cs" />
-    <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\FileTypeToStringConverter.cs" />
-    <Compile Include="Converters\GeoLivePeriodConverter.cs" />
     <Compile Include="Converters\MessageTtlConverter.cs" />
     <Compile Include="Converters\MeUrlPrefixConverter.cs" />
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
-    <Compile Include="Converters\StickerToEmojiConverter.cs" />
-    <Compile Include="Converters\StringFormatConverter.cs" />
-    <Compile Include="Converters\StringPluralConverter.cs" />
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\ErrorCode.cs" />
     <Compile Include="Entities\ErrorType.cs" />
@@ -1118,7 +1109,6 @@
     <Compile Include="Controls\ProgressBarRingSlice.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
     <Compile Include="Controls\SimpleButton.cs" />
-    <Compile Include="Converters\EditToVisibilityConverter.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
     <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
@@ -1141,7 +1131,6 @@
     <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="Converters\BindConvert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\DateTimeToFormatConverter.cs" />
     <Compile Include="Converters\FileSizeConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
@@ -1680,10 +1669,6 @@
     <Page Include="Controls\UndoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\VideoTimelineControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\InputDialog.xaml">
       <SubType>Designer</SubType>
