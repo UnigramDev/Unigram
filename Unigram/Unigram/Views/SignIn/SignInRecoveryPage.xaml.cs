@@ -55,6 +55,11 @@ namespace Unigram.Views.SignIn
 
         #region Binding
 
+        private string ConvertForgot(string pattern)
+        {
+            return string.Format(Strings.Resources.RestoreEmailTrouble, pattern);
+        }
+
         private string ConvertTrouble(string pattern)
         {
             return string.Format("");

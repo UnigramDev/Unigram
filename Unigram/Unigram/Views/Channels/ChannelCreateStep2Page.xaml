@@ -10,53 +10,55 @@
 
     <local:HostedPage.Header>
         <controls:ButtonPageHeader
+            x:Name="Header"
             Command="{x:Bind ViewModel.SendCommand}"
             Text="{CustomResource ChannelSettings}"
             Glyph="&#xE10B;"/>
     </local:HostedPage.Header>
-    
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
-            <StackPanel Padding="12" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
+            <controls:HeaderedControl
+                x:Name="Subheader"
+                Header="{CustomResource ChannelTypeHeader}"
+                Footer="{x:Bind ConvertFooter(ViewModel.IsPublic), Mode=OneWay}">
                 <RadioButton
+                    x:Name="Public"
+                    Content="{CustomResource ChannelPublic}"
                     IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}"
-                    Content="{CustomResource ChannelPublic}"/>
-                <TextBlock
-                    Text="{CustomResource ChannelPublicInfo}"
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="28,-6,0,8"/>
+                    Margin="12,6,0,0"/>
+                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+
                 <RadioButton
+                    x:Name="Private"
+                    Content="{CustomResource ChannelPrivate}"
                     IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
-                    Content="{CustomResource ChannelPrivate}"/>
-                <TextBlock
-                    Text="{CustomResource ChannelPrivateInfo}"
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="28,-6,0,0"/>
-            </StackPanel>
+                    Margin="12,0,0,0"/>
+                <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
+            </controls:HeaderedControl>
 
             <Grid Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
-                <StackPanel Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                <controls:HeaderedControl
+                    x:Name="UsernameHelp"
+                    Header="{CustomResource ChannelLinkTitle}"
+                    Footer="{CustomResource ChannelUsernameHelp}"
+                    Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
                     <controls:PrefixTextBox
                         x:Name="Username"
                         Value="{x:Bind ViewModel.Username, Mode=TwoWay}"
-                        Prefix="{x:Bind Converter={StaticResource MeUrlPrefixConverter}}"
-                        Header="{CustomResource ChannelLinkTitle}"
-                        Margin="12,12,12,8"/>
+                        Margin="12,8,12,8"/>
 
                     <TextBlock
                         Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
-                        Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=LinkAvailable}"
+                        Text="{x:Bind ConvertAvailable(ViewModel.Username), Mode=OneWay}"
                         Foreground="Green"
                         Margin="12,0,0,8"/>
                     <TextBlock
@@ -69,23 +71,20 @@
                         Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
                         Foreground="Red"
                         Margin="12,0,0,8"/>
+                </controls:HeaderedControl>
 
-                    <TextBlock
-                        Text="{CustomResource ChannelUsernameHelp}"
-                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Margin="12,0,12,12"/>
-                </StackPanel>
-
-                <ListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}"
-                          IsItemClickEnabled="True"
-                          ItemClick="ListView_ItemClick"
-                          ContainerContentChanging="OnContainerContentChanging"
-                          SelectionMode="None"
-                          Grid.Row="1">
+                <controls:TableListView
+                    Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}"
+                    IsItemClickEnabled="True"
+                    ItemClick="ListView_ItemClick"
+                    ContainerContentChanging="OnContainerContentChanging"
+                    SelectionMode="None"
+                    Grid.Row="1">
                     <ListView.Header>
-                        <TextBlock Text="{CustomResource ChangePublicLimitReached}" Foreground="#FF0000" Margin="12,12,12,6" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <Border MaxWidth="640">
+                            <TextBlock Text="{CustomResource ChangePublicLimitReached}" Foreground="#FF0000" Margin="12,12,12,6" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </Border>
                     </ListView.Header>
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -112,21 +111,25 @@
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                </ListView>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </controls:TableListView>
             </Grid>
 
-            <StackPanel Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Grid.Row="2">
+            <controls:HeaderedControl
+                x:Name="PrivateLinkHelp"
+                Header="{CustomResource ChannelInviteLinkTitle}"
+                Footer="{CustomResource ChannelPrivateLinkHelp}"
+                Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                Grid.Row="1">
                 <TextBox
                     Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}"
-                    Header="{CustomResource ChannelInviteLinkTitle}"
                     IsReadOnly="True"
-                    Margin="12,12,12,8"/>
-                <TextBlock
-                    Text="{CustomResource ChannelPrivateLinkHelp}"
-                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    Margin="12,0"/>
-            </StackPanel>
+                    Margin="12,8,12,8"/>
+            </controls:HeaderedControl>
         </Grid>
     </Grid>
 </local:HostedPage>

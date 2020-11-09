@@ -217,20 +217,11 @@
             <x:Int32 x:Key="UserLastNameMaxLength">255</x:Int32>
 
             <converters:FileTypeToStringConverter x:Key="FileTypeToStringConverter"/>
-            <converters:StringPluralConverter x:Key="StringPluralConverter"/>
-            <converters:StringFormatConverter x:Key="StringFormatConverter"/>
-            <converters:MeUrlPrefixConverter x:Key="MeUrlPrefixConverter"/>
-            <converters:GeoLivePeriodConverter x:Key="GeoLivePeriodConverter"/>
-            <converters:CompressionToGlyphConverter x:Key="CompressionToGlyphConverter"/>
             <converters:ChatTtlConverter x:Key="ChatTtlConverter"/>
             <converters:MessageTtlConverter x:Key="MessageTtlConverter"/>
-            <converters:StickerToEmojiConverter x:Key="StickerToEmojiConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
-            <converters:InitialNameStringConverter x:Key="InitialNameStringConverter" />
-            <converters:DateTimeToFormatConverter x:Key="DateTimeToFormatConverter" />
-            <converters:EditToVisibilityConverter x:Key="EditToVisibilityConverter"/>
             <converters:FileSizeConverter x:Key="FileSizeConverter"/>
 
             <SolidColorBrush x:Key="Placeholder0Brush" Color="#E56555"/>

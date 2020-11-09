@@ -137,13 +137,22 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        public void UpdateChat(Chat chat) { }
+        public void UpdateChat(Chat chat)
+        {
+            Username.Prefix = MeUrlPrefixConverter.Convert(ViewModel.CacheService, string.Empty);
+        }
+
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
 
         #endregion
 
         #region Binding
+
+        private string ConvertAvailable(string username)
+        {
+            return string.Format(Strings.Resources.LinkAvailable, username);
+        }
 
         private string ConvertFooter(bool pubblico)
         {

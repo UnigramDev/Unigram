@@ -35,7 +35,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock
-                    Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=UsernameAvailable}"
+                    Text="{x:Bind ConvertAvailable(ViewModel.Username), Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
                     Foreground="Green"
                     Margin="0,0,0,12"/>
@@ -60,7 +60,7 @@
                     <Run Text="{x:Bind UsernameHelpLink}"/>
                     <LineBreak/>
                     <Hyperlink Click="Copy_Click">
-                        <Run Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource MeUrlPrefixConverter}}"/>
+                        <Run Text="{x:Bind ConvertUsername(ViewModel.Username), Mode=OneWay}"/>
                     </Hyperlink>
                 </TextBlock>
             </Grid>

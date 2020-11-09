@@ -42,7 +42,7 @@
                     <PasswordBox x:Name="FieldPassword"
                                  Password="{x:Bind ViewModel.Password, Mode=TwoWay}" 
                                  PlaceholderText="{x:Bind ViewModel.PasswordHint}"/>
-                    <TextBlock Text="{x:Bind ViewModel.CredentialsTitle, Converter={StaticResource StringFormatConverter}, ConverterParameter=PaymentConfirmationMessage}"
+                    <TextBlock Text="{x:Bind ConvertConfirmation(ViewModel.CredentialsTitle)}"
                                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                Style="{StaticResource CaptionTextBlockStyle}"
                                Margin="12,4,12,24"/>

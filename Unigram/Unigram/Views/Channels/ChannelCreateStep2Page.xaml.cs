@@ -5,20 +5,19 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Channels
 {
-    public sealed partial class ChannelCreateStep2Page : HostedPage
+    public sealed partial class ChannelCreateStep2Page : HostedPage, ISupergroupEditDelegate
     {
         public ChannelCreateStep2ViewModel ViewModel => DataContext as ChannelCreateStep2ViewModel;
 
         public ChannelCreateStep2Page()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChannelCreateStep2ViewModel>();
-
-            Transitions = ApiInfo.CreateSlideTransition();
+            DataContext = TLContainer.Current.Resolve<ChannelCreateStep2ViewModel, ISupergroupEditDelegate>(this);
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
@@ -79,5 +78,93 @@ namespace Unigram.Views.Channels
         }
 
         #endregion
+
+        #region Delegate
+
+        public void UpdateSupergroup(Chat chat, Supergroup group)
+        {
+            Header.Text = group.IsChannel ? Strings.Resources.ChannelSettingsTitle : Strings.Resources.GroupSettingsTitle;
+            Subheader.Header = group.IsChannel ? Strings.Resources.ChannelTypeHeader : Strings.Resources.GroupTypeHeader;
+            Subheader.Footer = group.Username.Length > 0 ? group.IsChannel ? Strings.Resources.ChannelPublicInfo : Strings.Resources.MegaPublicInfo : group.IsChannel ? Strings.Resources.ChannelPrivateInfo : Strings.Resources.MegaPrivateInfo;
+
+            Public.Content = group.IsChannel ? Strings.Resources.ChannelPublic : Strings.Resources.MegaPublic;
+            Private.Content = group.IsChannel ? Strings.Resources.ChannelPrivate : Strings.Resources.MegaPrivate;
+
+            UsernameHelp.Footer = group.IsChannel ? Strings.Resources.ChannelUsernameHelp : Strings.Resources.MegaUsernameHelp;
+            PrivateLinkHelp.Footer = group.IsChannel ? Strings.Resources.ChannelPrivateLinkHelp : Strings.Resources.MegaPrivateLinkHelp;
+
+
+
+            ViewModel.Username = group.Username;
+            ViewModel.IsPublic = !string.IsNullOrEmpty(group.Username);
+        }
+
+        public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
+        {
+            ViewModel.InviteLink = fullInfo.InviteLink;
+
+            if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))
+            {
+                ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+            }
+        }
+
+        public void UpdateBasicGroup(Chat chat, BasicGroup group)
+        {
+            Header.Text = Strings.Resources.GroupSettingsTitle;
+            Subheader.Header = Strings.Resources.GroupTypeHeader;
+            Subheader.Footer = Strings.Resources.MegaPrivateInfo;
+
+            Public.Content = Strings.Resources.MegaPublic;
+            Private.Content = Strings.Resources.MegaPrivate;
+
+            UsernameHelp.Footer = Strings.Resources.MegaUsernameHelp;
+            PrivateLinkHelp.Footer = Strings.Resources.MegaPrivateLinkHelp;
+
+
+
+            ViewModel.Username = string.Empty;
+            ViewModel.IsPublic = false;
+        }
+
+        public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
+        {
+            ViewModel.InviteLink = fullInfo.InviteLink;
+
+            if (string.IsNullOrEmpty(fullInfo.InviteLink))
+            {
+                ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+            }
+        }
+
+        public void UpdateChat(Chat chat)
+        {
+            Username.Prefix = MeUrlPrefixConverter.Convert(ViewModel.CacheService, string.Empty);
+        }
+
+        public void UpdateChatTitle(Chat chat) { }
+        public void UpdateChatPhoto(Chat chat) { }
+
+        #endregion
+
+        #region Binding
+
+        private string ConvertAvailable(string username)
+        {
+            return string.Format(Strings.Resources.LinkAvailable, username);
+        }
+
+        private string ConvertFooter(bool pubblico)
+        {
+            if (ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            {
+                return pubblico ? Strings.Resources.ChannelPublicInfo : Strings.Resources.ChannelPrivateInfo;
+            }
+
+            return pubblico ? Strings.Resources.MegaPublicInfo : Strings.Resources.MegaPrivateInfo;
+        }
+
+        #endregion
+
     }
 }

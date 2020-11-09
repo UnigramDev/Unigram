@@ -48,7 +48,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <TextBlock Text="{x:Bind Title}" VerticalAlignment="Bottom" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
-                                <TextBlock Text="{x:Bind Size, Converter={StaticResource StringPluralConverter}, ConverterParameter=Stickers}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Margin="12,0" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
+                                <TextBlock Text="{x:Bind common:Locale.Declension('Stickers', Size)}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Margin="12,0" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>

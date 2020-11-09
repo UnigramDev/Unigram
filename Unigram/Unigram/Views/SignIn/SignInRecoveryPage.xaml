@@ -57,7 +57,7 @@
                     Grid.Row="5"/>
 
             <HyperlinkButton Command="{x:Bind ViewModel.ForgotCommand}"
-                             Content="{x:Bind ViewModel.RecoveryEmailAddressPattern, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=RestoreEmailTrouble}"
+                             Content="{x:Bind ConvertForgot(ViewModel.RecoveryEmailAddressPattern), Mode=OneWay}"
                              Grid.Row="6"/>
 
             <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsResettable, Mode=OneWay}" Margin="0,24,0,0" Grid.Row="7">
