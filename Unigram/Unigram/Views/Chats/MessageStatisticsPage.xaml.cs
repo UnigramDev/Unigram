@@ -1,16 +1,14 @@
-﻿using System.Linq;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Charts;
-using Unigram.Charts.DataView;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Chats
 {
@@ -110,148 +108,20 @@ namespace Unigram.Views.Chats
             button.Command = ViewModel.OpenPostCommand;
         }
 
-        private async void OnElementPrepared(FrameworkElement sender, DataContextChangedEventArgs args)
+        private void OnElementPrepared(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            var root = sender as HeaderedControl;
+            var root = sender as ChartCell;
             var data = args.NewValue as ChartViewData;
-
-            if (data == null)
-            {
-                return;
-            }
 
             var header = root.Items[0] as ChartHeaderView;
             var border = root.Items[1] as AspectView;
             var checks = root.Items[2] as WrapPanel;
 
-            border.Constraint = data;
-
-            if (data.token != null)
-            {
-                if (data.title == Strings.Resources.LanguagesChartTitle)
-                {
-                    System.Diagnostics.Debugger.Break();
-                }
-
-                await data.LoadAsync(ViewModel.ProtoService, ViewModel.Chat.Id);
-            }
-
-            //if (args.ItemIndex != _loadIndex)
-            //{
-            //    root.Header = data.title;
-            //    return;
-            //}
-
-            BaseChartView chartView = null;
-            BaseChartView zoomedChartView = null;
-
-            switch (data.graphType)
-            {
-                case 1:
-                    chartView = new DoubleLinearChartView();
-                    //zoomedChartView = new DoubleLinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
-                    break;
-                case 2:
-                    chartView = new StackBarChartView();
-                    //zoomedChartView = new StackBarChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
-                    break;
-                case 3:
-                    chartView = new BarChartView();
-                    //zoomedChartView = new LinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
-                    break;
-                case 4:
-                    chartView = new StackLinearChartView();
-                    chartView.legendSignatureView.showPercentage = true;
-                    //zoomedChartView = new PieChartView();
-                    break;
-                case 5:
-                    chartView = new StepChartView();
-                    chartView.legendSignatureView.isTopHourChart = true;
-                    //zoomedChartView = new LinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
-                    break;
-                case 6:
-                    chartView = new DoubleStepChartView();
-                    //zoomedChartView = new DoubleLinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
-                    break;
-                default:
-                    chartView = new LinearChartView();
-                    //zoomedChartView = new LinearChartView();
-                    //zoomedChartView.legendSignatureView.useHour = true;
-                    break;
-            }
-
             root.Header = data.title;
             border.Children.Clear();
-            border.Children.Add(chartView);
-            border.Children.Add(chartView.legendSignatureView);
-            checks.Children.Clear();
+            border.Constraint = data;
 
-            chartView.SetHeader(chartView.legendSignatureView.isTopHourChart ? null : header);
-            chartView.Loaded += (s, args) =>
-            {
-                chartView.SetDataPublic(data.chartData);
-
-                var lines = chartView.GetLines();
-                if (lines.Count > 1)
-                {
-                    foreach (var line in lines)
-                    {
-                        var check = new FauxCheckBox();
-                        check.Style = Resources["LineCheckBoxStyle"] as Style;
-                        check.Content = line.line.name;
-                        check.IsChecked = line.enabled;
-                        check.Background = new SolidColorBrush(line.lineColor);
-                        check.Margin = new Thickness(12, 0, 0, 12);
-                        check.DataContext = line;
-                        check.Tag = chartView;
-                        check.Click += CheckBox_Checked;
-
-                        checks.Children.Add(check);
-                    }
-
-                    checks.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    checks.Visibility = Visibility.Collapsed;
-                }
-            };
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            if (sender is CheckBox check && check.DataContext is LineViewData line && check.Tag is BaseChartView chartView)
-            {
-                var lines = chartView.GetLines();
-                if (line.enabled && lines.Except(new[] { line }).Any(x => x.enabled))
-                {
-                    line.enabled = false;
-                    check.IsChecked = false;
-
-                    chartView.OnCheckChanged();
-                }
-                else if (!line.enabled)
-                {
-                    line.enabled = true;
-                    check.IsChecked = true;
-
-                    chartView.OnCheckChanged();
-                }
-                else
-                {
-                    VisualUtilities.ShakeView(check);
-                }
-
-                //var border =
-
-                //test.onCheckChanged();
-            }
-
+            root.UpdateData(data);
         }
     }
 }

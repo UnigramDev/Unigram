@@ -23,13 +23,6 @@ namespace Unigram.Views.Chats
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChatStatisticsViewModel, IChatDelegate>(this);
-
-            _loadIndex++;
-
-            if (_loadIndex > 8)
-            {
-                _loadIndex = 0;
-            }
         }
 
         #region Delegate
@@ -68,8 +61,6 @@ namespace Unigram.Views.Chats
         }
 
         #endregion
-
-        public static int _loadIndex = 2;
 
         private async void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
