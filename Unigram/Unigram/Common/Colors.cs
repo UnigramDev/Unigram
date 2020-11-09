@@ -436,6 +436,62 @@ namespace Unigram.Common
             return new HSV(h, s, (v / 255));
         }
 
+
+        public static HSL ToHSL(this Color color)
+        {
+            RGB rgb = color;
+            HSL hsl = new HSL();
+
+            float r = (rgb.R / 255.0f);
+            float g = (rgb.G / 255.0f);
+            float b = (rgb.B / 255.0f);
+
+            float min = Math.Min(Math.Min(r, g), b);
+            float max = Math.Max(Math.Max(r, g), b);
+            float delta = max - min;
+
+            hsl.L = (max + min) / 2;
+
+            if (delta == 0)
+            {
+                hsl.H = 0;
+                hsl.S = 0.0f;
+            }
+            else
+            {
+                hsl.S = (hsl.L <= 0.5) ? (delta / (max + min)) : (delta / (2 - max - min));
+
+                float hue;
+
+                if (r == max)
+                {
+                    hue = ((g - b) / 6) / delta;
+                }
+                else if (g == max)
+                {
+                    hue = (1.0f / 3) + ((b - r) / 6) / delta;
+                }
+                else
+                {
+                    hue = (2.0f / 3) + ((r - g) / 6) / delta;
+                }
+
+                if (hue < 0)
+                {
+                    hue += 1;
+                }
+
+                if (hue > 1)
+                {
+                    hue -= 1;
+                }
+
+                hsl.H = (int)(hue * 360);
+            }
+
+            return hsl;
+        }
+
         public static Color GetPatternColor(Color color)
         {
             var rgb = (RGB)color;
