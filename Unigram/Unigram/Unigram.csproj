@@ -31,7 +31,7 @@
     <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -173,7 +173,6 @@
     <Compile Include="Common\DateTimeParser.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
-    <Compile Include="Common\ExpressionUtils.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\LoopThread.cs" />
     <Compile Include="Common\LoopThreadPool.cs" />
@@ -596,7 +595,6 @@
     <Compile Include="Services\Updates\UpdateAppVersion.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
     <Compile Include="Services\Updates\UpdateChatFiltersLayout.cs" />
-    <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
@@ -2338,6 +2336,12 @@
   </ItemGroup>-->
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
