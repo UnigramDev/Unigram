@@ -108,10 +108,5 @@ namespace Unigram.Collections
                 Add(item);
             }
         }
-
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
     }
 }
