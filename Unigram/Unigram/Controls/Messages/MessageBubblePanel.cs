@@ -143,35 +143,56 @@ namespace Unigram.Controls.Messages
 
             try
             {
-                using (CanvasTextFormat format = new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = Theme.Current.MessageFontSize })
-                using (CanvasTextLayout textLayout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, format, width, float.PositiveInfinity))
+                var textLayout = GetTextLayout(caption, width);
+                if (textLayout != null)
                 {
-                    foreach (var entity in caption.Entities)
-                    {
-                        if (entity.Type is TextEntityTypeBold)
-                        {
-                            textLayout.SetFontWeight(entity.Offset, entity.Length, FontWeights.SemiBold);
-                        }
-                        else if (entity.Type is TextEntityTypeItalic)
-                        {
-                            textLayout.SetFontStyle(entity.Offset, entity.Length, FontStyle.Italic);
-                        }
-                        else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
-                        {
-                            textLayout.SetFontFamily(entity.Offset, entity.Length, "Consolas");
-                        }
-                    }
+                    textLayout.GetCaretPosition(caption.Text.Length - 1, false, out CanvasTextLayoutRegion region);
 
-                    var regions = textLayout.GetCharacterRegions(caption.Text.Length, 0);
-                    if (regions.Length > 0 && regions[0].LayoutBounds.Bottom < text.DesiredSize.Height)
+                    if (region.LayoutBounds.Bottom < text.DesiredSize.Height)
                     {
-                        return regions[0].LayoutBounds;
+                        return region.LayoutBounds;
                     }
                 }
             }
             catch { }
 
             return new Rect(0, 0, int.MaxValue, 0);
+        }
+
+        private CanvasTextFormat _format;
+        private CanvasTextLayout _layout;
+
+        private FormattedText _prevText;
+
+        private CanvasTextLayout GetTextLayout(FormattedText caption, float width)
+        {
+            if (_prevText == caption && _layout != null)
+            {
+                _layout.RequestedSize = new Size(width, double.PositiveInfinity);
+                return _layout;
+            }
+
+            _format ??= new CanvasTextFormat { FontFamily = "Assets\\Emoji\\apple.ttf#Segoe UI Emoji", FontSize = Theme.Current.MessageFontSize };
+            _layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), caption.Text, _format, width, float.PositiveInfinity);
+
+            foreach (var entity in caption.Entities)
+            {
+                if (entity.Type is TextEntityTypeBold)
+                {
+                    _layout.SetFontWeight(entity.Offset, entity.Length, FontWeights.SemiBold);
+                }
+                else if (entity.Type is TextEntityTypeItalic)
+                {
+                    _layout.SetFontStyle(entity.Offset, entity.Length, FontStyle.Italic);
+                }
+                else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
+                {
+                    _layout.SetFontFamily(entity.Offset, entity.Length, "Consolas");
+                }
+            }
+
+            _prevText = caption;
+            return _layout;
         }
     }
 }
