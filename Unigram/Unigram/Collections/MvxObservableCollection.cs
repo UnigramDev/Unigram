@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Unigram.Common;
 
@@ -323,36 +322,6 @@ namespace Unigram.Collections
                 OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
             }
             catch { }
-        }
-
-        public virtual bool Set<P>(Expression<Func<P>> propertyExpression, ref P field, P newValue)
-        {
-            if (object.Equals(field, newValue))
-            {
-                return false;
-            }
-
-            field = newValue;
-            RaisePropertyChanged(propertyExpression);
-            return true;
-        }
-
-        public virtual void RaisePropertyChanged<P>(Expression<Func<P>> propertyExpression)
-        {
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
-            {
-                return;
-            }
-
-            var propertyName = ExpressionUtils.GetPropertyName(propertyExpression);
-            if (!object.Equals(propertyName, null))
-            {
-                try
-                {
-                    OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-                }
-                catch { }
-            }
         }
     }
 }

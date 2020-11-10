@@ -189,7 +189,7 @@ namespace Unigram.ViewModels.Payments
 
             if (propertyName.Equals("PaymentForm"))
             {
-                RaisePropertyChanged(() => IsAnyUserInfoRequested);
+                RaisePropertyChanged(nameof(IsAnyUserInfoRequested));
             }
             else if (propertyName.Equals("IsLoading"))
             {

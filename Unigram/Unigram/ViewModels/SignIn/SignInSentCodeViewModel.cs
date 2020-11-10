@@ -24,7 +24,7 @@ namespace Unigram.ViewModels.SignIn
             {
                 _codeInfo = waitCode.CodeInfo;
 
-                RaisePropertyChanged(() => CodeInfo);
+                RaisePropertyChanged(nameof(CodeInfo));
             }
 
             return Task.CompletedTask;

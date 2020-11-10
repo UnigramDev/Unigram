@@ -97,7 +97,7 @@ namespace Unigram.ViewModels
             var tags = Client.Execute(new GetLogTags()) as LogTags;
             if (tags != null)
             {
-                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag
+                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag(Settings)
                 {
                     Name = x,
                     Default = ((LogVerbosityLevel)Client.Execute(new GetLogTagVerbosityLevel(x))).VerbosityLevel,
@@ -211,8 +211,15 @@ namespace Unigram.ViewModels
 
     public class DiagnosticsTag : BindableBase
     {
+        private readonly ISettingsService _settings;
+
         public string Name { get; set; }
         public int Default { get; set; }
+
+        public DiagnosticsTag(ISettingsService settings)
+        {
+            _settings = settings;
+        }
 
         private VerbosityLevel _value;
         public VerbosityLevel Value
@@ -250,7 +257,9 @@ namespace Unigram.ViewModels
             if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VerbosityLevel index)
             {
                 Value = index;
-                RaisePropertyChanged(() => Text);
+                RaisePropertyChanged(nameof(Text));
+
+                _settings.Diagnostics.AddOrUpdateValue(Name, (int)index);
                 Client.Execute(new SetLogTagVerbosityLevel(Name, (int)index));
             }
         }

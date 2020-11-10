@@ -83,8 +83,8 @@ namespace Unigram.ViewModels
                 IsUsersEmpty = nearby.UsersNearby.IsEmpty();
                 IsChatsEmpty = nearby.SupergroupsNearby.IsEmpty();
 
-                RaisePropertyChanged(() => LoadMoreLabel);
-                RaisePropertyChanged(() => LoadMoreVisibility);
+                RaisePropertyChanged(nameof(LoadMoreLabel));
+                RaisePropertyChanged(nameof(LoadMoreVisibility));
             }
 
             Aggregator.Subscribe(this);
@@ -130,8 +130,8 @@ namespace Unigram.ViewModels
                 _remainingUsers = null;
                 _loadedMore = true;
 
-                RaisePropertyChanged(() => LoadMoreLabel);
-                RaisePropertyChanged(() => LoadMoreVisibility);
+                RaisePropertyChanged(nameof(LoadMoreLabel));
+                RaisePropertyChanged(nameof(LoadMoreVisibility));
             }
         }
 

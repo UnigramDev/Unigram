@@ -317,7 +317,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _shareLink, value);
-                RaisePropertyChanged(() => IsCopyLinkEnabled);
+                RaisePropertyChanged(nameof(IsCopyLinkEnabled));
             }
         }
 

@@ -198,7 +198,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (update.Name.Equals("disable_top_chats"))
             {
-                BeginOnUIThread(() => RaisePropertyChanged(() => IsContactsSuggestEnabled));
+                BeginOnUIThread(() => RaisePropertyChanged(nameof(IsContactsSuggestEnabled)));
             }
         }
 
@@ -209,7 +209,7 @@ namespace Unigram.ViewModels.Settings
                 var confirm = await MessagePopup.ShowAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
-                    RaisePropertyChanged(() => IsContactsSuggestEnabled);
+                    RaisePropertyChanged(nameof(IsContactsSuggestEnabled));
                     return;
                 }
             }

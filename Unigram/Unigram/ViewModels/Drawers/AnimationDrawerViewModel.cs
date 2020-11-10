@@ -123,13 +123,13 @@ namespace Unigram.ViewModels.Drawers
             if (searching)
             {
                 _searchSet = collection;
-                RaisePropertyChanged(() => Items);
+                RaisePropertyChanged(nameof(Items));
             }
             else
             {
                 _searchSet = null;
-                Set(() => SelectedSet, ref _selectedSet, collection);
-                RaisePropertyChanged(() => Items);
+                Set(ref _selectedSet, collection, nameof(SelectedSet));
+                RaisePropertyChanged(nameof(Items));
             }
 
             if (collection is SearchAnimationsCollection search && search.IsEmpty())

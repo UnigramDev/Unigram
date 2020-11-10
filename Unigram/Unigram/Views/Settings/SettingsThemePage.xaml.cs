@@ -624,14 +624,14 @@ namespace Unigram.Views.Settings
             //}
 
             Set(ref _value, value);
-            RaisePropertyChanged(() => IsDefault);
-            RaisePropertyChanged(() => HexValue);
+            RaisePropertyChanged(nameof(IsDefault));
+            RaisePropertyChanged(nameof(HexValue));
         }
 
         private void SetSuper(Color super)
         {
             _super = super;
-            RaisePropertyChanged(() => IsDefault);
+            RaisePropertyChanged(nameof(IsDefault));
         }
 
         public bool IsDefault => _value == _super || _value == default;

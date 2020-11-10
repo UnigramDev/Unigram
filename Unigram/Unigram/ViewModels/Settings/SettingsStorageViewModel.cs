@@ -250,7 +250,7 @@ namespace Unigram.ViewModels.Settings
                 CacheService.Options.StorageMaxTimeFromLastAccess = index * 60 * 60 * 24;
                 CacheService.Options.UseStorageOptimizer = index > 0;
 
-                RaisePropertyChanged(() => FilesTtl);
+                RaisePropertyChanged(nameof(FilesTtl));
             }
         }
     }

@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.Settings
                 _username = user.Username;
             }
 
-            RaisePropertyChanged(() => Username);
+            RaisePropertyChanged(nameof(Username));
         }
 
         private string _username;

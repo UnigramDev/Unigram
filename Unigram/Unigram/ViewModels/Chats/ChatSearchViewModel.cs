@@ -153,7 +153,7 @@ namespace Unigram.ViewModels.Chats
                 Set(ref _selectedItem, value);
                 NextCommand.RaiseCanExecuteChanged();
                 PreviousCommand.RaiseCanExecuteChanged();
-                RaisePropertyChanged(() => SelectedIndex);
+                RaisePropertyChanged(nameof(SelectedIndex));
             }
         }
 

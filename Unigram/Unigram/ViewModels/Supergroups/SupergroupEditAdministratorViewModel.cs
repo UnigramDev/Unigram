@@ -179,7 +179,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canChangeInfo, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -193,7 +193,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPostMessages, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -207,7 +207,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canEditMessages, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -221,7 +221,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canDeleteMessages, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -235,7 +235,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canRestrictMembers, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -249,7 +249,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canInviteUsers, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -263,7 +263,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPinMessages, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -291,7 +291,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPromoteMembers, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 

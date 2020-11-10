@@ -56,7 +56,7 @@ namespace Unigram.ViewModels.Settings
         public async Task SetThemeAsync(ThemeInfoBase info)
         {
             await _themeService.SetThemeAsync(info, !_darkOnly && NightMode == NightMode.Disabled);
-            RaisePropertyChanged(() => IsNightModeAvailable);
+            RaisePropertyChanged(nameof(IsNightModeAvailable));
 
             await RefreshThemesAsync();
         }

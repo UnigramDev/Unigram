@@ -59,11 +59,11 @@ namespace Unigram.ViewModels.Chats
             Music = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterAudio());
             Voice = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterVoiceNote());
 
-            RaisePropertyChanged(() => Media);
-            RaisePropertyChanged(() => Files);
-            RaisePropertyChanged(() => Links);
-            RaisePropertyChanged(() => Music);
-            RaisePropertyChanged(() => Voice);
+            RaisePropertyChanged(nameof(Media));
+            RaisePropertyChanged(nameof(Files));
+            RaisePropertyChanged(nameof(Links));
+            RaisePropertyChanged(nameof(Music));
+            RaisePropertyChanged(nameof(Voice));
 
             Aggregator.Subscribe(this);
             return Task.CompletedTask;
@@ -136,23 +136,23 @@ namespace Unigram.ViewModels.Chats
             {
                 case SearchMessagesFilterPhotoAndVideo photoAndVideo:
                     Media = new MediaCollection(ProtoService, Chat.Id, photoAndVideo, query);
-                    RaisePropertyChanged(() => Media);
+                    RaisePropertyChanged(nameof(Media));
                     break;
                 case SearchMessagesFilterDocument document:
                     Files = new MediaCollection(ProtoService, Chat.Id, document, query);
-                    RaisePropertyChanged(() => Files);
+                    RaisePropertyChanged(nameof(Files));
                     break;
                 case SearchMessagesFilterUrl url:
                     Links = new MediaCollection(ProtoService, Chat.Id, url, query);
-                    RaisePropertyChanged(() => Links);
+                    RaisePropertyChanged(nameof(Links));
                     break;
                 case SearchMessagesFilterAudio audio:
                     Music = new MediaCollection(ProtoService, Chat.Id, audio, query);
-                    RaisePropertyChanged(() => Music);
+                    RaisePropertyChanged(nameof(Music));
                     break;
                 case SearchMessagesFilterVoiceNote voiceNote:
                     Voice = new MediaCollection(ProtoService, Chat.Id, voiceNote, query);
-                    RaisePropertyChanged(() => Voice);
+                    RaisePropertyChanged(nameof(Voice));
                     break;
             }
         }

@@ -319,7 +319,7 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
-                    RaisePropertyChanged(() => UnreadCount);
+                    RaisePropertyChanged(nameof(UnreadCount));
                 });
             }
         }

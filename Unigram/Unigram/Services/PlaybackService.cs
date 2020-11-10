@@ -322,7 +322,7 @@ namespace Unigram.Services
                 _currentItem = value?.Message;
                 _currentPlayback = value;
                 _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
-                RaisePropertyChanged(() => CurrentItem);
+                RaisePropertyChanged(nameof(CurrentItem));
                 UpdateTransport();
             }
         }

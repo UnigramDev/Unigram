@@ -35,12 +35,12 @@ namespace Unigram.ViewModels.Users
                 }
 
                 Items = new ItemsCollection(ProtoService, user.Id);
-                RaisePropertyChanged(() => Items);
+                RaisePropertyChanged(nameof(Items));
             }
             else if (parameter is int userId)
             {
                 Items = new ItemsCollection(ProtoService, userId);
-                RaisePropertyChanged(() => Items);
+                RaisePropertyChanged(nameof(Items));
             }
 
             return Task.CompletedTask;

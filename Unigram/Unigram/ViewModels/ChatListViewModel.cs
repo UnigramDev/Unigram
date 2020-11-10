@@ -597,7 +597,7 @@ namespace Unigram.ViewModels
         {
             Aggregator.Unsubscribe(Items);
             Items = new ItemsCollection(ProtoService, Aggregator, this, chatList);
-            RaisePropertyChanged(() => Items);
+            RaisePropertyChanged(nameof(Items));
         }
 
         public class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading,

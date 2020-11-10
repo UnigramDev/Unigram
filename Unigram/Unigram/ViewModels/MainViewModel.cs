@@ -244,7 +244,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    RaisePropertyChanged(() => SelectedFilter);
+                    RaisePropertyChanged(nameof(SelectedFilter));
                 }
 
                 foreach (var filter in _filters)
@@ -568,8 +568,8 @@ namespace Unigram.ViewModels
             UnreadUnmutedCount = update.UnreadUnmutedCount;
             UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
 
-            RaisePropertyChanged(() => ShowUnmuted);
-            RaisePropertyChanged(() => ShowMuted);
+            RaisePropertyChanged(nameof(ShowUnmuted));
+            RaisePropertyChanged(nameof(ShowMuted));
         }
     }
 

@@ -93,7 +93,7 @@ namespace Unigram.ViewModels
                     Settings.IsContactsSortedByEpoch = value;
                     Load(value);
 
-                    RaisePropertyChanged(() => IsSortedByEpoch);
+                    RaisePropertyChanged(nameof(IsSortedByEpoch));
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace Unigram.ViewModels
 
                     Items = new SortedObservableCollection<User>(new UserComparer(epoch));
                     Items.ReplaceWith(items);
-                    RaisePropertyChanged(() => Items);
+                    RaisePropertyChanged(nameof(Items));
                 }
             }
         }

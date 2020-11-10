@@ -70,7 +70,7 @@ namespace Unigram.ViewModels.Folders
                     _useLeftLayout = value;
                     Settings.IsLeftTabsEnabled = value;
 
-                    RaisePropertyChanged(() => UseLeftLayout);
+                    RaisePropertyChanged(nameof(UseLeftLayout));
 
                     Aggregator.Publish(new UpdateChatFiltersLayout());
                 }

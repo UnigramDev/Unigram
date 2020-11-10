@@ -135,8 +135,8 @@ namespace Unigram.Views.Popups
                 _offset += users.UserIds.Count;
                 _remaining = users.TotalCount - _offset;
 
-                RaisePropertyChanged(() => LoadMoreLabel);
-                RaisePropertyChanged(() => LoadMoreVisibility);
+                RaisePropertyChanged(nameof(LoadMoreLabel));
+                RaisePropertyChanged(nameof(LoadMoreVisibility));
             }
         }
 

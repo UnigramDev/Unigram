@@ -28,7 +28,7 @@ namespace Unigram.ViewModels.Settings
                 _phoneNumber = CacheService.Options.GetValue<string>("x_phonenumber");
                 _codeInfo = codeInfo;
 
-                RaisePropertyChanged(() => CodeInfo);
+                RaisePropertyChanged(nameof(CodeInfo));
             }
 
             return Task.CompletedTask;

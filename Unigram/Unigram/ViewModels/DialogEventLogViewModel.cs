@@ -86,7 +86,7 @@ namespace Unigram.ViewModels
                 Filters = dialog.Filters;
                 UserIds = dialog.UserIds;
 
-                RaisePropertyChanged(() => Subtitle);
+                RaisePropertyChanged(nameof(Subtitle));
 
                 await LoadEventLogSliceAsync();
             }

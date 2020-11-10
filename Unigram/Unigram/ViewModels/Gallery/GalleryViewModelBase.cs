@@ -74,7 +74,7 @@ namespace Unigram.ViewModels.Gallery
             set
             {
                 Set(ref _totalItems, value);
-                RaisePropertyChanged(() => Position);
+                RaisePropertyChanged(nameof(Position));
             }
         }
 
@@ -144,7 +144,7 @@ namespace Unigram.ViewModels.Gallery
 
         protected virtual void OnSelectedItemChanged(GalleryContent item)
         {
-            RaisePropertyChanged(() => Position);
+            RaisePropertyChanged(nameof(Position));
         }
 
         public virtual bool CanDelete

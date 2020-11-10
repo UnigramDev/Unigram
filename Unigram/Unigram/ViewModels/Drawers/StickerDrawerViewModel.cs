@@ -163,7 +163,7 @@ namespace Unigram.ViewModels.Drawers
             set
             {
                 Set(ref _searchStickers, value);
-                RaisePropertyChanged(() => Stickers);
+                RaisePropertyChanged(nameof(Stickers));
             }
         }
 

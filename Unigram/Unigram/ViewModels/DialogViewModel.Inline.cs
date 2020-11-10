@@ -35,7 +35,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _inlineBotResults, value);
-                RaisePropertyChanged(() => InlineBotResultsVisibility);
+                RaisePropertyChanged(nameof(InlineBotResultsVisibility));
 
                 _inlineBotResults?.Reset();
             }

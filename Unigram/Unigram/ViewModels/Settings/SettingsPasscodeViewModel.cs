@@ -39,9 +39,9 @@ namespace Unigram.ViewModels.Settings
         {
             BeginOnUIThread(() =>
             {
-                RaisePropertyChanged(() => IsEnabled);
-                RaisePropertyChanged(() => AutolockTimeout);
-                RaisePropertyChanged(() => IsBiometricsEnabled);
+                RaisePropertyChanged(nameof(IsEnabled));
+                RaisePropertyChanged(nameof(AutolockTimeout));
+                RaisePropertyChanged(nameof(IsBiometricsEnabled));
             });
         }
 

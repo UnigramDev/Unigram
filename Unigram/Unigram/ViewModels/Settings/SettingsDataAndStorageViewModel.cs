@@ -222,8 +222,8 @@ namespace Unigram.ViewModels.Settings
                     Settings.AutoDownload = Services.Settings.AutoDownloadSettings.Default;
                 }
 
-                RaisePropertyChanged(() => AutoDownloadEnabled);
-                RaisePropertyChanged(() => AutoDownload);
+                RaisePropertyChanged(nameof(AutoDownloadEnabled));
+                RaisePropertyChanged(nameof(AutoDownload));
             }
         }
     }
