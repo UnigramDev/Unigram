@@ -240,10 +240,6 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.SendingState is MessageSendingStatePending)
-            {
-                return;
-            }
 
             var file = big.Photo;
             if (file.Local.IsDownloadingActive)
