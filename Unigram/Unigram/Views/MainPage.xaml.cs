@@ -68,7 +68,6 @@ namespace Unigram.Views
         IHandle<UpdateConnectionState>,
         IHandle<UpdateOption>,
         IHandle<UpdateCallDialog>,
-        IHandle<UpdateChatListLayout>,
         IHandle<UpdateChatFiltersLayout>,
         IHandle<UpdateConfetti>
     {
@@ -520,15 +519,6 @@ namespace Unigram.Views
                 {
                     CallBanner.Visibility = Visibility.Collapsed;
                 }
-            });
-        }
-
-        public void Handle(UpdateChatListLayout update)
-        {
-            this.BeginOnUIThread(() =>
-            {
-                ChatsList.UpdateViewState(MasterDetail.CurrentState);
-                ArchivedChats.UpdateViewState(new ChatListArchive(), false, MasterDetail.CurrentState == MasterDetailState.Compact, ((TLViewModelBase)ViewModel).Settings.UseThreeLinesLayout);
             });
         }
 

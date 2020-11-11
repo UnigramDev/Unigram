@@ -13,6 +13,7 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -41,8 +42,6 @@ namespace Unigram.Controls.Cells
         private IProtoService _protoService;
 
         private readonly Visual _onlineBadge;
-
-        private bool _expanded = false;
 
         private MessageTicksState _ticksState;
 
@@ -441,36 +440,16 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateViewState(Chat chat, bool selected, bool compact, bool threeLines)
+        public void UpdateViewState(Chat chat, bool selected, bool compact)
         {
             VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
             VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
-            VisualStateManager.GoToState(this, threeLines ? "ThreeLines" : "Default", false);
-
-            if (threeLines != _expanded && _protoService != null)
-            {
-                _expanded = threeLines;
-
-                var position = chat.GetPosition(_chatList);
-
-                DraftLabel.Text = UpdateDraftLabel(chat);
-                FromLabel.Text = UpdateFromLabel(chat, position);
-                BriefLabel.Text = UpdateBriefLabel(chat, position);
-            }
         }
 
-        public void UpdateViewState(ChatList chatList, bool selected, bool compact, bool threeLines)
+        public void UpdateViewState(ChatList chatList, bool selected, bool compact)
         {
             VisualStateManager.GoToState(this, selected ? "Selected" : "Normal", false);
             VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
-            VisualStateManager.GoToState(this, threeLines ? "ThreeLines" : "Default", false);
-
-            if (threeLines != _expanded && _protoService != null)
-            {
-                _expanded = threeLines;
-
-                UpdateChatList(_protoService, chatList);
-            }
         }
 
         private async void UpdateMinithumbnail(Message message)
@@ -602,7 +581,7 @@ namespace Unigram.Controls.Cells
                 switch (chat.DraftMessage.InputMessageText)
                 {
                     case InputMessageText text:
-                        return string.Format(_expanded ? "{0}\r\n" : "{0}: ", Strings.Resources.Draft);
+                        return string.Format("{0}: ", Strings.Resources.Draft);
                 }
             }
 
@@ -640,7 +619,7 @@ namespace Unigram.Controls.Cells
                 return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, null, message));
             }
 
-            var format = _expanded ? "{0}\r\n" : "{0}: ";
+            var format = "{0}: ";
             var result = string.Empty;
 
             if (ShowFrom(_protoService, chat, message, out User from))
@@ -959,24 +938,34 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (_protoService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
+            try
             {
-                if (DropVisual == null)
+                if (_protoService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
                 {
-                    FindName(nameof(DropVisual));
-                }
+                    if (DropVisual == null)
+                    {
+                        FindName(nameof(DropVisual));
+                    }
 
-                DropVisual.Visibility = Visibility.Visible;
-                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+                    DropVisual.Visibility = Visibility.Visible;
+                    e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+                }
+                else
+                {
+                    if (DropVisual != null)
+                    {
+                        DropVisual.Visibility = Visibility.Collapsed;
+                    }
+
+                    e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+                }
             }
-            else
+            catch
             {
                 if (DropVisual != null)
                 {
                     DropVisual.Visibility = Visibility.Collapsed;
                 }
-
-                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
             }
 
             base.OnDragEnter(e);
@@ -999,23 +988,27 @@ namespace Unigram.Controls.Cells
                 DropVisual.Visibility = Visibility.Collapsed;
             }
 
-            if (e.DataView.AvailableFormats.Count == 0)
+            try
             {
-                return;
-            }
+                if (e.DataView.AvailableFormats.Count == 0)
+                {
+                    return;
+                }
 
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return;
+                }
 
-            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{_protoService.SessionId}") as NavigationService;
-            if (service != null)
-            {
-                App.DataPackages[chat.Id] = e.DataView;
-                service.NavigateToChat(chat);
+                var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{_protoService.SessionId}") as NavigationService;
+                if (service != null)
+                {
+                    App.DataPackages[chat.Id] = e.DataView;
+                    service.NavigateToChat(chat);
+                }
             }
+            catch { }
 
             base.OnDrop(e);
         }
@@ -1469,5 +1462,196 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
+    }
+
+    public class ChatCellPanel : Panel
+    {
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var PhotoPanel = Children[0];
+
+            var TypeIcon = Children[1];
+            var TitleLabel = Children[2];
+            var VerifiedIcon = Children[3];
+            var MutedIcon = Children[4];
+            var StateIcon = Children[5];
+            var TimeLabel = Children[6];
+
+            var MinithumbnailPanel = Children[7];
+            var BriefInfo = Children[8];
+            var TypingLabel = Children[9];
+            var PinnedIcon = Children[10];
+            var UnreadMentionsBadge = Children[11];
+            var UnreadBadge = Children[12];
+            var FailedBadge = Children[13];
+
+            PhotoPanel.Measure(availableSize);
+
+            TimeLabel.Measure(availableSize);
+            StateIcon.Measure(availableSize);
+            TypeIcon.Measure(availableSize);
+            VerifiedIcon.Measure(availableSize);
+            MutedIcon.Measure(availableSize);
+
+            var line1Left = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
+            var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
+
+            var titleWidth = Math.Max(0, line1Right - (line1Left + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width));
+
+            TitleLabel.Measure(new Size(titleWidth, availableSize.Height));
+
+
+
+            MinithumbnailPanel.Measure(availableSize);
+            PinnedIcon.Measure(availableSize);
+            UnreadBadge.Measure(availableSize);
+            UnreadMentionsBadge.Measure(availableSize);
+            FailedBadge.Measure(availableSize);
+
+            var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
+
+            var line2Left = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
+            var line2Right = availableSize.Width - 12 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+
+            var briefWidth = Math.Max(0, line2Right - line2Left);
+
+            BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
+            TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
+            
+            return base.MeasureOverride(availableSize);
+
+            return new Size(availableSize.Width, PhotoPanel.DesiredSize.Height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var PhotoPanel = Children[0];
+
+            var TypeIcon = Children[1];
+            var TitleLabel = Children[2];
+            var VerifiedIcon = Children[3];
+            var MutedIcon = Children[4];
+            var StateIcon = Children[5];
+            var TimeLabel = Children[6];
+
+            var MinithumbnailPanel = Children[7];
+            var BriefInfo = Children[8];
+            var TypingLabel = Children[9];
+            var PinnedIcon = Children[10];
+            var UnreadMentionsBadge = Children[11];
+            var UnreadBadge = Children[12];
+            var FailedBadge = Children[13];
+
+            var rect = new Rect();
+            var min = 12 + PhotoPanel.DesiredSize.Width + 12;
+
+            rect.X = 12;
+            rect.Y = 0;
+            rect.Width = PhotoPanel.DesiredSize.Width;
+            rect.Height = PhotoPanel.DesiredSize.Height;
+            PhotoPanel.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - TimeLabel.DesiredSize.Width);
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = TimeLabel.DesiredSize.Width;
+            rect.Height = TimeLabel.DesiredSize.Height;
+            TimeLabel.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = StateIcon.DesiredSize.Width;
+            rect.Height = StateIcon.DesiredSize.Height;
+            StateIcon.Arrange(rect);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = TypeIcon.DesiredSize.Width;
+            rect.Height = TypeIcon.DesiredSize.Height;
+            TypeIcon.Arrange(rect);
+
+            var line1Left = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
+            var line1Right = finalSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
+
+            double titleWidth;
+            if (line1Left + TitleLabel.DesiredSize.Width + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
+            {
+                titleWidth = Math.Max(0, line1Right - (line1Left + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width));
+            }
+            else
+            {
+                titleWidth = TitleLabel.DesiredSize.Width;
+            }
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
+            rect.Y = 32 - 2 - TitleLabel.DesiredSize.Height;
+            rect.Width =  titleWidth;
+            rect.Height = TitleLabel.DesiredSize.Height;
+            TitleLabel.Arrange(rect);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width + titleWidth;
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = VerifiedIcon.DesiredSize.Width;
+            rect.Height = VerifiedIcon.DesiredSize.Height;
+            VerifiedIcon.Arrange(rect);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = MutedIcon.DesiredSize.Width;
+            rect.Height = MutedIcon.DesiredSize.Height;
+            MutedIcon.Arrange(rect);
+
+
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
+            rect.Y = 35;
+            rect.Width = MinithumbnailPanel.DesiredSize.Width;
+            rect.Height = MinithumbnailPanel.DesiredSize.Height;
+            MinithumbnailPanel.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - PinnedIcon.DesiredSize.Width);
+            rect.Y = 64 - 8 - PinnedIcon.DesiredSize.Height;
+            rect.Width = PinnedIcon.DesiredSize.Width;
+            rect.Height = PinnedIcon.DesiredSize.Height;
+            PinnedIcon.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - UnreadBadge.DesiredSize.Width);
+            rect.Y = 64 - 8 - UnreadBadge.DesiredSize.Height;
+            rect.Width = UnreadBadge.DesiredSize.Width;
+            rect.Height = UnreadBadge.DesiredSize.Height;
+            UnreadBadge.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width);
+            rect.Y = 64 - 8 - UnreadMentionsBadge.DesiredSize.Height;
+            rect.Width = UnreadMentionsBadge.DesiredSize.Width;
+            rect.Height = UnreadMentionsBadge.DesiredSize.Height;
+            UnreadMentionsBadge.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - FailedBadge.DesiredSize.Width);
+            rect.Y = 64 - 8 - FailedBadge.DesiredSize.Height;
+            rect.Width = FailedBadge.DesiredSize.Width;
+            rect.Height = FailedBadge.DesiredSize.Height;
+            FailedBadge.Arrange(rect);
+
+            var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
+
+            var line2Left = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
+            var line2Right = finalSize.Width - 12 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+
+            var briefWidth = Math.Max(0, line2Right - line2Left);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
+            rect.Y = 64 - 12 - BriefInfo.DesiredSize.Height;
+            rect.Width = briefWidth;
+            rect.Height = BriefInfo.DesiredSize.Height;
+            BriefInfo.Arrange(rect);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
+            rect.Y = 64 - 12 - TypingLabel.DesiredSize.Height;
+            rect.Width = briefWidth + MinithumbnailPanel.DesiredSize.Width;
+            rect.Height = TypingLabel.DesiredSize.Height;
+            TypingLabel.Arrange(rect);
+
+            return finalSize;
+        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Controls.Cells;
-using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
@@ -33,7 +32,7 @@ namespace Unigram.Controls
             if (content != null && args.Item is Chat chat)
             {
                 content.UpdateService(ViewModel.ProtoService);
-                content.UpdateViewState(chat, SelectedItem == args.Item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
+                content.UpdateViewState(chat, SelectedItem == args.Item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
                 content.UpdateChat(ViewModel.ProtoService, chat, ViewModel.Items.ChatList);
                 args.Handled = true;
             }
@@ -70,7 +69,7 @@ namespace Unigram.Controls
                 if (content != null)
                 {
                     var item = ItemFromContainer(container);
-                    content.UpdateViewState(item as Chat, SelectedItem == item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact, ViewModel.Settings.UseThreeLinesLayout);
+                    content.UpdateViewState(item as Chat, SelectedItem == item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
                 }
             }
         }
@@ -108,7 +107,7 @@ namespace Unigram.Controls
             var content = ContentTemplateRoot as ChatCell;
             if (content != null)
             {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact, SettingsService.Current.UseThreeLinesLayout);
+                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, IsSelected && _list.SelectionMode == ListViewSelectionMode.Single, _list._viewState == MasterDetailState.Compact);
             }
         }
     }

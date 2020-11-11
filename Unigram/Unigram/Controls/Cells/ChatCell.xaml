@@ -12,7 +12,7 @@
     d:DesignWidth="400"
     AllowDrop="True">
     
-    <Grid Padding="0,8,12,0" Background="Transparent">
+    <local:ChatCellPanel Height="64" Background="Transparent">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Normal"/>
@@ -60,45 +60,18 @@
                     </VisualState.Setters>
                 </VisualState>-->
             </VisualStateGroup>
-            <VisualStateGroup>
-                <VisualState x:Name="Default"/>
-                <VisualState x:Name="ThreeLines">
-                    <VisualState.Setters>
-                        <Setter Target="PhotoPanel.Margin" Value="12,0,0,-8"/>
-                        <Setter Target="TitlePanel.Margin" Value="12,-3,0,0"/>
-                        <Setter Target="BriefInfo.Style" Value="{StaticResource CaptionTextBlockStyle}"/>
-                        <Setter Target="BriefInfo.Margin" Value="12,0,0,0"/>
-                        <Setter Target="BriefInfo.TextWrapping" Value="Wrap"/>
-                        <Setter Target="BriefInfo.MaxLines" Value="2"/>
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition MinWidth="4"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
 
         <Grid x:Name="PhotoPanel"
                 Width="48"
                 Height="48"
-                Margin="12,0,0,-14"
-                VerticalAlignment="Top"
-                Grid.RowSpan="2"
-                Grid.ColumnSpan="2">
+                Margin="0,8">
             <Ellipse x:Name="SelectionOutline" StrokeThickness="2" Stroke="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-            <controls:ProfilePicture x:Name="Photo"
-                                        Width="48"
-                                        Height="48"
-                                        IsEnabled="False" />
+            <controls:ProfilePicture
+                x:Name="Photo"
+                Width="48"
+                Height="48"
+                IsEnabled="False" />
             
             <Border x:Name="OnlineBadge"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -115,67 +88,55 @@
                         CornerRadius="4.5"/>
             </Border>
         </Grid>
-
-        <Grid x:Name="TitlePanel" VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="2" Grid.ColumnSpan="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid Margin="0,0,4,0" HorizontalAlignment="Left">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock x:Name="TypeIcon"
-                            Text="&#xE125;"
-                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                            VerticalAlignment="Bottom"
-                            FontSize="16"
-                            Margin="0,0,4,1"
-                            Grid.Column="0"/>
-                <TextBlock x:Name="TitleLabel"
-                            Grid.Column="1"
-                            MaxLines="1"
-                            TextWrapping="NoWrap"
-                            TextTrimming="CharacterEllipsis"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
-                <Grid x:Name="VerifiedIcon" Margin="4,0,0,-2" Grid.Column="2">
-                    <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
-                </Grid>
-                <FontIcon x:Name="MutedIcon"
-                            Glyph="&#xE198;"
-                            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                            VerticalAlignment="Bottom"
-                            FontSize="16"
-                            Margin="8,0,4,0"
-                            Grid.Column="3"/>
-            </Grid>
-            <FontIcon x:Name="StateIcon"
-                        FontFamily="{StaticResource TelegramThemeFontFamily}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        Foreground="{ThemeResource ChatLastMessageStateBrush}"
-                        FontSize="10"
-                        Height="10"
-                        Width="18"
-                        Margin="0,0,4,3"
-                        Grid.Column="1"/>
-            <TextBlock x:Name="TimeLabel"
-                        Text="11:10"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                        VerticalAlignment="Bottom"
-                        Margin="0,0,0,1"
-                        Grid.Column="2"/>
+        
+        <TextBlock
+            x:Name="TypeIcon"
+            Text="&#xE125;"
+            FontFamily="{StaticResource SymbolThemeFontFamily}"
+            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+            VerticalAlignment="Bottom"
+            FontSize="16"
+            Margin="0,0,4,1"
+            Grid.Column="0"/>
+        <TextBlock
+            x:Name="TitleLabel"
+            MaxLines="1"
+            TextWrapping="NoWrap"
+            TextTrimming="CharacterEllipsis"
+            Style="{StaticResource BodyTextBlockStyle}"
+            FontFamily="{ThemeResource EmojiThemeFontFamily}"/>
+        <Grid x:Name="VerifiedIcon" Margin="4,0,0,-2" Grid.Column="2">
+            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource ChatVerifiedBadgeBrush}" StrokeThickness="0" />
         </Grid>
+        <FontIcon
+            x:Name="MutedIcon"
+            Glyph="&#xE198;"
+            Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+            VerticalAlignment="Bottom"
+            FontSize="16"
+            Margin="8,0,4,0"
+            Grid.Column="3"/>
+        
+        <FontIcon
+            x:Name="StateIcon"
+            FontFamily="{StaticResource TelegramThemeFontFamily}"
+            Foreground="{ThemeResource ChatLastMessageStateBrush}"
+            FontSize="10"
+            Height="10"
+            Width="18"
+            Margin="0,3,4,0"
+            Grid.Column="1"/>
+        <TextBlock
+            x:Name="TimeLabel"
+            Text="11:10"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+            Margin="0,0,0,1"
+            Grid.Column="2"/>
+        
         <Border
             x:Name="MinithumbnailPanel"
-            Margin="12,-8,-4,0"
+            Margin="0,0,6,0"
             CornerRadius="2"
             Height="16"
             Grid.Column="2"
@@ -194,39 +155,37 @@
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="NoWrap"
                     VerticalAlignment="Top"
-                    MaxLines="1"
-                    Margin="12,2,0,0"
-                    Grid.Column="3"
-                    Grid.Row="1">
+                   MaxLines="1">
             <ToolTipService.ToolTip>
                 <ToolTip Opened="ToolTip_Opened"/>
             </ToolTipService.ToolTip>
             <Run x:Name="FromLabel" Foreground="{ThemeResource ChatFromLabelBrush}"/><Run x:Name="DraftLabel" Foreground="{ThemeResource ChatDraftLabelBrush}"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
         </TextBlock>
 
-        <TextBlock x:Name="TypingLabel"
-                    Visibility="Collapsed"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                    Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="NoWrap"
-                    MaxLines="1"
-                    Margin="12,2,0,0"
-                    Grid.Column="2"
-                    Grid.ColumnSpan="2"
-                    Grid.Row="1"/>
+        <TextBlock
+            x:Name="TypingLabel"
+            Visibility="Collapsed"
+            Style="{StaticResource BodyTextBlockStyle}"
+            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+            Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+            TextTrimming="CharacterEllipsis"
+            TextWrapping="NoWrap"
+            MaxLines="1"/>
 
         <Border x:Name="PinnedIcon"
                 Width="20"
                 Height="20"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="8,0,0,8"
+                Margin="8,0,0,0"
                 Grid.ColumnSpan="2"
                 Grid.Column="4"
                 Grid.Row="1">
-            <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <FontIcon
+                Glyph="&#xE840;"
+                FontSize="14"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
         </Border>
         <Border x:Name="UnreadMentionsBadge"
                 Background="{ThemeResource ChatUnreadBadgeBrush}"
@@ -235,17 +194,18 @@
                 CornerRadius="10"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="8,0,0,8"
+                Margin="8,0,0,0"
                 Visibility="Collapsed"
                 Grid.Column="4"
                 Grid.Row="1">
-            <TextBlock x:Name="UnreadMentionsLabel"
-                        Text="&#xE168;"
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                        VerticalAlignment="Center"
-                        TextAlignment="Center"/>
+            <TextBlock
+                x:Name="UnreadMentionsLabel"
+                Text="&#xE168;"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                VerticalAlignment="Center"
+                TextAlignment="Center"/>
         </Border>
         <Border x:Name="UnreadBadge"
                 Background="{ThemeResource ChatUnreadBadgeBrush}"
@@ -254,15 +214,16 @@
                 CornerRadius="10"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="8,0,0,8"
+                Margin="8,0,0,0"
                 Visibility="Collapsed"
                 Grid.Column="5"
                 Grid.Row="1">
-            <TextBlock x:Name="UnreadLabel"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                        TextAlignment="Center"
-                        Margin="6,2,6,0"/>
+            <TextBlock
+                x:Name="UnreadLabel"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                TextAlignment="Center"
+                Margin="6,2,6,0"/>
         </Border>
 
         <Border x:Name="FailedBadge"
@@ -272,26 +233,28 @@
                 CornerRadius="10"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                Margin="8,0,0,8"
+                Margin="8,0,0,0"
                 Visibility="Collapsed"
                 Grid.Column="5"
                 Grid.Row="1">
-            <TextBlock x:Name="FailedLabel"
-                        Text="&#xE171;"
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        Foreground="{ThemeResource ChatFailedLabelBrush}"
-                        VerticalAlignment="Center"
-                        TextAlignment="Center"/>
+            <TextBlock
+                x:Name="FailedLabel"
+                Text="&#xE171;"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Foreground="{ThemeResource ChatFailedLabelBrush}"
+                VerticalAlignment="Center"
+                TextAlignment="Center"/>
         </Border>
 
-        <Rectangle x:Name="DropVisual"
-                    x:DeferLoadStrategy="Lazy"
-                    Grid.RowSpan="2"
-                    Grid.ColumnSpan="6"
-                    Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                    StrokeThickness="2"
-                    Margin="0,-8,-12,0"
-                    Visibility="Collapsed"/>
-    </Grid>
+        <Rectangle
+            x:Name="DropVisual"
+            x:DeferLoadStrategy="Lazy"
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="6"
+            Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+            StrokeThickness="2"
+            Margin="0,-8,-12,0"
+            Visibility="Collapsed"/>
+    </local:ChatCellPanel>
 </UserControl>
