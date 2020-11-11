@@ -18,8 +18,6 @@ using Windows.Graphics.Capture;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
-using Windows.Media.Core;
-using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Profile;
@@ -56,8 +54,6 @@ namespace Unigram.Services
     {
         private readonly IViewService _viewService;
 
-        private readonly MediaPlayer _mediaPlayer;
-
         private Call _call;
         private DateTime _callStarted;
         private VoipManager _controller;
@@ -71,15 +67,6 @@ namespace Unigram.Services
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _viewService = viewService;
-
-            if (ApiInfo.IsMediaSupported)
-            {
-                _mediaPlayer = new MediaPlayer();
-                _mediaPlayer.CommandManager.IsEnabled = false;
-                _mediaPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Communications;
-                _mediaPlayer.AudioCategory = MediaPlayerAudioCategory.Communications;
-            }
-
             aggregator.Subscribe(this);
         }
 
@@ -361,16 +348,12 @@ namespace Unigram.Services
             {
                 if (update.Call.IsOutgoing && pending.IsCreated && pending.IsReceived)
                 {
-                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_ringback.mp3"));
-                    _mediaPlayer.IsLoopingEnabled = true;
-                    _mediaPlayer.Play();
+                    SoundEffects.Play(SoundEffect.VoipRingback);
                 }
             }
             else if (update.Call.State is CallStateExchangingKeys exchangingKeys)
             {
-                _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3"));
-                _mediaPlayer.IsLoopingEnabled = false;
-                _mediaPlayer.Play();
+                SoundEffects.Play(SoundEffect.VoipConnecting);
             }
             else if (update.Call.State is CallStateReady ready)
             {
@@ -519,16 +502,12 @@ namespace Unigram.Services
                 case CallStateDiscarded discarded:
                     if (update.Call.IsOutgoing && discarded.Reason is CallDiscardReasonDeclined)
                     {
-                        _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_busy.mp3"));
-                        _mediaPlayer.IsLoopingEnabled = true;
-                        _mediaPlayer.Play();
-
+                        SoundEffects.Play(SoundEffect.VoipBusy);
                         Show(update.Call, null, null, _callStarted);
                     }
                     else
                     {
-                        _mediaPlayer.Source = null;
-
+                        SoundEffects.Stop();
                         Hide();
                     }
                     break;
@@ -545,14 +524,12 @@ namespace Unigram.Services
         {
             if (args == VoipState.WaitInit || args == VoipState.WaitInitAck)
             {
-                _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3"));
-                _mediaPlayer.IsLoopingEnabled = false;
-                _mediaPlayer.Play();
+                SoundEffects.Play(SoundEffect.VoipConnecting);
             }
             else if (args == VoipState.Established)
             {
                 _callStarted = DateTime.Now;
-                _mediaPlayer.Source = null;
+                SoundEffects.Stop();
             }
         }
 

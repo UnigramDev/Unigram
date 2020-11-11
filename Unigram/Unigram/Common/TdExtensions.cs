@@ -84,6 +84,17 @@ namespace Unigram.Common
             return defaultValue;
         }
 
+        public static JsonValueObject GetNamedObject(this JsonValueObject json, string key)
+        {
+            var member = json.GetNamedValue(key);
+            if (member?.Value is JsonValueObject value)
+            {
+                return value;
+            }
+
+            return null;
+        }
+
         public static JsonObjectMember GetNamedValue(this JsonValueObject json, string key)
         {
             if (json == null)
