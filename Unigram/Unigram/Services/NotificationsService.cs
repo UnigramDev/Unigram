@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -18,7 +17,6 @@ using Windows.ApplicationModel.AppService;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
-using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
 
@@ -377,24 +375,19 @@ namespace Unigram.Services
                 case NotificationTypeNewCall newCall:
                     break;
                 case NotificationTypeNewMessage newMessage:
-                    ProcessNewMessage(group, notification.Id, newMessage.Message);
+                    ProcessNewMessage(group, notification.Id, newMessage.Message, notification.Date, notification.IsSilent);
                     break;
                 case NotificationTypeNewPushMessage newPushMessage:
-                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage);
+                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, notification.Date, notification.IsSilent);
                     break;
                 case NotificationTypeNewSecretChat newSecretChat:
                     break;
             }
         }
 
-        private void ProcessNewPushMessage(int group, int id, long chatId, NotificationTypeNewPushMessage newPushMessage)
+        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, int date, bool silent)
         {
-            //UpdateFromLabel(_protoService.GetChat(chatId), newPushMessage);
-        }
-
-        private async void ProcessNewMessage(int gId, int id, Message message)
-        {
-            var chat = _protoService.GetChat(message.ChatId);
+            var chat = _protoService.GetChat(chatId);
             if (chat == null)
             {
                 return;
@@ -402,12 +395,10 @@ namespace Unigram.Services
 
             var caption = GetCaption(chat);
             var content = GetContent(chat, message);
-            var sound = "";
+            var sound = silent ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
-            var tag = $"{id}";
-            var group = $"{gId}";
             var picture = GetPhoto(chat);
-            var date = BindConvert.Current.DateTime(message.Date).ToUniversalTime().ToString("s") + "Z";
+            var dateTime = BindConvert.Current.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
@@ -424,7 +415,41 @@ namespace Unigram.Services
 
             await UpdateAsync(chat, async () =>
             {
-                await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, tag, group, picture, date, canReply);
+                await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
+            });
+        }
+
+        private async void ProcessNewMessage(int groupId, int id, Message message, int date, bool silent)
+        {
+            var chat = _protoService.GetChat(message.ChatId);
+            if (chat == null)
+            {
+                return;
+            }
+
+            var caption = GetCaption(chat);
+            var content = GetContent(chat, message);
+            var sound = silent ? "silent" : string.Empty;
+            var launch = GetLaunch(chat, message);
+            var picture = GetPhoto(chat);
+            var dateTime = BindConvert.Current.DateTime(date).ToUniversalTime().ToString("s") + "Z";
+            var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
+
+            var user = _protoService.GetUser(_protoService.Options.MyId);
+            var attribution = user?.GetFullName() ?? string.Empty;
+
+            if (chat.Type is ChatTypeSecret || TLContainer.Current.Passcode.IsLockscreenRequired)
+            {
+                caption = Strings.Resources.AppName;
+                content = Strings.Resources.YouHaveNewMessage;
+                picture = string.Empty;
+
+                canReply = false;
+            }
+
+            await UpdateAsync(chat, async () =>
+            {
+                await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
             });
 
             if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
@@ -495,6 +520,30 @@ namespace Unigram.Services
         public string GetLaunch(Chat chat, Message message)
         {
             var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.Id >> 20);
+
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;from_id={1}", launch, privata.UserId);
+            }
+            else if (chat.Type is ChatTypeSecret secret)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;secret_id={1}", launch, secret.SecretChatId);
+            }
+            else if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;channel_id={1}", launch, supergroup.SupergroupId);
+            }
+            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;chat_id={1}", launch, basicGroup.BasicGroupId);
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _protoService.SessionId);
+        }
+
+        public string GetLaunch(Chat chat, NotificationTypeNewPushMessage message)
+        {
+            var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.MessageId >> 20);
 
             if (chat.Type is ChatTypePrivate privata)
             {
@@ -744,6 +793,16 @@ namespace Unigram.Services
             return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
         }
 
+        private string GetContent(Chat chat, NotificationTypeNewPushMessage message)
+        {
+            if (chat.Type is ChatTypeSecret)
+            {
+                return Strings.Resources.YouHaveNewMessage;
+            }
+
+            return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
+        }
+
         private string GetPhoto(Chat chat)
         {
             if (chat.Photo != null && chat.Photo.Small.Local.IsDownloadingCompleted)
@@ -778,6 +837,24 @@ namespace Unigram.Services
 
                 case MessageDice dice:
                     return dice.Emoji;
+            }
+
+            return string.Empty;
+        }
+
+        private string GetBriefLabel(Chat chat, NotificationTypeNewPushMessage value)
+        {
+            switch (value.Content)
+            {
+                case PushMessageContentAnimation animation:
+                    return animation.Caption;
+                case PushMessageContentPhoto photo:
+                    return photo.Caption;
+                case PushMessageContentVideo video:
+                    return video.Caption;
+
+                case PushMessageContentText text:
+                    return text.Text;
             }
 
             return string.Empty;
