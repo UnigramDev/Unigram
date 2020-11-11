@@ -70,7 +70,6 @@
                         Grid.Column="2"/>
                 </Grid>
                 <TextBox x:Name="SearchField"
-                         Style="{StaticResource QueryTextBoxStyle}"
                          PlaceholderText="{CustomResource Search}"
                          PreventKeyboardDisplayOnProgrammaticFocus="True"
                          LostFocus="Search_LostFocus"

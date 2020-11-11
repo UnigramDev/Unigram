@@ -300,8 +300,6 @@
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Gallery\GalleryVolumeButton.cs" />
-    <Compile Include="Controls\GroupedGridView.cs" />
-    <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\HeaderedControl.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
     <Compile Include="Controls\InlineBotResultsView.xaml.cs">
@@ -346,7 +344,6 @@
     </Compile>
     <Compile Include="Controls\Messages\MessageReferenceBase.cs" />
     <Compile Include="Controls\Messages\MessageService.cs" />
-    <Compile Include="Controls\MediaPlayerView.cs" />
     <Compile Include="Controls\Messages\Content\AnimationContent.xaml.cs">
       <DependentUpon>AnimationContent.xaml</DependentUpon>
     </Compile>
@@ -409,9 +406,6 @@
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\GlyphRadioButton.cs" />
-    <Compile Include="Controls\Passport\PassportDocumentCell.xaml.cs">
-      <DependentUpon>PassportDocumentCell.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PencilCanvas.cs" />
@@ -446,7 +440,6 @@
     <Compile Include="Controls\StorageChart.cs" />
     <Compile Include="Controls\SwitchThemeButton.cs" />
     <Compile Include="Controls\TableListView.cs" />
-    <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
     <Compile Include="Controls\TopNavView.cs" />
     <Compile Include="Controls\UndoView.xaml.cs">
@@ -458,7 +451,6 @@
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\WalkthroughControl.cs" />
-    <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="Entities\StorageAudio.cs" />
     <Compile Include="Navigation\Services\FrameFacade.cs" />
@@ -1126,7 +1118,6 @@
     <Compile Include="Controls\Messages\MessageReference.xaml.cs">
       <DependentUpon>MessageReference.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="Converters\BindConvert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\FileSizeConverter.cs" />
@@ -1637,10 +1628,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Messages\MessagePinned.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Passport\PassportDocumentCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
