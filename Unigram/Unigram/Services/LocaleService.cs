@@ -34,7 +34,7 @@ namespace Unigram.Services
 
         private readonly ResourceLoader _loader;
 
-        private readonly Dictionary<string, ConcurrentDictionary<string, string>> _languagePack = new Dictionary<string, ConcurrentDictionary<string, string>>();
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
         private string _languageCode;
         private string _languagePlural;
 
@@ -107,22 +107,6 @@ namespace Unigram.Services
 
         public void saveRemoteLocaleStrings(string lang, LanguagePackStrings difference)
         {
-            string GetName(string value)
-            {
-                return value;
-
-                var split = value.Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
-                var result = string.Empty;
-
-                foreach (var item in split)
-                {
-                    result += item.Substring(0, 1).ToUpper();
-                    result += item.Substring(1);
-                }
-
-                return result;
-            }
-
             var fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path, "test", lang, "Resources.resw");
             try
             {
@@ -145,26 +129,26 @@ namespace Unigram.Services
                             continue;
                         }
 
-                        if (already.Contains(GetName(difference.Strings[a].Key).ToLower()))
+                        if (already.Contains(difference.Strings[a].Key.ToLower()))
                         {
                             continue;
                         }
 
-                        values[GetName(difference.Strings[a].Key)] = GetValue(single.Value);
-                        already.Add(GetName(difference.Strings[a].Key).ToLower());
+                        values[difference.Strings[a].Key] = GetValue(single.Value);
+                        already.Add(difference.Strings[a].Key.ToLower());
                     }
                     else if (difference.Strings[a].Value is LanguagePackStringValuePluralized pluralized)
                     {
-                        values[GetName(difference.Strings[a].Key) + "Zero"] = GetValue(pluralized.ZeroValue ?? string.Empty);
-                        values[GetName(difference.Strings[a].Key) + "One"] = GetValue(pluralized.OneValue ?? string.Empty);
-                        values[GetName(difference.Strings[a].Key) + "Two"] = GetValue(pluralized.TwoValue ?? string.Empty);
-                        values[GetName(difference.Strings[a].Key) + "Few"] = GetValue(pluralized.FewValue ?? string.Empty);
-                        values[GetName(difference.Strings[a].Key) + "Many"] = GetValue(pluralized.ManyValue ?? string.Empty);
-                        values[GetName(difference.Strings[a].Key) + "Other"] = GetValue(pluralized.OtherValue ?? string.Empty);
+                        values[difference.Strings[a].Key + "_zero"] = GetValue(pluralized.ZeroValue ?? string.Empty);
+                        values[difference.Strings[a].Key + "_one"] = GetValue(pluralized.OneValue ?? string.Empty);
+                        values[difference.Strings[a].Key + "_two"] = GetValue(pluralized.TwoValue ?? string.Empty);
+                        values[difference.Strings[a].Key + "_few"] = GetValue(pluralized.FewValue ?? string.Empty);
+                        values[difference.Strings[a].Key + "_many"] = GetValue(pluralized.ManyValue ?? string.Empty);
+                        values[difference.Strings[a].Key + "_other"] = GetValue(pluralized.OtherValue ?? string.Empty);
                     }
                     else if (difference.Strings[a].Value is LanguagePackStringValueDeleted deleted)
                     {
-                        values.Remove(GetName(difference.Strings[a].Key));
+                        values.Remove(difference.Strings[a].Key);
                     }
                 }
 
@@ -362,12 +346,12 @@ namespace Unigram.Services
             var result = Client.Execute(new GetLanguagePackString(_languagePath, "android", _languageCode, key));
             if (result is LanguagePackStringValuePluralized pluralized)
             {
-                values[key + "Zero"] = GetValue(pluralized.ZeroValue);
-                values[key + "One"] = GetValue(pluralized.OneValue);
-                values[key + "Two"] = GetValue(pluralized.TwoValue);
-                values[key + "Few"] = GetValue(pluralized.FewValue);
-                values[key + "Many"] = GetValue(pluralized.ManyValue);
-                values[key + "Other"] = GetValue(pluralized.OtherValue);
+                values[key + "_zero"] = GetValue(pluralized.ZeroValue);
+                values[key + "_one"] = GetValue(pluralized.OneValue);
+                values[key + "_two"] = GetValue(pluralized.TwoValue);
+                values[key + "_few"] = GetValue(pluralized.FewValue);
+                values[key + "_many"] = GetValue(pluralized.ManyValue);
+                values[key + "_other"] = GetValue(pluralized.OtherValue);
 
                 switch (quantity)
                 {
@@ -464,17 +448,18 @@ namespace Unigram.Services
             switch (quantity)
             {
                 case QUANTITY_ZERO:
-                    return "Zero";
+                    return "_zero";
                 case QUANTITY_ONE:
-                    return "One";
+                    return "_one";
                 case QUANTITY_TWO:
-                    return "Two";
+                    return "_two";
                 case QUANTITY_FEW:
-                    return "Few";
+                    return "_few";
                 case QUANTITY_MANY:
-                    return "Many";
+                    return "_many";
+                case QUANTITY_OTHER:
                 default:
-                    return "Other";
+                    return "_other";
             }
         }
     }
