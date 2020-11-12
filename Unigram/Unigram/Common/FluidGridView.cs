@@ -11,9 +11,19 @@ namespace Unigram.Common
         private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             var triggers = GetTriggers(sender as ItemsControl);
-            if (triggers != null)
+            if (triggers?.Owner != null)
             {
-                SetActive(triggers);
+                var owner = triggers.Owner;
+                var reference = GetReference(owner);
+
+                if (reference.Orientation == Orientation.Horizontal && Math.Truncate(e.PreviousSize.Width) != Math.Truncate(e.NewSize.Width))
+                {
+                    SetActive(triggers, reference);
+                }
+                else if (reference.Orientation == Orientation.Vertical && Math.Truncate(e.PreviousSize.Height) != Math.Truncate(e.NewSize.Height))
+                {
+                    SetActive(triggers, reference);
+                }
             }
         }
 
@@ -22,19 +32,18 @@ namespace Unigram.Common
             var triggers = sender as FluidGridViewTriggerCollection;
             if (triggers != null && triggers.Owner != null)
             {
-                SetActive(triggers);
+                SetActive(triggers, GetReference(triggers.Owner));
             }
         }
 
-        private static void SetActive(FluidGridViewTriggerCollection triggers)
+        private static void SetActive(FluidGridViewTriggerCollection triggers, WrapGridReference reference)
         {
-            if (triggers.Owner.ItemsPanelRoot == null)
+            if (triggers.Owner.ItemsPanelRoot == null || reference == null)
             {
                 return;
             }
 
             var owner = triggers.Owner;
-            var reference = GetReference(owner);
 
             var paddingNear = reference.Orientation == Orientation.Horizontal
                 ? owner.Padding.Left
@@ -125,9 +134,9 @@ namespace Unigram.Common
         private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as ItemsControl;
-            if (sender != null)
+            if (sender != null && e.NewValue is FluidGridViewTriggerCollection triggers)
             {
-                SetActive(e.NewValue as FluidGridViewTriggerCollection);
+                SetActive(triggers, GetReference(triggers.Owner));
             }
         }
         #endregion
@@ -136,6 +145,11 @@ namespace Unigram.Common
         private static WrapGridReference GetReference(DependencyObject obj)
         {
             var sender = obj as ItemsControl;
+            if (sender?.ItemsPanelRoot == null)
+            {
+                return null;
+            }
+
             var value = (WrapGridReference)obj.GetValue(ReferenceProperty);
             if (value == null)
             {
@@ -175,7 +189,7 @@ namespace Unigram.Common
                         return (Owner as VariableSizedWrapGrid).Orientation;
                     }
 
-                    throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
+                    return Orientation.Horizontal;
                 }
             }
 
@@ -196,7 +210,7 @@ namespace Unigram.Common
                         return (Owner as VariableSizedWrapGrid).ItemWidth;
                     }
 
-                    throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
+                    return double.NaN;
                 }
                 set
                 {
@@ -232,7 +246,7 @@ namespace Unigram.Common
                         return (Owner as VariableSizedWrapGrid).ItemHeight;
                     }
 
-                    throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
+                    return double.NaN;
                 }
                 set
                 {
