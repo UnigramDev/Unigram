@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -47,6 +48,8 @@ namespace Unigram.Common
                         this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSet.Id}.{emojiSet.Version}.ttf#Segoe UI Emoji"));
                         break;
                 }
+
+                this.Add("ThreadStackLayout", new StackLayout());
             }
             catch { }
 
