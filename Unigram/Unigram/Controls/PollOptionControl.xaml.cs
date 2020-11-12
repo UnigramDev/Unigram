@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -50,6 +50,10 @@ namespace Unigram.Controls
             if (option.IsChosen && poll.Type is PollTypeQuiz && !correct)
             {
                 VisualStateManager.GoToState(LayoutRoot, "Wrong", false);
+            }
+            else if (option.IsChosen && poll.Type is PollTypeQuiz && correct)
+            {
+                VisualStateManager.GoToState(LayoutRoot, "Correct", false);
             }
             else
             {
