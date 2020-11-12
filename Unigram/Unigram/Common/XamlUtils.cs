@@ -15,22 +15,6 @@ namespace Unigram.Common
             update?.Invoke(bindings, null);
         }
 
-        public static void InitializeBindings(UserControl page)
-        {
-            var field = page.GetType().GetTypeInfo().GetDeclaredField("Bindings");
-            var bindings = field?.GetValue(page);
-            var update = bindings?.GetType().GetRuntimeMethod("Initialize", new Type[] { });
-            update?.Invoke(bindings, null);
-        }
-
-        public static void StopTrackingBindings(UserControl page)
-        {
-            var field = page.GetType().GetTypeInfo().GetDeclaredField("Bindings");
-            var bindings = field?.GetValue(page);
-            var update = bindings?.GetType().GetRuntimeMethod("StopTracking", new Type[] { });
-            update?.Invoke(bindings, null);
-        }
-
         public static void SetAsNotSet(this DependencyObject o, DependencyProperty dp)
         {
             o.SetValue(dp, DependencyProperty.UnsetValue);
