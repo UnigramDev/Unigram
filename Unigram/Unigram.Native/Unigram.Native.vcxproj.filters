@@ -7,9 +7,6 @@
     <Filter Include="Helpers">
       <UniqueIdentifier>{903ec3d1-7f79-41e7-a41d-2ef61411b312}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mrz">
-      <UniqueIdentifier>{9e8ae57f-bce5-4315-9e6d-8ebf3ad1b207}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Proxies">
       <UniqueIdentifier>{4fa8da03-5bd0-46c1-8618-868e68b3a60c}</UniqueIdentifier>
     </Filter>
@@ -41,17 +38,7 @@
       <Filter>WebP</Filter>
     </ClCompile>
     <ClCompile Include="NativeUtils.cpp" />
-    <ClCompile Include="DeviceLostHelper.cpp" />
     <ClCompile Include="PlaceholderImageHelper.cpp" />
-    <ClCompile Include="Mrz\MrzRecognizer.cpp">
-      <Filter>Mrz</Filter>
-    </ClCompile>
-    <ClCompile Include="Mrz\fast-edge.cpp">
-      <Filter>Mrz</Filter>
-    </ClCompile>
-    <ClCompile Include="Mrz\genann.c">
-      <Filter>Mrz</Filter>
-    </ClCompile>
     <ClCompile Include="Proxies\TelegramGameProxy.cpp">
       <Filter>Proxies</Filter>
     </ClCompile>
@@ -216,17 +203,7 @@
       <Filter>WebP</Filter>
     </ClInclude>
     <ClInclude Include="NativeUtils.h" />
-    <ClInclude Include="DeviceLostHelper.h" />
     <ClInclude Include="PlaceholderImageHelper.h" />
-    <ClInclude Include="Mrz\MrzRecognizer.h">
-      <Filter>Mrz</Filter>
-    </ClInclude>
-    <ClInclude Include="Mrz\fast-edge.h">
-      <Filter>Mrz</Filter>
-    </ClInclude>
-    <ClInclude Include="Mrz\genann.h">
-      <Filter>Mrz</Filter>
-    </ClInclude>
     <ClInclude Include="Proxies\TelegramGameProxy.h">
       <Filter>Proxies</Filter>
     </ClInclude>

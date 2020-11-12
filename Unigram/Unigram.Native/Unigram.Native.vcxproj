@@ -232,7 +232,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DeviceLostHelper.h" />
     <ClInclude Include="libyuv\include\libyuv.h" />
     <ClInclude Include="libyuv\include\libyuv\basic_types.h" />
     <ClInclude Include="libyuv\include\libyuv\compare.h" />
@@ -253,9 +252,6 @@
     <ClInclude Include="libyuv\include\libyuv\scale_row.h" />
     <ClInclude Include="libyuv\include\libyuv\version.h" />
     <ClInclude Include="libyuv\include\libyuv\video_common.h" />
-    <ClInclude Include="Mrz\fast-edge.h" />
-    <ClInclude Include="Mrz\genann.h" />
-    <ClInclude Include="Mrz\MrzRecognizer.h" />
     <ClInclude Include="NativeUtils.h" />
     <ClInclude Include="PlaceholderImageHelper.h" />
     <ClInclude Include="Proxies\TelegramGameProxy.h" />
@@ -273,7 +269,6 @@
     <ClInclude Include="WebP\WebPImage.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DeviceLostHelper.cpp" />
     <ClCompile Include="libyuv\source\compare.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -403,12 +398,6 @@
     <ClCompile Include="libyuv\source\video_common.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Mrz\fast-edge.cpp" />
-    <ClCompile Include="Mrz\genann.c">
-      <CompileAsWinRT>false</CompileAsWinRT>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Mrz\MrzRecognizer.cpp" />
     <ClCompile Include="NativeUtils.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
