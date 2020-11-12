@@ -1,4 +1,4 @@
-﻿<ToggleButton
+<ToggleButton
     x:Class="Unigram.Controls.PollOptionControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,6 +16,13 @@
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="ResultState">
                     <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="Correct">
+                        <VisualState.Setters>
+                            <Setter Target="TickFill.Foreground" Value="{ThemeResource MessageHeaderBorderQuizCorrectBrush}"/>
+                            <Setter Target="Zero.Fill" Value="{ThemeResource MessageHeaderBorderQuizCorrectBrush}"/>
+                            <Setter Target="Votes.Foreground" Value="{ThemeResource MessageHeaderBorderQuizCorrectBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>                   
                     <VisualState x:Name="Wrong">
                         <VisualState.Setters>
                             <Setter Target="TickGlyph.Glyph" Value="&#xF13D;"/>
