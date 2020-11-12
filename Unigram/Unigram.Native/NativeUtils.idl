@@ -1,0 +1,21 @@
+namespace Unigram.Native
+{
+    [default_interface]
+    runtimeclass NativeUtils
+    {
+		static Int64 GetDirectorySize(String path);
+		static Int64 GetDirectorySize(String path, String filter);
+		static void CleanDirectory(String path, Int32 days);
+		static void Delete(String path);
+
+		static Int32 GetLastInputTime();
+
+		//[DefaultOverload]
+		//static Int32 GetDirectionality(String value);
+		//static Int32 GetDirectionality(char16 value);
+
+		static String GetCurrentCulture();
+
+		static Boolean IsMediaSupported();
+	}
+} // namespace Unigram.Native

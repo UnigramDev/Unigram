@@ -1,101 +1,110 @@
 #pragma once
+
+#include "PlaceholderImageHelper.g.h"
+
 #include <ppl.h>
 #include <wincodec.h>
 #include <Dwrite_1.h>
 #include <D2d1_3.h>
 #include <map>
-#include "Helpers\COMHelper.h"
 
-using namespace Microsoft::WRL;
-using namespace Microsoft::WRL::Wrappers;
-using namespace Windows::UI;
-using namespace Windows::Foundation;
-using namespace Windows::Foundation::Collections;
-using namespace Windows::Storage::Streams;
-using namespace Platform;
+#include <winrt/Windows.UI.h>
+#include <winrt/Windows.Storage.Streams.h>
 
-namespace Unigram
+using namespace concurrency;
+using namespace winrt::Windows::UI;
+using namespace winrt::Windows::Foundation::Collections;
+using namespace winrt::Windows::Storage::Streams;
+
+namespace winrt::Unigram::Native::implementation
 {
-	namespace Native
+	struct QrData {
+		int size = 0;
+		std::vector<bool> values; // size x size
+	};
+
+	struct PlaceholderImageHelper : PlaceholderImageHelperT<PlaceholderImageHelper>
 	{
-		struct QrData {
-			int size = 0;
-			std::vector<bool> values; // size x size
-		};
+	public:
+		PlaceholderImageHelper();
 
-		public ref class PlaceholderImageHelper sealed
+		//static PlaceholderImageHelper GetForCurrentView();
+
+		static winrt::Unigram::Native::PlaceholderImageHelper Current()
 		{
-		public:
-			static PlaceholderImageHelper^ GetForCurrentView();
+			auto lock = critical_section::scoped_lock(s_criticalSection);
 
-			static property PlaceholderImageHelper^ Current
-			{
-				PlaceholderImageHelper^ get() {
-					auto lock = s_criticalSection.Lock();
-
-					if (s_current == nullptr) {
-						s_current = ref new PlaceholderImageHelper();
-					}
-
-					return s_current;
-				}
+			if (s_current == nullptr) {
+				s_current = winrt::make_self<PlaceholderImageHelper>();
 			}
 
-			void DrawWebP(_In_ Platform::String^ fileName, _In_ IRandomAccessStream^ randomAccessStream);
+			return s_current.as<winrt::Unigram::Native::PlaceholderImageHelper>();
+		}
 
-			Windows::Foundation::Size DrawSvg(_In_ String^ path, _In_ Color foreground, IRandomAccessStream^ randomAccessStream);
-			void DrawQr(_In_ String^ data, _In_ Color foreground, _In_ Color background, IRandomAccessStream^ randomAccessStream);
-			void DrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
-			void DrawGlyph(_In_ String^ glyph, _In_ Color clear, IRandomAccessStream^ randomAccessStream);
-			void DrawSavedMessages(_In_ Color clear, IRandomAccessStream^ randomAccessStream);
-			void DrawDeletedUser(_In_ Color clear, IRandomAccessStream^ randomAccessStream);
-			void DrawProfilePlaceholder(_In_ Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
-			void DrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
+		void DrawWebP(hstring fileName, IRandomAccessStream randomAccessStream);
 
-		internal:
-			PlaceholderImageHelper();
+		Windows::Foundation::Size DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream);
+		void DrawQr(hstring data, _In_ Color foreground, _In_ Color background, IRandomAccessStream randomAccessStream);
+		void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
 
-		private:
-			HRESULT InternalDrawSvg(_In_ String^ data, _In_ Color foreground, _In_ IRandomAccessStream^ randomAccessStream, _Out_ Windows::Foundation::Size& size);
-			HRESULT InternalDrawQr(_In_ String^ data, _In_ Color foreground, _In_ Color background, _In_ IRandomAccessStream^ randomAccessStream);
-			HRESULT InternalDrawIdenticon(_In_ IVector<uint8>^ hash, _In_ int side, _In_ IRandomAccessStream^ randomAccessStream);
-			HRESULT InternalDrawGlyph(String^ glyph, Color clear, IRandomAccessStream^ randomAccessStream);
-			HRESULT InternalDrawSavedMessages(Color clear, IRandomAccessStream^ randomAccessStream);
-			HRESULT InternalDrawDeletedUser(Color clear, IRandomAccessStream^ randomAccessStream);
-			HRESULT InternalDrawProfilePlaceholder(Color clear, _In_ Platform::String^ text, _In_ IRandomAccessStream^ randomAccessStream);
-			HRESULT InternalDrawThumbnailPlaceholder(_In_ Platform::String^ fileName, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
-			HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream^ randomAccessStream);
-			HRESULT SaveImageToStream(_In_ ID2D1Image* image, _In_ REFGUID wicFormat, _In_ IRandomAccessStream^ randomAccessStream);
-			HRESULT MeasureText(_In_ const wchar_t* text, _In_ IDWriteTextFormat* format, _Out_ DWRITE_TEXT_METRICS* textMetrics);
-			HRESULT CreateDeviceIndependentResources();
-			HRESULT CreateDeviceResources();
+		void DrawGlyph(hstring glyph, _In_ Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
+		void DrawSavedMessages(_In_ Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
+		void DrawDeletedUser(_In_ Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
+		void DrawProfilePlaceholder(hstring text, _In_ Color top, _In_ Color bottom, _In_ IRandomAccessStream randomAccessStream);
+			
+		void DrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 
-		private:
-			static std::map<int, WeakReference> s_windowContext;
+	//internal:
+	//	PlaceholderImageHelper();
 
-			static CriticalSection s_criticalSection;
-			static PlaceholderImageHelper^ s_current;
+	private:
+		//PlaceholderImageHelper();
 
-			ComPtr<ID2D1Factory1> m_d2dFactory;
-			ComPtr<ID2D1Device> m_d2dDevice;
-			ComPtr<ID2D1DeviceContext2> m_d2dContext;
-			D3D_FEATURE_LEVEL m_featureLevel;
-			ComPtr<IWICImagingFactory2> m_wicFactory;
-			ComPtr<IWICImageEncoder> m_imageEncoder;
-			ComPtr<IDWriteFactory1> m_dwriteFactory;
-			ComPtr<IDWriteFontCollectionLoader> m_customLoader;
-			ComPtr<IDWriteFontCollection> m_fontCollection;
-			ComPtr<IDWriteTextFormat> m_symbolFormat;
-			ComPtr<IDWriteTextFormat> m_mdl2Format;
-			ComPtr<IDWriteTextFormat> m_textFormat;
-			ComPtr<ID2D1SolidColorBrush> m_textBrush;
-			ComPtr<ID2D1SolidColorBrush> m_black;
-			ComPtr<ID2D1SolidColorBrush> m_transparent;
-			std::vector<ComPtr<ID2D1SolidColorBrush>> m_identiconBrushes;
-			ComPtr<ID2D1Effect> m_gaussianBlurEffect;
-			ComPtr<ID2D1Bitmap1> m_targetBitmap;
-			CriticalSection m_criticalSection;
-		};
+		HRESULT InternalDrawSvg(hstring data, _In_ Color foreground, _In_ IRandomAccessStream randomAccessStream, _Out_ Windows::Foundation::Size& size);
+		HRESULT InternalDrawQr(hstring data, _In_ Color foreground, _In_ Color background, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawGlyph(hstring glyph, Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawSavedMessages(Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawDeletedUser(Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawProfilePlaceholder(hstring text, Color top, _In_ Color bottom, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT SaveImageToStream(_In_ ID2D1Image* image, _In_ REFGUID wicFormat, _In_ IRandomAccessStream randomAccessStream);
+		HRESULT MeasureText(_In_ const wchar_t* text, _In_ IDWriteTextFormat* format, _Out_ DWRITE_TEXT_METRICS* textMetrics);
+		HRESULT CreateDeviceIndependentResources();
+		HRESULT CreateDeviceResources();
 
-	}
-}
+	private:
+		//static std::map<int, WeakReference> s_windowContext;
+
+		static critical_section s_criticalSection;
+		static winrt::com_ptr<PlaceholderImageHelper> s_current;
+
+		winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
+		winrt::com_ptr<ID2D1Device> m_d2dDevice;
+		winrt::com_ptr<ID2D1DeviceContext2> m_d2dContext;
+		D3D_FEATURE_LEVEL m_featureLevel;
+		winrt::com_ptr<IWICImagingFactory2> m_wicFactory;
+		winrt::com_ptr<IWICImageEncoder> m_imageEncoder;
+		winrt::com_ptr<IDWriteFactory1> m_dwriteFactory;
+		winrt::com_ptr<IDWriteFontCollectionLoader> m_customLoader;
+		winrt::com_ptr<IDWriteFontCollection> m_fontCollection;
+		winrt::com_ptr<IDWriteTextFormat> m_symbolFormat;
+		winrt::com_ptr<IDWriteTextFormat> m_mdl2Format;
+		winrt::com_ptr<IDWriteTextFormat> m_textFormat;
+		winrt::com_ptr<ID2D1SolidColorBrush> m_textBrush;
+		winrt::com_ptr<ID2D1SolidColorBrush> m_black;
+		winrt::com_ptr<ID2D1SolidColorBrush> m_transparent;
+		std::vector<winrt::com_ptr<ID2D1SolidColorBrush>> m_identiconBrushes;
+		winrt::com_ptr<ID2D1Effect> m_gaussianBlurEffect;
+		winrt::com_ptr<ID2D1Bitmap1> m_targetBitmap;
+		critical_section m_criticalSection;
+	};
+} // namespace winrt::Unigram::Native::implementation
+
+namespace winrt::Unigram::Native::factory_implementation
+{
+	struct PlaceholderImageHelper : PlaceholderImageHelperT<PlaceholderImageHelper, implementation::PlaceholderImageHelper>
+	{
+	};
+} // namespace winrt::Unigram::Native::factory_implementation

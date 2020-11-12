@@ -1,0 +1,21 @@
+namespace Unigram.Native
+{
+	[default_interface]
+	runtimeclass PlaceholderImageHelper
+	{
+		static PlaceholderImageHelper Current{ get; };
+
+		void DrawWebP(String fileName, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+
+		Windows.Foundation.Size DrawSvg(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawQr(String data, Windows.UI.Color foreground, Windows.UI.Color background, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawIdenticon(Windows.Foundation.Collections.IVector<byte> hash, Int32 side, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+
+		void DrawGlyph(String glyph, Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawSavedMessages(Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawDeletedUser(Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawProfilePlaceholder(String text, Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+
+		void DrawThumbnailPlaceholder(String fileName, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+	}
+} // namespace Unigram.Native

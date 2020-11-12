@@ -2,8 +2,6 @@
 
 #include <string>
 
-using namespace Platform;
-
 inline std::string from_wstring(const wchar_t* begin, size_t size) {
 	size_t result_len = 0;
 	for (size_t i = 0; i < size; i++) {
@@ -54,9 +52,9 @@ inline std::string from_wstring(const wchar_t* begin, size_t size) {
 	return result;
 }
 
-inline std::string string_to_unmanaged(String^ str) {
-	if (!str) {
-		return std::string();
-	}
-	return from_wstring(str->Data(), str->Length());
+inline std::string string_to_unmanaged(winrt::hstring str) {
+	//if (!str) {
+	//	return std::string();
+	//}
+	return from_wstring(str.data(), str.size());
 }

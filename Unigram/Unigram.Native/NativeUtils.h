@@ -1,48 +1,45 @@
 #pragma once
 
+#include "NativeUtils.g.h"
+
 #include <iostream>  
 #include <iomanip>
 #include <sstream>
 #include <vector>
-#include <windows.h>
-#include <ppltasks.h>
 
-#include "Shlwapi.h"
+using namespace winrt::Windows::Foundation;
 
-using namespace Platform;
-using namespace Windows::Foundation;
-using namespace Windows::Foundation::Metadata;
-
-namespace Unigram
+namespace winrt::Unigram::Native::implementation
 {
-	namespace Native
+	struct NativeUtils : NativeUtilsT<NativeUtils>
 	{
+	public:
+		static int64_t GetDirectorySize(hstring path);
+		static int64_t GetDirectorySize(hstring path, hstring filter);
+		static void CleanDirectory(hstring path, int days);
+		static void Delete(hstring path);
 
-		public ref class NativeUtils sealed
-		{
-		public:
-			static int64 GetDirectorySize(String^ path);
-			static int64 GetDirectorySize(String^ path, String^ filter);
-			static void CleanDirectory(String^ path, int days);
-			static void Delete(String^ path);
+		static int32_t GetLastInputTime();
 
-			static int32 GetLastInputTime();
+		//[DefaultOverload]
+		//static int32_t GetDirectionality(hstring value);
+		//static int32_t GetDirectionality(char16 value);
 
-			[DefaultOverload]
-			static int32 GetDirectionality(String^ value);
-			static int32 GetDirectionality(char16 value);
+		static hstring GetCurrentCulture();
 
-			static String^ GetCurrentCulture();
+		static bool IsMediaSupported();
 
-			static bool IsMediaSupported();
+	private:
+		static uint64_t GetDirectorySizeInternal(const std::wstring &path, const std::wstring &filter, uint64_t size);
+		static void CleanDirectoryInternal(const std::wstring &path, int days);
+		static bool IsBrowsePath(const std::wstring& path);
+		static ULONGLONG FileTimeToSeconds(FILETIME& ft);
+	};
+} // namespace winrt::Unigram::Native::implementation
 
-			static IAsyncAction^ UpdateToast(String^ caption, String^ message, String^ session, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, bool canReply);
-
-		private:
-			static uint64_t GetDirectorySizeInternal(const std::wstring &path, const std::wstring &filter, uint64_t size);
-			static void CleanDirectoryInternal(const std::wstring &path, int days);
-			static bool IsBrowsePath(const std::wstring& path);
-			static ULONGLONG FileTimeToSeconds(FILETIME& ft);
-		};
-	}
-}
+namespace winrt::Unigram::Native::factory_implementation
+{
+	struct NativeUtils : NativeUtilsT<NativeUtils, implementation::NativeUtils>
+	{
+	};
+} // namespace winrt::Unigram::Native::factory_implementation
