@@ -74,6 +74,7 @@ namespace Unigram.Views
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
 
+        private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
 
         private bool _unloaded;
@@ -83,6 +84,7 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<MainViewModel>();
 
+            _protoService = ViewModel.ProtoService;
             _cacheService = ViewModel.CacheService;
 
             SettingsView.DataContext = ViewModel.Settings;
@@ -240,9 +242,10 @@ namespace Unigram.Views
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatActions(chat, ViewModel.ProtoService.GetChatActions(chat.Id)));
         }
 
-        public void Handle(UpdateUserStatus update)
+        public async void Handle(UpdateUserStatus update)
         {
-            if (_cacheService.TryGetChatFromUser(update.UserId, out Chat result))
+            var response = await _protoService.SendAsync(new CreatePrivateChat(update.UserId, true));
+            if (response is Chat result)
             {
                 var user = _cacheService.GetUser(update.UserId);
                 if (user != null && user.Type is UserTypeRegular && user.Id != _cacheService.Options.MyId && user.Id != 777000)
@@ -262,9 +265,10 @@ namespace Unigram.Views
             Handle(update.ChatId, update.MessageId, chat => chat.LastMessage.Content = update.NewContent, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
         }
 
-        public void Handle(UpdateSecretChat update)
+        public async void Handle(UpdateSecretChat update)
         {
-            if (_cacheService.TryGetChatFromSecret(update.SecretChat.Id, out Chat result))
+            var response = await _protoService.SendAsync(new CreateSecretChat(update.SecretChat.Id));
+            if (response is Chat result)
             {
                 Handle(result.Id, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
             }
