@@ -47,13 +47,9 @@ namespace Unigram.Controls
 
             Tick.Visibility = (results && correct) || option.IsChosen ? Visibility.Visible : Visibility.Collapsed;
 
-            if (option.IsChosen && poll.Type is PollTypeQuiz && !correct)
+            if (option.IsChosen && poll.Type is PollTypeQuiz)
             {
-                VisualStateManager.GoToState(LayoutRoot, "Wrong", false);
-            }
-            else if (option.IsChosen && poll.Type is PollTypeQuiz && correct)
-            {
-                VisualStateManager.GoToState(LayoutRoot, "Correct", false);
+                VisualStateManager.GoToState(LayoutRoot, correct ? "Correct" : "Wrong", false);
             }
             else
             {
