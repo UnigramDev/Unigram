@@ -11,11 +11,10 @@ namespace Unigram.Common
         private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             var triggers = GetTriggers(sender as ItemsControl);
-            if (triggers?.Owner != null)
-            {
-                var owner = triggers.Owner;
-                var reference = GetReference(owner);
 
+            var reference = GetReference(triggers?.Owner);
+            if (reference != null)
+            {
                 if (reference.Orientation == Orientation.Horizontal && Math.Truncate(e.PreviousSize.Width) != Math.Truncate(e.NewSize.Width))
                 {
                     SetActive(triggers, reference);
@@ -45,13 +44,13 @@ namespace Unigram.Common
 
             var owner = triggers.Owner;
 
-            var paddingNear = reference.Orientation == Orientation.Horizontal
-                ? owner.Padding.Left
-                : owner.Padding.Top;
+            //var paddingNear = reference.Orientation == Orientation.Horizontal
+            //    ? owner.Padding.Left
+            //    : owner.Padding.Top;
 
-            var paddingFar = reference.Orientation == Orientation.Horizontal
-                ? owner.Padding.Right
-                : owner.Padding.Bottom;
+            //var paddingFar = reference.Orientation == Orientation.Horizontal
+            //    ? owner.Padding.Right
+            //    : owner.Padding.Bottom;
 
             var parentLength = reference.Orientation == Orientation.Horizontal
                 ? owner.ItemsPanelRoot.ActualWidth

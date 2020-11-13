@@ -214,8 +214,11 @@ namespace Unigram.Services.Factories
             {
                 try
                 {
-                    var buffer = await FileIO.ReadBufferAsync(file);
-                    var webp = WebPImage.DecodeFromBuffer(buffer);
+                    //var buffer = await FileIO.ReadBufferAsync(file);
+                    //var webp = WebPImage.DecodeFromBuffer(buffer);
+                    
+                    // This isn't supposed to work.
+                    var webp = PlaceholderHelper.GetWebPFrame(file.Path) as Windows.UI.Xaml.Media.Imaging.BitmapImage;
 
                     var width = webp.PixelWidth;
                     var height = webp.PixelHeight;
@@ -241,11 +244,14 @@ namespace Unigram.Services.Factories
                 var props = await file.Properties.GetMusicPropertiesAsync();
                 var duration = (int)props.Duration.TotalSeconds;
 
+                var title = props.Title;
+                var performer = string.IsNullOrEmpty(props.AlbumArtist) ? props.Artist : props.AlbumArtist;
+
                 return new InputMessageFactory
                 {
                     InputFile = generated,
                     Type = new FileTypeAudio(),
-                    Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, duration, props.Title, props.AlbumArtist, caption)
+                    Delegate = (inputFile, caption) => new InputMessageAudio(inputFile, thumbnail, duration, title, performer, caption)
                 };
             }
 

@@ -83,7 +83,7 @@ namespace Unigram.Controls
 
                 var send = false;
 
-                if (ViewModel.Settings.IsSendByEnterEnabled)
+                if (ViewModel != null && ViewModel.Settings.IsSendByEnterEnabled)
                 {
                     send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                 }
