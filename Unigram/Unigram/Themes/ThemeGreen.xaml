@@ -70,8 +70,8 @@
             <Color x:Key="MessageHeaderBorderColor">#429BDB</Color>
             <Color x:Key="MessageHeaderBorderOutColor">#65B9F4</Color>
 
-            <Color x:Key="MessagePollCorrectBrush">#5DC452</Color>
-            <Color x:Key="MessagePollWrongBrush">#ED5050</Color>
+            <Color x:Key="MessagePollCorrectColor">#5DC452</Color>
+            <Color x:Key="MessagePollWrongColor">#ED5050</Color>
 
             <Color x:Key="MessageMediaForegroundColor">#FFFFFF</Color>
             <Color x:Key="MessageMediaForegroundOutColor">#FFFFFF</Color>
@@ -96,8 +96,8 @@
             <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource MessageSubtleForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MessageHeaderForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderColor}" />
-            <SolidColorBrush x:Key="MessagePollRightBrush" Color="{ThemeResource MessagePollRightBrush}"/>
-            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessageRightWrongBrush">
+            <SolidColorBrush x:Key="MessagePollRightBrush" Color="{ThemeResource MessagePollRightColor}"/>
+            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessageRightWrongColor">
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundColor}" />
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundColor}" />
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MessageOverlayBackgroundColor}" />
@@ -1305,8 +1305,8 @@
             <Color x:Key="MessageHeaderBorderColor">#37A4DE</Color>
             <Color x:Key="MessageHeaderBorderOutColor">#5DC452</Color>
 
-            <Color x:Key="MessagePollRightBrush">#5DC452</Color>
-            <Color x:Key="MessagePollWrongBrush">#DD5849</Color>
+            <Color x:Key="MessagePollRightColor">#5DC452</Color>
+            <Color x:Key="MessagePollWrongColor">#DD5849</Color>
 
             <Color x:Key="MessageMediaForegroundColor">#FFFFFF</Color>
             <Color x:Key="MessageMediaForegroundOutColor">#F0FDDF</Color>
@@ -1331,8 +1331,8 @@
             <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource MessageSubtleForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MessageHeaderForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderColor}" />
-            <SolidColorBrush x:Key="MessagePollRightBrush" Color="{ThemeResource MessagePollRightBrush}"/>
-            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessageRightWrongBrush">
+            <SolidColorBrush x:Key="MessagePollRightBrush" Color="{ThemeResource MessagePollRightColor}"/>
+            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessageRightWrongColor">
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundColor}" />
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundColor}" />
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MessageOverlayBackgroundColor}" />
