@@ -18,17 +18,17 @@
                     <VisualState x:Name="Normal"/>
                     <VisualState x:Name="Correct">
                         <VisualState.Setters>
-                            <Setter Target="TickFill.Foreground" Value="{ThemeResource MessageHeaderBorderQuizCorrectBrush}"/>
-                            <Setter Target="Zero.Fill" Value="{ThemeResource MessageHeaderBorderQuizCorrectBrush}"/>
-                            <Setter Target="Votes.Foreground" Value="{ThemeResource MessageHeaderBorderQuizCorrectBrush}"/>
+                            <Setter Target="TickFill.Foreground" Value="{ThemeResource MessagePollCorrectBrush}"/>
+                            <Setter Target="Zero.Fill" Value="{ThemeResource MessagePollCorrectBrush}"/>
+                            <Setter Target="Votes.Foreground" Value="{ThemeResource MessagePollCorrectBrush}"/>
                         </VisualState.Setters>
                     </VisualState>                   
                     <VisualState x:Name="Wrong">
                         <VisualState.Setters>
                             <Setter Target="TickGlyph.Glyph" Value="&#xF13D;"/>
-                            <Setter Target="TickFill.Foreground" Value="Red"/>
-                            <Setter Target="Zero.Fill" Value="Red"/>
-                            <Setter Target="Votes.Foreground" Value="Red"/>
+                            <Setter Target="TickFill.Foreground" Value="{ThemeResource MessagePollWrongBrush}"/>
+                            <Setter Target="Zero.Fill" Value="{ThemeResource MessagePollWrongBrush}"/>
+                            <Setter Target="Votes.Foreground" Value="{ThemeResource MessagePollWrongBrush}"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
