@@ -20,7 +20,7 @@ namespace Unigram.Selectors
                     return DefaultTemplate;
                 }
 
-                if (wallpaper.Name == Constants.WallpaperLocalFileName || wallpaper.Document != null)
+                if ((wallpaper.Id == Constants.WallpaperLocalId && wallpaper.Name != Constants.WallpaperColorFileName) || wallpaper.Document != null)
                 {
                     return ItemTemplate;
                 }

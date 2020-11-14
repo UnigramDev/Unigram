@@ -55,7 +55,7 @@ namespace Unigram.Services.SettingsLegacy
 
         public IPropertyMapping Converters { get; set; } = new JsonMapping();
 
-        private static Dictionary<string, IDictionary<string, object>> _keys = new Dictionary<string, IDictionary<string, object>>();
+        private static readonly Dictionary<string, IDictionary<string, object>> _keys = new Dictionary<string, IDictionary<string, object>>();
 
         private SettingsService(IDictionary<string, object> values)
         {
@@ -80,9 +80,14 @@ namespace Unigram.Services.SettingsLegacy
         public void Remove(string key)
         {
             if (Values.ContainsKey(key))
+            {
                 Values.Remove(key);
+            }
+
             if (_keys.ContainsKey(key))
+            {
                 _keys.Remove(key);
+            }
         }
 
         public void Clear(bool deleteSubContainers = true)
@@ -124,7 +129,9 @@ namespace Unigram.Services.SettingsLegacy
                     }
                 }
                 else
+                {
                     container["Value"] = converted;
+                }
             }
             if ((type != typeof(string) && !type.GetTypeInfo().IsValueType) || (type != typeof(T)))
             {

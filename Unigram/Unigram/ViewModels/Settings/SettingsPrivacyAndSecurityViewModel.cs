@@ -68,11 +68,11 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
-            ProtoService.Send(new GetBlockedUsers(0, 1), result =>
+            ProtoService.Send(new GetBlockedMessageSenders(0, 1), result =>
             {
-                if (result is Telegram.Td.Api.Users users)
+                if (result is MessageSenders senders)
                 {
-                    BeginOnUIThread(() => BlockedUsers = users.TotalCount);
+                    BeginOnUIThread(() => BlockedUsers = senders.TotalCount);
                 }
             });
 
@@ -166,6 +166,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsArchiveAndMuteEnabled
+        {
+            get
+            {
+                return ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
+            }
+            set
+            {
+                ProtoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool IsSecretPreviewsEnabled
         {
             get
@@ -185,7 +198,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (update.Name.Equals("disable_top_chats"))
             {
-                BeginOnUIThread(() => RaisePropertyChanged(() => IsContactsSuggestEnabled));
+                BeginOnUIThread(() => RaisePropertyChanged(nameof(IsContactsSuggestEnabled)));
             }
         }
 
@@ -196,7 +209,7 @@ namespace Unigram.ViewModels.Settings
                 var confirm = await MessagePopup.ShowAsync(Strings.Resources.SuggestContactsAlert, Strings.Resources.AppName, Strings.Resources.MuteDisable, Strings.Resources.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
-                    RaisePropertyChanged(() => IsContactsSuggestEnabled);
+                    RaisePropertyChanged(nameof(IsContactsSuggestEnabled));
                     return;
                 }
             }

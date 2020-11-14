@@ -73,6 +73,8 @@ namespace Unigram.Controls.Messages
                     return UpdateCustomServiceAction(message, customServiceAction, active);
                 case MessageGameScore gameScore:
                     return UpdateGameScore(message, gameScore, active);
+                case MessageProximityAlertTriggered proximityAlertTriggered:
+                    return UpdateProximityAlertTriggered(message, proximityAlertTriggered, active);
                 case MessagePassportDataSent passportDataSent:
                     return UpdatePassportDataSent(message, passportDataSent, active);
                 case MessagePaymentSuccessful paymentSuccessful:
@@ -91,7 +93,7 @@ namespace Unigram.Controls.Messages
                     return UpdateExpiredVideo(message, expiredVideo, active);
                 // Local types:
                 case MessageChatEvent chatEvent:
-                    switch (chatEvent.Event.Action)
+                    switch (chatEvent.Action)
                     {
                         case ChatEventSignMessagesToggled signMessagesToggled:
                             return UpdateSignMessagesToggled(message, signMessagesToggled, active);
@@ -108,13 +110,13 @@ namespace Unigram.Controls.Messages
                         case ChatEventMessageUnpinned messageUnpinned:
                             return UpdateMessageUnpinned(message, messageUnpinned, active);
                         case ChatEventMessageDeleted messageDeleted:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageDeleted.Message), active) : UpdateMessageDeleted(message, messageDeleted, active);
+                            return UpdateMessageDeleted(message, messageDeleted, active);
                         case ChatEventMessageEdited messageEdited:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messageEdited.NewMessage), active) : UpdateMessageEdited(message, messageEdited, active);
+                            return UpdateMessageEdited(message, messageEdited, active);
                         case ChatEventDescriptionChanged descriptionChanged:
                             return UpdateDescriptionChanged(message, descriptionChanged, active);
                         case ChatEventMessagePinned messagePinned:
-                            return chatEvent.IsFull ? GetEntities(new MessageViewModel(message.ProtoService, message.PlaybackService, message.Delegate, messagePinned.Message), active) : UpdateMessagePinned(message, messagePinned, active);
+                            return UpdateMessagePinned(message, messagePinned, active);
                         case ChatEventUsernameChanged usernameChanged:
                             return UpdateUsernameChanged(message, usernameChanged, active);
                         case ChatEventPollStopped pollStopped:
@@ -122,7 +124,7 @@ namespace Unigram.Controls.Messages
                         case ChatEventSlowModeDelayChanged slowModeDelayChanged:
                             return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
                         default:
-                            return (null, null);
+                            return (string.Empty, null);
                     }
                 case MessageHeaderDate headerDate:
                     return UpdateHeaderDate(message, headerDate, active);
@@ -137,14 +139,14 @@ namespace Unigram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                return (string.Format(Strings.Resources.MessageScheduledOn, DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate))), null);
+                return (string.Format(Strings.Resources.MessageScheduledOn, BindConvert.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate))), null);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
                 return (Strings.Resources.MessageScheduledUntilOnline, null);
             }
 
-            return (DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(message.Date)), null);
+            return (BindConvert.DayGrouping(Utils.UnixTimestampToDateTime(message.Date)), null);
         }
 
         #endregion
@@ -156,7 +158,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (slowModeDelayChanged.NewSlowModeDelay > 0)
             {
@@ -186,7 +188,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (signMessagesToggled.SignMessages)
             {
@@ -205,7 +207,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (stickerSetChanged.NewStickerSetId == 0)
             {
@@ -224,7 +226,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (invitesToggled.CanInviteUsers)
             {
@@ -243,7 +245,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (isAllHistoryAvailableToggled.IsAllHistoryAvailable)
             {
@@ -262,7 +264,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (message.IsChannelPost)
             {
@@ -299,7 +301,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (locationChanged.NewLocation != null)
             {
@@ -318,7 +320,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             content = ReplaceWithLink(Strings.Resources.EventLogUnpinnedMessages, "un1", fromUser, ref entities);
 
@@ -330,7 +332,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             content = ReplaceWithLink(Strings.Resources.EventLogDeletedMessages, "un1", fromUser, ref entities);
 
@@ -342,7 +344,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (messageEdited.NewMessage.Content is MessageText)
             {
@@ -361,7 +363,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (message.IsChannelPost)
             {
@@ -380,7 +382,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             content = ReplaceWithLink(Strings.Resources.EventLogPinnedMessages, "un1", fromUser, ref entities);
 
@@ -392,7 +394,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (string.IsNullOrEmpty(usernameChanged.NewUsername))
             {
@@ -411,9 +413,9 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
-            var poll = message.Content as MessagePoll;
+            var poll = pollStopped.Message.Content as MessagePoll;
             if (poll.Poll.Type is PollTypeRegular)
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogStopPoll, "un1", fromUser, ref entities);
@@ -439,7 +441,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                content = ReplaceWithLink(Strings.Resources.ActionCreateGroup, "un1", message.GetSenderUser(), ref entities);
+                content = ReplaceWithLink(Strings.Resources.ActionCreateGroup, "un1", message.GetSender(), ref entities);
             }
 
             return (content, entities);
@@ -456,12 +458,12 @@ namespace Unigram.Controls.Messages
                 singleUserId = chatAddMembers.MemberUserIds[0];
             }
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
             if (singleUserId != 0)
             {
                 var whoUser = message.ProtoService.GetUser(singleUserId);
-                if (singleUserId == message.SenderUserId)
+                if (message.Sender is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
                 {
                     var chat = message.GetChat();
                     if (chat == null)
@@ -545,7 +547,7 @@ namespace Unigram.Controls.Messages
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionAddUser, "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionAddUser, "un1", fromUser, ref entities);
                     content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ProtoService, ref entities);
                 }
             }
@@ -561,17 +563,23 @@ namespace Unigram.Controls.Messages
             var chat = message.GetChat();
             if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
-                content = Strings.Resources.ActionChannelChangedPhoto;
+                content = chatChangePhoto.Photo.Animation != null
+                    ? Strings.Resources.ActionChannelChangedVideo
+                    : Strings.Resources.ActionChannelChangedPhoto;
             }
             else
             {
                 if (message.IsOutgoing)
                 {
-                    content = Strings.Resources.ActionYouChangedPhoto;
+                    content = chatChangePhoto.Photo.Animation != null
+                        ? Strings.Resources.ActionYouChangedVideo
+                        : Strings.Resources.ActionYouChangedPhoto;
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionChangedPhoto, "un1", message.GetSenderUser(), ref entities);
+                    content = chatChangePhoto.Photo.Animation != null
+                        ? ReplaceWithLink(Strings.Resources.ActionChangedVideo, "un1", message.GetSender(), ref entities)
+                        : ReplaceWithLink(Strings.Resources.ActionChangedPhoto, "un1", message.GetSender(), ref entities);
                 }
             }
 
@@ -596,7 +604,7 @@ namespace Unigram.Controls.Messages
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionChangedTitle.Replace("un2", chatChangeTitle.Title), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionChangedTitle.Replace("un2", chatChangeTitle.Title), "un1", message.GetSender(), ref entities);
                 }
             }
 
@@ -608,9 +616,9 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var fromUser = message.GetSenderUser();
+            var fromUser = message.GetSender();
 
-            if (chatDeleteMember.UserId == message.SenderUserId)
+            if (message.Sender is MessageSenderUser senderUser && chatDeleteMember.UserId == senderUser.UserId)
             {
                 if (message.IsOutgoing)
                 {
@@ -665,9 +673,9 @@ namespace Unigram.Controls.Messages
                 {
                     content = Strings.Resources.ActionYouRemovedPhoto;
                 }
-                else
+                else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionRemovedPhoto, "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionRemovedPhoto, "un1", senderUser, ref entities);
                 }
             }
 
@@ -683,9 +691,9 @@ namespace Unigram.Controls.Messages
             {
                 content = Strings.Resources.ActionInviteYou;
             }
-            else
+            else if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
             {
-                content = ReplaceWithLink(Strings.Resources.ActionInviteUser, "un1", message.GetSenderUser(), ref entities);
+                content = ReplaceWithLink(Strings.Resources.ActionInviteUser, "un1", senderUser, ref entities);
             }
 
             return (content, entities);
@@ -704,7 +712,7 @@ namespace Unigram.Controls.Messages
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeChanged, "un1", Locale.FormatTtl(chatSetTtl.Ttl)), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeChanged, "un1", Locale.FormatTtl(chatSetTtl.Ttl)), "un1", message.GetSender(), ref entities);
                 }
             }
             else
@@ -715,7 +723,7 @@ namespace Unigram.Controls.Messages
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeRemoved, "un1"), "un1", message.GetSenderUser(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.MessageLifetimeRemoved, "un1"), "un1", message.GetSender(), ref entities);
                 }
             }
 
@@ -734,7 +742,12 @@ namespace Unigram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateContactRegistered(MessageViewModel message, MessageContactRegistered contactRegistered, bool active)
         {
-            return (string.Format(Strings.Resources.NotificationContactJoined, message.GetSenderUser().GetFullName()), null);
+            if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+            {
+                return (string.Format(Strings.Resources.NotificationContactJoined, senderUser.GetFullName()), null);
+            }
+
+            return (string.Empty, null);
         }
 
         private static (string, IList<TextEntity>) UpdateCustomServiceAction(MessageViewModel message, MessageCustomServiceAction customServiceAction, bool active)
@@ -750,27 +763,65 @@ namespace Unigram.Controls.Messages
             var game = GetGame(message);
             if (game == null)
             {
-                if (message.SenderUserId == message.ProtoService.Options.MyId)
+                if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
-                    content = string.Format(Strings.Resources.ActionYouScored, Locale.Declension("Points", gameScore.Score));
-                }
-                else
-                {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScored, Locale.Declension("Points", gameScore.Score)), "un1", message.GetSenderUser(), ref entities);
+                    if (senderUser.Id == message.ProtoService.Options.MyId)
+                    {
+                        content = string.Format(Strings.Resources.ActionYouScored, Locale.Declension("Points", gameScore.Score));
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScored, Locale.Declension("Points", gameScore.Score)), "un1", senderUser, ref entities);
+                    }
                 }
             }
             else
             {
-                if (message.SenderUserId == message.ProtoService.Options.MyId)
+                if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
                 {
-                    content = string.Format(Strings.Resources.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
-                }
-                else
-                {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScoredInGame, Locale.Declension("Points", gameScore.Score)), "un1", message.GetSenderUser(), ref entities);
+                    if (senderUser.Id == message.ProtoService.Options.MyId)
+                    {
+                        content = string.Format(Strings.Resources.ActionYouScoredInGame, Locale.Declension("Points", gameScore.Score));
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserScoredInGame, Locale.Declension("Points", gameScore.Score)), "un1", senderUser, ref entities);
+                    }
                 }
 
                 content = ReplaceWithLink(content, "un2", game, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+
+        private static (string, IList<TextEntity>) UpdateProximityAlertTriggered(MessageViewModel message, MessageProximityAlertTriggered proximityAlertTriggered, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            User traveler;
+            User watcher;
+
+            message.ProtoService.TryGetUser(proximityAlertTriggered.Traveler, out traveler);
+            message.ProtoService.TryGetUser(proximityAlertTriggered.Watcher, out watcher);
+
+            if (traveler != null && watcher != null)
+            {
+                if (traveler.Id == message.ProtoService.Options.MyId)
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinYouRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, ref entities);
+                }
+                else if (watcher.Id == message.ProtoService.Options.MyId)
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinOtherRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
+                    content = ReplaceWithLink(content, "un2", watcher, ref entities);
+                }
             }
 
             return (content, entities);
@@ -872,75 +923,80 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var sender = message.GetSenderUser();
-            var chat = message.GetChat();
+            var sender = message.GetSender();
 
             var reply = message.ReplyToMessage;
-
             if (reply == null)
             {
-                content = ReplaceWithLink(Strings.Resources.ActionPinnedNoText, "un1", sender ?? (BaseObject)chat, ref entities);
+                content = ReplaceWithLink(Strings.Resources.ActionPinnedNoText, "un1", sender, ref entities);
             }
             else
             {
                 if (reply.Content is MessageAudio)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedMusic, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedMusic, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageVideo)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedVideo, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedVideo, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageAnimation)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedGif, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedGif, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageVoiceNote)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedVoice, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedVoice, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageVideoNote)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedRound, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedRound, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageSticker)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedSticker, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedSticker, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageDocument)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedFile, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedFile, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageLocation location)
                 {
-                    content = ReplaceWithLink(location.LivePeriod > 0 ? Strings.Resources.ActionPinnedGeoLive : Strings.Resources.ActionPinnedGeo, "un1", sender ?? (BaseObject)chat, ref entities);
+                    if (location.LivePeriod > 0)
+                    {
+                        content = ReplaceWithLink(Strings.Resources.ActionPinnedGeoLive, "un1", sender, ref entities);
+                    }
+                    else
+                    {
+                        content = ReplaceWithLink(Strings.Resources.ActionPinnedGeo, "un1", sender, ref entities);
+                    }
                 }
                 else if (reply.Content is MessageVenue)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedGeo, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedGeo, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageContact)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedContact, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedContact, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessagePhoto)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedPhoto, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedPhoto, "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessagePoll poll)
                 {
                     if (poll.Poll.Type is PollTypeRegular)
                     {
-                        content = ReplaceWithLink(Strings.Resources.ActionPinnedPoll, "un1", sender ?? (BaseObject)chat, ref entities);
+                        content = ReplaceWithLink(Strings.Resources.ActionPinnedPoll, "un1", sender, ref entities);
                     }
                     else if (poll.Poll.Type is PollTypeQuiz)
                     {
-                        content = ReplaceWithLink(Strings.Resources.ActionPinnedQuiz, "un1", sender ?? (BaseObject)chat, ref entities);
+                        content = ReplaceWithLink(Strings.Resources.ActionPinnedQuiz, "un1", sender, ref entities);
                     }
                 }
                 else if (reply.Content is MessageGame game)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionPinnedGame, "\uD83C\uDFAE " + game.Game.Title), "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionPinnedGame, "\uD83C\uDFAE " + game.Game.Title), "un1", sender, ref entities);
                 }
                 else if (reply.Content is MessageText text)
                 {
@@ -950,11 +1006,11 @@ namespace Unigram.Controls.Messages
                         mess = mess.Substring(0, Math.Min(mess.Length, 20)) + "...";
                     }
 
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionPinnedText, mess), "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionPinnedText, mess), "un1", sender, ref entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionPinnedNoText, "un1", sender ?? (BaseObject)chat, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionPinnedNoText, "un1", sender, ref entities);
                 }
             }
 
@@ -972,7 +1028,7 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                content = ReplaceWithLink(Strings.Resources.ActionTakeScreenshoot, "un1", message.GetSenderUser(), ref entities);
+                content = ReplaceWithLink(Strings.Resources.ActionTakeScreenshoot, "un1", message.GetSender(), ref entities);
             }
 
             return (content, entities);

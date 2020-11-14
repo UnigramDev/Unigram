@@ -9,10 +9,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
+using Unigram.Entities;
 using Unigram.Native;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -20,6 +21,7 @@ using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
+using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -34,6 +36,17 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static async Task<StorageMedia> PickSingleMediaAsync(this FileOpenPicker picker)
+        {
+            var file = await picker.PickSingleFileAsync();
+            if (file == null)
+            {
+                return null;
+            }
+
+            return await StorageMedia.CreateAsync(file);
+        }
+
         public static Version ToVersion(this PackageVersion version)
         {
             return new Version(version.Major, version.Minor, version.Build, version.Revision);
@@ -252,8 +265,15 @@ namespace Unigram.Common
         /// <exception cref="InvalidOperationException"></exception>
         public static String MakeRelativePath(String fromPath, String toPath)
         {
-            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
-            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+            if (String.IsNullOrEmpty(fromPath))
+            {
+                throw new ArgumentNullException("fromPath");
+            }
+
+            if (String.IsNullOrEmpty(toPath))
+            {
+                throw new ArgumentNullException("toPath");
+            }
 
             Uri fromUri = new Uri(fromPath);
             Uri toUri = new Uri(toPath);
@@ -501,9 +521,13 @@ namespace Unigram.Common
             {
                 string[] parts = token.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 2)
+                {
                     queryDict[parts[0].Trim()] = WebUtility.UrlDecode(parts[1]).Trim();
+                }
                 else
+                {
                     queryDict[parts[0].Trim()] = "";
+                }
             }
             return queryDict;
         }
@@ -621,14 +645,6 @@ namespace Unigram.Common
             }
 
             return GetHyperlink(parent.ElementStart.Parent as TextElement);
-        }
-
-        public static void FocusMaybe2(this Control textBox, FocusState focusState)
-        {
-            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-            {
-                textBox.Focus(focusState);
-            }
         }
 
         public static bool IsEmpty<T>(this IList<T> list)
@@ -750,7 +766,7 @@ namespace Unigram.Common
         }
 
 
-        public static async Task UpdateLayoutAsync(this FrameworkElement element)
+        public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = true)
         {
             var tcs = new TaskCompletionSource<object>();
 
@@ -758,7 +774,12 @@ namespace Unigram.Common
             try
             {
                 element.LayoutUpdated += layoutUpdated;
-                element.UpdateLayout();
+
+                if (update)
+                {
+                    element.UpdateLayout();
+                }
+
                 await tcs.Task;
             }
             finally
@@ -881,6 +902,11 @@ namespace Unigram.Common
             EventHandler<object> layoutUpdated = (s1, e1) => tcs.TrySetResult(null);
             EventHandler<ScrollViewerViewChangedEventArgs> viewChanged = (s, e) =>
             {
+                if (e.IsIntermediate)
+                {
+                    return;
+                }
+
                 scrollViewer.LayoutUpdated += layoutUpdated;
                 scrollViewer.UpdateLayout();
             };
@@ -918,7 +944,20 @@ namespace Unigram.Common
         public static WindowContext GetWindowWrapper(this INavigationService service)
             => WindowContext.ActiveWrappers.FirstOrDefault(x => x.NavigationServices.Contains(service));
 
-        public static IDispatcherWrapper GetDispatcherWrapper(this INavigationService service)
+        public static IDispatcherContext GetDispatcherWrapper(this INavigationService service)
             => service.GetWindowWrapper()?.Dispatcher;
+    }
+
+    public static class UriEx
+    {
+        public static Uri GetLocal(string path)
+        {
+            return new Uri("file:///" + Uri.EscapeUriString(path.Replace('\\', '/')));
+
+            var directory = Path.GetDirectoryName(path);
+            var file = Path.GetFileName(path);
+
+            return new Uri("file:///" + directory + "\\" + Uri.EscapeUriString(file));
+        }
     }
 }

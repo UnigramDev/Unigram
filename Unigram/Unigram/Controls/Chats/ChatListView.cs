@@ -1,5 +1,4 @@
 ﻿using LinqToVisualTree;
-using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +19,8 @@ namespace Unigram.Controls.Chats
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
 
-        private DisposableMutex _loadMoreLock = new DisposableMutex();
+        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+        private bool _loadingMore = false;
 
         public ChatListView()
         {
@@ -56,6 +56,8 @@ namespace Unigram.Controls.Chats
                 SetScrollMode();
             }
 
+            _loadingMore = true;
+
             using (await _loadMoreLock.WaitAsync())
             {
                 if (ScrollingHost.ScrollableHeight < 200 && Items.Count > 0)
@@ -68,6 +70,8 @@ namespace Unigram.Controls.Chats
                     await ViewModel.LoadNextSliceAsync(false, true);
                 }
             }
+
+            _loadingMore = false;
         }
 
         protected override void OnApplyTemplate()
@@ -80,6 +84,8 @@ namespace Unigram.Controls.Chats
 
         private async void Panel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            _loadingMore = true;
+
             using (await _loadMoreLock.WaitAsync())
             {
                 if (ScrollingHost.ScrollableHeight < 200)
@@ -95,24 +101,29 @@ namespace Unigram.Controls.Chats
                     }
                 }
             }
+
+            _loadingMore = false;
         }
 
         private async void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (ScrollingHost == null || ItemsStack == null || ViewModel == null)
+            if (ScrollingHost == null || ItemsStack == null || ViewModel == null || _loadingMore)
             {
                 return;
             }
+
+            _loadingMore = true;
 
             //if (ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
             //if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
             using (await _loadMoreLock.WaitAsync())
             {
-                if (ItemsStack.FirstCacheIndex == 0 && !e.IsIntermediate)
+                if (ItemsStack.FirstCacheIndex == 0 && ViewModel.IsLastSliceLoaded != true)
                 {
                     await ViewModel.LoadNextSliceAsync(true);
                 }
-                else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0 && !e.IsIntermediate)
+                //else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 200 && ScrollingHost.ScrollableHeight > 0)
+                else if (ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
                 {
                     if (ViewModel.IsFirstSliceLoaded != true)
                     {
@@ -125,6 +136,8 @@ namespace Unigram.Controls.Chats
                     }
                 }
             }
+
+            _loadingMore = false;
         }
 
         private ItemsUpdatingScrollMode? _pendingMode;
@@ -219,7 +232,7 @@ namespace Unigram.Controls.Chats
                 await this.ScrollIntoViewAsync(item, direction);
 
                 // this time the item shouldn't be null again
-                selectorItem = (SelectorItem)ContainerFromItem(item);
+                selectorItem = ContainerFromItem(item) as SelectorItem;
                 iter--;
             }
 
@@ -232,6 +245,28 @@ namespace Unigram.Controls.Chats
             // calculate the position object in order to know how much to scroll to
             var transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
             var position = transform.TransformPoint(new Point(0, 0));
+
+            // If position is negative layout should still happen, 
+            // Lets wait for it.
+            if (position.Y < 0)
+            {
+                Logs.Logger.Debug(Logs.Target.Chat, "position.Y is negative, let's wait for layout");
+
+                // call task-based UpdateLayoutAsync to realize the item
+                await this.UpdateLayoutAsync(false);
+
+                // this time the item shouldn't be null again
+                selectorItem = ContainerFromItem(item) as SelectorItem;
+
+                if (selectorItem == null)
+                {
+                    Logs.Logger.Debug(Logs.Target.Chat, "selectorItem == null after layout, abort");
+                    return;
+                }
+
+                transform = selectorItem.TransformToVisual((UIElement)scrollViewer.Content);
+                position = transform.TransformPoint(new Point(0, 0));
+            }
 
             if (alignment == VerticalAlignment.Top)
             {
@@ -261,19 +296,21 @@ namespace Unigram.Controls.Chats
                 }
             }
 
-            // scroll to desired position with animation!
-            scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
-
             if (highlight)
             {
                 var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
-                if (bubble == null)
+                if (bubble != null)
                 {
-                    return;
+                    bubble.Highlight();
                 }
-
-                bubble.Highlight();
             }
+
+            // scroll to desired position with animation!
+            if (scrollViewer.ScrollableHeight > 0)
+            {
+                await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center);
+            }
+            //scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
         }
     }
 }

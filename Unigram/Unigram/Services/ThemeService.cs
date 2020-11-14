@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.Services.Settings;
@@ -27,9 +26,7 @@ namespace Unigram.Services
         Task<ThemeCustomInfo> DeserializeAsync(StorageFile file);
 
         Task InstallThemeAsync(StorageFile file);
-        Task SetThemeAsync(ThemeInfoBase info);
-
-        void Refresh();
+        Task SetThemeAsync(ThemeInfoBase info, bool apply);
     }
 
     public partial class ThemeService : IThemeService
@@ -38,32 +35,21 @@ namespace Unigram.Services
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        private readonly UISettings _uiSettings;
-
         public ThemeService(IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
             _settingsService = settingsService;
             _aggregator = aggregator;
-
-            _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
-        }
-
-        private void OnColorValuesChanged(UISettings sender, object args)
-        {
-            _aggregator.Publish(new UpdateSelectedBackground(true, _protoService.GetSelectedBackground(true)));
-            _aggregator.Publish(new UpdateSelectedBackground(false, _protoService.GetSelectedBackground(false)));
         }
 
         public Dictionary<string, string[]> GetMapping(TelegramTheme flags)
         {
-            return flags.HasFlag(TelegramTheme.Dark) ? _mappingDark : _mapping;
+            return flags == TelegramTheme.Dark ? _mappingDark : _mapping;
         }
 
         public Color GetDefaultColor(TelegramTheme flags, string key)
         {
-            var resources = flags.HasFlag(TelegramTheme.Dark) ? _defaultDark : _defaultLight;
+            var resources = flags == TelegramTheme.Dark ? _defaultDark : _defaultLight;
 
             while (resources.TryGetValue(key, out object value))
             {
@@ -190,7 +176,7 @@ namespace Unigram.Services
             var equals = installed.FirstOrDefault(x => x is ThemeCustomInfo custom && ThemeCustomInfo.Equals(custom, info));
             if (equals != null)
             {
-                await SetThemeAsync(equals);
+                await SetThemeAsync(equals, true);
                 return;
             }
 
@@ -200,78 +186,41 @@ namespace Unigram.Services
             var theme = await DeserializeAsync(result);
             if (theme != null)
             {
-                await SetThemeAsync(theme);
+                await SetThemeAsync(theme, true);
             }
         }
 
-        public async Task SetThemeAsync(ThemeInfoBase info)
+        public async Task SetThemeAsync(ThemeInfoBase info, bool apply)
         {
-            _settingsService.Appearance.RequestedTheme = info.Parent.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark;
+            if (apply)
+            {
+                _settingsService.Appearance.RequestedTheme = info.Parent;
+            }
 
             if (info is ThemeCustomInfo custom)
             {
-                _settingsService.Appearance.RequestedThemeType = TelegramThemeType.Custom;
-                _settingsService.Appearance.RequestedThemeCustom = custom.Path;
+                _settingsService.Appearance[info.Parent].Type = TelegramThemeType.Custom;
+                _settingsService.Appearance[info.Parent].Custom = custom.Path;
             }
             else if (info is ThemeAccentInfo accent)
             {
-                _settingsService.Appearance.RequestedThemeType = accent.Type;
+                _settingsService.Appearance[info.Parent].Type = accent.Type;
                 _settingsService.Appearance.Accents[accent.Type] = accent.AccentColor;
             }
             else
             {
-                _settingsService.Appearance.RequestedThemeType = info.Parent == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night;
+                _settingsService.Appearance[info.Parent].Type = info.Parent == TelegramTheme.Light ? TelegramThemeType.Classic : TelegramThemeType.Night;
             }
 
             var flags = _settingsService.Appearance.GetCalculatedElementTheme();
+            var theme = flags == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
 
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            if (theme != info.Parent && !apply)
             {
-                await window.Dispatcher.DispatchAsync(() =>
-                {
-                    Theme.Current.Update(info);
-
-                    window.UpdateTitleBar();
-
-                    if (window.Content is FrameworkElement element)
-                    {
-                        if (flags == element.RequestedTheme)
-                        {
-                            element.RequestedTheme = flags == ElementTheme.Dark
-                                ? ElementTheme.Light
-                                : ElementTheme.Dark;
-                        }
-
-                        element.RequestedTheme = flags;
-                    }
-                });
+                return;
             }
 
-            _aggregator.Publish(new UpdateSelectedBackground(true, _protoService.GetSelectedBackground(true)));
-            _aggregator.Publish(new UpdateSelectedBackground(false, _protoService.GetSelectedBackground(false)));
-        }
-
-        public async void Refresh()
-        {
-            var flags = _settingsService.Appearance.RequestedTheme;
-
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
-            {
-                await window.Dispatcher.DispatchAsync(() =>
-                {
-                    if (window.Content is FrameworkElement element)
-                    {
-                        if (flags == element.RequestedTheme)
-                        {
-                            element.RequestedTheme = flags == ElementTheme.Dark
-                                ? ElementTheme.Light
-                                : ElementTheme.Dark;
-                        }
-
-                        element.RequestedTheme = flags;
-                    }
-                });
-            }
+            _settingsService.Appearance.UpdateNightMode(true);
         }
     }
 
@@ -304,7 +253,13 @@ namespace Unigram.Services
 
         public static ThemeAccentInfo FromAccent(TelegramThemeType type, Color accent)
         {
-            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], accent);
+            var color = accent;
+            if (color == default)
+            {
+                color = BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
+            }
+
+            var colorizer = ThemeColorizer.FromTheme(type, _accent[type], color);
             var values = new Dictionary<string, Color>();
 
             foreach (var item in _map[type])
@@ -324,6 +279,19 @@ namespace Unigram.Services
         public override bool IsOfficial { get; }
 
 
+
+        public override Color SelectionColor
+        {
+            get
+            {
+                if (AccentColor == default)
+                {
+                    return BootStrapper.Current.UISettings.GetColorValue(UIColorType.Accent);
+                }
+
+                return AccentColor;
+            }
+        }
 
         public override Color ChatBackgroundColor
         {
@@ -534,7 +502,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0xdf, 0xe4, 0xe8);
                 }
@@ -547,7 +515,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0xe6, 0xe6, 0xe6);
                 }
@@ -560,7 +528,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
                 }
@@ -573,7 +541,7 @@ namespace Unigram.Services
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0xF0, 0xFD, 0xDF);
                 }
@@ -582,11 +550,13 @@ namespace Unigram.Services
             }
         }
 
+        public virtual Color SelectionColor => AccentColor;
+
         public virtual Color AccentColor
         {
             get
             {
-                if (Parent.HasFlag(TelegramTheme.Light))
+                if (Parent == TelegramTheme.Light)
                 {
                     return Color.FromArgb(0xFF, 0x15, 0x8D, 0xCD);
                 }

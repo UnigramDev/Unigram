@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Unigram.Services.Updates;
 using Unigram.Views;
 using Unigram.Views.Host;
@@ -43,10 +42,6 @@ namespace Unigram
         public static AppServiceConnection Connection { get; private set; }
         public static BackgroundTaskDeferral Deferral { get; private set; }
 
-        private readonly UISettings _uiSettings;
-
-        public UISettings UISettings => _uiSettings;
-
         private ExtendedExecutionSession _extendedSession;
         private MediaExtensionManager _mediaExtensionManager;
 
@@ -61,13 +56,7 @@ namespace Unigram
         {
             Locator.Configure(/*session*/);
 
-            _uiSettings = new UISettings();
-
-            if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
-            {
-                RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
-            }
-
+            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
 
             try
@@ -86,15 +75,16 @@ namespace Unigram
 
             InactivityHelper.Detected += Inactivity_Detected;
 
-            UnhandledException += async (s, args) =>
+            UnhandledException += (s, args) =>
             {
-                args.Handled = true;
-
-                try
+                if (args.Exception is NotSupportedException)
                 {
-                    await new MessagePopup(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
+                    args.Handled = true;
                 }
-                catch { }
+                else
+                {
+                    Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
+                }
             };
 
 #if !DEBUG
@@ -102,14 +92,11 @@ namespace Unigram
                 typeof(Microsoft.AppCenter.Analytics.Analytics),
                 typeof(Microsoft.AppCenter.Crashes.Crashes));
 
-            string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
-            ulong version = ulong.Parse(deviceFamilyVersion);
-            ulong major = (version & 0xFFFF000000000000L) >> 48;
-            ulong minor = (version & 0x0000FFFF00000000L) >> 32;
-            ulong build = (version & 0x00000000FFFF0000L) >> 16;
-
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent($"{major}.{minor}.{build}");
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent(AnalyticsInfo.VersionInfo.DeviceFamily);
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Windows",
+                new System.Collections.Generic.Dictionary<string, string>
+                {
+                    { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily }
+                });
 #endif
         }
 
@@ -119,14 +106,14 @@ namespace Unigram
 
             //args.Window.CoreWindow.FlowDirection = flowDirectionSetting == "RTL" ? CoreWindowFlowDirection.RightToLeft : CoreWindowFlowDirection.LeftToRight;
 
-            Theme.Current.Initialize();
+            //Theme.Current.Initialize();
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
         }
 
         protected override WindowContext CreateWindowWrapper(Window window)
         {
-            return new TLWindowContext(window, 0);
+            return new TLWindowContext(window, ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow));
         }
 
         private void Inactivity_Detected(object sender, EventArgs e)
@@ -137,13 +124,14 @@ namespace Unigram
                 if (passcode != null && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
                 {
                     passcode.Lock();
-                    ShowPasscode();
+                    ShowPasscode(false);
                 }
             });
         }
 
-        private static volatile bool _passcodeShown;
-        public static async void ShowPasscode()
+        [ThreadStatic]
+        private static bool _passcodeShown;
+        public static async void ShowPasscode(bool biometrics)
         {
             if (_passcodeShown)
             {
@@ -152,7 +140,28 @@ namespace Unigram
 
             _passcodeShown = true;
 
-            var dialog = new PasscodePage();
+            // This is a rare case, but it can happen.
+            var content = Window.Current.Content;
+            if (content != null)
+            {
+                content.Visibility = Visibility.Collapsed;
+            }
+
+            var dialog = new PasscodePage(biometrics);
+            TypedEventHandler<ContentDialog, ContentDialogClosingEventArgs> handler = null;
+            handler = (s, args) =>
+            {
+                dialog.Closing -= handler;
+
+                // This is a rare case, but it can happen.
+                var content = Window.Current.Content;
+                if (content != null)
+                {
+                    content.Visibility = Visibility.Visible;
+                }
+            };
+
+            dialog.Closing += handler;
             var result = await dialog.ShowQueuedAsync();
 
             _passcodeShown = false;
@@ -160,17 +169,17 @@ namespace Unigram
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
-            HandleActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
+            HandleActivated(Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground);
             SettingsService.Current.Appearance.UpdateTimer();
         }
 
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
-            HandleActivated(e.Visible);
+            //HandleActivated(e.Visible);
 
             if (e.Visible && TLContainer.Current.Passcode.IsLockscreenRequired)
             {
-                ShowPasscode();
+                ShowPasscode(false);
             }
             else
             {
@@ -204,18 +213,18 @@ namespace Unigram
         {
             base.OnBackgroundActivated(args);
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
-            {
-                Connection = appService.AppServiceConnection;
-                Deferral = args.TaskInstance.GetDeferral();
+            //if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
+            //{
+            //    Connection = appService.AppServiceConnection;
+            //    Deferral = args.TaskInstance.GetDeferral();
 
-                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
-                args.TaskInstance.Canceled += (s, e) =>
-                {
-                    Deferral.Complete();
-                };
-            }
-            else
+            //    appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+            //    args.TaskInstance.Canceled += (s, e) =>
+            //    {
+            //        Deferral.Complete();
+            //    };
+            //}
+            //else
             {
                 var deferral = args.TaskInstance.GetDeferral();
 
@@ -234,7 +243,10 @@ namespace Unigram
                         session = result;
                     }
 
-                    await TLContainer.Current.Resolve<INotificationsService>(session).ProcessAsync(data);
+                    if (TLContainer.Current.TryResolve(session, out INotificationsService service))
+                    {
+                        await service.ProcessAsync(data);
+                    }
                 }
                 else if (args.TaskInstance.TriggerDetails is RawNotification notification)
                 {
@@ -262,18 +274,14 @@ namespace Unigram
                         return;
                     }
 
-                    var service = TLContainer.Current.Resolve<IProtoService>(session.Value);
-                    if (service == null)
+                    if (TLContainer.Current.TryResolve(session.Value, out IProtoService service))
                     {
-                        deferral.Complete();
-                        return;
-                    }
-
-                    await service.SendAsync(new ProcessPushNotification(notification.Content));
-
-                    foreach (var item in TLContainer.Current.ResolveAll<IProtoService>())
-                    {
-                        await item.SendAsync(new Close());
+                        var response = await service.SendAsync(new ProcessPushNotification(notification.Content));
+                        if (response is Error error && error.Code == 406)
+                        {
+                            // xd memes
+                            await Task.Delay(5000);
+                        }
                     }
                 }
 
@@ -306,8 +314,6 @@ namespace Unigram
                 Window.Current.Activated += Window_Activated;
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;
                 Window.Current.VisibilityChanged += Window_VisibilityChanged;
-
-                TLWindowContext.GetForCurrentView().UpdateTitleBar();
             }
 
             return base.OnInitializeAsync(args);
@@ -315,6 +321,11 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            if (TLContainer.Current.Passcode.IsLockscreenRequired)
+            {
+                ShowPasscode(true);
+            }
+
             if (startKind == StartKind.Activate)
             {
                 var lifetime = TLContainer.Current.Lifetime;
@@ -347,7 +358,6 @@ namespace Unigram
             }
 
             TLWindowContext.GetForCurrentView().SetActivatedArgs(args, navService);
-            TLWindowContext.GetForCurrentView().UpdateTitleBar();
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.Activated += Window_Activated;
@@ -358,7 +368,7 @@ namespace Unigram
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             var dispatcher = Window.Current.Dispatcher;
-            Task.Run(() => OnStartSync(dispatcher));
+            Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
         }
 
@@ -376,7 +386,6 @@ namespace Unigram
             {
                 var navigationFrame = new Frame { FlowDirection = ApiInfo.FlowDirection };
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
-                navigationService.SerializationService = TLSerializationService.Current;
 
                 return navigationFrame;
             }
@@ -384,7 +393,6 @@ namespace Unigram
             {
                 var navigationFrame = new Frame();
                 var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
-                navigationService.SerializationService = TLSerializationService.Current;
 
                 return new RootPage(navigationService) { FlowDirection = ApiInfo.FlowDirection };
             }
@@ -405,7 +413,7 @@ namespace Unigram
             return new TLNavigationService(TLContainer.Current.Resolve<IProtoService>(session), frame, session, id);
         }
 
-        private async void OnStartSync(CoreDispatcher dispatcher)
+        private async void OnStartSync()
         {
             //#if DEBUG
             //await VoIPConnection.Current.ConnectAsync();
@@ -424,13 +432,6 @@ namespace Unigram
                 ToastNotificationManager.History.Clear("App");
             }
             catch { }
-
-#if !DEBUG && !PREVIEW
-            Execute.BeginOnThreadPool(async () =>
-            {
-                await new HockeyAppUpdateService().CheckForUpdatesAsync(Constants.HockeyAppId, dispatcher);
-            });
-#endif
 
 #if DESKTOP_BRIDGE
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
@@ -470,9 +471,14 @@ namespace Unigram
         {
             Logs.Logger.Info(Logs.Target.Lifecycle, "OnResuming");
 
-            //#if DEBUG
-            //await VoIPConnection.Current.ConnectAsync();
-            //#endif
+            // #1225: Will this work? No one knows.
+            foreach (var network in TLContainer.Current.ResolveAll<INetworkService>())
+            {
+                network.Reconnect();
+            }
+
+            // #2034: Will this work? No one knows.
+            SettingsService.Current.Appearance.UpdateNightMode();
 
             base.OnResuming(s, e, previousExecutionState);
         }

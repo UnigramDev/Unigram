@@ -361,7 +361,12 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.Equals(_message.PlaybackService.CurrentItem))
+            var file = audio.AudioValue;
+            if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
+            {
+                _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+            }
+            else if (_message.Equals(_message.PlaybackService.CurrentItem))
             {
                 if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                 {

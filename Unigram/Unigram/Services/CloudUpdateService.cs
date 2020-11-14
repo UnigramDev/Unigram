@@ -15,8 +15,8 @@ namespace Unigram.Services
         CloudUpdate NextUpdate { get; }
 
         Task UpdateAsync(bool force);
-        Task<CloudUpdate> GetNextUpdateAsync();
-        Task<IList<CloudUpdate>> GetHistoryAsync();
+        //Task<CloudUpdate> GetNextUpdateAsync();
+        //Task<IList<CloudUpdate>> GetHistoryAsync();
     }
 
     public class CloudUpdateService : ICloudUpdateService, IHandle<UpdateFile>
@@ -26,6 +26,7 @@ namespace Unigram.Services
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
 
+        private long? _chatId;
         private CloudUpdate _nextUpdate;
 
         private long _lastCheck;
@@ -156,22 +157,31 @@ namespace Unigram.Services
                 return null;
             }
 
-            var chat = await _protoService.SendAsync(new SearchPublicChat("cGFnbGlhY2Npb19kaV9naGlhY2Npbw")) as Chat;
-            if (chat == null)
+            if (_chatId == null)
+            {
+                var chat = await _protoService.SendAsync(new SearchPublicChat(Constants.AppChannel)) as Chat;
+                if (chat != null)
+                {
+                    _chatId = chat.Id;
+                }
+            }
+
+            if (_chatId == null)
             {
                 return null;
             }
 
-            await _protoService.SendAsync(new OpenChat(chat.Id));
+            var chatId = _chatId.Value;
+            await _protoService.SendAsync(new OpenChat(chatId));
 
-            var message = await _protoService.SendAsync(new GetChatPinnedMessage(chat.Id)) as Message;
+            var message = await _protoService.SendAsync(new GetChatPinnedMessage(chatId)) as Message;
             if (message == null)
             {
-                _protoService.Send(new CloseChat(chat.Id));
+                _protoService.Send(new CloseChat(chatId));
                 return null;
             }
 
-            _protoService.Send(new CloseChat(chat.Id));
+            _protoService.Send(new CloseChat(chatId));
 
             var document = message.Content as MessageDocument;
             if (document == null)
@@ -253,7 +263,7 @@ namespace Unigram.Services
 
             await _protoService.SendAsync(new OpenChat(chat.Id));
 
-            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#update", 0, 0, 0, 100, new SearchMessagesFilterDocument())) as Messages;
+            var response = await _protoService.SendAsync(new SearchChatMessages(chat.Id, "#update", null, 0, 0, 100, new SearchMessagesFilterDocument(), 0)) as Messages;
             if (response == null)
             {
                 _protoService.Send(new CloseChat(chat.Id));

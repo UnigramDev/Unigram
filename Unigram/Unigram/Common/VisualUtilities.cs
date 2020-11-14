@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using Unigram.Services;
-using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;

@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.Settings
                 _username = user.Username;
             }
 
-            RaisePropertyChanged(() => Username);
+            RaisePropertyChanged(nameof(Username));
         }
 
         private string _username;
@@ -96,7 +96,7 @@ namespace Unigram.ViewModels.Settings
                 if (chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId)
                 {
                     IsLoading = false;
-                    IsAvailable = true;
+                    IsAvailable = false;
                     ErrorMessage = null;
                 }
                 else

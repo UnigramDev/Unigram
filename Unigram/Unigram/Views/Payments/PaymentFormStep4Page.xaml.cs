@@ -35,5 +35,15 @@ namespace Unigram.Views.Payments
                     break;
             }
         }
+
+        #region Binding
+
+        private string ConvertConfirmation(string title)
+        {
+            return string.Format(Strings.Resources.PaymentConfirmationMessage, title);
+        }
+
+        #endregion
+
     }
 }

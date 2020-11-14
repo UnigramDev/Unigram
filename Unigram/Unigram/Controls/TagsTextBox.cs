@@ -278,7 +278,7 @@ namespace Unigram.Controls
 
         private void DeterminePlaceholderElementVisibility()
         {
-            if (string.IsNullOrEmpty(this.Text) && CanShowPlaceholder)
+            if (string.IsNullOrEmpty(Text) && CanShowPlaceholder)
             {
                 PlaceholderTextElement.Visibility = Visibility.Visible;
             }

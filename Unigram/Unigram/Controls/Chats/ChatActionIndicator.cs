@@ -1,5 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Animations.Expressions;
-using System;
+﻿using System;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -9,7 +8,6 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using EF = Microsoft.Toolkit.Uwp.UI.Animations.Expressions.ExpressionFunctions;
 
 namespace Unigram.Controls.Chats
 {
@@ -79,20 +77,20 @@ namespace Unigram.Controls.Chats
         {
             switch (action)
             {
-                case ChatActionTyping typing:
+                case ChatActionTyping _:
                     return AnimationType.Typing;
-                case ChatActionUploadingDocument document:
-                case ChatActionUploadingPhoto photo:
-                case ChatActionUploadingVideo video:
-                case ChatActionUploadingVideoNote videoNote:
-                case ChatActionUploadingVoiceNote voiceNote:
+                case ChatActionUploadingDocument _:
+                case ChatActionUploadingPhoto _:
+                case ChatActionUploadingVideo _:
+                case ChatActionUploadingVideoNote _:
+                case ChatActionUploadingVoiceNote _:
                     return AnimationType.Uploading;
-                case ChatActionStartPlayingGame game:
+                case ChatActionStartPlayingGame _:
                     return AnimationType.Playing;
-                case ChatActionRecordingVideo recordingVideo:
-                case ChatActionRecordingVideoNote recordingVideoNote:
+                case ChatActionRecordingVideo _:
+                case ChatActionRecordingVideoNote _:
                     return AnimationType.VideoRecording;
-                case ChatActionRecordingVoiceNote recordingVoiceNote:
+                case ChatActionRecordingVoiceNote _:
                     return AnimationType.VoiceRecording;
                 default:
                     return AnimationType.None;
@@ -245,9 +243,6 @@ namespace Unigram.Controls.Chats
             var props = compositor.CreatePropertySet();
             props.InsertScalar("animationValue", 0.0f);
 
-            var reference = props.GetReference();
-            var animationValue = reference.GetScalarProperty("animationValue");
-
             var easing = compositor.CreateLinearEasingFunction();
             var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
             animationValueImpl.InsertKeyFrame(0, 0, easing);
@@ -257,23 +252,29 @@ namespace Unigram.Controls.Chats
 
             props.StartAnimation("animationValue", animationValueImpl);
 
-            ScalarNode radiusz = animationValue * delta;
-            ExpressionNode radiusDot1 = EF.Vector2(radiusz, radiusz);
-            ExpressionNode radiusDot2 = EF.Vector2(radiusz + delta, radiusz + delta);
-            ExpressionNode radiusDot3 = EF.Vector2(radiusz + delta * 2, radiusz + delta * 2);
+            var radius = $"props.animationValue * {delta}";
+
+            var radiusDot1 = compositor.CreateExpressionAnimation($"Vector2({radius}, {radius})");
+            radiusDot1.SetReferenceParameter("props", props);
+
+            var radiusDot2 = compositor.CreateExpressionAnimation($"Vector2({radius} + {delta}, {radius} + {delta})");
+            radiusDot2.SetReferenceParameter("props", props);
+
+            var radiusDot3 = compositor.CreateExpressionAnimation($"Vector2({radius} + {delta} * 2, {radius} + {delta} * 2)");
+            radiusDot3.SetReferenceParameter("props", props);
 
             dot1.StartAnimation("Radius", radiusDot1);
             dot2.StartAnimation("Radius", radiusDot2);
             dot3.StartAnimation("Radius", radiusDot3);
 
-            ScalarNode alpha;
+            var colorDot1 = compositor.CreateExpressionAnimation($"ColorRGB((1.0f - Pow(Cos(({radius}) / (3.0f * {delta}) * Pi), 10)) * 255, {color.R}, {color.G}, {color.B})");
+            colorDot1.SetReferenceParameter("props", props);
 
-            alpha = 1.0f - EF.Pow(EF.Cos(radiusz / (3.0f * delta) * MathF.PI), 10);
-            ExpressionNode colorDot1 = EF.ColorRgb(alpha * 255, color.R, color.G, color.B);
-            alpha = 1.0f - EF.Pow(EF.Cos((radiusz + delta) / (3.0f * delta) * MathF.PI), 10);
-            ExpressionNode colorDot2 = EF.ColorRgb(alpha * 255, color.R, color.G, color.B);
-            alpha = 1.0f - EF.Pow(EF.Cos((radiusz + delta * 2) / (3.0f * delta) * MathF.PI), 10);
-            ExpressionNode colorDot3 = EF.ColorRgb(alpha * 255, color.R, color.G, color.B);
+            var colorDot2 = compositor.CreateExpressionAnimation($"ColorRGB((1.0f - Pow(Cos(({radius} + {delta}) / (3.0f * {delta}) * Pi), 10)) * 255, {color.R}, {color.G}, {color.B})");
+            colorDot2.SetReferenceParameter("props", props);
+
+            var colorDot3 = compositor.CreateExpressionAnimation($"ColorRGB((1.0f - Pow(Cos(({radius} + {delta} * 2) / (3.0f * {delta}) * Pi), 10)) * 255, {color.R}, {color.G}, {color.B})");
+            colorDot3.SetReferenceParameter("props", props);
 
             brushDot1.StartAnimation("Color", colorDot1);
             brushDot2.StartAnimation("Color", colorDot2);
@@ -301,9 +302,6 @@ namespace Unigram.Controls.Chats
             var props = compositor.CreatePropertySet();
             props.InsertScalar("animationValue", 0.0f);
 
-            var reference = props.GetReference();
-            var animationValue = reference.GetScalarProperty("animationValue");
-
             var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.42f, 0), new Vector2(0.58f, 1));
             var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
             animationValueImpl.InsertKeyFrame(0, 0, easing);
@@ -313,13 +311,16 @@ namespace Unigram.Controls.Chats
 
             props.StartAnimation("animationValue", animationValueImpl);
 
-            ScalarNode animValue = EF.Conditional(animationValue < 0.5f, animationValue / 0.5f, (1 - animationValue) / 0.5f);
+            var animValue = "(props.animationValue < 0.5f ? (props.animationValue / 0.5f) : ((1 - props.animationValue) / 0.5f))";
 
-            ScalarNode alpha = 1.0f - animValue * 0.6f;
-            ScalarNode radius = 3.5f - animValue * 0.66f;
+            var alpha = $"1.0f - {animValue} * 0.6f";
+            var radius = $"3.5f - {animValue} * 0.66f";
 
-            ExpressionNode colorEllipse = EF.ColorRgb(alpha * 255, color.R, color.G, color.B);
-            ExpressionNode radiusEllipse = EF.Vector2(radius, radius);
+            var colorEllipse = compositor.CreateExpressionAnimation($"ColorRGB(({alpha}) * 255, {color.R}, {color.G}, {color.B})");
+            colorEllipse.SetReferenceParameter("props", props);
+
+            var radiusEllipse = compositor.CreateExpressionAnimation($"Vector2({radius}, {radius})");
+            radiusEllipse.SetReferenceParameter("props", props);
 
             ellipseBrush.StartAnimation("Color", colorEllipse);
             ellipse.StartAnimation("Radius", radiusEllipse);
@@ -376,9 +377,6 @@ namespace Unigram.Controls.Chats
             var props = compositor.CreatePropertySet();
             props.InsertScalar("animationValue", 0.0f);
 
-            var reference = props.GetReference();
-            var animationValue = reference.GetScalarProperty("animationValue");
-
             var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.42f, 0), new Vector2(0.58f, 1));
             var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
             animationValueImpl.InsertKeyFrame(1, 0, easing);
@@ -388,8 +386,9 @@ namespace Unigram.Controls.Chats
 
             props.StartAnimation("animationValue", animationValueImpl);
 
-            ScalarNode progress = (animationValue * (progressWidth * 2.0f));
-            ExpressionNode moveBar = EF.Vector2(leftPadding - progressWidth + progress, topPadding);
+            var progress = $"(props.animationValue * ({progressWidth} * 2.0f))";
+            var moveBar = compositor.CreateExpressionAnimation($"Vector2({leftPadding} - {progressWidth} + {progress}, {topPadding})");
+            moveBar.SetReferenceParameter("props", props);
 
             bar.StartAnimation("Offset", moveBar);
 
@@ -451,12 +450,6 @@ namespace Unigram.Controls.Chats
             props.InsertScalar("dotsX", 0.0f);
             props.InsertScalar("bite", 0.0f);
 
-            var reference = props.GetReference();
-            var animationValue = reference.GetScalarProperty("animationValue");
-            var dotsProgress = reference.GetScalarProperty("dotsProgress");
-            var dotsX = reference.GetScalarProperty("dotsX");
-            var bite = reference.GetScalarProperty("bite");
-
             var easing = compositor.CreateLinearEasingFunction();
             var animationValueImpl = compositor.CreateScalarKeyFrameAnimation();
             animationValueImpl.InsertKeyFrame(0, 0, easing);
@@ -476,24 +469,37 @@ namespace Unigram.Controls.Chats
             props.StartAnimation("animationValue", animationValueImpl);
             props.StartAnimation("bite", biteImpl);
 
-            ExpressionNode animationDotsProgress = (EF.Ceil(animationValue * 100) % 50) / 50;
-            ExpressionNode animationDotsX = 1.5f + x - distance * dotsProgress;
+            var animationDotsProgress = compositor.CreateExpressionAnimation("Ceil(props.animationValue * 100) % 50 / 50");
+            animationDotsProgress.SetReferenceParameter("props", props);
+
+            var animationDotsX = compositor.CreateExpressionAnimation($"1.5f + {x} - {distance} * props.dotsProgress");
+            animationDotsX.SetReferenceParameter("props", props);
 
             props.StartAnimation("dotsProgress", animationDotsProgress);
             props.StartAnimation("dotsX", animationDotsX);
 
-            ExpressionNode moveDot1 = EF.Vector2(dotsX - radius, y - radius);
-            ExpressionNode moveDot2 = EF.Vector2(dotsX - radius + distance, y - radius);
-            ExpressionNode moveDot3 = EF.Vector2(dotsX - radius + distance * 2, y - radius);
-            ExpressionNode colorDot3 = EF.ColorRgb(dotsProgress * 255, color.R, color.G, color.B);
+            var moveDot1 = compositor.CreateExpressionAnimation($"Vector2(props.dotsX - {radius}, {y} - {radius})");
+            moveDot1.SetReferenceParameter("props", props);
+
+            var moveDot2 = compositor.CreateExpressionAnimation($"Vector2(props.dotsX - {radius} + {distance}, {y} - {radius})");
+            moveDot2.SetReferenceParameter("props", props);
+
+            var moveDot3 = compositor.CreateExpressionAnimation($"Vector2(props.dotsX - {radius} + {distance} * 2, {y} - {radius})");
+            moveDot3.SetReferenceParameter("props", props);
+
+            var colorDot3 = compositor.CreateExpressionAnimation($"ColorRGB(props.dotsProgress * 255, {color.R}, {color.G}, {color.B})");
+            colorDot3.SetReferenceParameter("props", props);
 
             spriteDot1.StartAnimation("Offset", moveDot1);
             spriteDot2.StartAnimation("Offset", moveDot2);
             spriteDot3.StartAnimation("Offset", moveDot3);
             brushDot3.StartAnimation("Color", colorDot3);
 
-            ExpressionNode start = bite * 0.125f;
-            ExpressionNode end = 1 - bite * 0.125f;
+            var start = compositor.CreateExpressionAnimation("props.bite * 0.125f");
+            start.SetReferenceParameter("props", props);
+
+            var end = compositor.CreateExpressionAnimation("1 - props.bite * 0.125f");
+            end.SetReferenceParameter("props", props);
 
             mouth.StartAnimation("TrimStart", start);
             mouth.StartAnimation("TrimEnd", end);

@@ -2,32 +2,27 @@
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Services;
 using Unigram.ViewModels.Gallery;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Chats
 {
     public class ChatPhotosViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        //private readonly TLInputPeerBase _peer;
+        private readonly Chat _chat;
 
-        private int _lastMaxId;
-        private readonly long _chatId;
-
-        public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, Chat chat)
+        public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, Chat chat, ChatPhoto photo)
             : base(protoService, aggregator)
         {
-            _chatId = chat.Id;
-
-            //_peer = chat.ToInputPeer();
-            //_lastMaxId = int.MaxValue;
-
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, chat.Photo) };
+            _chat = chat;
+            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(protoService, chat, photo, 0) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
-            Initialize(chat.Photo.Big.Id, chat.Photo.Small.Id);
+            Initialize(photo.GetBig().Photo.Id, photo.GetSmall().Photo.Id);
         }
 
         //public ChatPhotosViewModel(IProtoService protoService, IEventAggregator aggregator, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
@@ -53,8 +48,8 @@ namespace Unigram.ViewModels.Chats
                 var limit = 20;
                 var offset = -limit / 2;
 
-                var response = await ProtoService.SendAsync(new SearchChatMessages(_chatId, string.Empty, 0, 0, offset, limit, new SearchMessagesFilterChatPhoto()));
-                if (response is Telegram.Td.Api.Messages messages)
+                var response = await ProtoService.SendAsync(new SearchChatMessages(_chat.Id, string.Empty, null, 0, offset, limit, new SearchMessagesFilterChatPhoto(), 0));
+                if (response is Messages messages)
                 {
                     TotalItems = messages.TotalCount;
 
@@ -70,7 +65,7 @@ namespace Unigram.ViewModels.Chats
                                 continue;
                             }
 
-                            Items.Add(new GalleryMessage(ProtoService, message));
+                            Items.Add(new GalleryChatPhoto(ProtoService, _chat, chatChangePhoto.Photo, message.Id));
                         }
                         else
                         {
@@ -162,9 +157,70 @@ namespace Unigram.ViewModels.Chats
             //}
         }
 
+        public override bool CanDelete
+        {
+            get
+            {
+                var chat = _chat;
+                if (chat != null && CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanChangeInfo)
+                    {
+                        return true;
+                    }
+
+                    return supergroup.Status is ChatMemberStatusMember && chat.Permissions.CanChangeInfo;
+                }
+                else if (chat != null && CacheService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                {
+                    if (basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanChangeInfo)
+                    {
+                        return true;
+                    }
+
+                    return basicGroup.Status is ChatMemberStatusMember && chat.Permissions.CanChangeInfo;
+                }
+
+                return false;
+            }
+        }
+
+        protected override async void DeleteExecute()
+        {
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSureDeletePhoto, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary && _selectedItem is GalleryChatPhoto chatPhoto)
+            {
+                Function function;
+                if (chatPhoto.MessageId == 0)
+                {
+                    function = new SetChatPhoto(_chat.Id, null);
+                }
+                else
+                {
+                    function = new DeleteMessages(_chat.Id, new[] { chatPhoto.MessageId }, true);
+                }
+
+                var response = await ProtoService.SendAsync(function);
+                if (response is Ok)
+                {
+                    var index = Items.IndexOf(chatPhoto);
+                    if (index < Items.Count - 1 && chatPhoto.MessageId != 0)
+                    {
+                        SelectedItem = Items[index > 0 ? index - 1 : index + 1];
+                        Items.Remove(chatPhoto);
+                        TotalItems--;
+                    }
+                    else
+                    {
+                        NavigationService.GoBack();
+                    }
+                }
+            }
+        }
+
         public override int Position => TotalItems - (Items.Count - base.Position);
 
-        public override MvxObservableCollection<GalleryContent> Group => this.Items;
+        public override MvxObservableCollection<GalleryContent> Group => Items;
     }
 
     //public class GalleryChatPhotoItem : GalleryItem

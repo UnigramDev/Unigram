@@ -9,8 +9,8 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Services;
 using Unigram.Views;
+using Unigram.Views.Chats;
 using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
@@ -83,7 +83,7 @@ namespace Unigram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                message = album.Layout.Messages.FirstOrDefault();
+                message = album.Messages.FirstOrDefault();
             }
 
             ComposerHeader = new MessageComposerHeader { ReplyToMessage = message };
@@ -139,7 +139,9 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
+            var firstSender = first.Sender as MessageSenderUser;
+
+            var sameUser = firstSender != null && messages.All(x => x.Sender is MessageSenderUser senderUser && senderUser.UserId == firstSender.UserId);
             var dialog = new DeleteMessagesPopup(CacheService, items.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
@@ -152,7 +154,7 @@ namespace Unigram.ViewModels
 
             if (dialog.DeleteAll && sameUser)
             {
-                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, first.SenderUserId));
+                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, firstSender.UserId));
             }
             else
             {
@@ -161,12 +163,12 @@ namespace Unigram.ViewModels
 
             if (dialog.BanUser && sameUser)
             {
-                ProtoService.Send(new SetChatMemberStatus(chat.Id, first.SenderUserId, new ChatMemberStatusBanned()));
+                ProtoService.Send(new SetChatMemberStatus(chat.Id, firstSender.UserId, new ChatMemberStatusBanned()));
             }
 
             if (dialog.ReportSpam && sameUser && chat.Type is ChatTypeSupergroup supertype)
             {
-                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, first.SenderUserId, messages.Select(x => x.Id).ToList()));
+                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, firstSender.UserId, messages.Select(x => x.Id).ToList()));
             }
         }
 
@@ -209,7 +211,7 @@ namespace Unigram.ViewModels
         {
             if (message.Content is MessageAlbum album)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(album.Layout.Messages.Select(x => x.Get()).ToList());
+                await SharePopup.GetForCurrentView().ShowAsync(album.Messages.Select(x => x.Get()).ToList());
             }
             else
             {
@@ -288,23 +290,25 @@ namespace Unigram.ViewModels
                     var chat = message.GetChat();
                     var title = chat.Title;
 
-                    if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+                    if (CacheService.TryGetUser(message.Sender, out Telegram.Td.Api.User senderUser))
                     {
-                        title = ProtoService.GetTitle(chat);
+                        title = senderUser.GetFullName();
                     }
-                    else
+                    else if (CacheService.TryGetChat(message.Sender, out Chat senderChat))
                     {
-                        var sender = message.GetSenderUser();
-                        if (sender != null)
-                        {
-                            title = sender.GetFullName();
-                        }
+                        title = ProtoService.GetTitle(senderChat);
                     }
 
                     var date = BindConvert.Current.DateTime(message.Date);
                     builder.AppendLine(string.Format("{0}, [{1} {2}]", title, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date)));
 
-                    if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost)
+                    if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                    {
+                        var from = ProtoService.GetChat(fromChat.SenderChatId);
+                        builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
+                        builder.AppendLine($"[{Strings.Resources.From} {ProtoService.GetTitle(from)}]");
+                    }
+                    else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost)
                     {
                         var from = ProtoService.GetChat(forwardedPost.ChatId);
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
@@ -324,10 +328,13 @@ namespace Unigram.ViewModels
 
                     if (message.ReplyToMessage != null)
                     {
-                        var replySender = message.ReplyToMessage.GetSenderUser();
-                        if (replySender != null)
+                        if (CacheService.TryGetUser(message.ReplyToMessage.Sender, out Telegram.Td.Api.User replyUser))
                         {
-                            builder.AppendLine($"[In reply to {replySender.GetFullName()}]");
+                            builder.AppendLine($"[In reply to {replyUser.GetFullName()}]");
+                        }
+                        else if (CacheService.TryGetChat(message.ReplyToMessage.Sender, out Chat replyChat))
+                        {
+                            builder.AppendLine($"[In reply to {replyChat.Title}]");
                         }
                     }
 
@@ -459,7 +466,9 @@ namespace Unigram.ViewModels
             }
 
             var myId = CacheService.Options.MyId;
-            var messages = SelectedItems.Where(x => x.SenderUserId != myId).OrderBy(x => x.Id).Select(x => x.Id).ToList();
+            var messages = SelectedItems
+                .Where(x => x.Sender is MessageSenderChat || (x.Sender is MessageSenderUser senderUser && senderUser.UserId != myId))
+                .OrderBy(x => x.Id).Select(x => x.Id).ToList();
             if (messages.Count < 1)
             {
                 return;
@@ -524,7 +533,8 @@ namespace Unigram.ViewModels
             }
 
             var myId = CacheService.Options.MyId;
-            return chat.CanBeReported && SelectedItems.Count > 0 && SelectedItems.All(x => x.SenderUserId != myId);
+            return chat.CanBeReported && SelectedItems.Count > 0
+                && SelectedItems.All(x => x.Sender is MessageSenderChat || (x.Sender is MessageSenderUser senderUser && senderUser.UserId != myId));
         }
 
         #endregion
@@ -545,6 +555,26 @@ namespace Unigram.ViewModels
             ListField?.SelectedItems.Add(message);
 
             ExpandSelection(new[] { message });
+        }
+
+        #endregion
+
+        #region Unselect
+
+        public RelayCommand MessagesUnselectCommand { get; }
+        private void MessagesUnselectExecute()
+        {
+            SelectionMode = ListViewSelectionMode.None;
+        }
+
+        #endregion
+
+        #region Statistics
+
+        public RelayCommand<MessageViewModel> MessageStatisticsCommand { get; }
+        private void MessageStatisticsExecute(MessageViewModel message)
+        {
+            NavigationService.Navigate(typeof(MessageStatisticsPage), $"{message.ChatId};{message.Id}");
         }
 
         #endregion
@@ -684,27 +714,16 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var supergroup = CacheService.GetSupergroup(chat);
-            if (supergroup != null && string.IsNullOrEmpty(supergroup.Username))
+            var response = await ProtoService.SendAsync(new GetMessageLink(chat.Id, message.Id, false, _threadId != 0));
+            if (response is MessageLink link)
             {
-                var response = await ProtoService.SendAsync(new GetMessageLink(chat.Id, message.Id));
-                if (response is HttpUrl link)
-                {
-                    var dataPackage = new DataPackage();
-                    dataPackage.SetText(link.Url);
-                    ClipboardEx.TrySetContent(dataPackage);
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(link.Link);
+                ClipboardEx.TrySetContent(dataPackage);
 
-                    await MessagePopup.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
-                }
-            }
-            else
-            {
-                var response = await ProtoService.SendAsync(new GetPublicMessageLink(chat.Id, message.Id, false));
-                if (response is PublicMessageLink link)
+                if (!link.IsPublic)
                 {
-                    var dataPackage = new DataPackage();
-                    dataPackage.SetText(link.Link);
-                    ClipboardEx.TrySetContent(dataPackage);
+                    await MessagePopup.ShowAsync(Strings.Resources.LinkCopiedPrivate, Strings.Resources.AppName, Strings.Resources.OK);
                 }
             }
         }
@@ -780,43 +799,96 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region View thread
+
+        public RelayCommand<MessageViewModel> MessageThreadCommand { get; }
+        private async void MessageThreadExecute(MessageViewModel message)
+        {
+            var response = await ProtoService.SendAsync(new GetMessageThread(message.ChatId, message.Id));
+            if (response is MessageThreadInfo info)
+            {
+                NavigationService.NavigateToThread(message.ChatId, message.Id, message.Id);
+            }
+        }
+
+        #endregion
+
         #region Pin
 
         public RelayCommand<MessageViewModel> MessagePinCommand { get; }
         private async void MessagePinExecute(MessageViewModel message)
         {
             var chat = message.GetChat();
+            if (chat == null)
+            {
+                return;
+            }
 
-            if (chat.PinnedMessageId == message.Id)
+            if (message.IsPinned)
             {
                 var confirm = await MessagePopup.ShowAsync(Strings.Resources.UnpinMessageAlert, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new UnpinChatMessage(chat.Id));
+                    ProtoService.Send(new UnpinChatMessage(chat.Id, message.Id));
                 }
             }
             else
             {
+                var channel = chat.Type is ChatTypeSupergroup super && super.IsChannel;
+                var self = chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId;
+
+                var last = PinnedMessages.LastOrDefault();
+
                 var dialog = new MessagePopup();
-                dialog.Title = Strings.Resources.AppName;
-                dialog.Message = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
-                    ? Strings.Resources.PinMessageAlertChannel
-                    : chat.Type is ChatTypePrivate privata && privata.UserId == CacheService.Options.MyId
-                    ? Strings.Resources.PinMessageAlertChat
-                    : Strings.Resources.PinMessageAlert;
+                dialog.Title = Strings.Resources.PinMessageAlertTitle;
+
+                if (last != null && last.Id > message.Id)
+                {
+                    dialog.Message = Strings.Resources.PinOldMessageAlert;
+                }
+                else if (channel)
+                {
+                    dialog.Message = Strings.Resources.PinMessageAlertChannel;
+                }
+                else if (chat.Type is ChatTypePrivate)
+                {
+                    dialog.Message = Strings.Resources.PinMessageAlertChat;
+                }
+                else
+                {
+                    dialog.Message = Strings.Resources.PinMessageAlert;
+                }
+
                 dialog.PrimaryButtonText = Strings.Resources.OK;
                 dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-                if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup super && !super.IsChannel)
+                if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup && !channel)
                 {
                     dialog.CheckBoxLabel = Strings.Resources.PinNotify;
                     dialog.IsChecked = true;
+                }
+                else if (chat.Type is ChatTypePrivate && !self)
+                {
+                    dialog.CheckBoxLabel = string.Format(Strings.Resources.PinAlsoFor, chat.Title);
+                    dialog.IsChecked = false;
                 }
 
                 var confirm = await dialog.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    ProtoService.Send(new PinChatMessage(chat.Id, message.Id, dialog.IsChecked == false));
+                    var disableNotification = false;
+                    var onlyForSelf = false;
+
+                    if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup && !channel)
+                    {
+                        disableNotification = dialog.IsChecked == false;
+                    }
+                    else if (chat.Type is ChatTypePrivate && !self)
+                    {
+                        onlyForSelf = dialog.IsChecked == false;
+                    }
+
+                    ProtoService.Send(new PinChatMessage(chat.Id, message.Id, disableNotification, onlyForSelf));
                 }
             }
         }
@@ -901,7 +973,7 @@ namespace Unigram.ViewModels
         public RelayCommand<MessageViewModel> MessageRescheduleCommand { get; }
         private async void MessageRescheduleExecute(MessageViewModel message)
         {
-            var options = await PickSendMessageOptionsAsync(true);
+            var options = await PickMessageSendOptionsAsync(true);
             if (options?.SchedulingState == null)
             {
                 return;
@@ -1016,7 +1088,7 @@ namespace Unigram.ViewModels
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeSwitchInline switchInline)
                 {
-                    var bot = GetBot(message);
+                    var bot = message.GetViaBotUser();
                     if (bot == null)
                     {
                         return;
@@ -1054,10 +1126,10 @@ namespace Unigram.ViewModels
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeCallback callback)
                 {
-                    var bot = GetBot(message);
+                    var bot = message.GetViaBotUser();
                     if (bot != null)
                     {
-                        InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
+                        InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Resources.Loading, new TextEntity[0]), null), null));
                     }
 
                     var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
@@ -1078,7 +1150,7 @@ namespace Unigram.ViewModels
                                     return;
                                 }
 
-                                InformativeMessage = _messageFactory.Create(this, new Message(0, bot.Id, 0, null, null, false, false, false, true, false, false, false, 0, 0, null, 0, 0, 0, 0, string.Empty, 0, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
+                                InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, true, false, false, false, false, false, 0, 0, null, null, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
                             }
                         }
                         else if (!string.IsNullOrEmpty(answer.Url))
@@ -1118,7 +1190,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadGame(game.Game.ShortName)));
                     if (response is CallbackQueryAnswer answer && !string.IsNullOrEmpty(answer.Url))
                     {
-                        var bundle = new TdBundle();
+                        var bundle = new Dictionary<string, object>();
                         bundle.Add("title", game.Game.Title);
                         bundle.Add("url", answer.Url);
                         bundle.Add("message", message.Id);
@@ -1173,7 +1245,7 @@ namespace Unigram.ViewModels
                         var location = await _locationService.GetPositionAsync();
                         if (location != null)
                         {
-                            await SendMessageAsync(0, new InputMessageLocation(location, 0), null);
+                            await SendMessageAsync(0, new InputMessageLocation(location, 0, 0, 0), null);
                         }
                     }
                 }
@@ -1252,6 +1324,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var cached = await ProtoService.GetFileAsync(file);
+            if (cached == null)
+            {
+                return;
+            }
+
             var fileName = result.FileName;
             if (string.IsNullOrEmpty(fileName))
             {
@@ -1275,60 +1353,15 @@ namespace Unigram.ViewModels
             picker.SuggestedStartLocation = PickerLocationId.Downloads;
             picker.SuggestedFileName = fileName;
 
-            var picked = await picker.PickSaveFileAsync();
-            if (picked != null)
+            try
             {
-                try
+                var picked = await picker.PickSaveFileAsync();
+                if (picked != null)
                 {
-                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
                     await cached.CopyAndReplaceAsync(picked);
                 }
-                catch { }
             }
-        }
-
-        #endregion
-
-        #region Save to Downloads
-
-        public RelayCommand<MessageViewModel> MessageSaveDownloadCommand { get; }
-        private async void MessageSaveDownloadExecute(MessageViewModel message)
-        {
-            var result = message.Get().GetFileAndName(true);
-
-            var file = result.File;
-            if (file == null || !file.Local.IsDownloadingCompleted)
-            {
-                return;
-            }
-
-            var fileName = result.FileName;
-            if (string.IsNullOrEmpty(fileName))
-            {
-                fileName = Path.GetFileName(file.Local.Path);
-            }
-
-            var extension = Path.GetExtension(fileName);
-            if (string.IsNullOrEmpty(extension))
-            {
-                extension = ".dat";
-            }
-
-            var picker = new FileSavePicker();
-            picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
-            picker.SuggestedStartLocation = PickerLocationId.Downloads;
-            picker.SuggestedFileName = fileName;
-
-            var picked = await picker.PickSaveFileAsync();
-            if (picked != null)
-            {
-                try
-                {
-                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    await cached.CopyAndReplaceAsync(picked);
-                }
-                catch { }
-            }
+            catch { }
         }
 
         #endregion
@@ -1363,12 +1396,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+            var item = await ProtoService.GetFileAsync(file);
+            if (item != null)
+            {
+                var options = new LauncherOptions();
+                options.DisplayApplicationPicker = true;
 
-            var options = new LauncherOptions();
-            options.DisplayApplicationPicker = true;
-
-            await Launcher.LaunchFileAsync(item, options);
+                await Launcher.LaunchFileAsync(item, options);
+            }
         }
 
         #endregion
@@ -1386,13 +1421,20 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-            var folder = await item.GetParentAsync();
+            var item = await ProtoService.GetFileAsync(file);
+            if (item != null)
+            {
+                try
+                {
+                    var folder = await item.GetParentAsync();
 
-            var options = new FolderLauncherOptions();
-            options.ItemsToSelect.Add(item);
+                    var options = new FolderLauncherOptions();
+                    options.ItemsToSelect.Add(item);
 
-            await Launcher.LaunchFolderAsync(folder, options);
+                    await Launcher.LaunchFolderAsync(folder, options);
+                }
+                catch { }
+            }
         }
 
         #endregion
@@ -1455,12 +1497,24 @@ namespace Unigram.ViewModels
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
                     var offset = first.Date.ToTimestamp();
+
                     await LoadDateSliceAsync(offset);
                 }
             }
             else if (message.Content is MessagePinMessage pinMessage && pinMessage.MessageId != 0)
             {
-                await LoadMessageSliceAsync(null, pinMessage.MessageId);
+                await LoadMessageSliceAsync(message.Id, pinMessage.MessageId);
+            }
+            else if (message.Content is MessageGameScore gameScore && gameScore.GameMessageId != 0)
+            {
+                await LoadMessageSliceAsync(message.Id, gameScore.GameMessageId);
+            }
+            else if (message.Content is MessageChatEvent chatEvent)
+            {
+                if (chatEvent.Action is ChatEventStickerSetChanged stickerSetChanged && stickerSetChanged.NewStickerSetId != 0)
+                {
+                    await StickerSetPopup.GetForCurrentView().ShowAsync(stickerSetChanged.NewStickerSetId);
+                }
             }
         }
 

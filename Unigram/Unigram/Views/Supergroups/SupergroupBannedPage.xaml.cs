@@ -6,7 +6,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation;
-using Unigram.Services;
+using Unigram.Navigation.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupBannedPage : HostedPage, ISupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupBannedPage : HostedPage, ISupergroupDelegate, INavigablePage, ISearchablePage
     {
         public SupergroupBannedViewModel ViewModel => DataContext as SupergroupBannedViewModel;
 
@@ -36,6 +36,11 @@ namespace Unigram.Views.Supergroups
                     ViewModel.Find(SearchField.Text);
                 }
             });
+        }
+
+        public void Search()
+        {
+            Search_Click(null, null);
         }
 
         public void OnBackRequested(HandledEventArgs args)
@@ -62,7 +67,7 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
-            ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), new ChatMemberNavigation(chat.Id, member.UserId));
+            ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
         }
 
         #region Context menu
@@ -97,6 +102,19 @@ namespace Unigram.Views.Supergroups
         #endregion
 
         #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Member_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {

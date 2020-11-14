@@ -34,15 +34,15 @@ namespace Unigram.Views.BasicGroups
             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
             picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
 
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
+            var media = await picker.PickSingleMediaAsync();
+            if (media != null)
             {
-                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                    ViewModel.EditPhotoCommand.Execute(media);
                 }
             }
         }

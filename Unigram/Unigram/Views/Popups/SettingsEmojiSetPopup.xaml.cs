@@ -30,7 +30,7 @@ namespace Unigram.Views.Popups
 
         public SettingsEmojiSetPopup(IProtoService protoService, IEmojiSetService emojiSetService, IEventAggregator aggregator)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             _protoService = protoService;
             _aggregator = aggregator;
@@ -38,25 +38,6 @@ namespace Unigram.Views.Popups
             Title = "Emoji Set";
             PrimaryButtonText = Strings.Resources.OK;
             SecondaryButtonText = Strings.Resources.Cancel;
-
-#if DEBUG
-            CloseButtonText = "Reset";
-            CloseButtonClick += (s, args) =>
-            {
-                args.Cancel = true;
-
-                foreach (var item in List.ItemsSource as ItemsCollection)
-                {
-                    if (item.IsOfficial)
-                    {
-                        continue;
-                    }
-
-                    _protoService.Send(new DeleteFileW(item.Document.Id));
-                    _protoService.Send(new DeleteFileW(item.Thumbnail.Id));
-                }
-            };
-#endif
 
             _aggregator.Subscribe(this);
             List.ItemsSource = _collection = new ItemsCollection(emojiSetService);
@@ -97,7 +78,7 @@ namespace Unigram.Views.Popups
             }
 
             SettingsService.Current.Appearance.EmojiSet = emojiSet.ToInstalled();
-            TLContainer.Current.Resolve<IThemeService>().Refresh();
+            SettingsService.Current.Appearance.UpdateNightMode(true);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -135,6 +116,8 @@ namespace Unigram.Views.Popups
             var content = radio.Content as Grid;
             var emojiPack = args.Item as EmojiSet;
 
+            radio.Click -= EmojiSet_Click;
+            radio.Click += EmojiSet_Click;
             radio.IsChecked = SettingsService.Current.Appearance.EmojiSet.Id == emojiPack.Id;
 
             if (SettingsService.Current.Appearance.EmojiSet.Id == emojiPack.Id)

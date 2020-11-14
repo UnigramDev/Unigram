@@ -28,14 +28,15 @@ namespace Unigram.ViewModels
         IHandle<UpdateUnreadChatCount>,
         IHandle<UpdateChatFilters>,
         IHandle<UpdateAppVersion>,
-        IHandle<UpdateWindowActivated>
+        IHandle<UpdateWindowActivated>,
+        IDisposable
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
-        private readonly IVoIPService _voipService;
+        private readonly IVoipService _voipService;
         private readonly IEmojiSetService _emojiSetService;
         private readonly ICloudUpdateService _cloudUpdateService;
         private readonly IPlaybackService _playbackService;
@@ -43,7 +44,7 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoIPService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -59,11 +60,10 @@ namespace Unigram.ViewModels
 
             Filters = new ChatFilterCollection();
 
-            Chats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
-            ArchivedChats = new ChatsViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListArchive());
+            Chats = new ChatListViewModel(protoService, cacheService, settingsService, aggregator, pushService, new ChatListMain());
             Contacts = new ContactsViewModel(protoService, cacheService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, settingsService, aggregator);
-            Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, pushService, contactsService, settingsSearchService);
+            Settings = new SettingsViewModel(protoService, cacheService, settingsService, aggregator, settingsSearchService);
 
             // This must represent pivot tabs
             Children.Add(Chats);
@@ -72,7 +72,6 @@ namespace Unigram.ViewModels
             Children.Add(Settings);
 
             // Any additional child
-            Children.Add(ArchivedChats);
             Children.Add(_voipService as TLViewModelBase);
 
             aggregator.Subscribe(this);
@@ -92,6 +91,19 @@ namespace Unigram.ViewModels
             FilterDeleteCommand = new RelayCommand<ChatFilterViewModel>(FilterDeleteExecute);
         }
 
+        public void Dispose()
+        {
+            Aggregator.Unsubscribe(Chats.Items);
+            Aggregator.Unsubscribe(this);
+
+            if (Dispatcher != null && Dispatcher.HasThreadAccess)
+            {
+                Chats.Items.Clear();
+            }
+
+            Children.Clear();
+        }
+
         public ILifetimeService Lifetime => _lifetimeService;
         public ISessionService Session => _sessionService;
 
@@ -100,6 +112,8 @@ namespace Unigram.ViewModels
         public IPlaybackService PlaybackService => _playbackService;
 
         public IShortcutsService ShortcutService => _shortcutService;
+
+        public IVoipService VoipService => _voipService;
 
         public RelayCommand ToggleArchiveCommand { get; }
         private void ToggleArchiveExecute()
@@ -230,7 +244,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    RaisePropertyChanged(() => SelectedFilter);
+                    RaisePropertyChanged(nameof(SelectedFilter));
                 }
 
                 foreach (var filter in _filters)
@@ -326,16 +340,12 @@ namespace Unigram.ViewModels
         {
             get
             {
-                if (Chats.Items.ChatList is ChatListFilter filter)
+                if (Chats.Items.ChatList is ChatListFilter filter && _filters != null)
                 {
                     return _filters.FirstOrDefault(x => x.ChatFilterId == filter.ChatFilterId);
                 }
-                else if (Chats.Items.ChatList is ChatListArchive)
-                {
-                    return _filters[1];
-                }
 
-                return _filters.FirstOrDefault();
+                return _filters?.FirstOrDefault();
             }
             set
             {
@@ -375,30 +385,11 @@ namespace Unigram.ViewModels
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public ChatsViewModel Chats { get; private set; }
-        public ChatsViewModel ArchivedChats { get; private set; }
+        public ChatListViewModel Chats { get; private set; }
         public ContactsViewModel Contacts { get; private set; }
         public CallsViewModel Calls { get; private set; }
         public SettingsViewModel Settings { get; private set; }
 
-        public ChatsViewModel Folder { get; private set; }
-
-        public void SetFolder(ChatList chatList)
-        {
-            if (chatList is ChatListMain || chatList == null)
-            {
-                return;
-            }
-
-            Folder = ArchivedChats;
-            RaisePropertyChanged(() => Folder);
-            return;
-
-            Folder = new ChatsViewModel(ProtoService, CacheService, base.Settings, Aggregator, _pushService, chatList);
-            Folder.Dispatcher = Dispatcher;
-            Folder.NavigationService = NavigationService;
-            RaisePropertyChanged(() => Folder);
-        }
 
 
 
@@ -476,10 +467,16 @@ namespace Unigram.ViewModels
 
     public class ChatFilterViewModel : BindableBase
     {
-        public static ChatFilterViewModel Main => new ChatFilterViewModel
+        public static ChatFilterViewModel Main => new ChatFilterViewModel(new ChatListMain())
         {
             ChatFilterId = Constants.ChatListMain,
             Title = Strings.Resources.FilterAllChats
+        };
+
+        public static ChatFilterViewModel Archive => new ChatFilterViewModel(new ChatListArchive())
+        {
+            ChatFilterId = Constants.ChatListArchive,
+            Title = Strings.Resources.ArchivedChats
         };
 
         public ChatFilterViewModel(ChatFilterInfo info)
@@ -487,6 +484,10 @@ namespace Unigram.ViewModels
             if (info.Id == Constants.ChatListMain)
             {
                 ChatList = new ChatListMain();
+            }
+            else if (info.Id == Constants.ChatListArchive)
+            {
+                ChatList = new ChatListArchive();
             }
             else
             {
@@ -500,9 +501,9 @@ namespace Unigram.ViewModels
             _iconUri = new Uri($"ms-appx:///Assets/Filters/{_icon}.png");
         }
 
-        private ChatFilterViewModel()
+        private ChatFilterViewModel(ChatList list)
         {
-            ChatList = new ChatListMain();
+            ChatList = list;
         }
 
         public void Update(ChatFilterInfo info)
@@ -567,8 +568,8 @@ namespace Unigram.ViewModels
             UnreadUnmutedCount = update.UnreadUnmutedCount;
             UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
 
-            RaisePropertyChanged(() => ShowUnmuted);
-            RaisePropertyChanged(() => ShowMuted);
+            RaisePropertyChanged(nameof(ShowUnmuted));
+            RaisePropertyChanged(nameof(ShowMuted));
         }
     }
 

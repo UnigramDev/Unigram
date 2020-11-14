@@ -25,12 +25,12 @@ namespace Unigram.Common
 
         public bool UpdateFile(File file)
         {
-            if (Thumbnail.Id == file.Id)
+            if (Thumbnail?.Id == file.Id)
             {
                 Thumbnail = file;
                 return true;
             }
-            else if (Document.Id == file.Id)
+            else if (Document?.Id == file.Id)
             {
                 Document = file;
                 return true;
@@ -77,7 +77,7 @@ namespace Unigram.Common
 
     public class EmojiSkinData : EmojiData, INotifyPropertyChanged
     {
-        private string _value;
+        private readonly string _value;
 
         public EmojiSkinData(string value, EmojiSkinTone tone)
         {
@@ -476,32 +476,6 @@ namespace Unigram.Common
             }
 
             return false;
-        }
-
-        public static string BuildUri(string string2)
-        {
-            var result = string.Empty;
-            var i = 0;
-
-            do
-            {
-                if (char.IsSurrogatePair(string2, i))
-                {
-                    result += char.ConvertToUtf32(string2, i).ToString("x2");
-                    i += 2;
-                }
-                else
-                {
-                    result += ((short)string2[i]).ToString("x4");
-                    i++;
-                }
-
-                if (i < string2.Length)
-                    result += "-";
-
-            } while (i < string2.Length);
-
-            return $"ms-appx:///Assets/Emojis/{result}.png";
         }
     }
 }

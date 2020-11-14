@@ -35,7 +35,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _inlineBotResults, value);
-                RaisePropertyChanged(() => InlineBotResultsVisibility);
+                RaisePropertyChanged(nameof(InlineBotResultsVisibility));
 
                 _inlineBotResults?.Reset();
             }
@@ -179,7 +179,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var options = await PickSendMessageOptionsAsync();
+            var options = await PickMessageSendOptionsAsync();
             if (options == null)
             {
                 return;
@@ -207,24 +207,7 @@ namespace Unigram.ViewModels
 
             var reply = GetReply(true);
 
-            var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, reply, options, queryId, queryResult.GetId(), false));
-        }
-
-        private User GetBot(MessageViewModel message)
-        {
-            var via = message?.GetViaBotUser();
-            if (via != null)
-            {
-                return via;
-            }
-
-            var sender = message?.GetSenderUser();
-            if (sender != null && sender.Type is UserTypeBot)
-            {
-                return sender;
-            }
-
-            return null;
+            var response = await ProtoService.SendAsync(new SendInlineQueryResultMessage(chat.Id, _threadId, reply, options, queryId, queryResult.GetId(), false));
         }
     }
 

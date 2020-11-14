@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views.Popups;
+using Windows.Devices.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -21,8 +21,8 @@ namespace Unigram.Common
         private Control _element;
         private Pointer _pointer;
 
-        private ZoomableMediaPopup _popupPanel;
-        private Popup _popupHost;
+        private readonly ZoomableMediaPopup _popupPanel;
+        private readonly Popup _popupHost;
         private object _popupContent;
 
         public ZoomableListHandler(ListViewBase listView)
@@ -69,8 +69,6 @@ namespace Unigram.Common
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            _listView.Loaded -= OnLoaded;
-            _listView.Unloaded -= OnUnloaded;
             _listView.PointerMoved -= OnPointerMoved;
             _listView.PointerReleased -= OnPointerReleased;
             _listView.PointerCanceled -= OnPointerReleased;
@@ -81,12 +79,6 @@ namespace Unigram.Common
         {
             get => _popupPanel.DownloadFile;
             set => _popupPanel.DownloadFile = value;
-        }
-
-        public Func<int, Task<BaseObject>> GetEmojisAsync
-        {
-            get => _popupPanel.GetEmojisAsync;
-            set => _popupPanel.GetEmojisAsync = value;
         }
 
         public Action Opening { get; set; }
@@ -122,6 +114,11 @@ namespace Unigram.Common
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
             _element = sender as Control;
             _pointer = e.Pointer;
 

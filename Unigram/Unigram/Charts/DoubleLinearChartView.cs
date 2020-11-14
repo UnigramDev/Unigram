@@ -16,13 +16,13 @@ namespace Unigram.Charts
         {
         }
 
-        protected override void init()
+        protected override void InitializeComponent()
         {
             useMinHeight = true;
-            base.init();
+            base.InitializeComponent();
         }
 
-        protected override void drawChart(CanvasDrawingSession canvas)
+        protected override void DrawChart(CanvasDrawingSession canvas)
         {
             if (chartData != null)
             {
@@ -62,7 +62,10 @@ namespace Unigram.Charts
                 for (int k = 0; k < lines.Count; k++)
                 {
                     LineViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
 
                     int j = 0;
 
@@ -87,11 +90,15 @@ namespace Unigram.Charts
 
                     for (int i = localStart; i <= localEnd; i++)
                     {
-                        if (y[i] < 0) continue;
+                        if (y[i] < 0)
+                        {
+                            continue;
+                        }
+
                         float xPoint = chartData.xPercentage[i] * fullWidth - offset;
                         float yPercentage = ((float)y[i] * chartData.linesK[k] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
                         float padding = line.paint.StrokeWidth / 2f;
-                        float yPoint = getMeasuredHeight() - chartBottom - padding - (yPercentage) * (getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
+                        float yPoint = MeasuredHeight - chartBottom - padding - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
 
                         if (USE_LINES)
                         {
@@ -149,7 +156,10 @@ namespace Unigram.Charts
                         line.paint.StrokeCap = CanvasCapStyle.Round;
                     }
                     line.paint.A = (byte)(255 * line.alpha * transitionAlpha);
-                    if (!USE_LINES) canvas.DrawGeometry(CanvasGeometry.CreatePath(line.chartPath), line.paint);
+                    if (!USE_LINES)
+                    {
+                        canvas.DrawGeometry(CanvasGeometry.CreatePath(line.chartPath), line.paint);
+                    }
                     //else canvas.drawLines(line.linesPath, 0, j, line.paint);
                 }
 
@@ -159,10 +169,10 @@ namespace Unigram.Charts
 
         }
 
-        protected override void drawPickerChart(CanvasDrawingSession canvas)
+        protected override void DrawPickerChart(CanvasDrawingSession canvas)
         {
-            int bottom = getMeasuredHeight() - PICKER_PADDING;
-            int top = getMeasuredHeight() - pikerHeight - PICKER_PADDING;
+            int bottom = MeasuredHeight - PICKER_PADDING;
+            int top = MeasuredHeight - pickerHeight - PICKER_PADDING;
 
             int nl = lines.Count;
             if (chartData != null)
@@ -170,7 +180,10 @@ namespace Unigram.Charts
                 for (int k = 0; k < nl; k++)
                 {
                     LineViewData line = lines[k];
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
 
                     line.bottomLinePath = new CanvasPathBuilder(canvas);
 
@@ -192,7 +205,10 @@ namespace Unigram.Charts
                     //line.chartPath.reset();
                     for (int i = 0; i < n; i++)
                     {
-                        if (y[i] < 0) continue;
+                        if (y[i] < 0)
+                        {
+                            continue;
+                        }
 
                         float xPoint = chartData.xPercentage[i] * pickerWidth;
                         float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
@@ -248,7 +264,11 @@ namespace Unigram.Charts
                     line.linesPathBottomSize = j;
 
 
-                    if (!line.enabled && line.alpha == 0) continue;
+                    if (!line.enabled && line.alpha == 0)
+                    {
+                        continue;
+                    }
+
                     line.bottomLinePaint.A = (byte)(255 * line.alpha);
                     //if (USE_LINES)
                     //    canvas.drawLines(line.linesPathBottom, 0, line.linesPathBottomSize, line.bottomLinePaint);
@@ -259,9 +279,12 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void drawSelection(CanvasDrawingSession canvas)
+        protected override void DrawSelection(CanvasDrawingSession canvas)
         {
-            if (selectedIndex < 0 || !legendShowing) return;
+            if (selectedIndex < 0 || !legendShowing)
+            {
+                return;
+            }
 
             byte alpha = (byte)(chartActiveLineAlpha * selectionA);
 
@@ -278,9 +301,13 @@ namespace Unigram.Charts
             for (int tmpI = 0; tmpI < tmpN; tmpI++)
             {
                 LineViewData line = lines[tmpI];
-                if (!line.enabled && line.alpha == 0) continue;
+                if (!line.enabled && line.alpha == 0)
+                {
+                    continue;
+                }
+
                 float yPercentage = ((float)line.line.y[selectedIndex] * chartData.linesK[tmpI] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
-                float yPoint = getMeasuredHeight() - chartBottom - (yPercentage) * (getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT);
+                float yPoint = MeasuredHeight - chartBottom - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT);
 
                 line.selectionPaint.A = (byte)(255 * line.alpha * selectionA);
                 selectionBackgroundPaint.A = (byte)(255 * line.alpha * selectionA);
@@ -290,7 +317,7 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void drawSignaturesToHorizontalLines(CanvasDrawingSession canvas, ChartHorizontalLinesData a)
+        protected override void DrawSignaturesToHorizontalLines(CanvasDrawingSession canvas, ChartHorizontalLinesData a)
         {
             int n = a.values.Length;
             int rightIndex = chartData.linesK[0] == 1 ? 1 : 0;
@@ -322,7 +349,7 @@ namespace Unigram.Charts
 
 
             linePaint.A = (byte)(a.alpha * 0.1f * transitionAlpha);
-            int chartHeight = getMeasuredHeight() - chartBottom - SIGNATURE_TEXT_HEIGHT;
+            int chartHeight = MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT;
 
             var format = new CanvasTextFormat { FontSize = signaturePaint.TextSize ?? 0 };
             var layout = new CanvasTextLayout(canvas, "0", format, 0, 0);
@@ -333,12 +360,12 @@ namespace Unigram.Charts
             layout.Dispose();
             for (int i = 0; i < n; i++)
             {
-                int y = (int)((getMeasuredHeight() - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
+                int y = (int)((MeasuredHeight - chartBottom) - chartHeight * ((a.values[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight)));
                 if (a.valuesStr != null && lines.Count > 0)
                 {
                     if (a.valuesStr2 == null || lines.Count < 2)
                     {
-                        signaturePaint.Color = _colors["key_statisticChartSignature"];
+                        signaturePaint.Color = GetColor("StatisticChartSignature");
                         signaturePaint.A = (byte)(a.alpha * signaturePaintAlpha * transitionAlpha * additionalOutAlpha);
                     }
                     else
@@ -353,17 +380,17 @@ namespace Unigram.Charts
                 {
                     signaturePaint2.Color = lines[rightIndex].lineColor;
                     signaturePaint2.A = (byte)(a.alpha * lines[rightIndex].alpha * transitionAlpha * additionalOutAlpha);
-                    canvas.DrawText(a.valuesStr2[i], getMeasuredWidth() - HORIZONTAL_PADDING, y - textOffset, signaturePaint2);
+                    canvas.DrawText(a.valuesStr2[i], MeasuredWidth - HORIZONTAL_PADDING, y - textOffset, signaturePaint2);
                 }
             }
         }
 
-        public override LineViewData createLineViewData(ChartData.Line line)
+        public override LineViewData CreateLineViewData(ChartData.Line line)
         {
             return new LineViewData(line);
         }
 
-        public override int findMaxValue(int startXIndex, int endXIndex)
+        public override int FindMaxValue(int startXIndex, int endXIndex)
         {
             if (lines.Count < 1)
             {
@@ -374,12 +401,15 @@ namespace Unigram.Charts
             for (int i = 0; i < n; i++)
             {
                 int localMax = lines[i].enabled ? (int)(chartData.lines[i].segmentTree.rMaxQ(startXIndex, endXIndex) * chartData.linesK[i]) : 0;
-                if (localMax > max) max = localMax;
+                if (localMax > max)
+                {
+                    max = localMax;
+                }
             }
             return max;
         }
 
-        public override int findMinValue(int startXIndex, int endXIndex)
+        public override int FindMinValue(int startXIndex, int endXIndex)
         {
             if (lines.Count < 1)
             {
@@ -390,24 +420,34 @@ namespace Unigram.Charts
             for (int i = 0; i < n; i++)
             {
                 int localMin = lines[i].enabled ? (int)(chartData.lines[i].segmentTree.rMinQ(startXIndex, endXIndex) * chartData.linesK[i]) : int.MaxValue;
-                if (localMin < min) min = localMin;
+                if (localMin < min)
+                {
+                    min = localMin;
+                }
             }
             return min;
         }
 
-        protected override void updatePickerMinMaxHeight()
+        protected override void UpdatePickerMinMaxHeight()
         {
-            if (!ANIMATE_PICKER_SIZES) return;
+            if (!ANIMATE_PICKER_SIZES)
+            {
+                return;
+            }
+
             if (lines[0].enabled)
             {
-                base.updatePickerMinMaxHeight();
+                base.UpdatePickerMinMaxHeight();
                 return;
             }
 
             int max = 0;
             foreach (LineViewData l in lines)
             {
-                if (l.enabled && l.line.maxValue > max) max = l.line.maxValue;
+                if (l.enabled && l.line.maxValue > max)
+                {
+                    max = l.line.maxValue;
+                }
             }
             if (lines.Count > 1)
             {
@@ -417,19 +457,22 @@ namespace Unigram.Charts
             if (max > 0 && max != animatedToPickerMaxHeight)
             {
                 animatedToPickerMaxHeight = max;
-                if (pickerAnimator != null) pickerAnimator.cancel();
-
-                pickerAnimator = createAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
+                if (pickerAnimator != null)
                 {
-                    pickerMaxHeight = (float)animation.getAnimatedValue();
+                    pickerAnimator.Cancel();
+                }
+
+                pickerAnimator = CreateAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
+                {
+                    pickerMaxHeight = (float)animation.GetAnimatedValue();
                     invalidatePickerChart = true;
-                    invalidate();
+                    Invalidate();
                 }));
-                pickerAnimator.start();
+                pickerAnimator.Start();
             }
         }
 
-        protected override ChartHorizontalLinesData createHorizontalLinesData(int newMaxHeight, int newMinHeight)
+        protected override ChartHorizontalLinesData CreateHorizontalLinesData(int newMaxHeight, int newMinHeight)
         {
             float k;
             if (chartData.linesK.Length < 2)

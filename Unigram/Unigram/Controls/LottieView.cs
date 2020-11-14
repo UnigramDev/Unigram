@@ -8,7 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Unigram.Common;
+using Unigram.Views;
+using Windows.ApplicationModel;
 using Windows.Foundation;
+using Windows.Graphics;
 using Windows.Graphics.DirectX;
 using Windows.Storage;
 using Windows.UI.Composition;
@@ -20,7 +23,7 @@ namespace Unigram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     [TemplatePart(Name = "Thumbnail", Type = typeof(Image))]
-    public class LottieView : Control
+    public class LottieView : Control, IPlayerView
     {
         private CanvasControl _canvas;
         private CanvasBitmap _bitmap;
@@ -51,11 +54,13 @@ namespace Unigram.Controls
         private bool _isLoopingEnabled = true;
         private bool _isCachingEnabled = true;
 
+        private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
+
         private LoopThread _thread;
         private LoopThread _threadUI;
         private bool _subscribed;
 
-        private ICanvasResourceCreator _device;
+        private bool _unloaded;
 
         public LottieView()
             : this(CompositionCapabilities.GetForCurrentView().AreEffectsFast())
@@ -75,6 +80,8 @@ namespace Unigram.Controls
         //{
         //    Dispose();
         //}
+
+        public bool IsUnloaded => _unloaded;
 
         protected override void OnApplyTemplate()
         {
@@ -96,20 +103,9 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        public void Dispose()
-        {
-            //if (_animation is IDisposable disposable)
-            //{
-            //    Debug.WriteLine("Disposing animation for: " + Path.GetFileName(_source));
-            //    disposable.Dispose();
-            //}
-
-            //_animation = null;
-            _source = null;
-        }
-
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            _unloaded = true;
             Subscribe(false);
 
             _canvas.CreateResources -= OnCreateResources;
@@ -118,13 +114,13 @@ namespace Unigram.Controls
             _canvas.RemoveFromVisualTree();
             _canvas = null;
 
-            Dispose();
-
-            //_animation?.Dispose();
-            _animation = null;
+            _source = null;
 
             //_bitmap?.Dispose();
             _bitmap = null;
+
+            //_animation?.Dispose();
+            _animation = null;
         }
 
         private void OnTick(object sender, EventArgs args)
@@ -144,10 +140,25 @@ namespace Unigram.Controls
             _canvas?.Invalidate();
         }
 
+        private static object _reusableLock = new object();
+        private static byte[] _reusableBuffer;
+
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            _device = sender;
-            _bitmap = CanvasBitmap.CreateFromBytes(sender, new byte[256 * 256 * 4], 256, 256, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+            lock (_reusableLock)
+            {
+                if (_reusableBuffer == null)
+                {
+                    _reusableBuffer = new byte[256 * 256 * 4];
+                }
+            }
+
+            if (_bitmap != null)
+            {
+                _bitmap.Dispose();
+            }
+
+            _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
@@ -158,24 +169,24 @@ namespace Unigram.Controls
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            _device = args.DrawingSession.Device;
-
-            if (_bitmap != null)
+            if (_bitmap == null || _unloaded)
             {
-                args.DrawingSession.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+                return;
+            }
 
-                if (_hideThumbnail && _thumbnail != null)
-                {
-                    _hideThumbnail = false;
-                    _thumbnail.Opacity = 0;
-                }
+            args.DrawingSession.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
+
+            if (_hideThumbnail && _thumbnail != null)
+            {
+                _hideThumbnail = false;
+                _thumbnail.Opacity = 0;
             }
         }
 
         public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _animationIsCaching || _canvas == null || _bitmap == null)
+            if (animation == null || _animationIsCaching || _canvas == null || _bitmap == null || _unloaded)
             {
                 return;
             }
@@ -235,28 +246,28 @@ namespace Unigram.Controls
                         _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
                     }
                 }
-
-                return;
-            }
-
-            if (index + framesPerUpdate < _animationTotalFrame)
-            {
-                PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animationTotalFrame)));
-
-                _index += framesPerUpdate;
             }
             else
             {
-                _index = 0;
-
-                if (!_isLoopingEnabled)
+                if (index + framesPerUpdate < _animationTotalFrame)
                 {
-                    //sender.Paused = true;
-                    //sender.ResetElapsedTime();
-                    _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
-                }
+                    PositionChanged?.Invoke(this, Math.Min(1, Math.Max(0, (double)(index + 1) / _animationTotalFrame)));
 
-                PositionChanged?.Invoke(this, 1);
+                    _index += framesPerUpdate;
+                }
+                else
+                {
+                    _index = 0;
+
+                    if (!_isLoopingEnabled)
+                    {
+                        //sender.Paused = true;
+                        //sender.ResetElapsedTime();
+                        _ = Dispatcher.RunIdleAsync(idle => Subscribe(false));
+                    }
+
+                    PositionChanged?.Invoke(this, 1);
+                }
             }
         }
 
@@ -297,8 +308,6 @@ namespace Unigram.Controls
                 //canvas.Paused = true;
                 //canvas.ResetElapsedTime();
                 Subscribe(false);
-
-                Dispose();
                 return;
             }
 
@@ -322,12 +331,13 @@ namespace Unigram.Controls
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
 
-            _index = _isCachingEnabled ? 0 : _animationTotalFrame - 1;
-
-            var update = TimeSpan.FromSeconds(_animation.Duration / _animation.TotalFrame);
-            if (_limitFps && _animation.FrameRate >= 60)
+            if (_backward)
             {
-                update = TimeSpan.FromSeconds(update.TotalSeconds * 2);
+                _index = _animationTotalFrame - 1;
+            }
+            else
+            {
+                _index = _isCachingEnabled ? 0 : _animationTotalFrame - 1;
             }
 
             //canvas.Paused = true;
@@ -348,6 +358,11 @@ namespace Unigram.Controls
                 Invalidate();
                 _canvas.Invalidate();
             }
+        }
+
+        public void Play()
+        {
+            Play(false);
         }
 
         public void Play(bool backward = false)
@@ -412,7 +427,7 @@ namespace Unigram.Controls
             switch (uri.Scheme)
             {
                 case "ms-appx":
-                    return Path.Combine(uri.Segments.Select(x => x.Trim('/')).ToArray());
+                    return Path.Combine(new[] { Package.Current.InstalledLocation.Path }.Union(uri.Segments.Select(x => x.Trim('/'))).ToArray());
                 case "ms-appdata":
                     switch (uri.Host)
                     {
@@ -461,6 +476,42 @@ namespace Unigram.Controls
         private static void OnCachingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((LottieView)d)._isCachingEnabled = (bool)e.NewValue;
+        }
+
+        #endregion
+
+        #region IsBackward
+
+        public bool IsBackward
+        {
+            get { return (bool)GetValue(IsBackwardProperty); }
+            set { SetValue(IsBackwardProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsBackwardProperty =
+            DependencyProperty.Register("IsBackward", typeof(bool), typeof(LottieView), new PropertyMetadata(false, OnBackwardChanged));
+
+        private static void OnBackwardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._backward = (bool)e.NewValue;
+        }
+
+        #endregion
+
+        #region FrameSize
+
+        public SizeInt32 FrameSize
+        {
+            get { return (SizeInt32)GetValue(FrameSizeProperty); }
+            set { SetValue(FrameSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty FrameSizeProperty =
+            DependencyProperty.Register("FrameSize", typeof(SizeInt32), typeof(LottieView), new PropertyMetadata(new SizeInt32 { Width = 256, Height = 256 }, OnFrameSizeChanged));
+
+        private static void OnFrameSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((LottieView)d)._frameSize = (SizeInt32)e.NewValue;
         }
 
         #endregion

@@ -23,16 +23,25 @@
     </ContentControl.Resources>
 
     <ContentDialog.Title>
-        <Grid x:Name="Header2">
+        <Grid x:Name="Header2" Height="48">
             <Grid x:Name="MainHeader">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" MinWidth="12"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                    <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
-                </StackPanel>
+                <Button
+                    Click="Search_Click"
+                    AutomationProperties.LandmarkType="Search"
+                    Content="{x:Bind ViewModel.Title, Mode=OneWay}"
+                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                    Background="{ThemeResource PageBackgroundDarkBrush}"
+                    BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
+                    HorizontalContentAlignment="Left"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Height="32"
+                    Margin="12,0,0,0"
+                    Padding="9,0,6,0"/>
 
                 <controls:GlyphButton
                         AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"       
@@ -48,32 +57,25 @@
                         </MenuFlyout>
                     </controls:GlyphButton.Flyout>
                 </controls:GlyphButton>
-
-                <controls:GlyphButton
-                        AutomationProperties.Name="{CustomResource Search}"       
-                        ToolTipService.ToolTip="{CustomResource Search}" 
-                        Glyph="&#xE11A;"
-                        Click="Search_Click"
-                        Style="{StaticResource HeaderGlyphButtonStyle}"
-                        Grid.Column="2"/>
-
-                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
             </Grid>
 
-            <controls:SearchTextBox
+            <TextBox
                 x:Name="SearchField"
-                Style="{StaticResource QueryTextBoxStyle}"
-                PlaceholderText="{CustomResource Search}"
+                PlaceholderText="{x:Bind ViewModel.Title, Mode=OneWay}"
+                Background="{ThemeResource PageBackgroundDarkBrush}"
+                BorderBrush="{ThemeResource PageBackgroundDarkBrush}"
                 PreventKeyboardDisplayOnProgrammaticFocus="True"
-                Delete="Search_LostFocus"
-                GotFocus="Search_GotFocus"
+                VerticalAlignment="Center"
                 TextChanged="Search_TextChanged"
                 KeyDown="Search_KeyDown"
-                Visibility="Collapsed"/>
+                Visibility="Collapsed"
+                Margin="12,0"/>
+
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
         </Grid>
     </ContentDialog.Title>
     
-    <Grid Width="320" MaxHeight="4200">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
@@ -81,28 +83,19 @@
         <Grid>
             <ListView
                 x:Name="ChatsPanel"
+                IsItemClickEnabled="True"
                 ItemsSource="{x:Bind ViewModel.Items}"
                 SelectionMode="Multiple"
                 SizeChanged="List_SizeChanged"
                 SelectionChanged="List_SelectionChanged"
+                ItemClick="List_ItemClick"
                 ChoosingItemContainer="OnChoosingItemContainer"
                 ContainerContentChanging="OnContainerContentChanging">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePicture IsHitTestVisible="False" Width="36" Height="36" Margin="0,0,12,0"/>
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                TextWrapping="NoWrap"
-                                TextTrimming="CharacterEllipsis"
-                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                Style="{StaticResource BodyTextBlockStyle}"
-                                Grid.Column="1"/>
-                        </Grid>
+                        <cells:ChatShareCell
+                            SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            Accent="{ThemeResource SystemAccentColor}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.Footer>

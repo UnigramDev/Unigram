@@ -29,16 +29,12 @@ namespace Unigram.Controls.Drawers
 
         public EmojiDrawer()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
-
-            Separator.SizeChanged += (s, args) =>
-            {
-                shadow.Size = args.NewSize.ToVector2();
-            };
+            shadow.RelativeSizeAdjustment = Vector2.One;
 
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();
@@ -262,7 +258,7 @@ namespace Unigram.Controls.Drawers
 
         #region Recycle
 
-        private Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
+        private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {

@@ -11,32 +11,32 @@ namespace Unigram.Common
 
         public RGB(byte r, byte g, byte b)
         {
-            this._r = r;
-            this._g = g;
-            this._b = b;
+            _r = r;
+            _g = g;
+            _b = b;
         }
 
         public byte R
         {
-            get { return this._r; }
-            set { this._r = value; }
+            get { return _r; }
+            set { _r = value; }
         }
 
         public byte G
         {
-            get { return this._g; }
-            set { this._g = value; }
+            get { return _g; }
+            set { _g = value; }
         }
 
         public byte B
         {
-            get { return this._b; }
-            set { this._b = value; }
+            get { return _b; }
+            set { _b = value; }
         }
 
         public bool Equals(RGB rgb)
         {
-            return (this.R == rgb.R) && (this.G == rgb.G) && (this.B == rgb.B);
+            return (R == rgb.R) && (G == rgb.G) && (B == rgb.B);
         }
 
         public static implicit operator Color(RGB rhs)
@@ -60,26 +60,39 @@ namespace Unigram.Common
             delta = v - min;
 
             if (v == 0.0)
+            {
                 s = 0;
+            }
             else
+            {
                 s = delta / v;
+            }
 
             if (s == 0)
+            {
                 h = 0.0;
-
+            }
             else
             {
                 if (rgb.R == v)
+                {
                     h = (rgb.G - rgb.B) / delta;
+                }
                 else if (rgb.G == v)
+                {
                     h = 2 + (rgb.B - rgb.R) / delta;
+                }
                 else if (rgb.B == v)
+                {
                     h = 4 + (rgb.R - rgb.G) / delta;
+                }
 
                 h *= 60;
 
                 if (h < 0.0)
+                {
                     h = h + 360;
+                }
             }
 
             return new HSV(h, s, (v / 255));
@@ -125,9 +138,14 @@ namespace Unigram.Common
                 }
 
                 if (hue < 0)
+                {
                     hue += 1;
+                }
+
                 if (hue > 1)
+                {
                     hue -= 1;
+                }
 
                 hsl.H = (int)(hue * 360);
             }
@@ -144,32 +162,32 @@ namespace Unigram.Common
 
         public HSV(double h, double s, double v)
         {
-            this._h = h;
-            this._s = s;
-            this._v = v;
+            _h = h;
+            _s = s;
+            _v = v;
         }
 
         public double H
         {
-            get { return this._h; }
-            set { this._h = value; }
+            get { return _h; }
+            set { _h = value; }
         }
 
         public double S
         {
-            get { return this._s; }
-            set { this._s = value; }
+            get { return _s; }
+            set { _s = value; }
         }
 
         public double V
         {
-            get { return this._v; }
-            set { this._v = value; }
+            get { return _v; }
+            set { _v = value; }
         }
 
         public bool Equals(HSV hsv)
         {
-            return (this.H == hsv.H) && (this.S == hsv.S) && (this.V == hsv.V);
+            return (H == hsv.H) && (S == hsv.S) && (V == hsv.V);
         }
 
         public RGB ToRGB()
@@ -189,9 +207,13 @@ namespace Unigram.Common
                 double f, p, q, t;
 
                 if (hsv.H == 360)
+                {
                     hsv.H = 0;
+                }
                 else
+                {
                     hsv.H = hsv.H / 60;
+                }
 
                 i = (int)Math.Truncate(hsv.H);
                 f = hsv.H - i;
@@ -253,32 +275,32 @@ namespace Unigram.Common
 
         public HSL(int h, double s, double l)
         {
-            this._h = h;
-            this._s = s;
-            this._l = l;
+            _h = h;
+            _s = s;
+            _l = l;
         }
 
         public int H
         {
-            get { return this._h; }
-            set { this._h = value; }
+            get { return _h; }
+            set { _h = value; }
         }
 
         public double S
         {
-            get { return this._s; }
-            set { this._s = value; }
+            get { return _s; }
+            set { _s = value; }
         }
 
         public double L
         {
-            get { return this._l; }
-            set { this._l = value; }
+            get { return _l; }
+            set { _l = value; }
         }
 
         public bool Equals(HSL hsl)
         {
-            return (this.H == hsl.H) && (this.S == hsl.S) && (this.L == hsl.L);
+            return (H == hsl.H) && (S == hsl.S) && (L == hsl.L);
         }
 
         public RGB ToRGB()
@@ -311,19 +333,29 @@ namespace Unigram.Common
         private static double HueToRGB(double v1, double v2, double vH)
         {
             if (vH < 0)
+            {
                 vH += 1;
+            }
 
             if (vH > 1)
+            {
                 vH -= 1;
+            }
 
             if ((6 * vH) < 1)
+            {
                 return (v1 + (v2 - v1) * 6 * vH);
+            }
 
             if ((2 * vH) < 1)
+            {
                 return v2;
+            }
 
             if ((3 * vH) < 2)
+            {
                 return (v1 + (v2 - v1) * ((2.0f / 3) - vH) * 6);
+            }
 
             return v1;
         }
@@ -340,6 +372,21 @@ namespace Unigram.Common
             return Color.FromArgb(a, r, g, b);
         }
 
+        public static Color FromHex(int hexValue)
+        {
+            byte a = (byte)((hexValue & 0xff000000) >> 24);
+            byte r = (byte)((hexValue & 0x00ff0000) >> 16);
+            byte g = (byte)((hexValue & 0x0000ff00) >> 8);
+            byte b = (byte)(hexValue & 0x000000ff);
+
+            return Color.FromArgb(a, r, g, b);
+        }
+
+        public static int ToHex(Color color)
+        {
+            return (color.A << 24) + (color.R << 16) + (color.G << 8) + color.B;
+        }
+
         public static HSV ToHSV(this Color color)
         {
             RGB rgb = color;
@@ -351,155 +398,131 @@ namespace Unigram.Common
             delta = v - min;
 
             if (v == 0.0)
+            {
                 s = 0;
+            }
             else
+            {
                 s = delta / v;
+            }
 
             if (s == 0)
+            {
                 h = 0.0;
-
+            }
             else
             {
                 if (rgb.R == v)
+                {
                     h = (rgb.G - rgb.B) / delta;
+                }
                 else if (rgb.G == v)
+                {
                     h = 2 + (rgb.B - rgb.R) / delta;
+                }
                 else if (rgb.B == v)
+                {
                     h = 4 + (rgb.R - rgb.G) / delta;
+                }
 
                 h *= 60;
 
                 if (h < 0.0)
+                {
                     h = h + 360;
+                }
             }
 
             return new HSV(h, s, (v / 255));
         }
 
-        public static double GetLightness(this Color color)
+
+        public static HSL ToHSL(this Color color)
         {
-            double r = color.R / 255.0;
-            double g = color.G / 255.0;
-            double b = color.B / 255.0;
-            double v;
-            double m;
-            double vm;
-            double r2, g2, b2;
+            RGB rgb = color;
+            HSL hsl = new HSL();
 
-            var h = 0d; // default to black
-            var s = 0d;
-            var l = 0d;
-            v = Math.Max(r, g);
-            v = Math.Max(v, b);
-            m = Math.Min(r, g);
-            m = Math.Min(m, b);
+            float r = (rgb.R / 255.0f);
+            float g = (rgb.G / 255.0f);
+            float b = (rgb.B / 255.0f);
 
-            l = (m + v) / 2.0;
+            float min = Math.Min(Math.Min(r, g), b);
+            float max = Math.Max(Math.Max(r, g), b);
+            float delta = max - min;
 
-            if (l <= 0.0)
+            hsl.L = (max + min) / 2;
+
+            if (delta == 0)
             {
-                return l;
-            }
-
-            vm = v - m;
-            s = vm;
-
-            if (s > 0.0)
-            {
-                s /= (l <= 0.5) ? (v + m) : (2.0 - v - m);
+                hsl.H = 0;
+                hsl.S = 0.0f;
             }
             else
             {
-                return l;
+                hsl.S = (hsl.L <= 0.5) ? (delta / (max + min)) : (delta / (2 - max - min));
+
+                float hue;
+
+                if (r == max)
+                {
+                    hue = ((g - b) / 6) / delta;
+                }
+                else if (g == max)
+                {
+                    hue = (1.0f / 3) + ((b - r) / 6) / delta;
+                }
+                else
+                {
+                    hue = (2.0f / 3) + ((r - g) / 6) / delta;
+                }
+
+                if (hue < 0)
+                {
+                    hue += 1;
+                }
+
+                if (hue > 1)
+                {
+                    hue -= 1;
+                }
+
+                hsl.H = (int)(hue * 360);
             }
 
-            r2 = (v - r) / vm;
-            g2 = (v - g) / vm;
-            b2 = (v - b) / vm;
-
-            if (r == v)
-            {
-                h = (g == m ? 5.0 + b2 : 1.0 - g2);
-            }
-            else if (g == v)
-            {
-                h = (b == m ? 1.0 + r2 : 3.0 - b2);
-            }
-            else
-            {
-                h = (r == m ? 3.0 + g2 : 5.0 - r2);
-            }
-
-            h /= 6.0;
-
-            return l;
+            return hsl;
         }
 
-        public static Color FromHSL(double h, double sl, double l)
+        public static Color GetPatternColor(Color color)
         {
-            double v;
-            double r, g, b;
-
-            r = l;   // default to gray
-            g = l;
-            b = l;
-            v = (l <= 0.5) ? (l * (1.0 + sl)) : (l + sl - l * sl);
-
-            if (v > 0)
+            var rgb = (RGB)color;
+            var hsb = rgb.ToHSV();
+            if (hsb.S > 0.0f || (hsb.V < 1.0f && hsb.V > 0.0f))
             {
-                double m;
-                double sv;
-                int sextant;
-                double fract, vsf, mid1, mid2;
-
-                m = l + l - v;
-                sv = (v - m) / v;
-                h *= 6.0;
-                sextant = (int)h;
-                fract = h - sextant;
-                vsf = v * sv * fract;
-                mid1 = m + vsf;
-                mid2 = v - vsf;
-
-                switch (sextant)
-                {
-                    case 0:
-                        r = v;
-                        g = mid1;
-                        b = m;
-                        break;
-                    case 1:
-                        r = mid2;
-                        g = v;
-                        b = m;
-                        break;
-                    case 2:
-                        r = m;
-                        g = v;
-                        b = mid1;
-                        break;
-                    case 3:
-                        r = m;
-                        g = mid2;
-                        b = v;
-                        break;
-                    case 4:
-                        r = mid1;
-                        g = m;
-                        b = v;
-                        break;
-                    case 5:
-                        r = v;
-                        g = m;
-                        b = mid2;
-                        break;
-                }
+                hsb.S = Math.Min(1.0f, hsb.S + 0.05f + 0.1f * (1.0f - hsb.S));
+            }
+            if (hsb.V > 0.5f)
+            {
+                hsb.V = Math.Max(0.0f, hsb.V * 0.65f);
+            }
+            else
+            {
+                hsb.V = Math.Max(0.0f, Math.Min(1.0f, 1.0f - hsb.V * 0.65f));
             }
 
-            return Color.FromArgb(0xFF,
-                Convert.ToByte(r * 255.0f),
-                Convert.ToByte(g * 255.0f),
-                Convert.ToByte(b * 255.0f));
+            var result = hsb.ToRGB();
+            return Color.FromArgb(0x66, result.R, result.G, result.B);
+        }
+
+        public static Color GetAverageColor(Color color1, Color color2)
+        {
+            double r1 = color1.R;
+            double r2 = color2.R;
+            double g1 = color1.G;
+            double g2 = color2.G;
+            double b1 = color1.B;
+            double b2 = color2.B;
+
+            return Color.FromArgb(255, (byte)(r1 / 2d + r2 / 2d), (byte)(g1 / 2d + g2 / 2d), (byte)(b1 / 2d + b2 / 2d));
         }
     }
 }

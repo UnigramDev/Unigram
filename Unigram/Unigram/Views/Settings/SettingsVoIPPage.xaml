@@ -16,31 +16,32 @@
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel>
+            <StackPanel Margin="0,0,0,12">
+                <controls:HeaderedControl
+                    Header="Camera">
+                    <ComboBox
+                        ItemsSource="{x:Bind ViewModel.Video}"
+                        SelectedItem="{x:Bind ViewModel.SelectedVideo, Mode=TwoWay}"
+                        DisplayMemberPath="Name"
+                        Margin="12,6"/>
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl
                     Header="Speakers and headphones">
-                    <ComboBox Header="Output device"
-                              ItemsSource="{x:Bind ViewModel.Output}"
-                              SelectedItem="{x:Bind ViewModel.SelectedOutput, Mode=TwoWay}"
-                              DisplayMemberPath="Name"
-                              Margin="12,0"/>
-
-                    <Slider Header="{x:Bind ConvertVolumeLabel(ViewModel.OutputVolume, x:True), Mode=OneWay}"
-                            Value="{x:Bind ConvertVolume(ViewModel.OutputVolume), BindBack=ConvertVolumeOutput, Mode=TwoWay}"
-                            Margin="12,16,12,8"/>
+                    <ComboBox
+                        ItemsSource="{x:Bind ViewModel.Output}"
+                        SelectedItem="{x:Bind ViewModel.SelectedOutput, Mode=TwoWay}"
+                        DisplayMemberPath="Name"
+                        Margin="12,6"/>
                 </controls:HeaderedControl>
                 
                 <controls:HeaderedControl
                     Header="Microphone">
-                    <ComboBox Header="Input device"
-                              ItemsSource="{x:Bind ViewModel.Input}"
-                              SelectedItem="{x:Bind ViewModel.SelectedInput, Mode=TwoWay}"
-                              DisplayMemberPath="Name"
-                              Margin="12,0"/>
-
-                    <Slider Header="{x:Bind ConvertVolumeLabel(ViewModel.InputVolume, x:False), Mode=OneWay}"
-                            Value="{x:Bind ConvertVolume(ViewModel.InputVolume), BindBack=ConvertVolumeInput, Mode=TwoWay}"
-                            Margin="12,16,12,8"/>
+                    <ComboBox
+                        ItemsSource="{x:Bind ViewModel.Input}"
+                        SelectedItem="{x:Bind ViewModel.SelectedInput, Mode=TwoWay}"
+                        DisplayMemberPath="Name"
+                        Margin="12,6"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl

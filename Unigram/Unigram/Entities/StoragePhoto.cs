@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 
@@ -9,12 +8,11 @@ namespace Unigram.Entities
 {
     public class StoragePhoto : StorageMedia
     {
-        private BasicProperties _basic;
+        private readonly BasicProperties _basic;
 
         public StoragePhoto(StorageFile file, BasicProperties basic, ImageProperties props)
             : base(file, basic)
         {
-            _fullRectangle = new Rect(0, 0, props.GetWidth(), props.GetHeight());
             _basic = basic;
 
             Properties = props;
@@ -49,7 +47,7 @@ namespace Unigram.Entities
 
         public ImageProperties Properties { get; private set; }
 
-        public new static async Task<StoragePhoto> CreateAsync(StorageFile file, bool selected)
+        public new static async Task<StoragePhoto> CreateAsync(StorageFile file)
         {
             try
             {

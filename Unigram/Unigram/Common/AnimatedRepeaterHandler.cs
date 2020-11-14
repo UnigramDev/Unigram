@@ -179,7 +179,7 @@ namespace Unigram.Common
             public AnimationView Presenter { get; set; }
         }
 
-        private Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
+        private readonly Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
 
         private void Play(IEnumerable<(Button Contaner, T Sticker)> items, bool auto)
         {
@@ -270,7 +270,7 @@ namespace Unigram.Common
                     var presenter = new AnimationView();
                     presenter.AutoPlay = true;
                     presenter.IsLoopingEnabled = true;
-                    presenter.Source = new Uri("file:///" + data.File.Local.Path);
+                    presenter.Source = UriEx.GetLocal(data.File.Local.Path);
 
                     data.Presenter = presenter;
                     data.Container.Children.Insert(1, presenter);

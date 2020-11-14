@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -77,105 +76,84 @@ namespace Unigram.Controls.Chats
 
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
-            // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
-            // we have to handle the pasting operation manually to allow plaintext only.
-            var package = Clipboard.GetContent();
-            if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap))
+            try
             {
-                if (e != null)
+                // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
+                // we have to handle the pasting operation manually to allow plaintext only.
+                var package = Clipboard.GetContent();
+                if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap) || package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
-                    e.Handled = true;
-                }
-
-                await ViewModel.HandlePackageAsync(package);
-            }
-            //else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
-            //{
-
-            //}
-            else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
-            {
-                if (e != null)
-                {
-                    e.Handled = true;
-                }
-
-                await ViewModel.HandlePackageAsync(package);
-            }
-            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
-            {
-                if (e != null)
-                {
-                    e.Handled = true;
-                }
-
-                // This is our field format
-                var text = await package.GetTextAsync();
-                var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
-                var reader = new DataReader(data.GetInputStreamAt(0));
-                var length = await reader.LoadAsync((uint)data.Size);
-
-                var count = reader.ReadInt32();
-                var entities = new List<TextEntity>(count);
-
-                for (int i = 0; i < count; i++)
-                {
-                    var entity = new TextEntity { Offset = reader.ReadInt32(), Length = reader.ReadInt32() };
-                    var type = reader.ReadByte();
-
-                    switch (type)
+                    if (e != null)
                     {
-                        case 1:
-                            entity.Type = new TextEntityTypeBold();
-                            break;
-                        case 2:
-                            entity.Type = new TextEntityTypeItalic();
-                            break;
-                        case 3:
-                            entity.Type = new TextEntityTypePreCode();
-                            break;
-                        case 4:
-                            entity.Type = new TextEntityTypeTextUrl { Url = reader.ReadString(reader.ReadUInt32()) };
-                            break;
-                        case 5:
-                            entity.Type = new TextEntityTypeMentionName { UserId = reader.ReadInt32() };
-                            break;
+                        e.Handled = true;
                     }
 
-                    entities.Add(entity);
+                    await ViewModel.HandlePackageAsync(package);
                 }
-
-                InsertText(text, entities);
-            }
-            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-td-field-tags"))
-            {
-                // This is Telegram Desktop mentions format
-            }
-            else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
-            {
-                if (e != null)
+                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
                 {
-                    e.Handled = true;
-                }
-
-                var text = await package.GetTextAsync();
-                var start = Document.Selection.StartPosition;
-
-                var result = Emoticon.Pattern.Replace(text, (match) =>
-                {
-                    var emoticon = match.Groups[1].Value;
-                    var emoji = Emoticon.Replace(emoticon);
-                    if (match.Value.StartsWith(" "))
+                    if (e != null)
                     {
-                        emoji = $" {emoji}";
+                        e.Handled = true;
                     }
 
-                    return emoji;
-                });
+                    // This is our field format
+                    var text = await package.GetTextAsync();
+                    var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
+                    var reader = new DataReader(data.GetInputStreamAt(0));
+                    var length = await reader.LoadAsync((uint)data.Size);
 
-                Document.Selection.SetText(TextSetOptions.None, result);
-                Document.Selection.SetRange(start + result.Length, start + result.Length);
+                    var count = reader.ReadInt32();
+                    var entities = new List<TextEntity>(count);
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var entity = new TextEntity { Offset = reader.ReadInt32(), Length = reader.ReadInt32() };
+                        var type = reader.ReadByte();
+
+                        switch (type)
+                        {
+                            case 1:
+                                entity.Type = new TextEntityTypeBold();
+                                break;
+                            case 2:
+                                entity.Type = new TextEntityTypeItalic();
+                                break;
+                            case 3:
+                                entity.Type = new TextEntityTypePreCode();
+                                break;
+                            case 4:
+                                entity.Type = new TextEntityTypeTextUrl { Url = reader.ReadString(reader.ReadUInt32()) };
+                                break;
+                            case 5:
+                                entity.Type = new TextEntityTypeMentionName { UserId = reader.ReadInt32() };
+                                break;
+                        }
+
+                        entities.Add(entity);
+                    }
+
+                    InsertText(text, entities);
+                }
+                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-td-field-tags"))
+                {
+                    // This is Telegram Desktop mentions format
+                }
+                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
+                {
+                    if (e != null)
+                    {
+                        e.Handled = true;
+                    }
+
+                    var text = await package.GetTextAsync();
+                    var start = Document.Selection.StartPosition;
+
+                    Document.Selection.SetText(TextSetOptions.None, text);
+                    Document.Selection.SetRange(start + text.Length, start + text.Length);
+                }
             }
+            catch { }
         }
 
         public ListView Messages { get; set; }
@@ -183,15 +161,8 @@ namespace Unigram.Controls.Chats
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Space)
+            if (e.Key == VirtualKey.Space && Document.Selection.Length == 0)
             {
-                if (Document.Selection.Length > 0)
-                {
-                    return;
-                }
-
-                FormatText();
-
                 var clone = Document.Selection.GetClone();
                 var end = clone.EndOf(TextRangeUnit.CharacterFormat, true);
 
@@ -283,7 +254,21 @@ namespace Unigram.Controls.Chats
                 AcceptsReturn = !send;
                 e.Handled = send;
 
-                if (send)
+                // If handwriting panel is open, the app would crash on send.
+                // Still, someone should fill a ticket to Microsoft about this.
+                if (send && HandwritingView.IsOpen)
+                {
+                    RoutedEventHandler handler = null;
+                    handler = (s, args) =>
+                    {
+                        _ = SendAsync();
+                        HandwritingView.Unloaded -= handler;
+                    };
+
+                    HandwritingView.Unloaded += handler;
+                    HandwritingView.TryClose();
+                }
+                else if (send)
                 {
                     _ = SendAsync();
                 }
@@ -411,6 +396,22 @@ namespace Unigram.Controls.Chats
         {
             if (Emoji.ContainsSingleEmoji(text) && ViewModel.ComposerHeader?.EditingMessage == null)
             {
+                var chat = ViewModel.Chat;
+                if (chat?.Permissions.CanSendOtherMessages == false)
+                {
+                    autocomplete = null;
+                    return false;
+                }
+
+                if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.Status is ChatMemberStatusRestricted restricted && !restricted.Permissions.CanSendOtherMessages)
+                    {
+                        autocomplete = null;
+                        return false;
+                    }
+                }
+
                 autocomplete = new SearchStickersCollection(ViewModel.ProtoService, ViewModel.Settings, text.Trim());
                 return true;
             }
@@ -429,7 +430,7 @@ namespace Unigram.Controls.Chats
                     members = false;
                 }
 
-                autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, username, index == 0, members);
+                autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, ViewModel.ThreadId, username, index == 0, members);
                 return true;
             }
             else if (SearchByHashtag(query, out string hashtag, out int index2))
@@ -471,6 +472,7 @@ namespace Unigram.Controls.Chats
         {
             private readonly IProtoService _protoService;
             private readonly long _chatId;
+            private readonly long _threadId;
             private readonly string _query;
 
             private readonly bool _bots;
@@ -478,10 +480,11 @@ namespace Unigram.Controls.Chats
 
             private bool _hasMore = true;
 
-            public UsernameCollection(IProtoService protoService, long chatId, string query, bool bots, bool members)
+            public UsernameCollection(IProtoService protoService, long chatId, long threadId, string query, bool bots, bool members)
             {
                 _protoService = protoService;
                 _chatId = chatId;
+                _threadId = threadId;
                 _query = query;
 
                 _bots = bots;
@@ -514,7 +517,7 @@ namespace Unigram.Controls.Chats
 
                     if (_members)
                     {
-                        var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 20, null));
+                        var response = await _protoService.SendAsync(new SearchChatMembers(_chatId, _query, 20, new ChatMembersFilterMention(_threadId)));
                         if (response is ChatMembers members)
                         {
                             foreach (var member in members.Members)
@@ -679,45 +682,17 @@ namespace Unigram.Controls.Chats
             Text = text;
         }
 
-        private void FormatText()
+        public async Task SendAsync(bool disableNotification = false)
         {
-            if (!ViewModel.Settings.IsReplaceEmojiEnabled)
+            if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
             {
+                await ScheduleAsync();
                 return;
             }
 
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            var caretPosition = Document.Selection.StartPosition;
-            var result = Emoticon.Pattern.Matches(text);
-
-            Document.BatchDisplayUpdates();
-
-            foreach (Match match in result)
-            {
-                var emoticon = match.Groups[1].Value;
-                var emoji = Emoticon.Replace(emoticon);
-                if (match.Index + match.Length < caretPosition)
-                {
-                    caretPosition += emoji.Length - emoticon.Length;
-                }
-                if (match.Value.StartsWith(" "))
-                {
-                    emoji = $" {emoji}";
-                }
-
-                Document.GetRange(match.Index, match.Index + match.Length).SetText(TextSetOptions.None, emoji);
-            }
-
-            Document.ApplyDisplayUpdates();
-            Document.Selection.SetRange(caretPosition, caretPosition);
-        }
-
-        public async Task SendAsync(bool disableNotification = false)
-        {
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = new SendMessageOptions(disableNotification, false, null);
+            var options = new MessageSendOptions(disableNotification, false, null);
 
             var text = GetFormattedText(true);
             await ViewModel.SendMessageAsync(text, options);
@@ -727,7 +702,7 @@ namespace Unigram.Controls.Chats
         {
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = await ViewModel.PickSendMessageOptionsAsync(true);
+            var options = await ViewModel.PickMessageSendOptionsAsync(true);
             if (options == null)
             {
                 return;
@@ -739,7 +714,6 @@ namespace Unigram.Controls.Chats
 
         protected override void OnGettingFormattedText()
         {
-            FormatText();
         }
 
         protected override void OnSettingText()
@@ -925,7 +899,7 @@ namespace Unigram.Controls.Chats
                 }
                 else
                 {
-                    if (!MessageHelper.IsValidCommandSymbol(text[i]))
+                    if (!char.IsLetter(text[i]) && !char.IsNumber(text[i]))
                     {
                         flag = false;
                         break;

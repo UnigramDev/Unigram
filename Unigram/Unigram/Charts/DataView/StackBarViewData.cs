@@ -1,5 +1,8 @@
 ﻿using Unigram.Charts.Data;
+using Unigram.Common;
 using Windows.UI;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Charts.DataView
 {
@@ -23,11 +26,14 @@ namespace Unigram.Charts.DataView
         //    super.updateColors();
         //}
 
-        public override void updateColors()
+        public override void UpdateColors(ElementTheme theme)
         {
-            base.updateColors();
-            //blendColor = Extensions.blendARGB(Theme.getColor(Theme.key_windowBackgroundWhite), lineColor, 0.3f);
-            blendColor = Extensions.blendARGB(Colors.White, lineColor, 0.3f);
+            base.UpdateColors(theme);
+
+            if (App.Current.Resources.TryGet("ApplicationPageBackgroundThemeBrush", out SolidColorBrush brush))
+            {
+                blendColor = Extensions.blendARGB(brush.Color, lineColor, 0.3f);
+            }
         }
     }
 }

@@ -5,9 +5,12 @@
 #include <sstream>
 #include <vector>
 #include <windows.h>
+#include <ppltasks.h>
+
 #include "Shlwapi.h"
 
 using namespace Platform;
+using namespace Windows::Foundation;
 using namespace Windows::Foundation::Metadata;
 
 namespace Unigram
@@ -32,6 +35,8 @@ namespace Unigram
 			static String^ GetCurrentCulture();
 
 			static bool IsMediaSupported();
+
+			static IAsyncAction^ UpdateToast(String^ caption, String^ message, String^ session, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, bool canReply);
 
 		private:
 			static uint64_t GetDirectorySizeInternal(const std::wstring &path, const std::wstring &filter, uint64_t size);

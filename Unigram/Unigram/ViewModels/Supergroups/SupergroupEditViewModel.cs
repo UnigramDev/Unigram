@@ -1,20 +1,26 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
-using Windows.Storage;
+using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels.Supergroups
 {
     public class SupergroupEditViewModel : TLViewModelBase,
         IDelegable<ISupergroupEditDelegate>,
+        IHandle<UpdateFile>,
+        IHandle<UpdateChatPhoto>,
         IHandle<UpdateSupergroup>,
         IHandle<UpdateSupergroupFullInfo>,
         IHandle<UpdateBasicGroup>,
@@ -29,8 +35,7 @@ namespace Unigram.ViewModels.Supergroups
             EditHistoryCommand = new RelayCommand(EditHistoryExecute);
             EditLinkedChatCommand = new RelayCommand(EditLinkedChatExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
-            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
-            DeletePhotoCommand = new RelayCommand(DeletePhotoExecute);
+            EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
 
             RevokeCommand = new RelayCommand(RevokeExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
@@ -49,9 +54,6 @@ namespace Unigram.ViewModels.Supergroups
             get { return _chat; }
             set { Set(ref _chat, value); }
         }
-
-        private StorageFile _photo;
-        private bool _deletePhoto;
 
         private string _title;
         public string Title
@@ -138,6 +140,34 @@ namespace Unigram.ViewModels.Supergroups
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
+        }
+
+        public void Handle(UpdateFile update)
+        {
+            var chat = _chat;
+            if (chat?.Photo == null)
+            {
+                return;
+            }
+
+            if (update.File.Local.IsDownloadingCompleted && chat.Photo.UpdateFile(update.File))
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatPhoto(chat));
+            }
+        }
+
+        public void Handle(UpdateChatPhoto update)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Id == update.ChatId)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatPhoto(chat));
+            }
         }
 
         public void Handle(UpdateSupergroup update)
@@ -262,29 +292,13 @@ namespace Unigram.ViewModels.Supergroups
                 }
             }
 
-            if (_photo != null)
-            {
-                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, await _photo.ToGeneratedAsync()));
-                if (response is Error)
-                {
-                    // TODO:
-                }
-            }
-            else if (_deletePhoto)
-            {
-                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputFileId(0)));
-                if (response is Error)
-                {
-                    // TODO:
-                }
-            }
-
             if (_isAllHistoryAvailable && chat.Type is ChatTypeBasicGroup)
             {
                 var response = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id));
                 if (response is Chat result && result.Type is ChatTypeSupergroup super)
                 {
                     chat = result;
+                    supergroup = await ProtoService.SendAsync(new GetSupergroup(super.SupergroupId)) as Supergroup;
                     fullInfo = await ProtoService.SendAsync(new GetSupergroupFullInfo(super.SupergroupId)) as SupergroupFullInfo;
                 }
                 else if (response is Error)
@@ -293,7 +307,7 @@ namespace Unigram.ViewModels.Supergroups
                 }
             }
 
-            if (fullInfo != null && _isAllHistoryAvailable != fullInfo.IsAllHistoryAvailable)
+            if (supergroup != null && fullInfo != null && _isAllHistoryAvailable != fullInfo.IsAllHistoryAvailable)
             {
                 var response = await ProtoService.SendAsync(new ToggleSupergroupIsAllHistoryAvailable(supergroup.Id, _isAllHistoryAvailable));
                 if (response is Error)
@@ -305,18 +319,51 @@ namespace Unigram.ViewModels.Supergroups
             NavigationService.GoBack();
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageFile file)
+        public RelayCommand<StorageMedia> EditPhotoCommand { get; }
+        private async void EditPhotoExecute(StorageMedia file)
         {
-            _photo = file;
-            _deletePhoto = false;
-        }
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-        public RelayCommand DeletePhotoCommand { get; }
-        private void DeletePhotoExecute()
-        {
-            _photo = null;
-            _deletePhoto = true;
+            if (file is StorageVideo media)
+            {
+                var props = await media.File.Properties.GetVideoPropertiesAsync();
+
+                var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
+                var seconds = duration.TotalSeconds;
+
+                var conversion = new VideoConversion();
+                conversion.Mute = true;
+                conversion.TrimStartTime = media.EditState.TrimStartTime;
+                conversion.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
+                conversion.Transcode = true;
+                conversion.Transform = true;
+                //conversion.Rotation = file.EditState.Rotation;
+                conversion.OutputSize = new Size(640, 640);
+                //conversion.Mirror = transform.Mirror;
+                conversion.CropRectangle = new Rect(
+                    media.EditState.Rectangle.X * props.Width,
+                    media.EditState.Rectangle.Y * props.Height,
+                    media.EditState.Rectangle.Width * props.Width,
+                    media.EditState.Rectangle.Height * props.Height);
+
+                var rectangle = conversion.CropRectangle;
+                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
+                rectangle.Height = rectangle.Width;
+
+                conversion.CropRectangle = rectangle;
+
+                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
+                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoAnimation(generated, 0)));
+            }
+            else if (file is StoragePhoto photo)
+            {
+                var generated = await photo.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(photo.EditState));
+                var response = await ProtoService.SendAsync(new SetChatPhoto(chat.Id, new InputChatPhotoStatic(generated)));
+            }
         }
 
         public RelayCommand EditTypeCommand { get; }

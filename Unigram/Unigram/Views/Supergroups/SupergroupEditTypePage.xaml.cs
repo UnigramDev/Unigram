@@ -22,9 +22,9 @@ namespace Unigram.Views.Supergroups
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
-                if (ViewModel.UpdateIsValid(Username.Text))
+                if (ViewModel.UpdateIsValid(Username.Value))
                 {
-                    ViewModel.CheckAvailability(Username.Text);
+                    ViewModel.CheckAvailability(Username.Value);
                 }
             });
         }
@@ -137,13 +137,22 @@ namespace Unigram.Views.Supergroups
             }
         }
 
-        public void UpdateChat(Chat chat) { }
+        public void UpdateChat(Chat chat)
+        {
+            Username.Prefix = MeUrlPrefixConverter.Convert(ViewModel.CacheService, string.Empty);
+        }
+
         public void UpdateChatTitle(Chat chat) { }
         public void UpdateChatPhoto(Chat chat) { }
 
         #endregion
 
         #region Binding
+
+        private string ConvertAvailable(string username)
+        {
+            return string.Format(Strings.Resources.LinkAvailable, username);
+        }
 
         private string ConvertFooter(bool pubblico)
         {

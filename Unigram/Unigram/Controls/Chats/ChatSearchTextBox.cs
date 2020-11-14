@@ -36,14 +36,14 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private User _from;
-        public User From
+        private MessageSender _from;
+        public MessageSender From
         {
             get { return _from; }
             set
             {
                 _from = value;
-                Header = _from?.FirstName ?? string.Empty;
+                //Header = _from?.FirstName ?? string.Empty;
             }
         }
 
@@ -54,7 +54,7 @@ namespace Unigram.Controls.Chats
             set
             {
                 _filter = value;
-                Header = _filter?.Text ?? string.Empty;
+                //Header = _filter?.Text ?? string.Empty;
             }
         }
     }

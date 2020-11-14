@@ -35,8 +35,8 @@ namespace Unigram.Controls.Drawers
 
         private readonly AnimatedListHandler<StickerSetViewModel> _toolbarHandler;
 
-        private FileContext<StickerViewModel> _stickers = new FileContext<StickerViewModel>();
-        private FileContext<StickerSetViewModel> _stickerSets = new FileContext<StickerSetViewModel>();
+        private readonly FileContext<StickerViewModel> _stickers = new FileContext<StickerViewModel>();
+        private readonly FileContext<StickerSetViewModel> _stickerSets = new FileContext<StickerSetViewModel>();
 
         private bool _isActive;
 
@@ -56,15 +56,11 @@ namespace Unigram.Controls.Drawers
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
-            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
             //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
 
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
-            Separator.SizeChanged += (s, args) =>
-            {
-                shadow.Size = args.NewSize.ToVector2();
-            };
+            shadow.RelativeSizeAdjustment = Vector2.One;
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(FieldStickers, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>

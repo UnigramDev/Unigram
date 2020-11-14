@@ -6,10 +6,9 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Services;
+using Unigram.Navigation.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Supergroups;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -61,17 +60,17 @@ namespace Unigram.Views.Supergroups
 
             if (e.ClickedItem is ChatMember member)
             {
-                ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), new ChatMemberNavigation(chat.Id, member.UserId));
+                ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
             }
             else if (e.ClickedItem is SearchResult result)
             {
                 if (result.User is User user)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), new ChatMemberNavigation(chat.Id, user.Id));
+                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, user.Id));
                 }
                 else if (result.Chat is Chat temp && temp.Type is ChatTypePrivate privata)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), new ChatMemberNavigation(chat.Id, privata.UserId));
+                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, privata.UserId));
                 }
             }
         }
@@ -160,21 +159,18 @@ namespace Unigram.Views.Supergroups
                     subtitle.Text = LastSeenConverter.GetLabel(user, true);
                 }
 
-                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.TextBlock", "TextHighlighters"))
+                if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var highligher = new TextHighlighter();
-                        highligher.Foreground = new SolidColorBrush(Colors.Red);
-                        highligher.Background = new SolidColorBrush(Colors.Transparent);
-                        highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
+                    var highligher = new TextHighlighter();
+                    highligher.Foreground = new SolidColorBrush(Colors.Red);
+                    highligher.Background = new SolidColorBrush(Colors.Transparent);
+                    highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 
-                        subtitle.TextHighlighters.Add(highligher);
-                    }
-                    else
-                    {
-                        subtitle.TextHighlighters.Clear();
-                    }
+                    subtitle.TextHighlighters.Add(highligher);
+                }
+                else
+                {
+                    subtitle.TextHighlighters.Clear();
                 }
             }
             else if (args.Phase == 2)

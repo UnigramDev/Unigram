@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Services.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.System.Profile;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -52,11 +52,14 @@ namespace Unigram.Navigation
 
         internal volatile bool IsMainWindowCreated;
 
+        private UISettings _uiSettings;
+        public UISettings UISettings => _uiSettings ??= new UISettings();
+
         #region Debug
 
         [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Services.Logging.LoggingService.WriteLine(text, severity, caller: $"BootStrapper.{caller}");
+        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
+            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"BootStrapper.{caller}");
 
         #endregion
 
@@ -74,7 +77,7 @@ namespace Unigram.Navigation
             DebugWrite();
 
             // Hook up keyboard and mouse Back handler
-            var keyboard = Services.Keyboard.KeyboardService.GetForCurrentView();
+            var keyboard = Unigram.Services.Keyboard.KeyboardService.GetForCurrentView();
             keyboard.AfterBackGesture = (key) =>
             {
                 DebugWrite(caller: nameof(keyboard.AfterBackGesture));
@@ -149,7 +152,7 @@ namespace Unigram.Navigation
         protected override sealed void OnSearchActivated(SearchActivatedEventArgs args) { DebugWrite(); CallInternalActivatedAsync(args); }
         protected override sealed void OnShareTargetActivated(ShareTargetActivatedEventArgs args) { DebugWrite(); CallInternalActivatedAsync(args); }
 
-        public IActivatedEventArgs OriginalActivatedArgs { get; private set; }
+        public bool PrelaunchActivated { get; private set; }
 
         private async void CallInternalActivatedAsync(IActivatedEventArgs e)
         {
@@ -167,8 +170,6 @@ namespace Unigram.Navigation
         {
             DebugWrite();
 
-            OriginalActivatedArgs = e;
-
             // sometimes activate requires a frame to be built
             if (Window.Current.Content == null)
             {
@@ -177,7 +178,7 @@ namespace Unigram.Navigation
             }
 
             // onstart is shared with activate and launch
-            await CallOnStartAsync(true, StartKind.Activate);
+            await CallOnStartAsync(e, true, StartKind.Activate);
 
             // ensure active (this will hide any custom splashscreen)
             CallActivateWindow(WindowLogic.ActivateWindowSources.Activating);
@@ -189,9 +190,13 @@ namespace Unigram.Navigation
 
         // it is the intent of Template 10 to no longer require Launched/Activated overrides, only OnStartAsync()
 
-        protected sealed override void OnLaunched(LaunchActivatedEventArgs e) { DebugWrite(); CallInternalLaunchAsync(e); }
+        protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            DebugWrite();
+            CallInternalLaunchAsync(e);
+        }
 
-        async void CallInternalLaunchAsync(ILaunchActivatedEventArgs e)
+        async void CallInternalLaunchAsync(LaunchActivatedEventArgs e)
         {
             CurrentState = States.BeforeLaunch;
             await InternalLaunchAsync(e);
@@ -203,11 +208,11 @@ namespace Unigram.Navigation
         /// This is private because it is a specialized prelude to OnStartAsync().
         /// OnStartAsync will not be called if state restore is determined
         /// </summary>
-        private async Task InternalLaunchAsync(ILaunchActivatedEventArgs e)
+        private async Task InternalLaunchAsync(LaunchActivatedEventArgs e)
         {
-            DebugWrite($"Previous:{e.PreviousExecutionState.ToString()}");
+            DebugWrite($"Previous:{e.PreviousExecutionState}");
 
-            OriginalActivatedArgs = e;
+            PrelaunchActivated = e.PrelaunchActivated;
 
             if (e.PreviousExecutionState != ApplicationExecutionState.Running || Window.Current.Content == null)
             {
@@ -253,19 +258,21 @@ namespace Unigram.Navigation
             }
 
             // handle pre-launch
-            if ((e as LaunchActivatedEventArgs)?.PrelaunchActivated ?? false)
+            if (e.PrelaunchActivated)
             {
                 var runOnStartAsync = false;
                 _HasOnPrelaunchAsync = true;
                 await OnPrelaunchAsync(e, out runOnStartAsync);
                 if (!runOnStartAsync)
+                {
                     return;
+                }
             }
 
             if (!restored)
             {
                 var kind = e.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
-                await CallOnStartAsync(true, kind);
+                await CallOnStartAsync(e, true, kind);
             }
 
             CallActivateWindow(WindowLogic.ActivateWindowSources.Launching);
@@ -314,29 +321,21 @@ namespace Unigram.Navigation
             var args = new HandledEventArgs();
             BackRequested?.Invoke(null, args);
             if (handled = args.Handled)
+            {
                 return;
+            }
 
             var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
             foreach (var popup in popups)
             {
                 if (popup.Child is INavigablePage page)
                 {
-                    if (key == Windows.System.VirtualKey.Escape)
-                    {
-                        if (popup.Child is INavigatingPage navigating)
-                        {
-                            navigating.OnBackRequesting(args);
-                        }
-
-                        args.Handled = true;
-                    }
-                    else
-                    {
-                        page.OnBackRequested(args);
-                    }
+                    page.OnBackRequested(args);
 
                     if (handled = args.Handled)
+                    {
                         return;
+                    }
                 }
                 else if (popup.Child is ContentDialog dialog)
                 {
@@ -355,7 +354,9 @@ namespace Unigram.Navigation
                 frame.RaiseBackRequested(args);
 
                 if (handled = args.Handled)
+                {
                     return;
+                }
             }
 
             if (NavigationService?.CanGoBack ?? false)
@@ -374,12 +375,17 @@ namespace Unigram.Navigation
             var args = new HandledEventArgs();
             ForwardRequested?.Invoke(null, args);
             if (args.Handled)
+            {
                 return;
+            }
+
             foreach (var frame in WindowContext.GetForCurrentView().NavigationServices.Select(x => x.FrameFacade))
             {
                 frame.RaiseForwardRequested(args);
                 if (args.Handled)
+                {
                     return;
+                }
             }
 
             NavigationService?.GoForward();
@@ -525,7 +531,9 @@ namespace Unigram.Navigation
             foreach (var nav in WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices))
             {
                 if (nav.FrameFacade.Frame.Equals(frame))
+                {
                     return nav as INavigationService;
+                }
             }
 
             var navigationService = CreateNavigationService(frame, session, id, root);
@@ -594,7 +602,8 @@ namespace Unigram.Navigation
                 _currentState = value;
             }
         }
-        Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
+
+        readonly Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
 
         private async Task InitializeFrameAsync(IActivatedEventArgs e)
         {
@@ -620,7 +629,7 @@ namespace Unigram.Navigation
 
         #endregion
 
-        WindowLogic _WindowLogic = new WindowLogic();
+        readonly WindowLogic _WindowLogic = new WindowLogic();
         private void CallActivateWindow(WindowLogic.ActivateWindowSources source)
         {
             _WindowLogic.ActivateWindow(source);
@@ -642,19 +651,23 @@ namespace Unigram.Navigation
             DebugWrite();
 
             if (!canRepeat && CurrentStateHistory.ContainsValue(States.BeforeInit))
+            {
                 return;
+            }
 
             CurrentState = States.BeforeInit;
             await OnInitializeAsync(e);
             CurrentState = States.AfterInit;
         }
 
-        private async Task CallOnStartAsync(bool canRepeat, StartKind startKind)
+        private async Task CallOnStartAsync(IActivatedEventArgs args, bool canRepeat, StartKind startKind)
         {
             DebugWrite();
 
             if (!canRepeat && CurrentStateHistory.ContainsValue(States.BeforeStart))
+            {
                 return;
+            }
 
             CurrentState = States.BeforeStart;
             while (!CurrentStateHistory.ContainsValue(States.AfterInit))
@@ -662,7 +675,7 @@ namespace Unigram.Navigation
                 // this could happen if app is activated before previous init completes
                 await Task.Delay(500);
             }
-            await OnStartAsync(startKind, OriginalActivatedArgs);
+            await OnStartAsync(startKind, args);
             CurrentState = States.AfterStart;
         }
 
@@ -673,42 +686,32 @@ namespace Unigram.Navigation
         public bool AutoRestoreAfterTerminated { get; set; } = true;
         public bool AutoExtendExecutionSession { get; set; } = true;
         public bool AutoSuspendAllFrames { get; set; } = true;
-        LifecycleLogic _LifecycleLogic = new LifecycleLogic();
 
-        private async void CallResuming(object sender, object e)
+        readonly LifecycleLogic _LifecycleLogic = new LifecycleLogic();
+
+        private void CallResuming(object sender, object e)
         {
             DebugWrite(caller: nameof(Resuming));
 
             try
             {
-                var args = OriginalActivatedArgs as LaunchActivatedEventArgs;
-                if (args?.PrelaunchActivated ?? true)
-                {
-                    OnResuming(sender, e, AppExecutionState.Prelaunch);
-                    var kind = args?.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
-                    await CallOnStartAsync(false, kind);
-                    CallActivateWindow(WindowLogic.ActivateWindowSources.Resuming);
-                }
-                else
-                {
-                    OnResuming(sender, e, AppExecutionState.Suspended);
+                OnResuming(sender, e, AppExecutionState.Suspended);
 
-                    //var services = WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
-                    //foreach (INavigationService nav in services)
-                    //{
-                    //    try
-                    //    {
-                    //        // call view model suspend (OnNavigatedfrom)
-                    //        // date the cache (which marks the date/time it was suspended)
-                    //        DebugWrite($"Nav.FrameId:{nav.FrameFacade.FrameId}");
-                    //        await (nav as INavigationService).GetDispatcherWrapper().DispatchAsync(() => nav.Resuming());
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        DebugWrite($"FrameId: [{nav.FrameFacade.FrameId}] {ex} {ex.Message}", caller: nameof(Resuming));
-                    //    }
-                    //}
-                }
+                //var services = WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
+                //foreach (INavigationService nav in services)
+                //{
+                //    try
+                //    {
+                //        // call view model suspend (OnNavigatedfrom)
+                //        // date the cache (which marks the date/time it was suspended)
+                //        DebugWrite($"Nav.FrameId:{nav.FrameFacade.FrameId}");
+                //        await (nav as INavigationService).GetDispatcherWrapper().DispatchAsync(() => nav.Resuming());
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        DebugWrite($"FrameId: [{nav.FrameFacade.FrameId}] {ex} {ex.Message}", caller: nameof(Resuming));
+                //    }
+                //}
             }
             catch { }
         }
@@ -716,7 +719,10 @@ namespace Unigram.Navigation
         private async Task<bool> CallAutoRestoreAsync(ILaunchActivatedEventArgs e, bool restored)
         {
             if (!AutoRestoreAfterTerminated)
+            {
                 return false;
+            }
+
             return await _LifecycleLogic.AutoRestoreAsync(e, NavigationService);
         }
 
@@ -729,7 +735,7 @@ namespace Unigram.Navigation
                 {
                     await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
                 }
-                await OnSuspendingAsync(sender, e, (OriginalActivatedArgs as LaunchActivatedEventArgs)?.PrelaunchActivated ?? false);
+                await OnSuspendingAsync(sender, e, PrelaunchActivated);
             }
             finally
             {
@@ -778,22 +784,6 @@ namespace Unigram.Navigation
             }
         }
 
-        private object _PageKeys;
-        // T must be a custom Enum
-        public Dictionary<T, Type> PageKeys<T>()
-            where T : struct, IConvertible
-        {
-            if (!typeof(T).GetTypeInfo().IsEnum)
-            {
-                throw new ArgumentException("T must be an enumerated type");
-            }
-            if (_PageKeys != null && _PageKeys is Dictionary<T, Type>)
-            {
-                return _PageKeys as Dictionary<T, Type>;
-            }
-            return (_PageKeys = new Dictionary<T, Type>()) as Dictionary<T, Type>;
-        }
-
         public class LifecycleLogic
         {
             public async Task<bool> AutoRestoreAsync(ILaunchActivatedEventArgs e, INavigationService nav)
@@ -831,7 +821,7 @@ namespace Unigram.Navigation
 
                 //allow only main view NavigationService as others won't be able to use Dispatcher and processing will stuck
                 var services = WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
-                foreach (INavigationService nav in services)
+                foreach (INavigationService nav in services.ToArray())
                 {
                     try
                     {
@@ -839,7 +829,7 @@ namespace Unigram.Navigation
                         // date the cache (which marks the date/time it was suspended)
                         nav.FrameFacade.SetFrameState(CacheDateKey, DateTime.Now.ToString());
                         DebugWrite($"Nav.FrameId:{nav.FrameFacade.FrameId}");
-                        await (nav as INavigationService).GetDispatcherWrapper().DispatchAsync(async () => await nav.SuspendingAsync());
+                        await nav.GetDispatcherWrapper().DispatchAsync(async () => await nav.SuspendingAsync());
                     }
                     catch (Exception ex)
                     {
@@ -851,7 +841,7 @@ namespace Unigram.Navigation
 
         private class WindowLogic
         {
-            public enum ActivateWindowSources { Launching, Activating, SplashScreen, Resuming }
+            public enum ActivateWindowSources { Launching, Activating, Resuming }
             /// <summary>
             /// Override this method only if you (the developer) wants to programmatically
             /// control the means by which and when the Core Window is activated by Template 10.
@@ -880,5 +870,10 @@ namespace Unigram.Navigation
     public interface ISearchablePage
     {
         void Search();
+    }
+
+    public interface IActivablePage : IDisposable
+    {
+        void Activate();
     }
 }

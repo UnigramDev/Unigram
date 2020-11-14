@@ -24,7 +24,7 @@ namespace Unigram.Views.Settings
 
         public SettingsThemePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {
@@ -36,7 +36,7 @@ namespace Unigram.Views.Settings
         {
             base.OnNavigatedTo(e);
 
-            var path = TLSerializationService.Current.Deserialize((string)e.Parameter) as string;
+            var path = e.Parameter as string;
             var file = await StorageFile.GetFileFromPathAsync(path);
 
             var theme = _theme = await TLContainer.Current.Resolve<IThemeService>().DeserializeAsync(file);
@@ -63,7 +63,7 @@ namespace Unigram.Views.Settings
             //    baseTheme = baseTheme.ThemeDictionaries[theme.Parent.HasFlag(TelegramTheme.Light) ? "Light" : "Dark"] as ResourceDictionary;
             //}
             baseTheme = Theme.Current;
-            if (theme.Parent.HasFlag(TelegramTheme.Light))
+            if (theme.Parent == TelegramTheme.Light)
             {
                 baseTheme = baseTheme.MergedDictionaries[0].ThemeDictionaries["Light"] as ResourceDictionary;
             }
@@ -378,7 +378,7 @@ namespace Unigram.Views.Settings
 
         private async void Update()
         {
-            var value = SettingsService.Current.Appearance.RequestedTheme;
+            var value = SettingsService.Current.Appearance.GetActualTheme();
             var mapping = TLContainer.Current.Resolve<IThemeService>().GetMapping(_theme.Parent);
 
             _theme.Values.Clear();
@@ -624,14 +624,14 @@ namespace Unigram.Views.Settings
             //}
 
             Set(ref _value, value);
-            RaisePropertyChanged(() => IsDefault);
-            RaisePropertyChanged(() => HexValue);
+            RaisePropertyChanged(nameof(IsDefault));
+            RaisePropertyChanged(nameof(HexValue));
         }
 
         private void SetSuper(Color super)
         {
             _super = super;
-            RaisePropertyChanged(() => IsDefault);
+            RaisePropertyChanged(nameof(IsDefault));
         }
 
         public bool IsDefault => _value == _super || _value == default;

@@ -4,10 +4,11 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AnimationContent : AspectView, IContentWithFile
+    public sealed partial class AnimationContent : AspectView, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -169,6 +170,11 @@ namespace Unigram.Controls.Messages.Content
             }
 
             return null;
+        }
+
+        public Border GetPlaybackElement()
+        {
+            return Element;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

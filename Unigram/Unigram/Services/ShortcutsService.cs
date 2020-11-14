@@ -15,12 +15,23 @@ namespace Unigram.Services
 {
     public interface IShortcutsService
     {
-        IList<ShortcutCommand> Process(AcceleratorKeyEventArgs args);
+        InvokedShortcut Process(AcceleratorKeyEventArgs args);
 
         bool TryGetShortcut(AcceleratorKeyEventArgs args, out Shortcut shortcut);
 
         IList<ShortcutList> GetShortcuts();
         IList<ShortcutList> Update(Shortcut shortcut, ShortcutCommand command);
+    }
+
+    public class InvokedShortcut : Shortcut
+    {
+        public IList<ShortcutCommand> Commands { get; }
+
+        public InvokedShortcut(VirtualKeyModifiers modifiers, VirtualKey key, IList<ShortcutCommand> commands)
+            : base(modifiers, key)
+        {
+            Commands = commands;
+        }
     }
 
     public class ShortcutsService : TLViewModelBase, IShortcutsService
@@ -159,11 +170,11 @@ namespace Unigram.Services
             InitializeCustom();
         }
 
-        public IList<ShortcutCommand> Process(AcceleratorKeyEventArgs args)
+        public InvokedShortcut Process(AcceleratorKeyEventArgs args)
         {
             if (args.EventType != CoreAcceleratorKeyEventType.KeyDown && args.EventType != CoreAcceleratorKeyEventType.SystemKeyDown)
             {
-                return new ShortcutCommand[0];
+                return new InvokedShortcut(VirtualKeyModifiers.None, VirtualKey.None, new ShortcutCommand[0]);
             }
 
             var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
@@ -187,10 +198,10 @@ namespace Unigram.Services
             var shortcut = new Shortcut(modifiers, args.VirtualKey);
             if (_commands.TryGetValue(shortcut, out var value))
             {
-                return value;
+                return new InvokedShortcut(modifiers, args.VirtualKey, value);
             }
 
-            return new ShortcutCommand[0];
+            return new InvokedShortcut(VirtualKeyModifiers.None, VirtualKey.None, new ShortcutCommand[0]);
         }
 
         //[DllImport("user32.dll")]
@@ -579,7 +590,7 @@ namespace Unigram.Services
         }
     }
 
-    public sealed class Shortcut
+    public class Shortcut
     {
         public VirtualKeyModifiers Modifiers { get; }
         public VirtualKey Key { get; }

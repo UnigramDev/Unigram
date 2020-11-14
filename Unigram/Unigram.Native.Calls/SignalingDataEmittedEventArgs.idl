@@ -1,0 +1,8 @@
+namespace Unigram.Native.Calls
+{
+    [default_interface]
+    runtimeclass SignalingDataEmittedEventArgs
+    {
+        Windows.Foundation.Collections.IVector<byte> Data{ get; };
+    }
+} // namespace Unigram.Native.Calls

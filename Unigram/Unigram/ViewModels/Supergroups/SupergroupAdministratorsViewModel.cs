@@ -1,6 +1,7 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
+using Unigram.Views;
 using Unigram.Views.Supergroups;
 
 namespace Unigram.ViewModels.Supergroups
@@ -24,7 +25,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupEventLogPage), chat.Id);
+            NavigationService.Navigate(typeof(ChatEventLogPage), chat.Id);
         }
 
         public RelayCommand AddCommand { get; }

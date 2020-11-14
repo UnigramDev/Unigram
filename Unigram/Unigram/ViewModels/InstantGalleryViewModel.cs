@@ -73,7 +73,7 @@ namespace Unigram.ViewModels
             return null;
         }
 
-        public override MvxObservableCollection<GalleryContent> Group => _shouldGroup ? this.Items : null;
+        public override MvxObservableCollection<GalleryContent> Group => _shouldGroup ? Items : null;
 
         //private GalleryItem GetBlock(TLMessage message, TLWebPage webPage, object pageBlock)
         //{

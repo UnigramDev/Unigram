@@ -503,21 +503,6 @@
                             Checked="Blur_Click"
                             Unchecked="Blur_Click"/>
                     </Border>
-                    <Border x:Name="Motion"
-                            Visibility="Collapsed"
-                            Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            Padding="6,0"
-                            CornerRadius="4"
-                            Margin="4,12,4,10"
-                            Grid.Column="1">
-                        <CheckBox
-                            x:Name="MotionToggle"
-                            IsChecked="{x:Bind ViewModel.IsMotionEnabled, Mode=TwoWay}"
-                            Content="{CustomResource BackgroundMotion}"
-                            RequestedTheme="Dark"
-                            Checked="Motion_Click"
-                            Unchecked="Motion_Click"/>
-                    </Border>
                     <Border x:Name="Color"
                             Visibility="Collapsed"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"

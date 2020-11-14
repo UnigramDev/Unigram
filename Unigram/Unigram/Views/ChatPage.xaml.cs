@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -7,7 +6,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
-    public sealed partial class ChatPage : HostedPage, INavigablePage, ISearchablePage, IDisposable
+    public sealed partial class ChatPage : HostedPage, INavigablePage, ISearchablePage, IActivablePage
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
         public ChatView View => Content as ChatView;
@@ -34,6 +33,11 @@ namespace Unigram.Views
         public void Dispose()
         {
             View.Dispose();
+        }
+
+        public void Activate()
+        {
+            View.Activate();
         }
     }
 }

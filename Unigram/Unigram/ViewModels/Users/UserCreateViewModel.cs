@@ -16,7 +16,7 @@ namespace Unigram.ViewModels.Users
         public UserCreateViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrEmpty(_firstName) && !string.IsNullOrEmpty(_phoneCode) && !string.IsNullOrEmpty(_phoneNumber));
+            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrEmpty(_firstName) && !string.IsNullOrEmpty(_phoneNumber));
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -57,29 +57,14 @@ namespace Unigram.ViewModels.Users
         private Country _selectedCountry;
         public Country SelectedCountry
         {
-            get
-            {
-                return _selectedCountry;
-            }
-            set
-            {
-                if (value != null)
-                {
-                    _phoneCode = value.PhoneCode;
-                    RaisePropertyChanged(() => PhoneCode);
-                }
-
-                Set(ref _selectedCountry, value);
-            }
+            get => _selectedCountry;
+            set => Set(ref _selectedCountry, value);
         }
 
         private string _firstName = string.Empty;
         public string FirstName
         {
-            get
-            {
-                return _firstName;
-            }
+            get => _firstName;
             set
             {
                 Set(ref _firstName, value);
@@ -100,49 +85,10 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        private string _phoneCode = string.Empty;
-        public string PhoneCode
-        {
-            get
-            {
-                return _phoneCode;
-            }
-            set
-            {
-                Set(ref _phoneCode, value);
-
-                Country country = null;
-                foreach (var c in Country.Countries)
-                {
-                    if (c.PhoneCode == PhoneCode)
-                    {
-                        if (c.PhoneCode == "1" && c.Code != "us")
-                        {
-                            continue;
-                        }
-
-                        if (c.PhoneCode == "7" && c.Code != "ru")
-                        {
-                            continue;
-                        }
-
-                        country = c;
-                        break;
-                    }
-                }
-
-                SelectedCountry = country;
-                SendCommand.RaiseCanExecuteChanged();
-            }
-        }
-
         private string _phoneNumber = string.Empty;
         public string PhoneNumber
         {
-            get
-            {
-                return _phoneNumber;
-            }
+            get => _phoneNumber;
             set
             {
                 Set(ref _phoneNumber, value);
@@ -155,7 +101,9 @@ namespace Unigram.ViewModels.Users
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact(_phoneCode + _phoneNumber, _firstName, _lastName, string.Empty, 0) }));
+            var phoneNumber = _phoneNumber?.Trim('+').Replace(" ", string.Empty);
+
+            var response = await ProtoService.SendAsync(new ImportContacts(new[] { new Contact(phoneNumber, _firstName, _lastName, string.Empty, 0) }));
             if (response is ImportedContacts imported)
             {
                 if (imported.UserIds.Count > 0)

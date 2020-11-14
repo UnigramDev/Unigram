@@ -1,0 +1,14 @@
+namespace Unigram.Native.Calls
+{
+    [default_interface]
+    runtimeclass VoipServer
+    {
+        VoipServer();
+
+        String Host;
+        UInt16 Port;
+        String Login;
+        String Password;
+        Boolean IsTurn;
+    }
+} // namespace Unigram.Native.Calls

@@ -32,12 +32,21 @@ namespace Unigram.Views
 
         #endregion
 
+        private async void Calls_Click(object sender, RoutedEventArgs e)
+        {
+            var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
+            if (log != null)
+            {
+                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+            }
+        }
+
         private async void Log_Click(object sender, RoutedEventArgs e)
         {
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, null));
+                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 
@@ -46,8 +55,14 @@ namespace Unigram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt.old") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, null));
+                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
+        }
+
+        private void Crash_Click(object sender, RoutedEventArgs e)
+        {
+            var zero = 0;
+            var uno = 1 / zero;
         }
     }
 }

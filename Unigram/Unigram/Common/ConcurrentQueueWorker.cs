@@ -7,8 +7,8 @@ namespace Unigram.Common
 {
     public class ConcurrentQueueWorker
     {
-        private ConcurrentQueue<Func<Task>> taskQueue = new ConcurrentQueue<Func<Task>>();
-        private ManualResetEvent mre = new ManualResetEvent(true);
+        private readonly ConcurrentQueue<Func<Task>> taskQueue = new ConcurrentQueue<Func<Task>>();
+        private readonly ManualResetEvent mre = new ManualResetEvent(true);
         private int _concurrentCount = 1;
         private readonly object o = new object();
 

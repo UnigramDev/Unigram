@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -16,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Chats
 {
-    public class ChatSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>
+    public class ChatSharedMediaViewModel : TLViewModelBase, IMessageDelegate, IDelegable<IFileDelegate>, IHandle<UpdateFile>, IHandle<UpdateDeleteMessages>
     {
         public IFileDelegate Delegate { get; set; }
 
@@ -34,8 +35,6 @@ namespace Unigram.ViewModels.Chats
             MessageDeleteCommand = new RelayCommand<Message>(MessageDeleteExecute);
             MessageForwardCommand = new RelayCommand<Message>(MessageForwardExecute);
             MessageSelectCommand = new RelayCommand<Message>(MessageSelectExecute);
-
-            Aggregator.Subscribe(this);
         }
 
         public IPlaybackService PlaybackService => _playbackService;
@@ -60,18 +59,55 @@ namespace Unigram.ViewModels.Chats
             Music = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterAudio());
             Voice = new MediaCollection(ProtoService, chatId, new SearchMessagesFilterVoiceNote());
 
-            RaisePropertyChanged(() => Media);
-            RaisePropertyChanged(() => Files);
-            RaisePropertyChanged(() => Links);
-            RaisePropertyChanged(() => Music);
-            RaisePropertyChanged(() => Voice);
+            RaisePropertyChanged(nameof(Media));
+            RaisePropertyChanged(nameof(Files));
+            RaisePropertyChanged(nameof(Links));
+            RaisePropertyChanged(nameof(Music));
+            RaisePropertyChanged(nameof(Voice));
 
+            Aggregator.Subscribe(this);
+            return Task.CompletedTask;
+        }
+
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
         }
 
         public void Handle(UpdateFile update)
         {
             BeginOnUIThread(() => Delegate?.UpdateFile(update.File));
+        }
+
+        public void Handle(UpdateDeleteMessages update)
+        {
+            if (update.ChatId == _chat?.Id && !update.FromCache)
+            {
+                var table = update.MessageIds.ToImmutableHashSet();
+
+                BeginOnUIThread(() =>
+                {
+                    UpdateDeleteMessages(Media, table);
+                    UpdateDeleteMessages(Files, table);
+                    UpdateDeleteMessages(Links, table);
+                    UpdateDeleteMessages(Music, table);
+                    UpdateDeleteMessages(Voice, table);
+                });
+            }
+        }
+
+        private void UpdateDeleteMessages(IList<Message> target, ImmutableHashSet<long> table)
+        {
+            for (int i = 0; i < target.Count; i++)
+            {
+                var message = target[i];
+                if (table.Contains(message.Id))
+                {
+                    target.RemoveAt(i);
+                    i--;
+                }
+            }
         }
 
         private Chat _chat;
@@ -100,23 +136,23 @@ namespace Unigram.ViewModels.Chats
             {
                 case SearchMessagesFilterPhotoAndVideo photoAndVideo:
                     Media = new MediaCollection(ProtoService, Chat.Id, photoAndVideo, query);
-                    RaisePropertyChanged(() => Media);
+                    RaisePropertyChanged(nameof(Media));
                     break;
                 case SearchMessagesFilterDocument document:
                     Files = new MediaCollection(ProtoService, Chat.Id, document, query);
-                    RaisePropertyChanged(() => Files);
+                    RaisePropertyChanged(nameof(Files));
                     break;
                 case SearchMessagesFilterUrl url:
                     Links = new MediaCollection(ProtoService, Chat.Id, url, query);
-                    RaisePropertyChanged(() => Links);
+                    RaisePropertyChanged(nameof(Links));
                     break;
                 case SearchMessagesFilterAudio audio:
                     Music = new MediaCollection(ProtoService, Chat.Id, audio, query);
-                    RaisePropertyChanged(() => Music);
+                    RaisePropertyChanged(nameof(Music));
                     break;
                 case SearchMessagesFilterVoiceNote voiceNote:
                     Voice = new MediaCollection(ProtoService, Chat.Id, voiceNote, query);
-                    RaisePropertyChanged(() => Voice);
+                    RaisePropertyChanged(nameof(Voice));
                     break;
             }
         }
@@ -178,10 +214,22 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
+            var cached = await ProtoService.GetFileAsync(file);
+            if (cached == null)
+            {
+                return;
+            }
+
             var fileName = result.FileName;
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = System.IO.Path.GetFileName(file.Local.Path);
+            }
+
+            var clean = ProtoService.Execute(new CleanFileName(fileName));
+            if (clean is Text text && !string.IsNullOrEmpty(text.TextValue))
+            {
+                fileName = text.TextValue;
             }
 
             var extension = System.IO.Path.GetExtension(fileName);
@@ -195,16 +243,15 @@ namespace Unigram.ViewModels.Chats
             picker.SuggestedStartLocation = PickerLocationId.Downloads;
             picker.SuggestedFileName = fileName;
 
-            var picked = await picker.PickSaveFileAsync();
-            if (picked != null)
+            try
             {
-                try
+                var picked = await picker.PickSaveFileAsync();
+                if (picked != null)
                 {
-                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
                     await cached.CopyAndReplaceAsync(picked);
                 }
-                catch { }
             }
+            catch { }
         }
 
         #endregion
@@ -248,11 +295,23 @@ namespace Unigram.ViewModels.Chats
             {
                 for (int i = 0; i < updated.MessagesValue.Count; i++)
                 {
-                    messages[i] = updated.MessagesValue[i];
+                    if (updated.MessagesValue[i] != null)
+                    {
+                        messages[i] = updated.MessagesValue[i];
+                    }
+                    else
+                    {
+                        messages.RemoveAt(i);
+                        updated.MessagesValue.RemoveAt(i);
+
+                        i--;
+                    }
                 }
             }
 
-            var sameUser = messages.All(x => x.SenderUserId == first.SenderUserId);
+            var firstSender = first.Sender as MessageSenderUser;
+
+            var sameUser = firstSender != null && messages.All(x => x.Sender is MessageSenderUser senderUser && senderUser.UserId == firstSender.UserId);
             var dialog = new DeleteMessagesPopup(CacheService, messages.Where(x => x != null).ToArray());
 
             var confirm = await dialog.ShowQueuedAsync();
@@ -265,7 +324,7 @@ namespace Unigram.ViewModels.Chats
 
             if (dialog.DeleteAll && sameUser)
             {
-                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, first.SenderUserId));
+                ProtoService.Send(new DeleteChatMessagesFromUser(chat.Id, firstSender.UserId));
             }
             else
             {
@@ -274,12 +333,12 @@ namespace Unigram.ViewModels.Chats
 
             if (dialog.BanUser && sameUser)
             {
-                ProtoService.Send(new SetChatMemberStatus(chat.Id, first.SenderUserId, new ChatMemberStatusBanned()));
+                ProtoService.Send(new SetChatMemberStatus(chat.Id, firstSender.UserId, new ChatMemberStatusBanned()));
             }
 
             if (dialog.ReportSpam && sameUser && chat.Type is ChatTypeSupergroup supertype)
             {
-                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, first.SenderUserId, messages.Select(x => x.Id).ToList()));
+                ProtoService.Send(new ReportSupergroupSpam(supertype.SupergroupId, firstSender.UserId, messages.Select(x => x.Id).ToList()));
             }
         }
 
@@ -440,7 +499,7 @@ namespace Unigram.ViewModels.Chats
         {
         }
 
-        public void OpenChat(long chatId)
+        public void OpenChat(long chatId, bool profile = false)
         {
         }
 
@@ -465,7 +524,7 @@ namespace Unigram.ViewModels.Chats
             return false;
         }
 
-        public void Call(MessageViewModel message)
+        public void Call(MessageViewModel message, bool video)
         {
             throw new NotImplementedException();
         }
@@ -476,6 +535,16 @@ namespace Unigram.ViewModels.Chats
         }
 
         public string GetAdminTitle(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetAdminTitle(MessageSender sender)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OpenThread(MessageViewModel message)
         {
             throw new NotImplementedException();
         }

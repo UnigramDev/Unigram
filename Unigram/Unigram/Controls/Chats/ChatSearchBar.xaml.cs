@@ -2,6 +2,7 @@
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
 using Windows.Foundation.Metadata;
 using Windows.UI.Core;
@@ -41,6 +42,14 @@ namespace Unigram.Controls.Chats
             Field.From = null;
             Field.Filter = null;
             Field.State = ChatSearchState.Text;
+
+            if (viewModel != null)
+            {
+                var history = viewModel.Dialog.Type != DialogType.History && viewModel.Dialog.Type != DialogType.Thread;
+                SearchPrevious.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
+                SearchNext.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
+                ToolsPanel.Visibility = history ? Visibility.Collapsed : Visibility.Visible;
+            }
 
             ShowHide(viewModel != null);
         }
@@ -123,7 +132,7 @@ namespace Unigram.Controls.Chats
                 name.Text = user.GetFullName();
                 username.Text = string.IsNullOrEmpty(user.Username) ? string.Empty : $" @{user.Username}";
 
-                photo.Source = PlaceholderHelper.GetUser(ViewModel.ProtoService, user, 36);
+                photo.Source = PlaceholderHelper.GetUser(ViewModel?.ProtoService, user, 36);
             }
             else if (args.Item is ChatSearchMediaFilter filter)
             {
@@ -173,7 +182,7 @@ namespace Unigram.Controls.Chats
         {
             if (Field.State == ChatSearchState.Members)
             {
-                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, Field.Text, false, true);
+                ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, 0, Field.Text, false, true);
             }
 
             DeleteButton.Visibility = string.IsNullOrEmpty(Field.Text) && Field.State == ChatSearchState.Text ? Visibility.Collapsed : Visibility.Visible;
@@ -185,12 +194,12 @@ namespace Unigram.Controls.Chats
 
             if (e.Key == Windows.System.VirtualKey.Enter && !shift && Field.State != ChatSearchState.Members)
             {
-                ViewModel.Search(Field.Text, Field.From, Field.Filter?.Filter);
+                ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Enter && shift && Field.State != ChatSearchState.Members)
             {
-                ViewModel.NextCommand.Execute();
+                ViewModel?.NextCommand.Execute();
                 e.Handled = true;
             }
             else if (e.Key == Windows.System.VirtualKey.Back && string.IsNullOrEmpty(Field.Text))
@@ -202,7 +211,7 @@ namespace Unigram.Controls.Chats
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Search(Field.Text, Field.From, Field.Filter?.Filter);
+            ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -231,7 +240,7 @@ namespace Unigram.Controls.Chats
         {
             if (e.ClickedItem is User from)
             {
-                SetState(ChatSearchState.TextByMember, from);
+                SetState(ChatSearchState.TextByMember, new MessageSenderUser(from.Id));
             }
             else if (e.ClickedItem is ChatSearchMediaFilter filter)
             {
@@ -239,17 +248,34 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private void SetState(ChatSearchState state, User from = null, ChatSearchMediaFilter filter = null)
+        private void SetState(ChatSearchState state, MessageSender from = null, ChatSearchMediaFilter filter = null)
         {
+            var viewModel = ViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
             if (from != null)
             {
                 Field.Filter = null;
                 Field.From = from;
+
+                if (viewModel.CacheService.TryGetUser(from, out User user))
+                {
+                    Field.Header = user.GetFullName();
+                }
+                else if (viewModel.CacheService.TryGetChat(from, out Chat chat))
+                {
+                    Field.Header = chat.Title;
+                }
             }
             else
             {
                 Field.From = null;
                 Field.Filter = filter;
+
+                Field.Header = filter?.Text;
             }
 
             Field.Text = string.Empty;
@@ -259,20 +285,20 @@ namespace Unigram.Controls.Chats
             {
                 case ChatSearchState.Members:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.Autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Dialog.Chat.Id, string.Empty, false, true);
+                    viewModel.Autocomplete = new UsernameCollection(viewModel.ProtoService, viewModel.Dialog.Chat.Id, 0, string.Empty, false, true);
                     break;
                 case ChatSearchState.Media:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.Autocomplete = ViewModel.Filters;
+                    viewModel.Autocomplete = viewModel.Filters;
                     break;
                 case ChatSearchState.TextByMember:
                 case ChatSearchState.TextByMedia:
                     ToolsPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.Autocomplete = null;
+                    viewModel.Autocomplete = null;
                     break;
                 default:
-                    ToolsPanel.Visibility = Visibility.Visible;
-                    ViewModel.Autocomplete = null;
+                    ToolsPanel.Visibility = viewModel.Dialog.Type != DialogType.History && viewModel.Dialog.Type != DialogType.Thread ? Visibility.Collapsed : Visibility.Visible;
+                    viewModel.Autocomplete = null;
                     break;
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -116,7 +117,7 @@ namespace Unigram.Controls
                 {
                     var row = rows[j];
 
-                    var panel = new Grid();
+                    var panel = new ReplyMarkupRow();
                     panel.HorizontalAlignment = HorizontalAlignment.Stretch;
                     panel.VerticalAlignment = VerticalAlignment.Stretch;
                     panel.Margin = new Thickness(-1, 0, -1, 0);
@@ -171,11 +172,6 @@ namespace Unigram.Controls
                             button.Content = keyboardButton.Text;
                         }
 
-                        SetColumn(button, i);
-
-                        panel.ColumnDefinitions.Add(new ColumnDefinition());
-                        panel.Children.Add(button);
-
                         var topLeft = 4d;
                         var topRight = 4d;
                         var bottomRight = 4d;
@@ -195,6 +191,8 @@ namespace Unigram.Controls
                         }
 
                         button.Radius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
+
+                        panel.Children.Add(button);
                     }
 
                     SetRow(panel, j);
@@ -233,5 +231,45 @@ namespace Unigram.Controls
 
         public event EventHandler<ReplyMarkupButtonClickEventArgs> ButtonClick;
         public event EventHandler<ReplyMarkupInlineButtonClickEventArgs> InlineButtonClick;
+    }
+
+    public class ReplyMarkupRow : Panel
+    {
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var width = 0d;
+            var height = 0d;
+
+            foreach (var child in Children)
+            {
+                child.Measure(availableSize);
+                width = Math.Max(width, child.DesiredSize.Width);
+                height = Math.Max(height, child.DesiredSize.Height);
+            }
+
+            if (width * Children.Count > availableSize.Width)
+            {
+                width = availableSize.Width;
+            }
+            else
+            {
+                width = width * Children.Count;
+            }
+
+            return new Size(width, height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            var x = 0d;
+
+            foreach (var child in Children)
+            {
+                child.Arrange(new Rect(x, 0, finalSize.Width / Children.Count, finalSize.Height));
+                x += finalSize.Width / Children.Count;
+            }
+
+            return finalSize;
+        }
     }
 }

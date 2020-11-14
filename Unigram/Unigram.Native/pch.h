@@ -7,10 +7,7 @@
 #include <wrl.h>
 #include <robuffer.h>
 
-#include <mfobjects.h>
 #include <mfapi.h>
-#include <mfidl.h>
-#include <mfreadwrite.h>
 
 #include <winerror.h>
 #include <dwrite.h>

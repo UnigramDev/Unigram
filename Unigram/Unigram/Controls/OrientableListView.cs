@@ -55,6 +55,11 @@ namespace Unigram.Controls
 
         private void OnOrientationChanged(Orientation newValue, Orientation oldValue)
         {
+            if (newValue == oldValue)
+            {
+                return;
+            }
+
             var horizontal = newValue == Orientation.Horizontal;
             ScrollViewer.SetVerticalScrollBarVisibility(this, horizontal ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Auto);
             ScrollViewer.SetVerticalScrollMode(this, horizontal ? ScrollMode.Disabled : ScrollMode.Auto);

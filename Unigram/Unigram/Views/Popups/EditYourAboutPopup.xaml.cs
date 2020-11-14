@@ -7,7 +7,7 @@ namespace Unigram.Views.Popups
     {
         public EditYourAboutPopup(string bio)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             FieldAbout.Text = bio;
 

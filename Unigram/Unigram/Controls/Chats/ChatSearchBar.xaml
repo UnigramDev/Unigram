@@ -208,7 +208,7 @@
         <Border Grid.Row="1">
             <Grid x:Name="TopPanel" Height="{StaticResource TelegramToolBarHeight}" Background="{ThemeResource PageSubHeaderBackgroundBrush}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" MinWidth="12"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>

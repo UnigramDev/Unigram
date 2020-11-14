@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
-using Unigram.Services.ViewService;
 using Unigram.Views;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
@@ -23,10 +22,7 @@ namespace Unigram.Common
         private readonly IProtoService _protoService;
         private readonly IPasscodeService _passcodeService;
 
-        private ViewLifetimeControl _walletLifetime;
-
-        private Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
-        private AppWindow _walletWindow;
+        private readonly Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
 
         public TLNavigationService(IProtoService protoService, Frame frame, int session, string id)
             : base(frame, session, id)
@@ -72,7 +68,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
+        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
         {
             if (chat == null)
             {
@@ -116,7 +112,7 @@ namespace Unigram.Common
                 }
             }
 
-            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && !scheduled)
+            if (Frame.Content is ChatPage page && chat.Id.Equals((long)CurrentPageParam) && thread == null && !scheduled)
             {
                 if (message != null)
                 {
@@ -152,44 +148,90 @@ namespace Unigram.Common
 
                 //Frame.Navigated += handler;
 
-                if (message != null || accessToken != null)
+                state = state ?? new Dictionary<string, object>();
+
+                if (message != null)
                 {
-                    state = state ?? new Dictionary<string, object>();
+                    state["message_id"] = message.Value;
+                }
 
-                    if (message != null)
-                    {
-                        state["message_id"] = message.Value;
-                    }
-
-                    if (accessToken != null)
-                    {
-                        state["access_token"] = accessToken;
-                    }
+                if (accessToken != null)
+                {
+                    state["access_token"] = accessToken;
                 }
 
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift && !ctrl)
                 {
-                    await OpenAsync(scheduled ? typeof(ChatScheduledPage) : typeof(ChatPage), chat.Id);
+                    Type target;
+                    object parameter;
+
+                    if (thread != null)
+                    {
+                        target = typeof(ChatThreadPage);
+                        parameter = $"{chat.Id};{thread}";
+                    }
+                    else if (scheduled)
+                    {
+                        target = typeof(ChatScheduledPage);
+                        parameter = chat.Id;
+                    }
+                    else
+                    {
+                        target = typeof(ChatPage);
+                        parameter = chat.Id;
+                    }
+
+                    await OpenAsync(target, parameter);
                 }
                 else
                 {
-                    await NavigateAsync(scheduled ? typeof(ChatScheduledPage) : typeof(ChatPage), chat.Id, state);
+                    if (Frame.Content is ChatPage chatPage && thread == null && !scheduled && !force)
+                    {
+                        chatPage.ViewModel.OnNavigatingFrom(null);
+
+                        chatPage.Dispose();
+                        chatPage.Activate();
+                        chatPage.ViewModel.NavigationService = this;
+                        chatPage.ViewModel.Dispatcher = Dispatcher;
+                        await chatPage.ViewModel.OnNavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
+
+                        FrameFacade.RaiseNavigated(chat.Id);
+                    }
+                    else
+                    {
+                        Type target;
+                        object parameter;
+
+                        if (thread != null)
+                        {
+                            target = typeof(ChatThreadPage);
+                            parameter = $"{chat.Id};{thread}";
+                        }
+                        else if (scheduled)
+                        {
+                            target = typeof(ChatScheduledPage);
+                            parameter = chat.Id;
+                        }
+                        else
+                        {
+                            target = typeof(ChatPage);
+                            parameter = chat.Id;
+                        }
+
+                        Navigate(target, parameter, state);
+                    }
                 }
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false)
+        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)
             {
-                var response = await _protoService.SendAsync(new GetChat(chatId));
-                if (response is Chat result)
-                {
-                    chat = result;
-                }
+                chat = await _protoService.SendAsync(new GetChat(chatId)) as Chat;
             }
 
             if (chat == null)
@@ -197,7 +239,7 @@ namespace Unigram.Common
                 return;
             }
 
-            NavigateToChat(chat, message, accessToken, state, scheduled);
+            NavigateToChat(chat, message, thread, accessToken, state, scheduled, force);
         }
 
         public async void NavigateToPasscode()

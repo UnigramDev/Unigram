@@ -28,7 +28,7 @@ namespace Unigram.Views.Settings
 
         private void BlockedUsers_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsBlockedUsersPage));
+            Frame.Navigate(typeof(SettingsBlockedChatsPage));
         }
 
         private void ShowPhone_Click(object sender, RoutedEventArgs e)

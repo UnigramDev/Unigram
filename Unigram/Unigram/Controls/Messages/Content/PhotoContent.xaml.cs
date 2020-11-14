@@ -43,12 +43,15 @@ namespace Unigram.Controls.Messages.Content
             var small = photo.GetSmall();
             var big = photo.GetBig();
 
-            if (small != null /*&& small.Photo.Id != big.Photo.Id*/)
+            if (small != null /*&& !big.Photo.Local.IsDownloadingCompleted*/ /*&& small.Photo.Id != big.Photo.Id*/)
             {
                 UpdateThumbnail(message, small.Photo);
             }
 
-            UpdateFile(message, big.Photo);
+            if (big != null)
+            {
+                UpdateFile(message, big.Photo);
+            }
         }
 
         public void Mockup(MessagePhoto photo)
@@ -156,7 +159,20 @@ namespace Unigram.Controls.Messages.Content
 
                     Overlay.Opacity = 0;
 
-                    Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                    var width = 0;
+                    var height = 0;
+
+                    if (width > MaxWidth || height > MaxHeight)
+                    {
+                        double ratioX = MaxWidth / big.Width;
+                        double ratioY = MaxHeight / big.Height;
+                        double ratio = Math.Max(ratioX, ratioY);
+
+                        width = (int)(big.Width * ratio);
+                        height = (int)(big.Height * ratio);
+                    }
+
+                    Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
                 }
             }
         }
@@ -224,10 +240,6 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.SendingState is MessageSendingStatePending)
-            {
-                return;
-            }
 
             var file = big.Photo;
             if (file.Local.IsDownloadingActive)

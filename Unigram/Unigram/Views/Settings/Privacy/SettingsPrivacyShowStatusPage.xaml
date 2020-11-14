@@ -19,6 +19,7 @@
     <local:HostedPage.Header>
         <controls:ButtonPageHeader
             Text="{CustomResource PrivacyLastSeen}"
+            CommandToolTip="{CustomResource Save}"
             Command="{x:Bind ViewModel.SendCommand}"
             Glyph="&#xE10B;"/>
     </local:HostedPage.Header>

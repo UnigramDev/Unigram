@@ -15,7 +15,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Unigram.Views;
 using Unigram.Views.Popups;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,8 +23,8 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : IMessageDelegate
     {
-        private FileContext<MessageViewModel> _filesMap = new FileContext<MessageViewModel>();
-        private FileContext<MessageViewModel> _photosMap = new FileContext<MessageViewModel>();
+        private readonly FileContext<MessageViewModel> _filesMap = new FileContext<MessageViewModel>();
+        private readonly FileContext<MessageViewModel> _photosMap = new FileContext<MessageViewModel>();
 
         public bool CanBeDownloaded(MessageViewModel message)
         {
@@ -226,7 +225,56 @@ namespace Unigram.ViewModels
 
         public async void OpenReply(MessageViewModel message)
         {
-            await LoadMessageSliceAsync(message.Id, message.ReplyToMessageId);
+            if (message.ReplyToMessageState == ReplyToMessageState.None)
+            {
+                if (message.ReplyInChatId == message.ChatId || message.ReplyInChatId == 0)
+                {
+                    await LoadMessageSliceAsync(message.Id, message.ReplyToMessageId);
+                }
+                else
+                {
+                    NavigationService.NavigateToChat(message.ReplyInChatId, message.ReplyToMessageId);
+                }
+            }
+        }
+
+        public async void OpenThread(MessageViewModel message)
+        {
+            long chatId = message.ChatId;
+            long threadId = message.Id;
+
+            long? messageId = null;
+
+            if (message.ChatId == CacheService.Options.RepliesBotChatId)
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser || message.ForwardInfo?.Origin is MessageForwardOriginChat)
+                {
+                    chatId = message.ForwardInfo.FromChatId;
+                    threadId = message.ForwardInfo.FromMessageId;
+
+                    messageId = threadId;
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                {
+                    chatId = fromChannel.ChatId;
+                    threadId = fromChannel.MessageId;
+
+                    messageId = threadId;
+                }
+
+                var original = await ProtoService.SendAsync(new GetMessage(chatId, threadId)) as Message;
+                if (original == null || !original.CanGetMessageThread)
+                {
+                    NavigationService.NavigateToChat(chatId, threadId);
+                    return;
+                }
+            }
+
+            var response = await ProtoService.SendAsync(new GetMessageThread(chatId, threadId));
+            if (response is MessageThreadInfo)
+            {
+                NavigationService.NavigateToThread(chatId, threadId, messageId);
+            }
         }
 
 
@@ -241,17 +289,11 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                try
+                var temp = await ProtoService.GetFileAsync(file);
+                if (temp != null)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                    var result = await Windows.System.Launcher.LaunchFileAsync(temp);
-                    //var folder = await temp.GetParentAsync();
-                    //var options = new Windows.System.FolderLauncherOptions();
-                    //options.ItemsToSelect.Add(temp);
-
-                    //var result = await Windows.System.Launcher.LaunchFolderAsync(folder, options);
+                    await Windows.System.Launcher.LaunchFileAsync(temp);
                 }
-                catch { }
             }
         }
 
@@ -309,9 +351,9 @@ namespace Unigram.ViewModels
             KeyboardButtonExecute(message, button);
         }
 
-        public void Call(MessageViewModel message)
+        public void Call(MessageViewModel message, bool video)
         {
-            CallCommand.Execute();
+            CallCommand.Execute(video);
         }
 
         public async void VotePoll(MessageViewModel message, IList<PollOption> options)
@@ -340,9 +382,9 @@ namespace Unigram.ViewModels
                 else
                 {
                     var container = ListField?.ContainerFromItem(message) as SelectorItem;
-                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    var root = container?.ContentTemplateRoot as FrameworkElement;
 
-                    var bubble = root.FindName("Bubble") as FrameworkElement;
+                    var bubble = root?.FindName("Bubble") as FrameworkElement;
                     if (bubble == null)
                     {
                         return;
@@ -419,7 +461,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void OpenChat(long chatId)
+        public void OpenChat(long chatId, bool profile = false)
         {
             var chat = ProtoService.GetChat(chatId);
             if (chat == null)
@@ -427,7 +469,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.NavigateToChat(chat);
+            if (profile)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+            }
+            else
+            {
+                NavigationService.NavigateToChat(chat);
+            }
         }
 
         public void OpenChat(long chatId, long messageId)
@@ -504,6 +553,20 @@ namespace Unigram.ViewModels
                 await new PollResultsPopup(ProtoService, CacheService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll).ShowQueuedAsync();
                 return;
             }
+            else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
+            {
+                foreach (var row in inline.Rows)
+                {
+                    foreach (var button in row)
+                    {
+                        if (button.Type is InlineKeyboardButtonTypeCallbackGame)
+                        {
+                            KeyboardButtonExecute(message, button);
+                            return;
+                        }
+                    }
+                }
+            }
 
             GalleryViewModelBase viewModel = null;
 
@@ -518,7 +581,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            if (viewModel == null && (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
+            if (viewModel == null && (message.Content is MessageVideoNote || (webPage != null && webPage.VideoNote != null) || message.Content is MessageAnimation || (webPage != null && webPage.Animation != null)))
             {
                 Delegate?.PlayMessage(message, target);
             }
@@ -526,9 +589,9 @@ namespace Unigram.ViewModels
             {
                 if (viewModel == null)
                 {
-                    if ((message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
+                    if ((message.Content is MessageAnimation || message.Content is MessagePhoto || message.Content is MessageVideo) && !message.IsSecret())
                     {
-                        viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, message.Get());
+                        viewModel = new ChatGalleryViewModel(ProtoService, Aggregator, message.ChatId, _threadId, message.Get());
                     }
                     else
                     {
@@ -576,6 +639,16 @@ namespace Unigram.ViewModels
             }
 
             return false;
+        }
+
+        public string GetAdminTitle(MessageSender sender)
+        {
+            if (sender is MessageSenderUser senderUser)
+            {
+                return GetAdminTitle(senderUser.UserId);
+            }
+
+            return null;
         }
 
         public string GetAdminTitle(int userId)

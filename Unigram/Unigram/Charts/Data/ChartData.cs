@@ -54,8 +54,15 @@ namespace Unigram.Charts.Data
                     for (uint j = 0; j < len; j++)
                     {
                         l.y[j] = (int)a.GetNumberAt(j + 1);
-                        if (l.y[j] > l.maxValue) l.maxValue = l.y[j];
-                        if (l.y[j] < l.minValue) l.minValue = l.y[j];
+                        if (l.y[j] > l.maxValue)
+                        {
+                            l.maxValue = l.y[j];
+                        }
+
+                        if (l.y[j] < l.minValue)
+                        {
+                            l.minValue = l.y[j];
+                        }
                     }
                 }
 
@@ -67,7 +74,7 @@ namespace Unigram.Charts.Data
                 {
                     timeStep = 86400000L;
                 }
-                measure();
+                Measure();
             }
 
             JsonObject colors = jsonObject.GetNamedObject("colors");
@@ -86,7 +93,7 @@ namespace Unigram.Charts.Data
                         String key = matcher.Groups[1].Value;
                         if (key != null)
                         {
-                            line.colorKey = "statisticChartLine_" + matcher.Groups[1].Value;
+                            line.colorKey = "StatisticChartLine_" + matcher.Groups[1].Value;
                         }
 
                         line.color = matcher.Groups[2].Value.ToColor();
@@ -103,7 +110,7 @@ namespace Unigram.Charts.Data
         }
 
 
-        protected virtual void measure()
+        protected virtual void Measure()
         {
             int n = x.Length;
             if (n == 0)
@@ -128,8 +135,15 @@ namespace Unigram.Charts.Data
 
             for (int i = 0; i < lines.Count; i++)
             {
-                if (lines[i].maxValue > maxValue) maxValue = lines[i].maxValue;
-                if (lines[i].minValue < minValue) minValue = lines[i].minValue;
+                if (lines[i].maxValue > maxValue)
+                {
+                    maxValue = lines[i].maxValue;
+                }
+
+                if (lines[i].minValue < minValue)
+                {
+                    minValue = lines[i].minValue;
+                }
 
                 lines[i].segmentTree = new SegmentTree(lines[i].y);
             }
@@ -168,14 +182,18 @@ namespace Unigram.Charts.Data
             oneDayPercentage = timeStep / (float)(x[x.Length - 1] - x[0]);
         }
 
-        public String getDayString(int i)
+        public String GetDayString(int i)
         {
             return daysLookup[(int)((x[i] - x[0]) / timeStep)];
         }
 
-        public int findStartIndex(float v)
+        public int FindStartIndex(float v)
         {
-            if (v == 0) return 0;
+            if (v == 0)
+            {
+                return 0;
+            }
+
             int n = xPercentage.Length;
 
             if (n < 2)
@@ -209,10 +227,14 @@ namespace Unigram.Charts.Data
             return left;
         }
 
-        public int findEndIndex(int left, float v)
+        public int FindEndIndex(int left, float v)
         {
             int n = xPercentage.Length;
-            if (v == 1f) return n - 1;
+            if (v == 1f)
+            {
+                return n - 1;
+            }
+
             int right = n - 1;
 
             while (left <= right)
@@ -239,7 +261,7 @@ namespace Unigram.Charts.Data
         }
 
 
-        public int findIndex(int left, int right, float v)
+        public int FindIndex(int left, int right, float v)
         {
 
             int n = xPercentage.Length;

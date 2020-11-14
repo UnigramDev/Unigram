@@ -11,9 +11,19 @@ namespace Unigram.Common
         private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             var triggers = GetTriggers(sender as ItemsControl);
-            if (triggers != null)
+            if (triggers?.Owner != null)
             {
-                SetActive(triggers);
+                var owner = triggers.Owner;
+                var reference = GetReference(owner);
+
+                if (reference.Orientation == Orientation.Horizontal && Math.Truncate(e.PreviousSize.Width) != Math.Truncate(e.NewSize.Width))
+                {
+                    SetActive(triggers, reference);
+                }
+                else if (reference.Orientation == Orientation.Vertical && Math.Truncate(e.PreviousSize.Height) != Math.Truncate(e.NewSize.Height))
+                {
+                    SetActive(triggers, reference);
+                }
             }
         }
 
@@ -22,17 +32,18 @@ namespace Unigram.Common
             var triggers = sender as FluidGridViewTriggerCollection;
             if (triggers != null && triggers.Owner != null)
             {
-                SetActive(triggers);
+                SetActive(triggers, GetReference(triggers.Owner));
             }
         }
 
-        private static void SetActive(FluidGridViewTriggerCollection triggers)
+        private static void SetActive(FluidGridViewTriggerCollection triggers, WrapGridReference reference)
         {
-            if (triggers.Owner.ItemsPanelRoot == null)
+            if (triggers.Owner.ItemsPanelRoot == null || reference == null)
+            {
                 return;
+            }
 
             var owner = triggers.Owner;
-            var reference = GetReference(owner);
 
             var paddingNear = reference.Orientation == Orientation.Horizontal
                 ? owner.Padding.Left
@@ -51,7 +62,9 @@ namespace Unigram.Common
             foreach (var child in triggers)
             {
                 if (child.MaybeActive(parentLength))
+                {
                     trigger = child;
+                }
             }
 
             if (trigger != null)
@@ -60,17 +73,25 @@ namespace Unigram.Common
                 var itemLength = trigger.GetItemLength(parentLength);
 
                 if (reference.Orientation == Orientation.Horizontal)
+                {
                     reference.ItemWidth = itemLength;
+                }
                 else
+                {
                     reference.ItemHeight = itemLength;
+                }
 
                 var orientationOnly = GetOrientationOnly(owner);
                 if (!orientationOnly)
                 {
                     if (reference.Orientation == Orientation.Horizontal)
+                    {
                         reference.ItemHeight = itemLength;
+                    }
                     else
+                    {
                         reference.ItemWidth = itemLength;
+                    }
                 }
             }
         }
@@ -113,9 +134,9 @@ namespace Unigram.Common
         private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as ItemsControl;
-            if (sender != null)
+            if (sender != null && e.NewValue is FluidGridViewTriggerCollection triggers)
             {
-                SetActive(e.NewValue as FluidGridViewTriggerCollection);
+                SetActive(triggers, GetReference(triggers.Owner));
             }
         }
         #endregion
@@ -124,6 +145,11 @@ namespace Unigram.Common
         private static WrapGridReference GetReference(DependencyObject obj)
         {
             var sender = obj as ItemsControl;
+            if (sender?.ItemsPanelRoot == null)
+            {
+                return null;
+            }
+
             var value = (WrapGridReference)obj.GetValue(ReferenceProperty);
             if (value == null)
             {
@@ -151,13 +177,19 @@ namespace Unigram.Common
                 get
                 {
                     if (Owner is WrapGrid)
+                    {
                         return (Owner as WrapGrid).Orientation;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         return (Owner as ItemsWrapGrid).Orientation;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         return (Owner as VariableSizedWrapGrid).Orientation;
+                    }
 
-                    throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
+                    return Orientation.Horizontal;
                 }
             }
 
@@ -166,22 +198,34 @@ namespace Unigram.Common
                 get
                 {
                     if (Owner is WrapGrid)
+                    {
                         return (Owner as WrapGrid).ItemWidth;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         return (Owner as ItemsWrapGrid).ItemWidth;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         return (Owner as VariableSizedWrapGrid).ItemWidth;
+                    }
 
-                    throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
+                    return double.NaN;
                 }
                 set
                 {
                     if (Owner is WrapGrid)
+                    {
                         (Owner as WrapGrid).ItemWidth = value;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         (Owner as ItemsWrapGrid).ItemWidth = value;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         (Owner as VariableSizedWrapGrid).ItemWidth = value;
+                    }
                 }
             }
 
@@ -190,22 +234,34 @@ namespace Unigram.Common
                 get
                 {
                     if (Owner is WrapGrid)
+                    {
                         return (Owner as WrapGrid).ItemHeight;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         return (Owner as ItemsWrapGrid).ItemHeight;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         return (Owner as VariableSizedWrapGrid).ItemHeight;
+                    }
 
-                    throw new InvalidOperationException("WrapGrid or ItemsWrapGrid or VariableSizedWrapGrid required.");
+                    return double.NaN;
                 }
                 set
                 {
                     if (Owner is WrapGrid)
+                    {
                         (Owner as WrapGrid).ItemHeight = value;
+                    }
                     else if (Owner is ItemsWrapGrid)
+                    {
                         (Owner as ItemsWrapGrid).ItemHeight = value;
+                    }
                     else if (Owner is VariableSizedWrapGrid)
+                    {
                         (Owner as VariableSizedWrapGrid).ItemHeight = value;
+                    }
                 }
             }
 

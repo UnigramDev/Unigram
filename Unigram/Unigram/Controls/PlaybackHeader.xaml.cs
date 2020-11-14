@@ -1,16 +1,19 @@
 ﻿using System;
+using System.Numerics;
 using System.Windows.Input;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Cells;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Windows.Media.Playback;
 using Windows.System;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
@@ -22,6 +25,14 @@ namespace Unigram.Controls
         private INavigationService _navigationService;
         private IEventAggregator _aggregator;
 
+        private readonly Visual _visual1;
+        private readonly Visual _visual2;
+
+        private Visual _visual;
+
+        private long _chatId;
+        private long _messageId;
+
         public PlaybackHeader()
         {
             InitializeComponent();
@@ -30,6 +41,11 @@ namespace Unigram.Controls
             Slider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
             Slider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
             Slider.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(Slider_PointerCaptureLost), true);
+
+            _visual1 = ElementCompositionPreview.GetElementVisual(Label1);
+            _visual2 = ElementCompositionPreview.GetElementVisual(Label2);
+
+            _visual = _visual1;
         }
 
         public void Update(IProtoService cacheService, IPlaybackService playbackService, INavigationService navigationService, IEventAggregator aggregator)
@@ -140,10 +156,19 @@ namespace Unigram.Controls
 
         private void UpdateGlyph()
         {
-            if (_playbackService.CurrentItem == null)
+            var message = _playbackService.CurrentItem;
+            if (message == null)
             {
+                _chatId = 0;
+                _messageId = 0;
+
                 _aggregator.Unsubscribe(this);
+
+                TitleLabel1.Text = TitleLabel2.Text = string.Empty;
+                SubtitleLabel1.Text = SubtitleLabel2.Text = string.Empty;
                 Visibility = Visibility.Collapsed;
+
+                return;
             }
             else
             {
@@ -151,28 +176,30 @@ namespace Unigram.Controls
                 Visibility = Visibility.Visible;
             }
 
+            VolumeSlider.Value = _playbackService.Volume * 100;
+
             PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
             Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Playing ? Strings.Resources.AccActionPause : Strings.Resources.AccActionPlay);
-
-            var message = _playbackService.CurrentItem;
-            if (message == null)
-            {
-                return;
-            }
 
             var webPage = message.Content is MessageText text ? text.WebPage : null;
 
             if (message.Content is MessageVoiceNote || message.Content is MessageVideoNote || webPage?.VoiceNote != null || webPage?.VideoNote != null)
             {
+                var title = string.Empty;
                 var date = BindConvert.Current.DateTime(message.Date);
-                var user = _cacheService.GetUser(message.SenderUserId);
-                if (user == null)
+
+                if (_cacheService.TryGetUser(message.Sender, out Telegram.Td.Api.User senderUser))
                 {
-                    return;
+                    title = senderUser.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : senderUser.GetFullName();
+                }
+                else if (_cacheService.TryGetChat(message.Sender, out Chat senderChat))
+                {
+                    title = _cacheService.GetTitle(senderChat);
                 }
 
-                TitleLabel.Text = user.Id == _cacheService.Options.MyId ? Strings.Resources.ChatYourSelfName : user.GetFullName();
-                SubtitleLabel.Text = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+                var subtitle = string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date));
+
+                UpdateText(message.ChatId, message.Id, title, subtitle);
 
                 PreviousButton.Visibility = Visibility.Collapsed;
                 NextButton.Visibility = Visibility.Collapsed;
@@ -194,13 +221,11 @@ namespace Unigram.Controls
 
                 if (audio.Performer.Length > 0 && audio.Title.Length > 0)
                 {
-                    TitleLabel.Text = audio.Title;
-                    SubtitleLabel.Text = "- " + audio.Performer;
+                    UpdateText(message.ChatId, message.Id, audio.Title, "- " + audio.Performer);
                 }
                 else
                 {
-                    TitleLabel.Text = audio.FileName;
-                    SubtitleLabel.Text = string.Empty;
+                    UpdateText(message.ChatId, message.Id, audio.FileName, string.Empty);
                 }
 
                 PreviousButton.Visibility = Visibility.Visible;
@@ -215,6 +240,52 @@ namespace Unigram.Controls
 
                 ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
             }
+        }
+
+        private void UpdateText(long chatId, long messageId, string title, string subtitle)
+        {
+            if (_chatId == chatId && _messageId == messageId)
+            {
+                return;
+            }
+
+            var prev = _chatId == chatId && _messageId > messageId;
+
+            _chatId = chatId;
+            _messageId = messageId;
+
+            var visualShow = _visual == _visual1 ? _visual2 : _visual1;
+            var visualHide = _visual == _visual1 ? _visual1 : _visual2;
+
+            var titleShow = _visual == _visual1 ? TitleLabel2 : TitleLabel1;
+            var subtitleShow = _visual == _visual1 ? SubtitleLabel2 : SubtitleLabel1;
+
+            var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
+            hide1.InsertKeyFrame(0, new Vector3(0));
+            hide1.InsertKeyFrame(1, new Vector3(prev ? -12 : 12, 0, 0));
+
+            var hide2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
+            hide2.InsertKeyFrame(0, 1);
+            hide2.InsertKeyFrame(1, 0);
+
+            visualHide.StartAnimation("Offset", hide1);
+            visualHide.StartAnimation("Opacity", hide2);
+
+            titleShow.Text = title;
+            subtitleShow.Text = subtitle;
+
+            var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
+            show1.InsertKeyFrame(0, new Vector3(prev ? 12 : -12, 0, 0));
+            show1.InsertKeyFrame(1, new Vector3(0));
+
+            var show2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
+            show2.InsertKeyFrame(0, 0);
+            show2.InsertKeyFrame(1, 1);
+
+            visualShow.StartAnimation("Offset", show1);
+            visualShow.StartAnimation("Opacity", show2);
+
+            _visual = visualShow;
         }
 
         private void UpdateRepeat()
@@ -262,6 +333,27 @@ namespace Unigram.Controls
             }
         }
 
+        private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            _playbackService.Volume = e.NewValue / 100;
+
+            switch (_playbackService.Volume)
+            {
+                case double n when n >= 1d / 3d * 2d:
+                    VolumeButton.Glyph = "\uE995";
+                    break;
+                case double n when n >= 1d / 3d && n < 1d / 3d * 2d:
+                    VolumeButton.Glyph = "\uE994";
+                    break;
+                case double n when n > 0 && n < 1d / 3d:
+                    VolumeButton.Glyph = "\uE993";
+                    break;
+                default:
+                    VolumeButton.Glyph = "\uE74F";
+                    break;
+            }
+        }
+
         private void Repeat_Click(object sender, RoutedEventArgs e)
         {
             _playbackService.IsRepeatEnabled = RepeatButton.IsChecked;
@@ -290,12 +382,12 @@ namespace Unigram.Controls
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-            _playbackService.Clear();
+            _playbackService?.Clear();
         }
 
         private void View_Click(object sender, RoutedEventArgs e)
         {
-            var message = _playbackService.CurrentItem;
+            var message = _playbackService?.CurrentItem;
             if (message == null)
             {
                 return;
@@ -328,7 +420,7 @@ namespace Unigram.Controls
 
         private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _playbackService.SetPosition(TimeSpan.FromSeconds(Slider.Value));
+            _playbackService?.SetPosition(TimeSpan.FromSeconds(Slider.Value));
             _scrubbing = false;
         }
 

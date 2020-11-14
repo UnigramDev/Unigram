@@ -32,16 +32,11 @@
                         Grid.Column="1"/>
                 </Grid>
 
-                <controls:SearchTextBox
+                <TextBox
                     x:Name="SearchField"
-                    Padding="12,4,6,4"
-                    Background="{x:Null}"
-                    BorderBrush="{x:Null}"
-                    Style="{StaticResource QueryTextBoxStyle}"
                     PlaceholderText="{CustomResource Search}"
                     PreventKeyboardDisplayOnProgrammaticFocus="True"
                     Visibility="Collapsed"
-                    Delete="Search_LostFocus"
                     GotFocus="Search_GotFocus"
                     LostFocus="Search_LostFocus"
                     TextChanged="Search_TextChanged"

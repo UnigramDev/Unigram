@@ -11,7 +11,7 @@ namespace Unigram.ViewModels.Supergroups
     public class SupergroupPermissionsViewModel : SupergroupMembersViewModelBase
     {
         public SupergroupPermissionsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator, null, query => new SupergroupMembersFilterRestricted(query))
+            : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRestricted(), query => new SupergroupMembersFilterRestricted(query))
         {
             SendCommand = new RelayCommand(SendExecute);
             AddCommand = new RelayCommand(AddExecute);
@@ -221,6 +221,25 @@ namespace Unigram.ViewModels.Supergroups
 
             var response = await ProtoService.SendAsync(new SetChatPermissions(chat.Id, permissions));
             if (response is Error error)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeBasicGroup)
+            {
+                if (_slowModeDelay != 0)
+                {
+                    chat = await ProtoService.SendAsync(new UpgradeBasicGroupChatToSupergroupChat(chat.Id)) as Chat;
+                }
+                else
+                {
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
+                    return;
+                }
+            }
+
+            if (chat == null)
             {
                 return;
             }

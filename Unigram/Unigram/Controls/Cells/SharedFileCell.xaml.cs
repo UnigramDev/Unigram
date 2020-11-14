@@ -39,10 +39,13 @@ namespace Unigram.Controls.Cells
 
             if (string.IsNullOrEmpty(data.FileName))
             {
-                var user = protoService.GetUser(message.SenderUserId);
-                if (user != null)
+                if (_protoService.TryGetUser(message.Sender, out User user))
                 {
                     Title.Text = user.GetFullName();
+                }
+                else if (_protoService.TryGetChat(message.Sender, out Chat chat))
+                {
+                    Title.Text = chat.Title;
                 }
                 else
                 {
@@ -51,7 +54,7 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                Title.Text = data.FileName ?? string.Empty;
+                Title.Text = data.FileName;
             }
 
             UpdateFile(message, data.File);

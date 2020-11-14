@@ -22,6 +22,8 @@
 
         <controls:ImageCropper x:Name="Cropper" Padding="24">
             <Grid>
+                <MediaPlayerElement
+                    x:Name="Media"/>
                 <controls:PencilCanvas
                     x:Name="Canvas"
                     StrokesChanged="Canvas_StrokesChanged"
@@ -75,7 +77,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Rotate"
                     Click="Rotate_Click"
-                    UncheckedGlyph="&#xE909;"
+                    Glyph="&#xE909;"
                     CheckedGlyph="&#xE909;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -85,7 +87,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Flip"
                     Click="Flip_Click"
-                    UncheckedGlyph="&#xE908;"
+                    Glyph="&#xE908;"
                     CheckedGlyph="&#xE908;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -102,7 +104,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Proportions"
                     Click="Proportions_Click"
-                    UncheckedGlyph="&#xE90A;"
+                    Glyph="&#xE90A;"
                     CheckedGlyph="&#xE90A;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -132,7 +134,7 @@
                 <controls:GlyphToggleButton
                     x:Name="Brush"
                     Click="Brush_Click"
-                    UncheckedGlyph="&#xEE56;"
+                    Glyph="&#xEE56;"
                     CheckedGlyph="&#xEE56;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     Grid.Column="2"/>
@@ -140,10 +142,24 @@
                 <controls:GlyphToggleButton
                     x:Name="Erase"
                     Click="Erase_Click"
-                    UncheckedGlyph="&#xE75C;"
+                    Glyph="&#xE75C;"
                     CheckedGlyph="&#xE75C;"
                     CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                     Grid.Column="3"/>
+            </Grid>
+
+            <Grid x:Name="TrimToolbar" x:Load="False" Grid.Column="2">
+                <StackPanel
+                    x:Name="TrimThumbnails"
+                    Orientation="Horizontal"
+                    Width="296"
+                    CornerRadius="4"/>
+                <controls:VideoRangeSlider
+                    x:Name="TrimRange"
+                    MinimumChanged="TrimRange_MinimumChanged"
+                    MaximumChanged="TrimRange_MaximumChanged"
+                    Height="40"
+                    Width="296"/>
             </Grid>
             
             <Rectangle

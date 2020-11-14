@@ -184,30 +184,50 @@ namespace Unigram.Services.Settings
             {
                 case AutoDownloadChat.Contact:
                     if (isCellular)
+                    {
                         shouldDownload = (mode & AutoDownloadMode.CellularContacts) != 0;
+                    }
                     else if (isWiFi)
+                    {
                         shouldDownload = (mode & AutoDownloadMode.WifiContacts) != 0;
+                    }
+
                     break;
 
                 case AutoDownloadChat.OtherPrivateChat:
                     if (isCellular)
+                    {
                         shouldDownload = (mode & AutoDownloadMode.CellularPrivateChats) != 0;
+                    }
                     else if (isWiFi)
+                    {
                         shouldDownload = (mode & AutoDownloadMode.WifiPrivateChats) != 0;
+                    }
+
                     break;
 
                 case AutoDownloadChat.Group:
                     if (isCellular)
+                    {
                         shouldDownload = (mode & AutoDownloadMode.CellularGroups) != 0;
+                    }
                     else if (isWiFi)
+                    {
                         shouldDownload = (mode & AutoDownloadMode.WifiGroups) != 0;
+                    }
+
                     break;
 
                 case AutoDownloadChat.Channel:
                     if (isCellular)
+                    {
                         shouldDownload = (mode & AutoDownloadMode.CellularChannels) != 0;
+                    }
                     else if (isWiFi)
+                    {
                         shouldDownload = (mode & AutoDownloadMode.WifiChannels) != 0;
+                    }
+
                     break;
 
                 default:

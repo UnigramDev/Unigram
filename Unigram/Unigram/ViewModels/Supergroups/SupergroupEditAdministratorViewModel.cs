@@ -55,13 +55,10 @@ namespace Unigram.ViewModels.Supergroups
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var bundle = parameter as ChatMemberNavigation;
-            if (bundle == null)
-            {
-                return;
-            }
+            state.TryGet("chatId", out long chatId);
+            state.TryGet("userId", out int userId);
 
-            Chat = ProtoService.GetChat(bundle.ChatId);
+            Chat = ProtoService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -69,15 +66,13 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, bundle.UserId));
-            if (response is ChatMember member && chat.Type is ChatTypeSupergroup super)
+            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, userId));
+            if (response is ChatMember member)
             {
                 var item = ProtoService.GetUser(member.UserId);
                 var cache = ProtoService.GetUserFull(member.UserId);
 
-                var group = ProtoService.GetSupergroup(super.SupergroupId);
-
-                Delegate?.UpdateMember(chat, group, item, member);
+                Delegate?.UpdateMember(chat, item, member);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache == null)
@@ -101,6 +96,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = administrator.CanPostMessages;
                     CanPromoteMembers = administrator.CanPromoteMembers;
                     CanRestrictMembers = administrator.CanRestrictMembers;
+                    IsAnonymous = administrator.IsAnonymous;
 
                     CustomTitle = administrator.CustomTitle;
                 }
@@ -117,7 +113,15 @@ namespace Unigram.ViewModels.Supergroups
 
                     if (member.Status is ChatMemberStatusCreator creator)
                     {
+                        IsAnonymous = creator.IsAnonymous;
+
                         CustomTitle = creator.CustomTitle;
+                    }
+                    else
+                    {
+                        IsAnonymous = false;
+
+                        CustomTitle = string.Empty;
                     }
                 }
             }
@@ -175,7 +179,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canChangeInfo, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -189,7 +193,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPostMessages, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -203,7 +207,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canEditMessages, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -217,7 +221,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canDeleteMessages, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -231,7 +235,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canRestrictMembers, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -245,7 +249,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canInviteUsers, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -259,7 +263,21 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPinMessages, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
+            }
+        }
+
+        private bool _isAnonymous;
+        public bool IsAnonymous
+        {
+            get
+            {
+                return _isAnonymous;
+            }
+            set
+            {
+                Set(ref _isAnonymous, value);
+                // Is Anonymous isn't needed for transfer ownership.
             }
         }
 
@@ -273,7 +291,7 @@ namespace Unigram.ViewModels.Supergroups
             set
             {
                 Set(ref _canPromoteMembers, value);
-                RaisePropertyChanged(() => CanTransferOwnership);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
 
@@ -317,29 +335,26 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var supergroup = chat.Type as ChatTypeSupergroup;
-            if (supergroup == null)
-            {
-                return;
-            }
+            var channel = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
 
             ChatMemberStatus status;
             if (member.Status is ChatMemberStatusCreator creator)
             {
-                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, creator.IsMember);
+                status = new ChatMemberStatusCreator(_customTitle ?? string.Empty, channel ? false : _isAnonymous, creator.IsMember);
             }
             else
             {
                 status = new ChatMemberStatusAdministrator
                 {
+                    IsAnonymous = channel ? false : _isAnonymous,
                     CanChangeInfo = _canChangeInfo,
                     CanDeleteMessages = _canDeleteMessages,
-                    CanEditMessages = supergroup.IsChannel ? _canEditMessages : false,
+                    CanEditMessages = channel ? _canEditMessages : false,
                     CanInviteUsers = _canInviteUsers,
-                    CanPinMessages = supergroup.IsChannel ? false : _canPinMessages,
-                    CanPostMessages = supergroup.IsChannel ? _canPostMessages : false,
+                    CanPinMessages = channel ? false : _canPinMessages,
+                    CanPostMessages = channel ? _canPostMessages : false,
                     CanPromoteMembers = _canPromoteMembers,
-                    CanRestrictMembers = supergroup.IsChannel ? false : _canRestrictMembers,
+                    CanRestrictMembers = channel ? false : _canRestrictMembers,
                     CustomTitle = _customTitle ?? string.Empty
                 };
             }

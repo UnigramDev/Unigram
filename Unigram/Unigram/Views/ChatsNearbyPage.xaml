@@ -79,6 +79,7 @@
                         </Border>
 
                         <microsoft:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.Users}"
                             ItemTemplate="{StaticResource ChatTemplate}"
                             ElementPrepared="OnElementPrepared"/>
@@ -97,6 +98,7 @@
                             Glyph="&#xE902;"/>-->
 
                         <microsoft:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.Chats}"
                             ItemTemplate="{StaticResource ChatTemplate}"
                             ElementPrepared="OnElementPrepared"/>

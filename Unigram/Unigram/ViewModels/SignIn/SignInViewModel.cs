@@ -121,68 +121,15 @@ namespace Unigram.ViewModels.SignIn
         private Country _selectedCountry;
         public Country SelectedCountry
         {
-            get
-            {
-                return _selectedCountry;
-            }
-            set
-            {
-                if (value != null)
-                {
-                    _phoneCode = value.PhoneCode;
-                    RaisePropertyChanged(() => PhoneCode);
-                }
-
-                Set(ref _selectedCountry, value);
-            }
-        }
-
-        private string _phoneCode;
-        public string PhoneCode
-        {
-            get
-            {
-                return _phoneCode;
-            }
-            set
-            {
-                Set(ref _phoneCode, value);
-
-                Country country = null;
-                foreach (var c in Country.Countries)
-                {
-                    if (c.PhoneCode == PhoneCode)
-                    {
-                        if (c.PhoneCode == "1" && c.Code != "us")
-                        {
-                            continue;
-                        }
-
-                        if (c.PhoneCode == "7" && c.Code != "ru")
-                        {
-                            continue;
-                        }
-
-                        country = c;
-                        break;
-                    }
-                }
-
-                SelectedCountry = country;
-            }
+            get => _selectedCountry;
+            set => Set(ref _selectedCountry, value);
         }
 
         private string _phoneNumber;
         public string PhoneNumber
         {
-            get
-            {
-                return _phoneNumber;
-            }
-            set
-            {
-                Set(ref _phoneNumber, value);
-            }
+            get => _phoneNumber;
+            set => Set(ref _phoneNumber, value);
         }
 
         public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
@@ -199,22 +146,21 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            if (string.IsNullOrEmpty(_phoneCode))
-            {
-                RaisePropertyChanged("PHONE_CODE_INVALID");
-                return;
-            }
-
+            var phoneNumber = _phoneNumber?.Trim('+').Replace(" ", string.Empty);
             if (string.IsNullOrEmpty(_phoneNumber))
             {
                 RaisePropertyChanged("PHONE_NUMBER_INVALID");
                 return;
             }
 
-            var phoneNumber = (_phoneCode + _phoneNumber).Replace(" ", string.Empty);
-
             foreach (var session in _lifetimeService.Items)
             {
+                // We don't want to check other accounts if current one is test
+                if (Settings.UseTestDC)
+                {
+                    continue;
+                }
+
                 var user = session.ProtoService.GetUser(session.UserId);
                 if (user == null)
                 {

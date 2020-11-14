@@ -18,36 +18,13 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <StackPanel Margin="0,0,0,24">
-                <controls:HeaderedControl>
-                    <controls:BadgeButton
-                        Content="{CustomResource BlockedUsers}"
-                        Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
-                        Glyph="&#xF140;"
-                        Click="BlockedUsers_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource SessionsTitle}"
-                        Badge="{x:Bind ViewModel.ActiveSessions, Mode=OneWay}"
-                        Glyph="&#xE975;"
-                        Click="Sessions_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource Passcode}"
-                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasscodeEnabled), Mode=OneWay}"
-                        Glyph="&#xE928;"
-                        Command="{x:Bind ViewModel.PasscodeCommand}"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:BadgeButton
-                        Content="{CustomResource TwoStepVerification}"
-                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasswordEnabled), Mode=OneWay}"
-                        Glyph="&#xE192;"
-                        Command="{x:Bind ViewModel.PasswordCommand}"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
-                </controls:HeaderedControl>
-                
                 <controls:HeaderedControl
                     Header="{CustomResource PrivacyTitle}"
                     Footer="{CustomResource GroupsAndChannelsHelp}">
+                    <controls:BadgeButton
+                        Content="{CustomResource BlockedUsers}"
+                        Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
+                        Click="BlockedUsers_Click"/>
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyPhone}"
                         Badge="{x:Bind ViewModel.ShowPhoneRules.Badge, Mode=OneWay}"
@@ -72,6 +49,37 @@
                         Content="{CustomResource GroupsAndChannels}"
                         Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"
                         Click="ChatInvite_Click"/>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
+                    Header="{CustomResource SecurityTitle}">
+                    <controls:BadgeButton
+                        Content="{CustomResource SessionsTitle}"
+                        Badge="{x:Bind ViewModel.ActiveSessions, Mode=OneWay}"
+                        Glyph="&#xE975;"
+                        Click="Sessions_Click"
+                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource Passcode}"
+                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasscodeEnabled), Mode=OneWay}"
+                        Glyph="&#xE928;"
+                        Command="{x:Bind ViewModel.PasscodeCommand}"
+                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource TwoStepVerification}"
+                        Badge="{x:Bind ConvertOnOff(ViewModel.IsPasswordEnabled), Mode=OneWay}"
+                        Glyph="&#xE192;"
+                        Command="{x:Bind ViewModel.PasswordCommand}"
+                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
+                    Header="{CustomResource NewChatsFromNonContacts}"
+                    Footer="{CustomResource ArchiveAndMuteInfo}">
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IsArchiveAndMuteEnabled, Mode=TwoWay}"
+                        Header="{CustomResource ArchiveAndMute}"
+                        Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl

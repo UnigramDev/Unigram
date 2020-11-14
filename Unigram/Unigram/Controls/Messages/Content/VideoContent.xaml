@@ -20,6 +20,6 @@
     <controls:FileButton x:Name="Button" Click="Play_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
 
     <controls:FileButton x:Name="Overlay" Click="Button_Click" Padding="8,4,8,4" Margin="4" Radius="{ThemeResource MessageOverlayCornerRadius}" Style="{StaticResource SmallImmersiveFileButtonStyle}">
-        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" />
+        <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextWrapping="NoWrap"/>
     </controls:FileButton>
 </controls:AspectView>

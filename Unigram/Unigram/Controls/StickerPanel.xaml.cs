@@ -21,8 +21,6 @@ namespace Unigram.Controls
 {
     public sealed partial class StickerPanel : UserControl, IFileDelegate
     {
-        public DialogViewModel ViewModel => DataContext as DialogViewModel;
-
         public FrameworkElement Presenter => BackgroundElement;
 
         public Action<string> EmojiClick { get; set; }
@@ -38,13 +36,10 @@ namespace Unigram.Controls
         public StickerPanel()
         {
             InitializeComponent();
+            DataContext = new object();
 
-            var shadow1 = DropShadowEx.Attach(HeaderSeparator, 20, 0.25f);
-
-            HeaderSeparator.SizeChanged += (s, args) =>
-            {
-                shadow1.Size = args.NewSize.ToVector2();
-            };
+            var shadow = DropShadowEx.Attach(HeaderSeparator, 20, 0.25f);
+            shadow.RelativeSizeAdjustment = Vector2.One;
 
             var protoService = TLContainer.Current.Resolve<IProtoService>();
 
@@ -54,7 +49,9 @@ namespace Unigram.Controls
 
             StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(protoService.SessionId);
             StickersRoot.ItemClick = Stickers_ItemClick;
-            StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args); ;
+            StickersRoot.ItemContextRequested += (s, args) => StickerContextRequested?.Invoke(s, args);
+
+            EmojisRoot.DataContext = StickersRoot.DataContext;
 
             switch (SettingsService.Current.Stickers.SelectedTab)
             {
@@ -91,12 +88,6 @@ namespace Unigram.Controls
                 : "NarrowState", false);
         }
 
-        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            if (ViewModel != null) Bindings.Update();
-            if (ViewModel == null) Bindings.StopTracking();
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var scrollViewer = Pivot.GetScrollViewer();
@@ -116,11 +107,6 @@ namespace Unigram.Controls
             {
                 Pivot.GetScrollViewer().CancelDirectManipulations();
             }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Bindings.StopTracking();
         }
 
         public void UpdateFile(File file)
@@ -195,10 +181,7 @@ namespace Unigram.Controls
                 }
             }
 
-            if (ViewModel != null)
-            {
-                ViewModel.Settings.Stickers.SelectedTab = active.Tab;
-            }
+            SettingsService.Current.Stickers.SelectedTab = active.Tab;
         }
 
         public async void Refresh()
@@ -211,11 +194,11 @@ namespace Unigram.Controls
             Pivot_SelectionChanged(null, null);
         }
 
-        public void UpdateChatPermissions(Chat chat)
+        public void UpdateChatPermissions(ICacheService cacheService, Chat chat)
         {
-            var emojisRights = ViewModel.VerifyRights(chat, x => x.CanSendMessages, Strings.Resources.GlobalSendMessageRestricted, Strings.Resources.SendMessageRestrictedForever, Strings.Resources.SendMessageRestricted, out string emojisLabel);
-            var stickersRights = ViewModel.VerifyRights(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted, out string stickersLabel);
-            var animationsRights = ViewModel.VerifyRights(chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted, out string animationsLabel);
+            var emojisRights = DialogViewModel.VerifyRights(cacheService, chat, x => x.CanSendMessages, Strings.Resources.GlobalSendMessageRestricted, Strings.Resources.SendMessageRestrictedForever, Strings.Resources.SendMessageRestricted, out string emojisLabel);
+            var stickersRights = DialogViewModel.VerifyRights(cacheService, chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachStickersRestricted, Strings.Resources.AttachStickersRestrictedForever, Strings.Resources.AttachStickersRestricted, out string stickersLabel);
+            var animationsRights = DialogViewModel.VerifyRights(cacheService, chat, x => x.CanSendOtherMessages, Strings.Resources.GlobalAttachGifRestricted, Strings.Resources.AttachGifRestrictedForever, Strings.Resources.AttachGifRestricted, out string animationsLabel);
 
             EmojisRoot.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
             EmojisPermission.Visibility = emojisRights ? Visibility.Visible : Visibility.Collapsed;

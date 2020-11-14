@@ -24,10 +24,10 @@ namespace Unigram.Controls.Drawers
         public Action<Animation> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
 
-        private AnimatedRepeaterHandler<Animation> _handler;
-        private ZoomableRepeaterHandler _zoomer;
+        private readonly AnimatedRepeaterHandler<Animation> _handler;
+        private readonly ZoomableRepeaterHandler _zoomer;
 
-        private FileContext<Animation> _animations = new FileContext<Animation>();
+        private readonly FileContext<Animation> _animations = new FileContext<Animation>();
 
         private bool _isActive;
 
@@ -42,15 +42,11 @@ namespace Unigram.Controls.Drawers
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
-            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
-            Separator.SizeChanged += (s, args) =>
-            {
-                shadow.Size = args.NewSize.ToVector2();
-            };
+            shadow.RelativeSizeAdjustment = Vector2.One;
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(FieldAnimations, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>

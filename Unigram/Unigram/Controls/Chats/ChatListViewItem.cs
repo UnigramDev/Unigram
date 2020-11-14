@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.ViewModels;
-using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -98,10 +97,6 @@ namespace Unigram.Controls.Chats
             {
                 _hitTest.Size = _container.Size = e.NewSize.ToVector2();
             }
-            else
-            {
-                var a = "b";
-            }
         }
 
         private void ConfigureInteractionTracker()
@@ -124,7 +119,7 @@ namespace Unigram.Controls.Chats
             _tracker.Properties.InsertBoolean("CanReply", _reply);
             _tracker.Properties.InsertBoolean("CanForward", _forward);
 
-            ConfigureAnimations(_visual, null);
+            //ConfigureAnimations(_visual, null);
             ConfigureRestingPoints();
         }
 
@@ -236,7 +231,7 @@ namespace Unigram.Controls.Chats
                         return restricted.Permissions.CanSendMessages;
                     }
                 }
-                else
+                else if (chat != null)
                 {
                     return chat.Permissions.CanSendMessages;
                 }
@@ -338,7 +333,7 @@ namespace Unigram.Controls.Chats
 
         public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
-
+            ConfigureAnimations(_visual, null);
         }
 
         public void RequestIgnored(InteractionTracker sender, InteractionTrackerRequestIgnoredArgs args)

@@ -12,7 +12,7 @@ namespace Unigram.Views.Popups
     {
         public RoundVideoPopop()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             //Loaded += OnLoaded;
             //Unloaded += RoundVideoView_Unloaded;

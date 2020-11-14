@@ -24,10 +24,6 @@
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"/>
         <ScrollViewer
             x:Name="ScrollingHost"
             VerticalScrollBarVisibility="Auto"

@@ -10,10 +10,10 @@ namespace Unigram.Charts.Data
         public StackBarChartData(JsonObject jsonObject)
                 : base(jsonObject)
         {
-            init();
+            Init();
         }
 
-        public void init()
+        public void Init()
         {
             int n = lines[0].y.Length;
             int k = lines.Count;
@@ -31,7 +31,7 @@ namespace Unigram.Charts.Data
             ySumSegmentTree = new SegmentTree(ySum);
         }
 
-        public int findMax(int start, int end)
+        public int FindMax(int start, int end)
         {
             return ySumSegmentTree.rMaxQ(start, end);
         }

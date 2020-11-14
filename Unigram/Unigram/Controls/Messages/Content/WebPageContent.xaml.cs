@@ -4,10 +4,11 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class WebPageContent : WebPageContentBase, IContentWithFile
+    public sealed partial class WebPageContent : WebPageContentBase, IContentWithFile, IContentWithPlayback
     {
         private CancellationTokenSource _instantViewToken;
 
@@ -90,7 +91,14 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (webPage.Sticker != null)
                 {
-                    Media.Child = new StickerContent(message);
+                    if (webPage.Sticker.IsAnimated)
+                    {
+                        Media.Child = new AnimatedStickerContent(message);
+                    }
+                    else
+                    {
+                        Media.Child = new StickerContent(message);
+                    }
                 }
                 else if (webPage.Video != null)
                 {
@@ -127,6 +135,16 @@ namespace Unigram.Controls.Messages.Content
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageText text && text.WebPage != null && !text.WebPage.IsSmallPhoto();
+        }
+
+        public Border GetPlaybackElement()
+        {
+            if (Media.Child is IContentWithPlayback content)
+            {
+                return content.GetPlaybackElement();
+            }
+
+            return null;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

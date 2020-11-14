@@ -40,24 +40,28 @@ namespace Unigram.Views.Settings
             {
                 switch (fileType.FileType)
                 {
-                    case FileTypePhoto fileTypePhoto:
+                    case FileTypePhoto _:
                         photo = new StorageChartItem(fileType);
                         break;
-                    case FileTypeVideo fileTypeVideo:
-                        video = new StorageChartItem(fileType);
+                    case FileTypeVideo _:
+                    case FileTypeAnimation _:
+                        video = video?.Add(fileType) ?? new StorageChartItem(fileType);
                         break;
-                    case FileTypeDocument fileTypeDocument:
+                    case FileTypeDocument _:
                         document = new StorageChartItem(fileType);
                         break;
-                    case FileTypeAudio fileTypeAudio:
+                    case FileTypeAudio _:
                         audio = new StorageChartItem(fileType);
                         break;
-                    case FileTypeVideoNote videoNote:
-                    case FileTypeVoiceNote voiceNote:
+                    case FileTypeVideoNote _:
+                    case FileTypeVoiceNote _:
                         voice = voice?.Add(fileType) ?? new StorageChartItem(fileType);
                         break;
-                    case FileTypeSticker fileTypeSticker:
+                    case FileTypeSticker _:
                         stickers = new StorageChartItem(fileType);
+                        break;
+                    case FileTypeProfilePhoto _:
+                    case FileTypeWallpaper _:
                         break;
                     default:
                         local = local?.Add(fileType) ?? new StorageChartItem(fileType);
@@ -97,6 +101,9 @@ namespace Unigram.Views.Settings
 
             var title = content.Children[0] as TextBlock;
             var subtitle = content.Children[1] as TextBlock;
+
+            check.Click -= CheckBox_Click;
+            check.Click += CheckBox_Click;
 
             check.Background = new SolidColorBrush(item.Stroke);
             check.IsChecked = item.IsVisible;

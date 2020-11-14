@@ -88,8 +88,8 @@ namespace Unigram.Views.Popups
                 }
             }
 
-            LayoutRoot.Resources.ThemeDictionaries[flags.HasFlag(TelegramTheme.Light) ? "Light" : "Dark"] = dict;
-            LayoutRoot.RequestedTheme = flags.HasFlag(TelegramTheme.Light) ? ElementTheme.Light : ElementTheme.Dark;
+            LayoutRoot.Resources.ThemeDictionaries[flags == TelegramTheme.Light ? "Light" : "Dark"] = dict;
+            LayoutRoot.RequestedTheme = flags == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark;
 
             Chat1.Mockup(new ChatTypePrivate(), 0, "Eva Summer", string.Empty, "Reminds me of a Chinese proverb...", false, 0, false, true, DateTime.Now);
             Chat2.Mockup(new ChatTypePrivate(), 1, "Alexandra Smith", string.Empty, "This is amazing!", false, 2, false, false, DateTime.Now.AddHours(-1));
@@ -103,7 +103,7 @@ namespace Unigram.Views.Popups
             Title.Text = "Reinhardt";
             Subtitle.Text = string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.TodayAt, BindConvert.Current.ShortTime.Format(DateTime.Now.AddHours(-1)));
 
-            Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", new File { Local = new LocalFile { Path = "ms-appx:///Assets/Mockup/theme_preview_image.jpg" } }, 500, 302) }), new FormattedText(), false), "Bring it on! I LIVE for this!", false, DateTime.Now.AddSeconds(-25), true, true);
+            Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", new File { Local = new LocalFile { Path = "ms-appx:///Assets/Mockup/theme_preview_image.jpg", IsDownloadingCompleted = true } }, 500, 302, new int[0]) }), new FormattedText(), false), "Bring it on! I LIVE for this!", false, DateTime.Now.AddSeconds(-25), true, true);
             Message2.Mockup("Reinhardt, we need to find you some new tunes 🎶.", true, DateTime.Now, true, false);
             //Message3.Mockup(Strings.Resources.FontSizePreviewLine1, Strings.Resources.FontSizePreviewName, Strings.Resources.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
             Message3.Mockup(new MessageVoiceNote(new VoiceNote(3, new byte[]
@@ -120,11 +120,7 @@ namespace Unigram.Views.Popups
             SecondaryButtonText = Strings.Resources.Cancel;
 
             var shadow = DropShadowEx.Attach(Shadow, 20, 0.25f);
-            Shadow.SizeChanged += (s, args) =>
-            {
-                shadow.Size = args.NewSize.ToVector2();
-            };
-
+            shadow.RelativeSizeAdjustment = Vector2.One;
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

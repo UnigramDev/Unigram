@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     TitleTemplate="{x:Null}"
+    IsFullWindow="True"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded"
     Closing="OnClosing">
@@ -355,10 +356,30 @@
         <StackPanel
             VerticalAlignment="Center"
             HorizontalAlignment="Center">
-            <controls:ProfilePicture x:Name="Photo" Source="ms-appx:///Assets/Images/BoxArt.png" Width="120" Height="120" Margin="0,0,0,12" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="FullName" Text="{CustomResource AppName}" TextAlignment="Center" Margin="0,0,0,24" Style="{StaticResource TitleTextBlockStyle}"/>
+            
+            <controls:ProfilePicture
+                x:Name="Photo"
+                Width="120"
+                Height="120"
+                Margin="0,0,0,12" 
+                HorizontalAlignment="Center">
+                <controls:ProfilePicture.Source>
+                    <BitmapImage
+                        UriSource="ms-appx:///Assets/Images/BoxArt.png"
+                        DecodePixelWidth="120"
+                        DecodePixelHeight="120"/>
+                </controls:ProfilePicture.Source>
+            </controls:ProfilePicture>
+            
+            <TextBlock
+                x:Name="FullName"
+                Text="{CustomResource AppName}"
+                TextAlignment="Center"
+                Margin="0,0,0,24"
+                Style="{StaticResource TitleTextBlockStyle}"/>
 
-            <Grid HorizontalAlignment="Center"
+            <Grid x:Name="FieldPanel"
+                  HorizontalAlignment="Center"
                   VerticalAlignment="Center"
                   Margin="0,0,0,120"
                   Width="296">
@@ -368,19 +389,28 @@
                     InputScope="NumericPin"
                     PasswordChanged="Field_TextChanged"
                     KeyDown="Field_KeyDown"/>
-                <Button x:Name="EnterButton"
-                        Click="Enter_Click"
-                        Style="{StaticResource EnterButtonStyle}"
-                        Margin="{ThemeResource HelperButtonThemePadding}"
-                        BorderThickness="2"
-                        IsTabStop="False"
-                        AutomationProperties.AccessibilityView="Raw"
-                        MinWidth="34"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch" />
+                <Button
+                    x:Name="EnterButton"
+                    Click="Enter_Click"
+                    Style="{StaticResource EnterButtonStyle}"
+                    Margin="{ThemeResource HelperButtonThemePadding}"
+                    BorderThickness="2"
+                    IsTabStop="False"
+                    AutomationProperties.AccessibilityView="Raw"
+                    MinWidth="34"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch" />
             </Grid>
         </StackPanel>
 
-        <controls:GlyphButton x:Name="Biometrics" Click="OnLoaded" Visibility="Collapsed" Glyph="&#xE928;" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,24" Radius="24"/>
+        <controls:GlyphButton
+            x:Name="Biometrics"
+            Click="Biometrics_Click"
+            Visibility="Collapsed"
+            Glyph="&#xEB68;"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            Margin="0,24"
+            Radius="24"/>
     </Grid>
 </controls:ContentPopup>

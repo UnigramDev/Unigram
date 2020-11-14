@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Charts.Data;
 using Unigram.Collections;
+using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 
@@ -20,7 +22,16 @@ namespace Unigram.ViewModels.Chats
             : base(protoService, cacheService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<ChartViewData>();
+
             Interactions = new MvxObservableCollection<MessageInteractionCounters>();
+            TopInviters = new MvxObservableCollection<ChatStatisticsInviterInfo>();
+            TopAdministrators = new MvxObservableCollection<ChatStatisticsAdministratorActionsInfo>();
+            TopSenders = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
+            TopSendersLeft = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
+
+            TopSendersCommand = new RelayCommand(TopSendersExecute);
+            OpenProfileCommand = new RelayCommand<int>(OpenProfileExecute);
+            OpenPostCommand = new RelayCommand<Message>(OpenPostExecute);
         }
 
         private Chat _chat;
@@ -37,12 +48,60 @@ namespace Unigram.ViewModels.Chats
             set => Set(ref _statistics, value);
         }
 
+        private DateRange _period;
+        public DateRange Period
+        {
+            get => _period;
+            set => Set(ref _period, value);
+        }
+
         public MvxObservableCollection<ChartViewData> Items { get; private set; }
+
+
         public MvxObservableCollection<MessageInteractionCounters> Interactions { get; private set; }
+
+        //
+        // Summary:
+        //     List of most active inviters of new members in the last week.
+        public MvxObservableCollection<ChatStatisticsInviterInfo> TopInviters { get; private set; }
+        //
+        // Summary:
+        //     List of most active administrators in the last week.
+        public MvxObservableCollection<ChatStatisticsAdministratorActionsInfo> TopAdministrators { get; private set; }
+        //
+        // Summary:
+        //     List of users sent most messages in the last week.
+        public MvxObservableCollection<ChatStatisticsMessageSenderInfo> TopSenders { get; private set; }
+        public MvxObservableCollection<ChatStatisticsMessageSenderInfo> TopSendersLeft { get; private set; }
+
+        public RelayCommand TopSendersCommand { get; }
+        private void TopSendersExecute()
+        {
+            TopSenders.AddRange(TopSendersLeft);
+            TopSendersLeft.Clear();
+        }
+
+        public RelayCommand<int> OpenProfileCommand { get; }
+        private async void OpenProfileExecute(int userId)
+        {
+            var response = await ProtoService.SendAsync(new CreatePrivateChat(userId, false));
+            if (response is Chat chat)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+            }
+        }
+
+        public RelayCommand<Message> OpenPostCommand { get; }
+        private void OpenPostExecute(Message message)
+        {
+            NavigationService.NavigateToChat(message.ChatId, message.Id);
+        }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var chatId = (long)parameter;
+
+            IsLoading = true;
 
             Chat = ProtoService.GetChat(chatId);
             Delegate?.UpdateChat(Chat);
@@ -54,57 +113,92 @@ namespace Unigram.ViewModels.Chats
             {
                 Statistics = statistics;
 
-                var stats = new List<ChartViewData>(9);
-                stats.Add(ChartViewData.create(statistics.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0));
-                stats.Add(ChartViewData.create(statistics.JoinGraph, Strings.Resources.FollowersChartTitle, 0));
-                stats.Add(ChartViewData.create(statistics.MuteGraph, Strings.Resources.NotificationsChartTitle, 0));
-                stats.Add(ChartViewData.create(statistics.ViewCountByHourGraph, Strings.Resources.TopHoursChartTitle, /*0*/5));
-                stats.Add(ChartViewData.create(statistics.ViewCountBySourceGraph, Strings.Resources.ViewsBySourceChartTitle, 2));
-                stats.Add(ChartViewData.create(statistics.JoinBySourceGraph, Strings.Resources.NewFollowersBySourceChartTitle, 2));
-                stats.Add(ChartViewData.create(statistics.LanguageGraph, Strings.Resources.LanguagesChartTitle, 4));
-                stats.Add(ChartViewData.create(statistics.MessageInteractionGraph, Strings.Resources.InteractionsChartTitle, /*1*/6));
-                stats.Add(ChartViewData.create(statistics.InstantViewInteractionGraph, Strings.Resources.IVInteractionsChartTitle, /*1*/6));
-
-                for (int i = 0; i < stats.Count; i++)
+                List<ChartViewData> stats;
+                if (statistics is ChatStatisticsChannel channelStats)
                 {
-                    if (i == Views.Chats.ChatStatisticsPage._loadIndex && stats[i].token != null)
-                    {
-                        var resp = await ProtoService.SendAsync(new GetChatStatisticsGraph(chatId, stats[i].token, 0));
-                        if (resp is StatisticsGraphData data)
-                        {
-                            if (stats[i].title == Strings.Resources.LanguagesChartTitle)
-                            {
-                                System.Diagnostics.Debugger.Break();
-                            }
+                    Period = channelStats.Period;
 
-                            stats[i] = ChartViewData.create(data, stats[i].title, stats[i].graphType);
-                        }
+                    stats = new List<ChartViewData>(9);
+                    stats.Add(ChartViewData.create(channelStats.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0));
+                    stats.Add(ChartViewData.create(channelStats.JoinGraph, Strings.Resources.FollowersChartTitle, 0));
+                    stats.Add(ChartViewData.create(channelStats.MuteGraph, Strings.Resources.NotificationsChartTitle, 0));
+                    stats.Add(ChartViewData.create(channelStats.ViewCountByHourGraph, Strings.Resources.TopHoursChartTitle, /*0*/5));
+                    stats.Add(ChartViewData.create(channelStats.ViewCountBySourceGraph, Strings.Resources.ViewsBySourceChartTitle, 2));
+                    stats.Add(ChartViewData.create(channelStats.JoinBySourceGraph, Strings.Resources.NewFollowersBySourceChartTitle, 2));
+                    stats.Add(ChartViewData.create(channelStats.LanguageGraph, Strings.Resources.LanguagesChartTitle, 4));
+                    stats.Add(ChartViewData.create(channelStats.MessageInteractionGraph, Strings.Resources.InteractionsChartTitle, /*1*/6));
+                    stats.Add(ChartViewData.create(channelStats.InstantViewInteractionGraph, Strings.Resources.IVInteractionsChartTitle, /*1*/6));
+
+                    var messages = await ProtoService.SendAsync(new GetMessages(chatId, channelStats.RecentMessageInteractions.Select(x => x.MessageId).ToArray())) as Messages;
+                    if (messages == null)
+                    {
+                        return;
+                    }
+
+                    var interactions = new List<MessageInteractionCounters>(messages.MessagesValue.Count);
+
+                    foreach (var message in messages.MessagesValue)
+                    {
+                        var counters = channelStats.RecentMessageInteractions.FirstOrDefault(x => x.MessageId == message.Id);
+                        interactions.Add(new MessageInteractionCounters(message, counters.ForwardCount, counters.ViewCount));
+                    }
+
+                    Interactions.ReplaceWith(interactions);
+                    TopInviters.Clear();
+                    TopAdministrators.Clear();
+                    TopSenders.Clear();
+                    TopSendersLeft.Clear();
+                }
+                else if (statistics is ChatStatisticsSupergroup groupStats)
+                {
+                    Period = groupStats.Period;
+
+                    stats = new List<ChartViewData>(8);
+                    stats.Add(ChartViewData.create(groupStats.MemberCountGraph, Strings.Resources.GrowthChartTitle, 0));
+                    stats.Add(ChartViewData.create(groupStats.JoinGraph, Strings.Resources.GroupMembersChartTitle, 0));
+                    stats.Add(ChartViewData.create(groupStats.JoinBySourceGraph, Strings.Resources.NewMembersBySourceChartTitle, 2));
+                    stats.Add(ChartViewData.create(groupStats.LanguageGraph, Strings.Resources.MembersLanguageChartTitle, 4));
+                    stats.Add(ChartViewData.create(groupStats.MessageContentGraph, Strings.Resources.MessagesChartTitle, 2));
+                    stats.Add(ChartViewData.create(groupStats.ActionGraph, Strings.Resources.ActionsChartTitle, 1));
+                    stats.Add(ChartViewData.create(groupStats.DayGraph, Strings.Resources.TopHoursChartTitle, /*0*/5));
+                    stats.Add(ChartViewData.create(groupStats.WeekGraph, Strings.Resources.TopDaysOfWeekChartTitle, 4));
+
+                    if (stats[7] != null)
+                    {
+                        stats[7].useWeekFormat = true;
+                    }
+
+                    Interactions.Clear();
+                    TopInviters.ReplaceWith(groupStats.TopInviters);
+                    TopAdministrators.ReplaceWith(groupStats.TopAdministrators);
+
+                    if (groupStats.TopSenders.Count > 10)
+                    {
+                        TopSenders.ReplaceWith(groupStats.TopSenders.Take(10));
+                        TopSendersLeft.ReplaceWith(groupStats.TopSenders.Skip(10));
+                    }
+                    else
+                    {
+                        TopSenders.ReplaceWith(groupStats.TopSenders);
+                        TopSendersLeft.Clear();
                     }
                 }
-
-                Items.ReplaceWith(stats);
-
-                var messages = await ProtoService.SendAsync(new GetMessages(chatId, statistics.RecentMessageInteractions.Select(x => x.MessageId).ToArray())) as Messages;
-                if (messages == null)
+                else
                 {
-                    return;
+                    stats = null;
                 }
 
-                var interactions = new List<MessageInteractionCounters>(messages.MessagesValue.Count);
-
-                foreach (var message in messages.MessagesValue)
+                if (stats != null)
                 {
-                    var counters = statistics.RecentMessageInteractions.FirstOrDefault(x => x.MessageId == message.Id);
-                    interactions.Add(new MessageInteractionCounters(message, counters.ForwardCount, counters.ViewCount));
+                    Items.ReplaceWith(stats.Where(x => x != null));
                 }
-
-                Interactions.ReplaceWith(interactions);
-
-                //foreach (var item in stats)
-                //{
-                //    var model =
-                //}
+                else
+                {
+                    Items.Clear();
+                }
             }
+
+            IsLoading = false;
         }
     }
 
@@ -130,20 +224,22 @@ namespace Unigram.ViewModels.Chats
         public long activeZoom;
         public bool viewShowed;
         public ChartData chartData;
-        ChartData childChartData;
+        public ChartData childChartData;
         public String token;
-        String zoomToken;
+        public String zoomToken;
 
         public readonly int graphType;
         public readonly String title;
 
-        bool loading;
-        bool isEmpty;
+        public bool loading;
+        public bool isEmpty;
+        public bool isLanguages;
+        public bool useWeekFormat;
 
         public ChartViewData(String title, int grahType)
         {
             this.title = title;
-            this.graphType = grahType;
+            graphType = grahType;
         }
 
         public static ChartViewData create(StatisticsGraph graph, String title, int graphType)
@@ -206,16 +302,16 @@ namespace Unigram.ViewModels.Chats
             return null;
         }
 
-        public async Task LoadAsync(IProtoService protoService, long chatId)
+        public async Task<bool> LoadAsync(IProtoService protoService, long chatId)
         {
-            var graph = await protoService.SendAsync(new GetChatStatisticsGraph(chatId, token, 0)) as StatisticsGraph;
+            var graph = await protoService.SendAsync(new GetStatisticsGraph(chatId, token, 0)) as StatisticsGraph;
             var viewData = this;
 
             if (graph == null || graph is StatisticsGraphError)
             {
-                return;
+                return false;
             }
-            if (graph is StatisticsGraphData data)
+            else if (graph is StatisticsGraphData data)
             {
                 String json = data.JsonData;
                 try
@@ -232,12 +328,16 @@ namespace Unigram.ViewModels.Chats
                         viewData.childChartData = new StackLinearChartData(viewData.chartData, x);
                         viewData.activeZoom = x;
                     }
+
+                    return true;
                 }
                 catch (Exception e)
                 {
                     //e.printStackTrace();
                 }
             }
+
+            return false;
         }
 
         //public void load(int accountId, int classGuid, int dc, RecyclerListView recyclerListView, Adapter adapter, DiffUtilsCallback difCallback)

@@ -286,8 +286,10 @@
 
                 <controls:HeaderedControl
                     Header="{CustomResource ColorTheme}">
-                    <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                    <ListView x:Name="List"
+                              ItemsSource="{x:Bind ViewModel.Items}"
                               SelectionMode="None"
+                              ChoosingItemContainer="OnChoosingItemContainer"
                               ContainerContentChanging="OnContainerContentChanging"
                               Style="{StaticResource HorizontalListViewStyle}"
                               ItemContainerTransitions="{x:Null}">
@@ -295,16 +297,14 @@
                             <DataTemplate x:DataType="services:ThemeInfoBase">
                                 <StackPanel Margin="12,12,0,12">
                                     <RadioButton
-                                        Click="Switch_Click"
                                         Tag="{x:Bind}"
                                         GroupName="Theme"
-                                        ContextRequested="Theme_ContextRequested"
                                         Style="{StaticResource ThemeRadioButtonStyle}">
                                         <RadioButton.Background>
                                             <SolidColorBrush Color="{x:Bind ChatBackgroundColor}"/>
                                         </RadioButton.Background>
                                         <RadioButton.BorderBrush>
-                                            <SolidColorBrush Color="{x:Bind AccentColor}"/>
+                                            <SolidColorBrush Color="{x:Bind SelectionColor}"/>
                                         </RadioButton.BorderBrush>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -354,9 +354,9 @@
                             ItemContainerTransitions="{x:Null}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="services:ThemeAccentInfo">
-                                    <RadioButton Click="Switch_Click" Tag="{x:Bind}" GroupName="Accent" Margin="12,12,0,12" Style="{StaticResource AccentRadioButtonStyle}">
+                                    <RadioButton Tag="{x:Bind}" GroupName="Accent" Margin="12,12,0,12" Style="{StaticResource AccentRadioButtonStyle}">
                                         <RadioButton.Background>
-                                            <SolidColorBrush Color="{x:Bind AccentColor}"/>
+                                            <SolidColorBrush Color="{x:Bind SelectionColor}"/>
                                         </RadioButton.Background>
                                     </RadioButton>
                                 </DataTemplate>
@@ -424,100 +424,16 @@
                         IsThumbToolTipEnabled="False"
                         Margin="12,6,12,6"/>
                 </controls:HeaderedControl>
-                
-                <controls:HeaderedControl
-                    Header="{CustomResource ChatList}">
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                                  HorizontalScrollMode="Auto"
-                                  VerticalScrollBarVisibility="Disabled"
-                                  VerticalScrollMode="Disabled">
-                        <StackPanel Margin="12,0" Orientation="Horizontal">
-                            <StackPanel Margin="0,12,12,12">
-                                <RadioButton IsChecked="{x:Bind ViewModel.UseDefaultLayout, Mode=TwoWay}" GroupName="Layout" Style="{StaticResource ChatListRadioButtonStyle}">
-                                    <StackPanel>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundLowBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
-                                            <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
-                                            <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
-                                        </Grid>
-                                        <Grid Margin="0,8,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundHighBrush}" Margin="0,0,4,0" Grid.RowSpan="2"/>
-                                            <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="2" RadiusY="2" Margin="0,0,24,0" Grid.Column="1"/>
-                                            <Rectangle Height="4" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="2" RadiusY="2" Grid.Column="1" Grid.Row="1"/>
-                                        </Grid>
-                                    </StackPanel>
-                                </RadioButton>
-                                <TextBlock Text="{CustomResource ChatListDefault}" Margin="0,4,0,0" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            </StackPanel>
-
-                            <StackPanel Margin="0,12,0,12">
-                                <RadioButton IsChecked="{x:Bind ViewModel.UseThreeLinesLayout, Mode=TwoWay}" GroupName="Layout" Style="{StaticResource ChatListRadioButtonStyle}">
-                                    <StackPanel>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundLowBrush}" Margin="0,0,4,0" Grid.RowSpan="3"/>
-                                            <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="1" RadiusY="1" Margin="0,0,24,0" Grid.Column="1"/>
-                                            <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="1" RadiusY="1" Grid.Column="1" Grid.Row="1"/>
-                                            <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="1" RadiusY="1" Grid.Column="1" Grid.Row="2"/>
-                                        </Grid>
-                                        <Grid Margin="0,8,0,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Ellipse Width="24" Height="24" Fill="{ThemeResource PlaceholderForegroundHighBrush}" Margin="0,0,4,0" Grid.RowSpan="3"/>
-                                            <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundLowBrush}" RadiusX="1" RadiusY="1" Margin="0,0,24,0" Grid.Column="1"/>
-                                            <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="1" RadiusY="1" Grid.Column="1" Grid.Row="1"/>
-                                            <Rectangle Height="3" Fill="{ThemeResource PlaceholderForegroundHighBrush}" RadiusX="1" RadiusY="1" Grid.Column="1" Grid.Row="2"/>
-                                        </Grid>
-                                    </StackPanel>
-                                </RadioButton>
-                                <TextBlock Text="{CustomResource ChatListExpanded}" Margin="0,4,0,0" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
-
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0"/>
-                </controls:HeaderedControl>
 
                 <controls:HeaderedControl
                     Header="{CustomResource Settings}">
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.AutocorrectWords, Mode=TwoWay}"
-                        Header="Autocorrect mispelled words"
+                        IsOn="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
+                        Header="Enable full-screen gallery"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.HighlightWords, Mode=TwoWay}"
-                        Header="Highlight mispelled words"
+                        IsOn="{x:Bind ViewModel.DisableHighlightWords, Mode=TwoWay}"
+                        Header="Disable mispelled words highlight"
                         Style="{StaticResource CheckButtonStyle}"/>
 
                     <ToggleSwitch

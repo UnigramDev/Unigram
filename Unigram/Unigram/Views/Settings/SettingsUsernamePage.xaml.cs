@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -36,6 +37,16 @@ namespace Unigram.Views.Settings
         }
 
         #region Binding
+
+        private string ConvertAvailable(string username)
+        {
+            return string.Format(Strings.Resources.UsernameAvailable, username);
+        }
+
+        private string ConvertUsername(string username)
+        {
+            return MeUrlPrefixConverter.Convert(ViewModel.CacheService, username);
+        }
 
         public string UsernameHelpLink
         {

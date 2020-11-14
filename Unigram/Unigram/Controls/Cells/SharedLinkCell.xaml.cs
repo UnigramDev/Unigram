@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,7 +15,7 @@ namespace Unigram.Controls.Cells
 {
     public sealed partial class SharedLinkCell : UserControl
     {
-        private Message _message;
+        private readonly Message _message;
         private IProtoService _protoService;
         private INavigationService _navigationService;
 
@@ -284,7 +284,14 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                await Launcher.LaunchUriAsync(uri);
+                try
+                {
+                    await Launcher.LaunchUriAsync(uri);
+                }
+                catch
+                {
+                    // Invalid URI
+                }
             }
         }
 

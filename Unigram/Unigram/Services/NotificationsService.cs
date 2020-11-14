@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -12,12 +10,13 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
-using Unigram.Native.Tasks;
+using Unigram.Native;
 using Unigram.Navigation;
+using Unigram.Views;
 using Windows.ApplicationModel.AppService;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
-using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Controls;
 
@@ -44,6 +43,7 @@ namespace Unigram.Services
         IHandle<UpdateUnreadMessageCount>,
         IHandle<UpdateUnreadChatCount>,
         IHandle<UpdateChatReadInbox>,
+        IHandle<UpdateSuggestedActions>,
         IHandle<UpdateServiceNotification>,
         IHandle<UpdateTermsOfService>,
         IHandle<UpdateAuthorizationState>,
@@ -83,14 +83,22 @@ namespace Unigram.Services
 
         private void UpdateBadge(int count)
         {
-            //var tick = Environment.TickCount;
-            //if (tick < _tickCount + 500)
-            //{
-            //    return;
-            //}
+            try
+            {
+                var updater = BadgeUpdateManager.CreateBadgeUpdaterForApplication("App");
+                if (count == 0)
+                {
+                    updater.Clear();
+                    return;
+                }
 
-            //_tickCount = tick;
-            NotificationTask.UpdatePrimaryBadge(count);
+                var document = BadgeUpdateManager.GetTemplateContent(BadgeTemplateType.BadgeNumber);
+                var element = document.SelectSingleNode("/badge") as XmlElement;
+                element.SetAttribute("value", count.ToString());
+
+                updater.Update(new BadgeNotification(document));
+            }
+            catch { }
         }
 
         public async void Handle(UpdateTermsOfService update)
@@ -101,27 +109,27 @@ namespace Unigram.Services
                 return;
             }
 
-            async void DeleteAccount()
-            {
-                var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
-                if (decline != ContentDialogResult.Primary)
-                {
-                    Handle(update);
-                    return;
-                }
-
-                var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
-                if (delete != ContentDialogResult.Primary)
-                {
-                    Handle(update);
-                    return;
-                }
-
-                _protoService.Send(new DeleteAccount("Decline ToS update"));
-            }
-
             if (terms.ShowPopup)
             {
+                async void DeleteAccount()
+                {
+                    var decline = await MessagePopup.ShowAsync(Strings.Resources.TosUpdateDecline, Strings.Resources.TermsOfService, Strings.Resources.DeclineDeactivate, Strings.Resources.Back);
+                    if (decline != ContentDialogResult.Primary)
+                    {
+                        Handle(update);
+                        return;
+                    }
+
+                    var delete = await MessagePopup.ShowAsync(Strings.Resources.TosDeclineDeleteAccount, Strings.Resources.AppName, Strings.Resources.Deactivate, Strings.Resources.Cancel);
+                    if (delete != ContentDialogResult.Primary)
+                    {
+                        Handle(update);
+                        return;
+                    }
+
+                    _protoService.Send(new DeleteAccount("Decline ToS update"));
+                }
+
                 await Task.Delay(2000);
                 BeginOnUIThread(async () =>
                 {
@@ -145,6 +153,26 @@ namespace Unigram.Services
                     _protoService.Send(new AcceptTermsOfService(update.TermsOfServiceId));
                 });
             }
+        }
+
+        public void Handle(UpdateSuggestedActions update)
+        {
+            BeginOnUIThread(async () =>
+            {
+                foreach (var action in update.AddedActions)
+                {
+                    if (action is SuggestedActionEnableArchiveAndMuteNewChats)
+                    {
+                        var confirm = await MessagePopup.ShowAsync(Strings.Resources.HideNewChatsAlertText, Strings.Resources.HideNewChatsAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+                        if (confirm == ContentDialogResult.Primary)
+                        {
+                            _protoService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = true;
+                        }
+
+                        _protoService.Send(new HideSuggestedAction(action));
+                    }
+                }
+            });
         }
 
         public void Handle(UpdateServiceNotification update)
@@ -281,16 +309,14 @@ namespace Unigram.Services
         {
             // We want to ignore both delayed and unreceived notifications,
             // as they're the result of update difference on sync.
-            _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
-
-            //if (_suppress == null)
-            //{
-            //    _suppress = update.HaveDelayedNotifications && update.HaveUnreceivedNotifications;
-            //}
-            //else if (!update.HaveDelayedNotifications && !update.HaveUnreceivedNotifications)
-            //{
-            //    _suppress = false;
-            //}
+            if (_suppress == null && update.HaveDelayedNotifications && update.HaveUnreceivedNotifications)
+            {
+                //_suppress = true;
+            }
+            else if (_suppress == true && !update.HaveDelayedNotifications && !update.HaveUnreceivedNotifications)
+            {
+                //_suppress = false;
+            }
         }
 
         public async void Handle(UpdateNotificationGroup update)
@@ -349,22 +375,51 @@ namespace Unigram.Services
                 case NotificationTypeNewCall newCall:
                     break;
                 case NotificationTypeNewMessage newMessage:
-                    ProcessNewMessage(group, notification.Id, newMessage.Message);
+                    ProcessNewMessage(group, notification.Id, newMessage.Message, notification.Date, notification.IsSilent);
                     break;
                 case NotificationTypeNewPushMessage newPushMessage:
-                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage);
+                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, notification.Date, notification.IsSilent);
                     break;
                 case NotificationTypeNewSecretChat newSecretChat:
                     break;
             }
         }
 
-        private void ProcessNewPushMessage(int group, int id, long chatId, NotificationTypeNewPushMessage newPushMessage)
+        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, int date, bool silent)
         {
-            UpdateFromLabel(_protoService.GetChat(chatId), newPushMessage);
+            var chat = _protoService.GetChat(chatId);
+            if (chat == null)
+            {
+                return;
+            }
+
+            var caption = GetCaption(chat);
+            var content = GetContent(chat, message);
+            var sound = silent ? "silent" : string.Empty;
+            var launch = GetLaunch(chat, message);
+            var picture = GetPhoto(chat);
+            var dateTime = BindConvert.Current.DateTime(date).ToUniversalTime().ToString("s") + "Z";
+            var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
+
+            var user = _protoService.GetUser(_protoService.Options.MyId);
+            var attribution = user?.GetFullName() ?? string.Empty;
+
+            if (chat.Type is ChatTypeSecret || TLContainer.Current.Passcode.IsLockscreenRequired)
+            {
+                caption = Strings.Resources.AppName;
+                content = Strings.Resources.YouHaveNewMessage;
+                picture = string.Empty;
+
+                canReply = false;
+            }
+
+            await UpdateAsync(chat, async () =>
+            {
+                await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
+            });
         }
 
-        private async void ProcessNewMessage(int gId, int id, Message message)
+        private async void ProcessNewMessage(int groupId, int id, Message message, int date, bool silent)
         {
             var chat = _protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -374,19 +429,27 @@ namespace Unigram.Services
 
             var caption = GetCaption(chat);
             var content = GetContent(chat, message);
-            var sound = "";
+            var sound = silent ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
-            var tag = $"{id}";
-            var group = $"{gId}";
             var picture = GetPhoto(chat);
-            var date = BindConvert.Current.DateTime(message.Date).ToUniversalTime().ToString("s") + "Z";
-            var loc_key = chat.Type is ChatTypeSupergroup super && super.IsChannel ? "CHANNEL" : string.Empty;
+            var dateTime = BindConvert.Current.DateTime(date).ToUniversalTime().ToString("s") + "Z";
+            var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
+            var attribution = user?.GetFullName() ?? string.Empty;
 
-            Update(chat, async () =>
+            if (chat.Type is ChatTypeSecret || TLContainer.Current.Passcode.IsLockscreenRequired)
             {
-                await NotificationTask.UpdateToast(caption, content, user?.GetFullName() ?? string.Empty, $"{_sessionService.Id}", sound, launch, tag, group, picture, string.Empty, date, loc_key);
+                caption = Strings.Resources.AppName;
+                content = Strings.Resources.YouHaveNewMessage;
+                picture = string.Empty;
+
+                canReply = false;
+            }
+
+            await UpdateAsync(chat, async () =>
+            {
+                await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
             });
 
             if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
@@ -395,43 +458,35 @@ namespace Unigram.Services
             }
         }
 
-        private void Update(Chat chat, Action action)
+        private async Task UpdateAsync(Chat chat, Func<Task> action)
         {
-            var open = WindowContext.ActiveWrappers.Cast<TLWindowContext>().Any(x => x.IsChatOpen(_protoService.SessionId, chat.Id));
-            if (open)
+            try
             {
-                return;
-            }
-
-            action();
-        }
-
-        private ConcurrentDictionary<int, Message> _files = new ConcurrentDictionary<int, Message>();
-
-        private string GetPhoto(Message message)
-        {
-            if (message.Content is MessagePhoto photo)
-            {
-                var small = photo.Photo.GetBig();
-                if (small == null || !small.Photo.Local.IsDownloadingCompleted)
+                var active = TLWindowContext.ActiveWindow;
+                if (active == null)
                 {
-                    _files[small.Photo.Id] = message;
-                    _protoService.DownloadFile(small.Photo.Id, 1, 0);
-                    return string.Empty;
+                    await action();
+                    return;
                 }
 
-                var file = new Uri(small.Photo.Local.Path);
-                var folder = new Uri(ApplicationData.Current.LocalFolder.Path + "\\");
+                var service = active.NavigationServices?.GetByFrameId($"Main{_protoService.SessionId}");
+                if (service == null)
+                {
+                    await action();
+                    return;
+                }
 
-                var relativePath = Uri.UnescapeDataString(
-                                        folder.MakeRelativeUri(file)
-                                              .ToString()
-                                        );
+                if (service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
+                {
+                    return;
+                }
 
-                return "ms-appdata:///local/" + relativePath;
+                await action();
             }
-
-            return string.Empty;
+            catch
+            {
+                await action();
+            }
         }
 
         private string GetTag(Message message)
@@ -486,6 +541,30 @@ namespace Unigram.Services
             return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _protoService.SessionId);
         }
 
+        public string GetLaunch(Chat chat, NotificationTypeNewPushMessage message)
+        {
+            var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.MessageId >> 20);
+
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;from_id={1}", launch, privata.UserId);
+            }
+            else if (chat.Type is ChatTypeSecret secret)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;secret_id={1}", launch, secret.SecretChatId);
+            }
+            else if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;channel_id={1}", launch, supergroup.SupergroupId);
+            }
+            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;chat_id={1}", launch, basicGroup.BasicGroupId);
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _protoService.SessionId);
+        }
+
         public async Task RegisterAsync()
         {
             using (await _registrationLock.WaitAsync())
@@ -496,28 +575,40 @@ namespace Unigram.Services
                     return;
                 }
 
-                if (_alreadyRegistered) return;
+                if (_alreadyRegistered)
+                {
+                    return;
+                }
+
                 _alreadyRegistered = true;
 
                 try
                 {
-                    var oldUri = _settings.NotificationsToken;
-                    var ids = _settings.NotificationsIds.ToList();
                     var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
-                    if (channel.Uri != oldUri || !ids.Contains(userId))
+                    if (channel.Uri != _settings.PushToken)
                     {
-                        ids.Remove(userId);
+                        var ids = new List<int>();
+
+                        foreach (var settings in TLContainer.Current.ResolveAll<ISettingsService>())
+                        {
+                            if (settings.UseTestDC != _settings.UseTestDC || settings.UserId == _settings.UserId)
+                            {
+                                continue;
+                            }
+
+                            ids.Add(settings.UserId);
+                        }
 
                         var result = await _protoService.SendAsync(new RegisterDevice(new DeviceTokenWindowsPush(channel.Uri), ids));
-                        if (result is Ok)
+                        if (result is PushReceiverId receiverId)
                         {
-                            ids.Add(userId);
-                            _settings.NotificationsIds = ids.ToArray();
-                            _settings.NotificationsToken = channel.Uri;
+                            _settings.PushReceiverId = receiverId.Id;
+                            _settings.PushToken = channel.Uri;
                         }
                         else
                         {
-                            _settings.NotificationsToken = null;
+                            _settings.PushReceiverId = 0;
+                            _settings.PushToken = null;
                         }
                     }
 
@@ -526,7 +617,7 @@ namespace Unigram.Services
                 catch (Exception)
                 {
                     _alreadyRegistered = false;
-                    _settings.NotificationsToken = null;
+                    _settings.PushToken = null;
                 }
             }
         }
@@ -570,13 +661,13 @@ namespace Unigram.Services
 
         public async Task UnregisterAsync()
         {
-            var channel = _settings.NotificationsToken;
+            var channel = _settings.PushToken;
             //var response = await _protoService.UnregisterDeviceAsync(8, channel);
             //if (response.IsSucceeded)
             //{
             //}
 
-            _settings.NotificationsToken = null;
+            _settings.PushToken = null;
         }
 
         public async Task CloseAsync()
@@ -592,7 +683,7 @@ namespace Unigram.Services
             }
         }
 
-        private TaskCompletionSource<AuthorizationState> _authorizationStateTask = new TaskCompletionSource<AuthorizationState>();
+        private readonly TaskCompletionSource<AuthorizationState> _authorizationStateTask = new TaskCompletionSource<AuthorizationState>();
 
         public void Handle(UpdateAuthorizationState update)
         {
@@ -647,11 +738,11 @@ namespace Unigram.Services
                     var formatted = Client.Execute(new ParseMarkdown(new FormattedText(messageText, new TextEntity[0]))) as FormattedText;
 
                     var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
-                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, replyToMsgId, new SendMessageOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
-                
-                    if (chat.Type is ChatTypePrivate)
+                    var response = await _protoService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, null), null, new InputMessageText(formatted, false, false)));
+
+                    if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
                     {
-                        await _protoService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, true));
+                        await _protoService.SendAsync(new ViewMessages(chat.Id, 0, new long[] { chat.LastMessage.Id }, true));
                     }
                 }
                 else if (string.Equals(action, "markasread", StringComparison.OrdinalIgnoreCase))
@@ -661,7 +752,7 @@ namespace Unigram.Services
                         return;
                     }
 
-                    await _protoService.SendAsync(new ViewMessages(chat.Id, new long[] { chat.LastMessage.Id }, true));
+                    await _protoService.SendAsync(new ViewMessages(chat.Id, 0, new long[] { chat.LastMessage.Id }, true));
                 }
             }
         }
@@ -693,6 +784,16 @@ namespace Unigram.Services
         }
 
         private string GetContent(Chat chat, Message message)
+        {
+            if (chat.Type is ChatTypeSecret)
+            {
+                return Strings.Resources.YouHaveNewMessage;
+            }
+
+            return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
+        }
+
+        private string GetContent(Chat chat, NotificationTypeNewPushMessage message)
         {
             if (chat.Type is ChatTypeSecret)
             {
@@ -741,6 +842,24 @@ namespace Unigram.Services
             return string.Empty;
         }
 
+        private string GetBriefLabel(Chat chat, NotificationTypeNewPushMessage value)
+        {
+            switch (value.Content)
+            {
+                case PushMessageContentAnimation animation:
+                    return animation.Caption;
+                case PushMessageContentPhoto photo:
+                    return photo.Caption;
+                case PushMessageContentVideo video:
+                    return video.Caption;
+
+                case PushMessageContentText text:
+                    return text.Text;
+            }
+
+            return string.Empty;
+        }
+
         private string UpdateFromLabel(Chat chat, Message message)
         {
             if (message.IsService())
@@ -750,31 +869,27 @@ namespace Unigram.Services
 
             var result = string.Empty;
 
-            if (ShowFrom(chat, message))
+            if (ShowFrom(_protoService, chat, message, out User from))
             {
-                var from = _protoService.GetUser(message.SenderUserId);
-                if (from != null)
+                if (!string.IsNullOrEmpty(from.FirstName))
                 {
-                    if (!string.IsNullOrEmpty(from.FirstName))
-                    {
-                        result = $"{from.FirstName.Trim()}: ";
-                    }
-                    else if (!string.IsNullOrEmpty(from.LastName))
-                    {
-                        result = $"{from.LastName.Trim()}: ";
-                    }
-                    else if (!string.IsNullOrEmpty(from.Username))
-                    {
-                        result = $"{from.Username.Trim()}: ";
-                    }
-                    else if (from.Type is UserTypeDeleted)
-                    {
-                        result = $"{Strings.Resources.HiddenName}: ";
-                    }
-                    else
-                    {
-                        result = $"{from.Id}: ";
-                    }
+                    result = $"{from.FirstName.Trim()}: ";
+                }
+                else if (!string.IsNullOrEmpty(from.LastName))
+                {
+                    result = $"{from.LastName.Trim()}: ";
+                }
+                else if (!string.IsNullOrEmpty(from.Username))
+                {
+                    result = $"{from.Username.Trim()}: ";
+                }
+                else if (from.Type is UserTypeDeleted)
+                {
+                    result = $"{Strings.Resources.HiddenName}: ";
+                }
+                else
+                {
+                    result = $"{from.Id}: ";
                 }
             }
 
@@ -870,10 +985,7 @@ namespace Unigram.Services
             }
             else if (message.Content is MessageCall call)
             {
-                var outgoing = message.IsOutgoing;
-                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
-
-                return result + (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
+                return result + call.ToOutcomeText(message.IsOutgoing);
             }
             else if (message.Content is MessageUnsupported)
             {
@@ -892,28 +1004,33 @@ namespace Unigram.Services
 
             var result = string.Empty;
 
-            var from = _protoService.GetUser(message.SenderUserId);
-            if (from != null && ShowFrom(chat))
+            User from = null;
+            if (message.Sender is MessageSenderUser senderUser)
             {
-                if (!string.IsNullOrEmpty(from.FirstName))
+                from = _protoService.GetUser(senderUser.UserId);
+
+                if (from != null && ShowFrom(chat))
                 {
-                    result = $"{from.FirstName.Trim()}: ";
-                }
-                else if (!string.IsNullOrEmpty(from.LastName))
-                {
-                    result = $"{from.LastName.Trim()}: ";
-                }
-                else if (!string.IsNullOrEmpty(from.Username))
-                {
-                    result = $"{from.Username.Trim()}: ";
-                }
-                else if (from.Type is UserTypeDeleted)
-                {
-                    result = $"{Strings.Resources.HiddenName}: ";
-                }
-                else
-                {
-                    result = $"{from.Id}: ";
+                    if (!string.IsNullOrEmpty(from.FirstName))
+                    {
+                        result = $"{from.FirstName.Trim()}: ";
+                    }
+                    else if (!string.IsNullOrEmpty(from.LastName))
+                    {
+                        result = $"{from.LastName.Trim()}: ";
+                    }
+                    else if (!string.IsNullOrEmpty(from.Username))
+                    {
+                        result = $"{from.Username.Trim()}: ";
+                    }
+                    else if (from.Type is UserTypeDeleted)
+                    {
+                        result = $"{Strings.Resources.HiddenName}: ";
+                    }
+                    else
+                    {
+                        result = $"{from.Id}: ";
+                    }
                 }
             }
 
@@ -1142,28 +1259,31 @@ namespace Unigram.Services
             return result;
         }
 
-        private bool ShowFrom(Chat chat, Message message)
+        private bool ShowFrom(ICacheService cacheService, Chat chat, Message message, out User senderUser)
         {
             if (message.IsService())
             {
+                senderUser = null;
                 return false;
             }
 
             if (message.IsOutgoing)
             {
-                return true;
+                return cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
-                return true;
+                return cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                return !supergroup.IsChannel;
+                senderUser = null;
+                return !supergroup.IsChannel && cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
+            senderUser = null;
             return false;
         }
 
@@ -1195,11 +1315,11 @@ namespace Unigram.Services
             }
             else
             {
-                try
-                {
-                    action();
-                }
-                catch { }
+                //try
+                //{
+                //    action();
+                //}
+                //catch { }
             }
         }
 

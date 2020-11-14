@@ -1,10 +1,10 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.ViewModels.Drawers;
 using Unigram.Views.Popups;
+using Windows.Devices.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -22,9 +22,11 @@ namespace Unigram.Common
         private FrameworkElement _element;
         private Pointer _pointer;
 
-        private ZoomableMediaPopup _popupPanel;
-        private Popup _popupHost;
+        private readonly ZoomableMediaPopup _popupPanel;
+        private readonly Popup _popupHost;
         private object _popupContent;
+
+        private bool _shouldCapture;
 
         public ZoomableRepeaterHandler(ItemsRepeater listView)
         {
@@ -48,6 +50,7 @@ namespace Unigram.Common
                 }
                 catch
                 {
+                    _shouldCapture = false;
                     _popupContent = null;
                     _pointer = null;
 
@@ -70,8 +73,6 @@ namespace Unigram.Common
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            _listView.Loaded -= OnLoaded;
-            _listView.Unloaded -= OnUnloaded;
             _listView.PointerMoved -= OnPointerMoved;
             _listView.PointerReleased -= OnPointerReleased;
             _listView.PointerCanceled -= OnPointerReleased;
@@ -82,12 +83,6 @@ namespace Unigram.Common
         {
             get => _popupPanel.DownloadFile;
             set => _popupPanel.DownloadFile = value;
-        }
-
-        public Func<int, Task<BaseObject>> GetEmojisAsync
-        {
-            get => _popupPanel.GetEmojisAsync;
-            set => _popupPanel.GetEmojisAsync = value;
         }
 
         public Action Opening { get; set; }
@@ -107,6 +102,7 @@ namespace Unigram.Common
             container.AddHandler(UIElement.PointerPressedEvent, _handlerPressed ??= new PointerEventHandler(OnPointerPressed), true);
             container.AddHandler(UIElement.PointerReleasedEvent, _handlerReleased ??= new PointerEventHandler(OnPointerReleased), true);
             container.AddHandler(UIElement.PointerExitedEvent, _handlerExited ??= new PointerEventHandler(OnPointerExited), true);
+            container.AddHandler(UIElement.PointerCaptureLostEvent, _handlerExited ??= new PointerEventHandler(OnPointerExited), true);
         }
 
         public void ElementClearing(UIElement container)
@@ -119,10 +115,16 @@ namespace Unigram.Common
             container.RemoveHandler(UIElement.PointerPressedEvent, _handlerPressed);
             container.RemoveHandler(UIElement.PointerReleasedEvent, _handlerReleased);
             container.RemoveHandler(UIElement.PointerExitedEvent, _handlerExited);
+            container.RemoveHandler(UIElement.PointerCaptureLostEvent, _handlerExited);
         }
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
+            {
+                return;
+            }
+
             _element = sender as FrameworkElement;
             _pointer = e.Pointer;
 
@@ -135,6 +137,7 @@ namespace Unigram.Common
         {
             _throttler.Stop();
 
+            _shouldCapture = false;
             _popupContent = null;
             _pointer = null;
 
@@ -149,6 +152,12 @@ namespace Unigram.Common
 
         private void OnPointerExited(object sender, PointerRoutedEventArgs e)
         {
+            if (_shouldCapture)
+            {
+                _shouldCapture = false;
+                _listView.CapturePointer(e.Pointer);
+            }
+
             _throttler.Stop();
         }
 
@@ -212,15 +221,9 @@ namespace Unigram.Common
                 return;
             }
 
-            //if (_pointer != null)
-            //{
-            //    _listView.CapturePointer(_pointer);
-            //    _pointer = null;
-            //}
-
             if (_pointer != null)
             {
-                _listView.CapturePointer(_pointer);
+                _shouldCapture = true;
                 _element.ReleasePointerCapture(_pointer);
                 _pointer = null;
             }
@@ -249,11 +252,6 @@ namespace Unigram.Common
             {
                 _popupPanel.Margin = new Thickness();
             }
-
-            //if (item is TLDocument content && content.StickerSet != null)
-            //{
-            //    Debug.WriteLine(string.Join(" ", UnigramContainer.Current.ResolveType<IStickersService>().GetEmojiForSticker(content.Id)));
-            //}
 
             Opening?.Invoke();
 

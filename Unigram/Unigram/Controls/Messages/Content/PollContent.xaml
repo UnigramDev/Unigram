@@ -9,9 +9,11 @@
     mc:Ignorable="d"
     MinWidth="200"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
 
-    <Grid>
+    <Grid Margin="10,0,10,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
@@ -28,7 +30,7 @@
                 <TextBlock
                     x:Name="Type"
                     Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Style="{StaticResource BodyTextBlockStyle}"
                     VerticalAlignment="Top"
                     Margin="0,0,4,4"/>
 
@@ -37,47 +39,65 @@
                     x:Name="RecentVoters"/>
             </StackPanel>
         </StackPanel>
+
+        <StackPanel
+            x:Name="TimeoutLabel"
+            Orientation="Horizontal"
+            VerticalAlignment="Bottom"
+            Margin="10,0,0,4"
+            Grid.Column="1">
+            <TextBlock
+                x:Name="Timeout"
+                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                Style="{StaticResource BodyTextBlockStyle}"/>
+
+            <TextBlock
+                Text="&#xE916;"
+                FontSize="16"
+                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                TextLineBounds="Tight"
+                VerticalAlignment="Bottom"
+                Margin="4,0,0,2"/>
+        </StackPanel>
+        
         <controls:GlyphButton
             x:Name="Explanation"
             Click="Explanation_Click"
             Glyph="&#xEA80;"
             Foreground="{ThemeResource MessageSubtleForegroundBrush}"
             Margin="0,-4,-10,-5"
-            Grid.Column="1"
-            Grid.RowSpan="2"/>
+            Grid.Column="1"/>
     </Grid>
 
     <StackPanel
-        x:Name="Options"
-        Margin="-10,0"/>
+        x:Name="Options"/>
 
     <TextBlock
         x:Name="Votes"
         Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-        Style="{StaticResource CaptionTextBlockStyle}"
-        Margin="0,12,0,0"/>
+        TextAlignment="Center"
+        Margin="0,8,0,4"/>
 
     <Button
         x:Name="Submit"
         Style="{StaticResource EmptyButtonStyle}"
-        Click="Submit_Click"
-        Margin="0,0,0,-8">
+        Click="Submit_Click">
         <TextBlock
             Text="{CustomResource PollSubmitVotes}"
             Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Margin="0,12,0,8"/>
+            TextAlignment="Center"
+            Margin="0,8,0,4"/>
     </Button>
 
     <Button
         x:Name="View"
         Style="{StaticResource EmptyButtonStyle}"
-        Click="View_Click"
-        Margin="-10,0,-10,-8">
+        Click="View_Click">
         <TextBlock
             Text="{CustomResource PollViewResults}"
             Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Margin="10,12,10,8"/>
+            TextAlignment="Center"
+            Margin="0,8,10,4"/>
     </Button>
 </StackPanel>

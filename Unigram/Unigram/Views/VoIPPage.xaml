@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:settings="using:Unigram.Views.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -17,160 +18,72 @@
         <SolidColorBrush x:Key="SignalBarForegroundBrush" Color="#FFFFFF"/>
         <SolidColorBrush x:Key="SignalBarForegroundDisabledBrush" Color="#99FFFFFF"/>
 
-        <Style TargetType="controls:GlyphToggleButton">
-            <Setter Property="Background" Value="{ThemeResource ToggleButtonBackground}" />
-            <Setter Property="Foreground" Value="{ThemeResource ToggleButtonForeground}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource ToggleButtonBorderBrush}" />
-            <Setter Property="BorderThickness" Value="{ThemeResource ToggleButtonBorderThemeThickness}" />
-            <Setter Property="Padding" Value="8,4,8,4" />
+        <Style x:Key="CallGlyphButtonStyle" TargetType="controls:GlyphButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+            <Setter Property="Glyph" Value="&#xE700;" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Width" Value="48" />
             <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="FontSize" Value="20" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
+            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="controls:GlyphToggleButton">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="24">
+                    <ControlTemplate TargetType="controls:GlyphButton">
+                        <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding Radius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
+                                    <VisualState x:Name="Normal" />
                                     <VisualState x:Name="PointerOver">
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundPointerOver}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundPointerOver}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundPressed}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundPressed}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Disabled">
                                         <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Checked">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundChecked}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundChecked}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedPointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundCheckedPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundCheckedPointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedPressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundCheckedPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundCheckedPressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedDisabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundCheckedDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundCheckedDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Indeterminate">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundIndeterminate}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundIndeterminate}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="IndeterminatePointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundIndeterminatePointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundIndeterminatePointerOver}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="IndeterminatePressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundIndeterminatePressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBorderBrushIndeterminatePressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundIndeterminatePressed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="IndeterminateDisabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundIndeterminateDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundIndeterminateDisabled}" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
+
                             <TextBlock
-                                x:Name="ContentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding CheckedGlyph}"/>
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Text="{TemplateBinding Glyph}"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -178,19 +91,18 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
-        <!--<Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
-        <Image x:Name="Image" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0,32,0,0" RequestedTheme="Dark">
+        <controls:ProfilePicture x:Name="Image" Width="144" Height="144" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Border x:Name="BackgroundPanel" Background="Transparent"/>
 
-        <Grid Padding="12,0">
+        <Grid Padding="12,8" VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition MinHeight="72"/>
             </Grid.RowDefinitions>
             <!--<TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>-->
-            <TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="DurationLabel" Opacity="0" Text="00:00" TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
 
             <Grid Grid.Row="1">
@@ -231,7 +143,7 @@
             </Grid>
         </Grid>
 
-        <Border x:Name="SmallEmojiLabel" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+        <Border x:Name="SmallEmojiLabel" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0">
             <StackPanel x:Name="SmallPanel" Orientation="Horizontal" Width="108" Height="24" Margin="12,6"/>
         </Border>
 
@@ -247,10 +159,10 @@
 
                 <Border x:Name="LargeEmojiLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,8">
                     <StackPanel x:Name="LargePanel" Tapped="LargeEmojiLabel_Tapped" Background="Transparent" Orientation="Horizontal">
-                        <Image x:Name="LargeEmoji0" Source="ms-appx:///Assets/Emojis/0030-20e3.png" Height="48" Width="48" Margin="0,0,4,0"/>
-                        <Image x:Name="LargeEmoji1" Source="ms-appx:///Assets/Emojis/0031-20e3.png" Height="48" Width="48" Margin="4,0"/>
-                        <Image x:Name="LargeEmoji2" Source="ms-appx:///Assets/Emojis/0032-20e3.png" Height="48" Width="48" Margin="4,0"/>
-                        <Image x:Name="LargeEmoji3" Source="ms-appx:///Assets/Emojis/0033-20e3.png" Height="48" Width="48" Margin="4,0,0,0"/>
+                        <TextBlock x:Name="LargeEmoji0" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="36" Height="48" Width="48" Margin="0,0,4,0"/>
+                        <TextBlock x:Name="LargeEmoji1" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="36" Height="48" Width="48" Margin="4,0"/>
+                        <TextBlock x:Name="LargeEmoji2" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="36" Height="48" Width="48" Margin="4,0"/>
+                        <TextBlock x:Name="LargeEmoji3" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="36" Height="48" Width="48" Margin="4,0,0,0"/>
                     </StackPanel>
                 </Border>
 
@@ -258,60 +170,157 @@
             </Grid>
         </Grid>
 
-        <Grid VerticalAlignment="Bottom" Margin="0,12">
-            <Grid.ChildrenTransitions>
+        <controls:GlyphButton
+            Glyph="&#xE713;"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="0,0,12,0"
+            AutomationProperties.Name="{CustomResource Settings}"
+            ToolTipService.ToolTip="{CustomResource Settings}"
+            Grid.Column="1">
+            <Button.Flyout>
+                <Flyout>
+                    <settings:SettingsVoIPPage
+                        Width="296"
+                        Margin="-12"/>
+                </Flyout>
+            </Button.Flyout>
+        </controls:GlyphButton>
+
+        <StackPanel x:Name="BottomPanel" VerticalAlignment="Bottom">
+            <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition/>
                     <AddDeleteThemeTransition/>
                 </TransitionCollection>
-            </Grid.ChildrenTransitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <controls:GlyphToggleButton
-                x:Name="Mute"
-                IsChecked="{x:Bind IsMuted, Mode=TwoWay}"
-                IsOneWay="False"
-                CheckedGlyph="&#xE610;"
-                FontFamily="{StaticResource TelegramThemeFontFamily}"
-                HorizontalAlignment="Right"
-                Margin="0,0,12,0"
-                AutomationProperties.Name="{CustomResource AccDescrMuteMic}"
-                ToolTipService.ToolTip="{CustomResource AccDescrMuteMic}"/>
+            </StackPanel.ChildrenTransitions>
 
-            <Border x:Name="Close" Visibility="Collapsed" Background="#FFFFFF" CornerRadius="24" Grid.Column="1">
-                <controls:GlyphButton
-                    Click="Close_Click"
-                    Glyph="&#xE10A;"
-                    Foreground="#777777"
-                    RequestedTheme="Light"
-                    Radius="24"
-                    AutomationProperties.Name="{CustomResource Close}"
-                    ToolTipService.ToolTip="{CustomResource Close}"/>
-            </Border>
-            <Border x:Name="Accept" Visibility="Collapsed" Background="#64BA57" CornerRadius="24" Grid.Column="2">
-                <controls:GlyphButton
-                    Click="Accept_Click"
-                    Glyph="&#xE13A;"
-                    Radius="24"
-                    AutomationProperties.Name="{CustomResource VoipAnswerCall}"
-                    ToolTipService.ToolTip="{CustomResource VoipAnswerCall}"/>
-            </Border>
-            <Border x:Name="Discard" Background="#E33A32" CornerRadius="24" Grid.Column="3">
-                <controls:GlyphButton
-                    Click="Hangup_Click"
-                    Glyph="&#xE60F;"
+            <Grid
+                x:Name="AudioOff"
+                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                CornerRadius="{ThemeResource MessageServiceCornerRadius}"
+                Padding="12,2,12,4"
+                Margin="0,0,0,12"
+                HorizontalAlignment="Center"
+                Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Text="&#xE610;"
+                    FontSize="16"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
-                    FontSize="24"
-                    Padding="0,0,0,2"
-                    Radius="24"
-                    AutomationProperties.Name="{CustomResource VoipEndCall}"
-                    ToolTipService.ToolTip="{CustomResource VoipEndCall}"/>
-            </Border>
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,8,0"/>
+                <TextBlock
+                    x:Name="AudioOffText"
+                    Grid.Column="1"/>
+            </Grid>
+
+            <Grid
+                x:Name="VideoOff"
+                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                CornerRadius="{ThemeResource MessageServiceCornerRadius}"
+                Padding="12,2,12,4"
+                Margin="0,0,0,12"
+                HorizontalAlignment="Center"
+                Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Text="&#xE714;"
+                    FontSize="20"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    VerticalAlignment="Bottom"
+                    Margin="0,-2,8,-2"/>
+                <TextBlock
+                    x:Name="VideoOffText"
+                    Grid.Column="1"/>
+            </Grid>
+
+            <Grid HorizontalAlignment="Center">
+                <Grid.ChildrenTransitions>
+                    <TransitionCollection>
+                        <RepositionThemeTransition/>
+                        <AddDeleteThemeTransition/>
+                    </TransitionCollection>
+                </Grid.ChildrenTransitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:CallToggleButton
+                    x:Name="Video"
+                    Click="Video_Click"
+                    IsOneWay="False"
+                    Glyph="&#xE714;"
+                    Content="{CustomResource VoipStartVideo}"
+                    CheckedContent="{CustomResource VoipStopVideo}"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,16,0"
+                    FontSize="24"/>
+                <controls:CallToggleButton
+                    x:Name="Audio"
+                    Click="Audio_Click"
+                    IsChecked="True"
+                    IsOneWay="False"
+                    Glyph="&#xE720;"
+                    Content="{CustomResource VoipUnmute}"
+                    CheckedContent="{CustomResource VoipMute}"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,16,0"
+                    Grid.Column="1"/>
+
+                <Border x:Name="Close" Visibility="Collapsed" Background="#FFFFFF" CornerRadius="30" Grid.Column="2">
+                    <controls:GlyphButton
+                        Click="Close_Click"
+                        Glyph="&#xE10A;"
+                        Foreground="#777777"
+                        RequestedTheme="Light"
+                        Radius="30"
+                        Width="60"
+                        Height="60"
+                        AutomationProperties.Name="{CustomResource Close}"
+                        ToolTipService.ToolTip="{CustomResource Close}"
+                        Style="{StaticResource CallGlyphButtonStyle}"/>
+                </Border>
+                <controls:CallHangupButton
+                    x:Name="Discard"
+                    Click="Hangup_Click"
+                    IsChecked="True"
+                    Content="{CustomResource DeclineCall}"
+                    CheckedContent="{CustomResource DeclineCall}"
+                    Grid.Column="3"/>
+                <controls:CallHangupButton
+                    x:Name="Accept"
+                    Click="Accept_Click"
+                    Content="{CustomResource AcceptCall}"
+                    CheckedContent="{CustomResource VoipEndCall}"
+                    Visibility="Collapsed"
+                    Grid.Column="4"/>
+            </Grid>
+        </StackPanel>
+
+        <Grid
+            x:Name="ViewfinderPanel"
+            Visibility="Collapsed"
+            Width="146"
+            Height="110"
+            CornerRadius="4"
+            Background="#000000"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top">
+            <Border
+                x:Name="ViewfinderShadow"
+                Background="#000000"/>
+            <Border
+                x:Name="Viewfinder"/>
         </Grid>
     </Grid>
 </Page>

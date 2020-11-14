@@ -1,7 +1,9 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -9,18 +11,17 @@ using Unigram.Common.Chats;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
-using Unigram.ViewModels.Delegates;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Cells
 {
@@ -33,17 +34,14 @@ namespace Unigram.Controls.Cells
         Read
     }
 
-    public sealed partial class ChatCell : ToggleButton
+    public sealed partial class ChatCell : UserControl, IMultipleElement
     {
         private Chat _chat;
         private ChatList _chatList;
 
         private IProtoService _protoService;
-        private IChatListDelegate _delegate;
 
-        private Visual _onlineBadge;
-
-        private bool _expanded = false;
+        private readonly Visual _onlineBadge;
 
         private MessageTicksState _ticksState;
 
@@ -59,29 +57,21 @@ namespace Unigram.Controls.Cells
             _onlineBadge.Scale = new Vector3(0);
         }
 
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new ChatCellAutomationPeer(this);
-        }
-
-        public void UpdateService(IProtoService protoService, IChatListDelegate delegato)
+        public void UpdateService(IProtoService protoService)
         {
             _protoService = protoService;
-            _delegate = delegato;
         }
 
-        public void UpdateChat(IProtoService protoService, IChatListDelegate delegato, Chat chat, ChatList chatList)
+        public void UpdateChat(IProtoService protoService, Chat chat, ChatList chatList)
         {
             _protoService = protoService;
-            _delegate = delegato;
 
             Update(chat, chatList);
         }
 
-        public void UpdateMessage(IProtoService protoService, IChatListDelegate delegato, Message message)
+        public void UpdateMessage(IProtoService protoService, Message message)
         {
             _protoService = protoService;
-            _delegate = delegato;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -103,12 +93,13 @@ namespace Unigram.Controls.Cells
             BriefLabel.Text = UpdateBriefLabel(chat, message, true, false);
             TimeLabel.Text = UpdateTimeLabel(message);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
+
+            UpdateMinithumbnail(message);
         }
 
-        public async void UpdateChatList(IProtoService protoService, IChatListDelegate delegato, ChatList chatList)
+        public async void UpdateChatList(IProtoService protoService, ChatList chatList)
         {
             _protoService = protoService;
-            _delegate = delegato;
 
             TitleLabel.Text = Strings.Resources.ArchivedChats;
             Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
@@ -126,7 +117,9 @@ namespace Unigram.Controls.Cells
 
             MutedIcon.Visibility = Visibility.Collapsed;
 
-            VisualStateManager.GoToState(LayoutRoot, "Muted", false);
+            MinithumbnailPanel.Visibility = Visibility.Collapsed;
+
+            VisualStateManager.GoToState(this, "Muted", false);
 
             UpdateTicks(null);
 
@@ -134,7 +127,7 @@ namespace Unigram.Controls.Cells
             UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
             UnreadLabel.Text = $"{unreadCount.UnreadChatCount.UnreadCount}";
 
-            var response = await protoService.SendAsync(new GetChats(chatList, long.MaxValue, 0, 20));
+            var response = await protoService.GetChatListAsync(chatList, 0, 20);
             if (response is Telegram.Td.Api.Chats chats)
             {
                 Visibility = chats.ChatIds.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -234,24 +227,20 @@ namespace Unigram.Controls.Cells
             }
 
             //if (!message.IsOutgoing && message.SenderUserId != 0 && !message.IsService())
-            if (ShowFrom(chat, message))
+            if (ShowFrom(protoService, chat, message, out User fromUser))
             {
-                var fromUser = protoService.GetUser(message.SenderUserId);
-                if (fromUser != null)
+                if (message.IsOutgoing)
                 {
-                    if (message.IsOutgoing)
+                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser.Id) && !message.IsChannelPost)
                     {
-                        if (!(chat.Type is ChatTypePrivate priv && priv.UserId == message.SenderUserId) && !message.IsChannelPost)
-                        {
-                            builder.Append(Strings.Resources.FromYou);
-                            builder.Append(": ");
-                        }
-                    }
-                    else
-                    {
-                        builder.Append(fromUser.GetFullName());
+                        builder.Append(Strings.Resources.FromYou);
                         builder.Append(": ");
                     }
+                }
+                else
+                {
+                    builder.Append(fromUser.GetFullName());
+                    builder.Append(": ");
                 }
             }
 
@@ -278,6 +267,11 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatLastMessage(Chat chat, ChatPosition position = null)
         {
+            if (chat == null)
+            {
+                return;
+            }
+
             if (position == null)
             {
                 position = chat.GetPosition(_chatList);
@@ -289,6 +283,8 @@ namespace Unigram.Controls.Cells
             TimeLabel.Text = UpdateTimeLabel(chat, position);
             StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             FailedBadge.Visibility = chat.LastMessage?.SendingState is MessageSendingStateFailed ? Visibility.Visible : Visibility.Collapsed;
+
+            UpdateMinithumbnail(chat.LastMessage);
         }
 
         public void UpdateChatReadInbox(Chat chat, ChatPosition position = null)
@@ -324,7 +320,7 @@ namespace Unigram.Controls.Cells
         public void UpdateNotificationSettings(Chat chat)
         {
             var muted = _protoService.GetNotificationSettingsMuteFor(chat) > 0;
-            VisualStateManager.GoToState(LayoutRoot, muted ? "Muted" : "Unmuted", false);
+            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -357,11 +353,13 @@ namespace Unigram.Controls.Cells
                 TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, out ChatAction commonAction);
                 TypingLabel.Visibility = Visibility.Visible;
                 BriefInfo.Visibility = Visibility.Collapsed;
+                Minithumbnail.Visibility = Visibility.Collapsed;
             }
             else
             {
                 TypingLabel.Visibility = Visibility.Collapsed;
                 BriefInfo.Visibility = Visibility.Visible;
+                Minithumbnail.Visibility = Visibility.Visible;
             }
         }
 
@@ -442,35 +440,46 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        public void UpdateViewState(Chat chat, bool selected, bool compact, bool threeLines)
+        public void UpdateViewState(Chat chat, bool selected, bool compact)
         {
-            VisualStateManager.GoToState(LayoutRoot, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
-            VisualStateManager.GoToState(LayoutRoot, compact ? "Compact" : "Expanded", false);
-            VisualStateManager.GoToState(LayoutRoot, threeLines ? "ThreeLines" : "Default", false);
-
-            if (threeLines != _expanded && _protoService != null)
-            {
-                _expanded = threeLines;
-
-                var position = chat.GetPosition(_chatList);
-
-                DraftLabel.Text = UpdateDraftLabel(chat);
-                FromLabel.Text = UpdateFromLabel(chat, position);
-                BriefLabel.Text = UpdateBriefLabel(chat, position);
-            }
+            VisualStateManager.GoToState(this, selected ? "Selected" : chat.Type is ChatTypeSecret ? "Secret" : "Normal", false);
+            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
         }
 
-        public void UpdateViewState(ChatList chatList, bool selected, bool compact, bool threeLines)
+        public void UpdateViewState(ChatList chatList, bool selected, bool compact)
         {
-            VisualStateManager.GoToState(LayoutRoot, selected ? "Selected" : "Normal", false);
-            VisualStateManager.GoToState(LayoutRoot, compact ? "Compact" : "Expanded", false);
-            VisualStateManager.GoToState(LayoutRoot, threeLines ? "ThreeLines" : "Default", false);
+            VisualStateManager.GoToState(this, selected ? "Selected" : "Normal", false);
+            VisualStateManager.GoToState(this, compact ? "Compact" : "Expanded", false);
+        }
 
-            if (threeLines != _expanded && _protoService != null)
+        private async void UpdateMinithumbnail(Message message)
+        {
+            var thumbnail = message?.GetMinithumbnail(false);
+            if (thumbnail != null && SettingsService.Current.Diagnostics.Minithumbnails)
             {
-                _expanded = threeLines;
+                double ratioX = (double)16 / thumbnail.Width;
+                double ratioY = (double)16 / thumbnail.Height;
+                double ratio = Math.Max(ratioX, ratioY);
 
-                UpdateChatList(_protoService, _delegate, chatList);
+                var width = (int)(thumbnail.Width * ratio);
+                var height = (int)(thumbnail.Height * ratio);
+
+                var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                var bytes = thumbnail.Data.ToArray();
+
+                using (var stream = new System.IO.MemoryStream(bytes))
+                {
+                    var random = System.IO.WindowsRuntimeStreamExtensions.AsRandomAccessStream(stream);
+                    await bitmap.SetSourceAsync(random);
+                }
+
+                Minithumbnail.Source = bitmap;
+                MinithumbnailPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MinithumbnailPanel.Visibility = Visibility.Collapsed;
+                Minithumbnail.Source = null;
             }
         }
 
@@ -572,7 +581,7 @@ namespace Unigram.Controls.Cells
                 switch (chat.DraftMessage.InputMessageText)
                 {
                     case InputMessageText text:
-                        return string.Format(_expanded ? "{0}\r\n" : "{0}: ", Strings.Resources.Draft);
+                        return string.Format("{0}: ", Strings.Resources.Draft);
                 }
             }
 
@@ -610,43 +619,39 @@ namespace Unigram.Controls.Cells
                 return MessageService.GetText(new ViewModels.MessageViewModel(_protoService, null, null, message));
             }
 
-            var format = _expanded ? "{0}\r\n" : "{0}: ";
+            var format = "{0}: ";
             var result = string.Empty;
 
-            if (ShowFrom(chat, message))
+            if (ShowFrom(_protoService, chat, message, out User from))
             {
                 if (message.IsOutgoing)
                 {
-                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == message.SenderUserId) && !message.IsChannelPost)
+                    if (!(chat.Type is ChatTypePrivate priv && priv.UserId == from.Id) && !message.IsChannelPost)
                     {
                         result = string.Format(format, Strings.Resources.FromYou);
                     }
                 }
                 else
                 {
-                    var from = _protoService.GetUser(message.SenderUserId);
-                    if (from != null)
+                    if (!string.IsNullOrEmpty(from.FirstName))
                     {
-                        if (!string.IsNullOrEmpty(from.FirstName))
-                        {
-                            result = string.Format(format, from.FirstName.Trim());
-                        }
-                        else if (!string.IsNullOrEmpty(from.LastName))
-                        {
-                            result = string.Format(format, from.LastName.Trim());
-                        }
-                        else if (!string.IsNullOrEmpty(from.Username))
-                        {
-                            result = string.Format(format, from.Username.Trim());
-                        }
-                        else if (from.Type is UserTypeDeleted)
-                        {
-                            result = string.Format(format, Strings.Resources.HiddenName);
-                        }
-                        else
-                        {
-                            result = string.Format(format, from.Id);
-                        }
+                        result = string.Format(format, from.FirstName.Trim());
+                    }
+                    else if (!string.IsNullOrEmpty(from.LastName))
+                    {
+                        result = string.Format(format, from.LastName.Trim());
+                    }
+                    else if (!string.IsNullOrEmpty(from.Username))
+                    {
+                        result = string.Format(format, from.Username.Trim());
+                    }
+                    else if (from.Type is UserTypeDeleted)
+                    {
+                        result = string.Format(format, Strings.Resources.HiddenName);
+                    }
+                    else
+                    {
+                        result = string.Format(format, from.Id);
                     }
                 }
             }
@@ -743,10 +748,7 @@ namespace Unigram.Controls.Cells
             }
             else if (message.Content is MessageCall call)
             {
-                var outgoing = message.IsOutgoing;
-                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
-
-                return result + (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
+                return result + call.ToOutcomeText(message.IsOutgoing);
             }
             else if (message.Content is MessageUnsupported)
             {
@@ -756,28 +758,31 @@ namespace Unigram.Controls.Cells
             return result;
         }
 
-        private bool ShowFrom(Chat chat, Message message)
+        private bool ShowFrom(ICacheService cacheService, Chat chat, Message message, out User senderUser)
         {
             if (message.IsService())
             {
+                senderUser = null;
                 return false;
             }
 
             if (message.IsOutgoing)
             {
-                return true;
+                return cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
             if (chat.Type is ChatTypeBasicGroup)
             {
-                return true;
+                return cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                return !supergroup.IsChannel;
+                senderUser = null;
+                return !supergroup.IsChannel && cacheService.TryGetUser(message.Sender, out senderUser);
             }
 
+            senderUser = null;
             return false;
         }
 
@@ -894,6 +899,11 @@ namespace Unigram.Controls.Cells
             }
             else if (chat.Type is ChatTypePrivate privata && _protoService != null)
             {
+                if (_protoService.IsRepliesChat(chat))
+                {
+                    return null;
+                }
+
                 var user = _protoService.GetUser(privata.UserId);
                 if (user != null && user.Type is UserTypeBot)
                 {
@@ -928,20 +938,34 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (_protoService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
+            try
             {
-                if (DropVisual == null)
-                    FindName(nameof(DropVisual));
+                if (_protoService.CanPostMessages(chat) && e.DataView.AvailableFormats.Count > 0)
+                {
+                    if (DropVisual == null)
+                    {
+                        FindName(nameof(DropVisual));
+                    }
 
-                DropVisual.Visibility = Visibility.Visible;
-                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+                    DropVisual.Visibility = Visibility.Visible;
+                    e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
+                }
+                else
+                {
+                    if (DropVisual != null)
+                    {
+                        DropVisual.Visibility = Visibility.Collapsed;
+                    }
+
+                    e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+                }
             }
-            else
+            catch
             {
                 if (DropVisual != null)
+                {
                     DropVisual.Visibility = Visibility.Collapsed;
-
-                e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.None;
+                }
             }
 
             base.OnDragEnter(e);
@@ -950,7 +974,9 @@ namespace Unigram.Controls.Cells
         protected override void OnDragLeave(DragEventArgs e)
         {
             if (DropVisual != null)
+            {
                 DropVisual.Visibility = Visibility.Collapsed;
+            }
 
             base.OnDragLeave(e);
         }
@@ -958,25 +984,31 @@ namespace Unigram.Controls.Cells
         protected override void OnDrop(DragEventArgs e)
         {
             if (DropVisual != null)
+            {
                 DropVisual.Visibility = Visibility.Collapsed;
-
-            if (e.DataView.AvailableFormats.Count == 0)
-            {
-                return;
             }
 
-            var chat = _chat;
-            if (chat == null)
+            try
             {
-                return;
-            }
+                if (e.DataView.AvailableFormats.Count == 0)
+                {
+                    return;
+                }
 
-            var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{_protoService.SessionId}") as NavigationService;
-            if (service != null)
-            {
-                App.DataPackages[chat.Id] = e.DataView;
-                service.NavigateToChat(chat);
+                var chat = _chat;
+                if (chat == null)
+                {
+                    return;
+                }
+
+                var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId($"Main{_protoService.SessionId}") as NavigationService;
+                if (service != null)
+                {
+                    App.DataPackages[chat.Id] = e.DataView;
+                    service.NavigateToChat(chat);
+                }
             }
+            catch { }
 
             base.OnDrop(e);
         }
@@ -990,7 +1022,7 @@ namespace Unigram.Controls.Cells
             TypeIcon.Visibility = type is ChatTypeSupergroup ? Visibility.Visible : Visibility.Collapsed;
 
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
-            VisualStateManager.GoToState(LayoutRoot, muted ? "Muted" : "Unmuted", false);
+            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
 
             VerifiedIcon.Visibility = Visibility.Collapsed;
 
@@ -1153,27 +1185,9 @@ namespace Unigram.Controls.Cells
             _selectionOutline.Opacity = 0;
         }
 
-        protected override void OnToggle()
+        public void UpdateState(bool selected, bool animate)
         {
-            if (_selectionMode == ListViewSelectionMode.Multiple)
-            {
-                OnSelectionChanged(IsChecked != true, true);
-                base.OnToggle();
-
-                if (IsChecked == true)
-                {
-                    _delegate?.AddSelectedItem(_chat);
-                }
-                else
-                {
-                    _delegate?.RemoveSelectedItem(_chat);
-                }
-            }
-        }
-
-        private void OnSelectionChanged(bool selected, bool animate)
-        {
-            if (animate && selected != (IsChecked == true))
+            if (animate)
             {
                 var compositor = Window.Current.Compositor;
 
@@ -1224,29 +1238,6 @@ namespace Unigram.Controls.Cells
                 _selectionOutline.Scale = new Vector3(selected ? 1 : 40f / 48f);
                 _selectionOutline.Opacity = selected ? 1 : 0;
             }
-        }
-
-        private ListViewSelectionMode _selectionMode;
-
-        public void SetSelectionMode(ListViewSelectionMode mode, bool animate)
-        {
-            if (mode == ListViewSelectionMode.Multiple && _delegate?.IsItemSelected(_chat) == true)
-            {
-                OnSelectionChanged(true, animate);
-                IsChecked = true;
-            }
-            else if (mode == ListViewSelectionMode.Single && _delegate?.SelectedItem == _chat.Id)
-            {
-                OnSelectionChanged(false, _selectionMode == ListViewSelectionMode.Multiple && IsChecked == true);
-                IsChecked = null;
-            }
-            else
-            {
-                OnSelectionChanged(false, animate);
-                IsChecked = false;
-            }
-
-            _selectionMode = mode;
         }
 
         #endregion
@@ -1471,37 +1462,196 @@ namespace Unigram.Controls.Cells
 
         #endregion
 
-        private void OnClick(object sender, RoutedEventArgs e)
-        {
-            if (_selectionMode != ListViewSelectionMode.Multiple)
-            {
-                _delegate?.SetSelectedItem(_chat);
-            }
-            else if (_delegate.SelectedCount < 1)
-            {
-                _delegate?.SetSelectionMode(false);
-            }
-        }
     }
 
-    public class ChatCellAutomationPeer : ToggleButtonAutomationPeer
+    public class ChatCellPanel : Panel
     {
-        private ChatCell _owner;
-
-        public ChatCellAutomationPeer(ChatCell owner)
-            : base(owner)
+        protected override Size MeasureOverride(Size availableSize)
         {
-            _owner = owner;
+            var PhotoPanel = Children[0];
+
+            var TypeIcon = Children[1];
+            var TitleLabel = Children[2];
+            var VerifiedIcon = Children[3];
+            var MutedIcon = Children[4];
+            var StateIcon = Children[5];
+            var TimeLabel = Children[6];
+
+            var MinithumbnailPanel = Children[7];
+            var BriefInfo = Children[8];
+            var TypingLabel = Children[9];
+            var PinnedIcon = Children[10];
+            var UnreadMentionsBadge = Children[11];
+            var UnreadBadge = Children[12];
+            var FailedBadge = Children[13];
+
+            PhotoPanel.Measure(availableSize);
+
+            TimeLabel.Measure(availableSize);
+            StateIcon.Measure(availableSize);
+            TypeIcon.Measure(availableSize);
+            VerifiedIcon.Measure(availableSize);
+            MutedIcon.Measure(availableSize);
+
+            var line1Left = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
+            var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
+
+            var titleWidth = Math.Max(0, line1Right - (line1Left + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width));
+
+            TitleLabel.Measure(new Size(titleWidth, availableSize.Height));
+
+
+
+            MinithumbnailPanel.Measure(availableSize);
+            PinnedIcon.Measure(availableSize);
+            UnreadBadge.Measure(availableSize);
+            UnreadMentionsBadge.Measure(availableSize);
+            FailedBadge.Measure(availableSize);
+
+            var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
+
+            var line2Left = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
+            var line2Right = availableSize.Width - 12 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+
+            var briefWidth = Math.Max(0, line2Right - line2Left);
+
+            BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
+            TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
+            
+            return base.MeasureOverride(availableSize);
+
+            return new Size(availableSize.Width, PhotoPanel.DesiredSize.Height);
         }
 
-        protected override string GetNameCore()
+        protected override Size ArrangeOverride(Size finalSize)
         {
-            return _owner.GetAutomationName();
-        }
+            var PhotoPanel = Children[0];
 
-        protected override AutomationControlType GetAutomationControlTypeCore()
-        {
-            return AutomationControlType.ListItem;
+            var TypeIcon = Children[1];
+            var TitleLabel = Children[2];
+            var VerifiedIcon = Children[3];
+            var MutedIcon = Children[4];
+            var StateIcon = Children[5];
+            var TimeLabel = Children[6];
+
+            var MinithumbnailPanel = Children[7];
+            var BriefInfo = Children[8];
+            var TypingLabel = Children[9];
+            var PinnedIcon = Children[10];
+            var UnreadMentionsBadge = Children[11];
+            var UnreadBadge = Children[12];
+            var FailedBadge = Children[13];
+
+            var rect = new Rect();
+            var min = 12 + PhotoPanel.DesiredSize.Width + 12;
+
+            rect.X = 12;
+            rect.Y = 0;
+            rect.Width = PhotoPanel.DesiredSize.Width;
+            rect.Height = PhotoPanel.DesiredSize.Height;
+            PhotoPanel.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - TimeLabel.DesiredSize.Width);
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = TimeLabel.DesiredSize.Width;
+            rect.Height = TimeLabel.DesiredSize.Height;
+            TimeLabel.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = StateIcon.DesiredSize.Width;
+            rect.Height = StateIcon.DesiredSize.Height;
+            StateIcon.Arrange(rect);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = TypeIcon.DesiredSize.Width;
+            rect.Height = TypeIcon.DesiredSize.Height;
+            TypeIcon.Arrange(rect);
+
+            var line1Left = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
+            var line1Right = finalSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
+
+            double titleWidth;
+            if (line1Left + TitleLabel.DesiredSize.Width + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
+            {
+                titleWidth = Math.Max(0, line1Right - (line1Left + VerifiedIcon.DesiredSize.Width + MutedIcon.DesiredSize.Width));
+            }
+            else
+            {
+                titleWidth = TitleLabel.DesiredSize.Width;
+            }
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
+            rect.Y = 32 - 2 - TitleLabel.DesiredSize.Height;
+            rect.Width =  titleWidth;
+            rect.Height = TitleLabel.DesiredSize.Height;
+            TitleLabel.Arrange(rect);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width + titleWidth;
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = VerifiedIcon.DesiredSize.Width;
+            rect.Height = VerifiedIcon.DesiredSize.Height;
+            VerifiedIcon.Arrange(rect);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width + titleWidth + VerifiedIcon.DesiredSize.Width;
+            rect.Y = 32 - TitleLabel.DesiredSize.Height;
+            rect.Width = MutedIcon.DesiredSize.Width;
+            rect.Height = MutedIcon.DesiredSize.Height;
+            MutedIcon.Arrange(rect);
+
+
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
+            rect.Y = 35;
+            rect.Width = MinithumbnailPanel.DesiredSize.Width;
+            rect.Height = MinithumbnailPanel.DesiredSize.Height;
+            MinithumbnailPanel.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - PinnedIcon.DesiredSize.Width);
+            rect.Y = 64 - 8 - PinnedIcon.DesiredSize.Height;
+            rect.Width = PinnedIcon.DesiredSize.Width;
+            rect.Height = PinnedIcon.DesiredSize.Height;
+            PinnedIcon.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - UnreadBadge.DesiredSize.Width);
+            rect.Y = 64 - 8 - UnreadBadge.DesiredSize.Height;
+            rect.Width = UnreadBadge.DesiredSize.Width;
+            rect.Height = UnreadBadge.DesiredSize.Height;
+            UnreadBadge.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width);
+            rect.Y = 64 - 8 - UnreadMentionsBadge.DesiredSize.Height;
+            rect.Width = UnreadMentionsBadge.DesiredSize.Width;
+            rect.Height = UnreadMentionsBadge.DesiredSize.Height;
+            UnreadMentionsBadge.Arrange(rect);
+
+            rect.X = Math.Max(min, finalSize.Width - 12 - FailedBadge.DesiredSize.Width);
+            rect.Y = 64 - 8 - FailedBadge.DesiredSize.Height;
+            rect.Width = FailedBadge.DesiredSize.Width;
+            rect.Height = FailedBadge.DesiredSize.Height;
+            FailedBadge.Arrange(rect);
+
+            var line2RightPadding = Math.Max(Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width), FailedBadge.DesiredSize.Width);
+
+            var line2Left = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
+            var line2Right = finalSize.Width - 12 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
+
+            var briefWidth = Math.Max(0, line2Right - line2Left);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + MinithumbnailPanel.DesiredSize.Width;
+            rect.Y = 64 - 12 - BriefInfo.DesiredSize.Height;
+            rect.Width = briefWidth;
+            rect.Height = BriefInfo.DesiredSize.Height;
+            BriefInfo.Arrange(rect);
+
+            rect.X = 12 + PhotoPanel.DesiredSize.Width + 12;
+            rect.Y = 64 - 12 - TypingLabel.DesiredSize.Height;
+            rect.Width = briefWidth + MinithumbnailPanel.DesiredSize.Width;
+            rect.Height = TypingLabel.DesiredSize.Height;
+            TypingLabel.Arrange(rect);
+
+            return finalSize;
         }
     }
 }

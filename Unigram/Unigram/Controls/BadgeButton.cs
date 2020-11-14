@@ -36,10 +36,10 @@ namespace Unigram.Controls
         {
             if (_peer != null)
             {
-                _peer.RaisePropertyChangedEvent(
-                    ValuePatternIdentifiers.ValueProperty,
-                    oldValue?.ToString(),
-                    newValue?.ToString());
+                var newText = newValue?.ToString() ?? string.Empty;
+                var oldText = oldValue?.ToString() ?? string.Empty;
+
+                _peer.RaisePropertyChangedEvent(ValuePatternIdentifiers.ValueProperty, oldText, newText);
             }
         }
 

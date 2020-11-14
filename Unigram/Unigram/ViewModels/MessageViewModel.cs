@@ -26,18 +26,21 @@ namespace Unigram.ViewModels
         public IPlaybackService PlaybackService => _playbackService;
         public IMessageDelegate Delegate => _delegate;
 
+        public bool IsInitial { get; set; } = true;
+
         public bool IsFirst { get; set; } = true;
         public bool IsLast { get; set; } = true;
 
         public ReplyMarkup ReplyMarkup { get => _message.ReplyMarkup; set => _message.ReplyMarkup = value; }
         public MessageContent Content { get => _message.Content; set => _message.Content = value; }
         public long MediaAlbumId => _message.MediaAlbumId;
-        public int Views { get => _message.Views; set => _message.Views = value; }
+        public MessageInteractionInfo InteractionInfo { get => _message.InteractionInfo; set => _message.InteractionInfo = value; }
         public string AuthorSignature => _message.AuthorSignature;
         public int ViaBotUserId => _message.ViaBotUserId;
         public double TtlExpiresIn { get => _message.TtlExpiresIn; set => _message.TtlExpiresIn = value; }
         public int Ttl => _message.Ttl;
-        public long ReplyToMessageId => _message.ReplyToMessageId;
+        public long ReplyToMessageId { get => _message.ReplyToMessageId; set => _message.ReplyToMessageId = value; }
+        public long ReplyInChatId => _message.ReplyInChatId;
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
         public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
         public int Date => _message.Date;
@@ -47,11 +50,15 @@ namespace Unigram.ViewModels
         public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
         public bool CanBeForwarded => _message.CanBeForwarded;
         public bool CanBeEdited => _message.CanBeEdited;
+        public bool CanGetMessageThread => _message.CanGetMessageThread;
+        public bool CanGetStatistics => _message.CanGetStatistics;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
+        public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
         public MessageSchedulingState SchedulingState => _message.SchedulingState;
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;
-        public int SenderUserId => _message.SenderUserId;
+        public long MessageThreadId => _message.MessageThreadId;
+        public MessageSender Sender => _message.Sender;
         public long Id => _message.Id;
 
         public Photo GetPhoto() => _message.GetPhoto();
@@ -70,9 +77,18 @@ namespace Unigram.ViewModels
         public MessageContent GeneratedContent { get; set; }
         public bool GeneratedContentUnread { get; set; }
 
-        public User GetSenderUser()
+        public BaseObject GetSender()
         {
-            return ProtoService.GetUser(_message.SenderUserId);
+            if (_message.Sender is MessageSenderUser user)
+            {
+                return ProtoService.GetUser(user.UserId);
+            }
+            else if (_message.Sender is MessageSenderChat chat)
+            {
+                return ProtoService.GetChat(chat.ChatId);
+            }
+
+            return null;
         }
 
         public User GetViaBotUser()
@@ -82,8 +98,7 @@ namespace Unigram.ViewModels
                 return ProtoService.GetUser(_message.ViaBotUserId);
             }
 
-            var user = ProtoService.GetUser(_message.SenderUserId);
-            if (user?.Type is UserTypeBot)
+            if (ProtoService.TryGetUser(_message.Sender, out User user) && user.Type is UserTypeBot)
             {
                 return user;
             }
@@ -158,6 +173,10 @@ namespace Unigram.ViewModels
         public bool IsShareable()
         {
             var message = this;
+            if (message.SchedulingState != null)
+            {
+                return false;
+            }
             //if (currentPosition != null && !currentPosition.last)
             //{
             //    return false;
@@ -180,15 +199,14 @@ namespace Unigram.ViewModels
             //{
             //    return true;
             //}
-            else if (message.SenderUserId != 0)
+            else if (message.Sender is MessageSenderUser)
             {
                 if (message.Content is MessageText)
                 {
                     return false;
                 }
 
-                var user = message.GetSenderUser();
-                if (user != null && user.Type is UserTypeBot)
+                if (ProtoService.TryGetUser(message.Sender, out User user) && user.Type is UserTypeBot)
                 {
                     return true;
                 }
@@ -231,8 +249,17 @@ namespace Unigram.ViewModels
             {
                 return Id == y.Id && ChatId == y.ChatId;
             }
+            else if (obj is MessageViewModel ym)
+            {
+                return Id == ym.Id && ChatId == ym.ChatId;
+            }
 
             return base.Equals(obj);
+        }
+
+        public int AnimationHash()
+        {
+            return base.GetHashCode();
         }
 
         public override int GetHashCode()
@@ -242,11 +269,18 @@ namespace Unigram.ViewModels
 
         public void UpdateWith(MessageViewModel message)
         {
+            UpdateWith(message.Get());
+        }
+
+        public void UpdateWith(Message message)
+        {
             _message.AuthorSignature = message.AuthorSignature;
             _message.CanBeDeletedForAllUsers = message.CanBeDeletedForAllUsers;
             _message.CanBeDeletedOnlyForSelf = message.CanBeDeletedOnlyForSelf;
             _message.CanBeEdited = message.CanBeEdited;
             _message.CanBeForwarded = message.CanBeForwarded;
+            _message.CanGetMessageThread = message.CanGetMessageThread;
+            _message.CanGetStatistics = message.CanGetStatistics;
             _message.ChatId = message.ChatId;
             _message.ContainsUnreadMention = message.ContainsUnreadMention;
             //_message.Content = message.Content;
@@ -256,39 +290,57 @@ namespace Unigram.ViewModels
             _message.Id = message.Id;
             _message.IsChannelPost = message.IsChannelPost;
             _message.IsOutgoing = message.IsOutgoing;
+            _message.IsPinned = message.IsPinned;
+            _message.MessageThreadId = message.MessageThreadId;
             _message.MediaAlbumId = message.MediaAlbumId;
             _message.ReplyMarkup = message.ReplyMarkup;
+            _message.ReplyInChatId = message.ReplyInChatId;
             _message.ReplyToMessageId = message.ReplyToMessageId;
-            _message.SenderUserId = message.SenderUserId;
+            _message.Sender = message.Sender;
             _message.SendingState = message.SendingState;
             _message.Ttl = message.Ttl;
             _message.TtlExpiresIn = message.TtlExpiresIn;
             _message.ViaBotUserId = message.ViaBotUserId;
-            _message.Views = message.Views;
+            _message.InteractionInfo = message.InteractionInfo;
 
             if (_message.Content is MessageAlbum album)
             {
                 FormattedText caption = null;
 
-                foreach (var child in album.Layout.Messages)
+                if (album.IsMedia)
                 {
-                    var childCaption = child.Content?.GetCaption();
-                    if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))
+                    foreach (var child in album.Messages)
                     {
-                        if (caption == null || string.IsNullOrEmpty(caption.Text))
+                        var childCaption = child.Content?.GetCaption();
+                        if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))
                         {
-                            caption = childCaption;
-                        }
-                        else
-                        {
-                            caption = null;
-                            break;
+                            if (caption == null || string.IsNullOrEmpty(caption.Text))
+                            {
+                                caption = childCaption;
+                            }
+                            else
+                            {
+                                caption = null;
+                                break;
+                            }
                         }
                     }
+                }
+                else if (album.Messages.Count > 0)
+                {
+                    caption = album.Messages[album.Messages.Count - 1].Content.GetCaption();
                 }
 
                 album.Caption = caption ?? new FormattedText();
             }
         }
+    }
+
+    public enum ReplyToMessageState
+    {
+        None,
+        Loading,
+        Deleted,
+        Hidden
     }
 }

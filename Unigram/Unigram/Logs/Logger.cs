@@ -57,7 +57,7 @@ namespace Unigram.Logs
         [Conditional("DEBUG")]
         private static void Log(Target tag, LogLevel level, Type type, string message, string member, string filePath, int line)
         {
-            Logs.Log.Write(LogHelper.CreateEntryWithoutType(DateTime.Now, level, member, line, message));
+            //Logs.Log.Write(LogHelper.CreateEntryWithoutType(DateTime.Now, level, member, line, message));
             System.Diagnostics.Debug.WriteLine(LogHelper.CreateEntryWithoutType(DateTime.Now, level, member, line, message));
         }
 

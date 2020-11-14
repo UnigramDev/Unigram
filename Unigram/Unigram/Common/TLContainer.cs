@@ -9,13 +9,13 @@ namespace Unigram.Views
 {
     public class TLContainer
     {
-        private static TLContainer _instance = new TLContainer();
+        private static readonly TLContainer _instance = new TLContainer();
 
         //private Dictionary<int, IContainer> _containers = new Dictionary<int, IContainer>();
-        private ConcurrentDictionary<int, IContainer> _containers = new ConcurrentDictionary<int, IContainer>();
-        private ILifetimeService _lifetime;
-        private IPasscodeService _passcode;
-        private ILocaleService _locale;
+        private readonly ConcurrentDictionary<int, IContainer> _containers = new ConcurrentDictionary<int, IContainer>();
+        private readonly ILifetimeService _lifetime;
+        private readonly IPasscodeService _passcode;
+        private readonly ILocaleService _locale;
 
         private TLContainer()
         {
@@ -47,7 +47,11 @@ namespace Unigram.Views
             {
                 if (container != null)
                 {
-                    yield return container.Resolve<T>();
+                    var service = container.Resolve<T>();
+                    if (service != null)
+                    {
+                        yield return service;
+                    }
                 }
             }
         }
@@ -95,6 +99,24 @@ namespace Unigram.Views
             }
 
             return result;
+        }
+
+        public bool TryResolve<TService>(int session, out TService result)
+        {
+            if (session == int.MaxValue)
+            {
+                session = _lifetime.ActiveItem?.Id ?? 0;
+            }
+
+            result = default;
+
+            //if (_containers.TryGetValue(account, out IContainer container))
+            if (_containers.TryGetValue(session, out IContainer container))
+            {
+                result = container.Resolve<TService>();
+            }
+
+            return result != null;
         }
 
         public TService Resolve<TService, TDelegate>(TDelegate delegato, int session = int.MaxValue)

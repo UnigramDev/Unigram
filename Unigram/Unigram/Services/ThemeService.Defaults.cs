@@ -22,10 +22,12 @@ namespace Unigram.Services
                 TelegramThemeType.Tinted, new Dictionary<string, Color>
                 {
                     { "PageTitleBackgroundBrush", ColorEx.FromHex(0xFF151D26) },
+                    { "PinnedMessageForegroundBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "PageHeaderHighlightBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "PageHeaderBackgroundBrush", ColorEx.FromHex(0xFF1C2733) },
                     { "PageSubHeaderBackgroundBrush", ColorEx.FromHex(0xFF1C2733) },
                     { "PageBackgroundDarkBrush", ColorEx.FromHex(0xFF151D26) },
+                    { "PinnedMessageBorderBrush", ColorEx.FromHex(0xFF151D26) },
                     { "SystemAccentColor", ColorEx.FromHex(0xFF5288C1) },
                     { "ApplicationPageBackgroundThemeBrush", ColorEx.FromHex(0xFF1C2733) },
                     { "TelegramSeparatorMediumBrush", ColorEx.FromHex(0xFF10171E) },
@@ -34,11 +36,12 @@ namespace Unigram.Services
                     { "ChatLastMessageStateBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatFromLabelBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatUnreadBadgeBrush", ColorEx.FromHex(0xFF5288C1) },
-                    { "ChatUnreadBadgeMutedBrush", ColorEx.FromHex(0xFF7D8E98) },
+                    //{ "ChatUnreadBadgeMutedBrush", ColorEx.FromHex(0xFF7D8E98) },
                     { "ChatFailedBadgeBrush", ColorEx.FromHex(0xFFD32F2F) },
                     { "MessageBackgroundColor", ColorEx.FromHex(0xFF1C2733) },
                     { "MessageSubtleLabelColor", ColorEx.FromHex(0xFF7D8E98) },
                     { "MessageSubtleGlyphColor", ColorEx.FromHex(0xFF7D8E98) },
+                    { "MessageSubtleForegroundOutColor", ColorEx.FromHex(0xFF7DA8D3) },
                     { "MessageHeaderForegroundColor", ColorEx.FromHex(0xFF61A9E1) },
                     { "MessageHeaderBorderColor", ColorEx.FromHex(0xFF538EBD) },
                     { "MessageBackgroundOutColor", ColorEx.FromHex(0xFF456A93) },
@@ -51,13 +54,14 @@ namespace Unigram.Services
             {
                 TelegramThemeType.Night, new Dictionary<string, Color>
                 {
+                    { "PinnedMessageForegroundBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "PageHeaderHighlightBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "SystemAccentColor", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatVerifiedBadgeBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatLastMessageStateBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatFromLabelBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatUnreadBadgeBrush", ColorEx.FromHex(0xFF5288C1) },
-                    { "ChatUnreadBadgeMutedBrush", ColorEx.FromHex(0xFF7D8E98) },
+                    //{ "ChatUnreadBadgeMutedBrush", ColorEx.FromHex(0xFF7D8E98) },
                     { "ChatFailedBadgeBrush", ColorEx.FromHex(0xFFD32F2F) },
                     { "MessageBackgroundColor", ColorEx.FromHex(0xFF1C2733) },
                     { "MessageSubtleLabelColor", ColorEx.FromHex(0xFF7D8E98) },
@@ -65,6 +69,7 @@ namespace Unigram.Services
                     { "MessageHeaderForegroundColor", ColorEx.FromHex(0xFF61A9E1) },
                     { "MessageHeaderBorderColor", ColorEx.FromHex(0xFF538EBD) },
                     { "MessageBackgroundOutColor", ColorEx.FromHex(0xFF456A93) },
+                    { "MessageSubtleForegroundOutColor", ColorEx.FromHex(0xFF7DA8D3) },
                     { "MessageSubtleLabelOutColor", ColorEx.FromHex(0xFF91AFC8) },
                     { "MessageSubtleGlyphOutColor", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageHeaderForegroundOutColor", ColorEx.FromHex(0xFF86CAFF) },
@@ -74,19 +79,21 @@ namespace Unigram.Services
             {
                 TelegramThemeType.Day, new Dictionary<string, Color>
                 {
+                    { "PinnedMessageForegroundBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "PageHeaderHighlightBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "SystemAccentColor", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatVerifiedBadgeBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatLastMessageStateBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatFromLabelBrush", ColorEx.FromHex(0xFF5288C1) },
                     { "ChatUnreadBadgeBrush", ColorEx.FromHex(0xFF5288C1) },
-                    { "ChatUnreadBadgeMutedBrush", ColorEx.FromHex(0xFF7D8E98) },
+                    //{ "ChatUnreadBadgeMutedBrush", ColorEx.FromHex(0xFF7D8E98) },
                     { "ChatFailedBadgeBrush", ColorEx.FromHex(0xFFD32F2F) },
                     { "MessageSubtleLabelColor", ColorEx.FromHex(0xFF7D8E98) },
                     { "MessageSubtleGlyphColor", ColorEx.FromHex(0xFF7D8E98) },
                     { "MessageHeaderForegroundColor", ColorEx.FromHex(0xFF61A9E1) },
                     { "MessageHeaderBorderColor", ColorEx.FromHex(0xFF538EBD) },
                     { "MessageBackgroundOutColor", ColorEx.FromHex(0xFFDEF1FD) },
+                    { "MessageSubtleForegroundOutColor", ColorEx.FromHex(0xFF6DC264) },
                     { "MessageSubtleLabelOutColor", ColorEx.FromHex(0xFF91AFC8) },
                     { "MessageSubtleGlyphOutColor", ColorEx.FromHex(0xFF86CAFF) },
                     { "MessageHeaderForegroundOutColor", ColorEx.FromHex(0xFF86CAFF) },
@@ -97,7 +104,7 @@ namespace Unigram.Services
     }
 
     public partial class ThemeService
-    { 
+    {
         private readonly Dictionary<string, string[]> _mapping = new Dictionary<string, string[]>
         {
             { "SystemControlPageTextBaseMediumBrush", new[] { "SystemControlDescriptionTextForegroundBrush", "HyperlinkButtonForegroundPointerOver", "TextControlPlaceholderForeground", "TextControlPlaceholderForegroundPointerOver" } },

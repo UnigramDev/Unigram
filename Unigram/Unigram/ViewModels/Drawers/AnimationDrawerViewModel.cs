@@ -33,7 +33,7 @@ namespace Unigram.ViewModels.Drawers
             Aggregator.Subscribe(this);
         }
 
-        private static Dictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, AnimationDrawerViewModel>>();
+        private static readonly Dictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, AnimationDrawerViewModel>>();
         public static AnimationDrawerViewModel GetForCurrentView(int sessionId)
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
@@ -123,13 +123,13 @@ namespace Unigram.ViewModels.Drawers
             if (searching)
             {
                 _searchSet = collection;
-                RaisePropertyChanged(() => Items);
+                RaisePropertyChanged(nameof(Items));
             }
             else
             {
                 _searchSet = null;
-                Set(() => SelectedSet, ref _selectedSet, collection);
-                RaisePropertyChanged(() => Items);
+                Set(ref _selectedSet, collection, nameof(SelectedSet));
+                RaisePropertyChanged(nameof(Items));
             }
 
             if (collection is SearchAnimationsCollection search && search.IsEmpty())

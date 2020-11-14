@@ -8,6 +8,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
@@ -42,14 +43,14 @@ namespace Unigram.ViewModels
 
         public IProfileDelegate Delegate { get; set; }
 
-        private readonly IVoIPService _voipService;
+        private readonly IVoipService _voipService;
         private readonly INotificationsService _notificationsService;
 
         private readonly ChatSharedMediaViewModel _chatSharedMediaViewModel;
         private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
         private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoIPService voipService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _voipService = voipService;
@@ -61,18 +62,17 @@ namespace Unigram.ViewModels
             _supergroupMembersVieModel.IsEmbedded = true;
 
             SendMessageCommand = new RelayCommand(SendMessageExecute);
-            MediaCommand = new RelayCommand<int>(MediaExecute);
-            CommonChatsCommand = new RelayCommand(CommonChatsExecute);
             SystemCallCommand = new RelayCommand(SystemCallExecute);
             BlockCommand = new RelayCommand(BlockExecute);
             UnblockCommand = new RelayCommand(UnblockExecute);
             ReportCommand = new RelayCommand(ReportExecute);
-            CallCommand = new RelayCommand(CallExecute);
+            CallCommand = new RelayCommand<bool>(CallExecute);
             CopyPhoneCommand = new RelayCommand(CopyPhoneExecute);
             CopyDescriptionCommand = new RelayCommand(CopyDescriptionExecute);
             CopyUsernameCommand = new RelayCommand(CopyUsernameExecute);
             CopyUsernameLinkCommand = new RelayCommand(CopyUsernameLinkExecute);
             AddCommand = new RelayCommand(AddExecute);
+            DiscussCommand = new RelayCommand(DiscussExecute);
             EditCommand = new RelayCommand(EditExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
             ShareCommand = new RelayCommand(ShareExecute);
@@ -358,38 +358,17 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
+            {
+                var fullInfo = CacheService.GetSupergroupFull(chat);
+                if (fullInfo != null && fullInfo.LinkedChatId != 0)
+                {
+                    NavigationService.NavigateToChat(fullInfo.LinkedChatId);
+                    return;
+                }
+            }
+
             NavigationService.NavigateToChat(chat);
-        }
-
-        public RelayCommand<int> MediaCommand { get; }
-        private void MediaExecute(int selectedIndex)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id, new Dictionary<string, object> { { "selectedIndex", selectedIndex } });
-        }
-
-        public RelayCommand CommonChatsCommand { get; }
-        private void CommonChatsExecute()
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                NavigationService.Navigate(typeof(UserCommonChatsPage), privata.UserId);
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                NavigationService.Navigate(typeof(UserCommonChatsPage), secret.UserId);
-            }
         }
 
         public RelayCommand StatisticsCommand { get; }
@@ -448,14 +427,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                ProtoService.Send(new BlockUser(privata.UserId));
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                ProtoService.Send(new BlockUser(secret.UserId));
-            }
+            ToggleIsBlocked(chat, true);
         }
 
         public RelayCommand UnblockCommand { get; }
@@ -473,13 +445,18 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            ToggleIsBlocked(chat, false);
+        }
+
+        private void ToggleIsBlocked(Chat chat, bool blocked)
+        {
             if (chat.Type is ChatTypePrivate privata)
             {
-                ProtoService.Send(new UnblockUser(privata.UserId));
+                ProtoService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), blocked));
             }
             else if (chat.Type is ChatTypeSecret secret)
             {
-                ProtoService.Send(new UnblockUser(secret.UserId));
+                ProtoService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(secret.UserId), blocked));
             }
         }
 
@@ -816,8 +793,8 @@ namespace Unigram.ViewModels
 
         #region Call
 
-        public RelayCommand CallCommand { get; }
-        private async void CallExecute()
+        public RelayCommand<bool> CallCommand { get; }
+        private void CallExecute(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -825,57 +802,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var user = CacheService.GetUser(chat);
-            if (user == null)
-            {
-                return;
-            }
-
-            var full = CacheService.GetUserFull(chat);
-            if (full == null || !full.CanBeCalled)
-            {
-                return;
-            }
-
-            var call = _voipService.ActiveCall;
-            if (call != null)
-            {
-                var callUser = CacheService.GetUser(call.UserId);
-                if (callUser != null && callUser.Id != user.Id)
-                {
-                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipOngoingAlert, callUser.GetFullName(), user.GetFullName()), Strings.Resources.VoipOngoingAlertTitle, Strings.Resources.OK, Strings.Resources.Cancel);
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-
-                    }
-                }
-                else
-                {
-                    _voipService.Show();
-                }
-
-                return;
-            }
-
-            var fullInfo = CacheService.GetUserFull(user.Id);
-            if (fullInfo != null && fullInfo.HasPrivateCalls)
-            {
-                await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.VoipFailed, Strings.Resources.OK);
-                return;
-            }
-
-            var response = await ProtoService.SendAsync(new CreateCall(user.Id, new CallProtocol(true, true, 65, 74, new string[0])));
-            if (response is Error error)
-            {
-                if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
-                {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.VoipPeerOutdated, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
-                }
-                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
-                {
-                    await MessagePopup.ShowAsync(string.Format(Strings.Resources.CallNotAvailable, user.GetFullName()), Strings.Resources.AppName, Strings.Resources.OK);
-                }
-            }
+            _voipService.Start(chat.Id, video);
         }
 
         #endregion
@@ -906,13 +833,13 @@ namespace Unigram.ViewModels
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                ProtoService.Send(new AddContact(new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
+                ProtoService.Send(new AddContact(new Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id),
                     fullInfo.NeedPhoneNumberPrivacyException ? dialog.SharePhoneNumber : true));
             }
         }
 
         public RelayCommand EditCommand { get; }
-        private async void EditExecute()
+        private void EditExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -926,19 +853,28 @@ namespace Unigram.ViewModels
             }
             else if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
             {
-                var user = ProtoService.GetUser(chat);
-                if (user == null)
+                AddExecute();
+            }
+        }
+
+        public RelayCommand DiscussCommand { get; }
+        private void DiscussExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (chat.Type is ChatTypeSupergroup)
+            {
+                var fullInfo = CacheService.GetSupergroupFull(chat);
+                if (fullInfo == null)
                 {
                     return;
                 }
 
-                var dialog = new EditUserNamePopup(user.FirstName, user.LastName);
-
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    ProtoService.Send(new ImportContacts(new[] { new Telegram.Td.Api.Contact(user.PhoneNumber, dialog.FirstName, dialog.LastName, string.Empty, user.Id) }));
-                }
+                NavigationService.NavigateToChat(fullInfo.LinkedChatId);
             }
         }
 
@@ -1158,7 +1094,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), new ChatMemberNavigation(chat.Id, member.UserId));
+            NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
         }
 
         public RelayCommand<ChatMember> MemberRestrictCommand { get; }
@@ -1170,7 +1106,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), new ChatMemberNavigation(chat.Id, member.UserId));
+            NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
         }
 
         public RelayCommand<ChatMember> MemberRemoveCommand { get; }
@@ -1364,7 +1300,7 @@ namespace Unigram.ViewModels
         private SupergroupMembersFilter _filter;
         private int _offset;
 
-        private bool _group;
+        private readonly bool _group;
 
         private bool _hasMore;
 
@@ -1381,7 +1317,7 @@ namespace Unigram.ViewModels
         {
             _protoService = protoService;
             _supergroupId = supergroupId;
-            _filter = _group ? new SupergroupMembersFilterContacts() : null;
+            _filter = group ? new SupergroupMembersFilterContacts() : null;
             _hasMore = true;
             _group = group;
         }
@@ -1438,6 +1374,9 @@ namespace Unigram.ViewModels
                                 case SupergroupMembersFilterBots bots:
                                     title = Strings.Resources.ChannelBots;
                                     break;
+                                case SupergroupMembersFilterAdministrators administrators:
+                                    title = Strings.Resources.ChannelAdministrators;
+                                    break;
                                 case SupergroupMembersFilterRecent recent:
                                     title = Strings.Resources.ChannelOtherMembers;
                                     break;
@@ -1457,6 +1396,10 @@ namespace Unigram.ViewModels
                                     _offset = 0;
                                     break;
                                 case SupergroupMembersFilterBots bots:
+                                    _filter = new SupergroupMembersFilterAdministrators();
+                                    _offset = 0;
+                                    break;
+                                case SupergroupMembersFilterAdministrators administrators:
                                     _filter = new SupergroupMembersFilterRecent();
                                     _offset = 0;
                                     break;

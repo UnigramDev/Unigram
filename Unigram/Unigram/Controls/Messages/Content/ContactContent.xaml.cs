@@ -85,7 +85,7 @@ namespace Unigram.Controls.Messages.Content
 
                 var system = await Windows.ApplicationModel.Contacts.ContactManager.ConvertVCardToContactAsync(reference);
 
-                var transform = this.TransformToVisual(Window.Current.Content as UIElement);
+                var transform = TransformToVisual(Window.Current.Content as UIElement);
                 var point = transform.TransformPoint(new Point());
 
                 Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, ActualWidth, ActualHeight));

@@ -1,5 +1,6 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -28,9 +29,13 @@ namespace Unigram.Views.Settings
         private void Proxy_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
-
             var element = sender as FrameworkElement;
-            var proxy = element.DataContext as ProxyViewModel;
+
+            var proxy = List.ItemFromContainer(element) as ProxyViewModel;
+            if (proxy == null)
+            {
+                return;
+            }
 
             if (proxy.Type is ProxyTypeMtproto || proxy.Type is ProxyTypeSocks5)
             {
@@ -41,6 +46,23 @@ namespace Unigram.Views.Settings
             flyout.CreateFlyoutItem(ViewModel.RemoveCommand, proxy, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
             args.ShowAt(flyout, element);
+        }
+
+        #endregion
+
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContextRequested += Proxy_ContextRequested;
+            }
+
+            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
+            args.IsContainerPrepared = true;
         }
 
         #endregion

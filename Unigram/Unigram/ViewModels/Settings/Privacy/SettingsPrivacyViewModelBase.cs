@@ -30,7 +30,7 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (mode != NavigationMode.Back)
+            //if (mode != NavigationMode.Back)
             {
                 UpdatePrivacyAsync();
             }
@@ -238,6 +238,12 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand AlwaysCommand { get; }
         public async void AlwaysExecute()
         {
+            if (_allowedUsers == null ||
+                _allowedChatMembers == null)
+            {
+                return;
+            }
+
             var chats = new List<long>();
             var users = new List<int>();
 
@@ -256,6 +262,7 @@ namespace Unigram.ViewModels.Settings
             }
 
             var dialog = SharePopup.GetForCurrentView();
+            dialog.PrimaryButtonText = Strings.Resources.OK;
             dialog.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
@@ -303,6 +310,12 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand NeverCommand { get; }
         public async void NeverExecute()
         {
+            if (_restrictedUsers == null ||
+                _restrictedChatMembers == null)
+            {
+                return;
+            }
+
             var chats = new List<long>();
             var users = new List<int>();
 
@@ -321,6 +334,8 @@ namespace Unigram.ViewModels.Settings
             }
 
             var dialog = SharePopup.GetForCurrentView();
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
             {

@@ -2,23 +2,21 @@
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Windows.Devices.Geolocation;
 using Windows.Services.Maps;
 using Windows.System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsNightModeViewModel : TLViewModelBase
+    public class SettingsNightModeViewModel : SettingsThemesViewModel
     {
         private readonly ILocationService _locationService;
 
-        public SettingsNightModeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService)
-            : base(protoService, cacheService, settingsService, aggregator)
+        public SettingsNightModeViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IThemeService themeService, ILocationService locationService)
+            : base(protoService, cacheService, settingsService, aggregator, themeService, true)
         {
             _locationService = locationService;
 
@@ -43,37 +41,12 @@ namespace Unigram.ViewModels.Settings
             var geopoint = new Geopoint(new BasicGeoposition { Latitude = location.Latitude, Longitude = location.Longitude });
 
             Location = location;
-            UpdateTheme();
+            Settings.Appearance.UpdateNightMode();
 
             var result = await MapLocationFinder.FindLocationsAtAsync(geopoint, MapLocationDesiredAccuracy.Low);
             if (result.Status == MapLocationFinderStatus.Success)
             {
                 Town = result.Locations[0].Address.Town;
-            }
-        }
-
-        public void UpdateTheme()
-        {
-            Settings.Appearance.UpdateTimer();
-
-            var conditions = Settings.Appearance.CheckNightModeConditions();
-            var theme = conditions == null
-                ? Settings.Appearance.RequestedTheme
-                : conditions == true
-                ? ElementTheme.Dark
-                : ElementTheme.Light;
-
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
-            {
-                window.Dispatcher.Dispatch(() =>
-                {
-                    window.UpdateTitleBar();
-
-                    if (window.Content is FrameworkElement element)
-                    {
-                        element.RequestedTheme = theme;
-                    }
-                });
             }
         }
 

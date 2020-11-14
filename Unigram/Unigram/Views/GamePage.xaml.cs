@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Native;
-using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -21,19 +21,19 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var bundle = TLSerializationService.Current.Deserialize((string)e.Parameter) as TdBundle;
+            var bundle = e.Parameter as Dictionary<string, object>;
             if (bundle == null)
             {
                 return;
             }
 
-            bundle.TryGetValue("title", out string title);
-            bundle.TryGetValue("username", out string username);
+            bundle.TryGet("title", out string title);
+            bundle.TryGet("username", out string username);
 
-            bundle.TryGetValue("url", out string url);
+            bundle.TryGet("url", out string url);
 
-            bundle.TryGetValue("message", out long messageId);
-            bundle.TryGetValue("chat", out long chatId);
+            bundle.TryGet("message", out long messageId);
+            bundle.TryGet("chat", out long chatId);
 
             _shareMessage = new Message { ChatId = chatId, Id = messageId };
 

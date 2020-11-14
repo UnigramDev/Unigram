@@ -58,6 +58,7 @@ namespace Unigram.Converters
         public const string Help2 = "\uE9CE";
 
         public const string Reply = "\uE248";
+        public const string Thread = "\uE93D";
         public const string Edit = "\uE104";
         public const string Timer = "\uE916";
         public const string Report = "\uE730";
@@ -107,8 +108,13 @@ namespace Unigram.Converters
         public const string Search = "\uE721";
         public const string Settings = "\uE713";
 
+        public const string Call = "\uE13A";
+        public const string VideoCall = "\uE714";
+
         public const string Camera = "\uE722";
         public const string Photo = "\uEB9F";
+        public const string Music = "\uE7F6";
+        public const string Microphone = "\uE720";
 
         public const string Statistics = "\uE9D9";
 

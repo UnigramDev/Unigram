@@ -2,8 +2,8 @@
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Services.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.System.Profile;
 using Windows.UI.Core;
@@ -21,10 +21,7 @@ namespace Unigram.Views.Host
 
         public StandalonePage(INavigationService navigationService)
         {
-            if (SettingsService.Current.Appearance.RequestedTheme != ElementTheme.Default)
-            {
-                RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
-            }
+            RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
 
             InitializeComponent();
 
@@ -119,9 +116,9 @@ namespace Unigram.Views.Host
 
         private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            var commands = _shortcutsService.Process(args);
+            var invoked = _shortcutsService.Process(args);
 
-            foreach (var command in commands)
+            foreach (var command in invoked.Commands)
             {
                 ProcessAppCommands(command, args);
             }

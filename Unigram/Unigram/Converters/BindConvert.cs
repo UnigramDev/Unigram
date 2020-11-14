@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Native;
@@ -20,7 +19,9 @@ namespace Unigram.Converters
             get
             {
                 if (_current == null)
+                {
                     _current = new BindConvert();
+                }
 
                 return _current;
             }
@@ -36,6 +37,8 @@ namespace Unigram.Converters
         public DateTimeFormatter MonthFullYear { get; private set; }
         public DateTimeFormatter DayMonthFull { get; private set; }
         public DateTimeFormatter DayMonthFullYear { get; private set; }
+        public DateTimeFormatter MonthAbbreviatedYear { get; private set; }
+        public DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
 
         private BindConvert()
         {
@@ -54,6 +57,8 @@ namespace Unigram.Converters
             MonthFullYear = new DateTimeFormatter("month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             DayMonthFull = new DateTimeFormatter("day month.full", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
             DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            MonthAbbreviatedYear = new DateTimeFormatter("month.abbreviated year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            DayMonthAbbreviatedYear = new DateTimeFormatter("day month.abbreviated year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
         }
 
         public static string MonthGrouping(DateTime date)
@@ -78,35 +83,15 @@ namespace Unigram.Converters
             {
                 return Current.DayMonthFullYear.Format(date);
             }
+            else if (date.Date == now.Date)
+            {
+                return Strings.Resources.MessageScheduleToday;
+            }
 
             return Current.DayMonthFull.Format(date);
         }
 
-        public static string Grams(long value, bool gem)
-        {
-            var sign = value < 0 ? "-" : string.Empty;
-            var builder = new StringBuilder(string.Format("{0}{1}.{2:000000000}", sign, Math.Abs(value / 1000000000L), Math.Abs(value % 1000000000)));
-            while (builder.Length > 1 && builder[builder.Length - 1] == '0' && builder[builder.Length - 2] != '.')
-            {
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            if (gem)
-            {
-                var culture = NativeUtils.GetCurrentCulture();
-                var info = new CultureInfo(culture);
-                if (info.NumberFormat.CurrencyPositivePattern == 0 || info.NumberFormat.CurrencyPositivePattern == 2)
-                {
-                    return string.Format("\uD83D\uDC8E {0}", builder);
-                }
-
-                return string.Format("{0} \uD83D\uDC8E", builder);
-            }
-
-            return builder.ToString();
-        }
-
-        public static string Distance(float distance)
+        public static string Distance(float distance, bool away = true)
         {
             var useImperialSystemType = false;
 
@@ -130,7 +115,7 @@ namespace Unigram.Converters
                 distance *= 3.28084f;
                 if (distance < 1000)
                 {
-                    return string.Format(Strings.Resources.FootsAway, string.Format("{0}", (int)Math.Max(1, distance)));
+                    return string.Format(away ? Strings.Resources.FootsAway : Strings.Resources.FootsShort, string.Format("{0}", (int)Math.Max(1, distance)));
                 }
                 else
                 {
@@ -143,14 +128,15 @@ namespace Unigram.Converters
                     {
                         arg = string.Format("{0:0.00}", distance / 5280.0f);
                     }
-                    return string.Format(Strings.Resources.MilesAway, arg);
+
+                    return string.Format(away ? Strings.Resources.MilesAway : Strings.Resources.MilesShort, arg);
                 }
             }
             else
             {
                 if (distance < 1000)
                 {
-                    return string.Format(Strings.Resources.MetersAway2, string.Format("{0}", (int)Math.Max(1, distance)));
+                    return string.Format(away ? Strings.Resources.MetersAway2 : Strings.Resources.MetersShort, string.Format("{0}", (int)Math.Max(1, distance)));
                 }
                 else
                 {
@@ -163,7 +149,8 @@ namespace Unigram.Converters
                     {
                         arg = string.Format("{0:0.00}", distance / 1000.0f);
                     }
-                    return string.Format(Strings.Resources.KMetersAway2, arg);
+
+                    return string.Format(away ? Strings.Resources.KMetersAway2 : Strings.Resources.KMetersShort, arg);
                 }
             }
         }
@@ -239,7 +226,7 @@ namespace Unigram.Converters
         //}
 
 
-        private Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
+        private readonly Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
 
         public string FormatAmount(long amount, string currency)
         {
@@ -296,6 +283,12 @@ namespace Unigram.Converters
         public DateTime DateTime(int value)
         {
             return Utils.UnixTimestampToDateTime(value);
+        }
+
+        public static string DateAt(int value)
+        {
+            var date = Current.DateTime(value);
+            return string.Format(Strings.Resources.formatDateAtTime, Current.ShortDate.Format(date), Current.ShortTime.Format(date));
         }
 
         public static string ShortNumber(int number)

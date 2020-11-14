@@ -15,6 +15,7 @@ namespace Unigram.ViewModels.Delegates
         void ReplyToMessage(MessageViewModel message);
 
         void OpenReply(MessageViewModel message);
+        void OpenThread(MessageViewModel message);
 
         void OpenFile(File file);
         void OpenWebPage(WebPage webPage);
@@ -25,13 +26,13 @@ namespace Unigram.ViewModels.Delegates
         void OpenMedia(MessageViewModel message, FrameworkElement target);
         void PlayMessage(MessageViewModel message);
 
-        void Call(MessageViewModel message);
+        void Call(MessageViewModel message, bool video);
 
         void VotePoll(MessageViewModel message, IList<PollOption> option);
 
         void OpenUsername(string username);
         void OpenUser(int userId);
-        void OpenChat(long chatId);
+        void OpenChat(long chatId, bool profile = false);
         void OpenChat(long chatId, long messageId);
         void OpenViaBot(int viaBotUserId);
 
@@ -43,5 +44,6 @@ namespace Unigram.ViewModels.Delegates
 
         bool IsAdmin(int userId);
         string GetAdminTitle(int userId);
+        string GetAdminTitle(MessageSender sender);
     }
 }

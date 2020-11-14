@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -22,11 +21,11 @@ namespace Unigram.Views.Popups
 
             _applicationView = ApplicationView.GetForCurrentView();
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
+
             OnVisibleBoundsChanged(_applicationView, null);
         }
 
         public Action<int> DownloadFile { get; set; }
-        public Func<int, Task<BaseObject>> GetEmojisAsync { get; set; }
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
@@ -69,11 +68,11 @@ namespace Unigram.Views.Popups
             Padding = new Thickness();
         }
 
-        public async void SetSticker(Sticker sticker)
+        public void SetSticker(Sticker sticker)
         {
             _lastItem = sticker;
 
-            Title.Text = string.Empty;
+            Title.Text = sticker.Emoji;
             Aspect.MaxWidth = 200;
             Aspect.MaxHeight = 200;
             Aspect.Constraint = sticker;
@@ -84,12 +83,6 @@ namespace Unigram.Views.Popups
             }
 
             UpdateFile(sticker, sticker.StickerValue, true);
-
-            var response = await GetEmojisAsync(sticker.StickerValue.Id);
-            if (response is Emojis emojis)
-            {
-                Title.Text = string.Join(" ", emojis.EmojisValue);
-            }
         }
 
         public void SetAnimation(Animation animation)

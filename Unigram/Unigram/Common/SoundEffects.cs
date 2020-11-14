@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading.Tasks;
+using Telegram.Td.Api;
 using Windows.Media.Audio;
 using Windows.Media.Render;
 using Windows.Storage;
@@ -7,40 +11,104 @@ namespace Unigram.Common
 {
     public static class SoundEffects
     {
+        public static void Stop()
+        {
+            foreach (var reference in _prevGraph.Values.ToArray())
+            {
+                if (reference.TryGetTarget(out AudioGraph target))
+                {
+                    reference.SetTarget(null);
+                    target.Stop();
+                }
+            }
+
+            _prevGraph.Clear();
+        }
+
         public static async void Play(SoundEffect effect)
         {
-            var settings = new AudioGraphSettings(AudioRenderCategory.SoundEffects);
-            settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
-
-            var result = await AudioGraph.CreateAsync(settings);
-            if (result.Status != AudioGraphCreationStatus.Success)
+            switch (effect)
             {
-                return;
+                case SoundEffect.Sent:
+                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3")));
+                    break;
+                case SoundEffect.VoipRingback:
+                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_ringback.mp3")), null, 0);
+                    break;
+                case SoundEffect.VoipConnecting:
+                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3")), tag: 0);
+                    break;
+                case SoundEffect.VoipBusy:
+                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_busy.mp3")), 5, 0);
+                    break;
             }
+        }
 
-            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3"));
-
-            var fileInputNodeResult = await result.Graph.CreateFileInputNodeAsync(file);
-            if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+        public static async void Play(File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
             {
-                return;
+                await Play(await StorageFile.GetFileFromPathAsync(file.Local.Path), tag: 1);
             }
+        }
 
-            var deviceOutputNodeResult = await result.Graph.CreateDeviceOutputNodeAsync();
-            if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
+        private static readonly ConcurrentDictionary<int, WeakReference<AudioGraph>> _prevGraph = new ConcurrentDictionary<int, WeakReference<AudioGraph>>();
+
+        private static async Task Play(StorageFile file, int? loopCount = 0, int? tag = null)
+        {
+            try
             {
-                return;
+                await Task.Yield();
+
+                // This seems to fail in some conditions.
+                var settings = new AudioGraphSettings(AudioRenderCategory.SoundEffects);
+                settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.SystemDefault;
+
+                var result = await AudioGraph.CreateAsync(settings);
+                if (result.Status != AudioGraphCreationStatus.Success)
+                {
+                    return;
+                }
+
+                var fileInputNodeResult = await result.Graph.CreateFileInputNodeAsync(file);
+                if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+                {
+                    return;
+                }
+
+                fileInputNodeResult.FileInputNode.LoopCount = loopCount;
+
+                var deviceOutputNodeResult = await result.Graph.CreateDeviceOutputNodeAsync();
+                if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
+                {
+                    return;
+                }
+
+                fileInputNodeResult.FileInputNode
+                    .AddOutgoingConnection(deviceOutputNodeResult.DeviceOutputNode);
+
+                if (tag != null)
+                {
+                    if (_prevGraph.TryGetValue(tag.Value, out WeakReference<AudioGraph> reference) && reference.TryGetTarget(out AudioGraph target))
+                    {
+                        reference.SetTarget(null);
+                        target.Stop();
+                    }
+
+                    _prevGraph[tag.Value] = new WeakReference<AudioGraph>(result.Graph);
+                }
+
+                result.Graph.Start();
             }
-
-            fileInputNodeResult.FileInputNode
-                .AddOutgoingConnection(deviceOutputNodeResult.DeviceOutputNode);
-
-            result.Graph.Start();
+            catch { }
         }
     }
 
     public enum SoundEffect
     {
-        Sent
+        Sent,
+        VoipRingback,
+        VoipBusy,
+        VoipConnecting,
     }
 }

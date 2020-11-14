@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -6,13 +7,15 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Entities;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
 using Unigram.Views.Settings;
-using Windows.Storage;
+using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using static Unigram.Services.GenerationService;
 
 namespace Unigram.ViewModels
 {
@@ -22,21 +25,17 @@ namespace Unigram.ViewModels
          IHandle<UpdateUserFullInfo>,
          IHandle<UpdateFile>
     {
-        private readonly INotificationsService _pushService;
-        private readonly IContactsService _contactsService;
         private readonly ISettingsSearchService _searchService;
 
         public ISettingsDelegate Delegate { get; set; }
 
-        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, ISettingsSearchService searchService)
+        public SettingsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ISettingsSearchService searchService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            _pushService = pushService;
-            _contactsService = contactsService;
             _searchService = searchService;
 
             AskCommand = new RelayCommand(AskExecute);
-            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
             NavigateCommand = new RelayCommand<SettingsSearchEntry>(NavigateExecute);
 
             Results = new MvxObservableCollection<SettingsSearchEntry>();
@@ -64,10 +63,14 @@ namespace Unigram.ViewModels
                 if (chat.Type is ChatTypePrivate privata)
                 {
                     var item = ProtoService.GetUser(privata.UserId);
-                    var cache = ProtoService.GetUserFull(privata.UserId);
+                    if (item == null)
+                    {
+                        return;
+                    }
 
                     Delegate?.UpdateUser(chat, item, false);
 
+                    var cache = ProtoService.GetUserFull(privata.UserId);
                     if (cache == null)
                     {
                         ProtoService.Send(new GetUserFullInfo(privata.UserId));
@@ -134,11 +137,45 @@ namespace Unigram.ViewModels
 
 
 
-        public RelayCommand<StorageFile> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageFile file)
+        public RelayCommand<StorageMedia> EditPhotoCommand { get; }
+        private async void EditPhotoExecute(StorageMedia media)
         {
-            var props = await file.GetBasicPropertiesAsync();
-            var response = await ProtoService.SendAsync(new SetProfilePhoto(await file.ToGeneratedAsync()));
+            if (media is StorageVideo)
+            {
+                var props = await media.File.Properties.GetVideoPropertiesAsync();
+
+                var duration = media.EditState.TrimStopTime - media.EditState.TrimStartTime;
+                var seconds = duration.TotalSeconds;
+
+                var conversion = new VideoConversion();
+                conversion.Mute = true;
+                conversion.TrimStartTime = media.EditState.TrimStartTime;
+                conversion.TrimStopTime = media.EditState.TrimStartTime + TimeSpan.FromSeconds(Math.Min(seconds, 9.9));
+                conversion.Transcode = true;
+                conversion.Transform = true;
+                //conversion.Rotation = file.EditState.Rotation;
+                conversion.OutputSize = new Size(640, 640);
+                //conversion.Mirror = transform.Mirror;
+                conversion.CropRectangle = new Rect(
+                    media.EditState.Rectangle.X * props.Width,
+                    media.EditState.Rectangle.Y * props.Height,
+                    media.EditState.Rectangle.Width * props.Width,
+                    media.EditState.Rectangle.Height * props.Height);
+
+                var rectangle = conversion.CropRectangle;
+                rectangle.Width = Math.Min(conversion.CropRectangle.Width, conversion.CropRectangle.Height);
+                rectangle.Height = rectangle.Width;
+
+                conversion.CropRectangle = rectangle;
+
+                var generated = await media.File.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
+                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoAnimation(generated, 0)));
+            }
+            else
+            {
+                var generated = await media.File.ToGeneratedAsync(ConversionType.Compress, JsonConvert.SerializeObject(media.EditState));
+                var response = await ProtoService.SendAsync(new SetProfilePhoto(new InputChatPhotoStatic(generated)));
+            }
         }
 
         public RelayCommand AskCommand { get; }

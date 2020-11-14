@@ -34,7 +34,7 @@ namespace Unigram.ViewModels.Settings
                         break;
                 }
 
-                RaisePropertyChanged(() => Items);
+                RaisePropertyChanged(nameof(Items));
             }
 
             return Task.CompletedTask;

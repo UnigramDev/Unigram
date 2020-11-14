@@ -88,6 +88,7 @@
                 VerticalScrollBarVisibility="Auto"
                 VerticalScrollMode="Auto">
                 <muxc:ItemsRepeater
+                    Layout="{StaticResource ThreadStackLayout}"
                     ItemsSource="{x:Bind ViewModel.Items}">
                     <muxc:ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="services:ShortcutList">

@@ -1,10 +1,12 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Numerics;
 using Unigram.Charts.Data;
 using Unigram.Charts.DataView;
 using Windows.Foundation;
+using Windows.UI;
 
 namespace Unigram.Charts
 {
@@ -24,8 +26,7 @@ namespace Unigram.Charts
 
         float MIN_TEXT_SIZE = 9;
         float MAX_TEXT_SIZE = 13;
-
-        String[] lookupTable = new String[101];
+        readonly String[] lookupTable = new String[101];
 
         //PieLegendView pieLegendView;
 
@@ -46,20 +47,22 @@ namespace Unigram.Charts
         }
 
 
-        protected override void drawChart(CanvasDrawingSession canvas)
+        protected override void DrawChart(CanvasDrawingSession canvas)
         {
-            if (chartData == null) return;
+            if (chartData == null)
+            {
+                return;
+            }
 
             int transitionAlpha = 255;
 
-            //canvas.save();
+            if (canvas != null)
+            {
+                //canvas.save();
+            }
             if (transitionMode == TRANSITION_MODE_CHILD)
             {
                 transitionAlpha = (int)(transitionParams.progress * transitionParams.progress * 255);
-                canvas.Transform = Matrix3x2.CreateScale(
-                    new Vector2(transitionParams.progress, transitionParams.progress),
-                    new Vector2(chartArea.centerX(), chartArea.centerY())
-                );
             }
 
             if (isEmpty)
@@ -71,7 +74,7 @@ namespace Unigram.Charts
                     {
                         emptyDataAlpha = 0;
                     }
-                    invalidate();
+                    Invalidate();
                 }
             }
             else
@@ -83,19 +86,22 @@ namespace Unigram.Charts
                     {
                         emptyDataAlpha = 1f;
                     }
-                    invalidate();
+                    Invalidate();
                 }
             }
 
             transitionAlpha = (int)(transitionAlpha * emptyDataAlpha);
             float sc = 0.4f + emptyDataAlpha * 0.6f;
-            canvas.Transform = Matrix3x2.CreateScale(
-                new Vector2(sc, sc),
-                new Vector2(chartArea.centerX(), chartArea.centerY())
-            );
+            if (canvas != null)
+            {
+                canvas.Transform = Matrix3x2.CreateScale(
+                    new Vector2(sc, sc),
+                    new Vector2(chartArea.centerX(), chartArea.centerY())
+                );
+            }
 
             int radius = (int)((chartArea.Width > chartArea.Height ? chartArea.Height : chartArea.Width) * 0.45f);
-            rectF = createRect(
+            rectF = CreateRect(
                 chartArea.centerX() - radius,
                 chartArea.centerY() + 16 - radius,
                 chartArea.centerX() + radius,
@@ -103,7 +109,7 @@ namespace Unigram.Charts
             );
 
 
-            float a = -90f;
+            float a = 0f;
             float rText;
 
             int n = lines.Count;
@@ -116,12 +122,19 @@ namespace Unigram.Charts
             }
             if (localSum == 0)
             {
-                //canvas.restore();
+                if (canvas != null)
+                {
+                    //canvas.restore();
+                }
                 return;
             }
             for (int i = 0; i < n; i++)
             {
-                if (lines[i].alpha <= 0 && !lines[i].enabled) continue;
+                if (lines[i].alpha <= 0 && !lines[i].enabled)
+                {
+                    continue;
+                }
+
                 lines[i].paint.A = (byte)transitionAlpha;
 
                 float currentPercent = lines[i].drawingPart / localSum * lines[i].alpha;
@@ -132,104 +145,133 @@ namespace Unigram.Charts
                     continue;
                 }
 
-                //canvas.save();
+                if (canvas != null)
+                {
+                    //canvas.save();
+                }
 
-                double textAngle = a + (currentPercent / 2f) * 360f;
+                float textAngle = -90 + a + (currentPercent / 2f) * 360f;
 
                 if (lines[i].selectionA > 0f)
                 {
                     float ai = INTERPOLATOR.getInterpolation(lines[i].selectionA);
-                    canvas.Transform = Matrix3x2.CreateTranslation(
-                        (float)(Math.Cos(MathEx.ToRadians(textAngle)) * 8 * ai),
-                        (float)(Math.Sin(MathEx.ToRadians(textAngle)) * 8 * ai)
-                    );
+                    if (canvas != null)
+                    {
+                        canvas.Transform = Matrix3x2.CreateTranslation(
+                            MathF.Cos(MathFEx.ToRadians(textAngle)) * 8 * ai,
+                            MathF.Sin(MathFEx.ToRadians(textAngle)) * 8 * ai
+                        );
+                    }
                 }
 
                 //lines[i].paint.setStyle(Paint.Style.FILL_AND_STROKE);
                 lines[i].paint.StrokeWidth = 1;
                 //lines[i].paint.setAntiAlias(!USE_LINES);
 
-                //canvas.drawArc(
-                //        rectF,
-                //        a,
-                //        (currentPercent) * 360f,
-                //        true,
-                //        lines[i].paint);
+                if (canvas != null && transitionMode != TRANSITION_MODE_CHILD)
+                {
+                    //canvas.drawArc(
+                    //        rectF,
+                    //        a,
+                    //        (currentPercent) * 360f,
+                    //        true,
+                    //        lines[i].paint);
 
-                var b = a + (currentPercent) * 360f;
+                    var b = a + (currentPercent) * 360f;
 
-                var builder = new CanvasPathBuilder(canvas);
-                var center = new Vector2((float)rectF.X + (float)rectF.Width / 2, (float)rectF.Y + (float)rectF.Height / 2);
-                builder.BeginFigure(center);
-                builder.AddLine(
-                    new Vector2(
-                        (float)(center.X + Math.Sin(a * Math.PI / 180) * (float)rectF.Width / 2),
-                        (float)(center.Y - Math.Cos(a * Math.PI / 180) * (float)rectF.Height / 2)));
+                    var builder = new CanvasPathBuilder(canvas);
+                    var center = new Vector2((float)rectF.X + (float)rectF.Width / 2, (float)rectF.Y + (float)rectF.Height / 2);
+                    builder.BeginFigure(center);
+                    builder.AddLine(
+                        new Vector2(
+                            (float)(center.X + Math.Sin(a * Math.PI / 180) * (float)rectF.Width / 2),
+                            (float)(center.Y - Math.Cos(a * Math.PI / 180) * (float)rectF.Height / 2)));
 
-                builder.AddArc(
-                    new Vector2(
-                        (float)(center.X + Math.Sin(b * Math.PI / 180) * (float)rectF.Width / 2),
-                        (float)(center.Y - Math.Cos(b * Math.PI / 180) * (float)rectF.Height / 2)),
-                    (float)rectF.Width / 2,
-                    (float)rectF.Height / 2,
-                    0, CanvasSweepDirection.Clockwise,
-                    (b - a) >= 180.0 ? CanvasArcSize.Large : CanvasArcSize.Small);
+                    builder.AddArc(
+                        new Vector2(
+                            (float)(center.X + Math.Sin(b * Math.PI / 180) * (float)rectF.Width / 2),
+                            (float)(center.Y - Math.Cos(b * Math.PI / 180) * (float)rectF.Height / 2)),
+                        (float)rectF.Width / 2,
+                        (float)rectF.Height / 2,
+                        0, CanvasSweepDirection.Clockwise,
+                        (b - a) >= 180.0 ? CanvasArcSize.Large : CanvasArcSize.Small);
 
-                builder.EndFigure(CanvasFigureLoop.Closed);
-                canvas.FillGeometry(CanvasGeometry.CreatePath(builder), lines[i].paint.Color);
+                    builder.EndFigure(CanvasFigureLoop.Closed);
+                    canvas.FillGeometry(CanvasGeometry.CreatePath(builder), lines[i].paint.Color);
 
-                //lines[i].paint.setStyle(Paint.Style.STROKE);
+                    //lines[i].paint.setStyle(Paint.Style.STROKE);
 
-                //canvas.restore();
-                canvas.Transform = Matrix3x2.Identity;
+                    //canvas.restore();
+                    canvas.Transform = Matrix3x2.Identity;
+                }
 
                 lines[i].paint.A = 255;
                 a += currentPercent * 360f;
             }
-            a = -90f;
 
-            for (int i = 0; i < n; i++)
+            a = 0f;
+
+            if (canvas != null)
             {
-                if (lines[i].alpha <= 0 && !lines[i].enabled) continue;
-                float currentPercent = (lines[i].drawingPart * lines[i].alpha / localSum);
-                //canvas.save();
+                var textFormat = new CanvasTextFormat();
+                var textLayout = new CanvasTextLayout(canvas, "100%", textFormat, float.PositiveInfinity, float.PositiveInfinity);
 
-                double textAngle = a + (currentPercent / 2f) * 360f;
-
-                if (lines[i].selectionA > 0f)
+                for (int i = 0; i < n; i++)
                 {
-                    float ai = INTERPOLATOR.getInterpolation(lines[i].selectionA);
-                    canvas.Transform = Matrix3x2.CreateTranslation(
-                        (float)(Math.Cos(MathEx.ToRadians(textAngle)) * 8 * ai),
-                        (float)(Math.Sin(MathEx.ToRadians(textAngle)) * 8 * ai)
-                    );
-                }
+                    if (lines[i].alpha <= 0 && !lines[i].enabled)
+                    {
+                        continue;
+                    }
 
-                int percent = (int)(100f * currentPercent);
-                if (currentPercent >= 0.02f && percent > 0 && percent <= 100)
-                {
-                    rText = (float)(rectF.Width * 0.42f * Math.Sqrt(1f - currentPercent));
-                    //textPaint.setTextSize(MIN_TEXT_SIZE + currentPercent * MAX_TEXT_SIZE);
-                    //textPaint.setAlpha((int)(transitionAlpha * lines[i].alpha));
-                    //canvas.DrawText(
-                    //        lookupTable[percent],
-                    //        (float)(rectF.centerX() + rText * Math.Cos(MathEx.ToRadians(textAngle))),
-                    //        (float)(rectF.centerY() + rText * Math.Sin(MathEx.ToRadians(textAngle))) - ((textPaint.descent() + textPaint.ascent()) / 2),
-                    //        textPaint);
+                    float currentPercent = (lines[i].drawingPart * lines[i].alpha / localSum);
+
+                    //canvas.save();
+                    float textAngle = -90 + a + (currentPercent / 2f) * 360f;
+
+                    if (lines[i].selectionA > 0f)
+                    {
+                        float ai = INTERPOLATOR.getInterpolation(lines[i].selectionA);
+                        canvas.Transform = Matrix3x2.CreateTranslation(
+                            MathF.Cos(MathFEx.ToRadians(textAngle)) * 8 * ai,
+                            MathF.Sin(MathFEx.ToRadians(textAngle)) * 8 * ai
+                        );
+                    }
+
+                    int percent = (int)(100f * currentPercent);
+                    if (currentPercent >= 0.02f && percent > 0 && percent <= 100)
+                    {
+                        rText = (float)(rectF.Width * 0.42f * Math.Sqrt(1f - currentPercent));
+                        //textPaint.setTextSize(MIN_TEXT_SIZE + currentPercent * MAX_TEXT_SIZE);
+                        //textPaint.setAlpha((int)(transitionAlpha * lines[i].alpha));
+                        //canvas.drawText(
+                        //        lookupTable[percent],
+                        //        (float)(rectF.centerX() + rText * Math.Cos(MathEx.ToRadians(textAngle))),
+                        //        (float)(rectF.centerY() + rText * Math.Sin(MathEx.ToRadians(textAngle))) - ((textPaint.descent() + textPaint.ascent()) / 2),
+                        //        textPaint);
+
+                        var regions = textLayout.GetCharacterRegions(0, lookupTable[percent].Length);
+
+                        canvas.DrawText(
+                            lookupTable[percent],
+                            rectF.centerX() + rText * MathF.Cos(MathFEx.ToRadians(textAngle)) - (float)regions[0].LayoutBounds.Width / 2,
+                            rectF.centerY() + rText * MathF.Sin(MathFEx.ToRadians(textAngle)) - (float)regions[0].LayoutBounds.Height / 2 /*- ((textPaint.descent() + textPaint.ascent()) / 2)*/,
+                            Color.FromArgb((byte)(transitionAlpha * lines[i].alpha), 255, 255, 255)
+                        );
+                    }
+
+                    //canvas.restore();
+                    canvas.Transform = Matrix3x2.Identity;
+
+                    lines[i].paint.A = 255;
+                    a += currentPercent * 360f;
                 }
 
                 //canvas.restore();
                 canvas.Transform = Matrix3x2.Identity;
-
-                lines[i].paint.A = 255;
-                a += currentPercent * 360f;
             }
-
-            //canvas.restore();
-            canvas.Transform = Matrix3x2.Identity;
         }
 
-        protected override void drawPickerChart(CanvasDrawingSession canvas)
+        protected override void DrawPickerChart(CanvasDrawingSession canvas)
         {
             if (chartData != null)
             {
@@ -254,7 +296,11 @@ namespace Unigram.Charts
                     for (int k = 0; k < nl; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
+
                         float v = line.line.y[i] * line.alpha;
                         sum += v;
                         if (v > 0)
@@ -270,7 +316,10 @@ namespace Unigram.Charts
                     for (int k = 0; k < nl; k++)
                     {
                         LineViewData line = lines[k];
-                        if (!line.enabled && line.alpha == 0) continue;
+                        if (!line.enabled && line.alpha == 0)
+                        {
+                            continue;
+                        }
 
                         int[] y = line.line.y;
 
@@ -302,14 +351,14 @@ namespace Unigram.Charts
                             }
                         }
 
-                        float yPoint = (yPercentage) * (pikerHeight);
+                        float yPoint = (yPercentage) * (pickerHeight);
 
 
                         line.linesPath[line.linesPathBottomSize++] = xPoint;
-                        line.linesPath[line.linesPathBottomSize++] = pikerHeight - yPoint - stackOffset;
+                        line.linesPath[line.linesPathBottomSize++] = pickerHeight - yPoint - stackOffset;
 
                         line.linesPath[line.linesPathBottomSize++] = xPoint;
-                        line.linesPath[line.linesPathBottomSize++] = pikerHeight - stackOffset;
+                        line.linesPath[line.linesPathBottomSize++] = pickerHeight - stackOffset;
 
                         stackOffset += yPoint;
                     }
@@ -326,56 +375,64 @@ namespace Unigram.Charts
             }
         }
 
-        protected override void drawBottomLine(CanvasDrawingSession canvas)
+        protected override void DrawBottomLine(CanvasDrawingSession canvas)
         {
 
         }
 
-        protected override void drawSelection(CanvasDrawingSession canvas)
+        protected override void DrawSelection(CanvasDrawingSession canvas)
         {
 
         }
 
-        protected override void drawHorizontalLines(CanvasDrawingSession canvas, ChartHorizontalLinesData a)
+        protected override void DrawHorizontalLines(CanvasDrawingSession canvas, ChartHorizontalLinesData a)
         {
 
         }
 
-        protected override void drawSignaturesToHorizontalLines(CanvasDrawingSession canvas, ChartHorizontalLinesData a)
+        protected override void DrawSignaturesToHorizontalLines(CanvasDrawingSession canvas, ChartHorizontalLinesData a)
         {
 
         }
 
-        protected override void drawBottomSignature(CanvasDrawingSession canvas)
+        protected override void DrawBottomSignature(CanvasDrawingSession canvas)
         {
 
         }
 
-        public override void setData(StackLinearChartData chartData)
+        public override void SetData(StackLinearChartData chartData)
         {
-            base.setData(chartData);
+            base.SetData(chartData);
 
             if (chartData != null)
             {
                 values = new float[chartData.lines.Count];
                 darawingValuesPercentage = new float[chartData.lines.Count];
-                onPickerDataChanged(false, true, false);
+                OnPickerDataChanged(false, true, false);
             }
         }
 
-        public override PieChartViewData createLineViewData(ChartData.Line line)
+        public override PieChartViewData CreateLineViewData(ChartData.Line line)
         {
             return new PieChartViewData(line);
         }
 
 
-        protected override void selectXOnChart(int x, int y)
+        protected override void SelectXOnChart(int x, int y)
         {
-            if (chartData == null || isEmpty) return;
+            if (chartData == null || isEmpty)
+            {
+                return;
+            }
+
             double theta = Math.Atan2(chartArea.centerY() + 16 - y, chartArea.centerX() - x);
 
             float a = (float)(MathEx.ToDegrees(theta) - 90);
-            if (a < 0) a += 360f;
+            if (a < 0)
+            {
+                a += 360f;
+            }
+
             a /= 360;
 
             float p = 0;
@@ -401,7 +458,7 @@ namespace Unigram.Charts
             if (currentSelection != newSelection && newSelection >= 0)
             {
                 currentSelection = newSelection;
-                invalidate();
+                Invalidate();
                 //pieLegendView.setVisibility(Visibility.Visible);
                 LineViewData l = lines[newSelection];
 
@@ -413,7 +470,10 @@ namespace Unigram.Charts
                     rectF.centerX() + r * Math.Cos(MathEx.ToRadians(((selectionStartA * 360f) - 90f)))
                 );
 
-                if (xl < 0) xl = 0;
+                if (xl < 0)
+                {
+                    xl = 0;
+                }
 
                 int yl = (int)Math.Min(
                     (rectF.centerY() + r * Math.Sin(MathEx.ToRadians((selectionStartA * 360f) - 90f))),
@@ -439,10 +499,10 @@ namespace Unigram.Charts
                 //}
 
             }
-            moveLegend();
+            MoveLegend();
         }
 
-        protected override void onDraw(CanvasDrawingSession canvas)
+        protected override void OnDraw(CanvasDrawingSession canvas)
         {
             if (chartData != null)
             {
@@ -453,8 +513,12 @@ namespace Unigram.Charts
                         if (lines[i].selectionA < 1f)
                         {
                             lines[i].selectionA += 0.1f;
-                            if (lines[i].selectionA > 1f) lines[i].selectionA = 1f;
-                            invalidate();
+                            if (lines[i].selectionA > 1f)
+                            {
+                                lines[i].selectionA = 1f;
+                            }
+
+                            Invalidate();
                         }
                     }
                     else
@@ -462,37 +526,41 @@ namespace Unigram.Charts
                         if (lines[i].selectionA > 0)
                         {
                             lines[i].selectionA -= 0.1f;
-                            if (lines[i].selectionA < 0) lines[i].selectionA = 0;
-                            invalidate();
+                            if (lines[i].selectionA < 0)
+                            {
+                                lines[i].selectionA = 0;
+                            }
+
+                            Invalidate();
                         }
                     }
                 }
             }
-            base.onDraw(canvas);
+            base.OnDraw(canvas);
         }
 
-        protected override void onActionUp()
+        protected override void OnActionUp()
         {
             currentSelection = -1;
             //pieLegendView.setVisibility(Visibility.Collapsed);
-            invalidate();
+            Invalidate();
         }
 
         int oldW = 0;
 
-        protected override void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+        protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
         {
-            base.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            if (getMeasuredWidth() != oldW)
+            base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
+            if (MeasuredWidth != oldW)
             {
-                oldW = getMeasuredWidth();
+                oldW = MeasuredWidth;
                 int r = (int)((chartArea.Width > chartArea.Height ? chartArea.Height : chartArea.Width) * 0.45f);
                 MIN_TEXT_SIZE = r / 13;
                 MAX_TEXT_SIZE = r / 7;
             }
         }
 
-        public override void updatePicker(ChartData chartData, long d)
+        public override void UpdatePicker(ChartData chartData, long d)
         {
             int n = chartData.x.Length;
             long startOfDay = d - d % 86400000L;
@@ -500,7 +568,10 @@ namespace Unigram.Charts
 
             for (int i = 0; i < n; i++)
             {
-                if (startOfDay >= chartData.x[i]) startIndex = i;
+                if (startOfDay >= chartData.x[i])
+                {
+                    startIndex = i;
+                }
             }
 
             float p;
@@ -534,7 +605,7 @@ namespace Unigram.Charts
                 pickerDelegate.pickerEnd = 1f;
             }
 
-            onPickerDataChanged(true, true, false);
+            OnPickerDataChanged(true, true, false);
         }
 
         //protected override LegendSignatureView createLegendView()
@@ -545,9 +616,9 @@ namespace Unigram.Charts
         int lastStartIndex = -1;
         int lastEndIndex = -1;
 
-        public override void onPickerDataChanged(bool animated, bool force, bool useAnimator)
+        public override void OnPickerDataChanged(bool animated, bool force, bool useAnimator)
         {
-            base.onPickerDataChanged(animated, force, useAnimator);
+            base.OnPickerDataChanged(animated, force, useAnimator);
             if (chartData == null || chartData.xPercentage == null)
             {
                 return;
@@ -617,7 +688,11 @@ namespace Unigram.Charts
                 for (int i = 0; i < nl; i++)
                 {
                     PieChartViewData line = lines[i];
-                    if (line.animator != null) line.animator.cancel();
+                    if (line.animator != null)
+                    {
+                        line.animator.Cancel();
+                    }
+
                     float animateTo;
                     if (sum == 0)
                     {
@@ -627,13 +702,13 @@ namespace Unigram.Charts
                     {
                         animateTo = values[i] / sum;
                     }
-                    ValueAnimator animator = createAnimator(line.drawingPart, animateTo, new AnimatorUpdateListener(animation =>
+                    ValueAnimator animator = CreateAnimator(line.drawingPart, animateTo, new AnimatorUpdateListener(animation =>
                     {
-                        line.drawingPart = (float)animation.getAnimatedValue();
-                        invalidate();
+                        line.drawingPart = (float)animation.GetAnimatedValue();
+                        Invalidate();
                     }));
                     line.animator = animator;
-                    animator.start();
+                    animator.Start();
                 }
             }
             else
@@ -652,17 +727,33 @@ namespace Unigram.Charts
             }
         }
 
-        public override void onPickerJumpTo(float start, float end, bool force)
+        public override void OnPickerJumpTo(float start, float end, bool force)
         {
-            if (chartData == null) return;
+            if (chartData == null)
+            {
+                return;
+            }
+
             if (force)
             {
                 updateCharValues(start, end, false);
             }
             else
             {
-                updateIndexes();
-                invalidate();
+                UpdateIndexes();
+                Invalidate();
+            }
+        }
+
+        public override void FillTransitionParams(TransitionParams param)
+        {
+            DrawChart(null);
+
+            float p = 0;
+            for (int i = 0; i < darawingValuesPercentage.Length; i++)
+            {
+                p += darawingValuesPercentage[i];
+                param.angle[i] = p * 360 - 180;
             }
         }
     }

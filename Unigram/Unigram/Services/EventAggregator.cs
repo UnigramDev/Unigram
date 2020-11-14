@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using Unigram.Common;
 
 namespace Unigram.Services
 {
@@ -30,14 +29,6 @@ namespace Unigram.Services
     /// </summary>
     public interface IEventAggregator
     {
-        /// <summary>
-        ///   Gets or sets the default publication thread marshaller.
-        /// </summary>
-        /// <value>
-        ///   The default publication thread marshaller.
-        /// </value>
-        Action<System.Action> PublicationThreadMarshaller { get; set; }
-
         /// <summary>
         /// Searches the subscribed handlers to check if we have a handler for
         /// the message type supplied.
@@ -66,14 +57,6 @@ namespace Unigram.Services
         ///   Uses the default thread marshaller during publication.
         /// </remarks>
         void Publish(object message);
-        void Publish(object message, object subscriber);
-
-        /// <summary>
-        ///   Publishes a message.
-        /// </summary>
-        /// <param name = "message">The message instance.</param>
-        /// <param name = "marshal">Allows the publisher to provide a custom thread marshaller for the message publication.</param>
-        void Publish(object message, object subscriber, Action<System.Action> marshal);
     }
 
     /// <summary>
@@ -82,36 +65,6 @@ namespace Unigram.Services
     public class EventAggregator : IEventAggregator
     {
         readonly List<Handler> handlers = new List<Handler>();
-
-        /// <summary>
-        ///   The default thread marshaller used for publication;
-        /// </summary>
-        public static Action<System.Action> DefaultPublicationThreadMarshaller = action => action();
-
-        /// <summary>
-        /// Processing of handler results on publication thread.
-        /// </summary>
-        public static Action<object, object> HandlerResultProcessing = (target, result) => { };
-
-        public static IEventAggregator Instance { get; protected set; }
-
-        /// <summary>
-        ///   Initializes a new instance of the <see cref = "EventAggregator" /> class.
-        /// </summary>
-        public EventAggregator()
-        {
-            PublicationThreadMarshaller = DefaultPublicationThreadMarshaller;
-
-            Instance = this;
-        }
-
-        /// <summary>
-        ///   Gets or sets the default publication thread marshaller.
-        /// </summary>
-        /// <value>
-        ///   The default publication thread marshaller.
-        /// </value>
-        public Action<System.Action> PublicationThreadMarshaller { get; set; }
 
         /// <summary>
         /// Searches the subscribed handlers to check if we have a handler for
@@ -166,16 +119,10 @@ namespace Unigram.Services
             }
         }
 
-        public static bool LogPublish { get; set; }
-
         /// <summary>
         ///   Publishes a message.
         /// </summary>
         /// <param name = "message">The message instance.</param>
-        /// <remarks>
-        ///   Does not marshall the the publication to any special thread by default.
-        /// </remarks>
-        [DebuggerStepThrough]
         public virtual void Publish(object message)
         {
             if (message == null)
@@ -183,81 +130,25 @@ namespace Unigram.Services
                 throw new ArgumentNullException("message");
             }
 
-#if DEBUG
-            if (LogPublish)
-            {
-                Debug.WriteLine("Publish " + message.GetType());
-            }
-#endif
-
-            Publish(message, null, PublicationThreadMarshaller);
-        }
-
-        [DebuggerStepThrough]
-        public virtual void Publish(object message, object subscriber)
-        {
-            if (message == null)
-            {
-                throw new ArgumentNullException("message");
-            }
-
-#if DEBUG
-            if (LogPublish)
-            {
-                Debug.WriteLine("Publish " + message.GetType());
-            }
-#endif
-
-            Publish(message, subscriber, PublicationThreadMarshaller);
-        }
-
-        /// <summary>
-        ///   Publishes a message.
-        /// </summary>
-        /// <param name = "message">The message instance.</param>
-        /// <param name = "marshal">Allows the publisher to provide a custom thread marshaller for the message publication.</param>
-        public virtual void Publish(object message, object subscriber, Action<System.Action> marshal)
-        {
-            if (message == null)
-            {
-                throw new ArgumentNullException("message");
-            }
-            if (marshal == null)
-            {
-                throw new ArgumentNullException("marshal");
-            }
-
             Handler[] toNotify;
             lock (handlers)
             {
-                var found = handlers.FirstOrDefault(x => x.Matches(subscriber));
-
-                if (found != null)
-                {
-                    toNotify = handlers.Except(new[] { found }).ToArray();
-                }
-                else
-                {
-                    toNotify = handlers.ToArray();
-                }
+                toNotify = handlers.ToArray();
             }
 
-            marshal(() =>
+            var messageType = message.GetType();
+
+            var dead = toNotify
+                .Where(handler => !handler.Handle(messageType, message))
+                .ToImmutableHashSet();
+
+            if (dead.Any())
             {
-                var messageType = message.GetType();
-
-                var dead = toNotify
-                    .Where(handler => !handler.Handle(messageType, message))
-                    .ToList();
-
-                if (dead.Any())
+                lock (handlers)
                 {
-                    lock (handlers)
-                    {
-                        dead.Apply(x => handlers.Remove(x));
-                    }
+                    handlers.RemoveAll(x => dead.Contains(x));
                 }
-            });
+            }
         }
 
         class Handler
@@ -274,28 +165,15 @@ namespace Unigram.Services
             {
                 reference = new WeakReference(handler);
 
-#if WIN_RT
-                var handlerInfo = typeof(IHandle).GetTypeInfo();
-                var interfaces = handler.GetType().GetTypeInfo().ImplementedInterfaces
-                    .Where(x => handlerInfo.IsAssignableFrom(x.GetTypeInfo()) && x.GetTypeInfo().IsGenericType);
-
-                foreach (var @interface in interfaces)
-                {
-                    var type = @interface.GenericTypeArguments[0];
-                    var method = @interface.GetTypeInfo().DeclaredMethods.First(x => x.Name == "Handle");
-                    supportedHandlers[type] = method;
-                }
-#else
                 var interfaces = handler.GetType().GetInterfaces()
                     .Where(x => typeof(IHandle).IsAssignableFrom(x) && x.IsConstructedGenericType);
 
                 foreach (var @interface in interfaces)
                 {
-                    var type = @interface.GetGenericArguments()[0];
+                    var type = @interface.GenericTypeArguments[0];
                     var method = @interface.GetMethod("Handle");
                     supportedHandlers[type] = method;
                 }
-#endif
             }
 
             public bool Matches(object instance)
@@ -311,16 +189,9 @@ namespace Unigram.Services
                     return false;
                 }
 
-                foreach (var pair in supportedHandlers)
+                if (supportedHandlers.TryGetValue(messageType, out MethodInfo method))
                 {
-                    if (pair.Key.IsAssignableFrom(messageType))
-                    {
-                        var result = pair.Value.Invoke(target, new[] { message });
-                        if (result != null)
-                        {
-                            HandlerResultProcessing(target, result);
-                        }
-                    }
+                    method.Invoke(target, new[] { message });
                 }
 
                 return true;
@@ -328,7 +199,7 @@ namespace Unigram.Services
 
             public bool Handles(Type messageType)
             {
-                return supportedHandlers.Any(pair => pair.Key.IsAssignableFrom(messageType));
+                return supportedHandlers.ContainsKey(messageType);
             }
         }
     }

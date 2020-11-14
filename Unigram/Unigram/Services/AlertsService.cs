@@ -295,7 +295,7 @@ namespace Unigram.Services
         //    }
         //}
 
-        private static async void ShowPeerFloodAlert(IDispatcherWrapper fragment, int reason)
+        private static async void ShowPeerFloodAlert(IDispatcherContext fragment, int reason)
         {
             var dialog = new MessagePopup();
             dialog.Title = Strings.Resources.AppName;
@@ -306,7 +306,7 @@ namespace Unigram.Services
                 dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
                 dialog.SecondaryButtonClick += (s, args) =>
                 {
-                    MessageHelper.NavigateToUsername(null, null, "spambot", null, null, null);
+                    MessageHelper.NavigateToUsername(null, null, "spambot", null, null, null, null);
                 };
             }
 
@@ -326,7 +326,7 @@ namespace Unigram.Services
             await dialog.ShowQueuedAsync();
         }
 
-        public static void ShowSimpleToast(IDispatcherWrapper fragment, String text)
+        public static void ShowSimpleToast(IDispatcherContext fragment, String text)
         {
             if (text == null)
             {
@@ -372,7 +372,7 @@ namespace Unigram.Services
             ShowSimpleAlert(GetFloodWaitString(error));
         }
 
-        public static async void ShowAddUserAlert(IDispatcherWrapper fragment, string error, bool channel)
+        public static async void ShowAddUserAlert(IDispatcherContext fragment, string error, bool channel)
         {
             if (error == null)
             {
@@ -390,7 +390,7 @@ namespace Unigram.Services
                     dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
                     dialog.SecondaryButtonClick += (s, args) =>
                     {
-                        MessageHelper.NavigateToUsername(null, null, "spambot", null, null, null);
+                        MessageHelper.NavigateToUsername(null, null, "spambot", null, null, null, null);
                     };
                     break;
                 case "USER_BLOCKED":

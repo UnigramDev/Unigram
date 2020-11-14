@@ -21,15 +21,15 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
+            <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Style="{StaticResource HeaderGlyphButtonStyle}" AutomationProperties.Name="{CustomResource ShareSendTo}" ToolTipService.ToolTip="{CustomResource ShareSendTo}" Grid.Column="1"/>
 
-            <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.StickerSet.Title, Mode=OneWay}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
+            <TextBlock common:TextBlockHelper.Text="{x:Bind ViewModel.StickerSet.Title, Mode=OneWay}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
     </ContentDialog.Title>
 
-    <Grid MaxWidth="380" MaxHeight="420">
+    <Grid MaxHeight="420">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>

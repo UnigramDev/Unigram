@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
+using Unigram.Native.Calls;
 using Unigram.Services.Settings;
 using Windows.Globalization;
 using Windows.Storage;
@@ -27,13 +28,13 @@ namespace Unigram.Services
         DiagnosticsSettings Diagnostics { get; }
 
         int UserId { get; set; }
+        long PushReceiverId { get; set; }
 
         string FilesDirectory { get; set; }
 
         int VerbosityLevel { get; set; }
         bool UseTestDC { get; set; }
 
-        bool UseThreeLinesLayout { get; set; }
         bool CollapseArchivedChats { get; set; }
         bool IsAdaptiveWideEnabled { get; set; }
         bool IsTrayVisible { get; set; }
@@ -52,14 +53,16 @@ namespace Unigram.Services
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
 
+        int[] AccountsSelectorOrder { get; set; }
+
         bool IsLeftTabsEnabled { get; set; }
 
         Vector2 Pencil { get; set; }
 
         DistanceUnits DistanceUnits { get; set; }
 
-        bool AutocorrectWords { get; set; }
-        bool HighlightWords { get; set; }
+        bool FullScreenGallery { get; set; }
+        bool DisableHighlightWords { get; set; }
 
         bool IsStreamingEnabled { get; set; }
         double VolumeLevel { get; set; }
@@ -70,10 +73,9 @@ namespace Unigram.Services
         string LanguagePluralId { get; set; }
         string LanguageShownId { get; set; }
 
-        string NotificationsToken { get; set; }
-        int[] NotificationsIds { get; set; }
+        string PushToken { get; set; }
 
-        libtgvoip.DataSavingMode UseLessData { get; set; }
+        VoipDataSaving UseLessData { get; set; }
 
         void SetChatPinnedMessage(long chatId, long messageId);
         long GetChatPinnedMessage(long chatId);
@@ -167,7 +169,9 @@ namespace Unigram.Services
             get
             {
                 if (_current == null)
+                {
                     _current = new SettingsService();
+                }
 
                 return _current;
             }
@@ -194,8 +198,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (4UL << 48) | (0UL << 32) | (5072UL << 16);
-        public const string CurrentChangelog = "• Chat folders.\r\n• Stream Videos and Audio files.\r\n• Improved stickers, GIFs and emojis.\r\n\r\nRead more: https://telegra.ph/Unigram-40-05-28";
+        public const ulong CurrentVersion = (7UL << 48) | (2UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = "PINNED MESSAGES 2.0, PLAYLISTS AND MORE\r\n\r\nMultiple Pinned Messages\r\n• Pin several messages in any chat, including one-on-one chats.\r\n• Jump between pinned messages or open them all on a separate page via the top bar.\r\n\r\nPlaylists and More\r\n• Send several music tracks as a playlist. \r\n• Send a :slot_machine: emoji to any chat to try your luck.";
 
         public int Session => _session;
 
@@ -205,7 +209,9 @@ namespace Unigram.Services
             get
             {
                 if (_version == null)
+                {
                     _version = GetValueOrDefault("LongVersion", 0UL);
+                }
 
                 return _version ?? 0;
             }
@@ -333,7 +339,9 @@ namespace Unigram.Services
             get
             {
                 if (_filesDirectory == null)
+                {
                     _filesDirectory = GetValueOrDefault("FilesDirectory", null as string);
+                }
 
                 return _filesDirectory;
             }
@@ -373,7 +381,9 @@ namespace Unigram.Services
             get
             {
                 if (_useTestDC == null)
+                {
                     _useTestDC = GetValueOrDefault(_own, "UseTestDC", false);
+                }
 
                 return _useTestDC ?? false;
             }
@@ -390,7 +400,9 @@ namespace Unigram.Services
             get
             {
                 if (_userId == null)
+                {
                     _userId = GetValueOrDefault(_own, "UserId", 0);
+                }
 
                 return _userId ?? 0;
             }
@@ -402,13 +414,35 @@ namespace Unigram.Services
             }
         }
 
+        private long? _pushReceiverId;
+        public long PushReceiverId
+        {
+            get
+            {
+                if (_pushReceiverId == null)
+                {
+                    _pushReceiverId = GetValueOrDefault(_own, "PushReceiverId", 0L);
+                }
+
+                return _pushReceiverId ?? 0L;
+            }
+            set
+            {
+                _pushReceiverId = value;
+                AddOrUpdateValue(_local, $"PushReceiverId{value}", Session);
+                AddOrUpdateValue(_own, "PushReceiverId", value);
+            }
+        }
+
         private static int? _distanceUnits;
         public DistanceUnits DistanceUnits
         {
             get
             {
                 if (_distanceUnits == null)
+                {
                     _distanceUnits = GetValueOrDefault("DistanceUnits", 0);
+                }
 
                 return (DistanceUnits)(_distanceUnits ?? 0);
             }
@@ -425,7 +459,9 @@ namespace Unigram.Services
             get
             {
                 if (_dialogsWidthRatio == null)
+                {
                     _dialogsWidthRatio = GetValueOrDefault(_local, "DialogsWidthRatio", 5d / 14d);
+                }
 
                 return _dialogsWidthRatio ?? 5d / 14d;
             }
@@ -442,7 +478,9 @@ namespace Unigram.Services
             get
             {
                 if (_isSidebarOpen == null)
+                {
                     _isSidebarOpen = GetValueOrDefault(_local, "IsSidebarOpen", true);
+                }
 
                 return _isSidebarOpen ?? true;
             }
@@ -459,7 +497,9 @@ namespace Unigram.Services
             get
             {
                 if (_isAdaptiveWideEnabled == null)
+                {
                     _isAdaptiveWideEnabled = GetValueOrDefault(_local, "IsAdaptiveWideEnabled", false);
+                }
 
                 return _isAdaptiveWideEnabled ?? false;
             }
@@ -476,7 +516,9 @@ namespace Unigram.Services
             get
             {
                 if (_isTrayVisible == null)
+                {
                     _isTrayVisible = GetValueOrDefault(_local, "IsTrayVisible", true);
+                }
 
                 return _isTrayVisible ?? true;
             }
@@ -493,7 +535,9 @@ namespace Unigram.Services
             get
             {
                 if (_isLaunchMinimized == null)
+                {
                     _isLaunchMinimized = GetValueOrDefault(_local, "IsLaunchMinimized", false);
+                }
 
                 return _isLaunchMinimized ?? false;
             }
@@ -504,30 +548,15 @@ namespace Unigram.Services
             }
         }
 
-        private static bool? _useThreeLinesLayout;
-        public bool UseThreeLinesLayout
-        {
-            get
-            {
-                if (_useThreeLinesLayout == null)
-                    _useThreeLinesLayout = GetValueOrDefault(_local, "UseThreeLinesLayout", false);
-
-                return _useThreeLinesLayout ?? false;
-            }
-            set
-            {
-                _useThreeLinesLayout = value;
-                AddOrUpdateValue(_local, "UseThreeLinesLayout", value);
-            }
-        }
-
         private static bool? _collapseArchivedChats;
         public bool CollapseArchivedChats
         {
             get
             {
                 if (_collapseArchivedChats == null)
+                {
                     _collapseArchivedChats = GetValueOrDefault(_local, "CollapseArchivedChats", false);
+                }
 
                 return _collapseArchivedChats ?? false;
             }
@@ -544,7 +573,9 @@ namespace Unigram.Services
             get
             {
                 if (_isAccountsSelectorExpanded == null)
+                {
                     _isAccountsSelectorExpanded = GetValueOrDefault(_local, "IsAccountsSelectorExpanded", false);
+                }
 
                 return _isAccountsSelectorExpanded ?? false;
             }
@@ -555,13 +586,42 @@ namespace Unigram.Services
             }
         }
 
+        private int[] _accountsSelectorOrder;
+        public int[] AccountsSelectorOrder
+        {
+            get
+            {
+                if (_accountsSelectorOrder == null)
+                {
+                    var value = GetValueOrDefault<string>(_local, "AccountsSelectorOrder", null);
+                    if (value == null)
+                    {
+                        _accountsSelectorOrder = new int[0];
+                    }
+                    else
+                    {
+                        _accountsSelectorOrder = value.Split(',').Select(x => int.Parse(x)).ToArray();
+                    }
+                }
+
+                return _accountsSelectorOrder;
+            }
+            set
+            {
+                _accountsSelectorOrder = value;
+                AddOrUpdateValue(_local, "AccountsSelectorOrder", value != null ? string.Join(",", value) : null);
+            }
+        }
+
         private static bool? _isAllAccountsNotifications;
         public bool IsAllAccountsNotifications
         {
             get
             {
                 if (_isAllAccountsNotifications == null)
+                {
                     _isAllAccountsNotifications = GetValueOrDefault(_local, "IsAllAccountsNotifications", true);
+                }
 
                 return _isAllAccountsNotifications ?? true;
             }
@@ -578,7 +638,9 @@ namespace Unigram.Services
             get
             {
                 if (_isLeftTabsEnabled == null)
+                {
                     _isLeftTabsEnabled = GetValueOrDefault(_local, "IsLeftTabsEnabled", false);
+                }
 
                 return _isLeftTabsEnabled ?? false;
             }
@@ -589,37 +651,41 @@ namespace Unigram.Services
             }
         }
 
-        private static bool? _autocorrectWords;
-        public bool AutocorrectWords
+        private static bool? _fullScreenGallery;
+        public bool FullScreenGallery
         {
             get
             {
-                if (_autocorrectWords == null)
-                    _autocorrectWords = GetValueOrDefault(_local, "AutocorrectWords", true);
+                if (_fullScreenGallery == null)
+                {
+                    _fullScreenGallery = GetValueOrDefault(_local, "FullScreenGallery", false);
+                }
 
-                return _autocorrectWords ?? true;
+                return _fullScreenGallery ?? false;
             }
             set
             {
-                _autocorrectWords = value;
-                AddOrUpdateValue(_local, "AutocorrectWords", value);
+                _fullScreenGallery = value;
+                AddOrUpdateValue(_local, "FullScreenGallery", value);
             }
         }
 
-        private static bool? _highlightWords;
-        public bool HighlightWords
+        private static bool? _disableHighlightWords;
+        public bool DisableHighlightWords
         {
             get
             {
-                if (_highlightWords == null)
-                    _highlightWords = GetValueOrDefault(_local, "HighlightWords", true);
+                if (_disableHighlightWords == null)
+                {
+                    _disableHighlightWords = GetValueOrDefault(_local, "DisableHighlightWords", false);
+                }
 
-                return _highlightWords ?? true;
+                return _disableHighlightWords ?? false;
             }
             set
             {
-                _highlightWords = value;
-                AddOrUpdateValue(_local, "HighlightWords", value);
+                _disableHighlightWords = value;
+                AddOrUpdateValue(_local, "DisableHighlightWords", value);
             }
         }
 
@@ -629,7 +695,9 @@ namespace Unigram.Services
             get
             {
                 if (_isSendByEnterEnabled == null)
+                {
                     _isSendByEnterEnabled = GetValueOrDefault("IsSendByEnterEnabled", true);
+                }
 
                 return _isSendByEnterEnabled ?? true;
             }
@@ -646,7 +714,9 @@ namespace Unigram.Services
             get
             {
                 if (_isTextFormattingVisible == null)
+                {
                     _isTextFormattingVisible = GetValueOrDefault("IsTextFormattingVisible", false);
+                }
 
                 return _isTextFormattingVisible ?? false;
             }
@@ -663,7 +733,9 @@ namespace Unigram.Services
             get
             {
                 if (_isReplaceEmojiEnabled == null)
+                {
                     _isReplaceEmojiEnabled = GetValueOrDefault("IsReplaceEmojiEnabled", true);
+                }
 
                 return _isReplaceEmojiEnabled ?? true;
             }
@@ -680,7 +752,9 @@ namespace Unigram.Services
             get
             {
                 if (_isLargeEmojiEnabled == null)
+                {
                     _isLargeEmojiEnabled = GetValueOrDefault(_local, "IsLargeEmojiEnabled", true);
+                }
 
                 return _isLargeEmojiEnabled ?? true;
             }
@@ -697,7 +771,9 @@ namespace Unigram.Services
             get
             {
                 if (_isContactsSyncEnabled == null)
+                {
                     _isContactsSyncEnabled = GetValueOrDefault("IsContactsSyncEnabled", true);
+                }
 
                 return _isContactsSyncEnabled ?? true;
             }
@@ -714,7 +790,9 @@ namespace Unigram.Services
             get
             {
                 if (_isContactsSyncRequested == null)
+                {
                     _isContactsSyncRequested = GetValueOrDefault("IsContactsSyncRequested", false);
+                }
 
                 return _isContactsSyncRequested ?? false;
             }
@@ -731,7 +809,9 @@ namespace Unigram.Services
             get
             {
                 if (_isContactsSortedByEpoch == null)
+                {
                     _isContactsSortedByEpoch = GetValueOrDefault("IsContactsSortedByEpoch", true);
+                }
 
                 return _isContactsSortedByEpoch ?? true;
             }
@@ -748,7 +828,9 @@ namespace Unigram.Services
             get
             {
                 if (_isSecretPreviewsEnabled == null)
+                {
                     _isSecretPreviewsEnabled = GetValueOrDefault("IsSecretPreviewsEnabled", false);
+                }
 
                 return _isSecretPreviewsEnabled ?? true;
             }
@@ -765,7 +847,9 @@ namespace Unigram.Services
             get
             {
                 if (_isAutoPlayEnabled == null)
+                {
                     _isAutoPlayEnabled = GetValueOrDefault("IsAutoPlayEnabled", true);
+                }
 
                 return _isAutoPlayEnabled ?? true;
             }
@@ -782,7 +866,9 @@ namespace Unigram.Services
             get
             {
                 if (_isAutoPlayVideosEnabled == null)
+                {
                     _isAutoPlayVideosEnabled = GetValueOrDefault("IsAutoPlayVideosEnabled", true);
+                }
 
                 return _isAutoPlayVideosEnabled ?? true;
             }
@@ -799,7 +885,9 @@ namespace Unigram.Services
             get
             {
                 if (_isSendGrouped == null)
+                {
                     _isSendGrouped = GetValueOrDefault("IsSendGrouped", true);
+                }
 
                 return _isSendGrouped ?? true;
             }
@@ -816,7 +904,9 @@ namespace Unigram.Services
             get
             {
                 if (_isStreamingEnabled == null)
+                {
                     _isStreamingEnabled = GetValueOrDefault("IsStreamingEnabled", true);
+                }
 
                 return _isStreamingEnabled ?? true;
             }
@@ -833,7 +923,9 @@ namespace Unigram.Services
             get
             {
                 if (_volumeLevel == null)
+                {
                     _volumeLevel = GetValueOrDefault("VolumeLevel", 1d);
+                }
 
                 return _volumeLevel ?? 1d;
             }
@@ -873,7 +965,9 @@ namespace Unigram.Services
             get
             {
                 if (_lastMessageTtl == null)
+                {
                     _lastMessageTtl = GetValueOrDefault("LastMessageTtl", 7);
+                }
 
                 return _lastMessageTtl ?? 7;
             }
@@ -890,7 +984,9 @@ namespace Unigram.Services
             get
             {
                 if (_previousSession == null)
+                {
                     _previousSession = GetValueOrDefault(_local, "PreviousSession", 0);
+                }
 
                 return _activeSession ?? 0;
             }
@@ -907,7 +1003,9 @@ namespace Unigram.Services
             get
             {
                 if (_activeSession == null)
+                {
                     _activeSession = GetValueOrDefault(_local, "SelectedAccount", 0);
+                }
 
                 return _activeSession ?? 0;
             }
@@ -924,7 +1022,9 @@ namespace Unigram.Services
             get
             {
                 if (_languagePackId == null)
-                    _languagePackId = GetValueOrDefault(_local, "LanguagePackId", ApplicationLanguages.Languages[0]);
+                {
+                    _languagePackId = GetValueOrDefault(_local, "LanguagePackId", ApplicationLanguages.Languages[0].Split('-').First());
+                }
 
                 return _languagePackId;
             }
@@ -941,7 +1041,9 @@ namespace Unigram.Services
             get
             {
                 if (_languagePluralId == null)
-                    _languagePluralId = GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0]);
+                {
+                    _languagePluralId = GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0].Split('-').First());
+                }
 
                 return _languagePluralId;
             }
@@ -958,7 +1060,9 @@ namespace Unigram.Services
             get
             {
                 if (_languageShownId == null)
+                {
                     _languageShownId = GetValueOrDefault<string>(_local, "LanguageShownId", null);
+                }
 
                 return _languageShownId;
             }
@@ -969,59 +1073,36 @@ namespace Unigram.Services
             }
         }
 
-        private string _notificationsToken;
-        public string NotificationsToken
+        private string _pushToken;
+        public string PushToken
         {
             get
             {
-                if (_notificationsToken == null)
-                    _notificationsToken = GetValueOrDefault<string>(_local, "ChannelUri", null);
-
-                return _notificationsToken;
-            }
-            set
-            {
-                _notificationsToken = value;
-                AddOrUpdateValue(_local, "ChannelUri", value);
-            }
-        }
-
-        private int[] _notificationsIds;
-        public int[] NotificationsIds
-        {
-            get
-            {
-                if (_notificationsIds == null)
+                if (_pushToken == null)
                 {
-                    var value = GetValueOrDefault<string>(_local, "NotificationsIds", null);
-                    if (value == null)
-                    {
-                        _notificationsIds = new int[0];
-                    }
-                    else
-                    {
-                        _notificationsIds = value.Split(',').Select(x => int.Parse(x)).ToArray();
-                    }
+                    _pushToken = GetValueOrDefault<string>("ChannelUri", null);
                 }
 
-                return _notificationsIds;
+                return _pushToken;
             }
             set
             {
-                _notificationsIds = value;
-                AddOrUpdateValue(_local, "NotificationsIds", string.Join(",", value));
+                _pushToken = value;
+                AddOrUpdateValue("ChannelUri", value);
             }
         }
 
-        private libtgvoip.DataSavingMode? _useLessData;
-        public libtgvoip.DataSavingMode UseLessData
+        private VoipDataSaving? _useLessData;
+        public VoipDataSaving UseLessData
         {
             get
             {
                 if (_useLessData == null)
-                    _useLessData = (libtgvoip.DataSavingMode)GetValueOrDefault("UseLessData", 0);
+                {
+                    _useLessData = (VoipDataSaving)GetValueOrDefault("UseLessData", 0);
+                }
 
-                return _useLessData ?? libtgvoip.DataSavingMode.Never;
+                return _useLessData ?? VoipDataSaving.Never;
             }
             set
             {
@@ -1045,7 +1126,7 @@ namespace Unigram.Services
         public void CleanUp()
         {
             // Here should be cleaned up all the settings that are shared with background tasks.
-            _useLessData = null;
+            //_useLessData = null;
         }
 
         public new void Clear()
@@ -1071,18 +1152,18 @@ namespace Unigram.Services
         {
         }
 
-        public object this[long chatId, ChatSetting key]
+        public object this[long chatId, long threadId, ChatSetting key]
         {
             //get => GetValueOrDefault<object>(chatId + key, null);
-            set => AddOrUpdateValue(ConvertToKey(chatId, key), value);
+            set => AddOrUpdateValue(ConvertToKey(chatId, threadId, key), value);
         }
 
-        public bool TryRemove<T>(long chatId, ChatSetting key, out T value)
+        public bool TryRemove<T>(long chatId, long threadId, ChatSetting key, out T value)
         {
-            if (_container.Values.ContainsKey(ConvertToKey(chatId, key)))
+            if (_container.Values.ContainsKey(ConvertToKey(chatId, threadId, key)))
             {
-                value = (T)_container.Values[ConvertToKey(chatId, key)];
-                _container.Values.Remove(ConvertToKey(chatId, key));
+                value = (T)_container.Values[ConvertToKey(chatId, threadId, key)];
+                _container.Values.Remove(ConvertToKey(chatId, threadId, key));
                 return true;
             }
 
@@ -1090,8 +1171,13 @@ namespace Unigram.Services
             return false;
         }
 
-        private string ConvertToKey(long chatId, ChatSetting setting)
+        private string ConvertToKey(long chatId, long threadId, ChatSetting setting)
         {
+            if (threadId != 0)
+            {
+                return $"{chatId}{threadId}{setting}";
+            }
+
             return $"{chatId}{setting}";
         }
     }

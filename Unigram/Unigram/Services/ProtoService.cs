@@ -1,8 +1,14 @@
-﻿using System;
+﻿using Microsoft.Toolkit.HighPerformance.Buffers;
+using Microsoft.Toolkit.HighPerformance.Extensions;
+using System;
+using System.Buffers;
+using System.Buffers.Text;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -23,9 +29,13 @@ namespace Unigram.Services
         void Send(Function function, Action<BaseObject> handler = null);
         Task<BaseObject> SendAsync(Function function);
 
+        Task<StorageFile> GetFileAsync(File file);
+
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
         void CancelDownloadFile(int fileId, bool onlyIfPending = false);
         bool IsDownloadFileCanceled(int fileId);
+
+        Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
 
         int SessionId { get; }
 
@@ -34,8 +44,6 @@ namespace Unigram.Services
 
     public interface ICacheService
     {
-        int UserId { get; }
-
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
@@ -52,6 +60,8 @@ namespace Unigram.Services
         ConnectionState GetConnectionState();
 
         string GetTitle(Chat chat, bool tiny = false);
+        string GetTitle(MessageForwardInfo info);
+
         Chat GetChat(long id);
         IList<Chat> GetChats(IList<long> ids);
 
@@ -60,10 +70,14 @@ namespace Unigram.Services
         bool IsSavedMessages(User user);
         bool IsSavedMessages(Chat chat);
 
+        bool IsRepliesChat(Chat chat);
+
         bool CanPostMessages(Chat chat);
 
-        bool TryGetChatFromUser(int userId, out Chat chat);
-        bool TryGetChatFromSecret(int secretId, out Chat chat);
+        bool TryGetChat(long chatId, out Chat chat);
+        bool TryGetChat(MessageSender sender, out Chat value);
+        //bool TryGetChatFromUser(int userId, out Chat chat);
+        //bool TryGetChatFromSecret(int secretId, out Chat chat);
 
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChat(Chat chat);
@@ -73,6 +87,7 @@ namespace Unigram.Services
         User GetUser(int id);
         bool TryGetUser(int id, out User value);
         bool TryGetUser(Chat chat, out User value);
+        bool TryGetUser(MessageSender sender, out User value);
 
         UserFullInfo GetUserFull(int id);
         UserFullInfo GetUserFull(Chat chat);
@@ -94,6 +109,9 @@ namespace Unigram.Services
         SupergroupFullInfo GetSupergroupFull(int id);
         SupergroupFullInfo GetSupergroupFull(Chat chat);
 
+        bool TryGetChatForFileId(int fileId, out Chat chat);
+        bool TryGetUserForFileId(int fileId, out User user);
+
         bool IsAnimationSaved(int id);
         bool IsStickerFavorite(int id);
         bool IsStickerSetInstalled(long id);
@@ -106,9 +124,11 @@ namespace Unigram.Services
 
         Task<StickerSet> GetAnimatedSetAsync(AnimatedSetType type);
         bool IsDiceEmoji(string text, out string dice);
+
+        File GetEmojiSound(string emoji);
     }
 
-    public class ProtoService : IProtoService, ClientResultHandler
+    public partial class ProtoService : IProtoService, ClientResultHandler
     {
         private Client _client;
 
@@ -121,7 +141,10 @@ namespace Unigram.Services
         private readonly IEventAggregator _aggregator;
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
-        private readonly ConcurrentDictionary<long, Dictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, Dictionary<int, ChatAction>>();
+        private readonly ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>>();
+
+        //private readonly Dictionary<int, long> _userToChat = new Dictionary<int, long>();
+        //private readonly Dictionary<int, long> _secretChatToChat = new Dictionary<int, long>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
@@ -141,8 +164,11 @@ namespace Unigram.Services
         private readonly FlatFileContext<long> _chatsMap = new FlatFileContext<long>();
         private readonly FlatFileContext<int> _usersMap = new FlatFileContext<int>();
 
-        private StickerSet[] _animatedSet = new StickerSet[2] { null, null };
-        private TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
+        private readonly StickerSet[] _animatedSet = new StickerSet[2] { null, null };
+        private readonly TaskCompletionSource<StickerSet>[] _animatedSetTask = new TaskCompletionSource<StickerSet>[2] { null, null };
+
+        private readonly Dictionary<string, File> _animatedSounds = new Dictionary<string, File>();
+        private readonly FlatFileContext<string> _animatedSoundsMap = new FlatFileContext<string>();
 
         private IList<string> _diceEmojis;
 
@@ -192,7 +218,7 @@ namespace Unigram.Services
 
             var parameters = new TdlibParameters
             {
-                DatabaseDirectory = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
+                DatabaseDirectory = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
                 UseSecretChats = true,
                 UseMessageDatabase = true,
                 ApiId = Constants.ApiId,
@@ -201,11 +227,7 @@ namespace Unigram.Services
                 SystemVersion = _deviceInfoService.SystemVersion,
                 SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
                 DeviceModel = _deviceInfoService.DeviceModel,
-#if DEBUG
                 UseTestDc = _settings.UseTestDC
-#else
-                UseTestDc = false
-#endif
             };
 
             if (_settings.FilesDirectory != null)
@@ -308,7 +330,7 @@ namespace Unigram.Services
             {
                 InitializeDiagnostics();
 
-                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
+                _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
                 _client.Send(new SetOption("language_pack_id", new OptionValueString(SettingsService.Current.LanguagePackId)));
                 //_client.Send(new SetOption("online", new OptionValueBoolean(online)));
@@ -316,14 +338,14 @@ namespace Unigram.Services
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
                 _client.Send(new SetTdlibParameters(parameters));
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
-                _client.Send(new GetApplicationConfig(), result => UpdateConfig(result));
+                _client.Send(new GetApplicationConfig(), UpdateConfig);
                 _client.Run();
             });
         }
 
         private void InitializeDiagnostics()
         {
-            Client.Execute(new SetLogStream(new LogStreamFile(Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024)));
+            Client.Execute(new SetLogStream(new LogStreamFile(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt"), 100 * 1024 * 1024, false)));
             Client.Execute(new SetLogVerbosityLevel(SettingsService.Current.VerbosityLevel));
 
             var tags = Client.Execute(new GetLogTags()) as LogTags;
@@ -351,11 +373,125 @@ namespace Unigram.Services
             UpdateVersion();
         }
 
-        private void UpdateConfig(BaseObject value)
+        private async void UpdateConfig(BaseObject value)
         {
             if (value is JsonValueObject obj)
             {
                 _config = obj;
+
+                // This is a temporary solution until sounds aren't provided
+                // through standard API.
+                var sounds = obj.GetNamedObject("emojies_sounds");
+                if (sounds != null)
+                {
+                    foreach (var member in sounds.Members)
+                    {
+                        if (member.Value is JsonValueObject sound)
+                        {
+                            try
+                            {
+                                var id = sound.GetNamedString("id", null);
+                                var access_hash = sound.GetNamedString("access_hash", null);
+                                var file_reference_base64 = sound.GetNamedString("file_reference_base64", null);
+
+                                var base64 = EncodeToBase64(id, access_hash, file_reference_base64);
+
+                                var response = await _client.SendAsync(new GetRemoteFile(base64, new FileTypeVoiceNote()));
+                                if (response is File file)
+                                {
+                                    _animatedSounds[member.Key] = file;
+                                    _animatedSoundsMap[file.Id] = member.Key;
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static unsafe string EncodeToBase64(string id, string accessHash, string fileReferenceBase64)
+        {
+            using var bufferWriter = new ArrayPoolBufferWriter<byte>();
+
+            int fileType = 3 | (1 << 25);
+            int dcId = 2;
+            long id_ = long.Parse(id);
+            long access_hash_ = long.Parse(accessHash);
+
+            bufferWriter.Write(fileType);
+            bufferWriter.Write(dcId);
+
+            var maxUtf8Length = Encoding.UTF8.GetMaxByteCount(fileReferenceBase64.Length);
+
+            using (var utf8Buffer = SpanOwner<byte>.Allocate(maxUtf8Length))
+            {
+                int utf8BytesCount;
+
+                fixed (char* pSource = fileReferenceBase64)
+                fixed (byte* pDestination = &utf8Buffer.DangerousGetReference())
+                {
+                    utf8BytesCount = Encoding.UTF8.GetBytes(pSource, fileReferenceBase64.Length, pDestination, utf8Buffer.Length);
+                }
+
+                if (utf8BytesCount <= 253)
+                {
+                    bufferWriter.Write((byte)utf8BytesCount);
+                }
+                else
+                {
+                    bufferWriter.Write((byte)254);
+                    bufferWriter.Write((byte)utf8BytesCount);
+                    bufferWriter.Write((byte)(utf8BytesCount >> 8));
+                    bufferWriter.Write((byte)(utf8BytesCount >> 16));
+                }
+
+                bufferWriter.Write<byte>(utf8Buffer.Span.Slice(0, utf8BytesCount));
+
+                int j = utf8BytesCount <= 253 ? 1 : 4;
+                while ((utf8BytesCount + j) % 4 != 0)
+                {
+                    bufferWriter.Write((byte)0);
+                    j++;
+                }
+            }
+
+            bufferWriter.Write(id_);
+            bufferWriter.Write(access_hash_);
+
+            bufferWriter.Write((byte)30);
+            bufferWriter.Write((byte)4);
+
+            var bytes = bufferWriter.WrittenSpan;
+            using var resultBuffer = new ArrayPoolBufferWriter<byte>(bytes.Length);
+
+            for (int n = bytes.Length, i = 0; i < n; i++)
+            {
+                resultBuffer.Write(bytes[i]);
+                if (bytes[i] == 0)
+                {
+                    byte cnt = 1;
+                    while (cnt < 250 && i + cnt < n && bytes[i + cnt] == bytes[i])
+                    {
+                        cnt++;
+                    }
+
+                    resultBuffer.Write(cnt);
+                    i += cnt - 1;
+                }
+            }
+
+            var maxBase64Length = Base64.GetMaxEncodedToUtf8Length(resultBuffer.WrittenCount);
+
+            using (var utf8Buffer = SpanOwner<byte>.Allocate(maxBase64Length))
+            {
+                Base64.EncodeToUtf8(resultBuffer.WrittenSpan, utf8Buffer.Span, out _, out int bytesWritten);
+
+                fixed (byte* p = utf8Buffer.Span)
+                {
+                    return Encoding.UTF8.GetString(p, bytesWritten)
+                        .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+                }
             }
         }
 
@@ -385,7 +521,7 @@ namespace Unigram.Services
                         }
                     }
 
-                    Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, false, false)));
+                    Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, false, false)));
                 }
             }
 
@@ -401,7 +537,7 @@ namespace Unigram.Services
                 var message = title + Environment.NewLine + string.Join(Environment.NewLine, update.Strings);
                 var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
 
-                Send(new AddLocalMessage(chat.Id, 777000, 0, false, new InputMessageText(formattedText, true, false)));
+                Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
             }
         }
 
@@ -467,7 +603,27 @@ namespace Unigram.Services
 
 
 
-        private ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
+        private readonly ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
+
+        public async Task<StorageFile> GetFileAsync(File file)
+        {
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var path = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path);
+
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(path) as StorageFile;
+                if (item != null)
+                {
+                    return item;
+                }
+                else
+                {
+                    Send(new DeleteFileW(file.Id));
+                }
+            }
+
+            return null;
+        }
 
         public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
         {
@@ -489,19 +645,6 @@ namespace Unigram.Services
         public int SessionId => _session;
 
         public Client Client => _client;
-
-        private int? _userId;
-        public int UserId
-        {
-            get
-            {
-                return (_userId = _userId ?? _settings.UserId) ?? 0;
-            }
-            set
-            {
-                _userId = _settings.UserId = value;
-            }
-        }
 
         #region Cache
 
@@ -556,7 +699,7 @@ namespace Unigram.Services
             return -1;
         }
 
-        private bool TryGetChatForFileId(int fileId, out Chat chat)
+        public bool TryGetChatForFileId(int fileId, out Chat chat)
         {
             if (_chatsMap.TryGetValue(fileId, out long chatId))
             {
@@ -568,7 +711,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private bool TryGetUserForFileId(int fileId, out User user)
+        public bool TryGetUserForFileId(int fileId, out User user)
         {
             if (_usersMap.TryGetValue(fileId, out int userId))
             {
@@ -611,12 +754,12 @@ namespace Unigram.Services
 
         public IList<string> AnimationSearchEmojis
         {
-            get { return _animationSearchParameters.Emojis; }
+            get => _animationSearchParameters?.Emojis ?? new string[0];
         }
 
         public string AnimationSearchProvider
         {
-            get { return _animationSearchParameters.Provider; }
+            get => _animationSearchParameters?.Provider;
         }
 
         public Background SelectedBackground
@@ -655,6 +798,10 @@ namespace Unigram.Services
                 {
                     return Strings.Resources.SavedMessages;
                 }
+                else if (chat.Id == _options.RepliesBotChatId)
+                {
+                    return Strings.Resources.RepliesTitle;
+                }
                 else if (tiny)
                 {
                     return user.FirstName;
@@ -662,6 +809,28 @@ namespace Unigram.Services
             }
 
             return chat.Title;
+        }
+
+        public string GetTitle(MessageForwardInfo info)
+        {
+            if (info?.Origin is MessageForwardOriginUser fromUser)
+            {
+                return GetUser(fromUser.SenderUserId)?.GetFullName();
+            }
+            else if (info?.Origin is MessageForwardOriginChat fromChat)
+            {
+                return GetTitle(GetChat(fromChat.SenderChatId));
+            }
+            else if (info?.Origin is MessageForwardOriginChannel fromChannel)
+            {
+                return GetTitle(GetChat(fromChannel.ChatId));
+            }
+            else if (info?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+            {
+                return fromHiddenUser.SenderName;
+            }
+
+            return null;
         }
 
         public Chat GetChat(long id)
@@ -676,7 +845,7 @@ namespace Unigram.Services
 
         public IDictionary<int, ChatAction> GetChatActions(long id)
         {
-            if (_chatActions.TryGetValue(id, out Dictionary<int, ChatAction> value))
+            if (_chatActions.TryGetValue(id, out ConcurrentDictionary<int, ChatAction> value))
             {
                 return value;
             }
@@ -686,12 +855,7 @@ namespace Unigram.Services
 
         public bool IsSavedMessages(User user)
         {
-            if (user.Id == _options.MyId)
-            {
-                return true;
-            }
-
-            return false;
+            return user.Id == _options.MyId;
         }
 
         public bool IsSavedMessages(Chat chat)
@@ -702,6 +866,11 @@ namespace Unigram.Services
             }
 
             return false;
+        }
+
+        public bool IsRepliesChat(Chat chat)
+        {
+            return chat.Id == _options.RepliesBotChatId;
         }
 
         public bool CanPostMessages(Chat chat)
@@ -732,17 +901,44 @@ namespace Unigram.Services
             return true;
         }
 
-        public bool TryGetChatFromUser(int userId, out Chat chat)
+        public bool TryGetChat(long chatId, out Chat chat)
         {
-            chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == userId);
+            chat = GetChat(chatId);
             return chat != null;
         }
 
-        public bool TryGetChatFromSecret(int secretId, out Chat chat)
+        public bool TryGetChat(MessageSender sender, out Chat value)
         {
-            chat = _chats.Values.FirstOrDefault(x => x.Type is ChatTypeSecret secret && secret.SecretChatId == secretId);
-            return chat != null;
+            if (sender is MessageSenderChat senderChat)
+            {
+                return TryGetChat(senderChat.ChatId, out value);
+            }
+
+            value = null;
+            return false;
         }
+
+        //public bool TryGetChatFromUser(int userId, out Chat chat)
+        //{
+        //    if (_userToChat.TryGetValue(userId, out long chatId))
+        //    {
+        //        return TryGetChat(chatId, out chat);
+        //    }
+
+        //    chat = null;
+        //    return false;
+        //}
+
+        //public bool TryGetChatFromSecret(int secretId, out Chat chat)
+        //{
+        //    if (_secretChatToChat.TryGetValue(secretId, out long chatId))
+        //    {
+        //        return TryGetChat(chatId, out chat);
+        //    }
+
+        //    chat = null;
+        //    return false;
+        //}
 
 
         public IList<Chat> GetChats(IList<long> ids)
@@ -835,13 +1031,24 @@ namespace Unigram.Services
             return _users.TryGetValue(id, out value);
         }
 
+        public bool TryGetUser(MessageSender sender, out User value)
+        {
+            if (sender is MessageSenderUser senderUser)
+            {
+                return TryGetUser(senderUser.UserId, out value);
+            }
+
+            value = null;
+            return false;
+        }
+
         public bool TryGetUser(Chat chat, out User value)
         {
-            if (chat.Type is ChatTypePrivate privata)
+            if (chat?.Type is ChatTypePrivate privata)
             {
                 return TryGetUser(privata.UserId, out value);
             }
-            else if (chat.Type is ChatTypeSecret secret)
+            else if (chat?.Type is ChatTypeSecret secret)
             {
                 return TryGetUser(secret.UserId, out value);
             }
@@ -864,11 +1071,11 @@ namespace Unigram.Services
 
         public UserFullInfo GetUserFull(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate privata)
+            if (chat?.Type is ChatTypePrivate privata)
             {
                 return GetUserFull(privata.UserId);
             }
-            else if (chat.Type is ChatTypeSecret secret)
+            else if (chat?.Type is ChatTypeSecret secret)
             {
                 return GetUserFull(secret.UserId);
             }
@@ -890,7 +1097,7 @@ namespace Unigram.Services
 
         public BasicGroup GetBasicGroup(Chat chat)
         {
-            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            if (chat?.Type is ChatTypeBasicGroup basicGroup)
             {
                 return GetBasicGroup(basicGroup.BasicGroupId);
             }
@@ -905,7 +1112,7 @@ namespace Unigram.Services
 
         public bool TryGetBasicGroup(Chat chat, out BasicGroup value)
         {
-            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            if (chat?.Type is ChatTypeBasicGroup basicGroup)
             {
                 return TryGetBasicGroup(basicGroup.BasicGroupId, out value);
             }
@@ -928,7 +1135,7 @@ namespace Unigram.Services
 
         public BasicGroupFullInfo GetBasicGroupFull(Chat chat)
         {
-            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            if (chat?.Type is ChatTypeBasicGroup basicGroup)
             {
                 return GetBasicGroupFull(basicGroup.BasicGroupId);
             }
@@ -950,7 +1157,7 @@ namespace Unigram.Services
 
         public Supergroup GetSupergroup(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            if (chat?.Type is ChatTypeSupergroup supergroup)
             {
                 return GetSupergroup(supergroup.SupergroupId);
             }
@@ -965,7 +1172,7 @@ namespace Unigram.Services
 
         public bool TryGetSupergroup(Chat chat, out Supergroup value)
         {
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            if (chat?.Type is ChatTypeSupergroup supergroup)
             {
                 return TryGetSupergroup(supergroup.SupergroupId, out value);
             }
@@ -988,7 +1195,7 @@ namespace Unigram.Services
 
         public SupergroupFullInfo GetSupergroupFull(Chat chat)
         {
-            if (chat.Type is ChatTypeSupergroup supergroup)
+            if (chat?.Type is ChatTypeSupergroup supergroup)
             {
                 return GetSupergroupFull(supergroup.SupergroupId);
             }
@@ -1145,6 +1352,16 @@ namespace Unigram.Services
             return _diceEmojis.Contains(text);
         }
 
+        public File GetEmojiSound(string emoji)
+        {
+            if (_animatedSounds.TryGetValue(Emoji.RemoveModifiers(emoji, false), out File value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
         #endregion
 
 
@@ -1202,8 +1419,12 @@ namespace Unigram.Services
             {
                 if (_chats.TryGetValue(updateChatDraftMessage.ChatId, out Chat value))
                 {
-                    value.Positions = updateChatDraftMessage.Positions;
+                    Monitor.Enter(value);
+
                     value.DraftMessage = updateChatDraftMessage.DraftMessage;
+                    SetChatPositions(value, updateChatDraftMessage.Positions);
+
+                    Monitor.Exit(value);
                 }
             }
             else if (update is UpdateChatFilters updateChatFilters)
@@ -1217,6 +1438,13 @@ namespace Unigram.Services
                     value.HasScheduledMessages = updateChatHasScheduledMessages.HasScheduledMessages;
                 }
             }
+            else if (update is UpdateChatIsBlocked updateChatIsBlocked)
+            {
+                if (_chats.TryGetValue(updateChatIsBlocked.ChatId, out Chat value))
+                {
+                    value.IsBlocked = updateChatIsBlocked.IsBlocked;
+                }
+            }
             else if (update is UpdateChatIsMarkedAsUnread updateChatIsMarkedAsUnread)
             {
                 if (_chats.TryGetValue(updateChatIsMarkedAsUnread.ChatId, out Chat value))
@@ -1228,8 +1456,12 @@ namespace Unigram.Services
             {
                 if (_chats.TryGetValue(updateChatLastMessage.ChatId, out Chat value))
                 {
-                    value.Positions = updateChatLastMessage.Positions;
+                    Monitor.Enter(value);
+
                     value.LastMessage = updateChatLastMessage.LastMessage;
+                    SetChatPositions(value, updateChatLastMessage.Positions);
+
+                    Monitor.Exit(value);
                 }
             }
             else if (update is UpdateChatNotificationSettings updateNotificationSettings)
@@ -1259,29 +1491,38 @@ namespace Unigram.Services
                     _chatsMap[updateChatPhoto.Photo.Big.Id] = updateChatPhoto.ChatId;
                 }
             }
-            else if (update is UpdateChatPinnedMessage updateChatPinnedMessage)
-            {
-                if (_chats.TryGetValue(updateChatPinnedMessage.ChatId, out Chat value))
-                {
-                    value.PinnedMessageId = updateChatPinnedMessage.PinnedMessageId;
-                }
-            }
             else if (update is UpdateChatPosition updateChatPosition)
             {
                 if (_chats.TryGetValue(updateChatPosition.ChatId, out Chat value))
                 {
-                    var existing = value.GetPosition(updateChatPosition.Position.List);
-                    if (existing != null)
+                    Monitor.Enter(value);
+
+                    int i;
+                    for (i = 0; i < value.Positions.Count; i++)
                     {
-                        existing.IsPinned = updateChatPosition.Position.IsPinned;
-                        existing.List = updateChatPosition.Position.List;
-                        existing.Order = updateChatPosition.Position.Order;
-                        existing.Source = updateChatPosition.Position.Source;
+                        if (value.Positions[i].List.ToId() == updateChatPosition.Position.List.ToId())
+                        {
+                            break;
+                        }
                     }
-                    else
+
+                    var newPositions = new List<ChatPosition>(value.Positions.Count + (updateChatPosition.Position.Order == 0 ? 0 : 1) - (i < value.Positions.Count ? 1 : 0));
+                    if (updateChatPosition.Position.Order != 0)
                     {
-                        value.Positions.Add(updateChatPosition.Position);
+                        newPositions.Add(updateChatPosition.Position);
                     }
+
+                    for (int j = 0; j < value.Positions.Count; j++)
+                    {
+                        if (j != i)
+                        {
+                            newPositions.Add(value.Positions[j]);
+                        }
+                    }
+
+                    SetChatPositions(value, newPositions);
+
+                    Monitor.Exit(value);
                 }
             }
             else if (update is UpdateChatReadInbox updateChatReadInbox)
@@ -1341,21 +1582,16 @@ namespace Unigram.Services
                 if (TryGetChatForFileId(updateFile.File.Id, out Chat chat))
                 {
                     chat.UpdateFile(updateFile.File);
-
-                    if (updateFile.File.Local.IsDownloadingCompleted && updateFile.File.Remote.IsUploadingCompleted)
-                    {
-                        _chatsMap.Remove(updateFile.File.Id);
-                    }
                 }
 
                 if (TryGetUserForFileId(updateFile.File.Id, out User user))
                 {
                     user.UpdateFile(updateFile.File);
+                }
 
-                    if (updateFile.File.Local.IsDownloadingCompleted && updateFile.File.Remote.IsUploadingCompleted)
-                    {
-                        _usersMap.Remove(updateFile.File.Id);
-                    }
+                if (_animatedSoundsMap.TryGetValue(updateFile.File.Id, out string emoji))
+                {
+                    _animatedSounds[emoji].Update(updateFile.File);
                 }
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)
@@ -1397,6 +1633,14 @@ namespace Unigram.Services
             {
 
             }
+            else if (update is UpdateMessageInteractionInfo updateMessageInteractionInfo)
+            {
+
+            }
+            else if (update is UpdateMessageIsPinned updateMessageIsPinned)
+            {
+                _settings.SetChatPinnedMessage(updateMessageIsPinned.ChatId, 0);
+            }
             else if (update is UpdateMessageMentionRead updateMessageMentionRead)
             {
                 if (_chats.TryGetValue(updateMessageMentionRead.ChatId, out Chat value))
@@ -1416,13 +1660,13 @@ namespace Unigram.Services
             {
 
             }
-            else if (update is UpdateMessageViews updateMessageViews)
-            {
-
-            }
             else if (update is UpdateNewChat updateNewChat)
             {
                 _chats[updateNewChat.Chat.Id] = updateNewChat.Chat;
+
+                Monitor.Enter(updateNewChat.Chat);
+                SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
+                Monitor.Exit(updateNewChat.Chat);
 
                 if (updateNewChat.Chat.Photo != null)
                 {
@@ -1436,6 +1680,15 @@ namespace Unigram.Services
                         _chatsMap[updateNewChat.Chat.Photo.Big.Id] = updateNewChat.Chat.Id;
                     }
                 }
+
+                //if (updateNewChat.Chat.Type is ChatTypePrivate privata)
+                //{
+                //    _userToChat[privata.UserId] = updateNewChat.Chat.Id;
+                //}
+                //else if (updateNewChat.Chat.Type is ChatTypeSecret secret)
+                //{
+                //    _secretChatToChat[secret.SecretChatId] = updateNewChat.Chat.Id;
+                //}
             }
             else if (update is UpdateNewMessage updateNewMessage)
             {
@@ -1447,7 +1700,11 @@ namespace Unigram.Services
 
                 if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
                 {
-                    UserId = myId.Value;
+                    _settings.UserId = (int)myId.Value;
+
+#if !DEBUG
+                    Microsoft.AppCenter.AppCenter.SetUserId($"uid={myId.Value}");
+#endif
                 }
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
@@ -1531,10 +1788,10 @@ namespace Unigram.Services
             }
             else if (update is UpdateUserChatAction updateUserChatAction)
             {
-                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new Dictionary<int, ChatAction>());
+                var actions = _chatActions.GetOrAdd(updateUserChatAction.ChatId, x => new ConcurrentDictionary<int, ChatAction>());
                 if (updateUserChatAction.Action is ChatActionCancel)
                 {
-                    actions.Remove(updateUserChatAction.UserId);
+                    actions.TryRemove(updateUserChatAction.UserId, out _);
                 }
                 else
                 {
@@ -1688,7 +1945,7 @@ namespace Unigram.Services
 
     class TdHandler : ClientResultHandler
     {
-        private Action<BaseObject> _callback;
+        private readonly Action<BaseObject> _callback;
 
         public TdHandler(Action<BaseObject> callback)
         {

@@ -65,11 +65,6 @@ namespace Unigram.ViewModels
                 return;
             }
 
-#if DEBUG
-            // GPS doesn't work within the VM
-            location = new Location(53.556064, 9.988436);
-#endif
-
             var response = await ProtoService.SendAsync(new SearchChatsNearby(location));
             if (response is ChatsNearby nearby)
             {
@@ -88,8 +83,8 @@ namespace Unigram.ViewModels
                 IsUsersEmpty = nearby.UsersNearby.IsEmpty();
                 IsChatsEmpty = nearby.SupergroupsNearby.IsEmpty();
 
-                RaisePropertyChanged(() => LoadMoreLabel);
-                RaisePropertyChanged(() => LoadMoreVisibility);
+                RaisePropertyChanged(nameof(LoadMoreLabel));
+                RaisePropertyChanged(nameof(LoadMoreVisibility));
             }
 
             Aggregator.Subscribe(this);
@@ -135,8 +130,8 @@ namespace Unigram.ViewModels
                 _remainingUsers = null;
                 _loadedMore = true;
 
-                RaisePropertyChanged(() => LoadMoreLabel);
-                RaisePropertyChanged(() => LoadMoreVisibility);
+                RaisePropertyChanged(nameof(LoadMoreLabel));
+                RaisePropertyChanged(nameof(LoadMoreVisibility));
             }
         }
 

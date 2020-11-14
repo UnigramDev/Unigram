@@ -5,7 +5,6 @@ using Unigram.Common;
 using Unigram.Logs;
 using Unigram.Native.Media;
 using Unigram.ViewModels;
-using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Media;
@@ -15,6 +14,7 @@ using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Display;
+using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -32,15 +32,15 @@ namespace Unigram.Controls.Chats
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private DispatcherTimer _timer;
-        private RoundVideoPopop _roundView = new RoundVideoPopop();
+        private readonly DispatcherTimer _timer;
+        private readonly Recorder _recorder;
 
         private DateTime _start;
 
         public TimeSpan Elapsed => DateTime.Now - _start;
 
-        public bool IsRecording => recordingAudioVideo;
-        public bool IsLocked => recordingLocked;
+        public bool IsRecording => _recordingAudioVideo;
+        public bool IsLocked => _recordingLocked;
 
         public ChatRecordMode Mode
         {
@@ -76,15 +76,16 @@ namespace Unigram.Controls.Chats
                 RecordAudioVideoRunnable();
             };
 
-            Recorder.Current.RecordingStarted += Current_RecordingStarted;
-            Recorder.Current.RecordingStopped += Current_RecordingStopped;
-            Recorder.Current.RecordingFailed += Current_RecordingStopped;
+            _recorder = Recorder.Current;
+            _recorder.RecordingStarted += Current_RecordingStarted;
+            _recorder.RecordingStopped += Current_RecordingStopped;
+            _recorder.RecordingFailed += Current_RecordingStopped;
         }
 
         private async void RecordAudioVideoRunnable()
         {
-            calledRecordRunnable = true;
-            recordAudioVideoRunnableStarted = false;
+            _calledRecordRunnable = true;
+            _recordAudioVideoRunnableStarted = false;
 
             var permissions = await CheckAccessAsync(Mode);
             if (permissions == false)
@@ -94,18 +95,18 @@ namespace Unigram.Controls.Chats
 
             Logger.Debug(Target.Recording, "Permissions granted, mode: " + Mode);
 
-            Recorder.Current.Start(Mode);
+            _recorder.Start(Mode);
             UpdateRecordingInterface();
         }
 
         private void Current_RecordingStarted(object sender, EventArgs e)
         {
-            if (!recordingAudioVideo)
+            if (!_recordingAudioVideo)
             {
-                recordingAudioVideo = true;
+                _recordingAudioVideo = true;
                 UpdateRecordingInterface();
 
-                if (enqueuedLocking)
+                if (_enqueuedLocking)
                 {
                     LockRecording();
                 }
@@ -114,10 +115,10 @@ namespace Unigram.Controls.Chats
 
         private void Current_RecordingStopped(object sender, EventArgs e)
         {
-            if (recordingAudioVideo)
+            if (_recordingAudioVideo)
             {
                 // cancel typing
-                recordingAudioVideo = false;
+                _recordingAudioVideo = false;
                 UpdateRecordingInterface();
             }
         }
@@ -130,7 +131,7 @@ namespace Unigram.Controls.Chats
         {
             Logger.Debug(Target.Recording, "Updating interface, state: " + recordInterfaceState);
 
-            if (recordingLocked && recordingAudioVideo)
+            if (_recordingLocked && _recordingAudioVideo)
             {
                 if (recordInterfaceState == 2)
                 {
@@ -146,7 +147,7 @@ namespace Unigram.Controls.Chats
                     RecordingLocked?.Invoke(this, EventArgs.Empty);
                 });
             }
-            else if (recordingAudioVideo)
+            else if (_recordingAudioVideo)
             {
                 if (recordInterfaceState == 1)
                 {
@@ -158,12 +159,12 @@ namespace Unigram.Controls.Chats
                     if (_request == null)
                     {
                         _request = new DisplayRequest();
-                        _request.GetType();
+                        _request.RequestActive();
                     }
                 }
                 catch { }
 
-                recordingLocked = false;
+                _recordingLocked = false;
 
                 _start = DateTime.Now;
 
@@ -192,7 +193,7 @@ namespace Unigram.Controls.Chats
                 }
                 recordInterfaceState = 0;
 
-                recordingLocked = false;
+                _recordingLocked = false;
 
                 this.BeginOnUIThread(() =>
                 {
@@ -212,12 +213,12 @@ namespace Unigram.Controls.Chats
             {
                 Logger.Debug(Target.Recording, "Click mode: Press");
 
-                if (recordingLocked)
+                if (_recordingLocked)
                 {
-                    if (!hasRecordVideo || calledRecordRunnable)
+                    if (!_hasRecordVideo || _calledRecordRunnable)
                     {
-                        Recorder.Current.Stop(ViewModel, false);
-                        recordingAudioVideo = false;
+                        _recorder.Stop(ViewModel, false);
+                        _recordingAudioVideo = false;
                         UpdateRecordingInterface();
                     }
 
@@ -240,12 +241,12 @@ namespace Unigram.Controls.Chats
 
                 _timer.Stop();
 
-                if (hasRecordVideo)
+                if (_hasRecordVideo)
                 {
                     Logger.Debug(Target.Recording, "Can record videos, start timer to allow switch");
 
-                    calledRecordRunnable = false;
-                    recordAudioVideoRunnableStarted = true;
+                    _calledRecordRunnable = false;
+                    _recordAudioVideoRunnableStarted = true;
                     _timer.Start();
                 }
                 else
@@ -300,24 +301,24 @@ namespace Unigram.Controls.Chats
 
         private void OnRelease()
         {
-            if (recordingLocked)
+            if (_recordingLocked)
             {
                 Logger.Debug(Target.Recording, "Recording is locked, abort");
                 return;
             }
-            if (recordAudioVideoRunnableStarted)
+            if (_recordAudioVideoRunnableStarted)
             {
                 Logger.Debug(Target.Recording, "Timer should still tick, change mode to: " + (Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video));
 
                 _timer.Stop();
                 Mode = Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video;
             }
-            else if (!hasRecordVideo || calledRecordRunnable)
+            else if (!_hasRecordVideo || _calledRecordRunnable)
             {
                 Logger.Debug(Target.Recording, "Timer has tick, stopping recording");
 
-                Recorder.Current.Stop(ViewModel, false);
-                recordingAudioVideo = false;
+                _recorder.Stop(ViewModel, false);
+                _recordingAudioVideo = false;
                 UpdateRecordingInterface();
             }
         }
@@ -344,6 +345,12 @@ namespace Unigram.Controls.Chats
 
         private async Task<bool> CheckDeviceAccessAsync(bool audio, ChatRecordMode mode)
         {
+            // For some reason, as far as I understood, CurrentStatus is always Unspecified on Xbox
+            if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
+            {
+                return true;
+            }
+
             var access = DeviceAccessInformation.CreateFromDeviceClass(audio ? DeviceClass.AudioCapture : DeviceClass.VideoCapture);
             if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
             {
@@ -392,20 +399,20 @@ namespace Unigram.Controls.Chats
             return true;
         }
 
-        private bool hasRecordVideo = false;
+        private readonly bool _hasRecordVideo = false;
 
-        private bool calledRecordRunnable;
-        private bool recordAudioVideoRunnableStarted;
+        private bool _calledRecordRunnable;
+        private bool _recordAudioVideoRunnableStarted;
 
-        private bool recordingAudioVideo;
+        private bool _recordingAudioVideo;
 
-        private bool recordingLocked;
-        private bool enqueuedLocking;
+        private bool _recordingLocked;
+        private bool _enqueuedLocking;
 
         public void CancelRecording()
         {
-            Recorder.Current.Stop(null, true);
-            recordingAudioVideo = false;
+            _recorder.Stop(null, true);
+            _recordingAudioVideo = false;
             UpdateRecordingInterface();
         }
 
@@ -413,19 +420,19 @@ namespace Unigram.Controls.Chats
         {
             Logger.Debug(Target.Recording, "Locking recording");
 
-            enqueuedLocking = false;
-            recordingLocked = true;
+            _enqueuedLocking = false;
+            _recordingLocked = true;
             UpdateRecordingInterface();
         }
 
         public async void ToggleRecording()
         {
-            if (recordingLocked)
+            if (_recordingLocked)
             {
-                if (!hasRecordVideo || calledRecordRunnable)
+                if (!_hasRecordVideo || _calledRecordRunnable)
                 {
-                    Recorder.Current.Stop(ViewModel, false);
-                    recordingAudioVideo = false;
+                    _recorder.Stop(ViewModel, false);
+                    _recordingAudioVideo = false;
                     UpdateRecordingInterface();
                 }
             }
@@ -443,7 +450,7 @@ namespace Unigram.Controls.Chats
                     return;
                 }
 
-                enqueuedLocking = true;
+                _enqueuedLocking = true;
                 RecordAudioVideoRunnable();
             }
         }
@@ -463,7 +470,7 @@ namespace Unigram.Controls.Chats
             private static Recorder _current;
             public static Recorder Current => _current = _current ?? new Recorder();
 
-            private ConcurrentQueueWorker _recordQueue;
+            private readonly ConcurrentQueueWorker _recordQueue;
 
             private OpusRecorder _recorder;
             private StorageFile _file;
@@ -545,7 +552,7 @@ namespace Unigram.Controls.Chats
                     {
                         Logger.Debug(Target.Recording, "Failed to initialize devices, abort: " + ex);
 
-                        _recorder.Dispose();
+                        _recorder?.Dispose();
                         _recorder = null;
 
                         _file = null;
@@ -679,9 +686,9 @@ namespace Unigram.Controls.Chats
             {
                 #region fields
 
-                private bool m_isVideo;
+                private readonly bool m_isVideo;
 
-                private StorageFile m_file;
+                private readonly StorageFile m_file;
                 private IMediaExtension m_opusSink;
                 private LowLagMediaRecording m_lowLag;
                 public MediaCapture m_mediaCapture;
@@ -691,8 +698,8 @@ namespace Unigram.Controls.Chats
                 public bool _mirroringPreview;
                 public bool _externalCamera;
 
-                // Rotation Helper to simplify handling rotation compensation for the camera streams
-                public CameraRotationHelper _rotationHelper;
+                //// Rotation Helper to simplify handling rotation compensation for the camera streams
+                //public CameraRotationHelper _rotationHelper;
 
                 #endregion
 
@@ -745,8 +752,8 @@ namespace Unigram.Controls.Chats
                     if (m_isVideo)
                     {
                         var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Auto);
-                        var rotationAngle = CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(Windows.Devices.Sensors.SimpleOrientation.NotRotated); // _rotationHelper.GetCameraCaptureOrientation());
-                        profile.Video.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), PropertyValue.CreateInt32(rotationAngle));
+                        //var rotationAngle = CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(Windows.Devices.Sensors.SimpleOrientation.NotRotated); // _rotationHelper.GetCameraCaptureOrientation());
+                        //profile.Video.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), PropertyValue.CreateInt32(rotationAngle));
 
                         m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
 
@@ -813,14 +820,17 @@ namespace Unigram.Controls.Chats
 
                 public async Task SetPreviewRotationAsync()
                 {
-                    // Only need to update the orientation if the camera is mounted on the device
-                    if (_externalCamera || _rotationHelper == null || m_mediaCapture == null) return;
+                    //// Only need to update the orientation if the camera is mounted on the device
+                    //if (_externalCamera || _rotationHelper == null || m_mediaCapture == null)
+                    //{
+                    //    return;
+                    //}
 
-                    // Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
-                    var rotation = _rotationHelper.GetCameraPreviewOrientation();
-                    var props = m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
-                    props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(rotation));
-                    await m_mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
+                    //// Add rotation metadata to the preview stream to make sure the aspect ratio / dimensions match when rendering and getting preview frames
+                    //var rotation = _rotationHelper.GetCameraPreviewOrientation();
+                    //var props = m_mediaCapture.VideoDeviceController.GetMediaStreamProperties(MediaStreamType.VideoPreview);
+                    //props.Properties.Add(new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1"), CameraRotationHelper.ConvertSimpleOrientationToClockwiseDegrees(rotation));
+                    //await m_mediaCapture.SetEncodingPropertiesAsync(MediaStreamType.VideoPreview, props, null);
                 }
             }
         }

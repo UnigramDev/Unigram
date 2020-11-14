@@ -21,7 +21,7 @@ namespace Unigram.Views.Supergroups
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(ShortName, "TextChanged");
             var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
-                ViewModel.CheckAvailability(ShortName.Text);
+                ViewModel.CheckAvailability(ShortName.Value);
             });
         }
 

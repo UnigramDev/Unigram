@@ -12,7 +12,7 @@ namespace Unigram.Collections
         private readonly TopChatCategory _category;
         private readonly int _limit;
 
-        private bool _hasMore = false;
+        private readonly bool _hasMore = false;
 
         public TopChatsCollection(IProtoService protoService, TopChatCategory category, int limit)
         {

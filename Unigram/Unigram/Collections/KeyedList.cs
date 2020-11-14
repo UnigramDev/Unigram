@@ -41,6 +41,11 @@ namespace Unigram.Collections
             //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Count"));
         }
 
+        public override string ToString()
+        {
+            return Key?.ToString() ?? string.Empty;
+        }
+
         //protected override event PropertyChangedEventHandler PropertyChanged;
     }
 }

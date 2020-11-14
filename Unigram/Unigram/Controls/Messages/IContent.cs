@@ -1,6 +1,7 @@
 ﻿using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages
 {
@@ -22,5 +23,10 @@ namespace Unigram.Controls.Messages
     public interface IContentWithMask
     {
         CompositionBrush GetAlphaMask();
+    }
+
+    public interface IContentWithPlayback
+    {
+        Border GetPlaybackElement();
     }
 }

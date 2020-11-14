@@ -17,9 +17,9 @@ namespace Unigram.Services.Keyboard
 
         #endregion
 
-        KeyboardHelper _helper;
+        readonly KeyboardHelper _helper;
 
-        private static Dictionary<int, KeyboardService> _windowContext = new Dictionary<int, KeyboardService>();
+        private static readonly Dictionary<int, KeyboardService> _windowContext = new Dictionary<int, KeyboardService>();
         public static KeyboardService GetForCurrentView()
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);

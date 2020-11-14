@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
 {
@@ -45,6 +46,16 @@ namespace Unigram.Views
             }
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            SharedMedia.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            SharedMedia.OnNavigatedFrom(e);
+        }
+
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
@@ -61,17 +72,35 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user);
-                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
-            }
-            else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
-            {
-                if (chat.Photo == null)
+                var userFull = ViewModel.ProtoService.GetUserFull(user.Id);
+                if (userFull?.Photo == null)
                 {
                     return;
                 }
 
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat);
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user, userFull);
+                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
+            }
+            else if (chat.Type is ChatTypeBasicGroup)
+            {
+                var basicGroupFull = ViewModel.ProtoService.GetBasicGroupFull(chat);
+                if (basicGroupFull?.Photo == null)
+                {
+                    return;
+                }
+
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat, basicGroupFull.Photo);
+                await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
+            }
+            else if (chat.Type is ChatTypeSupergroup)
+            {
+                var supergroupFull = ViewModel.ProtoService.GetSupergroupFull(chat);
+                if (supergroupFull?.Photo == null)
+                {
+                    return;
+                }
+
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, chat, supergroupFull.Photo);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
@@ -97,6 +126,7 @@ namespace Unigram.Views
             NotificationGlyph.Text = unmuted ? Icons.Unmute : Icons.Mute;
 
             Call.Visibility = Visibility.Collapsed;
+            VideoCall.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -184,14 +214,11 @@ namespace Unigram.Views
             if (user.Type is UserTypeBot)
             {
                 GetEntities(fullInfo.ShareText);
-
                 DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.ShareText) ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {
-                DescriptionSpan.Inlines.Clear();
-                DescriptionSpan.Inlines.Add(new Run { Text = fullInfo.Bio });
-
+                GetEntities(fullInfo.Bio);
                 DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
             }
 
@@ -200,7 +227,7 @@ namespace Unigram.Views
 
             if (fullInfo.GroupInCommonCount > 0)
             {
-                SharedMedia.Tab = new UserCommonChatsPage { DataContext = ViewModel.UserCommonChats, IsEmbedded = true };
+                SharedMedia.Tab = new UserCommonChatsView { DataContext = ViewModel.UserCommonChats, IsEmbedded = true };
             }
             else
             {
@@ -208,6 +235,8 @@ namespace Unigram.Views
             }
 
             Call.Visibility = fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
+            VideoCall.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
+
             Edit.Visibility = Visibility.Collapsed;
         }
 
@@ -222,7 +251,7 @@ namespace Unigram.Views
         {
             if (secretChat.State is SecretChatStateReady ready)
             {
-                SecretLifetime.Badge = Locale.FormatTtl(secretChat.Ttl);
+                SecretLifetime.Badge = secretChat.Ttl > 0 ? Locale.FormatTtl(secretChat.Ttl) : Strings.Resources.ShortMessageLifetimeForever;
                 //SecretIdenticon.Source = PlaceholderHelper.GetIdenticon(secretChat.KeyHash, 24);
 
                 MiscPanel.Visibility = Visibility.Visible;
@@ -254,6 +283,7 @@ namespace Unigram.Views
 
             // Unused:
             Call.Visibility = Visibility.Collapsed;
+            VideoCall.Visibility = Visibility.Collapsed;
 
             Verified.Visibility = Visibility.Collapsed;
             UserPhone.Visibility = Visibility.Collapsed;
@@ -279,7 +309,7 @@ namespace Unigram.Views
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
 
-            SharedMedia.Tab = new SupergroupMembersPage { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
+            SharedMedia.Tab = new SupergroupMembersView { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
         }
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
@@ -301,6 +331,8 @@ namespace Unigram.Views
             Automation.SetToolTip(Edit, group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu);
 
             Call.Visibility = Visibility.Collapsed;
+            VideoCall.Visibility = Visibility.Collapsed;
+
             Edit.Visibility = group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator ? Visibility.Visible : Visibility.Collapsed;
             Edit.Glyph = Icons.Edit;
 
@@ -322,7 +354,7 @@ namespace Unigram.Views
                 GroupLeave.Visibility = Visibility.Collapsed;
             }
 
-            GroupInvite.Visibility = !group.IsChannel && group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
+            GroupInvite.Visibility = !group.IsChannel && (group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers) ? Visibility.Visible : Visibility.Collapsed;
 
             ChannelMembersPanel.Visibility = group.IsChannel && (group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator) ? Visibility.Visible : Visibility.Collapsed;
             MembersPanel.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Collapsed;
@@ -349,7 +381,7 @@ namespace Unigram.Views
             }
             else
             {
-                SharedMedia.Tab = new SupergroupMembersPage { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
+                SharedMedia.Tab = new SupergroupMembersView { DataContext = ViewModel.SupergroupMembers, IsEmbedded = true };
             }
         }
 
@@ -481,7 +513,7 @@ namespace Unigram.Views
                     if (user.IsContact)
                     {
                         flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
-                        flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
+                        flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, chat.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Banned : Icons.Banned });
                         flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.EditContact, new FontIcon { Glyph = Icons.Edit });
                         flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.DeleteContact, new FontIcon { Glyph = Icons.Delete });
                     }
@@ -504,17 +536,17 @@ namespace Unigram.Views
                         if (user.PhoneNumber.Length > 0)
                         {
                             flyout.CreateFlyoutItem(ViewModel.ShareCommand, Strings.Resources.ShareContact, new FontIcon { Glyph = Icons.Share });
-                            flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
+                            flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, chat.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Banned : Icons.Banned });
                         }
                         else
                         {
                             if (user.Type is UserTypeBot)
                             {
-                                flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.BotRestart : Strings.Resources.BotStop, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
+                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, chat.IsBlocked ? Strings.Resources.BotRestart : Strings.Resources.BotStop, new FontIcon { Glyph = chat.IsBlocked ? Icons.Banned : Icons.Banned });
                             }
                             else
                             {
-                                flyout.CreateFlyoutItem(fullInfo.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, fullInfo.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = fullInfo.IsBlocked ? Icons.Banned : Icons.Banned });
+                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.UnblockCommand : ViewModel.BlockCommand, chat.IsBlocked ? Strings.Resources.Unblock : Strings.Resources.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Banned : Icons.Banned });
                             }
                         }
                     }
@@ -560,14 +592,12 @@ namespace Unigram.Views
 
                 var fullInfo = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
 
-                if (super.IsChannel)
+                if (fullInfo != null && fullInfo.CanGetStatistics)
                 {
-                    if (fullInfo != null && fullInfo.CanViewStatistics)
-                    {
-                        flyout.CreateFlyoutItem(ViewModel.StatisticsCommand, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.Statistics });
-                    }
+                    flyout.CreateFlyoutItem(ViewModel.StatisticsCommand, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.Statistics });
                 }
-                else
+
+                if (!super.IsChannel)
                 {
                     flyout.CreateFlyoutItem(ViewModel.MembersCommand, Strings.Resources.SearchMembers, new FontIcon { Glyph = Icons.Search });
 
@@ -575,6 +605,10 @@ namespace Unigram.Views
                     {
                         flyout.CreateFlyoutItem(ViewModel.DeleteCommand, Strings.Resources.LeaveMegaMenu, new FontIcon { Glyph = Icons.Delete });
                     }
+                }
+                else if (supergroup.HasLinkedChat)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.DiscussCommand, Strings.Resources.ViewDiscussion, new FontIcon { Glyph = Icons.Message });
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
@@ -885,7 +919,7 @@ namespace Unigram.Views
 
         private void SharedMedia_ViewChanged(object sender, ScrollViewerViewChangedEventArgs args)
         {
-            var scrollViewer2 = SharedMedia.GetScrollViewer();
+            var scrollViewer2 = sender as ScrollViewer;
             if (_sharedMediaDisabled)
             {
                 if (!args.IsIntermediate)
@@ -1022,7 +1056,7 @@ namespace Unigram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SharedMedia.Height = e.NewSize.Height;
+            SharedMedia.Height = e.NewSize.Height - 16;
         }
     }
 }

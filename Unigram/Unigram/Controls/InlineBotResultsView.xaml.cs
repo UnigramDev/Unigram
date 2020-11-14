@@ -18,11 +18,11 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        private AnimatedRepeaterHandler<InlineQueryResult> _handler;
-        private ZoomableRepeaterHandler _zoomer;
+        private readonly AnimatedRepeaterHandler<InlineQueryResult> _handler;
+        private readonly ZoomableRepeaterHandler _zoomer;
 
-        private FileContext<InlineQueryResult> _files = new FileContext<InlineQueryResult>();
-        private FileContext<InlineQueryResult> _thumbnails = new FileContext<InlineQueryResult>();
+        private readonly FileContext<InlineQueryResult> _files = new FileContext<InlineQueryResult>();
+        private readonly FileContext<InlineQueryResult> _thumbnails = new FileContext<InlineQueryResult>();
 
         public InlineBotResultsView()
         {
@@ -38,7 +38,6 @@ namespace Unigram.Controls
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
-            _zoomer.GetEmojisAsync = fileId => ViewModel.ProtoService.SendAsync(new GetStickerEmojis(new InputFileId(fileId)));
         }
 
         public void UpdateCornerRadius(double radius)
@@ -51,8 +50,20 @@ namespace Unigram.Controls
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            if (ViewModel != null) Bindings.Update();
-            if (ViewModel == null) Bindings.StopTracking();
+            if (ViewModel != null)
+            {
+                Bindings.Update();
+            }
+
+            if (ViewModel == null)
+            {
+                Bindings.StopTracking();
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -75,11 +86,6 @@ namespace Unigram.Controls
             {
                 layout.MaximumRowsOrColumns = (int)Math.Ceiling(e.NewSize.Width / 96);
             }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Bindings.StopTracking();
         }
 
         public event ItemClickEventHandler ItemClick;
@@ -408,7 +414,7 @@ namespace Unigram.Controls
             ViewModel.ProtoService.DownloadFile(id, 1);
         }
 
-        private DisposableMutex _loadMoreLock = new DisposableMutex();
+        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private bool _loadMoreDrop;
 
         private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)

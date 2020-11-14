@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Security.Credentials;
 using Windows.Security.Cryptography;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,14 +18,16 @@ namespace Unigram.Views
     public sealed partial class PasscodePage : ContentPopup
     {
         private readonly IPasscodeService _passcodeService;
+        private readonly bool _biometrics;
 
         private bool _accepted;
 
-        public PasscodePage()
+        public PasscodePage(bool biometrics)
         {
             InitializeComponent();
 
             _passcodeService = TLContainer.Current.Resolve<IPasscodeService>();
+            _biometrics = biometrics;
 
             _applicationView = ApplicationView.GetForCurrentView();
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
@@ -45,7 +48,7 @@ namespace Unigram.Views
 
         #region Bounds
 
-        private ApplicationView _applicationView;
+        private readonly ApplicationView _applicationView;
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
@@ -143,30 +146,11 @@ namespace Unigram.Views
 
             if (await KeyCredentialManager.IsSupportedAsync())
             {
-                var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
-                if (result.Credential != null)
+                Biometrics.Visibility = Visibility.Visible;
+
+                if (_biometrics)
                 {
-                    var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
-                    if (signResult.Status == KeyCredentialStatus.Success)
-                    {
-                        Unlock();
-                    }
-                    else
-                    {
-                        Biometrics.Visibility = Visibility.Visible;
-                    }
-                }
-                else
-                {
-                    var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Resources.AppName, KeyCredentialCreationOption.ReplaceExisting);
-                    if (creationResult.Status == KeyCredentialStatus.Success)
-                    {
-                        Unlock();
-                    }
-                    else
-                    {
-                        Biometrics.Visibility = Visibility.Visible;
-                    }
+                    Biometrics_Click(null, null);
                 }
             }
             else
@@ -184,13 +168,13 @@ namespace Unigram.Views
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
             args.EnsuredFocusedElementInView = true;
-            Field.Margin = new Thickness(0, 0, 0, Math.Max(args.OccludedRect.Height + 8, 120));
+            FieldPanel.Margin = new Thickness(0, 0, 0, Math.Max(args.OccludedRect.Height + 8, 120));
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
         {
             args.EnsuredFocusedElementInView = true;
-            Field.Margin = new Thickness(0, 0, 0, 120);
+            FieldPanel.Margin = new Thickness(0, 0, 0, 120);
         }
 
         private void Unlock()
@@ -199,6 +183,35 @@ namespace Unigram.Views
             _accepted = true;
 
             Hide();
+        }
+
+        private async void Biometrics_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var windowContext = TLWindowContext.GetForCurrentView();
+                if (windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                {
+                    var result = await KeyCredentialManager.OpenAsync(Strings.Resources.AppName);
+                    if (result.Credential != null)
+                    {
+                        var signResult = await result.Credential.RequestSignAsync(CryptographicBuffer.ConvertStringToBinary(Package.Current.Id.Name, BinaryStringEncoding.Utf8));
+                        if (signResult.Status == KeyCredentialStatus.Success)
+                        {
+                            Unlock();
+                        }
+                    }
+                    else
+                    {
+                        var creationResult = await KeyCredentialManager.RequestCreateAsync(Strings.Resources.AppName, KeyCredentialCreationOption.ReplaceExisting);
+                        if (creationResult.Status == KeyCredentialStatus.Success)
+                        {
+                            Unlock();
+                        }
+                    }
+                }
+            }
+            catch { }
         }
     }
 }

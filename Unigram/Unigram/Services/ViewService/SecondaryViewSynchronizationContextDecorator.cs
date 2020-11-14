@@ -11,9 +11,15 @@ namespace Unigram.Services.ViewService
         public SecondaryViewSynchronizationContextDecorator(ViewLifetimeControl control, SynchronizationContext context)
         {
             if (context == null)
+            {
                 throw new ArgumentNullException(nameof(context));
+            }
+
             if (control == null)
+            {
                 throw new ArgumentNullException(nameof(control));
+            }
+
             this.control = control;
             this.context = context;
         }

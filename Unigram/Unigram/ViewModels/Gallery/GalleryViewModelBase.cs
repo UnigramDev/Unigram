@@ -19,7 +19,7 @@ namespace Unigram.ViewModels.Gallery
         public IFileDelegate Delegate { get; set; }
 
         public GalleryViewModelBase(IProtoService protoService, IEventAggregator aggregator)
-            : base(protoService, null, null, aggregator)
+            : base(protoService, protoService, null, aggregator)
         {
             StickersCommand = new RelayCommand(StickersExecute);
             ViewCommand = new RelayCommand(ViewExecute);
@@ -74,7 +74,7 @@ namespace Unigram.ViewModels.Gallery
             set
             {
                 Set(ref _totalItems, value);
-                RaisePropertyChanged(() => Position);
+                RaisePropertyChanged(nameof(Position));
             }
         }
 
@@ -144,7 +144,7 @@ namespace Unigram.ViewModels.Gallery
 
         protected virtual void OnSelectedItemChanged(GalleryContent item)
         {
-            RaisePropertyChanged(() => Position);
+            RaisePropertyChanged(nameof(Position));
         }
 
         public virtual bool CanDelete
@@ -260,10 +260,22 @@ namespace Unigram.ViewModels.Gallery
                 return;
             }
 
+            var cached = await ProtoService.GetFileAsync(file);
+            if (cached == null)
+            {
+                return;
+            }
+
             var fileName = result.FileName;
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = System.IO.Path.GetFileName(file.Local.Path);
+            }
+
+            var clean = ProtoService.Execute(new CleanFileName(fileName));
+            if (clean is Text text && !string.IsNullOrEmpty(text.TextValue))
+            {
+                fileName = text.TextValue;
             }
 
             var extension = System.IO.Path.GetExtension(fileName);
@@ -277,16 +289,15 @@ namespace Unigram.ViewModels.Gallery
             picker.SuggestedStartLocation = PickerLocationId.Downloads;
             picker.SuggestedFileName = fileName;
 
-            var picked = await picker.PickSaveFileAsync();
-            if (picked != null)
+            try
             {
-                try
+                var picked = await picker.PickSaveFileAsync();
+                if (picked != null)
                 {
-                    var cached = await StorageFile.GetFileFromPathAsync(file.Local.Path);
                     await cached.CopyAndReplaceAsync(picked);
                 }
-                catch { }
             }
+            catch { }
         }
 
         public RelayCommand OpenWithCommand { get; }
@@ -301,17 +312,14 @@ namespace Unigram.ViewModels.Gallery
             var file = item.GetFile();
             if (file != null && file.Local.IsDownloadingCompleted)
             {
-                try
+                var temp = await ProtoService.GetFileAsync(file);
+                if (temp != null)
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-
                     var options = new LauncherOptions();
                     options.DisplayApplicationPicker = true;
 
                     await Launcher.LaunchFileAsync(temp, options);
-
                 }
-                catch { }
             }
         }
 

@@ -16,13 +16,14 @@ namespace Unigram.Common
 
         private readonly IProtoService _protoService;
 
-        private File _file;
+        private readonly File _file;
         private readonly TimeSpan _duration;
 
         private IRandomAccessStream _fileStream;
 
+        private readonly int _chunk;
+
         private int _offset;
-        private int _chunk;
         private int _next;
 
         private int _bufferSize = 256 * 1024;

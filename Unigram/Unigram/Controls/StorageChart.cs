@@ -19,7 +19,7 @@ namespace Unigram.Controls
 
         private const float THICKNESS = 6;
 
-        private ShapeVisual _visual;
+        private readonly ShapeVisual _visual;
 
         private float[] _values;
         private bool[] _visible;

@@ -7,20 +7,41 @@
         {
         }
 
-        private bool? _bubbleKnockout;
-        public bool BubbleKnockout
+        private bool? _bubbleAnimations;
+        public bool BubbleAnimations
         {
             get
             {
-                if (_bubbleKnockout == null)
-                    _bubbleKnockout = GetValueOrDefault("BubbleKnockout", false);
+                if (_bubbleAnimations == null)
+                {
+                    _bubbleAnimations = GetValueOrDefault("BubbleAnimations", true);
+                }
 
-                return _bubbleKnockout ?? false;
+                return _bubbleAnimations ?? true;
             }
             set
             {
-                _bubbleKnockout = value;
-                AddOrUpdateValue("BubbleKnockout", value);
+                _bubbleAnimations = value;
+                AddOrUpdateValue("BubbleAnimations", value);
+            }
+        }
+
+        private bool? _minithumbnails;
+        public bool Minithumbnails
+        {
+            get
+            {
+                if (_minithumbnails == null)
+                {
+                    _minithumbnails = GetValueOrDefault("Minithumbnails", true);
+                }
+
+                return _minithumbnails ?? true;
+            }
+            set
+            {
+                _minithumbnails = value;
+                AddOrUpdateValue("Minithumbnails", value);
             }
         }
     }

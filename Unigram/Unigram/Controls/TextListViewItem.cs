@@ -1,11 +1,20 @@
 ﻿using LinqToVisualTree;
 using System.Text;
 using Unigram.Controls.Cells;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
+    public class TextListView : ListView
+    {
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new TextListViewItem();
+        }
+    }
+
     public class TextListViewItem : ListViewItem
     {
         protected override AutomationPeer OnCreateAutomationPeer()
@@ -16,7 +25,7 @@ namespace Unigram.Controls
 
     public class TextListViewItemAutomationPeer : ListViewItemAutomationPeer
     {
-        private ListViewItem _owner;
+        private readonly ListViewItem _owner;
 
         public TextListViewItemAutomationPeer(ListViewItem owner)
             : base(owner)
@@ -60,7 +69,7 @@ namespace Unigram.Controls
 
     public class TextGridViewItemAutomationPeer : GridViewItemAutomationPeer
     {
-        private GridViewItem _owner;
+        private readonly GridViewItem _owner;
 
         public TextGridViewItemAutomationPeer(GridViewItem owner)
             : base(owner)

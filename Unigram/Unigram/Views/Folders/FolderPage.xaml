@@ -101,6 +101,7 @@
                             Content="{CustomResource FilterAddChats}"
                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                         <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.Include}"
                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
@@ -134,6 +135,7 @@
                             Content="{CustomResource FilterAddChats}"
                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                         <muxc:ItemsRepeater
+                            Layout="{StaticResource ThreadStackLayout}"
                             ItemsSource="{x:Bind ViewModel.Exclude}"
                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>

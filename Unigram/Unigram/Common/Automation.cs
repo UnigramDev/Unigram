@@ -104,10 +104,7 @@ namespace Unigram.Common
             }
             else if (message.Content is MessageCall call)
             {
-                var outgoing = message.IsOutgoing;
-                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
-
-                builder.Append(missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming));
+                builder.Append(call.ToOutcomeText(message.IsOutgoing));
             }
             else if (message.Content is MessageText text)
             {
@@ -137,6 +134,21 @@ namespace Unigram.Common
                 return MessageService.GetText(new ViewModels.MessageViewModel(protoService, null, null, message)) + ", ";
             }
 
+            if (message.Content is MessageAlbum album)
+            {
+                if (album.IsMedia)
+                {
+                    return Locale.Declension("Photos", album.Messages.Count) + ", ";
+                }
+                else if (album.Messages.Count > 0 && album.Messages[0].Content is MessageAudio)
+                {
+                    return Locale.Declension("MusicFiles", album.Messages.Count) + ", ";
+                }
+                else
+                {
+                    return Locale.Declension("Files", album.Messages.Count) + ", ";
+                }
+            }
             if (message.Content is MessageText text)
             {
                 return text.Text.Text + ", ";
@@ -178,7 +190,7 @@ namespace Unigram.Common
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                return Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", ";
+                return Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", " + (voiceNote.IsListened ? "" : Strings.Resources.AccDescrMsgNotPlayed + ", ");
             }
             else if (message.Content is MessageVideo video)
             {
@@ -237,10 +249,7 @@ namespace Unigram.Common
             }
             else if (message.Content is MessageCall call)
             {
-                var outgoing = message.IsOutgoing;
-                var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
-
-                return (missed ? (outgoing ? Strings.Resources.CallMessageOutgoingMissed : Strings.Resources.CallMessageIncomingMissed) : (outgoing ? Strings.Resources.CallMessageOutgoing : Strings.Resources.CallMessageIncoming)) + ", ";
+                return call.ToOutcomeText(message.IsOutgoing) + ", ";
             }
             else if (message.Content is MessageUnsupported)
             {
@@ -262,8 +271,14 @@ namespace Unigram.Common
 
             if (!light && /*message.IsFirst &&*/ !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
             {
-                var sender = cacheService.GetUser(message.SenderUserId);
-                title = sender?.GetFullName();
+                if (cacheService.TryGetUser(message.Sender, out User senderUser))
+                {
+                    title = senderUser.GetFullName();
+                }
+                else if (cacheService.TryGetChat(message.Sender, out Chat senderChat))
+                {
+                    title = senderChat.Title;
+                }
             }
             else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup)
             {
@@ -271,18 +286,7 @@ namespace Unigram.Common
             }
             else if (!light && /*message.IsFirst &&*/ message.IsSaved(cacheService.Options.MyId))
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
-                {
-                    title = cacheService.GetUser(fromUser.SenderUserId)?.GetFullName();
-                }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel post)
-                {
-                    title = cacheService.GetTitle(cacheService.GetChat(post.ChatId));
-                }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
-                {
-                    title = fromHiddenUser.SenderName;
-                }
+                title = cacheService.GetTitle(message.ForwardInfo);
             }
 
             var builder = new StringBuilder();

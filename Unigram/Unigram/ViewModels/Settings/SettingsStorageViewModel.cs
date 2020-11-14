@@ -45,8 +45,6 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        private static string[] ExcludedFileNames = new[] { Constants.WallpaperFileName };
-
         public int FilesTtl
         {
             get
@@ -85,8 +83,7 @@ namespace Unigram.ViewModels.Settings
             }
             set
             {
-                Set(ref _statistics, value);
-                ProcessTotal(value);
+                Set(ref _statistics, ProcessTotal(value));
             }
         }
 
@@ -143,8 +140,8 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var types = dialog.SelectedItems ?? new FileType[0];
-            if (types.IsEmpty())
+            var types = dialog.SelectedItems;
+            if (types == null || types.IsEmpty())
             {
                 return;
             }
@@ -174,18 +171,36 @@ namespace Unigram.ViewModels.Settings
             TaskCompleted = true;
         }
 
-        private void ProcessTotal(StorageStatistics value)
+        private StorageStatistics ProcessTotal(StorageStatistics value)
         {
             var result = new StorageStatisticsByChat();
             result.ByFileType = new List<StorageStatisticsByFileType>();
 
-            foreach (var chat in value.ByChat)
+            for (int i = 0; i < value.ByChat.Count; i++)
             {
+                var chat = value.ByChat[i];
+
                 result.Count += chat.Count;
                 result.Size += chat.Size;
 
-                foreach (var type in chat.ByFileType)
+                for (int j = 0; j < chat.ByFileType.Count; j++)
                 {
+                    var type = chat.ByFileType[j];
+
+                    if (type.FileType is FileTypeProfilePhoto || type.FileType is FileTypeWallpaper)
+                    {
+                        result.Count -= type.Count;
+                        result.Size -= type.Size;
+
+                        chat.Count -= type.Count;
+                        chat.Size -= type.Size;
+
+                        chat.ByFileType.Remove(type);
+                        j--;
+
+                        continue;
+                    }
+
                     var already = result.ByFileType.FirstOrDefault(x => x.FileType.TypeEquals(type.FileType));
                     if (already == null)
                     {
@@ -196,10 +211,18 @@ namespace Unigram.ViewModels.Settings
                     already.Count += type.Count;
                     already.Size += type.Size;
                 }
+
+                if (chat.ByFileType.IsEmpty())
+                {
+                    value.ByChat.Remove(chat);
+                    i--;
+                }
             }
 
             TotalStatistics = result;
             IsLoading = false;
+
+            return value;
         }
 
         public RelayCommand ChangeTtlCommand { get; }
@@ -227,7 +250,7 @@ namespace Unigram.ViewModels.Settings
                 CacheService.Options.StorageMaxTimeFromLastAccess = index * 60 * 60 * 24;
                 CacheService.Options.UseStorageOptimizer = index > 0;
 
-                RaisePropertyChanged(() => FilesTtl);
+                RaisePropertyChanged(nameof(FilesTtl));
             }
         }
     }

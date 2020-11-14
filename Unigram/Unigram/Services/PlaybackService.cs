@@ -22,6 +22,8 @@ namespace Unigram.Services
 
         double PlaybackRate { get; set; }
 
+        double Volume { get; set; }
+
         void Pause();
         void Play();
 
@@ -63,11 +65,11 @@ namespace Unigram.Services
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        private MediaPlayer _mediaPlayer;
+        private readonly MediaPlayer _mediaPlayer;
 
-        private SystemMediaTransportControls _transport;
+        private readonly SystemMediaTransportControls _transport;
 
-        private Dictionary<string, PlaybackItem> _mapping;
+        private readonly Dictionary<string, PlaybackItem> _mapping;
 
         private readonly FileContext<RemoteFileStream> _streams = new FileContext<RemoteFileStream>();
 
@@ -81,6 +83,11 @@ namespace Unigram.Services
 
         public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
         {
+            if (!ApiInfo.IsMediaSupported)
+            {
+                return;
+            }
+
             _protoService = protoService;
             _cacheService = cacheService;
             _settingsService = settingsService;
@@ -93,6 +100,7 @@ namespace Unigram.Services
             _mediaPlayer.MediaEnded += OnMediaEnded;
             _mediaPlayer.SourceChanged += OnSourceChanged;
             _mediaPlayer.CommandManager.IsEnabled = false;
+            _mediaPlayer.Volume = _settingsService.VolumeLevel;
 
             _transport = _mediaPlayer.SystemMediaTransportControls;
             _transport.ButtonPressed += Transport_ButtonPressed;
@@ -261,6 +269,19 @@ namespace Unigram.Services
             _transport.IsPreviousEnabled = true;
             _transport.IsNextEnabled = items.Count > 1;
 
+            void SetProperties(string title, string artist)
+            {
+                _transport.DisplayUpdater.ClearAll();
+                _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
+
+                try
+                {
+                    _transport.DisplayUpdater.MusicProperties.Title = title ?? string.Empty;
+                    _transport.DisplayUpdater.MusicProperties.Artist = artist ?? string.Empty;
+                }
+                catch { }
+            }
+
             if (item.File.Local.IsDownloadingCompleted)
             {
                 try
@@ -270,18 +291,12 @@ namespace Unigram.Services
                 }
                 catch
                 {
-                    _transport.DisplayUpdater.ClearAll();
-                    _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
-                    _transport.DisplayUpdater.MusicProperties.Title = item.Title ?? string.Empty;
-                    _transport.DisplayUpdater.MusicProperties.Artist = item.Artist ?? string.Empty;
+                    SetProperties(item.Title, item.Artist);
                 }
             }
             else
             {
-                _transport.DisplayUpdater.ClearAll();
-                _transport.DisplayUpdater.Type = MediaPlaybackType.Music;
-                _transport.DisplayUpdater.MusicProperties.Title = item.Title ?? string.Empty;
-                _transport.DisplayUpdater.MusicProperties.Artist = item.Artist ?? string.Empty;
+                SetProperties(item.Title, item.Artist);
             }
 
             _transport.DisplayUpdater.Update();
@@ -307,7 +322,7 @@ namespace Unigram.Services
                 _currentItem = value?.Message;
                 _currentPlayback = value;
                 _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
-                RaisePropertyChanged(() => CurrentItem);
+                RaisePropertyChanged(nameof(CurrentItem));
                 UpdateTransport();
             }
         }
@@ -419,6 +434,16 @@ namespace Unigram.Services
             }
         }
 
+        public double Volume
+        {
+            get => _mediaPlayer.Volume;
+            set
+            {
+                _settingsService.VolumeLevel = value;
+                _mediaPlayer.Volume = value;
+            }
+        }
+
         public void Pause()
         {
             if (_mediaPlayer.PlaybackSession.CanPause)
@@ -492,7 +517,7 @@ namespace Unigram.Services
 
         private void SetSource(List<PlaybackItem> items, int index)
         {
-            if (index > 0 && index < items.Count - 1)
+            if (index >= 0 && index <= items.Count - 1)
             {
                 _mediaPlayer.Source = items[index].Source;
             }
@@ -543,7 +568,7 @@ namespace Unigram.Services
             var offset = -49;
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
 
-            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, 0, message.Id, offset, 100, filter), result =>
+            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, 0), result =>
             {
                 if (result is Messages messages)
                 {

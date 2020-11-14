@@ -6,15 +6,13 @@ namespace Unigram.Charts
 {
     public class ChartPickerDelegate
     {
-
         public bool disabled;
-        Listener view;
+        readonly IListener view;
 
-        public ChartPickerDelegate(Listener view)
+        public ChartPickerDelegate(IListener view)
         {
             this.view = view;
         }
-
 
         private const int CAPTURE_NONE = 0;
         private const int CAPTURE_LEFT = 1;
@@ -38,37 +36,55 @@ namespace Unigram.Charts
         public float minDistance = 0.1f;
 
 
-        public CapturesData getMiddleCaptured()
+        public CapturesData GetMiddleCaptured()
         {
             if (capturedStates[0] != null && capturedStates[0].state == CAPTURE_MIDDLE)
+            {
                 return capturedStates[0];
+            }
+
             if (capturedStates[1] != null && capturedStates[1].state == CAPTURE_MIDDLE)
+            {
                 return capturedStates[1];
+            }
+
             return null;
         }
 
-        public CapturesData getLeftCaptured()
+        public CapturesData GetLeftCaptured()
         {
             if (capturedStates[0] != null && capturedStates[0].state == CAPTURE_LEFT)
+            {
                 return capturedStates[0];
+            }
+
             if (capturedStates[1] != null && capturedStates[1].state == CAPTURE_LEFT)
+            {
                 return capturedStates[1];
+            }
+
             return null;
         }
 
-        public CapturesData getRightCaptured()
+        public CapturesData GetRightCaptured()
         {
             if (capturedStates[0] != null && capturedStates[0].state == CAPTURE_RIGHT)
+            {
                 return capturedStates[0];
+            }
+
             if (capturedStates[1] != null && capturedStates[1].state == CAPTURE_RIGHT)
+            {
                 return capturedStates[1];
+            }
+
             return null;
         }
 
 
         public class CapturesData
         {
-            public readonly Listener view;
+            public readonly IListener view;
             public readonly int state;
             public int capturedX;
             public int lastMovingX;
@@ -76,10 +92,10 @@ namespace Unigram.Charts
             public float end;
 
             ValueAnimator a;
-            ValueAnimator jumpToAnimator;
+            readonly ValueAnimator jumpToAnimator;
             public float aValue = 0f;
 
-            public CapturesData(Listener view, int state)
+            public CapturesData(IListener view, int state)
             {
                 this.view = view;
                 this.state = state;
@@ -87,27 +103,34 @@ namespace Unigram.Charts
 
             public void captured()
             {
-                a = ValueAnimator.ofFloat(view, 0, 1f);
-                a.setDuration(600);
+                a = ValueAnimator.OfFloat(0, 1f);
+                a.SetDuration(600);
                 a.setInterpolator(BaseChartView.INTERPOLATOR);
-                a.addUpdateListener(new AnimatorUpdateListener(animation =>
+                a.AddUpdateListener(new AnimatorUpdateListener(animation =>
                 {
-                    aValue = (float)animation.getAnimatedValue();
-                    view.invalidate();
+                    aValue = (float)animation.GetAnimatedValue();
+                    view.Invalidate();
                 }));
-                a.start();
+                a.Start();
             }
 
             public void uncapture()
             {
-                if (a != null) a.cancel();
-                if (jumpToAnimator != null) jumpToAnimator.cancel();
+                if (a != null)
+                {
+                    a.Cancel();
+                }
+
+                if (jumpToAnimator != null)
+                {
+                    jumpToAnimator.Cancel();
+                }
             }
         }
 
-        CapturesData[] capturedStates = { null, null };
+        readonly CapturesData[] capturedStates = { null, null };
 
-        public bool capture(int x, int y, int pointerIndex)
+        public bool Capture(int x, int y, int pointerIndex)
         {
             if (disabled)
             {
@@ -117,7 +140,11 @@ namespace Unigram.Charts
             {
                 if (leftPickerArea.Contains(new Point(x, y)))
                 {
-                    if (capturedStates[0] != null) capturedStates[1] = capturedStates[0];
+                    if (capturedStates[0] != null)
+                    {
+                        capturedStates[1] = capturedStates[0];
+                    }
+
                     capturedStates[0] = new CapturesData(view, CAPTURE_LEFT);
                     capturedStates[0].start = pickerStart;
                     capturedStates[0].capturedX = x;
@@ -126,21 +153,29 @@ namespace Unigram.Charts
 
                     if (moveToAnimator != null)
                     {
-                        moveToAnimator.cancel();
+                        moveToAnimator.Cancel();
                     }
                     return true;
                 }
 
                 if (rightPickerArea.Contains(new Point(x, y)))
                 {
-                    if (capturedStates[0] != null) capturedStates[1] = capturedStates[0];
+                    if (capturedStates[0] != null)
+                    {
+                        capturedStates[1] = capturedStates[0];
+                    }
+
                     capturedStates[0] = new CapturesData(view, CAPTURE_RIGHT);
                     capturedStates[0].end = pickerEnd;
                     capturedStates[0].capturedX = x;
                     capturedStates[0].lastMovingX = x;
                     capturedStates[0].captured();
 
-                    if (moveToAnimator != null) moveToAnimator.cancel();
+                    if (moveToAnimator != null)
+                    {
+                        moveToAnimator.Cancel();
+                    }
+
                     return true;
                 }
 
@@ -153,7 +188,11 @@ namespace Unigram.Charts
                     capturedStates[0].capturedX = x;
                     capturedStates[0].lastMovingX = x;
                     capturedStates[0].captured();
-                    if (moveToAnimator != null) moveToAnimator.cancel();
+                    if (moveToAnimator != null)
+                    {
+                        moveToAnimator.Cancel();
+                    }
+
                     return true;
                 }
 
@@ -166,20 +205,26 @@ namespace Unigram.Charts
                     startTapTime = DateTime.Now.ToTimestamp() * 1000;
                     if (moveToAnimator != null)
                     {
-                        if (moveToAnimator.isRunning())
+                        if (moveToAnimator.IsRunning())
                         {
-                            view.onPickerJumpTo(pickerStart, pickerEnd, true);
+                            view.OnPickerJumpTo(pickerStart, pickerEnd, true);
                         }
-                        moveToAnimator.cancel();
+                        moveToAnimator.Cancel();
                     }
                     return true;
                 }
             }
             else if (pointerIndex == 1)
             {
-                if (capturedStates[0] == null) return false;
-                if (capturedStates[0].state == CAPTURE_MIDDLE) return false;
+                if (capturedStates[0] == null)
+                {
+                    return false;
+                }
 
+                if (capturedStates[0].state == CAPTURE_MIDDLE)
+                {
+                    return false;
+                }
 
                 if (leftPickerArea.Contains(new Point(x, y)) && capturedStates[0].state != CAPTURE_LEFT)
                 {
@@ -188,38 +233,54 @@ namespace Unigram.Charts
                     capturedStates[1].capturedX = x;
                     capturedStates[1].lastMovingX = x;
                     capturedStates[1].captured();
-                    if (moveToAnimator != null) moveToAnimator.cancel();
+                    if (moveToAnimator != null)
+                    {
+                        moveToAnimator.Cancel();
+                    }
+
                     return true;
                 }
 
                 if (rightPickerArea.Contains(new Point(x, y)))
                 {
-                    if (capturedStates[0].state == CAPTURE_RIGHT) return false;
+                    if (capturedStates[0].state == CAPTURE_RIGHT)
+                    {
+                        return false;
+                    }
+
                     capturedStates[1] = new CapturesData(view, CAPTURE_RIGHT);
                     capturedStates[1].end = pickerEnd;
                     capturedStates[1].capturedX = x;
                     capturedStates[1].lastMovingX = x;
                     capturedStates[1].captured();
-                    if (moveToAnimator != null) moveToAnimator.cancel();
+                    if (moveToAnimator != null)
+                    {
+                        moveToAnimator.Cancel();
+                    }
+
                     return true;
                 }
             }
             return false;
         }
 
-        public bool captured()
+        public bool Captured()
         {
             return capturedStates[0] != null || tryMoveTo;
         }
 
-        public bool move(int x, int y, int pointer)
+        public bool Move(int x, int y, int pointer)
         {
             if (tryMoveTo)
             {
                 return false;
             }
             CapturesData d = capturedStates[pointer];
-            if (d == null) return false;
+            if (d == null)
+            {
+                return false;
+            }
+
             int capturedState = d.state;
             float capturedStart = d.start;
             float capturedEnd = d.end;
@@ -230,16 +291,32 @@ namespace Unigram.Charts
             if (capturedState == CAPTURE_LEFT)
             {
                 pickerStart = capturedStart - (capturedX - x) / (float)pickerWidth;
-                if (pickerStart < 0f) pickerStart = 0f;
-                if (pickerEnd - pickerStart < minDistance) pickerStart = pickerEnd - minDistance;
+                if (pickerStart < 0f)
+                {
+                    pickerStart = 0f;
+                }
+
+                if (pickerEnd - pickerStart < minDistance)
+                {
+                    pickerStart = pickerEnd - minDistance;
+                }
+
                 notifyPicker = true;
             }
 
             if (capturedState == CAPTURE_RIGHT)
             {
                 pickerEnd = capturedEnd - (capturedX - x) / (float)pickerWidth;
-                if (pickerEnd > 1f) pickerEnd = 1f;
-                if (pickerEnd - pickerStart < minDistance) pickerEnd = pickerStart + minDistance;
+                if (pickerEnd > 1f)
+                {
+                    pickerEnd = 1f;
+                }
+
+                if (pickerEnd - pickerStart < minDistance)
+                {
+                    pickerEnd = pickerStart + minDistance;
+                }
+
                 notifyPicker = true;
             }
 
@@ -261,13 +338,15 @@ namespace Unigram.Charts
 
                 notifyPicker = true;
             }
-            if (notifyPicker) view.onPickerDataChanged();
+            if (notifyPicker)
+            {
+                view.OnPickerDataChanged();
+            }
+
             return true;
         }
 
-        public const int HORIZONTAL_PADDING = 16;
-
-        public bool uncapture(PointerPoint point, int pointerIndex)
+        public bool Uncapture(PointerPoint point, int pointerIndex)
         {
             if (pointerIndex == 0)
             {
@@ -279,7 +358,7 @@ namespace Unigram.Charts
                     if (/*@event.getAction() == MotionEvent.ACTION_UP &&*/ DateTime.Now.ToTimestamp() * 1000 - startTapTime < 300 && Math.Sqrt(dx * dx + dy * dy) < 10)
                     {
 
-                        float moveToX = (this.moveToX - HORIZONTAL_PADDING) / pickerWidth;
+                        float moveToX = (this.moveToX - BaseChartView.HORIZONTAL_PADDING) / pickerWidth;
                         float w = pickerEnd - pickerStart;
                         float moveToLeft = moveToX - w / 2f;
                         float moveToRight = moveToX + w / 2f;
@@ -297,24 +376,28 @@ namespace Unigram.Charts
                         float moveFromLeft = pickerStart;
                         float moveFromRight = pickerEnd;
 
-                        moveToAnimator = ValueAnimator.ofFloat(view, 0f, 1f);
+                        moveToAnimator = ValueAnimator.OfFloat(0f, 1f);
                         float finalMoveToLeft = moveToLeft;
                         float finalMoveToRight = moveToRight;
-                        view.onPickerJumpTo(finalMoveToLeft, finalMoveToRight, true);
-                        moveToAnimator.addUpdateListener(new AnimatorUpdateListener(animation =>
+                        view.OnPickerJumpTo(finalMoveToLeft, finalMoveToRight, true);
+                        moveToAnimator.AddUpdateListener(new AnimatorUpdateListener(animation =>
                         {
-                            float v = (float)animation.getAnimatedValue();
+                            float v = (float)animation.GetAnimatedValue();
                             pickerStart = moveFromLeft + (finalMoveToLeft - moveFromLeft) * v;
                             pickerEnd = moveFromRight + (finalMoveToRight - moveFromRight) * v;
-                            view.onPickerJumpTo(finalMoveToLeft, finalMoveToRight, false);
+                            view.OnPickerJumpTo(finalMoveToLeft, finalMoveToRight, false);
                         }));
                         moveToAnimator.setInterpolator(BaseChartView.INTERPOLATOR);
-                        moveToAnimator.start();
+                        moveToAnimator.Start();
                     }
                     return true;
                 }
 
-                if (capturedStates[0] != null) capturedStates[0].uncapture();
+                if (capturedStates[0] != null)
+                {
+                    capturedStates[0].uncapture();
+                }
+
                 capturedStates[0] = null;
                 if (capturedStates[1] != null)
                 {
@@ -324,28 +407,37 @@ namespace Unigram.Charts
             }
             else
             {
-                if (capturedStates[1] != null) capturedStates[1].uncapture();
+                if (capturedStates[1] != null)
+                {
+                    capturedStates[1].uncapture();
+                }
+
                 capturedStates[1] = null;
             }
             return false;
         }
 
-        public void uncapture()
+        public void Uncapture()
         {
-            if (capturedStates[0] != null) capturedStates[0].uncapture();
-            if (capturedStates[1] != null) capturedStates[1].uncapture();
+            if (capturedStates[0] != null)
+            {
+                capturedStates[0].uncapture();
+            }
+
+            if (capturedStates[1] != null)
+            {
+                capturedStates[1].uncapture();
+            }
+
             capturedStates[0] = null;
             capturedStates[1] = null;
         }
 
-        public interface Listener
+        public interface IListener
         {
-            void onPickerDataChanged();
-            void onPickerJumpTo(float start, float end, bool force);
-            void invalidate();
-
-            void change(Animator animator, bool start);
+            void OnPickerDataChanged();
+            void OnPickerJumpTo(float start, float end, bool force);
+            void Invalidate();
         }
-
     }
 }

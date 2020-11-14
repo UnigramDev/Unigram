@@ -18,7 +18,7 @@
 
     <Page.Resources>
         <DataTemplate x:Key="MemberTemplate">
-            <Grid Margin="0,6" Background="Transparent" ContextRequested="Member_ContextRequested">
+            <Grid Margin="0,6" Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -70,7 +70,6 @@
                         Grid.Column="2"/>
                 </Grid>
                 <TextBox x:Name="SearchField"
-                         Style="{StaticResource QueryTextBoxStyle}"
                          PlaceholderText="{CustomResource Search}"
                          PreventKeyboardDisplayOnProgrammaticFocus="True"
                          LostFocus="Search_LostFocus"
@@ -86,6 +85,7 @@
                   ItemTemplate="{StaticResource MemberTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
+                  ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None">
             <ListView.ItemContainerStyle>
@@ -110,6 +110,7 @@
                 ItemTemplate="{StaticResource MemberTemplate}"
                 ItemClick="ListView_ItemClick"
                 IsItemClickEnabled="True"
+                ChoosingItemContainer="OnChoosingItemContainer"
                 ContainerContentChanging="OnContainerContentChanging"
                 SelectionMode="None"
                 Grid.Row="1">

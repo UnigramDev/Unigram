@@ -23,7 +23,7 @@
 using System;
 using System.Collections.Concurrent;
 using Unigram.Navigation;
-using Unigram.Services.Navigation;
+using Unigram.Navigation.Services;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -177,7 +177,7 @@ namespace Unigram.Services.ViewService
 
             lock (syncObject)
             {
-                releasedCopy = this.released;
+                releasedCopy = released;
                 if (!released)
                 {
                     refCountCopy = ++refCount;
@@ -202,7 +202,7 @@ namespace Unigram.Services.ViewService
 
             lock (syncObject)
             {
-                releasedCopy = this.released;
+                releasedCopy = released;
                 if (!released)
                 {
                     refCountCopy = --refCount;

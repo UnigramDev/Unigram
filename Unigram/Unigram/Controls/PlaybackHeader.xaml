@@ -14,62 +14,6 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Style TargetType="controls:PlaybackSlider">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:PlaybackSlider">
-                        <Grid Background="Transparent">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualStateGroup.Transitions>
-                                        <VisualTransition From="PointerOver" To="Normal">
-                                            <Storyboard>
-                                                <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                                 Storyboard.TargetName="HorizontalThumbTransform"
-                                                                 Storyboard.TargetProperty="ScaleY"
-                                                                 To="0.3333333333333333" />
-                                                <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                                 Storyboard.TargetName="HorizontalThumbTransform"
-                                                                 Storyboard.TargetProperty="TranslateY"
-                                                                 To="4" />
-                                            </Storyboard>
-                                        </VisualTransition>
-                                    </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalThumbTransform"
-                                                         Storyboard.TargetProperty="ScaleY"
-                                                         To="1.0" />
-                                            <DoubleAnimation Duration="{ThemeResource ScrollBarExpandDuration}"
-                                                         Storyboard.TargetName="HorizontalThumbTransform"
-                                                         Storyboard.TargetProperty="TranslateY"
-                                                         To="0" />
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid x:Name="LayoutRoot" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="HorizontalThumbTransform"
-                                                        ScaleX="1.0"
-                                                        ScaleY="0.3333333333333333"
-                                                        TranslateX="0"
-                                                        TranslateY="4" />
-                                </Grid.RenderTransform>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Border x:Name="HorizontalThumb" Background="{ThemeResource SystemControlHighlightAccentBrush}"/>
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <Style x:Key="ThreeStateToggleStyle" TargetType="controls:GlyphToggleButton">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="UncheckedForeground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -240,7 +184,7 @@
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     AutomationProperties.AccessibilityView="Raw"
-                                    Text="{TemplateBinding UncheckedGlyph}"/>
+                                    Text="{TemplateBinding Glyph}"/>
                             </Grid>
                         </Grid>
                     </ControlTemplate>
@@ -256,6 +200,7 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
@@ -312,15 +257,23 @@
                     </ListView>
                 </Flyout>
             </FlyoutBase.AttachedFlyout>
-            <TextBlock TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource BodyTextBlockStyle}">
-                <Run x:Name="TitleLabel" FontWeight="SemiBold"/>
-                <Run x:Name="SubtitleLabel"/>
-            </TextBlock>
+            <Grid Margin="0,-2,0,0">
+                <TextBlock x:Name="Label1" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource BodyTextBlockStyle}">
+                    <Run x:Name="TitleLabel1" FontWeight="SemiBold"/>
+                    <Run x:Name="SubtitleLabel1"/>
+                </TextBlock>
+
+                <TextBlock x:Name="Label2" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Style="{StaticResource BodyTextBlockStyle}">
+                    <Run x:Name="TitleLabel2" FontWeight="SemiBold"/>
+                    <Run x:Name="SubtitleLabel2"/>
+                </TextBlock>
+            </Grid>
         </Button>
 
-        <controls:GlyphButton
+        <controls:PlaybackNextButton
             x:Name="PreviousButton"
             Click="Previous_Click"
+            IsPrevious="True"
             Glyph="&#xE892;"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
             FontSize="16"
@@ -337,9 +290,10 @@
             Width="40"
             Height="40"
             Grid.Column="1"/>
-        <controls:GlyphButton
+        <controls:PlaybackNextButton
             x:Name="NextButton"
             Click="Next_Click"
+            IsPrevious="False"
             Glyph="&#xE893;"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
             FontSize="16"
@@ -349,17 +303,43 @@
             AutomationProperties.Name="{CustomResource Next}"
             ToolTipService.ToolTip="{CustomResource Next}"/>
 
+        <controls:GlyphButton
+            x:Name="VolumeButton"
+            Glyph="&#xE74F;"
+            FontSize="16"
+            Width="40"
+            Height="40"
+            Grid.Column="4"
+            Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+            AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
+            ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}">
+            <controls:GlyphButton.Flyout>
+                <Flyout Placement="Bottom">
+                    <Flyout.FlyoutPresenterStyle>
+                        <Style TargetType="FlyoutPresenter">
+                            <Setter Property="MinWidth" Value="0"/>
+                        </Style>
+                    </Flyout.FlyoutPresenterStyle>
+                    <Slider
+                        x:Name="VolumeSlider"
+                        ValueChanged="VolumeSlider_ValueChanged"
+                        Orientation="Vertical"
+                        Height="140"/>
+                </Flyout>
+            </controls:GlyphButton.Flyout>
+        </controls:GlyphButton>
+
         <controls:GlyphToggleButton
             x:Name="RateButton"
             Click="Rate_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            UncheckedGlyph="&#xEC57;"
+            Glyph="&#xEC57;"
             CheckedGlyph="&#xEC58;"
             FontSize="16"
             Width="40"
             Height="40"
-            Grid.Column="4"
+            Grid.Column="5"
             AutomationProperties.Name="{CustomResource AccDescrPlayerSpeed}"
             ToolTipService.ToolTip="{CustomResource AccDescrPlayerSpeed}"
             Visibility="Collapsed"/>
@@ -369,13 +349,13 @@
             Click="Repeat_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            UncheckedGlyph="&#xE8EE;"
+            Glyph="&#xE8EE;"
             CheckedGlyph="&#xE8EE;"
             IndeterminateGlyph="&#xE8ED;"
             FontSize="16"
             Width="40"
             Height="40"
-            Grid.Column="4"
+            Grid.Column="5"
             IsOneWay="False"
             IsThreeState="True"
             Style="{StaticResource ThreeStateToggleStyle}"/>
@@ -384,12 +364,12 @@
             Click="Shuffle_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            UncheckedGlyph="&#xE8CB;"
+            Glyph="&#xE8CB;"
             CheckedGlyph="&#xE8CB;"
             FontSize="16"
             Width="40"
             Height="40"
-            Grid.Column="5"
+            Grid.Column="6"
             IsOneWay="False"
             AutomationProperties.Name="{CustomResource Shuffle}"
             ToolTipService.ToolTip="{CustomResource Shuffle}"/>
@@ -399,7 +379,7 @@
             Click="Shuffle_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
-            UncheckedGlyph="&#xE8B1;"
+            Glyph="&#xE8B1;"
             CheckedGlyph="&#xE8B1;"
             FontSize="16"
             Width="40"
@@ -412,7 +392,7 @@
             Glyph="&#xE10A;"
             FontSize="16"
             Height="40"
-            Grid.Column="6"
+            Grid.Column="7"
             AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
             ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}"/>
 
@@ -420,6 +400,6 @@
             x:Name="Slider"
             Height="6"
             VerticalAlignment="Bottom"
-            Grid.ColumnSpan="7"/>
+            Grid.ColumnSpan="8"/>
     </Grid>
 </UserControl>

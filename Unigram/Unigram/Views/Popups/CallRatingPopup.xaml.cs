@@ -8,7 +8,7 @@ namespace Unigram.Views.Popups
     {
         public CallRatingPopup()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             Title = Strings.Resources.AppName;
             PrimaryButtonText = Strings.Resources.OK;

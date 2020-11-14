@@ -21,9 +21,25 @@
                 <controls:HeaderedControl
                     Header="Experimental">
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.BubbleKnockout, Mode=TwoWay}"
-                        Header="Bubble knockout"
+                        IsOn="{x:Bind ViewModel.UseTestDC, Mode=TwoWay}"
+                        Header="Use Test DC"
                         Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.Minithumbnails, Mode=TwoWay}"
+                        Header="Minithumbnails"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.BubbleAnimations, Mode=TwoWay}"
+                        Header="Bubble animations"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
+                    Header="Calls Logs">
+                    <controls:BadgeButton
+                        Content="tgcalls.txt"
+                        Click="Calls_Click"
+                        Badge="{x:Bind ConvertSize(ViewModel.LogCallsSize), Mode=OneWay}"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl
@@ -74,6 +90,12 @@
                                 Badge="{x:Bind Value}"/>
                         </DataTemplate>
                     </controls:HeaderedControl.ItemTemplate>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl>
+                    <controls:BadgeButton
+                        Content="Crash the app &#x2620;"
+                        Click="Crash_Click"/>
                 </controls:HeaderedControl>
             </StackPanel>
         </ScrollViewer>

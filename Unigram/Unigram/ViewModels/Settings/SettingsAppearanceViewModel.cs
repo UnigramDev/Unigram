@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
-using Unigram.Services.Navigation;
-using Unigram.Services.Updates;
 using Unigram.Views.Popups;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -23,9 +20,6 @@ namespace Unigram.ViewModels.Settings
             : base(protoService, cacheService, settingsService, aggregator, themeService)
         {
             _emojiSetService = emojiSetService;
-
-            UseDefaultLayout = !Settings.UseThreeLinesLayout;
-            UseThreeLinesLayout = Settings.UseThreeLinesLayout;
 
             DistanceUnitsCommand = new RelayCommand(DistanceUnitsExecute);
             EmojiSetCommand = new RelayCommand(EmojiSetExecute);
@@ -50,17 +44,6 @@ namespace Unigram.ViewModels.Settings
             await base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatingFromAsync(NavigatingEventArgs args)
-        {
-            if (UseThreeLinesLayout != Settings.UseThreeLinesLayout)
-            {
-                Settings.UseThreeLinesLayout = UseThreeLinesLayout;
-                Aggregator.Publish(new UpdateChatListLayout(UseThreeLinesLayout));
-            }
-
-            return base.OnNavigatingFromAsync(args);
-        }
-
         private string _emojiSet;
         public string EmojiSet
         {
@@ -79,10 +62,10 @@ namespace Unigram.ViewModels.Settings
         {
             get
             {
-                var size = (int)Theme.Current.GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d);
+                var size = Theme.Current.MessageFontSize;
                 if (_sizeToIndex.TryGetValue(size, out int index))
                 {
-                    return (double)index;
+                    return index;
                 }
 
                 return 2d;
@@ -92,7 +75,7 @@ namespace Unigram.ViewModels.Settings
                 var index = (int)Math.Round(value);
                 if (_indexToSize.TryGetValue(index, out int size))
                 {
-                    Theme.Current.AddOrUpdateValue("MessageFontSize", (double)size);
+                    Theme.Current.MessageFontSize = size;
                 }
 
                 RaisePropertyChanged();
@@ -128,28 +111,28 @@ namespace Unigram.ViewModels.Settings
 
 
 
-        public bool AutocorrectWords
+        public bool FullScreenGallery
         {
             get
             {
-                return Settings.AutocorrectWords;
+                return Settings.FullScreenGallery;
             }
             set
             {
-                Settings.AutocorrectWords = value;
+                Settings.FullScreenGallery = value;
                 RaisePropertyChanged();
             }
         }
 
-        public bool HighlightWords
+        public bool DisableHighlightWords
         {
             get
             {
-                return Settings.HighlightWords;
+                return Settings.DisableHighlightWords;
             }
             set
             {
-                Settings.HighlightWords = value;
+                Settings.DisableHighlightWords = value;
                 RaisePropertyChanged();
             }
         }
@@ -247,23 +230,5 @@ namespace Unigram.ViewModels.Settings
                     break;
             }
         }
-
-        #region Layouts
-
-        private bool _useDefaultLayout;
-        public bool UseDefaultLayout
-        {
-            get => _useDefaultLayout;
-            set => Set(ref _useDefaultLayout, value);
-        }
-
-        private bool _useThreeLinesLayout;
-        public bool UseThreeLinesLayout
-        {
-            get => _useThreeLinesLayout;
-            set => Set(ref _useThreeLinesLayout, value);
-        }
-
-        #endregion
     }
 }

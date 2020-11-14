@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels;
@@ -77,7 +78,7 @@ namespace Unigram.Views.Popups
 
         #region Show
 
-        private static Dictionary<int, WeakReference<SharePopup>> _windowContext = new Dictionary<int, WeakReference<SharePopup>>();
+        private static readonly Dictionary<int, WeakReference<SharePopup>> _windowContext = new Dictionary<int, WeakReference<SharePopup>>();
         public static SharePopup GetForCurrentView()
         {
             return new SharePopup();
@@ -467,7 +468,7 @@ namespace Unigram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer = new MultipleListViewItem();
                 args.ItemContainer.Style = ChatsPanel.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsPanel.ItemTemplate;
             }
@@ -482,10 +483,12 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var content = args.ItemContainer.ContentTemplateRoot as ChatShareCell;
             var chat = args.Item as Chat;
 
-            var photo = content.Children[0] as ProfilePicture;
+            content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple && args.ItemContainer.IsSelected, false);
+
+            var photo = content.Photo;
             var title = content.Children[1] as TextBlock;
 
             photo.Source = PlaceholderHelper.GetChat(ViewModel.ProtoService, chat, 36);
@@ -576,21 +579,18 @@ namespace Unigram.Views.Popups
                         subtitle.Text = string.Empty;
                     }
 
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.TextBlock", "TextHighlighters"))
+                    if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
                     {
-                        if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
-                        {
-                            var highligher = new TextHighlighter();
-                            highligher.Foreground = new SolidColorBrush(Colors.Red);
-                            highligher.Background = new SolidColorBrush(Colors.Transparent);
-                            highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
+                        var highligher = new TextHighlighter();
+                        highligher.Foreground = new SolidColorBrush(Colors.Red);
+                        highligher.Background = new SolidColorBrush(Colors.Transparent);
+                        highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
 
-                            subtitle.TextHighlighters.Add(highligher);
-                        }
-                        else
-                        {
-                            subtitle.TextHighlighters.Clear();
-                        }
+                        subtitle.TextHighlighters.Add(highligher);
+                    }
+                    else
+                    {
+                        subtitle.TextHighlighters.Clear();
                     }
                 }
                 else if (args.Phase == 2)
@@ -650,10 +650,6 @@ namespace Unigram.Views.Popups
             SearchField.Visibility = Visibility.Visible;
 
             SearchField.Focus(FocusState.Keyboard);
-        }
-
-        private void Search_GotFocus(object sender, RoutedEventArgs e)
-        {
             Search_TextChanged(null, null);
         }
 
@@ -664,7 +660,7 @@ namespace Unigram.Views.Popups
                 MainHeader.Visibility = Visibility.Visible;
                 SearchField.Visibility = Visibility.Collapsed;
 
-                this.Focus(FocusState.Programmatic);
+                Focus(FocusState.Programmatic);
             }
 
             Search_TextChanged(null, null);
@@ -693,7 +689,7 @@ namespace Unigram.Views.Popups
                     ViewModel.TopChats = null;
                 }
 
-                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, null, ViewModel.SearchType);
+                var items = ViewModel.Search = new SearchChatsCollection(ViewModel.ProtoService, SearchField.Text, null, null, ViewModel.SearchType);
                 await items.LoadMoreItemsAsync(0);
                 await items.LoadMoreItemsAsync(1);
             }
@@ -757,6 +753,20 @@ namespace Unigram.Views.Popups
             IsPrimaryButtonEnabled = ViewModel.AllowEmptySelection || ViewModel.SelectedItems.Count > 0;
         }
 
+        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is Chat chat && ViewModel.CacheService.IsSavedMessages(chat))
+            {
+                if (ViewModel.SelectedItems.IsEmpty())
+                {
+                    ViewModel.SelectedItems = new MvxObservableCollection<Chat>(new[] { chat });
+                    ViewModel.SendCommand.Execute();
+
+                    Hide();
+                }
+            }
+        }
+
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem;
@@ -790,15 +800,19 @@ namespace Unigram.Views.Popups
 
             chat = ViewModel.Items.FirstOrDefault(x => x.Id == chat.Id) ?? chat;
             SearchField.Text = string.Empty;
+            Search_TextChanged(null, null);
 
             var items = ViewModel.Items;
             var selectedItems = ViewModel.SelectedItems;
 
             var index = items.IndexOf(chat);
-            if (index > 0)
+            if (index >= 0)
             {
-                items.Remove(chat);
-                items.Insert(1, chat);
+                if (index > 0)
+                {
+                    items.Remove(chat);
+                    items.Insert(1, chat);
+                }
             }
             else if (items.Count > 0)
             {
@@ -840,7 +854,15 @@ namespace Unigram.Views.Popups
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
             var character = System.Text.Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character.Length == 0 || char.IsControl(character[0]) || char.IsWhiteSpace(character[0]))
+            if (character.Length == 0)
+            {
+                return;
+            }
+            else if (/*character != "\r" &&*/ char.IsControl(character[0]))
+            {
+                return;
+            }
+            else if (/*character != "\r" &&*/ char.IsWhiteSpace(character[0]))
             {
                 return;
             }
@@ -848,9 +870,16 @@ namespace Unigram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused == null || (focused is TextBox == false && focused is RichEditBox == false))
             {
-                Search_Click(null, null);
-                SearchField.Text = character;
-                SearchField.SelectionStart = character.Length;
+                //if (IsPrimaryButtonEnabled && character == "\r")
+                //{
+                //    ViewModel.SendCommand.Execute();
+                //}
+                //else
+                {
+                    Search_Click(null, null);
+                    SearchField.Text = character;
+                    SearchField.SelectionStart = character.Length;
+                }
 
                 args.Handled = true;
             }

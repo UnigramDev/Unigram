@@ -52,22 +52,17 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            var user = protoService.GetUser(message.SenderUserId);
-            if (user != null)
+            if (_protoService.TryGetUser(message.Sender, out User user))
             {
                 Title.Text = user.GetFullName();
             }
+            else if (_protoService.TryGetChat(message.Sender, out Chat chat))
+            {
+                Title.Text = chat.Title;
+            }
             else
             {
-                var chat = protoService.GetChat(message.ChatId);
-                if (chat != null)
-                {
-                    Title.Text = chat.Title;
-                }
-                else
-                {
-                    Title.Text = string.Empty;
-                }
+                Title.Text = string.Empty;
             }
 
             UpdateFile(message, voiceNote.Voice);

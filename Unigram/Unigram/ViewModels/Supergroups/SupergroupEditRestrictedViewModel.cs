@@ -53,13 +53,10 @@ namespace Unigram.ViewModels.Supergroups
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var bundle = parameter as ChatMemberNavigation;
-            if (bundle == null)
-            {
-                return;
-            }
+            state.TryGet("chatId", out long chatId);
+            state.TryGet("userId", out int userId);
 
-            Chat = ProtoService.GetChat(bundle.ChatId);
+            Chat = ProtoService.GetChat(chatId);
 
             var chat = _chat;
             if (chat == null)
@@ -67,15 +64,13 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, bundle.UserId));
-            if (response is ChatMember member && chat.Type is ChatTypeSupergroup super)
+            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, userId));
+            if (response is ChatMember member)
             {
                 var item = ProtoService.GetUser(member.UserId);
                 var cache = ProtoService.GetUserFull(member.UserId);
 
-                var group = ProtoService.GetSupergroup(super.SupergroupId);
-
-                Delegate?.UpdateMember(chat, group, item, member);
+                Delegate?.UpdateMember(chat, item, member);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache == null)
@@ -176,6 +171,12 @@ namespace Unigram.ViewModels.Supergroups
                 if (!value && _canAddWebPagePreviews)
                 {
                     CanAddWebPagePreviews = false;
+                }
+
+                // Don't allow polls
+                if (!value && _canSendPolls)
+                {
+                    CanSendPolls = false;
                 }
             }
         }

@@ -10,12 +10,9 @@ using Unigram.Views.Folders;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel;
-using Windows.Foundation.Metadata;
-using Windows.Media.Capture;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views
@@ -32,11 +29,6 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
 
             Diagnostics.Text = $"Unigram " + GetVersion();
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                PhotoFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
         }
 
         public void Dispose()
@@ -54,10 +46,10 @@ namespace Unigram.Views
 
             if (version.Revision > 0)
             {
-                return string.Format("{0}.{1}.{3} ({2})", version.Major, version.Minor, version.Build, version.Revision);
+                return string.Format("{0}.{1}.{3} ({2}) {4}", version.Major, version.Minor, version.Build, version.Revision, packageId.Architecture);
             }
 
-            return string.Format("{0}.{1} ({2})", version.Major, version.Minor, version.Build, version.Revision);
+            return string.Format("{0}.{1} ({2}) {3}", version.Major, version.Minor, version.Build, packageId.Architecture);
         }
 
         private MasterDetailView _masterDetail;
@@ -208,7 +200,13 @@ namespace Unigram.Views
                     return;
                 }
 
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user);
+                var userFull = ViewModel.ProtoService.GetUserFull(user.Id);
+                if (userFull?.Photo == null)
+                {
+                    return;
+                }
+
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, ViewModel.Aggregator, user, userFull);
                 await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => Photo);
             }
         }
@@ -218,37 +216,17 @@ namespace Unigram.Views
             var picker = new FileOpenPicker();
             picker.ViewMode = PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
+            picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
+            var media = await picker.PickSingleMediaAsync();
+            if (media != null)
             {
-                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
+                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
 
                 var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
+                if (confirm == ContentDialogResult.Primary)
                 {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
-                }
-            }
-        }
-
-        private async void EditCamera_Click(object sender, RoutedEventArgs e)
-        {
-            var capture = new CameraCaptureUI();
-            capture.PhotoSettings.AllowCropping = false;
-            capture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
-            capture.PhotoSettings.MaxResolution = CameraCaptureUIMaxPhotoResolution.HighestAvailable;
-
-            var file = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo);
-            if (file != null)
-            {
-                var dialog = new EditMediaPopup(file, BitmapProportions.Square, ImageCropperMask.Ellipse);
-
-                var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.Result != null)
-                {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
+                    ViewModel.EditPhotoCommand.Execute(media);
                 }
             }
         }
@@ -263,9 +241,16 @@ namespace Unigram.Views
             Verified.Visibility = user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
 
 #if DEBUG
-            PhoneNumber.Badge = "+39 --- --- ----";
+            PhoneNumber.Badge = "+42 --- --- ----";
 #else
-            PhoneNumber.Badge = Common.PhoneNumber.Format(user.PhoneNumber);
+            if (ViewModel.Settings.UseTestDC)
+            {
+                PhoneNumber.Badge = "+42 --- --- ----";
+            }
+            else
+            {
+                PhoneNumber.Badge = Common.PhoneNumber.Format(user.PhoneNumber);
+            }
 #endif
 
             Username.Badge = string.IsNullOrEmpty(user.Username) ? Strings.Resources.UsernameEmpty : $"{user.Username}";

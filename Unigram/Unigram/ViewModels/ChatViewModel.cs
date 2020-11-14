@@ -37,7 +37,7 @@ namespace Unigram.ViewModels
         public bool CanBeReported { get => _chat.CanBeReported; set => _chat.CanBeReported = value; }
         public IList<ChatPosition> Positions { get => _chat.Positions; set => _chat.Positions = value; }
         public Message LastMessage { get => _chat.LastMessage; set => _chat.LastMessage = value; }
-        public ChatPhoto Photo { get => _chat.Photo; set => _chat.Photo = value; }
+        public ChatPhotoInfo Photo { get => _chat.Photo; set => _chat.Photo = value; }
         public string Title { get => _chat.Title; set => _chat.Title = value; }
         public ChatType Type { get => _chat.Type; set => _chat.Type = value; }
         public long Id { get => _chat.Id; set => _chat.Id = value; }

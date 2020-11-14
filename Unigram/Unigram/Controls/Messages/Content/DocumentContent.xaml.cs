@@ -92,7 +92,6 @@ namespace Unigram.Controls.Messages.Content
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
@@ -100,7 +99,6 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
@@ -108,7 +106,6 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
@@ -122,9 +119,14 @@ namespace Unigram.Controls.Messages.Content
             else
             {
                 var theme = document.FileName.EndsWith(".unigram-theme");
-
-                //Button.Glyph = Icons.Document;
-                Button.SetGlyph(file.Id, theme ? MessageContentState.Theme : MessageContentState.Document);
+                if (theme)
+                {
+                    Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Theme);
+                }
+                else
+                {
+                    Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Document);
+                }
                 Button.Progress = 1;
 
                 Subtitle.Text = FileSizeConverter.Convert(size);

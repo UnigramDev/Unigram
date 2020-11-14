@@ -12,13 +12,11 @@ namespace Unigram.Entities
 {
     public class StorageVideo : StorageMedia
     {
-        private BasicProperties _basic;
+        private readonly BasicProperties _basic;
 
         public StorageVideo(StorageFile file, BasicProperties basic, VideoProperties props, MediaEncodingProfile profile)
             : base(file, basic)
         {
-            _fullRectangle = new Rect(0, 0, props.GetWidth(), props.GetHeight());
-
             _basic = basic;
             Properties = props;
             Profile = profile;
@@ -41,7 +39,7 @@ namespace Unigram.Entities
         public override uint Width => Properties.GetWidth();
         public override uint Height => Properties.GetHeight();
 
-        public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
+        public new static async Task<StorageVideo> CreateAsync(StorageFile file)
         {
             try
             {
@@ -59,7 +57,7 @@ namespace Unigram.Entities
                 var basic = await file.GetBasicPropertiesAsync();
                 var video = await file.Properties.GetVideoPropertiesAsync();
 
-                if (video.Width > 0 && video.Height > 0)
+                if ((video.Width > 0 && video.Height > 0) || (profile.Video.Width > 0 && profile.Video.Height > 0))
                 {
                     return new StorageVideo(file, basic, video, profile);
                 }
@@ -121,7 +119,7 @@ namespace Unigram.Entities
             set
             {
                 Set(ref _maxCompression, value);
-                RaisePropertyChanged(() => CanCompress);
+                RaisePropertyChanged(nameof(CanCompress));
             }
         }
 
@@ -135,9 +133,9 @@ namespace Unigram.Entities
             set
             {
                 Set(ref _isMuted, value);
-                Set(() => Compression, ref _compression, 0);
+                Set(ref _compression, 0, nameof(Compression));
 
-                RaisePropertyChanged(() => CanCompress);
+                RaisePropertyChanged(nameof(CanCompress));
             }
         }
 
@@ -193,21 +191,21 @@ namespace Unigram.Entities
             }
         }
 
-        private int originalWidth;
-        private int originalHeight;
+        private readonly int originalWidth;
+        private readonly int originalHeight;
 
-        private long originalSize;
-        private int originalBitrate;
+        private readonly long originalSize;
+        private readonly int originalBitrate;
 
         private int resultWidth;
         private int resultHeight;
 
-        private int rotationValue;
+        private readonly int rotationValue;
 
         private int bitrate;
-        private long audioFramesSize;
+        private readonly long audioFramesSize;
         private long videoFramesSize;
-        private double videoDuration;
+        private readonly double videoDuration;
 
         private int estimatedSize;
         private long estimatedDuration;
@@ -234,7 +232,7 @@ namespace Unigram.Entities
             int resultWidth = originalWidth;
             int resultHeight = originalHeight;
 
-            int bitrate = this.originalBitrate;
+            int bitrate = originalBitrate;
             long videoFramesSize = 0;
             double videoDuration = 0;
 

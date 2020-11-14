@@ -28,6 +28,13 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            var calls = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
+            if (calls != null)
+            {
+                var basic = await calls.GetBasicPropertiesAsync();
+                LogCallsSize = basic.Size;
+            }
+
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
             if (log != null)
             {
@@ -90,7 +97,7 @@ namespace Unigram.ViewModels
             var tags = Client.Execute(new GetLogTags()) as LogTags;
             if (tags != null)
             {
-                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag
+                Tags.ReplaceWith(tags.Tags.Select(x => new DiagnosticsTag(Settings)
                 {
                     Name = x,
                     Default = ((LogVerbosityLevel)Client.Execute(new GetLogTagVerbosityLevel(x))).VerbosityLevel,
@@ -102,12 +109,22 @@ namespace Unigram.ViewModels
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
         public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
 
-        public bool BubbleKnockout
+        public bool Minithumbnails
         {
-            get => Settings.Diagnostics.BubbleKnockout;
+            get => Settings.Diagnostics.Minithumbnails;
             set
             {
-                Settings.Diagnostics.BubbleKnockout = value;
+                Settings.Diagnostics.Minithumbnails = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool BubbleAnimations
+        {
+            get => Settings.Diagnostics.BubbleAnimations;
+            set
+            {
+                Settings.Diagnostics.BubbleAnimations = value;
                 RaisePropertyChanged();
             }
         }
@@ -122,7 +139,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool UseTestDc
+        public bool UseTestDC
         {
             get => Settings.UseTestDC;
             set
@@ -132,6 +149,13 @@ namespace Unigram.ViewModels
             }
         }
 
+
+        private ulong _logCallsSize;
+        public ulong LogCallsSize
+        {
+            get => _logCallsSize;
+            set => Set(ref _logCallsSize, value);
+        }
 
         private ulong _logSize;
         public ulong LogSize
@@ -187,8 +211,15 @@ namespace Unigram.ViewModels
 
     public class DiagnosticsTag : BindableBase
     {
+        private readonly ISettingsService _settings;
+
         public string Name { get; set; }
         public int Default { get; set; }
+
+        public DiagnosticsTag(ISettingsService settings)
+        {
+            _settings = settings;
+        }
 
         private VerbosityLevel _value;
         public VerbosityLevel Value
@@ -226,7 +257,9 @@ namespace Unigram.ViewModels
             if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is VerbosityLevel index)
             {
                 Value = index;
-                RaisePropertyChanged(() => Text);
+                RaisePropertyChanged(nameof(Text));
+
+                _settings.Diagnostics.AddOrUpdateValue(Name, (int)index);
                 Client.Execute(new SetLogTagVerbosityLevel(Name, (int)index));
             }
         }

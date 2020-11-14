@@ -73,7 +73,7 @@ namespace Unigram.Controls.Messages.Content
                 var size = Math.Max(file.Size, file.ExpectedSize);
                 if (file.Local.IsDownloadingActive)
                 {
-                    Button.Glyph = Icons.Cancel;
+                    Button.SetGlyph(file.Id, MessageContentState.Downloading);
                     Button.Progress = (double)file.Local.DownloadedSize / size;
 
                     Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
@@ -82,7 +82,7 @@ namespace Unigram.Controls.Messages.Content
                 {
                     var generating = file.Local.DownloadedSize < size;
 
-                    Button.Glyph = Icons.Cancel;
+                    Button.SetGlyph(file.Id, MessageContentState.Uploading);
                     Button.Progress = (double)(generating ? file.Local.DownloadedSize : file.Remote.UploadedSize) / size;
 
                     if (generating)
@@ -96,7 +96,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                 {
-                    Button.Glyph = Icons.Download;
+                    Button.SetGlyph(file.Id, MessageContentState.Download);
                     Button.Progress = 0;
 
                     Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(message.Ttl, true), FileSizeConverter.Convert(size));
@@ -108,7 +108,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
-                    Button.Glyph = Icons.Ttl;
+                    Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
                     Subtitle.Text = Locale.FormatTtl(message.Ttl, true);
@@ -119,9 +119,9 @@ namespace Unigram.Controls.Messages.Content
                 var size = Math.Max(file.Size, file.ExpectedSize);
                 if (file.Local.IsDownloadingActive)
                 {
-                    Button.Glyph = Icons.Play;
+                    Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 0;
-                    Overlay.Glyph = Icons.Cancel;
+                    Overlay.SetGlyph(file.Id, MessageContentState.Downloading);
                     Overlay.Progress = (double)file.Local.DownloadedSize / size;
                     Overlay.ProgressVisibility = Visibility.Visible;
 
@@ -131,7 +131,7 @@ namespace Unigram.Controls.Messages.Content
                 {
                     var generating = file.Local.DownloadedSize < size;
 
-                    Button.Glyph = Icons.Cancel;
+                    Button.SetGlyph(file.Id, MessageContentState.Uploading);
                     Button.Progress = (double)(generating ? file.Local.DownloadedSize : file.Remote.UploadedSize) / size;
                     Overlay.ProgressVisibility = Visibility.Collapsed;
 
@@ -146,9 +146,9 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                 {
-                    Button.Glyph = Icons.Play;
+                    Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 0;
-                    Overlay.Glyph = Icons.Download;
+                    Overlay.SetGlyph(file.Id, MessageContentState.Download);
                     Overlay.Progress = 0;
                     Overlay.ProgressVisibility = Visibility.Visible;
 
@@ -161,7 +161,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
-                    Button.Glyph = message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? Icons.Confirm : Icons.Play;
+                    Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                     Button.Progress = 0;
                     Overlay.Progress = 1;
                     Overlay.ProgressVisibility = Visibility.Collapsed;
@@ -274,11 +274,6 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (_message.SendingState is MessageSendingStatePending)
-                {
-                    return;
-                }
-
                 var file = video.VideoValue;
                 if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
                 {
@@ -286,6 +281,11 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
+                    if (_message.SendingState is MessageSendingStatePending)
+                    {
+                        return;
+                    }
+
                     _message.Delegate.OpenMedia(_message, this);
                 }
             }

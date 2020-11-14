@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -47,20 +48,39 @@ namespace Unigram.Common
                         this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appdata:///local/emoji/{emojiSet.Id}.{emojiSet.Version}.ttf#Segoe UI Emoji"));
                         break;
                 }
+
+                this.Add("ThreadStackLayout", new StackLayout());
             }
             catch { }
+
+            Initialize();
         }
 
         public void Initialize()
         {
+            Initialize(SettingsService.Current.Appearance.GetCalculatedApplicationTheme());
+        }
+
+        public void Initialize(ApplicationTheme requested)
+        {
+            Initialize(requested == ApplicationTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
+        }
+
+        public void Initialize(ElementTheme requested)
+        {
+            Initialize(requested == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light);
+        }
+
+        public void Initialize(TelegramTheme requested)
+        {
             var settings = SettingsService.Current.Appearance;
-            if (settings.RequestedThemeType == TelegramThemeType.Custom && File.Exists(settings.RequestedThemeCustom))
+            if (settings[requested].Type == TelegramThemeType.Custom && File.Exists(settings[requested].Custom))
             {
-                InitializeCustom(settings.RequestedThemeCustom);
+                UpdateCustom(settings[requested].Custom);
             }
-            else if (ThemeAccentInfo.IsAccent(settings.RequestedThemeType))
+            else if (ThemeAccentInfo.IsAccent(settings[requested].Type))
             {
-                Update(ThemeAccentInfo.FromAccent(settings.RequestedThemeType, settings.Accents[settings.RequestedThemeType]));
+                Update(ThemeAccentInfo.FromAccent(settings[requested].Type, settings.Accents[settings[requested].Type]));
             }
             else
             {
@@ -68,12 +88,12 @@ namespace Unigram.Common
             }
         }
 
-        private void InitializeCustom(string path)
+        private void UpdateCustom(string path)
         {
             var lines = File.ReadAllLines(path);
             var dict = new ResourceDictionary();
 
-            var flags = SettingsService.Current.Appearance.RequestedTheme == ElementTheme.Light ? TelegramTheme.Light : TelegramTheme.Dark;
+            var flags = SettingsService.Current.Appearance.RequestedTheme;
 
             foreach (var line in lines)
             {
@@ -85,13 +105,18 @@ namespace Unigram.Common
                 {
                     flags = (TelegramTheme)int.Parse(line.Substring("parent: ".Length));
                 }
-                else if (line.Equals("!") || line.Equals("#"))
+                else if (line.Equals("!") || line.Equals("#") || string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
                 else
                 {
                     var split = line.Split(':');
+                    if (split.Length < 2)
+                    {
+                        continue;
+                    }
+
                     var key = split[0].Trim();
                     var value = split[1].Trim();
 
@@ -118,29 +143,20 @@ namespace Unigram.Common
 
             MergedDictionaries[0].MergedDictionaries.Clear();
             MergedDictionaries[0].MergedDictionaries.Add(dict);
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                try
-                {
-                    TLWindowContext.GetForCurrentView().UpdateTitleBar();
-                }
-                catch { }
-            }
+            //MergedDictionaries.Add(dict);
         }
 
         public void Update()
         {
-            try
+            // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
+            // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
+            if (!ApiInfo.IsBuildOrGreater(17763))
             {
-                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
-                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
                 ThemeDictionaries.Clear();
-                MergedDictionaries.Clear();
-
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
             }
-            catch { }
+
+            MergedDictionaries.Clear();
+            MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
         }
 
         public void Update(ThemeInfoBase info)
@@ -163,12 +179,7 @@ namespace Unigram.Common
         {
             try
             {
-                // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
-                // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
-                ThemeDictionaries.Clear();
-                MergedDictionaries.Clear();
-
-                MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
+                Update();
 
                 var dict = new ResourceDictionary();
 
@@ -176,26 +187,41 @@ namespace Unigram.Common
                 {
                     if (item.Key.EndsWith("Brush"))
                     {
-                        dict[item.Key] = new SolidColorBrush((Color)item.Value);
+                        dict[item.Key] = new SolidColorBrush(item.Value);
                     }
                     else if (item.Key.EndsWith("Color"))
                     {
-                        dict[item.Key] = (Color)item.Value;
+                        dict[item.Key] = item.Value;
                     }
                 }
 
                 MergedDictionaries[0].MergedDictionaries.Clear();
                 MergedDictionaries[0].MergedDictionaries.Add(dict);
-
-                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-                {
-                    TLWindowContext.GetForCurrentView().UpdateTitleBar();
-                }
+                //MergedDictionaries.Add(dict);
             }
             catch { }
         }
 
         #region Settings
+
+        private int? _messageFontSize;
+        public int MessageFontSize
+        {
+            get
+            {
+                if (_messageFontSize == null)
+                {
+                    _messageFontSize = (int)GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d);
+                }
+
+                return _messageFontSize ?? 14;
+            }
+            set
+            {
+                _messageFontSize = value;
+                AddOrUpdateValue("MessageFontSize", (double)value);
+            }
+        }
 
         public bool AddOrUpdateColor(string key, Color value)
         {

@@ -5,7 +5,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Brushes;
 using Unigram.Services;
-using Unigram.Views;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,82 +24,33 @@ namespace Unigram.Controls.Chats
         private Background _oldBackground = new Background();
         private bool? _oldDark;
 
-        private Rectangle _imageBackground;
-        private Rectangle _colorBackground;
+        private readonly Rectangle _imageBackground;
+        private readonly Rectangle _colorBackground;
+
+        private readonly Compositor _compositor;
 
         private SpriteVisual _blurVisual;
         private CompositionEffectBrush _blurBrush;
 
-        private Visual _motionVisual;
-        private Compositor _compositor;
-
-        private BackgroundParallaxEffect _parallaxEffect;
-
         public ChatBackgroundPresenter()
         {
-            _parallaxEffect = new BackgroundParallaxEffect();
             _imageBackground = new Rectangle();
             _colorBackground = new Rectangle();
-            _colorBackground.SizeChanged += OnSizeChanged;
 
             Children.Add(_colorBackground);
             Children.Add(_imageBackground);
 
-            RegisterPropertyChangedCallback(OpacityProperty, OnOpacityChanged);
-
-
-
-            _motionVisual = ElementCompositionPreview.GetElementVisual(_colorBackground);
-            _compositor = _motionVisual.Compositor;
-
+            _compositor = Window.Current.Compositor;
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
-        }
-
-        private async void OnOpacityChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            if (Opacity > 0 && (_protoService?.SelectedBackground?.IsMoving() ?? false) && await _parallaxEffect.IsSupportedAsync())
-            {
-                await _parallaxEffect.RegisterAsync(OnParallaxChanged);
-            }
-            else
-            {
-                await _parallaxEffect.UnregisterAsync(OnParallaxChanged);
-            }
-        }
-
-        private void OnParallaxChanged(object sender, (int x, int y) e)
-        {
-            _motionVisual.Offset = new Vector3(e.x, e.y, 0);
-        }
-
-        private async void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            _motionVisual.Size = e.NewSize.ToVector2();
-
-            if (_blurVisual != null)
-            {
-                _blurVisual.Size = e.NewSize.ToVector2();
-            }
-
-            if ((_protoService?.SelectedBackground?.IsMoving() ?? false) && await _parallaxEffect.IsSupportedAsync())
-            {
-                _motionVisual.CenterPoint = new Vector3((float)e.NewSize.Width / 2, (float)e.NewSize.Height / 2, 0);
-                _motionVisual.Scale = new Vector3(_parallaxEffect.getScale(e.NewSize.Width, e.NewSize.Height));
-            }
-            else
-            {
-                _motionVisual.CenterPoint = new Vector3(0);
-                _motionVisual.Scale = new Vector3(1);
-            }
         }
 
         public void Handle(UpdateSelectedBackground update)
         {
             this.BeginOnUIThread(() =>
             {
-                if (update.ForDarkTheme == SettingsService.Current.Appearance.IsDarkTheme())
+                if (update.ForDarkTheme == (ActualTheme == ElementTheme.Dark)) //SettingsService.Current.Appearance.IsDarkTheme())
                 {
-                    Update(_session, _protoService.SelectedBackground, update.ForDarkTheme);
+                    Update(_session, update.Background /*_protoService.SelectedBackground*/, update.ForDarkTheme);
                 }
             });
         }
@@ -128,13 +78,13 @@ namespace Unigram.Controls.Chats
 
             if (background == null)
             {
-                UpdateMotion(false);
                 UpdateBlurred(false);
 
                 Background = null;
                 _colorBackground.Opacity = 1;
 
-                if (SettingsService.Current.Appearance.IsLightTheme())
+                //if (SettingsService.Current.Appearance.IsLightTheme())
+                if (ActualTheme == ElementTheme.Light)
                 {
                     _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
                 }
@@ -145,7 +95,6 @@ namespace Unigram.Controls.Chats
             }
             else if (background.Type is BackgroundTypeFill typeFill)
             {
-                UpdateMotion(false);
                 UpdateBlurred(false);
 
                 Background = typeFill.ToBrush();
@@ -154,7 +103,6 @@ namespace Unigram.Controls.Chats
             }
             else if (background.Type is BackgroundTypePattern typePattern)
             {
-                UpdateMotion(typePattern.IsMoving);
                 UpdateBlurred(false);
 
                 Background = typePattern.ToBrush();
@@ -165,7 +113,7 @@ namespace Unigram.Controls.Chats
                 {
                     if (string.Equals(background.Document.MimeType, "application/x-tgwallpattern", StringComparison.OrdinalIgnoreCase))
                     {
-                        _colorBackground.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, document) };
+                        _colorBackground.Fill = new TiledBrush { SvgSource = PlaceholderHelper.GetVectorSurface(null, document, typePattern.GetForeground()) };
                     }
                     else
                     {
@@ -175,7 +123,6 @@ namespace Unigram.Controls.Chats
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
             {
-                UpdateMotion(typeWallpaper.IsMoving);
                 UpdateBlurred(typeWallpaper.IsBlurred);
 
                 Background = null;
@@ -212,24 +159,6 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private async void UpdateMotion(bool enabled)
-        {
-            if (enabled && await _parallaxEffect.IsSupportedAsync())
-            {
-                _motionVisual.CenterPoint = new Vector3((float)ActualWidth / 2, (float)ActualHeight / 2, 0);
-                _motionVisual.Scale = new Vector3(_parallaxEffect.getScale(ActualWidth, ActualHeight));
-
-                await _parallaxEffect.RegisterAsync(OnParallaxChanged);
-            }
-            else
-            {
-                _motionVisual.CenterPoint = new Vector3(0);
-                _motionVisual.Scale = new Vector3(1);
-
-                await _parallaxEffect.UnregisterAsync(OnParallaxChanged);
-            }
-        }
-
         private void UpdateBlurred(bool enabled)
         {
             if (enabled)
@@ -249,6 +178,7 @@ namespace Unigram.Controls.Chats
 
                 _blurBrush = effectBrush;
                 _blurVisual = _compositor.CreateSpriteVisual();
+                _blurVisual.RelativeSizeAdjustment = Vector2.One;
                 _blurVisual.Brush = _blurBrush;
 
                 ElementCompositionPreview.SetElementChildVisual(_imageBackground, _blurVisual);
@@ -256,6 +186,12 @@ namespace Unigram.Controls.Chats
             else
             {
                 ElementCompositionPreview.SetElementChildVisual(_imageBackground, null);
+
+                _blurBrush?.Dispose();
+                _blurBrush = null;
+
+                _blurVisual?.Dispose();
+                _blurVisual = null;
             }
         }
     }

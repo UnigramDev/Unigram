@@ -7,7 +7,7 @@ namespace Unigram.Views.Popups
     {
         public ChatTtlPopup()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             Title = Strings.Resources.MessageLifetime;
             PrimaryButtonText = Strings.Resources.OK;

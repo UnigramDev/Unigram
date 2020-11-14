@@ -28,52 +28,52 @@
     <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <LangVersion>7.3</LangVersion>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-    <CodeAnalysisRuleSet />
-    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
-    <CodeAnalysisRuleSet />
-    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\ARM\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <OutputPath>bin\ARM64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
+    <PlatformTarget>ARM64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <CodeAnalysisRuleSet />
     <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -82,26 +82,24 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <CodeAnalysisRuleSet />
-    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
-    <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
+    <OutputPath>bin\ARM64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
+    <PlatformTarget>ARM64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <CodeAnalysisRuleSet />
-    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -110,8 +108,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <CodeAnalysisRuleSet />
-    <LangVersion>8.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
@@ -121,12 +118,17 @@
     <Compile Include="Charts\Animator.cs" />
     <Compile Include="Charts\BarChartView.cs" />
     <Compile Include="Charts\BaseChartView.cs" />
+    <Compile Include="Charts\ChartHeaderView.xaml.cs">
+      <DependentUpon>ChartHeaderView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Charts\ChartPickerDelegate.cs" />
     <Compile Include="Charts\CubicBezierInterpolator.cs" />
     <Compile Include="Charts\DataView\BarViewData.cs" />
     <Compile Include="Charts\DataView\ChartBottomSignatureData.cs" />
     <Compile Include="Charts\DataView\ChartHorizontalLinesData.cs" />
-    <Compile Include="Charts\DataView\LegendSignatureView.cs" />
+    <Compile Include="Charts\DataView\LegendSignatureView.xaml.cs">
+      <DependentUpon>LegendSignatureView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Charts\DataView\LineViewData.cs" />
     <Compile Include="Charts\DataView\PieChartViewData.cs" />
     <Compile Include="Charts\DataView\StackBarViewData.cs" />
@@ -158,6 +160,7 @@
     <Compile Include="Collections\SearchStickersCollection.cs" />
     <Compile Include="Collections\SearchUsersCollection.cs" />
     <Compile Include="Collections\TopChatsCollection.cs" />
+    <Compile Include="Common\AlbumLayout.cs" />
     <Compile Include="Common\AnimatedRepeaterHandler.cs" />
     <Compile Include="Common\AnimatedListHandler.cs" />
     <Compile Include="Common\ApiInfo.cs" />
@@ -167,45 +170,9 @@
     <Compile Include="Common\Colors.cs" />
     <Compile Include="Common\ColorsHelper.cs" />
     <Compile Include="Common\ConcurrentQueueWorker.cs" />
+    <Compile Include="Common\DateTimeParser.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
-    <Compile Include="Common\Expressions\CompositionExtensions.cs" />
-    <Compile Include="Common\Expressions\ExpressionFunctions.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\BooleanNode.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\ColorNode.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\ExpressionNode.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\ExpressionNodeType.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\Matrix3x2Node.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\Matrix4x4Node.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\Matrix4x4Node.Subchannel.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\QuaternionNode.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\ScalarNode.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\ValueKeywordKind.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\Vector2Node.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\Vector3Node.cs" />
-    <Compile Include="Common\Expressions\ExpressionNodes\Vector4Node.cs" />
-    <Compile Include="Common\Expressions\ExpressionValues\ExpressionValues.Constant.cs" />
-    <Compile Include="Common\Expressions\ExpressionValues\ExpressionValues.CurrentValue.cs" />
-    <Compile Include="Common\Expressions\ExpressionValues\ExpressionValues.Reference.cs" />
-    <Compile Include="Common\Expressions\ExpressionValues\ExpressionValues.StartingValue.cs" />
-    <Compile Include="Common\Expressions\ExpressionValues\ExpressionValues.Target.cs" />
-    <Compile Include="Common\Expressions\OperationType.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\AmbientLightReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\ColorBrushReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\DistantLightReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\DropShadowReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\InsetClipReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\InteractionTrackerReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\ManipulationPropertySetReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\NineGridBrushReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\PointerPositionPropertySetReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\PointLightReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\PropertySetReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\ReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\SpotLightReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\SurfaceBrushReferenceNode.cs" />
-    <Compile Include="Common\Expressions\ReferenceNodes\VisualReferenceNode.cs" />
-    <Compile Include="Common\ExpressionUtils.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\LoopThread.cs" />
     <Compile Include="Common\LoopThreadPool.cs" />
@@ -217,11 +184,9 @@
     <Compile Include="Common\ThemeColorizer.cs" />
     <Compile Include="Common\TitleBar.cs" />
     <Compile Include="Common\TLContainer.cs" />
-    <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\InactivityHelper.cs" />
     <Compile Include="Common\Locale.cs" />
     <Compile Include="Common\MosaicMedia.cs" />
-    <Compile Include="Common\GroupedMessages.cs" />
     <Compile Include="Common\MessageDialogExtensions.cs" />
     <Compile Include="Common\PhoneNumber.cs" />
     <Compile Include="Common\PlaceholderHelper.cs" />
@@ -247,12 +212,20 @@
     <Compile Include="Controls\AnimationView.cs" />
     <Compile Include="Controls\BackButton.cs" />
     <Compile Include="Controls\Brushes\TiledBrush.cs" />
+    <Compile Include="Controls\CallHangupButton.cs" />
+    <Compile Include="Controls\CallToggleButton.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\Cells\CallCell.xaml.cs">
       <DependentUpon>CallCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ChartCell.xaml.cs">
+      <DependentUpon>ChartCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\ChatShareCell.xaml.cs">
+      <DependentUpon>ChatShareCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\SessionCell.xaml.cs">
       <DependentUpon>SessionCell.xaml</DependentUpon>
@@ -275,7 +248,7 @@
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ChatsListView.cs" />
+    <Compile Include="Controls\ChatListListView.cs" />
     <Compile Include="Controls\ChatStatisticsOverview.xaml.cs">
       <DependentUpon>ChatStatisticsOverview.xaml</DependentUpon>
     </Compile>
@@ -300,7 +273,7 @@
     <Compile Include="Controls\ColorTextBox.cs" />
     <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\ContentPopup.cs" />
-    <Compile Include="Controls\DialogListView.cs" />
+    <Compile Include="Controls\DiceView.cs" />
     <Compile Include="Controls\Drawers\AnimationDrawer.xaml.cs">
       <DependentUpon>AnimationDrawer.xaml</DependentUpon>
     </Compile>
@@ -316,6 +289,8 @@
     <Compile Include="Controls\Gallery\EmbedUrlView.xaml.cs">
       <DependentUpon>EmbedUrlView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Gallery\GalleryBottomPanel.cs" />
+    <Compile Include="Controls\Gallery\GalleryCompactView.cs" />
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
       <DependentUpon>GalleryContentView.xaml</DependentUpon>
     </Compile>
@@ -325,8 +300,6 @@
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Gallery\GalleryVolumeButton.cs" />
-    <Compile Include="Controls\GroupedGridView.cs" />
-    <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\HeaderedControl.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
     <Compile Include="Controls\InlineBotResultsView.xaml.cs">
@@ -347,6 +320,9 @@
     <Compile Include="Controls\Messages\Content\AudioContent.xaml.cs">
       <DependentUpon>AudioContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Content\DiceContent.xaml.cs">
+      <DependentUpon>DiceContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\DocumentPhotoContent.xaml.cs">
       <DependentUpon>DocumentPhotoContent.xaml</DependentUpon>
     </Compile>
@@ -359,11 +335,15 @@
     <Compile Include="Controls\Messages\MessageBubble.xaml.cs">
       <DependentUpon>MessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\MessageBubblePanel.cs" />
     <Compile Include="Controls\Messages\MessageFooter.xaml.cs">
       <DependentUpon>MessageFooter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\MessagePinned.xaml.cs">
+      <DependentUpon>MessagePinned.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\MessageReferenceBase.cs" />
     <Compile Include="Controls\Messages\MessageService.cs" />
-    <Compile Include="Controls\MediaPlayerView.cs" />
     <Compile Include="Controls\Messages\Content\AnimationContent.xaml.cs">
       <DependentUpon>AnimationContent.xaml</DependentUpon>
     </Compile>
@@ -415,18 +395,17 @@
       <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MosaicLayout.cs" />
+    <Compile Include="Controls\MultipleListView.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
+    <Compile Include="Controls\NumericTextBlock.cs" />
     <Compile Include="Controls\OverlayPage.cs" />
     <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\GlyphRadioButton.cs" />
-    <Compile Include="Controls\Passport\PassportDocumentCell.xaml.cs">
-      <DependentUpon>PassportDocumentCell.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PencilCanvas.cs" />
@@ -435,10 +414,12 @@
     <Compile Include="Controls\PlaybackHeader.xaml.cs">
       <DependentUpon>PlaybackHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PlaybackNextButton.cs" />
     <Compile Include="Controls\PlaybackSlider.cs" />
     <Compile Include="Controls\PollOptionControl.xaml.cs">
       <DependentUpon>PollOptionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PrefixTextBox.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\ProfilePicture.cs" />
     <Compile Include="Controls\ProxyStatusControl.xaml.cs">
@@ -457,24 +438,59 @@
       <DependentUpon>StickerPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\StorageChart.cs" />
+    <Compile Include="Controls\SwitchThemeButton.cs" />
     <Compile Include="Controls\TableListView.cs" />
-    <Compile Include="Controls\TablePanel.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
     <Compile Include="Controls\TopNavView.cs" />
     <Compile Include="Controls\UndoView.xaml.cs">
       <DependentUpon>UndoView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\VideoTimelineControl.xaml.cs">
-      <DependentUpon>VideoTimelineControl.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\VideoRangeSlider.cs" />
     <Compile Include="Controls\RatingBar.cs" />
     <Compile Include="Controls\ScrollViewerBackground.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
     <Compile Include="Controls\WalkthroughControl.cs" />
-    <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
+    <Compile Include="Entities\StorageAudio.cs" />
+    <Compile Include="Navigation\Services\FrameFacade.cs" />
+    <Compile Include="Navigation\Services\INavigable.cs" />
+    <Compile Include="Navigation\Services\NavigatedEventArgs.cs" />
+    <Compile Include="Navigation\Services\NavigatingEventArgs.cs" />
+    <Compile Include="Navigation\Services\NavigationService.cs" />
+    <Compile Include="Navigation\Services\NavigationServiceList.cs" />
+    <Compile Include="Selectors\ChatStatisticsOverviewTemplateSelector.cs" />
+    <Compile Include="Services\CallsService.cs" />
+    <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
+    <Compile Include="ViewModels\ChatListViewModel.cs" />
+    <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
+    <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
+    <Compile Include="ViewModels\DialogPinnedViewModel.cs" />
+    <Compile Include="ViewModels\DialogThreadViewModel.cs" />
+    <Compile Include="ViewModels\Chats\MessageStatisticsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
+    <Compile Include="Views\ChatEventLogPage.xaml.cs">
+      <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatListPage.xaml.cs">
+      <DependentUpon>ChatListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatPinnedPage.xaml.cs">
+      <DependentUpon>ChatPinnedPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
+      <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatSharedMediaView.xaml.cs">
+      <DependentUpon>ChatSharedMediaView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChatThreadPage.xaml.cs">
+      <DependentUpon>ChatThreadPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\MessageStatisticsPage.xaml.cs">
+      <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
     </Compile>
@@ -484,15 +500,10 @@
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\ChatTtlConverter.cs" />
-    <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\FileTypeToStringConverter.cs" />
-    <Compile Include="Converters\GeoLivePeriodConverter.cs" />
     <Compile Include="Converters\MessageTtlConverter.cs" />
     <Compile Include="Converters\MeUrlPrefixConverter.cs" />
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
-    <Compile Include="Converters\StickerToEmojiConverter.cs" />
-    <Compile Include="Converters\StringFormatConverter.cs" />
-    <Compile Include="Converters\StringPluralConverter.cs" />
     <Compile Include="Entities\Country.cs" />
     <Compile Include="Entities\ErrorCode.cs" />
     <Compile Include="Entities\ErrorType.cs" />
@@ -508,9 +519,7 @@
     <Compile Include="Logs\LogLevel.cs" />
     <Compile Include="Navigation\BindableBase.cs" />
     <Compile Include="Navigation\BootStrapper.cs" />
-    <Compile Include="Navigation\Deferral.cs" />
-    <Compile Include="Navigation\DispatcherWrapper.cs" />
-    <Compile Include="Navigation\IDispatcherWrapper.cs" />
+    <Compile Include="Navigation\DispatcherContext.cs" />
     <Compile Include="Navigation\TypedEventHandler.cs" />
     <Compile Include="Navigation\ViewModelBase.cs" />
     <Compile Include="Navigation\WindowContext.cs" />
@@ -531,16 +540,6 @@
     <Compile Include="Services\Keyboard\KeyboardHelper.cs" />
     <Compile Include="Services\Keyboard\KeyboardService.cs" />
     <Compile Include="Services\Logging\LoggingService.cs" />
-    <Compile Include="Services\Navigation\FrameFacade.cs" />
-    <Compile Include="Services\Navigation\INavigable.cs" />
-    <Compile Include="Services\Navigation\INavigationService.cs" />
-    <Compile Include="Services\Navigation\NavigatedEventArgs.cs" />
-    <Compile Include="Services\Navigation\NavigatingEventArgs.cs" />
-    <Compile Include="Services\Navigation\NavigationService.cs" />
-    <Compile Include="Services\Navigation\NavigationServiceList.cs" />
-    <Compile Include="Services\Serialization\ISerializationService.cs" />
-    <Compile Include="Services\Serialization\JsonSerializationService.cs" />
-    <Compile Include="Services\Serialization\SerializationService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacy\IPropertyMapping.cs" />
     <Compile Include="Services\SettingsLegacy\ISettingsService.cs" />
@@ -584,20 +583,17 @@
     <Compile Include="Services\Stripe\StripeTextUtils.cs" />
     <Compile Include="Services\Stripe\StripeToken.cs" />
     <Compile Include="Services\ThemeService.cs" />
-    <Compile Include="Services\TLSerializationService.cs" />
+    <Compile Include="Navigation\Services\NavigationState.cs" />
     <Compile Include="Services\Updates\UpdateAppVersion.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
     <Compile Include="Services\Updates\UpdateChatFiltersLayout.cs" />
-    <Compile Include="Services\Updates\UpdateChatListLayout.cs" />
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdatePlaybackItem.cs" />
     <Compile Include="Services\Updates\UpdateWindowActivated.cs" />
-    <Compile Include="Services\ViewService\IViewService.cs" />
     <Compile Include="Services\ViewService\SecondaryViewSynchronizationContextDecorator.cs" />
     <Compile Include="Services\ViewService\ViewLifetimeControl.cs" />
     <Compile Include="Services\ViewService\ViewService.cs" />
-    <Compile Include="Services\VoIPService.cs" />
     <Compile Include="Strings\en\Additional.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -608,11 +604,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
-    <Compile Include="Themes\Fluent.cs" />
     <Compile Include="Triggers\CompactTrigger.cs" />
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\EnumTrigger.cs" />
-    <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\BackgroundViewModel.cs" />
     <Compile Include="ViewModels\BasicGroups\BasicGroupCreateStep1ViewModel.cs" />
@@ -620,7 +614,6 @@
     <Compile Include="ViewModels\Channels\ChannelCreateStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelCreateStep2ViewModel.cs" />
     <Compile Include="ViewModels\ChatsNearbyViewModel.cs" />
-    <Compile Include="ViewModels\ChatsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatGalleryViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -630,7 +623,6 @@
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IBackgroundDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IBasicAndSupergroupDelegate.cs" />
-    <Compile Include="ViewModels\Delegates\IChatsDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IDelegable.cs" />
     <Compile Include="ViewModels\Delegates\IGalleryDelegate.cs" />
     <Compile Include="ViewModels\Delegates\ILiveLocationDelegate.cs" />
@@ -655,8 +647,6 @@
     <Compile Include="ViewModels\Gallery\GalleryContent.cs" />
     <Compile Include="ViewModels\Gallery\GalleryMessage.cs" />
     <Compile Include="ViewModels\Gallery\GalleryPhoto.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryProfilePhoto.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryUserProfilePhoto.cs" />
     <Compile Include="ViewModels\Gallery\GalleryVideo.cs" />
     <Compile Include="ViewModels\Gallery\GalleryViewModelBase.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
@@ -716,7 +706,6 @@
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsBlockedUsersViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksArchivedViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsMasksViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
@@ -738,7 +727,6 @@
     <Compile Include="ViewModels\Supergroups\SupergroupEditTypeViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditViewModelBase.cs" />
-    <Compile Include="ViewModels\Supergroups\SupergroupEventLogViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupPermissionsViewModel.cs" />
@@ -764,14 +752,8 @@
     <Compile Include="Views\ChatScheduledPage.xaml.cs">
       <DependentUpon>ChatScheduledPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ChatsPage.xaml.cs">
-      <DependentUpon>ChatsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
       <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
-      <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatStatisticsPage.xaml.cs">
       <DependentUpon>ChatStatisticsPage.xaml</DependentUpon>
@@ -983,6 +965,9 @@
     <Compile Include="Views\Settings\SettingsBackgroundsPage.xaml.cs">
       <DependentUpon>SettingsBackgroundsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsBlockedChatsPage.xaml.cs">
+      <DependentUpon>SettingsBlockedChatsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsDataAutoPage.xaml.cs">
       <DependentUpon>SettingsDataAutoPage.xaml</DependentUpon>
     </Compile>
@@ -1031,9 +1016,6 @@
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsBlockedUsersPage.xaml.cs">
-      <DependentUpon>SettingsBlockedUsersPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\SettingsMasksArchivedPage.xaml.cs">
       <DependentUpon>SettingsMasksArchivedPage.xaml</DependentUpon>
     </Compile>
@@ -1073,17 +1055,17 @@
     <Compile Include="Views\Supergroups\SupergroupEditTypePage.xaml.cs">
       <DependentUpon>SupergroupEditTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Supergroups\SupergroupEventLogPage.Bubbles.cs">
-      <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Supergroups\SupergroupEventLogPage.xaml.cs">
-      <DependentUpon>SupergroupEventLogPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Supergroups\SupergroupMembersPage.xaml.cs">
       <DependentUpon>SupergroupMembersPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Supergroups\SupergroupMembersView.xaml.cs">
+      <DependentUpon>SupergroupMembersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\SupergroupPermissionsPage.xaml.cs">
       <DependentUpon>SupergroupPermissionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Users\UserCommonChatsView.xaml.cs">
+      <DependentUpon>UserCommonChatsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VoIPPage.xaml.cs">
       <DependentUpon>VoIPPage.xaml</DependentUpon>
@@ -1095,339 +1077,6 @@
     <Content Include="Assets\Audio\voip_end.mp3" />
     <Content Include="Assets\Audio\voip_failed.mp3" />
     <Content Include="Assets\Audio\voip_ringback.mp3" />
-    <Content Include="Assets\Emojis\0030-20e3.png" />
-    <Content Include="Assets\Emojis\0031-20e3.png" />
-    <Content Include="Assets\Emojis\0032-20e3.png" />
-    <Content Include="Assets\Emojis\0033-20e3.png" />
-    <Content Include="Assets\Emojis\0034-20e3.png" />
-    <Content Include="Assets\Emojis\0035-20e3.png" />
-    <Content Include="Assets\Emojis\0036-20e3.png" />
-    <Content Include="Assets\Emojis\0037-20e3.png" />
-    <Content Include="Assets\Emojis\0038-20e3.png" />
-    <Content Include="Assets\Emojis\0039-20e3.png" />
-    <Content Include="Assets\Emojis\1f0cf.png" />
-    <Content Include="Assets\Emojis\1f1e8-1f1f3.png" />
-    <Content Include="Assets\Emojis\1f1e9-1f1ea.png" />
-    <Content Include="Assets\Emojis\1f1ea-1f1f8.png" />
-    <Content Include="Assets\Emojis\1f1eb-1f1f7.png" />
-    <Content Include="Assets\Emojis\1f1ec-1f1e7.png" />
-    <Content Include="Assets\Emojis\1f1ee-1f1f9.png" />
-    <Content Include="Assets\Emojis\1f1ef-1f1f5.png" />
-    <Content Include="Assets\Emojis\1f1f0-1f1f7.png" />
-    <Content Include="Assets\Emojis\1f1f7-1f1fa.png" />
-    <Content Include="Assets\Emojis\1f1fa-1f1f8.png" />
-    <Content Include="Assets\Emojis\1f300.png" />
-    <Content Include="Assets\Emojis\1f308.png" />
-    <Content Include="Assets\Emojis\1f30a.png" />
-    <Content Include="Assets\Emojis\1f30b.png" />
-    <Content Include="Assets\Emojis\1f30e.png" />
-    <Content Include="Assets\Emojis\1f319.png" />
-    <Content Include="Assets\Emojis\1f31a.png" />
-    <Content Include="Assets\Emojis\1f31e.png" />
-    <Content Include="Assets\Emojis\1f333.png" />
-    <Content Include="Assets\Emojis\1f334.png" />
-    <Content Include="Assets\Emojis\1f335.png" />
-    <Content Include="Assets\Emojis\1f339.png" />
-    <Content Include="Assets\Emojis\1f33b.png" />
-    <Content Include="Assets\Emojis\1f33d.png" />
-    <Content Include="Assets\Emojis\1f33e.png" />
-    <Content Include="Assets\Emojis\1f340.png" />
-    <Content Include="Assets\Emojis\1f341.png" />
-    <Content Include="Assets\Emojis\1f344.png" />
-    <Content Include="Assets\Emojis\1f345.png" />
-    <Content Include="Assets\Emojis\1f346.png" />
-    <Content Include="Assets\Emojis\1f347.png" />
-    <Content Include="Assets\Emojis\1f349.png" />
-    <Content Include="Assets\Emojis\1f34a.png" />
-    <Content Include="Assets\Emojis\1f34b.png" />
-    <Content Include="Assets\Emojis\1f34c.png" />
-    <Content Include="Assets\Emojis\1f34d.png" />
-    <Content Include="Assets\Emojis\1f34e.png" />
-    <Content Include="Assets\Emojis\1f34f.png" />
-    <Content Include="Assets\Emojis\1f350.png" />
-    <Content Include="Assets\Emojis\1f351.png" />
-    <Content Include="Assets\Emojis\1f352.png" />
-    <Content Include="Assets\Emojis\1f353.png" />
-    <Content Include="Assets\Emojis\1f354.png" />
-    <Content Include="Assets\Emojis\1f355.png" />
-    <Content Include="Assets\Emojis\1f357.png" />
-    <Content Include="Assets\Emojis\1f35a.png" />
-    <Content Include="Assets\Emojis\1f35c.png" />
-    <Content Include="Assets\Emojis\1f35e.png" />
-    <Content Include="Assets\Emojis\1f35f.png" />
-    <Content Include="Assets\Emojis\1f361.png" />
-    <Content Include="Assets\Emojis\1f366.png" />
-    <Content Include="Assets\Emojis\1f369.png" />
-    <Content Include="Assets\Emojis\1f36a.png" />
-    <Content Include="Assets\Emojis\1f36b.png" />
-    <Content Include="Assets\Emojis\1f36d.png" />
-    <Content Include="Assets\Emojis\1f36f.png" />
-    <Content Include="Assets\Emojis\1f370.png" />
-    <Content Include="Assets\Emojis\1f371.png" />
-    <Content Include="Assets\Emojis\1f373.png" />
-    <Content Include="Assets\Emojis\1f374.png" />
-    <Content Include="Assets\Emojis\1f377.png" />
-    <Content Include="Assets\Emojis\1f37a.png" />
-    <Content Include="Assets\Emojis\1f37c.png" />
-    <Content Include="Assets\Emojis\1f380.png" />
-    <Content Include="Assets\Emojis\1f381.png" />
-    <Content Include="Assets\Emojis\1f382.png" />
-    <Content Include="Assets\Emojis\1f383.png" />
-    <Content Include="Assets\Emojis\1f384.png" />
-    <Content Include="Assets\Emojis\1f385.png" />
-    <Content Include="Assets\Emojis\1f386.png" />
-    <Content Include="Assets\Emojis\1f388.png" />
-    <Content Include="Assets\Emojis\1f393.png" />
-    <Content Include="Assets\Emojis\1f3a0.png" />
-    <Content Include="Assets\Emojis\1f3a1.png" />
-    <Content Include="Assets\Emojis\1f3a2.png" />
-    <Content Include="Assets\Emojis\1f3a4.png" />
-    <Content Include="Assets\Emojis\1f3a5.png" />
-    <Content Include="Assets\Emojis\1f3a7.png" />
-    <Content Include="Assets\Emojis\1f3a8.png" />
-    <Content Include="Assets\Emojis\1f3a9.png" />
-    <Content Include="Assets\Emojis\1f3aa.png" />
-    <Content Include="Assets\Emojis\1f3ac.png" />
-    <Content Include="Assets\Emojis\1f3ad.png" />
-    <Content Include="Assets\Emojis\1f3ae.png" />
-    <Content Include="Assets\Emojis\1f3af.png" />
-    <Content Include="Assets\Emojis\1f3b0.png" />
-    <Content Include="Assets\Emojis\1f3b1.png" />
-    <Content Include="Assets\Emojis\1f3b2.png" />
-    <Content Include="Assets\Emojis\1f3b3.png" />
-    <Content Include="Assets\Emojis\1f3b5.png" />
-    <Content Include="Assets\Emojis\1f3b8.png" />
-    <Content Include="Assets\Emojis\1f3b9.png" />
-    <Content Include="Assets\Emojis\1f3ba.png" />
-    <Content Include="Assets\Emojis\1f3bb.png" />
-    <Content Include="Assets\Emojis\1f3be.png" />
-    <Content Include="Assets\Emojis\1f3c0.png" />
-    <Content Include="Assets\Emojis\1f3c1.png" />
-    <Content Include="Assets\Emojis\1f3c3.png" />
-    <Content Include="Assets\Emojis\1f3c4.png" />
-    <Content Include="Assets\Emojis\1f3c6.png" />
-    <Content Include="Assets\Emojis\1f3c7.png" />
-    <Content Include="Assets\Emojis\1f3c8.png" />
-    <Content Include="Assets\Emojis\1f3c9.png" />
-    <Content Include="Assets\Emojis\1f3ca.png" />
-    <Content Include="Assets\Emojis\1f3e1.png" />
-    <Content Include="Assets\Emojis\1f3e5.png" />
-    <Content Include="Assets\Emojis\1f3e6.png" />
-    <Content Include="Assets\Emojis\1f3ed.png" />
-    <Content Include="Assets\Emojis\1f3f0.png" />
-    <Content Include="Assets\Emojis\1f40a.png" />
-    <Content Include="Assets\Emojis\1f40b.png" />
-    <Content Include="Assets\Emojis\1f40c.png" />
-    <Content Include="Assets\Emojis\1f40d.png" />
-    <Content Include="Assets\Emojis\1f410.png" />
-    <Content Include="Assets\Emojis\1f411.png" />
-    <Content Include="Assets\Emojis\1f414.png" />
-    <Content Include="Assets\Emojis\1f417.png" />
-    <Content Include="Assets\Emojis\1f418.png" />
-    <Content Include="Assets\Emojis\1f419.png" />
-    <Content Include="Assets\Emojis\1f41a.png" />
-    <Content Include="Assets\Emojis\1f41b.png" />
-    <Content Include="Assets\Emojis\1f41c.png" />
-    <Content Include="Assets\Emojis\1f41d.png" />
-    <Content Include="Assets\Emojis\1f41e.png" />
-    <Content Include="Assets\Emojis\1f41f.png" />
-    <Content Include="Assets\Emojis\1f422.png" />
-    <Content Include="Assets\Emojis\1f425.png" />
-    <Content Include="Assets\Emojis\1f427.png" />
-    <Content Include="Assets\Emojis\1f428.png" />
-    <Content Include="Assets\Emojis\1f42b.png" />
-    <Content Include="Assets\Emojis\1f42c.png" />
-    <Content Include="Assets\Emojis\1f42d.png" />
-    <Content Include="Assets\Emojis\1f42e.png" />
-    <Content Include="Assets\Emojis\1f42f.png" />
-    <Content Include="Assets\Emojis\1f430.png" />
-    <Content Include="Assets\Emojis\1f431.png" />
-    <Content Include="Assets\Emojis\1f434.png" />
-    <Content Include="Assets\Emojis\1f436.png" />
-    <Content Include="Assets\Emojis\1f437.png" />
-    <Content Include="Assets\Emojis\1f438.png" />
-    <Content Include="Assets\Emojis\1f439.png" />
-    <Content Include="Assets\Emojis\1f43a.png" />
-    <Content Include="Assets\Emojis\1f43b.png" />
-    <Content Include="Assets\Emojis\1f43c.png" />
-    <Content Include="Assets\Emojis\1f440.png" />
-    <Content Include="Assets\Emojis\1f442.png" />
-    <Content Include="Assets\Emojis\1f443.png" />
-    <Content Include="Assets\Emojis\1f444.png" />
-    <Content Include="Assets\Emojis\1f445.png" />
-    <Content Include="Assets\Emojis\1f446.png" />
-    <Content Include="Assets\Emojis\1f447.png" />
-    <Content Include="Assets\Emojis\1f448.png" />
-    <Content Include="Assets\Emojis\1f449.png" />
-    <Content Include="Assets\Emojis\1f44a.png" />
-    <Content Include="Assets\Emojis\1f44c.png" />
-    <Content Include="Assets\Emojis\1f44d.png" />
-    <Content Include="Assets\Emojis\1f44e.png" />
-    <Content Include="Assets\Emojis\1f44f.png" />
-    <Content Include="Assets\Emojis\1f450.png" />
-    <Content Include="Assets\Emojis\1f451.png" />
-    <Content Include="Assets\Emojis\1f452.png" />
-    <Content Include="Assets\Emojis\1f453.png" />
-    <Content Include="Assets\Emojis\1f455.png" />
-    <Content Include="Assets\Emojis\1f456.png" />
-    <Content Include="Assets\Emojis\1f457.png" />
-    <Content Include="Assets\Emojis\1f459.png" />
-    <Content Include="Assets\Emojis\1f45c.png" />
-    <Content Include="Assets\Emojis\1f45e.png" />
-    <Content Include="Assets\Emojis\1f45f.png" />
-    <Content Include="Assets\Emojis\1f460.png" />
-    <Content Include="Assets\Emojis\1f468.png" />
-    <Content Include="Assets\Emojis\1f469.png" />
-    <Content Include="Assets\Emojis\1f46a.png" />
-    <Content Include="Assets\Emojis\1f46b.png" />
-    <Content Include="Assets\Emojis\1f46c.png" />
-    <Content Include="Assets\Emojis\1f46d.png" />
-    <Content Include="Assets\Emojis\1f46e.png" />
-    <Content Include="Assets\Emojis\1f474.png" />
-    <Content Include="Assets\Emojis\1f475.png" />
-    <Content Include="Assets\Emojis\1f476.png" />
-    <Content Include="Assets\Emojis\1f477.png" />
-    <Content Include="Assets\Emojis\1f47a.png" />
-    <Content Include="Assets\Emojis\1f47b.png" />
-    <Content Include="Assets\Emojis\1f47d.png" />
-    <Content Include="Assets\Emojis\1f47e.png" />
-    <Content Include="Assets\Emojis\1f480.png" />
-    <Content Include="Assets\Emojis\1f482.png" />
-    <Content Include="Assets\Emojis\1f483.png" />
-    <Content Include="Assets\Emojis\1f484.png" />
-    <Content Include="Assets\Emojis\1f485.png" />
-    <Content Include="Assets\Emojis\1f489.png" />
-    <Content Include="Assets\Emojis\1f48a.png" />
-    <Content Include="Assets\Emojis\1f48d.png" />
-    <Content Include="Assets\Emojis\1f48e.png" />
-    <Content Include="Assets\Emojis\1f499.png" />
-    <Content Include="Assets\Emojis\1f49a.png" />
-    <Content Include="Assets\Emojis\1f49b.png" />
-    <Content Include="Assets\Emojis\1f49c.png" />
-    <Content Include="Assets\Emojis\1f4a1.png" />
-    <Content Include="Assets\Emojis\1f4a3.png" />
-    <Content Include="Assets\Emojis\1f4a4.png" />
-    <Content Include="Assets\Emojis\1f4a5.png" />
-    <Content Include="Assets\Emojis\1f4a9.png" />
-    <Content Include="Assets\Emojis\1f4aa.png" />
-    <Content Include="Assets\Emojis\1f4af.png" />
-    <Content Include="Assets\Emojis\1f4b0.png" />
-    <Content Include="Assets\Emojis\1f4b3.png" />
-    <Content Include="Assets\Emojis\1f4b5.png" />
-    <Content Include="Assets\Emojis\1f4bb.png" />
-    <Content Include="Assets\Emojis\1f4bf.png" />
-    <Content Include="Assets\Emojis\1f4c1.png" />
-    <Content Include="Assets\Emojis\1f4c5.png" />
-    <Content Include="Assets\Emojis\1f4cc.png" />
-    <Content Include="Assets\Emojis\1f4ce.png" />
-    <Content Include="Assets\Emojis\1f4d0.png" />
-    <Content Include="Assets\Emojis\1f4da.png" />
-    <Content Include="Assets\Emojis\1f4e1.png" />
-    <Content Include="Assets\Emojis\1f4e6.png" />
-    <Content Include="Assets\Emojis\1f4eb.png" />
-    <Content Include="Assets\Emojis\1f4f7.png" />
-    <Content Include="Assets\Emojis\1f4fa.png" />
-    <Content Include="Assets\Emojis\1f4fb.png" />
-    <Content Include="Assets\Emojis\1f509.png" />
-    <Content Include="Assets\Emojis\1f50b.png" />
-    <Content Include="Assets\Emojis\1f50c.png" />
-    <Content Include="Assets\Emojis\1f50e.png" />
-    <Content Include="Assets\Emojis\1f511.png" />
-    <Content Include="Assets\Emojis\1f512.png" />
-    <Content Include="Assets\Emojis\1f514.png" />
-    <Content Include="Assets\Emojis\1f517.png" />
-    <Content Include="Assets\Emojis\1f51f.png" />
-    <Content Include="Assets\Emojis\1f525.png" />
-    <Content Include="Assets\Emojis\1f526.png" />
-    <Content Include="Assets\Emojis\1f527.png" />
-    <Content Include="Assets\Emojis\1f528.png" />
-    <Content Include="Assets\Emojis\1f52a.png" />
-    <Content Include="Assets\Emojis\1f52b.png" />
-    <Content Include="Assets\Emojis\1f52c.png" />
-    <Content Include="Assets\Emojis\1f52d.png" />
-    <Content Include="Assets\Emojis\1f52e.png" />
-    <Content Include="Assets\Emojis\1f531.png" />
-    <Content Include="Assets\Emojis\1f534.png" />
-    <Content Include="Assets\Emojis\1f535.png" />
-    <Content Include="Assets\Emojis\1f536.png" />
-    <Content Include="Assets\Emojis\1f537.png" />
-    <Content Include="Assets\Emojis\1f5fb.png" />
-    <Content Include="Assets\Emojis\1f5fd.png" />
-    <Content Include="Assets\Emojis\1f5ff.png" />
-    <Content Include="Assets\Emojis\1f607.png" />
-    <Content Include="Assets\Emojis\1f608.png" />
-    <Content Include="Assets\Emojis\1f609.png" />
-    <Content Include="Assets\Emojis\1f60d.png" />
-    <Content Include="Assets\Emojis\1f60e.png" />
-    <Content Include="Assets\Emojis\1f60f.png" />
-    <Content Include="Assets\Emojis\1f61b.png" />
-    <Content Include="Assets\Emojis\1f621.png" />
-    <Content Include="Assets\Emojis\1f62c.png" />
-    <Content Include="Assets\Emojis\1f62d.png" />
-    <Content Include="Assets\Emojis\1f631.png" />
-    <Content Include="Assets\Emojis\1f634.png" />
-    <Content Include="Assets\Emojis\1f635.png" />
-    <Content Include="Assets\Emojis\1f63b.png" />
-    <Content Include="Assets\Emojis\1f63d.png" />
-    <Content Include="Assets\Emojis\1f640.png" />
-    <Content Include="Assets\Emojis\1f648.png" />
-    <Content Include="Assets\Emojis\1f649.png" />
-    <Content Include="Assets\Emojis\1f64a.png" />
-    <Content Include="Assets\Emojis\1f64f.png" />
-    <Content Include="Assets\Emojis\1f680.png" />
-    <Content Include="Assets\Emojis\1f681.png" />
-    <Content Include="Assets\Emojis\1f682.png" />
-    <Content Include="Assets\Emojis\1f68b.png" />
-    <Content Include="Assets\Emojis\1f68c.png" />
-    <Content Include="Assets\Emojis\1f68e.png" />
-    <Content Include="Assets\Emojis\1f691.png" />
-    <Content Include="Assets\Emojis\1f692.png" />
-    <Content Include="Assets\Emojis\1f694.png" />
-    <Content Include="Assets\Emojis\1f695.png" />
-    <Content Include="Assets\Emojis\1f697.png" />
-    <Content Include="Assets\Emojis\1f699.png" />
-    <Content Include="Assets\Emojis\1f69b.png" />
-    <Content Include="Assets\Emojis\1f69c.png" />
-    <Content Include="Assets\Emojis\1f6a0.png" />
-    <Content Include="Assets\Emojis\1f6a2.png" />
-    <Content Include="Assets\Emojis\1f6a4.png" />
-    <Content Include="Assets\Emojis\1f6a6.png" />
-    <Content Include="Assets\Emojis\1f6a7.png" />
-    <Content Include="Assets\Emojis\1f6a8.png" />
-    <Content Include="Assets\Emojis\1f6aa.png" />
-    <Content Include="Assets\Emojis\1f6ac.png" />
-    <Content Include="Assets\Emojis\1f6b2.png" />
-    <Content Include="Assets\Emojis\1f6b6.png" />
-    <Content Include="Assets\Emojis\1f6bd.png" />
-    <Content Include="Assets\Emojis\1f6bf.png" />
-    <Content Include="Assets\Emojis\231a.png" />
-    <Content Include="Assets\Emojis\23f0.png" />
-    <Content Include="Assets\Emojis\23f3.png" />
-    <Content Include="Assets\Emojis\260e.png" />
-    <Content Include="Assets\Emojis\2614.png" />
-    <Content Include="Assets\Emojis\2615.png" />
-    <Content Include="Assets\Emojis\2665.png" />
-    <Content Include="Assets\Emojis\2666.png" />
-    <Content Include="Assets\Emojis\2693.png" />
-    <Content Include="Assets\Emojis\26a0.png" />
-    <Content Include="Assets\Emojis\26a1.png" />
-    <Content Include="Assets\Emojis\26bd.png" />
-    <Content Include="Assets\Emojis\26be.png" />
-    <Content Include="Assets\Emojis\26c4.png" />
-    <Content Include="Assets\Emojis\26ea.png" />
-    <Content Include="Assets\Emojis\26f2.png" />
-    <Content Include="Assets\Emojis\26fa.png" />
-    <Content Include="Assets\Emojis\26fd.png" />
-    <Content Include="Assets\Emojis\2702.png" />
-    <Content Include="Assets\Emojis\2708.png" />
-    <Content Include="Assets\Emojis\2709.png" />
-    <Content Include="Assets\Emojis\270b.png" />
-    <Content Include="Assets\Emojis\270c.png" />
-    <Content Include="Assets\Emojis\270f.png" />
-    <Content Include="Assets\Emojis\2712.png" />
-    <Content Include="Assets\Emojis\2744.png" />
-    <Content Include="Assets\Emojis\2753.png" />
-    <Content Include="Assets\Emojis\2757.png" />
     <Content Include="Assets\Emoji\apple.png" />
     <Content Include="Assets\Emoji\microsoft.png" />
     <Compile Include="Controls\GlyphToggleButton.cs" />
@@ -1450,7 +1099,6 @@
     <Compile Include="Controls\ProgressBarRingSlice.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
     <Compile Include="Controls\SimpleButton.cs" />
-    <Compile Include="Converters\EditToVisibilityConverter.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
     <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
@@ -1470,10 +1118,8 @@
     <Compile Include="Controls\Messages\MessageReference.xaml.cs">
       <DependentUpon>MessageReference.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SearchTextBox.cs" />
     <Compile Include="Converters\BindConvert.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\DateTimeToFormatConverter.cs" />
     <Compile Include="Converters\FileSizeConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
@@ -1550,9 +1196,6 @@
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
-      <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Users\UserCreatePage.xaml.cs">
       <DependentUpon>UserCreatePage.xaml</DependentUpon>
     </Compile>
@@ -1585,21 +1228,8 @@
     <Content Include="Assets\Filters\unmuted.png" />
     <Content Include="Assets\Filters\unread.png" />
     <Content Include="Assets\Filters\work.png" />
-    <Content Include="Assets\Fonts\CamMDL2.ttf" />
-    <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
-    <Content Include="Assets\Fonts\SegMVR2.ttf" />
-    <Content Include="Assets\Fonts\SEGMDL2.TTF" />
     <Content Include="Assets\Emoji\apple.ttf" />
     <Content Include="Assets\Animations\SendingGrams.tgs" />
-    <Content Include="Assets\Animations\WalletCreated.tgs" />
-    <Content Include="Assets\Animations\WalletEmpty.tgs" />
-    <Content Include="Assets\Animations\WalletIntroLoading.tgs" />
-    <Content Include="Assets\Animations\WalletIntroStatic.tgs" />
-    <Content Include="Assets\Animations\WalletKeyLock.tgs" />
-    <Content Include="Assets\Animations\WalletWordCheck.tgs" />
-    <Content Include="Assets\Animations\WalletWordList.tgs" />
-    <Content Include="Assets\Animations\WalletDone.tgs" />
-    <Content Include="Assets\Animations\WalletNotAvailable.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupDone.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupHint.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupIntro.tgs" />
@@ -1610,9 +1240,6 @@
     <Content Include="Assets\Animations\TwoFactorSetupMonkeyTracking.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupMonkeyCloseAndPeek.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupMonkeyCloseAndPeekToIdle.tgs" />
-    <Content Include="Assets\Animations\WalletApologiesAccepted.tgs" />
-    <Content Include="Assets\Animations\WalletInitializing.tgs" />
-    <Content Include="Assets\Animations\WalletSynchronization.tgs" />
     <Content Include="Assets\Animations\Compass.tgs" />
     <Content Include="Assets\Animations\ChatListFolders.tgs" />
     <PRIResource Include="Strings\uk\Additional.resw">
@@ -1761,11 +1388,13 @@
     <PRIResource Include="Strings\pl\Resources.resw" />
     <PRIResource Include="Strings\uz\Resources.resw" />
     <Content Include="Assets\Animations\ChatListNewFolder.tgs" />
+    <PRIResource Include="Strings\be\Resources.resw" />
+    <Content Include="Assets\Animations\DiscussionGroupSetup.tgs" />
+    <Content Include="Assets\Animations\Sun.tgs" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Icons\Toast\Send.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-16.png" />
@@ -1788,13 +1417,6 @@
     <Content Include="Assets\Logos\StoreLogo.scale-150.png" />
     <Content Include="Assets\Logos\StoreLogo.scale-200.png" />
     <Content Include="Assets\Logos\StoreLogo.scale-400.png" />
-    <Content Include="Assets\Sounds\Default.wav" />
-    <Content Include="Assets\Sounds\Sound1.wav" />
-    <Content Include="Assets\Sounds\Sound2.wav" />
-    <Content Include="Assets\Sounds\Sound3.wav" />
-    <Content Include="Assets\Sounds\Sound4.wav" />
-    <Content Include="Assets\Sounds\Sound5.wav" />
-    <Content Include="Assets\Sounds\Sound6.wav" />
     <Content Include="Assets\Webviews\injected.js" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
@@ -1809,13 +1431,29 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Include="Charts\ChartHeaderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Charts\DataView\LegendSignatureView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\CallCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Cells\ChartCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\ChatCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\ChatShareCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\SessionCell.xaml">
       <SubType>Designer</SubType>
@@ -1898,6 +1536,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Content\AudioContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\Content\DiceContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1985,7 +1627,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Passport\PassportDocumentCell.xaml">
+    <Page Include="Controls\Messages\MessagePinned.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2013,15 +1655,39 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\VideoTimelineControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\InputDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageReference.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChatEventLogPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChatListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatPinnedPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatSharedMediaView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ChatThreadPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\MessageStatisticsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2037,10 +1703,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Themes\Fluent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2052,10 +1714,6 @@
     <Page Include="Themes\OutgoingOverride.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\Plain.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\TeachingTip.xaml">
       <SubType>Designer</SubType>
@@ -2093,15 +1751,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ChatsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Chats\ChatInviteLinkPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2389,6 +2039,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\SettingsBlockedChatsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\SettingsDataAutoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2477,10 +2131,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingsBlockedUsersPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Settings\SettingsDataAndStoragePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2565,11 +2215,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Supergroups\SupergroupEventLogPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Supergroups\SupergroupMembersPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Supergroups\SupergroupMembersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2577,7 +2227,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Users\UserCommonChatsPage.xaml">
+    <Page Include="Views\Users\UserCommonChatsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2598,16 +2248,19 @@
       <Version>4.1.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>3.2.2</Version>
+      <Version>3.4.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>3.2.2</Version>
+      <Version>3.4.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.HighPerformance">
+      <Version>6.1.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.4.2</Version>
+      <Version>2.4.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml.Core.Direct">
       <Version>2.0.180924001-prerelease</Version>
@@ -2626,13 +2279,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Unigram.Native.Calls\Unigram.Native.Calls.vcxproj">
+      <Project>{fdd3c45d-4cff-4a90-8fef-16ca70ab00be}</Project>
+      <Name>Unigram.Native.Calls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Unigram.Native.Media\Unigram.Native.Media.vcxproj">
       <Project>{3adbf08f-0550-4a1c-9794-fea30cf69e3a}</Project>
       <Name>Unigram.Native.Media</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Unigram.Native.Tasks\Unigram.Native.Tasks.vcxproj">
-      <Project>{ca0c2cc0-3d83-4556-a9a3-0923ece8c1d3}</Project>
-      <Name>Unigram.Native.Tasks</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj">
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
@@ -2640,9 +2293,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
-      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
-    </SDKReference>
     <SDKReference Include="Telegram.Td.UWP, Version=1.0">
       <Name>TDLib for Universal Windows Platform</Name>
     </SDKReference>
@@ -2652,27 +2302,37 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="RLottie">
-      <HintPath>$(SolutionDir)\Libraries\rlottie\$(Platform)\RLottie.winmd</HintPath>
+      <HintPath>$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.winmd</HintPath>
       <Implementation>RLottie.dll</Implementation>
     </Reference>
-    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\RLottie.dll" />
-    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\RLottie.pri" />
-    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(SolutionDir)\Libraries\rlottie\$(Platform)\zlib1.dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.dll" />
+    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
+    <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="libtgvoip">
-      <HintPath>$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.winmd</HintPath>
-      <Implementation>libtgvoip.dll</Implementation>
-    </Reference>
-    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.dll" />
-    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Libraries\libtgvoip\$(Platform)\libtgvoip.pri" />
+    <Folder Include="ViewModels\Messages\" />
+    <Folder Include="Views\Messages\" />
   </ItemGroup>
+  <!--<ItemGroup>
+    <Reference Include="Unigram.Native.Calls">
+      <HintPath>$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.winmd</HintPath>
+      <Implementation>Unigram.Native.Calls.dll</Implementation>
+    </Reference>
+    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.dll" />
+    <ReferenceCopyLocalPaths Include="$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.pri" />
+  </ItemGroup>-->
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)\UpdateManifest.ps1" -path $(ProjectDir) -config $(ConfigurationName)</PreBuildEvent>
+    <PreBuildEvent>powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(ProjectDir)\..\UpdateManifest.ps1" -path $(ProjectDir) -config $(ConfigurationName)</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>

@@ -63,10 +63,13 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            var user = _message.GetSenderUser();
-            if (user != null)
+            if (_message.ProtoService.TryGetUser(_message.Sender, out User senderUser))
             {
-                _message.Delegate.OpenLocation(venue.Venue.Location, user.GetFullName());
+                _message.Delegate.OpenLocation(venue.Venue.Location, senderUser.GetFullName());
+            }
+            else if (_message.ProtoService.TryGetChat(_message.Sender, out Chat senderChat))
+            {
+                _message.Delegate.OpenLocation(venue.Venue.Location, _message.ProtoService.GetTitle(senderChat));
             }
         }
     }

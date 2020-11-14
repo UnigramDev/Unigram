@@ -14,8 +14,8 @@ namespace Unigram.Common
         private HSV _was;
         private HSV _now;
 
-        private List<string> _ignoreKeys;
-        private Dictionary<string, Tuple<HSV, HSV>> _keepContrast;
+        private readonly List<string> _ignoreKeys;
+        private readonly Dictionary<string, Tuple<HSV, HSV>> _keepContrast;
 
         public static explicit operator bool(ThemeColorizer colorizer)
         {

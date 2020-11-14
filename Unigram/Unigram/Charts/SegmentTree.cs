@@ -5,9 +5,9 @@ namespace Unigram.Charts
     public class SegmentTree
     {
 
-        private Node[] heap;
-        private int[] array;
-        private int size;
+        private readonly Node[] heap;
+        private readonly int[] array;
+        private readonly int size;
 
         public SegmentTree(int[] array)
         {
@@ -53,11 +53,22 @@ namespace Unigram.Charts
             if (array.Length < 30)
             {
                 int max = int.MinValue;
-                if (from < 0) from = 0;
-                if (to > array.Length - 1) to = array.Length - 1;
+                if (from < 0)
+                {
+                    from = 0;
+                }
+
+                if (to > array.Length - 1)
+                {
+                    to = array.Length - 1;
+                }
+
                 for (int i = from; i <= to; i++)
                 {
-                    if (array[i] > max) max = array[i];
+                    if (array[i] > max)
+                    {
+                        max = array[i];
+                    }
                 }
                 return max;
             }
@@ -95,11 +106,22 @@ namespace Unigram.Charts
             if (array.Length < 30)
             {
                 int min = int.MaxValue;
-                if (from < 0) from = 0;
-                if (to > array.Length - 1) to = array.Length - 1;
+                if (from < 0)
+                {
+                    from = 0;
+                }
+
+                if (to > array.Length - 1)
+                {
+                    to = array.Length - 1;
+                }
+
                 for (int i = from; i <= to; i++)
                 {
-                    if (array[i] < min) min = array[i];
+                    if (array[i] < min)
+                    {
+                        min = array[i];
+                    }
                 }
                 return min;
             }

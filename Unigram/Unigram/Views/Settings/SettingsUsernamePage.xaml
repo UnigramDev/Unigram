@@ -18,47 +18,52 @@
             Glyph="&#xE10B;"/>
     </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid Padding="12">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
+        <StackPanel>
+            <controls:HeaderedControl>
+                <TextBox
+                    x:Name="Username"
+                    Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    PlaceholderText="{CustomResource UsernamePlaceholder}"
+                    Margin="12,8,12,8"/>
+            </controls:HeaderedControl>
 
-            <TextBox
-                x:Name="Username"
-                Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                PlaceholderText="{CustomResource UsernamePlaceholder}"
-                Margin="0,0,0,8"/>
+            <Grid MaxWidth="640" Margin="12,8,12,24" Padding="12,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Text="{x:Bind ConvertAvailable(ViewModel.Username), Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
+                    Foreground="Green"
+                    Margin="0,0,0,12"/>
+                <TextBlock
+                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                    Text="{CustomResource UsernameChecking}"
+                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                    Margin="0,0,0,12"/>
+                <TextBlock
+                    Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                    Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                    Foreground="Red"
+                    Margin="0,0,0,12"/>
 
-            <TextBlock
-                Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter=UsernameAvailable}"
-                Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}"
-                Foreground="Green"
-                Grid.Row="1"/>
-            <TextBlock
-                Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                Text="{CustomResource UsernameChecking}"
-                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                Grid.Row="1"/>
-            <TextBlock
-                Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-                Foreground="Red"
-                Grid.Row="1"/>
+                <TextBlock
+                    common:TextBlockHelper.Markdown="{CustomResource UsernameHelp}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Margin="0,0,0,12"
+                    Grid.Row="1"/>
 
-            <TextBlock common:TextBlockHelper.Markdown="{CustomResource UsernameHelp}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,12" Grid.Row="2"/>
-
-            <TextBlock Visibility="{x:Bind ViewModel.Username, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,12" Grid.Row="3">
-                <Run Text="{x:Bind UsernameHelpLink}"/>
-                <LineBreak/>
-                <Hyperlink Click="Copy_Click">
-                    <Run Text="{x:Bind ViewModel.Username, Mode=OneWay, Converter={StaticResource MeUrlPrefixConverter}}"/>
-                </Hyperlink>
-            </TextBlock>
-        </Grid>
+                <TextBlock Visibility="{x:Bind ViewModel.Username, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,12" Grid.Row="2">
+                    <Run Text="{x:Bind UsernameHelpLink}"/>
+                    <LineBreak/>
+                    <Hyperlink Click="Copy_Click">
+                        <Run Text="{x:Bind ConvertUsername(ViewModel.Username), Mode=OneWay}"/>
+                    </Hyperlink>
+                </TextBlock>
+            </Grid>
+        </StackPanel>
     </Grid>
 </local:HostedPage>

@@ -1,10 +1,7 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using System;
-using Telegram.Td;
+﻿using System;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
-using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,12 +34,12 @@ namespace Unigram.Controls.Messages.Content
                 Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
                 Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
                 Player.ColorReplacements = Emoji.GetColorReplacements(text.Text.Text);
-            }
-            else if (message.Content is MessageDice)
-            {
-                Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
-                Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
-                Player.ColorReplacements = null;
+
+                var sound = message.ProtoService.GetEmojiSound(sticker.Emoji);
+                if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
+                {
+                    message.ProtoService.DownloadFile(sound.Id, 1);
+                }
             }
             else
             {
@@ -81,35 +78,12 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Player.IsLoopingEnabled = (message.Content is MessageDice dice && dice.Value == 0) || (message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled);
-                Player.IsCachingEnabled = !(message.Content is MessageDice dies && !message.GeneratedContentUnread);
+                Player.IsLoopingEnabled = message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled;
                 Player.Source = new Uri("file:///" + file.Local.Path);
-
-                if (message.IsOutgoing &&
-                    message.GeneratedContentUnread &&
-                    message.Content is MessageDice dais &&
-                    dais.FinalStateSticker != null &&
-                    dais.SuccessAnimationFrameNumber != 0)
-                {
-                    Player.IndexChanged += OnIndexChanged;
-                }
-                else
-                {
-                    Player.IndexChanged -= OnIndexChanged;
-                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
                 message.ProtoService.DownloadFile(file.Id, 1);
-            }
-        }
-
-        private void OnIndexChanged(object sender, int e)
-        {
-            if (_message?.Content is MessageDice dice && dice.SuccessAnimationFrameNumber == e)
-            {
-                _message.Delegate.Aggregator.Publish(new UpdateConfetti());
-                Player.IndexChanged -= OnIndexChanged;
             }
         }
 
@@ -128,7 +102,10 @@ namespace Unigram.Controls.Messages.Content
         public bool IsValid(MessageContent content, bool primary)
         {
             // We can't recycle it as we must destroy CanvasAnimatedControl on Unload.
-            return false;
+            if (Player.IsUnloaded)
+            {
+                return false;
+            }
 
             if (content is MessageSticker sticker)
             {
@@ -165,28 +142,17 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (_message.Content is MessageDice dice)
+            if (_message.Content is MessageText)
             {
-                string text;
-                switch (dice.Emoji)
+                var started = Player.Play();
+                if (started)
                 {
-                    case "\uD83C\uDFB2":
-                        text = Strings.Resources.DiceInfo2;
-                        break;
-                    case "\uD83C\uDFAF":
-                        text = Strings.Resources.DartInfo;
-                        break;
-                    default:
-                        text = string.Format(Strings.Resources.DiceEmojiInfo, dice.Emoji);
-                        break;
+                    var sound = _message.ProtoService.GetEmojiSound(sticker.Emoji);
+                    if (sound != null && sound.Local.IsDownloadingCompleted)
+                    {
+                        SoundEffects.Play(sound);
+                    }
                 }
-
-                var formatted = Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
-                Window.Current.ShowTeachingTip(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
-            }
-            else if (_message.Content is MessageText)
-            {
-                Player.Play();
             }
             else
             {

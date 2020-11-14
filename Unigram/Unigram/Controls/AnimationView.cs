@@ -7,7 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Native;
+using Unigram.Views;
 using Windows.Foundation;
+using Windows.Graphics.DirectX;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,7 +19,7 @@ namespace Unigram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     [TemplatePart(Name = "Thumbnail", Type = typeof(Image))]
-    public class AnimationView : Control
+    public class AnimationView : Control, IPlayerView
     {
         private CanvasControl _canvas;
         private CanvasBitmap _bitmap;
@@ -35,7 +37,7 @@ namespace Unigram.Controls
         private LoopThread _thread = LoopThreadPool.Animations.Get();
         private bool _subscribed;
 
-        private ICanvasResourceCreator _device;
+        private bool _unloaded;
 
         public AnimationView()
         {
@@ -46,6 +48,8 @@ namespace Unigram.Controls
         //{
         //    Dispose();
         //}
+
+        public bool IsUnloaded => _unloaded;
 
         protected override void OnApplyTemplate()
         {
@@ -67,20 +71,9 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        public void Dispose()
-        {
-            //if (_animation is IDisposable disposable)
-            //{
-            //    Debug.WriteLine("Disposing animation for: " + Path.GetFileName(_source));
-            //    disposable.Dispose();
-            //}
-
-            //_animation = null;
-            _source = null;
-        }
-
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            _unloaded = true;
             Subscribe(false);
 
             _canvas.CreateResources -= OnCreateResources;
@@ -89,13 +82,13 @@ namespace Unigram.Controls
             _canvas.RemoveFromVisualTree();
             _canvas = null;
 
-            Dispose();
-
-            //_animation?.Dispose();
-            _animation = null;
+            _source = null;
 
             //_bitmap?.Dispose();
             _bitmap = null;
+
+            //_animation?.Dispose();
+            _animation = null;
         }
 
         private void OnTick(object sender, EventArgs args)
@@ -115,6 +108,9 @@ namespace Unigram.Controls
             _canvas?.Invalidate();
         }
 
+        private static object _reusableLock = new object();
+        private static byte[] _reusableBuffer;
+
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
             args.TrackAsyncAction(Task.Run(() =>
@@ -127,19 +123,27 @@ namespace Unigram.Controls
 
                 _animation = animation;
 
-                var colors = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
+                lock (_reusableLock)
+                {
+                    if (_reusableBuffer == null || _reusableBuffer.Length < _animation.PixelWidth * _animation.PixelHeight * 4)
+                    {
+                        _reusableBuffer = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
+                    }
+                }
 
-                _bitmap = CanvasBitmap.CreateFromBytes(sender, colors, _animation.PixelWidth, _animation.PixelHeight, Windows.Graphics.DirectX.DirectXPixelFormat.R8G8B8A8UIntNormalized);
-                _device = sender;
+                if (_bitmap != null)
+                {
+                    _bitmap.Dispose();
+                }
+
+                _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
 
             }).AsAsyncAction());
         }
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            _device = args.DrawingSession.Device;
-
-            if (_animation == null)
+            if (_animation == null || _unloaded)
             {
                 return;
             }
@@ -149,7 +153,7 @@ namespace Unigram.Controls
             var x = 0d;
             var y = 0d;
 
-            if (width > sender.Size.Width || height > sender.Size.Height)
+            //if (width > sender.Size.Width || height > sender.Size.Height)
             {
                 double ratioX = (double)sender.Size.Width / width;
                 double ratioY = (double)sender.Size.Height / height;
@@ -180,7 +184,7 @@ namespace Unigram.Controls
         public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _canvas == null || _bitmap == null)
+            if (animation == null || _canvas == null || _bitmap == null || _unloaded)
             {
                 return;
             }
@@ -212,8 +216,6 @@ namespace Unigram.Controls
                 //canvas.Paused = true;
                 //canvas.ResetElapsedTime();
                 Subscribe(false);
-
-                Dispose();
                 return;
             }
 

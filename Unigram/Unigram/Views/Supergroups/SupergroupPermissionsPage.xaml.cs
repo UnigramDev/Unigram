@@ -6,7 +6,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation;
-using Unigram.Services;
+using Unigram.Navigation.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Supergroups
 {
-    public sealed partial class SupergroupPermissionsPage : HostedPage, ISupergroupDelegate, INavigablePage
+    public sealed partial class SupergroupPermissionsPage : HostedPage, ISupergroupDelegate, INavigablePage, ISearchablePage
     {
         public SupergroupPermissionsViewModel ViewModel => DataContext as SupergroupPermissionsViewModel;
 
@@ -62,6 +62,11 @@ namespace Unigram.Views.Supergroups
             Grid.SetColumnSpan(Slowmode, SlowmodeTicks.ColumnDefinitions.Count);
         }
 
+        public void Search()
+        {
+            Search_Click(null, null);
+        }
+
         public void OnBackRequested(HandledEventArgs args)
         {
             if (ContentPanel.Visibility == Visibility.Collapsed)
@@ -86,7 +91,7 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
-            ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), new ChatMemberNavigation(chat.Id, member.UserId));
+            ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
         }
 
         #region Context menu
@@ -247,6 +252,19 @@ namespace Unigram.Views.Supergroups
 
         #region Recycle
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TextListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += Member_ContextRequested;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)
@@ -256,6 +274,9 @@ namespace Unigram.Views.Supergroups
 
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
+
+            args.ItemContainer.Tag = args.Item;
+            content.Tag = args.Item;
 
             var user = ViewModel.ProtoService.GetUser(member.UserId);
             if (user == null)

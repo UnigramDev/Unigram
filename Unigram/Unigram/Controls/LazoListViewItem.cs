@@ -6,7 +6,7 @@ namespace Unigram.Controls
 {
     public class LazoListViewItem : ListViewItem
     {
-        private LazoListView _parent;
+        private readonly LazoListView _parent;
 
         public LazoListViewItem(LazoListView parent)
         {

@@ -63,7 +63,7 @@ namespace Unigram.Views.Popups
 
         private void Done()
         {
-            var button = this.Descendants<Button>().FirstOrDefault(x => x is Button y && y.Parent is Border border && border.Name == "Button1Host") as Button;
+            var button = this.Descendants<Button>().FirstOrDefault(x => x is Button y && y.Name == "PrimaryButton") as Button;
             if (button != null)
             {
                 new ButtonAutomationPeer(button).Invoke();

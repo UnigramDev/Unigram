@@ -1,12 +1,11 @@
 ﻿using System;
-using Windows.Storage;
 
 namespace Unigram.Services.Settings
 {
     public class PasscodeLockSettings : SettingsServiceBase
     {
         public PasscodeLockSettings()
-            : base(ApplicationData.Current.LocalSettings.CreateContainer("PasscodeLock", ApplicationDataCreateDisposition.Always))
+            : base("PasscodeLock")
         {
         }
 
@@ -30,7 +29,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_hash == null)
+                {
                     _hash = Convert.FromBase64String(GetValueOrDefault("Hash", string.Empty));
+                }
 
                 return _hash ?? new byte[0];
             }
@@ -47,7 +48,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_salt == null)
+                {
                     _salt = Convert.FromBase64String(GetValueOrDefault("Salt", string.Empty));
+                }
 
                 return _salt ?? new byte[0];
             }
@@ -64,7 +67,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_isSimple == null)
+                {
                     _isSimple = GetValueOrDefault("IsSimple", true);
+                }
 
                 return _isSimple ?? true;
             }
@@ -81,7 +86,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_closeTime == null)
+                {
                     _closeTime = DateTime.FromFileTimeUtc(GetValueOrDefault("CloseTime", 2650467743999999999 /* DateTime.MaxValue */));
+                }
 
                 return _closeTime ?? DateTime.MaxValue;
             }
@@ -98,7 +105,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_autolockTimeout == null)
+                {
                     _autolockTimeout = GetValueOrDefault("AutolockTimeout", 0);
+                }
 
                 return _autolockTimeout ?? 0;
             }
@@ -115,7 +124,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_isLocked == null)
+                {
                     _isLocked = GetValueOrDefault("IsLocked", false);
+                }
 
                 return _isLocked ?? false;
             }
@@ -132,7 +143,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_isHelloEnabled == null)
+                {
                     _isHelloEnabled = GetValueOrDefault("IsHelloEnabled", false);
+                }
 
                 return _isHelloEnabled ?? false;
             }
@@ -149,7 +162,9 @@ namespace Unigram.Services.Settings
             get
             {
                 if (_isScreenshotEnabled == null)
+                {
                     _isScreenshotEnabled = GetValueOrDefault("IsScreenshotEnabled", true);
+                }
 
                 return _isScreenshotEnabled ?? true;
             }

@@ -14,8 +14,11 @@ using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Text;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -23,16 +26,20 @@ namespace Unigram.Controls
 {
     public class FormattedTextBox : RichEditBox
     {
+        private readonly MenuFlyoutSubItem _proofingMenu;
+
         public FormattedTextBox()
         {
             DefaultStyleKey = typeof(FormattedTextBox);
 
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
+            _proofingMenu = new MenuFlyoutSubItem();
+            _proofingMenu.Text = "Spelling";
+
             ContextFlyout = new MenuFlyout();
             ContextFlyout.Opening += OnContextFlyoutOpening;
-
-            //ContextMenuOpening += OnContextMenuOpening;
+            ContextFlyout.Closing += OnContextFlyoutClosing;
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
             {
@@ -51,6 +58,80 @@ namespace Unigram.Controls
                 CreateKeyboardAccelerator(VirtualKey.K);
                 CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             }
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+        }
+
+        public bool IsReplaceEmojiEnabled { get; set; } = true;
+
+        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        {
+            if (FocusState == FocusState.Unfocused || !IsReplaceEmojiEnabled || string.Equals(Document.Selection.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
+
+            //var matches = Emoticon.Data.Keys.Where(x => x.EndsWith(character)).ToArray();
+            if (Emoticon.Matches.TryGetValue(character[0], out string[] matches))
+            {
+                var length = matches.Max(x => x.Length);
+                var start = Math.Max(Document.Selection.EndPosition - length, 0);
+
+                var range = Document.GetRange(start, Document.Selection.EndPosition);
+                range.GetText(TextGetOptions.NoHidden, out string value);
+
+                var emoticon = matches.FirstOrDefault(x => value.EndsWith(x));
+                if (emoticon != null)
+                {
+                    Document.BeginUndoGroup();
+                    range.SetRange(range.EndPosition - emoticon.Length, range.EndPosition);
+                    range.SetText(TextSetOptions.None, Emoticon.Data[emoticon]);
+                    range.SetRange(range.EndPosition, range.EndPosition);
+                    range.SetText(TextSetOptions.None, emoticon);
+                    range.CharacterFormat.Hidden = FormatEffect.On;
+                    Document.EndUndoGroup();
+
+                    Document.Selection.SetRange(range.EndPosition, range.EndPosition);
+                    args.Handled = true;
+                }
+            }
+        }
+
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Back && IsReplaceEmojiEnabled)
+            {
+                Document.GetText(TextGetOptions.None, out string text);
+
+                var range = Document.Selection.GetClone();
+                if (range.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.TryGetValue(range.Text, out string emoji))
+                {
+                    var emoticon = range.Text;
+
+                    Document.BeginUndoGroup();
+                    range.SetRange(range.StartPosition - emoji.Length, range.EndPosition);
+                    range.SetText(TextSetOptions.Unhide, emoticon);
+                    Document.EndUndoGroup();
+
+                    Document.Selection.SetRange(range.EndPosition, range.EndPosition);
+                    return;
+                }
+            }
+
+            base.OnKeyDown(e);
         }
 
         public event TypedEventHandler<FormattedTextBox, EventArgs> ShowFormatting;
@@ -102,19 +183,6 @@ namespace Unigram.Controls
 
             flyout.Items.Clear();
 
-            //if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
-            //{
-            //    var sub = new MenuFlyoutItem();
-            //    sub.Text = "Proofing";
-            //    sub.Click += (s, args) =>
-            //    {
-            //        proofing.ShowAt(this);
-            //    };
-
-            //    flyout.Items.Add(sub);
-            //    flyout.Items.Add(new MenuFlyoutSeparator());
-            //}
-
             var selection = Document.Selection;
             var format = Document.Selection.CharacterFormat;
 
@@ -150,6 +218,27 @@ namespace Unigram.Controls
             flyout.Items.Add(formatting);
             flyout.Items.Add(new MenuFlyoutSeparator());
             CreateFlyoutItem(flyout.Items, !IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
+            {
+                flyout.CreateFlyoutSeparator();
+                //flyout.Items.Add(_proofingMenu);
+
+                foreach (var item in proofing.Items)
+                {
+                    flyout.Items.Add(item);
+                }
+            }
+        }
+
+        private void OnContextFlyoutClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+        {
+            _proofingMenu.Items.Clear();
+
+            if (sender is MenuFlyout flyout)
+            {
+                flyout.Items.Clear();
+            }
         }
 
         public void ToggleBold()
@@ -649,6 +738,7 @@ namespace Unigram.Controls
         {
             OnSettingText();
 
+            Document.BeginUndoGroup();
             Document.BatchDisplayUpdates();
             Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
 
@@ -701,10 +791,12 @@ namespace Unigram.Controls
             }
 
             Document.ApplyDisplayUpdates();
+            Document.EndUndoGroup();
         }
 
         public void InsertText(string text, IList<TextEntity> entities)
         {
+            Document.BeginUndoGroup();
             Document.BatchDisplayUpdates();
 
             if (!string.IsNullOrEmpty(text))
@@ -748,6 +840,7 @@ namespace Unigram.Controls
             }
 
             Document.ApplyDisplayUpdates();
+            Document.EndUndoGroup();
         }
 
         public void InsertText(string text, bool allowPreceding = false, bool allowTrailing = false)
