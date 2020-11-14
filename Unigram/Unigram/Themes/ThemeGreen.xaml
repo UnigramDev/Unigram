@@ -96,7 +96,7 @@
             <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource MessageSubtleForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MessageHeaderForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderColor}" />
-            <SolidColorBrush x:Key="MessagePollRightBrush" Color="{ThemeResource MessagePollRightColor}"/>
+            <SolidColorBrush x:Key="MessagePollCorrectBrush" Color="{ThemeResource MessagePollCorrectColor}"/>
             <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessageRightWrongColor">
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundColor}" />
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundColor}" />
@@ -1305,7 +1305,7 @@
             <Color x:Key="MessageHeaderBorderColor">#37A4DE</Color>
             <Color x:Key="MessageHeaderBorderOutColor">#5DC452</Color>
 
-            <Color x:Key="MessagePollRightColor">#5DC452</Color>
+            <Color x:Key="MessagePollCorrectColor">#5DC452</Color>
             <Color x:Key="MessagePollWrongColor">#DD5849</Color>
 
             <Color x:Key="MessageMediaForegroundColor">#FFFFFF</Color>
@@ -1331,7 +1331,7 @@
             <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="{ThemeResource MessageSubtleForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MessageHeaderForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderColor}" />
-            <SolidColorBrush x:Key="MessagePollRightBrush" Color="{ThemeResource MessagePollRightColor}"/>
+            <SolidColorBrush x:Key="MessagePollCorrectBrush" Color="{ThemeResource MessagePollCorrectColor}"/>
             <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessageRightWrongColor">
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundColor}" />
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundColor}" />
