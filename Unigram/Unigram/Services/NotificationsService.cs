@@ -296,11 +296,39 @@ namespace Unigram.Services
             });
         }
 
-        public void Handle(UpdateActiveNotifications update)
+        public async void Handle(UpdateActiveNotifications update)
         {
-            foreach (var group in update.Groups)
+            try
             {
-                _protoService.Send(new RemoveNotificationGroup(group.Id, int.MaxValue));
+                var manager = await GetCollectionHistoryAsync();
+                var history = manager.GetHistory();
+
+                var hash = new HashSet<string>();
+
+                foreach (var item in history)
+                {
+                    hash.Add($"{item.Tag}_{item.Group}");
+                }
+
+                foreach (var group in update.Groups)
+                {
+                    foreach (var notification in group.Notifications)
+                    {
+                        if (hash.Contains($"{notification.Id}_{group.Id}"))
+                        {
+                            continue;
+                        }
+
+                        _protoService.Send(new RemoveNotification(group.Id, notification.Id));
+                    }
+                }
+            }
+            catch
+            {
+                foreach (var group in update.Groups)
+                {
+                    _protoService.Send(new RemoveNotificationGroup(group.Id, int.MaxValue));
+                }
             }
         }
 
@@ -564,7 +592,7 @@ namespace Unigram.Services
 
                 if (!string.IsNullOrEmpty(group))
                 {
-                    notification.Group = tag;
+                    notification.Group = group;
 
                     if (!string.IsNullOrEmpty(group))
                     {
@@ -1133,7 +1161,7 @@ namespace Unigram.Services
                     return string.Format(key, string.Empty).Trim(' ');
                 }
 
-                    return string.Format(key, message.SenderName);
+                return string.Format(key, message.SenderName);
             }
 
             if (message.Content is PushMessageContentGame gameMedia)
@@ -1213,8 +1241,8 @@ namespace Unigram.Services
                     return FormatPinned(Strings.Resources.NotificationActionPinnedMusicChannel);
                 }
 
-                var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio?.Performer;
-                var title = string.IsNullOrEmpty(audio.Audio?.Title) ? null : audio.Audio?.Title;
+                var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio.Performer;
+                var title = string.IsNullOrEmpty(audio.Audio?.Title) ? null : audio.Audio.Title;
 
                 if (performer == null || title == null)
                 {
@@ -1232,7 +1260,7 @@ namespace Unigram.Services
                     return FormatPinned(Strings.Resources.NotificationActionPinnedFileChannel);
                 }
 
-                if (string.IsNullOrEmpty(document.Document.FileName))
+                if (string.IsNullOrEmpty(document.Document?.FileName))
                 {
                     return result + Strings.Resources.AttachDocument;
                 }
