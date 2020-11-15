@@ -2,6 +2,7 @@
 using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
+using System.Buffers;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace Unigram.Controls
 
         private bool _isLoopingEnabled = true;
 
-        private LoopThread _thread = LoopThreadPool.Animations.Get();
+        private readonly LoopThread _thread = LoopThreadPool.Animations.Get();
         private bool _subscribed;
 
         private bool _unloaded;
@@ -108,9 +109,6 @@ namespace Unigram.Controls
             _canvas?.Invalidate();
         }
 
-        private static object _reusableLock = new object();
-        private static byte[] _reusableBuffer;
-
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
             args.TrackAsyncAction(Task.Run(() =>
@@ -123,20 +121,14 @@ namespace Unigram.Controls
 
                 _animation = animation;
 
-                lock (_reusableLock)
-                {
-                    if (_reusableBuffer == null || _reusableBuffer.Length < _animation.PixelWidth * _animation.PixelHeight * 4)
-                    {
-                        _reusableBuffer = new byte[_animation.PixelWidth * _animation.PixelHeight * 4];
-                    }
-                }
-
                 if (_bitmap != null)
                 {
                     _bitmap.Dispose();
                 }
 
-                _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                var buffer = ArrayPool<byte>.Shared.Rent(_animation.PixelWidth * _animation.PixelHeight * 4);
+                _bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                ArrayPool<byte>.Shared.Return(buffer);
 
             }).AsAsyncAction());
         }
@@ -242,26 +234,32 @@ namespace Unigram.Controls
             }
         }
 
-        public void Play()
+        public bool Play()
         {
             var canvas = _canvas;
             if (canvas == null)
             {
                 _shouldPlay = true;
-                return;
+                return false;
             }
 
             var animation = _animation;
             if (animation == null)
             {
                 _shouldPlay = true;
-                return;
+                return false;
             }
 
             _shouldPlay = false;
 
+            if (_subscribed)
+            {
+                return false;
+            }
+
             //canvas.Paused = false;
             Subscribe(true);
+            return true;
             //OnInvalidate();
         }
 

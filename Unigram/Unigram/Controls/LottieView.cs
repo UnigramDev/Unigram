@@ -3,10 +3,12 @@ using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using RLottie;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Views;
 using Windows.ApplicationModel;
@@ -36,7 +38,7 @@ namespace Unigram.Controls
 
         private bool _animationShouldCache;
         private bool _animationIsCaching;
-        private static SemaphoreSlim _cachingSemaphone = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim _cachingSemaphone = new SemaphoreSlim(1, 1);
 
         private double _animationFrameRate;
         private int _animationTotalFrame;
@@ -44,7 +46,7 @@ namespace Unigram.Controls
         private bool _shouldPlay;
 
         // Detect from hardware?
-        private bool _limitFps = true;
+        private readonly bool _limitFps = true;
 
         private bool _skipFrame;
 
@@ -56,8 +58,8 @@ namespace Unigram.Controls
 
         private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
 
-        private LoopThread _thread;
-        private LoopThread _threadUI;
+        private readonly LoopThread _thread;
+        private readonly LoopThread _threadUI;
         private bool _subscribed;
 
         private bool _unloaded;
@@ -140,25 +142,16 @@ namespace Unigram.Controls
             _canvas?.Invalidate();
         }
 
-        private static object _reusableLock = new object();
-        private static byte[] _reusableBuffer;
-
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            lock (_reusableLock)
-            {
-                if (_reusableBuffer == null)
-                {
-                    _reusableBuffer = new byte[256 * 256 * 4];
-                }
-            }
-
             if (_bitmap != null)
             {
                 _bitmap.Dispose();
             }
 
-            _bitmap = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+            var buffer = ArrayPool<byte>.Shared.Rent(256 * 256 * 4);
+            _bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+            ArrayPool<byte>.Shared.Return(buffer);
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
@@ -169,7 +162,7 @@ namespace Unigram.Controls
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            if (_bitmap == null || _unloaded)
+            if (_bitmap == null || _animation == null || _unloaded)
             {
                 return;
             }
@@ -295,7 +288,7 @@ namespace Unigram.Controls
             OnSourceChanged(UriToPath(newValue), UriToPath(oldValue));
         }
 
-        private void OnSourceChanged(string newValue, string oldValue)
+        private async void OnSourceChanged(string newValue, string oldValue)
         {
             var canvas = _canvas;
             if (canvas == null)
@@ -317,11 +310,18 @@ namespace Unigram.Controls
                 return;
             }
 
-            var animation = LottieAnimation.LoadFromFile(newValue, _isCachingEnabled, ColorReplacements);
+            var shouldPlay = _shouldPlay;
+
+            var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _isCachingEnabled, ColorReplacements));
             if (animation == null)
             {
                 // The app can't access the file specified
                 return;
+            }
+
+            if (_shouldPlay)
+            {
+                shouldPlay = true;
             }
 
             _source = newValue;
@@ -360,32 +360,38 @@ namespace Unigram.Controls
             }
         }
 
-        public void Play()
+        public bool Play()
         {
-            Play(false);
+            return Play(false);
         }
 
-        public void Play(bool backward = false)
+        public bool Play(bool backward = false)
         {
             var canvas = _canvas;
             if (canvas == null)
             {
                 _shouldPlay = true;
-                return;
+                return false;
             }
 
             var animation = _animation;
             if (animation == null)
             {
                 _shouldPlay = true;
-                return;
+                return false;
             }
 
             _shouldPlay = false;
             _backward = backward;
 
             //canvas.Paused = false;
+            if (_subscribed)
+            {
+                return false;
+            }
+
             Subscribe(true);
+            return true;
             //OnInvalidate();
         }
 
