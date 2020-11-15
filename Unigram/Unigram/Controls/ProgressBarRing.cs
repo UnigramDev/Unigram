@@ -27,14 +27,7 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            Indicator = (ProgressBarRingSlice)GetTemplateChild("Indicator");
-            Rotation = (RotateTransform)GetTemplateChild("Rotation");
-
-            if (Indicator != null)
-            {
-                OnApplyLegacyTemplate();
-            }
-            else if (ApiInfo.CanUseDirectComposition)
+            if (false && ApiInfo.CanUseDirectComposition)
             {
                 var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
                 ellipse.Radius = new Vector2(21);
@@ -77,47 +70,49 @@ namespace Unigram.Controls
 
                 ElementCompositionPreview.SetElementChildVisual(this, visual);
             }
-        }
-
-        private void OnApplyLegacyTemplate()
-        {
-            Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-
-            if (Rotation != null)
-            {
-                _foreverStoryboard = new Storyboard();
-                _foreverStoryboard.RepeatBehavior = RepeatBehavior.Forever;
-                var rotationAnimation = new DoubleAnimation();
-                rotationAnimation.From = 0;
-                rotationAnimation.To = 360;
-                rotationAnimation.Duration = TimeSpan.FromSeconds(3.0);
-
-                Storyboard.SetTarget(rotationAnimation, Rotation);
-                Storyboard.SetTargetProperty(rotationAnimation, "(RotateTransform.Angle)");
-
-                _foreverStoryboard.Children.Add(rotationAnimation);
-                _foreverStoryboard.Completed += OnForeverStoryboardCompleted;
-
-                _angleStoryboard = new Storyboard();
-                var angleAnimation = new DoubleAnimation();
-                angleAnimation.Duration = TimeSpan.FromSeconds(0.25);
-                angleAnimation.EnableDependentAnimation = true;
-
-                Storyboard.SetTarget(angleAnimation, Indicator);
-                Storyboard.SetTargetProperty(angleAnimation, "EndAngle");
-
-                _angleStoryboard.Children.Add(angleAnimation);
-                _angleStoryboard.Completed += OnAngleStoryboardCompleted;
-
-                Loaded += OnLoaded;
-                Unloaded += OnUnloaded;
-            }
             else
             {
-                Indicator.EndAngle = 359;
-            }
+                Indicator = (ProgressBarRingSlice)GetTemplateChild("Indicator");
+                Rotation = (RotateTransform)GetTemplateChild("Rotation");
 
-            OnValueChanged(0, Value);
+                Visibility = Visibility.Collapsed;
+
+                if (Rotation != null)
+                {
+                    _foreverStoryboard = new Storyboard();
+                    _foreverStoryboard.RepeatBehavior = RepeatBehavior.Forever;
+                    var rotationAnimation = new DoubleAnimation();
+                    rotationAnimation.From = 0;
+                    rotationAnimation.To = 360;
+                    rotationAnimation.Duration = TimeSpan.FromSeconds(3.0);
+
+                    Storyboard.SetTarget(rotationAnimation, Rotation);
+                    Storyboard.SetTargetProperty(rotationAnimation, "(RotateTransform.Angle)");
+
+                    _foreverStoryboard.Children.Add(rotationAnimation);
+                    _foreverStoryboard.Completed += OnForeverStoryboardCompleted;
+
+                    _angleStoryboard = new Storyboard();
+                    var angleAnimation = new DoubleAnimation();
+                    angleAnimation.Duration = TimeSpan.FromSeconds(0.25);
+                    angleAnimation.EnableDependentAnimation = true;
+
+                    Storyboard.SetTarget(angleAnimation, Indicator);
+                    Storyboard.SetTargetProperty(angleAnimation, "EndAngle");
+
+                    _angleStoryboard.Children.Add(angleAnimation);
+                    _angleStoryboard.Completed += OnAngleStoryboardCompleted;
+
+                    Loaded += OnLoaded;
+                    Unloaded += OnUnloaded;
+                }
+                else
+                {
+                    Indicator.EndAngle = 359;
+                }
+
+                OnValueChanged(0, Value);
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -146,6 +141,8 @@ namespace Unigram.Controls
 
         protected override void OnValueChanged(double oldValue, double newValue)
         {
+            newValue = Math.Max(newValue, 0.0001);
+
             if (_ellipse != null)
             {
                 _ellipse.TrimEnd = (float)newValue;

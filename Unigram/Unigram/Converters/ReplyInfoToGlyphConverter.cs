@@ -60,6 +60,9 @@ namespace Unigram.Converters
         public const string Reply = "\uE248";
         public const string Thread = "\uE93D";
         public const string Edit = "\uE104";
+        public const string EditText = "\uE932";
+        public const string Draw = "\uEE56";
+        public const string ReplaceFile = "\uE7C3";
         public const string Timer = "\uE916";
         public const string Report = "\uE730";
         public const string Clear = "\uEA99";

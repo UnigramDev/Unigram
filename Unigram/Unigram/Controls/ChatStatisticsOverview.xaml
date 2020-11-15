@@ -31,7 +31,8 @@
                 x:Name="GrowthLabel"
                 Style="{StaticResource CaptionTextBlockStyle}"
                 VerticalAlignment="Bottom"
-                Foreground="Green"/>
+                Foreground="Green"
+                Margin="4,0,0,0"/>
         </StackPanel>
         
         <TextBlock

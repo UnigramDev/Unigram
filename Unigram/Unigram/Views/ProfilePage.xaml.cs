@@ -42,7 +42,6 @@ namespace Unigram.Views
             if (ApiInfo.CanAddContextRequestedEvent)
             {
                 DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
-                DescriptionPanel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Description_ContextRequested), true);
             }
         }
 
@@ -160,7 +159,7 @@ namespace Unigram.Views
             Username.Badge = $"{user.Username}";
             Username.Visibility = string.IsNullOrEmpty(user.Username) ? Visibility.Collapsed : Visibility.Visible;
 
-            DescriptionTitle.Text = user.Type is UserTypeBot ? Strings.Resources.DescriptionPlaceholder : Strings.Resources.UserBio;
+            Description.Content = user.Type is UserTypeBot ? Strings.Resources.DescriptionPlaceholder : Strings.Resources.UserBio;
 
             if (user.Id == ViewModel.CacheService.Options.MyId)
             {
@@ -214,12 +213,12 @@ namespace Unigram.Views
             if (user.Type is UserTypeBot)
             {
                 GetEntities(fullInfo.ShareText);
-                DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.ShareText) ? Visibility.Collapsed : Visibility.Visible;
+                Description.Visibility = string.IsNullOrEmpty(fullInfo.ShareText) ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {
                 GetEntities(fullInfo.Bio);
-                DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
+                Description.Visibility = string.IsNullOrEmpty(fullInfo.Bio) ? Visibility.Collapsed : Visibility.Visible;
             }
 
             //UserCommonChats.Badge = fullInfo.GroupInCommonCount;
@@ -272,7 +271,7 @@ namespace Unigram.Views
         {
             Subtitle.Text = Locale.Declension("Members", group.MemberCount);
 
-            DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
+            Description.Content = Strings.Resources.DescriptionPlaceholder;
 
             GroupInvite.Visibility = group.Status is ChatMemberStatusCreator || (group.Status is ChatMemberStatusAdministrator administrator && administrator.CanInviteUsers) || chat.Permissions.CanInviteUsers ? Visibility.Visible : Visibility.Collapsed;
 
@@ -290,7 +289,7 @@ namespace Unigram.Views
             Location.Visibility = Visibility.Collapsed;
             Username.Visibility = Visibility.Collapsed;
 
-            DescriptionPanel.Visibility = Visibility.Collapsed;
+            Description.Visibility = Visibility.Collapsed;
 
             //UserCommonChats.Visibility = Visibility.Collapsed;
             UserStartSecret.Visibility = Visibility.Collapsed;
@@ -315,7 +314,7 @@ namespace Unigram.Views
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             GetEntities(fullInfo.Description);
-            DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
+            Description.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
 
             ViewModel.Members = new SortedObservableCollection<ChatMember>(new ChatMemberComparer(ViewModel.ProtoService, true), fullInfo.Members);
         }
@@ -326,7 +325,7 @@ namespace Unigram.Views
         {
             Subtitle.Text = Locale.Declension(group.IsChannel ? "Subscribers" : "Members", group.MemberCount);
 
-            DescriptionTitle.Text = Strings.Resources.DescriptionPlaceholder;
+            Description.Content = Strings.Resources.DescriptionPlaceholder;
 
             Automation.SetToolTip(Edit, group.IsChannel ? Strings.Resources.ManageChannelMenu : Strings.Resources.ManageGroupMenu);
 
@@ -388,7 +387,7 @@ namespace Unigram.Views
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
             GetEntities(fullInfo.Description);
-            DescriptionPanel.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
+            Description.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
 
             Location.Visibility = fullInfo.Location != null ? Visibility.Visible : Visibility.Collapsed;
             Location.Badge = fullInfo.Location?.Address;
@@ -744,6 +743,7 @@ namespace Unigram.Views
         private void GetEntities(string text)
         {
             DescriptionSpan.Inlines.Clear();
+            Description.BadgeLabel = text;
 
             var response = ViewModel.ProtoService.Execute(new GetTextEntities(text));
             if (response is TextEntities entities)

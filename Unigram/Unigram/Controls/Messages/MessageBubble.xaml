@@ -178,7 +178,6 @@
                 Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                Margin="0,4,0,0"
                 Padding="0"
                 Grid.Column="1"
                 Grid.Row="5">

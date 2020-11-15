@@ -607,10 +607,11 @@
                                 Grid.ColumnSpan="2">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <ItemsStackPanel Loading="ItemsStackPanel_Loading"
-                                         SizeChanged="OnViewSizeChanged"
-                                         ItemsUpdatingScrollMode="KeepItemsInView"
-                                         VerticalAlignment="Bottom" />
+                        <ItemsStackPanel
+                            Loading="ItemsStackPanel_Loading"
+                            SizeChanged="OnViewSizeChanged"
+                            ItemsUpdatingScrollMode="KeepItemsInView"
+                            VerticalAlignment="Bottom" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
                 <ListView.ItemContainerStyleSelector>
