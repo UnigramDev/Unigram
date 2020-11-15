@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Unigram.Logs;
 using Windows.UI.Core;
 
 namespace Unigram.Navigation
@@ -25,19 +25,11 @@ namespace Unigram.Navigation
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-DispatcherWrapper
     public class DispatcherContext : IDispatcherContext
     {
-        #region Debug
-
-        [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"DispatcherWrapper.{caller}");
-
-        #endregion
-
         public static IDispatcherContext Current() => WindowContext.GetForCurrentView().Dispatcher;
 
         public DispatcherContext(CoreDispatcher dispatcher)
         {
-            DebugWrite(caller: "Constructor");
+            Logger.Info("Constructor");
             _dispatcher = dispatcher;
         }
 

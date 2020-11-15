@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using Unigram.Logs;
 using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,14 +13,6 @@ namespace Unigram.Navigation.Services
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-NavigationService
     public class FrameFacade
     {
-        #region Debug
-
-        [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"{nameof(FrameFacade)}.{caller}");
-
-        #endregion
-
         internal FrameFacade(NavigationService navigationService, Frame frame, string id)
         {
             NavigationService = navigationService;
@@ -115,12 +106,7 @@ namespace Unigram.Navigation.Services
 
         private string GetPageStateKey(string frameId, Type type, int backStackDepth, object parameter)
         {
-            if (FrameStateSettingsService().IsBasicType(parameter))
-            {
-                return $"{frameId}-{type}-{parameter}";
-            }
-
-            return $"{frameId}-{type}-{backStackDepth}";
+            return $"{frameId}-{type}-{parameter}";
         }
 
         public Unigram.Services.SettingsLegacy.ISettingsService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
@@ -132,11 +118,6 @@ namespace Unigram.Navigation.Services
         public Unigram.Services.SettingsLegacy.ISettingsService PageStateSettingsService(string key)
         {
             return FrameStateSettingsService().Open(key, true);
-        }
-
-        public void ClearPageState(Type type)
-        {
-            FrameStateSettingsService().Remove(GetPageStateKey(FrameId, type, BackStackDepth, null));
         }
 
         #endregion
@@ -153,7 +134,7 @@ namespace Unigram.Navigation.Services
 
         public bool Navigate(Type page, object parameter, NavigationTransitionInfo infoOverride)
         {
-            DebugWrite();
+            Logger.Info();
 
             if (Frame.Navigate(page, parameter, infoOverride))
             {
@@ -173,7 +154,7 @@ namespace Unigram.Navigation.Services
 
         public void GoBack(NavigationTransitionInfo infoOverride = null)
         {
-            DebugWrite($"CanGoBack {CanGoBack}");
+            Logger.Info($"CanGoBack {CanGoBack}");
 
             NavigationModeHint = NavigationMode.Back;
             if (CanGoBack)
@@ -191,7 +172,7 @@ namespace Unigram.Navigation.Services
 
         public void Refresh()
         {
-            DebugWrite();
+            Logger.Info();
 
             NavigationModeHint = NavigationMode.Refresh;
 
@@ -228,7 +209,7 @@ namespace Unigram.Navigation.Services
 
         public void Refresh(object param)
         {
-            DebugWrite();
+            Logger.Info();
 
 
 
@@ -263,7 +244,7 @@ namespace Unigram.Navigation.Services
 
         public void GoForward()
         {
-            DebugWrite($"CanGoForward {CanGoForward}");
+            Logger.Info($"CanGoForward {CanGoForward}");
 
             NavigationModeHint = NavigationMode.Forward;
             if (CanGoForward)
@@ -302,7 +283,7 @@ namespace Unigram.Navigation.Services
         }
         void FacadeNavigatedEventHandler(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
-            DebugWrite();
+            Logger.Info();
 
             CurrentPageType = e.SourcePageType;
             CurrentPageParam = e.Parameter;
@@ -349,7 +330,7 @@ namespace Unigram.Navigation.Services
         }
         private void FacadeNavigatingCancelEventHandler(object sender, NavigatingCancelEventArgs e)
         {
-            DebugWrite();
+            Logger.Info();
 
             var parameter = e.Parameter;
             if (parameter is string cacheKey && e.SourcePageType == typeof(ChatPage))

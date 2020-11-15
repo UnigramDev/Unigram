@@ -656,7 +656,7 @@ namespace Unigram.Common
                         await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
-                    Logs.Logger.Warning(Logs.Target.API, "account.signIn error " + error);
+                    Logs.Logger.Warning(Logs.LogTarget.API, "account.signIn error " + error);
                 }
             }
             else

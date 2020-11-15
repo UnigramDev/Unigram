@@ -106,7 +106,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Logger.Error(Logs.Target.API, "auth.resetWebAuthotization error " + error);
+                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetWebAuthotization error " + error);
                 }
 
                 ProtoService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(session.BotUserId), true));
@@ -126,7 +126,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Logger.Error(Logs.Target.API, "auth.resetWebAuthotizations error " + error);
+                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetWebAuthotizations error " + error);
                 }
             }
         }

@@ -140,7 +140,7 @@ namespace Unigram.ViewModels.SignIn
                     await MessagePopup.ShowAsync(error.Message, Strings.Resources.AppName, Strings.Resources.OK);
                 }
 
-                Logs.Logger.Error(Logs.Target.API, "account.signIn error " + error);
+                Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);
             }
         }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Unigram.Navigation.Services;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -14,19 +12,6 @@ namespace Unigram.Navigation
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-WindowWrapper
     public class WindowContext
     {
-        #region Debug
-
-        [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"WindowWrapper.{caller}");
-
-        #endregion
-
-        static WindowContext()
-        {
-            DebugWrite(caller: "Static Constructor");
-        }
-
         public static WindowContext Default()
         {
             try

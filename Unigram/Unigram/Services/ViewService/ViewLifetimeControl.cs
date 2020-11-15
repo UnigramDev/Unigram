@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using Unigram.Logs;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Windows.UI.Core;
@@ -183,7 +184,7 @@ namespace Unigram.Services.ViewService
                     refCountCopy = ++refCount;
                 }
             }
-            Logging.LoggingService.WriteLine("Start:" + refCountCopy);
+            Logger.Info("Start:" + refCountCopy);
             if (releasedCopy)
             {
                 throw new ViewLifeTimeException("This view is being disposed");
@@ -222,7 +223,7 @@ namespace Unigram.Services.ViewService
                     }
                 }
             }
-            Logging.LoggingService.WriteLine("Stop:" + refCountCopy);
+            Logger.Info("Stop:" + refCountCopy);
             if (releasedCopy)
             {
                 throw new ViewLifeTimeException("This view is being disposed");

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+using Unigram.Logs;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
@@ -9,14 +8,6 @@ namespace Unigram.Services.Keyboard
 {
     public class KeyboardService
     {
-        #region Debug
-
-        [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Services.Logging.Severities severity = Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Logging.LoggingService.WriteLine(text, severity, caller: $"{nameof(KeyboardService)}.{caller}");
-
-        #endregion
-
         readonly KeyboardHelper _helper;
 
         private static readonly Dictionary<int, KeyboardService> _windowContext = new Dictionary<int, KeyboardService>();
@@ -44,58 +35,58 @@ namespace Unigram.Services.Keyboard
                 // use this to nav back
                 if (e.VirtualKey == Windows.System.VirtualKey.GoBack)
                 {
-                    DebugWrite("GoBack", caller: nameof(AfterBackGesture));
+                    Logger.Info("GoBack", member: nameof(AfterBackGesture));
                     AfterBackGesture?.Invoke(e.VirtualKey);
                 }
                 else if (e.VirtualKey == Windows.System.VirtualKey.NavigationLeft)
                 {
-                    DebugWrite("NavigationLeft", caller: nameof(AfterBackGesture));
+                    Logger.Info("NavigationLeft", member: nameof(AfterBackGesture));
                     AfterBackGesture?.Invoke(e.VirtualKey);
                 }
                 else if (e.VirtualKey == Windows.System.VirtualKey.GamepadMenu)
                 {
-                    DebugWrite("GamepadMenu", caller: nameof(AfterMenuGesture));
+                    Logger.Info("GamepadMenu", member: nameof(AfterMenuGesture));
                     AfterMenuGesture?.Invoke();
                 }
                 else if (e.VirtualKey == Windows.System.VirtualKey.GamepadLeftShoulder)
                 {
-                    DebugWrite("GamepadLeftShoulder", caller: nameof(AfterBackGesture));
+                    Logger.Info("GamepadLeftShoulder", member: nameof(AfterBackGesture));
                     AfterBackGesture?.Invoke(e.VirtualKey);
                 }
                 else if (e.OnlyAlt && e.VirtualKey == Windows.System.VirtualKey.Back)
                 {
-                    DebugWrite("Alt+Back", caller: nameof(AfterBackGesture));
+                    Logger.Info("Alt+Back", member: nameof(AfterBackGesture));
                     AfterBackGesture?.Invoke(e.VirtualKey);
                 }
                 else if (e.OnlyAlt && e.VirtualKey == Windows.System.VirtualKey.Left)
                 {
-                    DebugWrite("Alt+Left", caller: nameof(AfterBackGesture));
+                    Logger.Info("Alt+Left", member: nameof(AfterBackGesture));
                     AfterBackGesture?.Invoke(e.VirtualKey);
                 }
                 else if (e.VirtualKey == Windows.System.VirtualKey.Escape)
                 {
-                    DebugWrite("Escape", caller: nameof(AfterBackGesture));
+                    Logger.Info("Escape", member: nameof(AfterBackGesture));
                     AfterBackGesture?.Invoke(e.VirtualKey);
                 }
                 // use this to nav forward
                 else if (e.VirtualKey == Windows.System.VirtualKey.GoForward)
                 {
-                    DebugWrite("GoForward", caller: nameof(AfterForwardGesture));
+                    Logger.Info("GoForward", member: nameof(AfterForwardGesture));
                     AfterForwardGesture?.Invoke();
                 }
                 else if (e.VirtualKey == Windows.System.VirtualKey.NavigationRight)
                 {
-                    DebugWrite("NavigationRight", caller: nameof(AfterForwardGesture));
+                    Logger.Info("NavigationRight", member: nameof(AfterForwardGesture));
                     AfterForwardGesture?.Invoke();
                 }
                 else if (e.VirtualKey == Windows.System.VirtualKey.GamepadRightShoulder)
                 {
-                    DebugWrite("GamepadRightShoulder", caller: nameof(AfterForwardGesture));
+                    Logger.Info("GamepadRightShoulder", member: nameof(AfterForwardGesture));
                     AfterForwardGesture?.Invoke();
                 }
                 else if (e.OnlyAlt && e.VirtualKey == Windows.System.VirtualKey.Right)
                 {
-                    DebugWrite("Alt+Right", caller: nameof(AfterForwardGesture));
+                    Logger.Info("Alt+Right", member: nameof(AfterForwardGesture));
                     AfterForwardGesture?.Invoke();
                 }
 
@@ -107,12 +98,12 @@ namespace Unigram.Services.Keyboard
             };
             _helper.PointerGoBackGestured = () =>
             {
-                DebugWrite(caller: nameof(KeyboardHelper.PointerGoBackGestured));
+                Logger.Info(member: nameof(KeyboardHelper.PointerGoBackGestured));
                 AfterBackGesture?.Invoke(Windows.System.VirtualKey.GoBack);
             };
             _helper.PointerGoForwardGestured = () =>
             {
-                DebugWrite(caller: nameof(KeyboardHelper.PointerGoForwardGestured));
+                Logger.Info(member: nameof(KeyboardHelper.PointerGoForwardGestured));
                 AfterForwardGesture?.Invoke();
             };
         }
