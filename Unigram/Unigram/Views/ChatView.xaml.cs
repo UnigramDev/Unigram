@@ -544,7 +544,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                await Messages.ItemsStack.UpdateLayoutAsync(false);
+                await Messages.ItemsStack.UpdateLayoutAsync();
 
                 var owner = Messages.ContainerFromItem(args.NewItems[0]) as SelectorItem;
                 if (owner == null)

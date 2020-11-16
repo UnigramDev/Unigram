@@ -726,7 +726,7 @@ namespace Unigram.Common
         }
 
 
-        public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = true)
+        public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)
         {
             var tcs = new TaskCompletionSource<object>();
 
