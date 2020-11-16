@@ -2307,10 +2307,7 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Messages\" />
-    <Folder Include="Views\Messages\" />
-  </ItemGroup>
+  <ItemGroup />
   <!--<ItemGroup>
     <Reference Include="Unigram.Native.Calls">
       <HintPath>$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.winmd</HintPath>
