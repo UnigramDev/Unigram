@@ -754,6 +754,7 @@ namespace Unigram.Views
             else if (ViewModel.Chats.Items.ChatList is ChatListFilter || ViewModel.Chats.Items.ChatList is ChatListArchive)
             {
                 ViewModel.SelectedFilter = ChatFilterViewModel.Main;
+                ConvertFilter(ChatFilterViewModel.Main);
                 args.Handled = true;
             }
             else
