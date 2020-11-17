@@ -26,7 +26,7 @@ namespace Unigram.Views
         {
             InitializeComponent();
 
-            _passcodeService = TLContainer.Current.Resolve<IPasscodeService>();
+            _passcodeService = TLContainer.Current.Passcode;
             _biometrics = biometrics;
 
             _applicationView = ApplicationView.GetForCurrentView();
