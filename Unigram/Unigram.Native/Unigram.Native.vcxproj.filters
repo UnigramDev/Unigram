@@ -167,12 +167,6 @@
     <ClCompile Include="libyuv\source\video_common.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
-    <ClCompile Include="Proxy\TelegramGameProxy.cpp">
-      <Filter>Proxy</Filter>
-    </ClCompile>
-    <ClCompile Include="Proxy\TelegramPaymentProxy.cpp">
-      <Filter>Proxy</Filter>
-    </ClCompile>
     <ClCompile Include="Generated Files\module.g.cpp" />
     <ClCompile Include="TelegramGameProxy.cpp" />
     <ClCompile Include="TelegramPaymentProxy.cpp" />
@@ -257,9 +251,6 @@
     </ClInclude>
     <ClInclude Include="libyuv\include\libyuv\video_common.h">
       <Filter>libyuv\include\libyuv</Filter>
-    </ClInclude>
-    <ClInclude Include="Proxy\TelegramPaymentProxy.h">
-      <Filter>Proxy</Filter>
     </ClInclude>
     <ClInclude Include="TelegramGameProxy.h" />
     <ClInclude Include="TelegramPaymentProxy.h" />
