@@ -2,12 +2,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Themes">
-    
+
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
             <!-- Common -->
             <Color x:Key="SystemAccentColor">#71BAFA</Color>
-            
+
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{StaticResource SystemChromeLowColor}"/>
             <StaticResource x:Key="ChatPageBackgroundBrush" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
             <StaticResource x:Key="ContentDialogBackground" ResourceKey="ApplicationPageBackgroundThemeBrush"/>
@@ -97,14 +97,14 @@
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MessageHeaderForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderColor}" />
             <SolidColorBrush x:Key="MessagePollCorrectBrush" Color="{ThemeResource MessagePollCorrectColor}" />
-            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessageRightWrongColor}" />
+            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessagePollWrongColor}" />
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundColor}" />
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundColor}" />
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MessageOverlayBackgroundColor}" />
             <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="{ThemeResource MessageCallForegroundColor}" />
             <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="{ThemeResource MessageCallMissedForegroundColor}" />
 
-            
+
 
             <!-- Begin Windows.UI.Xaml.Controls.dll resources - DO NOT MANUALLY EDIT BELOW THIS LINE! -->
             <Color x:Key="SystemAltHighColor">#FF000000</Color>
@@ -784,7 +784,6 @@
             <StaticResource x:Key="ContentLinkBackgroundColor" ResourceKey="SystemControlHighlightChromeAltLowBrush" />
             <!--
                 Resources for:
-
                 Windows.UI.Xaml.Controls.RichTextBlock
             -->
             <StaticResource x:Key="TextControlHighlighterForeground" ResourceKey="SystemControlForegroundAltHighBrush" />
@@ -1279,7 +1278,7 @@
 
             <SolidColorBrush x:Key="ChatUnreadBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>
             <SolidColorBrush x:Key="ChatUnreadLabelBrush" Color="#FFFFFF"/>
-            
+
             <!-- Messages -->
             <Color x:Key="MessageForegroundColor">#000000</Color>
             <Color x:Key="MessageForegroundOutColor">#000000</Color>
@@ -1289,7 +1288,7 @@
 
             <Color x:Key="MessageBackgroundColor">#FFFFFF</Color>
             <Color x:Key="MessageBackgroundOutColor">#F0FDDF</Color>
-            
+
             <Color x:Key="MessageSubtleLabelColor">#A1ADB6</Color>
             <Color x:Key="MessageSubtleLabelOutColor">#6DC264</Color>
 
@@ -1332,15 +1331,15 @@
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="{ThemeResource MessageHeaderForegroundColor}" />
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="{ThemeResource MessageHeaderBorderColor}" />
             <SolidColorBrush x:Key="MessagePollCorrectBrush" Color="{ThemeResource MessagePollCorrectColor}" />
-            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessageRightWrongColor}" />
+            <SolidColorBrush x:Key="MessagePollWrongBrush" Color="{ThemeResource MessagePollWrongColor}" />
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="{ThemeResource MessageMediaForegroundColor}" />
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="{ThemeResource MessageMediaBackgroundColor}" />
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="{ThemeResource MessageOverlayBackgroundColor}" />
             <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="{ThemeResource MessageCallForegroundColor}" />
             <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="{ThemeResource MessageCallMissedForegroundColor}" />
 
-            
-            
+
+
             <!-- Begin Windows.UI.Xaml.Controls.dll resources - DO NOT MANUALLY EDIT BELOW THIS LINE! -->
             <Color x:Key="SystemAltHighColor">#FFFFFFFF</Color>
             <Color x:Key="SystemAltLowColor">#33FFFFFF</Color>
@@ -1986,7 +1985,6 @@
             <StaticResource x:Key="LoopingSelectorItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
             <!--
                 Resources for:
-
                 Windows.UI.Xaml.Controls.RichEditBox
             -->
             <StaticResource x:Key="TextControlForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
@@ -2021,7 +2019,6 @@
             <StaticResource x:Key="ContentLinkBackgroundColor" ResourceKey="SystemControlPageBackgroundChromeLowBrush" />
             <!--
                 Resources for:
-
                 Windows.UI.Xaml.Controls.RichTextBlock
             -->
             <StaticResource x:Key="TextControlHighlighterForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
