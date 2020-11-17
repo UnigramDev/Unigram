@@ -204,6 +204,10 @@ namespace Unigram.Controls.Messages.Content
             if (diff > 0)
             {
                 Timeout.Text = TimeSpan.FromSeconds(diff).ToString("m\\:ss");
+                if (diff <= 5)
+                {
+                    VisualState.GoToState(LayoutRoot, "isRunningOut", false);
+                }
             }
             else
             {
