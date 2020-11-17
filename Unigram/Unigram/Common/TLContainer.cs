@@ -1,9 +1,10 @@
-﻿using Autofac;
-using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Windows.Storage;
 
 namespace Unigram.Views
 {
@@ -11,8 +12,7 @@ namespace Unigram.Views
     {
         private static readonly TLContainer _instance = new TLContainer();
 
-        //private Dictionary<int, IContainer> _containers = new Dictionary<int, IContainer>();
-        private readonly ConcurrentDictionary<int, IContainer> _containers = new ConcurrentDictionary<int, IContainer>();
+        private readonly ConcurrentDictionary<int, TLLocator> _containers = new ConcurrentDictionary<int, TLLocator>();
         private readonly ILifetimeService _lifetime;
         private readonly IPasscodeService _passcode;
         private readonly ILocaleService _locale;
@@ -22,6 +22,57 @@ namespace Unigram.Views
             _lifetime = new LifetimeService();
             _passcode = new PasscodeService(SettingsService.Current.PasscodeLock);
             _locale = LocaleService.Current;
+        }
+
+        public void Configure()
+        {
+            var fail = true;
+            var first = 0;
+
+            foreach (var session in GetSessionsToInitialize())
+            {
+                if (first < 1 || session == SettingsService.Current.PreviousSession)
+                {
+                    first = session;
+                }
+
+                fail = false;
+                TLContainer.Current.Build(session);
+            }
+
+            if (fail)
+            {
+                TLContainer.Current.Build(first);
+            }
+
+            _lifetime.Update();
+        }
+
+        private IEnumerable<int> GetSessionsToInitialize()
+        {
+            var folders = Directory.GetDirectories(ApplicationData.Current.LocalFolder.Path);
+            foreach (var folder in folders)
+            {
+                if (int.TryParse(Path.GetFileName(folder), out int session))
+                {
+                    var container = ApplicationData.Current.LocalSettings.CreateContainer($"{session}", ApplicationDataCreateDisposition.Always);
+                    if (container.Values.ContainsKey("UserId"))
+                    {
+                        yield return session;
+                    }
+                    else
+                    {
+                        Task.Factory.StartNew((path) =>
+                        {
+                            try
+                            {
+                                Directory.Delete((string)path, true);
+                            }
+                            catch { }
+                        }, folder);
+                    }
+                }
+            }
         }
 
         public ILifetimeService Lifetime => _lifetime;
@@ -56,31 +107,16 @@ namespace Unigram.Views
             }
         }
 
-        public IContainer Build(int id, Func<ContainerBuilder, int, IContainer> factory)
+        public TLLocator Build(int id)
         {
-            //for (int i = 0; i < Telegram.Api.Constants.AccountsMaxCount; i++)
-            //{
-            //    //if (_containers.ContainsKey(i))
-            //    if (_containers[i] != null)
-            //    {
-            //        continue;
-            //    }
-
-            //}
-
-            var builder = new ContainerBuilder();
-            builder.RegisterInstance(_lifetime).As<ILifetimeService>();
-            builder.RegisterInstance(_passcode).As<IPasscodeService>();
-            builder.RegisterInstance(_locale).As<ILocaleService>();
-
-            return _containers[id] = factory(builder, id);
+            return _containers[id] = new TLLocator(_lifetime, _locale, _passcode, id, id == SettingsService.Current.ActiveSession);
         }
 
         public void Destroy(int id)
         {
-            if (_containers.TryRemove(id, out IContainer container))
+            if (_containers.TryRemove(id, out TLLocator container))
             {
-                container.Dispose();
+                //container.Dispose();
             }
         }
 
@@ -93,7 +129,7 @@ namespace Unigram.Views
 
             var result = default(TService);
             //if (_containers.TryGetValue(account, out IContainer container))
-            if (_containers.TryGetValue(session, out IContainer container))
+            if (_containers.TryGetValue(session, out TLLocator container))
             {
                 result = container.Resolve<TService>();
             }
@@ -111,7 +147,7 @@ namespace Unigram.Views
             result = default;
 
             //if (_containers.TryGetValue(account, out IContainer container))
-            if (_containers.TryGetValue(session, out IContainer container))
+            if (_containers.TryGetValue(session, out TLLocator container))
             {
                 result = container.Resolve<TService>();
             }
@@ -130,7 +166,7 @@ namespace Unigram.Views
 
             var result = default(TService);
             //if (_containers.TryGetValue(account, out IContainer container))
-            if (_containers.TryGetValue(session, out IContainer container))
+            if (_containers.TryGetValue(session, out TLLocator container))
             {
                 result = container.Resolve<TService>();
             }

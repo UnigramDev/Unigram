@@ -84,9 +84,9 @@ namespace Unigram.Navigation.Services
 
         private string GetFrameStateKey() => string.Format("{0}-PageState", FrameId);
 
-        private Unigram.Services.SettingsLegacy.ISettingsService FrameStateSettingsService()
+        private Unigram.Services.ISettingsLegacyService FrameStateSettingsService()
         {
-            return Unigram.Services.SettingsLegacy.SettingsService.Create(GetFrameStateKey(), true);
+            return Unigram.Services.SettingsLegacyService.Create(GetFrameStateKey(), true);
         }
 
         public void SetFrameState(string key, string value)
@@ -109,13 +109,13 @@ namespace Unigram.Navigation.Services
             return $"{frameId}-{type}-{parameter}";
         }
 
-        public Unigram.Services.SettingsLegacy.ISettingsService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
+        public Unigram.Services.ISettingsLegacyService PageStateSettingsService(Type type, int depth = 0, object parameter = null)
         {
             var key = GetPageStateKey(FrameId, type, BackStackDepth + depth, parameter);
             return FrameStateSettingsService().Open(key, true);
         }
 
-        public Unigram.Services.SettingsLegacy.ISettingsService PageStateSettingsService(string key)
+        public Unigram.Services.ISettingsLegacyService PageStateSettingsService(string key)
         {
             return FrameStateSettingsService().Open(key, true);
         }

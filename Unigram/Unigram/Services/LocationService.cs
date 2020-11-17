@@ -133,68 +133,8 @@ namespace Unigram.Services
             return true;
         }
 
-        public async Task<List<Telegram.Td.Api.Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null)
+        public async Task<List<Venue>> GetVenuesAsync(long chatId, double latitude, double longitude, string query = null)
         {
-#if USE_FOURSQUARE
-
-            var builder = new StringBuilder("https://api.foursquare.com/v2/venues/search/?");
-            if (string.IsNullOrEmpty(query) == false)
-            {
-                builder.Append(string.Format("{0}={1}&", "query", WebUtility.UrlEncode(query)));
-            }
-            builder.Append(string.Format("{0}={1}&", "v", "20150326"));
-            builder.Append(string.Format("{0}={1}&", "locale", "en"));
-            builder.Append(string.Format("{0}={1}&", "limit", "25"));
-            builder.Append(string.Format("{0}={1}&", "client_id", "BN3GWQF1OLMLKKQTFL0OADWD1X1WCDNISPPOT1EMMUYZTQV1"));
-            builder.Append(string.Format("{0}={1}&", "client_secret", "WEEZHCKI040UVW2KWW5ZXFAZ0FMMHKQ4HQBWXVSX4WXWBWYN"));
-            builder.Append(string.Format("{0}={1},{2}&", "ll", latitude.ToString(new CultureInfo("en-US")), longitute.ToString(new CultureInfo("en-US"))));
-
-            try
-            {
-                var client = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, builder.ToString());
-
-                var response = await client.SendAsync(request);
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var json = await Task.Run(() => JsonConvert.DeserializeObject<FoursquareRootObject>(content));
-
-                    if (json?.response?.venues != null)
-                    {
-                        var result = new List<Telegram.Td.Api.Venue>();
-                        foreach (var item in json.response.venues)
-                        {
-                            var venue = new Telegram.Td.Api.Venue();
-                            venue.Id = item.id;
-                            venue.Title = item.name;
-                            venue.Address = item.location.address ?? item.location.city ?? item.location.country;
-                            venue.Provider = "foursquare";
-                            venue.Location = new Telegram.Td.Api.Location(item.location.lat, item.location.lng);
-
-                            //if (item.categories != null && item.categories.Count > 0)
-                            //{
-                            //    var icon = item.categories[0].icon;
-                            //    if (icon != null)
-                            //    {
-                            //        venue.VenueType = icon.prefix.Replace("https://ss3.4sqi.net/img/categories_v2/", string.Empty).TrimEnd('_');
-                            //        //location.Icon = string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png");
-                            //    }
-                            //}
-
-                            result.Add(venue);
-                        }
-
-                        return result;
-                    }
-                }
-            }
-            catch { }
-
-            return new List<Telegram.Td.Api.Venue>();
-
-#else
-
             var results = new List<Venue>();
 
             var option = _cacheService.Options.VenueSearchBotUsername;
@@ -230,7 +170,6 @@ namespace Unigram.Services
             }
 
             return results;
-#endif
         }
     }
 }

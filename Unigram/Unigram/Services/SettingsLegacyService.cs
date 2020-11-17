@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using Windows.Foundation;
 using Windows.Storage;
 
-namespace Unigram.Services.SettingsLegacy
+namespace Unigram.Services
 {
+    public interface ISettingsLegacyService
+    {
+        IDictionary<string, object> Values { get; }
+        bool Exists(string key);
+        T Read<T>(string key, T fallback = default(T));
+        void Remove(string key);
+        void Write<T>(string key, T value);
+        ISettingsLegacyService Open(string folderName, bool createFolderIsNotExists = true);
+        void Clear(bool deleteSubContainers = true);
+
+        bool IsBasicType(object parameter);
+    }
+
     // https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-SettingsService
-    public class SettingsService : ISettingsService
+    public class SettingsLegacyService : ISettingsLegacyService
     {
         /// <summary>
         /// Creates an <c>ISettingsService</c> object targeting the requested (optional) <paramref name="folderName"/>
@@ -19,7 +30,7 @@ namespace Unigram.Services.SettingsLegacy
         /// <param name="folderName">Name of the settings folder to use</param>
         /// <param name="createFolderIfNotExists"><c>true</c> to create the folder if it isn't already there, false otherwise.</param>
         /// <returns></returns>
-        public static ISettingsService Create(string folderName = null, bool createFolderIfNotExists = true)
+        public static ISettingsLegacyService Create(string folderName = null, bool createFolderIfNotExists = true)
         {
             //ApplicationDataContainer rootContainer;
             //switch (strategy)
@@ -48,21 +59,19 @@ namespace Unigram.Services.SettingsLegacy
             //}
 
             //return new SettingsService(targetContainer);
-            return new SettingsService(new Dictionary<string, object>());
+            return new SettingsLegacyService(new Dictionary<string, object>());
         }
 
         public IDictionary<string, object> Values { get; private set; }
 
-        public IPropertyMapping Converters { get; set; } = new JsonMapping();
-
         private static readonly Dictionary<string, IDictionary<string, object>> _keys = new Dictionary<string, IDictionary<string, object>>();
 
-        private SettingsService(IDictionary<string, object> values)
+        private SettingsLegacyService(IDictionary<string, object> values)
         {
             Values = values;
         }
 
-        public ISettingsService Open(string folderName, bool createFolderIfNotExists = true)
+        public ISettingsLegacyService Open(string folderName, bool createFolderIfNotExists = true)
         {
             IDictionary<string, object> values;
             if (!_keys.TryGetValue(folderName, out values))
@@ -70,8 +79,7 @@ namespace Unigram.Services.SettingsLegacy
                 _keys[folderName] = values = new Dictionary<string, object>();
             }
 
-            var service = new SettingsService(values);
-            service.Converters = Converters;
+            var service = new SettingsLegacyService(values);
             return service;
         }
 
@@ -106,38 +114,38 @@ namespace Unigram.Services.SettingsLegacy
 
         public void Write<T>(string key, T value)
         {
-            var type = typeof(T);
-            if (value != null)
-            {
-                type = value.GetType();
-            }
-            var converter = Converters.GetConverter(type);
-            var container = new ApplicationDataCompositeValue();
-            var converted = converter.ToStore(value, type);
-            if (converted != null)
-            {
-                var valueLength = converted.Length;
-                if (valueLength > MaxValueSize)
-                {
-                    int count = (valueLength - 1) / MaxValueSize + 1;
-                    container["Count"] = count;
-                    for (int part = 0; part < count; part++)
-                    {
-                        string partValue = converted.Substring(part * MaxValueSize, Math.Min(MaxValueSize, valueLength));
-                        container["Part" + part] = partValue;
-                        valueLength = valueLength - MaxValueSize;
-                    }
-                }
-                else
-                {
-                    container["Value"] = converted;
-                }
-            }
-            if ((type != typeof(string) && !type.GetTypeInfo().IsValueType) || (type != typeof(T)))
-            {
-                container["Type"] = type.AssemblyQualifiedName;
-            }
-            Values[key] = container;
+            //var type = typeof(T);
+            //if (value != null)
+            //{
+            //    type = value.GetType();
+            //}
+            //var converter = Converters.GetConverter(type);
+            //var container = new Dictionary<string, object>();
+            //var converted = converter.ToStore(value, type);
+            //if (converted != null)
+            //{
+            //    var valueLength = converted.Length;
+            //    if (valueLength > MaxValueSize)
+            //    {
+            //        int count = (valueLength - 1) / MaxValueSize + 1;
+            //        container["Count"] = count;
+            //        for (int part = 0; part < count; part++)
+            //        {
+            //            string partValue = converted.Substring(part * MaxValueSize, Math.Min(MaxValueSize, valueLength));
+            //            container["Part" + part] = partValue;
+            //            valueLength = valueLength - MaxValueSize;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        container["Value"] = converted;
+            //    }
+            //}
+            //if ((type != typeof(string) && !type.GetTypeInfo().IsValueType) || (type != typeof(T)))
+            //{
+            //    container["Type"] = type.AssemblyQualifiedName;
+            //}
+            Values[key] = value;
         }
 
         public T Read<T>(string key, T fallback = default(T))
@@ -146,30 +154,33 @@ namespace Unigram.Services.SettingsLegacy
             {
                 if (Values.ContainsKey(key))
                 {
-                    var container = Values[key] as ApplicationDataCompositeValue;
-                    var type = typeof(T);
-                    if (container.ContainsKey("Type"))
+                    var container = Values[key];
+                    if (container is T converted)
                     {
-                        type = Type.GetType((string)container["Type"]);
+                        return converted;
                     }
-                    string value = null;
-                    if (container.ContainsKey("Value"))
-                    {
-                        value = container["Value"] as string;
-                    }
-                    else if (container.ContainsKey("Count"))
-                    {
-                        int count = (int)container["Count"];
-                        var sb = new StringBuilder(count * MaxValueSize);
-                        for (int statePart = 0; statePart < count; statePart++)
-                        {
-                            sb.Append(container["Part" + statePart]);
-                        }
-                        value = sb.ToString();
-                    }
-                    var converter = Converters.GetConverter(type);
-                    var converted = (T)converter.FromStore(value, type);
-                    return converted;
+                    //var type = typeof(T);
+                    //if (container.ContainsKey("Type"))
+                    //{
+                    //    type = Type.GetType((string)container["Type"]);
+                    //}
+                    //string value = null;
+                    //if (container.ContainsKey("Value"))
+                    //{
+                    //    value = container["Value"] as string;
+                    //}
+                    //else if (container.ContainsKey("Count"))
+                    //{
+                    //    int count = (int)container["Count"];
+                    //    var sb = new StringBuilder(count * MaxValueSize);
+                    //    for (int statePart = 0; statePart < count; statePart++)
+                    //    {
+                    //        sb.Append(container["Part" + statePart]);
+                    //    }
+                    //    value = sb.ToString();
+                    //}
+                    //var converter = Converters.GetConverter(type);
+                    //var converted = (T)converter.FromStore(value, type);
                 }
                 return fallback;
             }

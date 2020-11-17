@@ -1,5 +1,4 @@
-﻿using Autofac;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -114,7 +113,7 @@ namespace Unigram.Services
             var settings = ApplicationData.Current.LocalSettings.CreateContainer($"{id}", ApplicationDataCreateDisposition.Always);
             settings.Values["UseTestDC"] = test;
 
-            var container = app.Locator.Configure(id);
+            var container = TLContainer.Current.Build(id);
             var session = container.Resolve<ISessionService>();
             if (update)
             {
