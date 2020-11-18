@@ -154,15 +154,6 @@ namespace Unigram.Controls.Chats
                     return;
                 }
                 recordInterfaceState = 1;
-                try
-                {
-                    if (_request == null)
-                    {
-                        _request = new DisplayRequest();
-                        _request.RequestActive();
-                    }
-                }
-                catch { }
 
                 _recordingLocked = false;
 
@@ -174,19 +165,20 @@ namespace Unigram.Controls.Chats
 
                     ClickMode = ClickMode.Release;
                     RecordingStarted?.Invoke(this, EventArgs.Empty);
+
+                    try
+                    {
+                        if (_request == null)
+                        {
+                            _request = new DisplayRequest();
+                            _request.RequestActive();
+                        }
+                    }
+                    catch { }
                 });
             }
             else
             {
-                if (_request != null)
-                {
-                    try
-                    {
-                        _request.RequestRelease();
-                        _request = null;
-                    }
-                    catch { }
-                }
                 if (recordInterfaceState == 0)
                 {
                     return;
@@ -201,6 +193,16 @@ namespace Unigram.Controls.Chats
 
                     ClickMode = ClickMode.Press;
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
+
+                    if (_request != null)
+                    {
+                        try
+                        {
+                            _request.RequestRelease();
+                            _request = null;
+                        }
+                        catch { }
+                    }
                 });
             }
 
