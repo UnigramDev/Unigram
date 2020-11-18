@@ -173,6 +173,7 @@
     <Compile Include="Common\DateTimeParser.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
+    <Compile Include="Common\EventThrottler.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\LoopThread.cs" />
     <Compile Include="Common\LoopThreadPool.cs" />
@@ -2251,14 +2252,8 @@
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.4.3</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.UI.Xaml.Core.Direct">
-      <Version>2.0.180924001-prerelease</Version>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="System.Reactive">
-      <Version>4.4.1</Version>
     </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>

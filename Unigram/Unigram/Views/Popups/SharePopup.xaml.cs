@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -44,8 +43,8 @@ namespace Unigram.Views.Popups
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
-            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>
+            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            throttler.Invoked += async (s, args) =>
             {
                 var items = ViewModel.Search;
                 if (items != null && string.Equals(SearchField.Text, items.Query))
@@ -53,7 +52,7 @@ namespace Unigram.Views.Popups
                     await items.LoadMoreItemsAsync(2);
                     await items.LoadMoreItemsAsync(3);
                 }
-            });
+            };
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reactive.Linq;
+﻿using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -16,14 +15,14 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsUsernameViewModel>();
 
-            var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
+            throttler.Invoked += (s, args) =>
             {
                 if (ViewModel.UpdateIsValid(Username.Text))
                 {
                     ViewModel.CheckAvailability(Username.Text);
                 }
-            });
+            };
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

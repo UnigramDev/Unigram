@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reactive.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -229,11 +228,11 @@ namespace Unigram.Views.Chats
 
         private void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
         {
-            var observable = Observable.FromEventPattern<TextChangedEventArgs>(field, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => field.TextChanged += new TextChangedEventHandler(handler));
+            throttler.Invoked += (s, args) =>
             {
                 ViewModel.Find(filter(), field.Text);
-            });
+            };
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)

@@ -2,13 +2,13 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.ViewModels;
 using Windows.Devices.Geolocation;
+using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Services.Maps;
 using Windows.Storage.Streams;
@@ -57,14 +57,14 @@ namespace Unigram.Views.Popups
 
             Loaded += OnLoaded;
 
-            var observable = Observable.FromEventPattern<object>(mMap, "CenterChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(async x =>
+            var throttler = new EventThrottler<object>(500, handler => mMap.CenterChanged += new TypedEventHandler<MapControl, object>(handler));
+            throttler.Invoked += async (s, args) =>
             {
                 await UpdateLocationAsync(mMap.Center);
-            });
+            };
 
-            var observable1 = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
-            var throttled1 = observable1.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            var throttler1 = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            throttler1.Invoked += (s, args) =>
             {
                 if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {
@@ -74,7 +74,7 @@ namespace Unigram.Views.Popups
                 {
                     ViewModel.Find(SearchField.Text);
                 }
-            });
+            };
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

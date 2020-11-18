@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Reactive.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -48,8 +47,8 @@ namespace Unigram.Controls.Drawers
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
             shadow.RelativeSizeAdjustment = Vector2.One;
 
-            var observable = Observable.FromEventPattern<TextChangedEventArgs>(FieldAnimations, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
+            throttler.Invoked += (s, args) =>
             {
                 ViewModel.FindAnimations(FieldAnimations.Text);
                 //var items = ViewModel.Stickers.SearchStickers;
@@ -58,7 +57,7 @@ namespace Unigram.Controls.Drawers
                 //    await items.LoadMoreItemsAsync(1);
                 //    await items.LoadMoreItemsAsync(2);
                 //}
-            });
+            };
         }
 
         public StickersTab Tab => StickersTab.Animations;

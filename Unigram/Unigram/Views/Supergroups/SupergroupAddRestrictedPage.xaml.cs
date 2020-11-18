@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Reactive.Linq;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -26,8 +25,8 @@ namespace Unigram.Views.Supergroups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SupergroupAddRestrictedViewModel>();
 
-            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(async x =>
+            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            throttler.Invoked += async (s, args) =>
             {
                 var items = ViewModel.Search;
                 if (items != null && string.Equals(SearchField.Text, items.Query))
@@ -37,7 +36,7 @@ namespace Unigram.Views.Supergroups
                     await items.LoadMoreItemsAsync(2);
                     await items.LoadMoreItemsAsync(3);
                 }
-            });
+            };
         }
 
         public void OnBackRequested(HandledEventArgs args)

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Reactive.Linq;
+﻿using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels.Supergroups;
@@ -18,11 +16,11 @@ namespace Unigram.Views.Supergroups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SupergroupEditStickerSetViewModel>();
 
-            var observable = Observable.FromEventPattern<TextChangedEventArgs>(ShortName, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => ShortName.TextChanged += new TextChangedEventHandler(handler));
+            throttler.Invoked += (s, args) =>
             {
                 ViewModel.CheckAvailability(ShortName.Value);
-            });
+            };
         }
 
         #region Recycle
