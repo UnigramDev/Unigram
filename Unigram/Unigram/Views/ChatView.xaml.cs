@@ -3822,6 +3822,11 @@ namespace Unigram.Views
                 ViewModel.BotCommands = fullInfo.BotInfo.Commands.Select(x => new UserCommand(user.Id, x)).ToList();
                 ViewModel.HasBotCommands = fullInfo.BotInfo.Commands.Count > 0;
             }
+            else
+            {
+                ViewModel.BotCommands = null;
+                ViewModel.HasBotCommands = false;
+            }
 
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
             VideoCall.Visibility = /*!secret &&*/ fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
