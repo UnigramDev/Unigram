@@ -152,6 +152,11 @@ namespace Unigram.Common
         public string Glyph { get; set; }
 
         public EmojiData[] Items { get; set; }
+
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 
     public static partial class Emoji
