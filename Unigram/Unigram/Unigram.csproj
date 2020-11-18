@@ -204,7 +204,6 @@
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
-    <Compile Include="Common\XamlUtils.cs" />
     <Compile Include="Common\ZoomableListHandler.cs" />
     <Compile Include="Common\ZoomableRepeaterHandler.cs" />
     <Compile Include="Constants.Secret.cs" />

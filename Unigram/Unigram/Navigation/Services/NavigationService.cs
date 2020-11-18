@@ -234,17 +234,6 @@ namespace Unigram.Navigation.Services
                     dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: parameter).Values;
                     await dataContext.OnNavigatedToAsync(parameter, mode, pageState);
-
-                    // update bindings after NavTo initializes data
-                    //XamlUtils.InitializeBindings(page);
-                    if (page.Content is UserControl pageWith && !cleaned)
-                    {
-                        XamlUtils.UpdateBindings(pageWith);
-                    }
-                    else
-                    {
-                        XamlUtils.UpdateBindings(page);
-                    }
                 }
             }
         }
@@ -417,17 +406,6 @@ namespace Unigram.Navigation.Services
                     dataContext.SessionState = BootStrapper.Current.SessionState;
                     var pageState = FrameFacade.PageStateSettingsService(page.GetType(), parameter: FrameFacade.CurrentPageParam).Values;
                     await dataContext.OnNavigatedToAsync(FrameFacade.CurrentPageParam, NavigationMode.Refresh, pageState);
-
-                    // update bindings after NavTo initializes data
-                    //XamlUtils.InitializeBindings(page);
-                    if (page.Content is UserControl pageWith)
-                    {
-                        XamlUtils.UpdateBindings(pageWith);
-                    }
-                    else
-                    {
-                        XamlUtils.UpdateBindings(page);
-                    }
                 }
             }
         }
