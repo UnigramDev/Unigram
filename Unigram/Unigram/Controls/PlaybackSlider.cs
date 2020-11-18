@@ -28,16 +28,22 @@ namespace Unigram.Controls
         {
             base.OnValueChanged(oldValue, newValue);
 
-            LayoutRoot.ColumnDefinitions[0].Width = new GridLength(newValue, GridUnitType.Star);
-            LayoutRoot.ColumnDefinitions[1].Width = new GridLength(Maximum - newValue, GridUnitType.Star);
+            if (LayoutRoot != null)
+            {
+                LayoutRoot.ColumnDefinitions[0].Width = new GridLength(newValue, GridUnitType.Star);
+                LayoutRoot.ColumnDefinitions[1].Width = new GridLength(Maximum - newValue, GridUnitType.Star);
+            }
         }
 
         protected override void OnMaximumChanged(double oldMaximum, double newMaximum)
         {
             base.OnMaximumChanged(oldMaximum, newMaximum);
 
-            LayoutRoot.ColumnDefinitions[0].Width = new GridLength(Value, GridUnitType.Star);
-            LayoutRoot.ColumnDefinitions[1].Width = new GridLength(newMaximum - Value, GridUnitType.Star);
+            if (LayoutRoot != null)
+            {
+                LayoutRoot.ColumnDefinitions[0].Width = new GridLength(Value, GridUnitType.Star);
+                LayoutRoot.ColumnDefinitions[1].Width = new GridLength(newMaximum - Value, GridUnitType.Star);
+            }
         }
 
         private bool _pressed;
