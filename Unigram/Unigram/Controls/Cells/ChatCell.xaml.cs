@@ -39,6 +39,8 @@ namespace Unigram.Controls.Cells
         private Chat _chat;
         private ChatList _chatList;
 
+        private Message _message;
+
         private IProtoService _protoService;
 
         private readonly Visual _onlineBadge;
@@ -72,6 +74,7 @@ namespace Unigram.Controls.Cells
         public void UpdateMessage(IProtoService protoService, Message message)
         {
             _protoService = protoService;
+            _message = message;
 
             var chat = protoService.GetChat(message.ChatId);
             if (chat == null)
@@ -159,12 +162,25 @@ namespace Unigram.Controls.Cells
 
         public string GetAutomationName()
         {
-            if (_protoService == null || _chat == null)
+            if (_protoService == null)
             {
                 return null;
             }
 
-            return UpdateAutomation(_protoService, _chat, _chat.LastMessage);
+            if (_chat != null)
+            {
+                return UpdateAutomation(_protoService, _chat, _chat.LastMessage);
+            }
+            else if (_message != null)
+            {
+                var chat = _protoService.GetChat(_message.ChatId);
+                if (chat != null)
+                {
+                    return UpdateAutomation(_protoService, chat, _message);
+                }
+            }
+
+            return null;
         }
 
         private string UpdateAutomation(IProtoService protoService, Chat chat, Message message)
