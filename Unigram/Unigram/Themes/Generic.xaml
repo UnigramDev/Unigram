@@ -16,7 +16,7 @@
     <Style TargetType="local:ColorTextBox" BasedOn="{StaticResource DefaultTextBoxStyle}" />
     <Style TargetType="local:PrefixTextBox" BasedOn="{StaticResource DefaultTextBoxStyle}" />
     <Style TargetType="local:FormattedTextBox" BasedOn="{StaticResource DefaultRichEditBoxStyle}" />
-    
+
     <Style TargetType="local:NavigationView">
         <Setter Property="Padding" Value="0,32,0,0"/>
         <Setter Property="IsTabStop" Value="False"/>
@@ -969,7 +969,7 @@
                                           HorizontalAlignment="Stretch"
                                           VerticalAlignment="Bottom"
                                           XYFocusKeyboardNavigation="Enabled"
-                                          Padding="0,8">
+                                          Padding="0,0,0,8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="0.5*"/>
