@@ -935,13 +935,13 @@ namespace Unigram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null)
             {
-                if (string.IsNullOrEmpty(BriefInfo.Text) || ApiInfo.CanCheckTextTrimming && !BriefInfo.IsTextTrimmed)
+                if (BriefInfo.IsTextTrimmed)
                 {
-                    tooltip.IsOpen = false;
+                    tooltip.Content = BriefInfo.Text;
                 }
                 else
                 {
-                    tooltip.Content = BriefInfo.Text;
+                    tooltip.IsOpen = false;
                 }
             }
         }

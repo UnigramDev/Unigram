@@ -36,7 +36,7 @@
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.16299.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformMinVersion>10.0.17134.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <ProjectName>Unigram.Native</ProjectName>
   </PropertyGroup>
@@ -77,9 +77,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-    <Import Project="..\Unigram.Native.Shared\Unigram.Native.Shared.vcxitems" Label="Shared" />
-  </ImportGroup>
+  <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -239,6 +237,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Helpers\COMHelper.h" />
+    <ClInclude Include="Helpers\DebugHelper.h" />
+    <ClInclude Include="Helpers\LibraryHelper.h" />
+    <ClInclude Include="Helpers\StringHelper.h" />
     <ClInclude Include="libyuv\include\libyuv.h" />
     <ClInclude Include="libyuv\include\libyuv\basic_types.h" />
     <ClInclude Include="libyuv\include\libyuv\compare.h" />
@@ -284,6 +286,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Generated Files\module.g.cpp" />
+    <ClCompile Include="Helpers\LibraryHelper.cpp" />
     <ClCompile Include="libyuv\source\compare.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

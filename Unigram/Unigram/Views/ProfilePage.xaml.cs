@@ -38,10 +38,7 @@ namespace Unigram.Views
             SharedMedia.DataContext = ViewModel.ChatSharedMedia;
             SharedMedia.ViewModel.Delegate = SharedMedia;
 
-            if (ApiInfo.CanAddContextRequestedEvent)
-            {
-                DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
-            }
+            DescriptionLabel.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(About_ContextRequested), true);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -980,36 +977,32 @@ namespace Unigram.Views
             var subtitle = ElementCompositionPreview.GetElementVisual(Subtitle);
             var action = ElementCompositionPreview.GetElementVisual(SendMessage);
 
-            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateLinearGradientBrush"))
+            var overlay = photo.Compositor.CreateSpriteVisual();
+            var gradient = overlay.Compositor.CreateLinearGradientBrush();
+            gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(0, ((SolidColorBrush)App.Current.Resources["PageHeaderBackgroundBrush"]).Color));
+            gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(1, ((SolidColorBrush)App.Current.Resources["PageSubHeaderBackgroundBrush"]).Color));
+            gradient.StartPoint = new Vector2();
+            gradient.EndPoint = new Vector2(0, 1);
+            overlay.Brush = gradient;
+            overlay.Size = new Vector2((float)HeaderOverlay.ActualWidth, (float)HeaderOverlay.ActualHeight);
+
+            HeaderOverlay.SizeChanged += (s, args) =>
             {
-                var overlay = photo.Compositor.CreateSpriteVisual();
-                var gradient = overlay.Compositor.CreateLinearGradientBrush();
-                gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(0, ((SolidColorBrush)App.Current.Resources["PageHeaderBackgroundBrush"]).Color));
-                gradient.ColorStops.Add(overlay.Compositor.CreateColorGradientStop(1, ((SolidColorBrush)App.Current.Resources["PageSubHeaderBackgroundBrush"]).Color));
-                gradient.StartPoint = new Vector2();
-                gradient.EndPoint = new Vector2(0, 1);
-                overlay.Brush = gradient;
-                overlay.Size = new Vector2((float)HeaderOverlay.ActualWidth, (float)HeaderOverlay.ActualHeight);
+                overlay.Size = args.NewSize.ToVector2();
+            };
 
-                HeaderOverlay.SizeChanged += (s, args) =>
-                {
-                    overlay.Size = args.NewSize.ToVector2();
-                };
+            ElementCompositionPreview.SetElementChildVisual(HeaderOverlay, overlay);
 
-                ElementCompositionPreview.SetElementChildVisual(HeaderOverlay, overlay);
+            var animOverlay = header.Compositor.CreateExpressionAnimation("Min(76, -Min(scrollViewer.Translation.Y, 0)) / 38");
+            animOverlay.SetReferenceParameter("scrollViewer", properties);
 
-                var animOverlay = header.Compositor.CreateExpressionAnimation("Min(76, -Min(scrollViewer.Translation.Y, 0)) / 38");
-                animOverlay.SetReferenceParameter("scrollViewer", properties);
-
-                overlay.StartAnimation("Scale.Y", animOverlay);
-            }
+            overlay.StartAnimation("Scale.Y", animOverlay);
 
             var animClip = header.Compositor.CreateExpressionAnimation("Min(76, -Min(scrollViewer.Translation.Y, 0))");
             animClip.SetReferenceParameter("scrollViewer", properties);
 
             header.Clip = header.Compositor.CreateInsetClip(0, -32, -12, 0);
             header.Clip.StartAnimation("BottomInset", animClip);
-
 
             var animPhotoOffsetY = header.Compositor.CreateExpressionAnimation("-(Min(76, -Min(scrollViewer.Translation.Y, 0)) / 76 * 41)");
             animPhotoOffsetY.SetReferenceParameter("scrollViewer", properties);

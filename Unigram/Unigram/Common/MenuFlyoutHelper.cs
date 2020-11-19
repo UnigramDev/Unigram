@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Core.Direct;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using Windows.Foundation;
@@ -80,7 +79,7 @@ namespace Unigram.Common
                     flyoutItem.Icon = icon;
                 }
 
-                if (key.HasValue && ApiInfo.CanUseAccelerators)
+                if (key.HasValue)
                 {
                     flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
                 }
@@ -105,7 +104,7 @@ namespace Unigram.Common
                     flyoutItem.Icon = icon;
                 }
 
-                if (key.HasValue && ApiInfo.CanUseAccelerators)
+                if (key.HasValue)
                 {
                     flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
                 }
@@ -126,7 +125,7 @@ namespace Unigram.Common
                 flyoutItem.Icon = icon;
             }
 
-            if (key.HasValue && ApiInfo.CanUseAccelerators)
+            if (key.HasValue)
             {
                 flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
@@ -157,28 +156,12 @@ namespace Unigram.Common
                 flyoutItem.Icon = icon;
             }
 
-            if (key.HasValue && ApiInfo.CanUseAccelerators)
+            if (key.HasValue)
             {
                 flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
 
             items.Add(flyoutItem);
-        }
-
-        public static IconElement GetGlyph(string glyph)
-        {
-            var direct = XamlDirect.GetDefault();
-            if (direct.IsXamlDirectEnabled)
-            {
-                var icon = direct.CreateInstance(XamlTypeIndex.FontIcon);
-                direct.SetStringProperty(icon, XamlPropertyIndex.FontIcon_Glyph, glyph);
-
-                return direct.GetObject(icon) as FontIcon;
-            }
-            else
-            {
-                return new FontIcon { Glyph = glyph };
-            }
         }
     }
 }

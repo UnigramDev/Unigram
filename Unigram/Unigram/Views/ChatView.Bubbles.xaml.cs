@@ -909,16 +909,7 @@ namespace Unigram.Views
             item.ContentTemplate = _typeToTemplateMapping[typeName];
             item.Tag = typeName;
 
-            // For some reason the event is available since Anniversary Update,
-            // but the property has been added in April Update.
-            if (ApiInfo.CanAddContextRequestedEvent)
-            {
-                item.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
-            }
-            else
-            {
-                item.ContextRequested += _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested);
-            }
+            item.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
 
             return item;
         }

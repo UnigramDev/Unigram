@@ -677,13 +677,8 @@ namespace Unigram.Views
             textBlock.Blocks.Add(paragraph);
             textBlock.TextWrapping = TextWrapping.Wrap;
 
-            textBlock.ContextRequested += Text_ContextRequested;
             textBlock.ContextMenuOpening += Text_ContextMenuOpening;
-
-            if (ApiInfo.CanAddContextRequestedEvent)
-            {
-                textBlock.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Text_ContextRequested), true);
-            }
+            textBlock.AddHandler(ContextRequestedEvent, new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Text_ContextRequested), true);
 
             //textBlock.Margin = new Thickness(12, 0, 12, 12);
             ProcessRichText(text, span, textBlock);
@@ -1589,11 +1584,11 @@ namespace Unigram.Views
 
         private async void Hyperlink_Click(RichTextAnchorLink anchorLinkText)
         {
-            if (string.IsNullOrEmpty(anchorLinkText.Name))
+            if (string.IsNullOrEmpty(anchorLinkText.AnchorName))
             {
                 ScrollingHost.GetScrollViewer().ChangeView(null, 0, null);
             }
-            else if (_anchors.TryGetValue(anchorLinkText.Name, out Border anchor))
+            else if (_anchors.TryGetValue(anchorLinkText.AnchorName, out Border anchor))
             {
                 await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
             }

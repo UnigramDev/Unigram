@@ -4,7 +4,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Chats;
-using Windows.Foundation.Metadata;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -22,15 +21,7 @@ namespace Unigram.Controls.Chats
         public ChatSearchBar()
         {
             InitializeComponent();
-
-            if (ApiInformation.IsEventPresent("Windows.UI.Xaml.UIElement", "PreviewKeyDown"))
-            {
-                Field.PreviewKeyDown += OnKeyDown;
-            }
-            else
-            {
-                Field.KeyDown += OnKeyDown;
-            }
+            Field.PreviewKeyDown += OnKeyDown;
         }
 
         public void Update(ChatSearchViewModel viewModel)

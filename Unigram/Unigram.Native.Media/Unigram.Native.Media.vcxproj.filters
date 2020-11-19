@@ -34,6 +34,9 @@
     <ClCompile Include="Opus\OpusOutputByteStream.cpp">
       <Filter>Opus</Filter>
     </ClCompile>
+    <ClCompile Include="Helpers\LibraryHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -66,6 +69,18 @@
       <Filter>Opus</Filter>
     </ClInclude>
     <ClInclude Include="Helpers\MediaFoundationHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\COMHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\DebugHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\LibraryHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\StringHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
   </ItemGroup>

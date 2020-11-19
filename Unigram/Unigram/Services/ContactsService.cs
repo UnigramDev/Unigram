@@ -8,7 +8,6 @@ using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 using Windows.ApplicationModel.UserDataAccounts;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.StartScreen;
 
@@ -79,7 +78,7 @@ namespace Unigram.Services
 
         public async Task JumpListAsync()
         {
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
+            if (JumpList.IsSupported())
             {
                 var current = await JumpList.LoadCurrentAsync();
                 current.SystemGroupKind = JumpListSystemGroupKind.None;
@@ -353,12 +352,11 @@ namespace Unigram.Services
 
                 annotation.ContactId = contact.Id;
                 annotation.RemoteId = contact.RemoteId;
-                annotation.SupportedOperations = ContactAnnotationOperations.ContactProfile | ContactAnnotationOperations.Message | ContactAnnotationOperations.AudioCall;
-
-                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
-                {
-                    annotation.SupportedOperations |= ContactAnnotationOperations.Share;
-                }
+                annotation.SupportedOperations = ContactAnnotationOperations.ContactProfile
+                    | ContactAnnotationOperations.Message
+                    | ContactAnnotationOperations.AudioCall
+                    | ContactAnnotationOperations.VideoCall
+                    | ContactAnnotationOperations.Share;
 
                 if (annotation.ProviderProperties.Count == 0)
                 {

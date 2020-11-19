@@ -172,6 +172,9 @@
     <ClCompile Include="TelegramPaymentProxy.cpp" />
     <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="VideoAnimation.cpp" />
+    <ClCompile Include="Helpers\LibraryHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -256,6 +259,18 @@
     <ClInclude Include="TelegramPaymentProxy.h" />
     <ClInclude Include="PlaceholderImageHelper.h" />
     <ClInclude Include="VideoAnimation.h" />
+    <ClInclude Include="Helpers\COMHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\DebugHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\LibraryHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\StringHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

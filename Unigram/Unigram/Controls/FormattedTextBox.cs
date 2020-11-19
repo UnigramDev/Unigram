@@ -40,23 +40,16 @@ namespace Unigram.Controls
             ContextFlyout.Opening += OnContextFlyoutOpening;
             ContextFlyout.Closing += OnContextFlyoutClosing;
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "DisabledFormattingAccelerators"))
-            {
-                DisabledFormattingAccelerators = DisabledFormattingAccelerators.All;
-            }
+            DisabledFormattingAccelerators = DisabledFormattingAccelerators.All;
+            KeyboardAcceleratorPlacementMode = KeyboardAcceleratorPlacementMode.Hidden;
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "KeyboardAcceleratorPlacementMode"))
-            {
-                KeyboardAcceleratorPlacementMode = KeyboardAcceleratorPlacementMode.Hidden;
-
-                CreateKeyboardAccelerator(VirtualKey.B);
-                CreateKeyboardAccelerator(VirtualKey.I);
-                CreateKeyboardAccelerator(VirtualKey.U);
-                CreateKeyboardAccelerator(VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-                CreateKeyboardAccelerator(VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-                CreateKeyboardAccelerator(VirtualKey.K);
-                CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            }
+            CreateKeyboardAccelerator(VirtualKey.B);
+            CreateKeyboardAccelerator(VirtualKey.I);
+            CreateKeyboardAccelerator(VirtualKey.U);
+            CreateKeyboardAccelerator(VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateKeyboardAccelerator(VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            CreateKeyboardAccelerator(VirtualKey.K);
+            CreateKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -532,7 +525,7 @@ namespace Unigram.Controls
                 flyoutItem.Icon = icon;
             }
 
-            if (key.HasValue && ApiInfo.CanUseAccelerators)
+            if (key.HasValue)
             {
                 flyoutItem.KeyboardAccelerators.Add(new KeyboardAccelerator { Modifiers = modifiers, Key = key.Value, IsEnabled = false });
             }
@@ -542,13 +535,10 @@ namespace Unigram.Controls
 
         private void CreateKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            if (ApiInfo.CanUseAccelerators)
-            {
-                var accelerator = new KeyboardAccelerator { Modifiers = modifiers, Key = key, ScopeOwner = this };
-                accelerator.Invoked += FlyoutAccelerator_Invoked;
+            var accelerator = new KeyboardAccelerator { Modifiers = modifiers, Key = key, ScopeOwner = this };
+            accelerator.Invoked += FlyoutAccelerator_Invoked;
 
-                KeyboardAccelerators.Add(accelerator);
-            }
+            KeyboardAccelerators.Add(accelerator);
         }
 
         private void FlyoutAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
