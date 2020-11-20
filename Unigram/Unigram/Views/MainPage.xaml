@@ -244,7 +244,9 @@
         
         <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1" Grid.Row="1">
             <controls:MasterDetailView.Banner>
-                <controls:PlaybackHeader x:Name="Playback"/>
+                <Border>
+                    <controls:PlaybackHeader x:Name="Playback" x:Load="False"/>
+                </Border>
             </controls:MasterDetailView.Banner>
             <controls:MasterDetailView.MasterHeader>
                 <controls:ContentPageHeader x:Name="PageHeader" BackVisibility="Collapsed" Grid.Row="1">
@@ -696,7 +698,10 @@
                                             <GroupStyle.HeaderTemplate>
                                                 <DataTemplate>
                                                     <!--<TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>-->
-                                                    <TextBlock Text="{Binding Key}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                                    <TextBlock
+                                                        Text="{Binding Key}"
+                                                        Style="{StaticResource SettingsGroupTextBlockStyle}"
+                                                        Margin="12,16,12,6" />
                                                 </DataTemplate>
                                             </GroupStyle.HeaderTemplate>
                                             <GroupStyle.HeaderContainerStyle>
@@ -1041,7 +1046,7 @@
                         </ListView>
                     </PivotItem>
                     <PivotItem Header="{CustomResource Settings}">
-                        <Grid>
+                        <Grid x:Name="SettingsRoot" x:Load="False">
                             <ListView ItemsSource="{x:Bind ViewModel.Settings.Results}"
                                       SelectionMode="None"
                                       ContainerContentChanging="Settings_ContainerContentChanging"

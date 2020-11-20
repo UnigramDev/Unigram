@@ -20,10 +20,11 @@ using static Unigram.Services.GenerationService;
 namespace Unigram.ViewModels
 {
     public class SettingsViewModel : TLViewModelBase,
-         IDelegable<ISettingsDelegate>,
-         IHandle<UpdateUser>,
-         IHandle<UpdateUserFullInfo>,
-         IHandle<UpdateFile>
+        IChildViewModel,
+        IDelegable<ISettingsDelegate>,
+        IHandle<UpdateUser>,
+        IHandle<UpdateUserFullInfo>,
+        IHandle<UpdateFile>
     {
         private readonly ISettingsSearchService _searchService;
 
@@ -82,6 +83,13 @@ namespace Unigram.ViewModels
                 }
             }
         }
+
+        public async void Activate()
+        {
+            await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+        }
+
+        public void Deactivate() { }
 
         public void Handle(UpdateUser update)
         {
