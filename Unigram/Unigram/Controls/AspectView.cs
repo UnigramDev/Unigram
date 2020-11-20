@@ -68,6 +68,11 @@ namespace Unigram.Controls
                 width = 640;
                 height = 420;
             }
+            else if (Constraint is Size size)
+            {
+                width = size.Width;
+                height = size.Height;
+            }
 
             #region MessageContent
 

@@ -1039,12 +1039,11 @@ namespace Unigram.Views
                 }
                 view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
 
-                var ratio = new RatioControl();
+                var ratio = new AspectView();
                 ratio.MaxWidth = block.Width;
                 ratio.MaxHeight = block.Height;
-                ratio.Content = view;
-                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
+                ratio.Constraint = new Size(block.Width, block.Height);
+                ratio.Children.Add(view);
                 child = ratio;
             }
             else if (!string.IsNullOrEmpty(block.Url))
@@ -1056,12 +1055,11 @@ namespace Unigram.Views
                 }
                 view.Navigate(new Uri(block.Url));
 
-                var ratio = new RatioControl();
+                var ratio = new AspectView();
                 ratio.MaxWidth = block.Width;
                 ratio.MaxHeight = block.Height;
-                ratio.Content = view;
-                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
+                ratio.Constraint = new Size(block.Width, block.Height);
+                ratio.Children.Add(view);
                 child = ratio;
             }
 
