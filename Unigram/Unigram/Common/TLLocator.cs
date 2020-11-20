@@ -88,7 +88,7 @@ namespace Unigram.Views
                     _eventAggregator,
                     _sessionService,
                     _lifetimeService,
-                    _notificationsService); 
+                    _notificationsService);
             }
             else if (type == typeof(Unigram.ViewModels.SignIn.SignUpViewModel))
             {
@@ -96,7 +96,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.SignIn.SignInSentCodeViewModel))
             {
@@ -104,7 +104,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.SignIn.SignInPasswordViewModel))
             {
@@ -112,7 +112,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.SignIn.SignInRecoveryViewModel))
             {
@@ -120,7 +120,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.MainViewModel))
             {
@@ -161,7 +161,7 @@ namespace Unigram.Views
                         _protoService,
                         _cacheService,
                         _settingsService,
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.ShareViewModel))
             {
@@ -177,7 +177,7 @@ namespace Unigram.Views
                             _cacheService,
                             _settingsService,
                             _eventAggregator),
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.SendLocationViewModel))
             {
@@ -188,17 +188,7 @@ namespace Unigram.Views
                     _eventAggregator,
                     _locationService ??= new Unigram.Services.LocationService(
                         _protoService,
-                        _cacheService)); 
-            }
-            else if (type == typeof(Unigram.ViewModels.ChatListViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.ChatListViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator,
-                    _notificationsService,
-                    Resolve<Telegram.Td.Api.ChatList>()); 
+                        _cacheService));
             }
             else if (type == typeof(Unigram.ViewModels.DialogViewModel))
             {
@@ -230,7 +220,7 @@ namespace Unigram.Views
                             _cacheService,
                             _settingsService,
                             _eventAggregator),
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.DialogThreadViewModel))
             {
@@ -262,7 +252,7 @@ namespace Unigram.Views
                             _cacheService,
                             _settingsService,
                             _eventAggregator),
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.DialogPinnedViewModel))
             {
@@ -294,7 +284,7 @@ namespace Unigram.Views
                             _cacheService,
                             _settingsService,
                             _eventAggregator),
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.DialogScheduledViewModel))
             {
@@ -326,7 +316,7 @@ namespace Unigram.Views
                             _cacheService,
                             _settingsService,
                             _eventAggregator),
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.DialogEventLogViewModel))
             {
@@ -358,7 +348,7 @@ namespace Unigram.Views
                             _cacheService,
                             _settingsService,
                             _eventAggregator),
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.Drawers.AnimationDrawerViewModel))
             {
@@ -366,7 +356,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Drawers.StickerDrawerViewModel))
             {
@@ -374,7 +364,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.ProfileViewModel))
             {
@@ -392,7 +382,7 @@ namespace Unigram.Views
                     _notificationsService,
                     Resolve<Unigram.ViewModels.Chats.ChatSharedMediaViewModel>(),
                     Resolve<Unigram.ViewModels.Users.UserCommonChatsViewModel>(),
-                    Resolve<Unigram.ViewModels.Supergroups.SupergroupMembersViewModel>()); 
+                    Resolve<Unigram.ViewModels.Supergroups.SupergroupMembersViewModel>());
             }
             else if (type == typeof(Unigram.ViewModels.Users.UserCommonChatsViewModel))
             {
@@ -400,7 +390,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Users.UserCreateViewModel))
             {
@@ -408,7 +398,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupEditViewModel))
             {
@@ -416,7 +406,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupEditTypeViewModel))
             {
@@ -424,7 +414,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupEditStickerSetViewModel))
             {
@@ -432,7 +422,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupEditAdministratorViewModel))
             {
@@ -440,7 +430,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupEditRestrictedViewModel))
             {
@@ -448,7 +438,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupEditLinkedChatViewModel))
             {
@@ -456,7 +446,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupAddAdministratorViewModel))
             {
@@ -464,7 +454,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupAddRestrictedViewModel))
             {
@@ -472,7 +462,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.LiveLocationViewModel))
             {
@@ -480,7 +470,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Chats.ChatInviteLinkViewModel))
             {
@@ -488,7 +478,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupAdministratorsViewModel))
             {
@@ -496,7 +486,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupBannedViewModel))
             {
@@ -504,7 +494,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupPermissionsViewModel))
             {
@@ -512,7 +502,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Supergroups.SupergroupMembersViewModel))
             {
@@ -520,7 +510,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Chats.ChatSharedMediaViewModel))
             {
@@ -533,7 +523,7 @@ namespace Unigram.Views
                         _protoService,
                         _cacheService,
                         _settingsService,
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.Chats.ChatStatisticsViewModel))
             {
@@ -541,7 +531,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Chats.MessageStatisticsViewModel))
             {
@@ -549,7 +539,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Channels.ChannelCreateStep1ViewModel))
             {
@@ -557,7 +547,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Channels.ChannelCreateStep2ViewModel))
             {
@@ -565,7 +555,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel))
             {
@@ -573,7 +563,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.InstantViewModel))
             {
@@ -589,7 +579,7 @@ namespace Unigram.Views
                             _settingsService,
                             _eventAggregator),
                         _eventAggregator),
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.LogOutViewModel))
             {
@@ -604,7 +594,7 @@ namespace Unigram.Views
                         _cacheService,
                         _settingsService,
                         _eventAggregator),
-                    _passcodeService); 
+                    _passcodeService);
             }
             else if (type == typeof(Unigram.ViewModels.DiagnosticsViewModel))
             {
@@ -612,7 +602,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.SettingsViewModel))
             {
@@ -621,7 +611,7 @@ namespace Unigram.Views
                     _cacheService,
                     _settingsService,
                     _eventAggregator,
-                    _settingsSearchService ??= new Unigram.Services.SettingsSearchService(_protoService)); 
+                    _settingsSearchService ??= new Unigram.Services.SettingsSearchService(_protoService));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsAdvancedViewModel))
             {
@@ -632,7 +622,7 @@ namespace Unigram.Views
                     _eventAggregator,
                     _cloudUpdateService ??= new Unigram.Services.CloudUpdateService(
                         _protoService,
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPhoneIntroViewModel))
             {
@@ -640,7 +630,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPhoneViewModel))
             {
@@ -648,7 +638,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPhoneSentCodeViewModel))
             {
@@ -656,7 +646,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsStorageViewModel))
             {
@@ -664,7 +654,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsNetworkViewModel))
             {
@@ -672,7 +662,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsUsernameViewModel))
             {
@@ -680,7 +670,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsSessionsViewModel))
             {
@@ -688,7 +678,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsWebSessionsViewModel))
             {
@@ -696,7 +686,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsBlockedChatsViewModel))
             {
@@ -704,7 +694,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsNotificationsViewModel))
             {
@@ -712,7 +702,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel))
             {
@@ -720,7 +710,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsDataAndStorageViewModel))
             {
@@ -728,7 +718,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsDataAutoViewModel))
             {
@@ -736,7 +726,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsProxiesViewModel))
             {
@@ -744,7 +734,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel))
             {
@@ -764,7 +754,7 @@ namespace Unigram.Views
                     Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel>(),
                     Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel>(),
                     Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(),
-                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>()); 
+                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>());
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel))
             {
@@ -773,7 +763,7 @@ namespace Unigram.Views
                     _cacheService,
                     _settingsService,
                     _eventAggregator,
-                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>()); 
+                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>());
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel))
             {
@@ -781,7 +771,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel))
             {
@@ -789,7 +779,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel))
             {
@@ -797,7 +787,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel))
             {
@@ -807,7 +797,7 @@ namespace Unigram.Views
                     _settingsService,
                     _eventAggregator,
                     Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel>(),
-                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel>()); 
+                    Resolve<Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel>());
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel))
             {
@@ -815,7 +805,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyAllowFindingByPhoneNumberViewModel))
             {
@@ -823,7 +813,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel))
             {
@@ -831,7 +821,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel))
             {
@@ -839,7 +829,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPasswordViewModel))
             {
@@ -847,7 +837,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Password.SettingsPasswordIntroViewModel))
             {
@@ -855,7 +845,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Password.SettingsPasswordCreateViewModel))
             {
@@ -863,7 +853,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Password.SettingsPasswordHintViewModel))
             {
@@ -871,7 +861,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Password.SettingsPasswordEmailViewModel))
             {
@@ -879,7 +869,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Password.SettingsPasswordConfirmViewModel))
             {
@@ -887,7 +877,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.Password.SettingsPasswordDoneViewModel))
             {
@@ -895,7 +885,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPasscodeViewModel))
             {
@@ -904,7 +894,7 @@ namespace Unigram.Views
                     _cacheService,
                     _settingsService,
                     _eventAggregator,
-                    _passcodeService); 
+                    _passcodeService);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsStickersViewModel))
             {
@@ -912,7 +902,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsStickersTrendingViewModel))
             {
@@ -920,7 +910,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsStickersArchivedViewModel))
             {
@@ -928,7 +918,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsMasksViewModel))
             {
@@ -936,7 +926,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsMasksArchivedViewModel))
             {
@@ -944,7 +934,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsLanguageViewModel))
             {
@@ -953,7 +943,7 @@ namespace Unigram.Views
                     _cacheService,
                     _settingsService,
                     _eventAggregator,
-                    _localeService); 
+                    _localeService);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsAppearanceViewModel))
             {
@@ -969,7 +959,7 @@ namespace Unigram.Views
                     _emojiSetService ??= new Unigram.Services.EmojiSetService(
                         _protoService,
                         _settingsService,
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsThemesViewModel))
             {
@@ -981,8 +971,7 @@ namespace Unigram.Views
                     _themeService ??= new Unigram.Services.ThemeService(
                         _protoService,
                         _settingsService,
-                        _eventAggregator),
-                    Resolve<System.Boolean>()); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsNightModeViewModel))
             {
@@ -997,7 +986,7 @@ namespace Unigram.Views
                         _eventAggregator),
                     _locationService ??= new Unigram.Services.LocationService(
                         _protoService,
-                        _cacheService)); 
+                        _cacheService));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsBackgroundsViewModel))
             {
@@ -1005,7 +994,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsVoIPViewModel))
             {
@@ -1019,7 +1008,7 @@ namespace Unigram.Views
                         _cacheService,
                         _settingsService,
                         _eventAggregator,
-                        _viewService ??= new Unigram.Services.ViewService.ViewService())); 
+                        _viewService ??= new Unigram.Services.ViewService.ViewService()));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsShortcutsViewModel))
             {
@@ -1032,7 +1021,7 @@ namespace Unigram.Views
                         _protoService,
                         _cacheService,
                         _settingsService,
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.BackgroundViewModel))
             {
@@ -1040,7 +1029,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.AttachedStickersViewModel))
             {
@@ -1048,7 +1037,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.StickerSetViewModel))
             {
@@ -1056,7 +1045,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep1ViewModel))
             {
@@ -1064,7 +1053,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep2ViewModel))
             {
@@ -1072,7 +1061,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep3ViewModel))
             {
@@ -1080,7 +1069,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep4ViewModel))
             {
@@ -1088,7 +1077,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep5ViewModel))
             {
@@ -1096,7 +1085,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Payments.PaymentReceiptViewModel))
             {
@@ -1104,7 +1093,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.InviteViewModel))
             {
@@ -1117,7 +1106,7 @@ namespace Unigram.Views
                         _protoService,
                         _cacheService,
                         _settingsService,
-                        _eventAggregator)); 
+                        _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.ChatsNearbyViewModel))
             {
@@ -1128,7 +1117,7 @@ namespace Unigram.Views
                     _eventAggregator,
                     _locationService ??= new Unigram.Services.LocationService(
                         _protoService,
-                        _cacheService)); 
+                        _cacheService));
             }
             else if (type == typeof(Unigram.ViewModels.Folders.FoldersViewModel))
             {
@@ -1136,7 +1125,7 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.ViewModels.Folders.FolderViewModel))
             {
@@ -1144,43 +1133,43 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator); 
+                    _eventAggregator);
             }
             else if (type == typeof(Unigram.Services.IDeviceInfoService))
             {
-                return (T)_deviceInfoService; 
+                return (T)_deviceInfoService;
             }
             else if (type == typeof(Unigram.Services.ISettingsService))
             {
-                return (T)_settingsService; 
+                return (T)_settingsService;
             }
             else if (type == typeof(Unigram.Services.IEventAggregator))
             {
-                return (T)_eventAggregator; 
+                return (T)_eventAggregator;
             }
             else if (type == typeof(Unigram.Services.IProtoService))
             {
-                return (T)_protoService; 
+                return (T)_protoService;
             }
             else if (type == typeof(Unigram.Services.INetworkService))
             {
-                return (T)_networkService; 
+                return (T)_networkService;
             }
             else if (type == typeof(Unigram.Services.IGenerationService))
             {
-                return (T)_generationService; 
+                return (T)_generationService;
             }
             else if (type == typeof(Unigram.Services.ICacheService))
             {
-                return (T)_cacheService; 
+                return (T)_cacheService;
             }
             else if (type == typeof(Unigram.Services.ISessionService))
             {
-                return (T)_sessionService; 
+                return (T)_sessionService;
             }
             else if (type == typeof(Unigram.Services.INotificationsService))
             {
-                return (T)_notificationsService; 
+                return (T)_notificationsService;
             }
             else if (type == typeof(Unigram.Services.ISettingsSearchService))
             {
