@@ -11,7 +11,6 @@ using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -24,17 +23,12 @@ namespace Unigram.ViewModels.Settings
         {
             AutoDownloadCommand = new RelayCommand<AutoDownloadType>(AutoDownloadExecute);
             ResetAutoDownloadCommand = new RelayCommand(ResetAutoDownloadExecute);
-            DownloadLocationCommand = new RelayCommand(DownloadLocationExecute);
+            StoragePathCommand = new RelayCommand<bool>(StoragePathExecute);
             UseLessDataCommand = new RelayCommand(UseLessDataExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            //foreach (var item in AutoDownloads)
-            //{
-            //    item.Refresh();
-            //}
-
             return Task.CompletedTask;
         }
 
@@ -141,63 +135,34 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand DownloadLocationCommand { get; }
-        private async void DownloadLocationExecute()
+        public RelayCommand<bool> StoragePathCommand { get; }
+        private async void StoragePathExecute(bool reset)
         {
-            var dialog = new ContentPopup();
-            var stack = new StackPanel();
-            stack.Margin = new Thickness(12, 16, 12, 0);
-            stack.Children.Add(new RadioButton { Tag = 1, Content = "Temp folder, cleared on logout or uninstall", IsChecked = FilesDirectory == null });
-            stack.Children.Add(new RadioButton { Tag = 2, Content = "Custom folder, cleared only manually", IsChecked = FilesDirectory != null });
-
-            dialog.Title = "Choose download location";
-            dialog.Content = stack;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary)
+            var path = FilesDirectory;
+            if (reset)
             {
-                var mode = 1;
-                var path = FilesDirectory + string.Empty;
-                foreach (RadioButton current in stack.Children)
-                {
-                    if (current.IsChecked == true)
-                    {
-                        mode = (int)current.Tag;
-                        break;
-                    }
-                }
-
-                switch (mode)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        FilesDirectory = null;
-                        break;
-                    case 2:
-                        var picker = new FolderPicker();
-                        picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                        picker.FileTypeFilter.Add("*");
-
-                        var folder = await picker.PickSingleFolderAsync();
-                        if (folder != null)
-                        {
-                            StorageApplicationPermissions.FutureAccessList.AddOrReplace("FilesDirectory", folder);
-                            FilesDirectory = folder.Path;
-                        }
-
-                        break;
-                }
-
-                if (string.Equals(path, FilesDirectory, StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-
-                ProtoService.Send(new Close());
+                FilesDirectory = null;
             }
+            else
+            {
+                var picker = new FolderPicker();
+                picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                picker.FileTypeFilter.Add("*");
+
+                var folder = await picker.PickSingleFolderAsync();
+                if (folder != null)
+                {
+                    StorageApplicationPermissions.MostRecentlyUsedList.AddOrReplace("FilesDirectory", folder);
+                    FilesDirectory = folder.Path;
+                }
+            }
+
+            if (string.Equals(path, FilesDirectory, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            ProtoService.Close(true);
         }
 
         public RelayCommand<AutoDownloadType> AutoDownloadCommand { get; }

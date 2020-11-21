@@ -6,7 +6,6 @@ using System.Buffers.Text;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,12 +14,14 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 
 namespace Unigram.Services
 {
     public interface IProtoService : ICacheService
     {
         bool TryInitialize();
+        void Close(bool restart);
 
         BaseObject Execute(Function function);
 
@@ -189,6 +190,8 @@ namespace Unigram.Services
         private Background _selectedBackground;
         private Background _selectedBackgroundDark;
 
+        private bool _initializeAfterClose;
+
         public ProtoService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
             _session = session;
@@ -212,6 +215,12 @@ namespace Unigram.Services
             return false;
         }
 
+        public void Close(bool restart)
+        {
+            _initializeAfterClose = restart;
+            _client.Send(new Close());
+        }
+
         private void Initialize(bool online = true)
         {
             _client = Client.Create(this);
@@ -230,7 +239,7 @@ namespace Unigram.Services
                 UseTestDc = _settings.UseTestDC
             };
 
-            if (_settings.FilesDirectory != null)
+            if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
             {
                 parameters.FilesDirectory = _settings.FilesDirectory;
             }
@@ -570,6 +579,12 @@ namespace Unigram.Services
 
             _authorizationState = null;
             _connectionState = null;
+
+            if (_initializeAfterClose)
+            {
+                _initializeAfterClose = false;
+                Initialize();
+            }
         }
 
 
@@ -609,17 +624,16 @@ namespace Unigram.Services
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                var path = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path);
-
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(path) as StorageFile;
-                if (item != null)
+                try
                 {
-                    return item;
+                    return await StorageFile.GetFileFromPathAsync(file.Local.Path);
                 }
-                else
+                catch
                 {
                     Send(new DeleteFileW(file.Id));
                 }
+
+                return null;
             }
 
             return null;

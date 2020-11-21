@@ -80,7 +80,7 @@
     <local:HostedPage.Header>
         <controls:PageHeader Text="{CustomResource DataSettings}"/>
     </local:HostedPage.Header>
-    
+
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
@@ -94,8 +94,33 @@
                     <controls:BadgeButton
                         Content="{CustomResource NetworkUsage}"
                         Click="Stats_Click"/>
+
+                    <Grid>
+                        <controls:BadgeButton
+                            Command="{x:Bind ViewModel.StoragePathCommand}"
+                            Content="{CustomResource StoragePath}"
+                            Badge="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
+                            Style="{StaticResource SubtitleBadgeButtonStyle}">
+                            <controls:BadgeButton.CommandParameter>
+                                <x:Boolean>False</x:Boolean>
+                            </controls:BadgeButton.CommandParameter>
+                        </controls:BadgeButton>
+
+                        <controls:BadgeButton
+                            Command="{x:Bind ViewModel.StoragePathCommand}"
+                            Visibility="{x:Bind ConvertFilesReset(ViewModel.FilesDirectory), Mode=OneWay}"
+                            Content="{CustomResource Reset}"
+                            Style="{StaticResource StartButtonStyle}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Margin="0,0,12,0">
+                            <controls:BadgeButton.CommandParameter>
+                                <x:Boolean>True</x:Boolean>
+                            </controls:BadgeButton.CommandParameter>
+                        </controls:BadgeButton>
+                    </Grid>
                 </controls:HeaderedControl>
-                
+
                 <controls:HeaderedControl
                     Header="{CustomResource AutomaticMediaDownload}"
                     Footer="{CustomResource AutoDownloadAudioInfo}">
@@ -103,18 +128,12 @@
                         IsOn="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
                         Header="{CustomResource AutoDownloadMedia}"
                         Style="{StaticResource CheckButtonStyle}"/>
-                    <!--<Button
-                         Command="{x:Bind ViewModel.DownloadLocationCommand}"
-                         Tag="Download location"
-                         Content="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
-                         Style="{StaticResource HyperVerticalDetailButtonStyle}"/>-->
-
                     <controls:BadgeButton
                         Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Photos, ViewModel.AutoDownload.Photos, 0), Mode=OneWay}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Content="{CustomResource AutoDownloadPhotos}"
-                        Style="{StaticResource HyperVerticalDetailButtonStyle}">
+                        Style="{StaticResource SubtitleBadgeButtonStyle}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -125,7 +144,7 @@
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Content="{CustomResource AutoDownloadVideos}"
-                        Style="{StaticResource HyperVerticalDetailButtonStyle}">
+                        Style="{StaticResource SubtitleBadgeButtonStyle}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
                         </Button.CommandParameter>
@@ -136,7 +155,7 @@
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                         Content="{CustomResource AutoDownloadFiles}"
-                        Style="{StaticResource HyperVerticalDetailButtonStyle}">
+                        Style="{StaticResource SubtitleBadgeButtonStyle}">
                         <Button.CommandParameter>
                             <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
                         </Button.CommandParameter>

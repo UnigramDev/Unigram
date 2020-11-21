@@ -39,10 +39,20 @@ namespace Unigram.Views.Settings
         {
             if (string.IsNullOrEmpty(path))
             {
-                return "Default folder";
+                return Strings.Resources.Default;
             }
 
             return path;
+        }
+
+        private Visibility ConvertFilesReset(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return Visibility.Collapsed;
+            }
+
+            return Visibility.Visible;
         }
 
         private string ConvertAutoDownload(AutoDownloadType type, AutoDownloadMode mode, int limit)
@@ -132,6 +142,5 @@ namespace Unigram.Views.Settings
         }
 
         #endregion
-
     }
 }
