@@ -10641,6 +10641,9 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   <data name="StopVerification" xml:space="preserve">
     <value>Do you want to stop the verification process?</value>
   </data>
+  <data name="StoragePath" xml:space="preserve">
+    <value>Storage Path</value>
+  </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Storage Usage</value>
   </data>

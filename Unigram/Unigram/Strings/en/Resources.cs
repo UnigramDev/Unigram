@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2020 11:00:15
+// 	Generated: 11/21/2020 13:57:48
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -38431,6 +38431,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("StopVerification");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Storage Path"
+        /// </summary>
+        public static string StoragePath
+        {
+            get
+            {
+                return resourceLoader.GetString("StoragePath");
             }
         }
         
