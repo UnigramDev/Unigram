@@ -86,7 +86,7 @@ namespace winrt::Unigram::Native::implementation
         //    javaVm->DetachCurrentThread();
         //}
         //info->fd = open(info->src, O_RDONLY, S_IRUSR);
-        info->fd = CreateFile2(info->src, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+        info->fd = CreateFile2FromAppW(info->src, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
     }
 
     int VideoAnimation::readCallback(void* opaque, uint8_t* buf, int buf_size)
@@ -161,7 +161,7 @@ namespace winrt::Unigram::Native::implementation
 
         int ret;
         info->src = filePath.data();
-        info->fd = CreateFile2(info->src, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
+        info->fd = CreateFile2FromAppW(info->src, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
         info->limitFps = limitFps;
 
         LARGE_INTEGER size;

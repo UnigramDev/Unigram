@@ -791,7 +791,7 @@ namespace winrt::Unigram::Native::implementation
 	{
 		auto lock = critical_section::scoped_lock(m_criticalSection);
 
-		HANDLE file = CreateFile2(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
+		HANDLE file = CreateFile2FromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
 
 		if (file == INVALID_HANDLE_VALUE)
 		{
