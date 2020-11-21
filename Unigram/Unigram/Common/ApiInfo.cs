@@ -1,4 +1,5 @@
 ﻿using Unigram.Native;
+using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
@@ -8,6 +9,11 @@ namespace Unigram.Common
 {
     public static class ApiInfo
     {
+        private static bool? _isStoreRelease;
+        public static bool IsStoreRelease => (_isStoreRelease = (_isStoreRelease ??= Package.Current.SignatureKind == PackageSignatureKind.Store)) ?? false;
+
+        public static bool IsPackagedRelease => !IsStoreRelease;
+
         private static bool? _canUseDirectComposition;
         public static bool CanUseDirectComposition => (_canUseDirectComposition = _canUseDirectComposition ?? ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7)) ?? false;
 

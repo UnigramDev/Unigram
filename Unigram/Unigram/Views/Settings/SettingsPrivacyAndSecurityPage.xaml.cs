@@ -14,6 +14,11 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsPrivacyAndSecurityViewModel>();
+
+            if (ApiInfo.IsPackagedRelease && ViewModel.CacheService.Options.CanIgnoreSensitiveContentRestrictions)
+            {
+                FindName(nameof(SensitiveContent));
+            }
         }
 
         private void Sessions_Click(object sender, RoutedEventArgs e)

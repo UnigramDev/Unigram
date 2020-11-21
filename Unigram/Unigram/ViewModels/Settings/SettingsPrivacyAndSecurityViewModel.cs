@@ -92,6 +92,14 @@ namespace Unigram.ViewModels.Settings
                 }
             });
 
+            if (ApiInfo.IsPackagedRelease && CacheService.Options.CanIgnoreSensitiveContentRestrictions)
+            {
+                ProtoService.Send(new GetOption("ignore_sensitive_content_restrictions"), result =>
+                {
+                    BeginOnUIThread(() => RaisePropertyChanged(nameof(IgnoreSensitiveContentRestrictions)));
+                });
+            }
+
             IsPasscodeEnabled = _passcodeService.IsEnabled;
 
             return base.OnNavigatedToAsync(parameter, mode, state);
@@ -192,6 +200,22 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IgnoreSensitiveContentRestrictions
+        {
+            get
+            {
+                return CacheService.Options.IgnoreSensitiveContentRestrictions;
+            }
+            set
+            {
+                if (CacheService.Options.CanIgnoreSensitiveContentRestrictions)
+                {
+                    CacheService.Options.IgnoreSensitiveContentRestrictions = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         public void Handle(UpdateOption update)
@@ -199,6 +223,10 @@ namespace Unigram.ViewModels.Settings
             if (update.Name.Equals("disable_top_chats"))
             {
                 BeginOnUIThread(() => RaisePropertyChanged(nameof(IsContactsSuggestEnabled)));
+            }
+            else if (update.Name.Equals("ignore_sensitive_content_restrictions"))
+            {
+                BeginOnUIThread(() => RaisePropertyChanged(nameof(IgnoreSensitiveContentRestrictions)));
             }
         }
 

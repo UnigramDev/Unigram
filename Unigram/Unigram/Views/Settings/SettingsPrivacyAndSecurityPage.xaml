@@ -122,6 +122,17 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl
+                    x:Name="SensitiveContent"
+                    x:Load="False"
+                    Header="Sensitive Content"
+                    Footer="Display sensitive media in public channels on all your Telegram devices.">
+                    <ToggleSwitch
+                        IsOn="{x:Bind ViewModel.IgnoreSensitiveContentRestrictions, Mode=TwoWay}"
+                        Header="Disable Filtering"
+                        Style="{StaticResource CheckButtonStyle}"/>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl
                     Header="{CustomResource SecretChat}"
                     Footer="{CustomResource SecretWebPageInfo}">
                     <ToggleSwitch

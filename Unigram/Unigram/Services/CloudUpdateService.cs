@@ -49,7 +49,7 @@ namespace Unigram.Services
 
         public async Task UpdateAsync(bool force)
         {
-            if (Package.Current.SignatureKind == PackageSignatureKind.Store)
+            if (ApiInfo.IsStoreRelease)
             {
                 return;
             }
@@ -152,7 +152,7 @@ namespace Unigram.Services
 
         public async Task<CloudUpdate> GetNextUpdateAsync()
         {
-            if (Package.Current.SignatureKind == PackageSignatureKind.Store)
+            if (ApiInfo.IsStoreRelease)
             {
                 return null;
             }
@@ -250,7 +250,7 @@ namespace Unigram.Services
 
         public async Task<IList<CloudUpdate>> GetHistoryAsync()
         {
-            if (Package.Current.SignatureKind == PackageSignatureKind.Store)
+            if (ApiInfo.IsStoreRelease)
             {
                 return null;
             }
