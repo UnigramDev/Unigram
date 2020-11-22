@@ -1630,13 +1630,13 @@ namespace Unigram.Controls.Cells
             rect.Height = PinnedIcon.DesiredSize.Height;
             PinnedIcon.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - UnreadBadge.DesiredSize.Width);
+            rect.X = finalSize.Width - 12 - UnreadBadge.DesiredSize.Width;
             rect.Y = 64 - 8 - UnreadBadge.DesiredSize.Height;
             rect.Width = UnreadBadge.DesiredSize.Width;
             rect.Height = UnreadBadge.DesiredSize.Height;
             UnreadBadge.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 12 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width);
+            rect.X = finalSize.Width - 12 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width;
             rect.Y = 64 - 8 - UnreadMentionsBadge.DesiredSize.Height;
             rect.Width = UnreadMentionsBadge.DesiredSize.Width;
             rect.Height = UnreadMentionsBadge.DesiredSize.Height;
