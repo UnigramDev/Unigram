@@ -85,9 +85,8 @@ namespace Unigram.Views
             _protoService = ViewModel.ProtoService;
             _cacheService = ViewModel.CacheService;
 
-            SettingsView.DataContext = ViewModel.Settings;
-            ViewModel.Settings.Delegate = SettingsView;
             ViewModel.Chats.Delegate = this;
+            ViewModel.PlaybackService.PropertyChanged += OnCurrentItemChanged;
 
             NavigationCacheMode = NavigationCacheMode.Disabled;
 
@@ -133,6 +132,8 @@ namespace Unigram.Views
                 var viewModel = ViewModel;
                 if (viewModel != null)
                 {
+                    viewModel.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
+
                     viewModel.Settings.Delegate = null;
                     viewModel.Chats.Delegate = null;
 
@@ -144,7 +145,7 @@ namespace Unigram.Views
                 MasterDetail.NavigationService.FrameFacade.Navigated -= OnNavigated;
 
                 MasterDetail.Dispose();
-                SettingsView.Dispose();
+                SettingsView?.Dispose();
             }
             catch { }
         }
@@ -402,7 +403,7 @@ namespace Unigram.Views
                     }
                 }
 
-                SettingsView.UpdateFile(update.File);
+                SettingsView?.UpdateFile(update.File);
             });
         }
 
@@ -769,8 +770,6 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Playback.Update(ViewModel.ProtoService, ViewModel.PlaybackService, ViewModel.NavigationService, ViewModel.Aggregator);
-
             ViewModel.Aggregator.Subscribe(this);
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.GetForCurrentView().AcceleratorKeyActivated += OnAcceleratorKeyActivated;
@@ -803,6 +802,14 @@ namespace Unigram.Views
 
         private async void ShowHideBanner(bool show)
         {
+            if (show && Playback == null)
+            {
+                FindName(nameof(Playback));
+                Playback.Update(ViewModel.ProtoService, ViewModel.PlaybackService, ViewModel.NavigationService, ViewModel.Aggregator);
+            }
+
+            return;
+
             if ((show && Playback.Visibility == Visibility.Visible) || (!show && (Playback.Visibility == Visibility.Collapsed || _bannerCollapsed)))
             {
                 return;
@@ -1636,6 +1643,13 @@ namespace Unigram.Views
                     break;
                 case 3:
                     Root?.SetSelectedIndex(RootDestination.Settings);
+                    
+                    if (SettingsView == null)
+                    {
+                        FindName(nameof(SettingsRoot));
+                        SettingsView.DataContext = ViewModel.Settings;
+                        ViewModel.Settings.Delegate = SettingsView;
+                    }
                     break;
             }
 
@@ -1824,7 +1838,10 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    SettingsView.Visibility = Visibility.Collapsed;
+                    if (SettingsView != null)
+                    {
+                        SettingsView.Visibility = Visibility.Collapsed;
+                    }
 
                     ViewModel.Settings.Search(SearchField.Text);
                 }
@@ -1835,8 +1852,16 @@ namespace Unigram.Views
         {
             //DialogsPanel.Visibility = Visibility.Visible;
             ShowHideSearch(false);
-            ContactsPanel.Visibility = Visibility.Visible;
-            SettingsView.Visibility = Visibility.Visible;
+
+            if (ContactsPanel != null)
+            {
+                ContactsPanel.Visibility = Visibility.Visible;
+            }
+
+            if (SettingsView != null)
+            {
+                SettingsView.Visibility = Visibility.Visible;
+            }
 
             ViewModel.Chats.SearchFilters.Clear();
             ViewModel.Chats.TopChats = null;
