@@ -31,14 +31,14 @@ namespace Unigram.Controls
             ValueLabel.Text = string.Format("{0:0.0}%", value);
         }
 
-        private StatisticsValue _value;
-        public StatisticsValue Value
+        private StatisticalValue _value;
+        public StatisticalValue Value
         {
             get => _value;
             set => Set(value);
         }
 
-        private void Set(StatisticsValue value)
+        private void Set(StatisticalValue value)
         {
             _value = value;
 

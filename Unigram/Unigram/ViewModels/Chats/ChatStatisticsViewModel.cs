@@ -242,14 +242,14 @@ namespace Unigram.ViewModels.Chats
             graphType = grahType;
         }
 
-        public static ChartViewData create(StatisticsGraph graph, String title, int graphType)
+        public static ChartViewData create(StatisticalGraph graph, String title, int graphType)
         {
-            if (graph == null || graph is StatisticsGraphError)
+            if (graph == null || graph is StatisticalGraphError)
             {
                 return null;
             }
             ChartViewData viewData = new ChartViewData(title, graphType);
-            if (graph is StatisticsGraphData data)
+            if (graph is StatisticalGraphData data)
             {
                 String json = data.JsonData;
                 try
@@ -273,7 +273,7 @@ namespace Unigram.ViewModels.Chats
                     return null;
                 }
             }
-            else if (graph is StatisticsGraphAsync async)
+            else if (graph is StatisticalGraphAsync async)
             {
                 viewData.token = async.Token;
             }
@@ -304,14 +304,14 @@ namespace Unigram.ViewModels.Chats
 
         public async Task<bool> LoadAsync(IProtoService protoService, long chatId)
         {
-            var graph = await protoService.SendAsync(new GetStatisticsGraph(chatId, token, 0)) as StatisticsGraph;
+            var graph = await protoService.SendAsync(new GetStatisticalGraph(chatId, token, 0)) as StatisticalGraph;
             var viewData = this;
 
-            if (graph == null || graph is StatisticsGraphError)
+            if (graph == null || graph is StatisticalGraphError)
             {
                 return false;
             }
-            else if (graph is StatisticsGraphData data)
+            else if (graph is StatisticalGraphData data)
             {
                 String json = data.JsonData;
                 try
