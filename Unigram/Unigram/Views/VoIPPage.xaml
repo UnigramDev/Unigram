@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:settings="using:Unigram.Views.Settings"
+    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -93,7 +94,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0,32,0,0" RequestedTheme="Dark">
         <controls:ProfilePicture x:Name="Image" Width="144" Height="144" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Border x:Name="BackgroundPanel" Background="Transparent"/>
+        <xaml:CanvasControl x:Name="BackgroundPanel" Background="Transparent"/>
 
         <Grid Padding="12,8" VerticalAlignment="Top">
             <Grid.RowDefinitions>
@@ -319,7 +320,7 @@
             <Border
                 x:Name="ViewfinderShadow"
                 Background="#000000"/>
-            <Border
+            <xaml:CanvasControl
                 x:Name="Viewfinder"/>
         </Grid>
     </Grid>

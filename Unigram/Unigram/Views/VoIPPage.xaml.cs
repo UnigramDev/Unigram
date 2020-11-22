@@ -252,6 +252,9 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Dispose();
+
+            BackgroundPanel.RemoveFromVisualTree();
+            Viewfinder.RemoveFromVisualTree();
         }
 
         public void Dispose()
