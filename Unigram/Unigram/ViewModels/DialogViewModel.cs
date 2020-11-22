@@ -80,7 +80,6 @@ namespace Unigram.ViewModels
         protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
 
         protected readonly DisposableMutex _loadMoreLock = new DisposableMutex();
-        protected readonly DisposableMutex _insertLock = new DisposableMutex();
 
         protected readonly StickerDrawerViewModel _stickers;
         protected readonly AnimationDrawerViewModel _animations;
@@ -632,6 +631,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var chat = _migratedChat ?? _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             using (await _loadMoreLock.WaitAsync())
             {
                 try
@@ -644,13 +649,7 @@ namespace Unigram.ViewModels
                 }
                 catch { }
 
-                var chat = _migratedChat ?? _chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || (_chat?.Id != chat.Id && _migratedChat?.Id != chat.Id) || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
@@ -695,6 +694,14 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(func);
                 if (response is Messages messages)
                 {
+                    if (_chat?.Id != chat.Id)
+                    {
+                        _isLoadingNextSlice = false;
+                        IsLoading = false;
+
+                        return;
+                    }
+
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
@@ -744,6 +751,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             using (await _loadMoreLock.WaitAsync())
             {
                 try
@@ -756,13 +769,7 @@ namespace Unigram.ViewModels
                 }
                 catch { }
 
-                var chat = _chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || chat == null || Items.Count < 1)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id || Items.Count < 1)
                 {
                     return;
                 }
@@ -816,6 +823,14 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(func);
                 if (response is Messages messages)
                 {
+                    if (_chat?.Id != chat.Id)
+                    {
+                        _isLoadingPreviousSlice = false;
+                        IsLoading = false;
+
+                        return;
+                    }
+
                     if (messages.MessagesValue.Any(x => !Items.ContainsKey(x.Id)))
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
@@ -1220,15 +1235,15 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             using (await _loadMoreLock.WaitAsync())
             {
-                var chat = _chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id)
                 {
                     return;
                 }
@@ -1262,9 +1277,29 @@ namespace Unigram.ViewModels
                     func = new GetChatHistory(chat.Id, maxId, -25, 50, false);
                 }
 
-                var response = await ProtoService.SendAsync(func);
+                var send = ProtoService.SendAsync(func);
+
+                if (alignment != VerticalAlignment.Center)
+                {
+                    var wait = await Task.WhenAny(send, Task.Delay(200));
+                    if (wait != send)
+                    {
+                        Items.Clear();
+                    }
+                }
+
+                var response = await send;
                 if (response is Messages messages)
                 {
+                    if (_chat?.Id != chat.Id)
+                    {
+                        _isLoadingNextSlice = false;
+                        _isLoadingPreviousSlice = false;
+                        IsLoading = false;
+
+                        return;
+                    }
+
                     _groupedMessages.Clear();
 
                     if (messages.MessagesValue.Count > 0)
@@ -1520,8 +1555,14 @@ namespace Unigram.ViewModels
             {
                 if (message.Content is MessageText text)
                 {
-                    if (Emoji.TryCountEmojis(text.Text.Text, out int count, 1))
+                    if (Emoji.TryCountEmojis(text.Text.Text, out int count, 3))
                     {
+                        if (count > 1)
+                        {
+                            message.GeneratedContent = new MessageBigEmoji(text.Text, count);
+                            continue;
+                        }
+
                         if (set == null)
                         {
                             set = await ProtoService.GetAnimatedSetAsync(AnimatedSetType.Emoji);
@@ -1544,6 +1585,8 @@ namespace Unigram.ViewModels
                                 continue;
                             }
                         }
+
+                        message.GeneratedContent ??= new MessageBigEmoji(text.Text, count);
                     }
                 }
             }
@@ -2211,13 +2254,26 @@ namespace Unigram.ViewModels
 
         public override void OnNavigatingFrom(NavigatingEventArgs args)
         {
-            Aggregator.Unsubscribe(this);
+            //Aggregator.Unsubscribe(this);
 
             var chat = _chat;
             if (chat == null)
             {
                 return;
             }
+
+            _photosMap.Clear();
+            _filesMap.Clear();
+            _groupedMessages.Clear();
+            _hasLoadedLastPinnedMessage = false;
+            _selectedItems = new List<MessageViewModel>();
+            _chatActionManager = null;
+
+            PinnedMessages.Clear();
+            LastPinnedMessage = null;
+            LockedPinnedMessageId = 0;
+
+            SelectionMode = ListViewSelectionMode.None;
 
 #if !DEBUG
             if (chat.Type is ChatTypeSecret)
@@ -2710,7 +2766,7 @@ namespace Unigram.ViewModels
                 if (CacheService.IsDiceEmoji(text, out string dice))
                 {
                     var input = new InputMessageDice(dice, true);
-                    await SendMessageAsync(reply, input, options);
+                    await SendMessageAsync(chat, reply, input, options);
                 }
                 else
                 {
@@ -2719,13 +2775,13 @@ namespace Unigram.ViewModels
                         foreach (var split in formattedText.Split(CacheService.Options.MessageTextLengthMax))
                         {
                             var input = new InputMessageText(split, disablePreview, true);
-                            await SendMessageAsync(reply, input, options);
+                            await SendMessageAsync(chat, reply, input, options);
                         }
                     }
                     else if (text.Length > 0)
                     {
                         var input = new InputMessageText(formattedText, disablePreview, true);
-                        await SendMessageAsync(reply, input, options);
+                        await SendMessageAsync(chat, reply, input, options);
                     }
                     else
                     {

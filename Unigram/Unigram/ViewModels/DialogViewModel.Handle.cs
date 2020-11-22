@@ -405,7 +405,7 @@ namespace Unigram.ViewModels
 
                 BeginOnUIThread(async () =>
                 {
-                    using (await _insertLock.WaitAsync())
+                    using (await _loadMoreLock.WaitAsync())
                     {
                         for (int i = 0; i < Items.Count; i++)
                         {
@@ -682,7 +682,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                using (await _insertLock.WaitAsync())
+                using (await _loadMoreLock.WaitAsync())
                 {
                     for (int i = 0; i < Items.Count; i++)
                     {
@@ -769,7 +769,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                using (await _insertLock.WaitAsync())
+                using (await _loadMoreLock.WaitAsync())
                 {
                     for (int i = 0; i < Items.Count; i++)
                     {
@@ -881,7 +881,7 @@ namespace Unigram.ViewModels
 
         private async void InsertMessage(Message message, long? oldMessageId = null)
         {
-            using (await _insertLock.WaitAsync())
+            using (await _loadMoreLock.WaitAsync())
             {
                 //if (!IsFirstSliceLoaded)
                 //{

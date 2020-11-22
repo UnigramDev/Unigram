@@ -1186,7 +1186,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new GetMe());
                     if (response is Telegram.Td.Api.User cached)
                     {
-                        var chat = Chat;
+                        var chat = CacheService.GetChat(message.ChatId);
                         if (chat == null)
                         {
                             return;
@@ -1205,7 +1205,7 @@ namespace Unigram.ViewModels
                         var confirm = await MessagePopup.ShowAsync(content, Strings.Resources.ShareYouPhoneNumberTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
-                            await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
+                            await SendContactAsync(chat, new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
                         }
                     }
                 }
@@ -1217,7 +1217,13 @@ namespace Unigram.ViewModels
                         var location = await _locationService.GetPositionAsync();
                         if (location != null)
                         {
-                            await SendMessageAsync(0, new InputMessageLocation(location, 0, 0, 0), null);
+                            var chat = CacheService.GetChat(message.ChatId);
+                            if (chat == null)
+                            {
+                                return;
+                            }
+
+                            await SendMessageAsync(chat, 0, new InputMessageLocation(location, 0, 0, 0), null);
                         }
                     }
                 }

@@ -60,7 +60,7 @@ namespace Unigram.ViewModels
             var reply = GetReply(true);
             var input = new InputMessageSticker(new InputFileId(sticker.StickerValue.Id), sticker.Thumbnail?.ToInput(), sticker.Width, sticker.Height);
 
-            await SendMessageAsync(reply, input, options);
+            await SendMessageAsync(chat, reply, input, options);
         }
 
         public RelayCommand<Sticker> StickerViewCommand { get; }
@@ -118,7 +118,7 @@ namespace Unigram.ViewModels
             var reply = GetReply(true);
             var input = new InputMessageAnimation(new InputFileId(animation.AnimationValue.Id), animation.Thumbnail?.ToInput(), new int[0], animation.Duration, animation.Width, animation.Height, null);
 
-            await SendMessageAsync(reply, input, options);
+            await SendMessageAsync(chat, reply, input, options);
         }
 
         public RelayCommand<Animation> AnimationDeleteCommand { get; }
@@ -253,6 +253,12 @@ namespace Unigram.ViewModels
 
         public async void SendFileExecute(IReadOnlyList<StorageFile> files, FormattedText caption = null, bool media = true)
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             var items = await StorageMedia.CreateAsync(files);
             if (items.IsEmpty())
             {
@@ -291,7 +297,7 @@ namespace Unigram.ViewModels
 
             if (dialog.Items.Count == 1)
             {
-                await SendStorageMediaAsync(dialog.Items[0], dialog.Caption, dialog.IsFilesSelected, options);
+                await SendStorageMediaAsync(chat, dialog.Items[0], dialog.Caption, dialog.IsFilesSelected, options);
             }
             else if (dialog.Items.Count > 1 && dialog.IsAlbum && dialog.IsAlbumAvailable)
             {
@@ -322,28 +328,28 @@ namespace Unigram.ViewModels
 
                 foreach (var file in dialog.Items)
                 {
-                    await SendStorageMediaAsync(file, null, dialog.IsFilesSelected, options);
+                    await SendStorageMediaAsync(chat, file, null, dialog.IsFilesSelected, options);
                 }
             }
         }
 
-        private async Task SendStorageMediaAsync(StorageMedia storage, FormattedText caption, bool asFile, MessageSendOptions options)
+        private async Task SendStorageMediaAsync(Chat chat, StorageMedia storage, FormattedText caption, bool asFile, MessageSendOptions options)
         {
             if (storage is StorageDocument || storage is StorageAudio)
             {
-                await SendDocumentAsync(storage.File, caption, options);
+                await SendDocumentAsync(chat, storage.File, caption, options);
             }
             else if (storage is StoragePhoto photo)
             {
-                await SendPhotoAsync(storage.File, caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
+                await SendPhotoAsync(chat, storage.File, caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
             }
             else if (storage is StorageVideo video)
             {
-                await SendVideoAsync(storage.File, caption, video.IsMuted, asFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
+                await SendVideoAsync(chat, storage.File, caption, video.IsMuted, asFile, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
             }
         }
 
-        private async Task SendDocumentAsync(StorageFile file, FormattedText caption = null, MessageSendOptions options = null)
+        private async Task SendDocumentAsync(Chat chat, StorageFile file, FormattedText caption = null, MessageSendOptions options = null)
         {
             var factory = await _messageFactory.CreateDocumentAsync(file, false);
             if (factory != null)
@@ -351,11 +357,11 @@ namespace Unigram.ViewModels
                 var reply = GetReply(true);
                 var input = factory.Delegate(factory.InputFile, caption);
 
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(chat, reply, input, options);
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, FormattedText caption, bool asFile, int ttl = 0, BitmapEditState editState = null, MessageSendOptions options = null)
+        private async Task SendPhotoAsync(Chat chat, StorageFile file, FormattedText caption, bool asFile, int ttl = 0, BitmapEditState editState = null, MessageSendOptions options = null)
         {
             var factory = await _messageFactory.CreatePhotoAsync(file, asFile, ttl, editState);
             if (factory != null)
@@ -363,11 +369,11 @@ namespace Unigram.ViewModels
                 var reply = GetReply(true);
                 var input = factory.Delegate(factory.InputFile, caption);
 
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(chat, reply, input, options);
             }
         }
 
-        public async Task SendVideoAsync(StorageFile file, FormattedText caption, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
+        public async Task SendVideoAsync(Chat chat, StorageFile file, FormattedText caption, bool animated, bool asFile, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
         {
             var factory = await _messageFactory.CreateVideoAsync(file, animated, asFile, ttl, profile, transform);
             if (factory != null)
@@ -375,11 +381,11 @@ namespace Unigram.ViewModels
                 var reply = GetReply(true);
                 var input = factory.Delegate(factory.InputFile, caption);
 
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(chat, reply, input, options);
             }
         }
 
-        public async Task SendVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public async Task SendVideoNoteAsync(Chat chat, StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             var options = await PickMessageSendOptionsAsync();
             if (options == null)
@@ -393,18 +399,12 @@ namespace Unigram.ViewModels
                 var reply = GetReply(true);
                 var input = factory.Delegate(factory.InputFile, null);
 
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(chat, reply, input, options);
             }
         }
 
-        public async Task SendVoiceNoteAsync(StorageFile file, int duration, FormattedText caption)
+        public async Task SendVoiceNoteAsync(Chat chat, StorageFile file, int duration, FormattedText caption)
         {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
             var options = await PickMessageSendOptionsAsync();
             if (options == null)
             {
@@ -414,7 +414,7 @@ namespace Unigram.ViewModels
             var reply = GetReply(true);
             var input = new InputMessageVoiceNote(await file.ToGeneratedAsync(), duration, new byte[0], caption);
 
-            await SendMessageAsync(reply, input, options);
+            await SendMessageAsync(chat, reply, input, options);
         }
 
         public RelayCommand SendCameraCommand { get; }
@@ -456,6 +456,12 @@ namespace Unigram.ViewModels
         public RelayCommand SendContactCommand { get; }
         private async void SendContactExecute()
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             var picker = new ContactPicker();
             //picker.SelectionMode = ContactSelectionMode.Fields;
             //picker.DesiredFieldsWithContactFieldType.Add(ContactFieldType.Address);
@@ -535,15 +541,18 @@ namespace Unigram.ViewModels
                         return;
                     }
 
-                    await SendContactAsync(contact, options);
+                    await SendContactAsync(chat, contact, options);
                 }
             }
             catch { }
         }
 
-        public async Task<BaseObject> SendContactAsync(Telegram.Td.Api.Contact contact, MessageSendOptions options)
+        public async Task<BaseObject> SendContactAsync(Chat chat, Telegram.Td.Api.Contact contact, MessageSendOptions options)
         {
-            return await SendMessageAsync(0, new InputMessageContact(contact), options);
+            var reply = GetReply(true);
+            var input = new InputMessageContact(contact);
+
+            return await SendMessageAsync(chat, reply, input, options);
         }
 
         //private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent)
@@ -599,14 +608,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task<BaseObject> SendMessageAsync(long replyToMessageId, InputMessageContent inputMessageContent, MessageSendOptions options)
+        private async Task<BaseObject> SendMessageAsync(Chat chat, long replyToMessageId, InputMessageContent inputMessageContent, MessageSendOptions options)
         {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return null;
-            }
-
             if (options == null)
             {
                 options = new MessageSendOptions(false, false, null);
@@ -646,6 +649,12 @@ namespace Unigram.ViewModels
         public RelayCommand SendLocationCommand { get; }
         private async void SendLocationExecute()
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             var dialog = new SendLocationPopup();
             //page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
 
@@ -661,7 +670,7 @@ namespace Unigram.ViewModels
                 var reply = GetReply(true);
                 var input = dialog.Media;
 
-                await SendMessageAsync(reply, input, options);
+                await SendMessageAsync(chat, reply, input, options);
 
                 //if (page.Media is TLMessageMediaVenue venue)
                 //{
@@ -695,6 +704,12 @@ namespace Unigram.ViewModels
 
         private async Task SendPollAsync(bool forceQuiz, bool forceRegular, bool forceAnonymous)
         {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
             var dialog = new CreatePollPopup(forceQuiz, forceRegular, forceAnonymous);
 
             var confirm = await dialog.ShowQueuedAsync();
@@ -712,7 +727,7 @@ namespace Unigram.ViewModels
             var reply = GetReply(true);
             var input = new InputMessagePoll(dialog.Question, dialog.Options, dialog.IsAnonymous, dialog.Type, 0, 0, false);
 
-            await SendMessageAsync(reply, input, options);
+            await SendMessageAsync(chat, reply, input, options);
         }
 
         //public Task<bool> SendGeoAsync(TLMessageMediaGeoLive media)
