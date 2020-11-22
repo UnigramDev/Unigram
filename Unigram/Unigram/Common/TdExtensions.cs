@@ -794,6 +794,9 @@ namespace Unigram.Common
                 case MessageVoiceNote voiceNote:
                     return voiceNote.Caption;
 
+                case MessageBigEmoji bigEmoji:
+                    return bigEmoji.Text;
+
                 case MessageText text:
                     return text.Text;
             }
@@ -2237,6 +2240,29 @@ namespace Unigram.Common
 
 namespace Telegram.Td.Api
 {
+    public class MessageBigEmoji : MessageContent
+    {
+        public FormattedText Text { get; set; }
+
+        public int Count { get; set; }
+
+        public MessageBigEmoji()
+        {
+
+        }
+
+        public MessageBigEmoji(FormattedText text, int count)
+        {
+            Text = text;
+            Count = count;
+        }
+
+        public NativeObject ToUnmanaged()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class MessageAlbum : MessageContent
     {
         public bool IsMedia { get; }

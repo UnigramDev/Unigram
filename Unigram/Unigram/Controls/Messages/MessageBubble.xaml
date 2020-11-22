@@ -31,13 +31,14 @@
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
-                            <Setter Target="Header.(Grid.Row)" Value="2"/>
+                            <Setter Target="Header.(Grid.Row)" Value="1"/>
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
                             <Setter Target="Header.Margin" Value="-4,0,4,0"/>
                             <Setter Target="Header.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Right"/>
+                            <Setter Target="Message.Margin" Value="0,0,0,28"/>
                             <Setter Target="Panel.(Grid.Column)" Value="2"/>
                         </VisualState.Setters>
                     </VisualState>
@@ -52,13 +53,14 @@
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
                             <Setter Target="Header.Padding" Value="8,2,8,4"/>
-                            <Setter Target="Header.(Grid.Row)" Value="2"/>
+                            <Setter Target="Header.(Grid.Row)" Value="1"/>
                             <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
                             <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
 
                             <Setter Target="Header.Margin" Value="4,0,-4,0"/>
                             <Setter Target="Header.HorizontalAlignment" Value="Left"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Left"/>
+                            <Setter Target="Message.Margin" Value="0,0,0,10"/>
                             <Setter Target="Panel.(Grid.Column)" Value="0"/>
                         </VisualState.Setters>
                     </VisualState>
@@ -84,9 +86,6 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -137,8 +136,7 @@
             <local:MessageBubblePanel
                 x:Name="Panel"
                 Grid.Column="1"
-                Grid.Row="2"
-                Grid.RowSpan="3">
+                Grid.Row="1">
                 <RichTextBlock
                     x:Name="Message"
                     Style="{StaticResource BodyRichTextBlockStyle}"
@@ -180,7 +178,7 @@
                 HorizontalContentAlignment="Stretch"
                 Padding="0"
                 Grid.Column="1"
-                Grid.Row="5">
+                Grid.Row="2">
                 <Grid
                     BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}"
                     BorderThickness="0,1,0,0"

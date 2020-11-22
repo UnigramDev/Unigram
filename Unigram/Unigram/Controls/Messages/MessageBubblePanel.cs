@@ -110,6 +110,11 @@ namespace Unigram.Controls.Messages
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
+                if (Content is MessageBigEmoji)
+                {
+                    return new Size(Math.Max(0, footerWidth - 16), 0);
+                }
+
                 var width = text.DesiredSize.Width;
                 var rect = ContentEnd(availableWidth);
 

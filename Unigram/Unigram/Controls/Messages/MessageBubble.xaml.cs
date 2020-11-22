@@ -35,6 +35,11 @@ namespace Unigram.Controls.Messages
         public MessageBubble()
         {
             InitializeComponent();
+
+            //ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(Footer, true);
         }
 
         public void UpdateQuery(string text)
@@ -125,7 +130,12 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            builder.Append(Automation.GetSummary(message.ProtoService, message.Get()));
+            builder.Append(Automation.GetSummary(message.ProtoService, message.Get(), true));
+
+            if (message.AuthorSignature.Length > 0)
+            {
+                builder.Append($"{message.AuthorSignature}, ");
+            }
 
             if (message.EditDate != 0 && message.ViaBotUserId == 0 && !senderBot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard))
             {
@@ -232,7 +242,7 @@ namespace Unigram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (message.ReplyMarkup is ReplyMarkupInlineKeyboard)
             {
-                if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
+                if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
                 {
                     ContentPanel.CornerRadius = new CornerRadius();
                 }
@@ -246,7 +256,7 @@ namespace Unigram.Controls.Messages
                     Markup.CornerRadius = new CornerRadius(small, small, bottomRight, bottomLeft);
                 }
             }
-            else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
+            else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
             {
                 ContentPanel.CornerRadius = new CornerRadius();
             }
@@ -309,7 +319,7 @@ namespace Unigram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
 
             var sticker = content is MessageSticker;
-            var light = sticker || content is MessageDice || content is MessageVideoNote;
+            var light = sticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji;
             var shown = false;
 
             if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
@@ -732,7 +742,7 @@ namespace Unigram.Controls.Messages
 
         public void UpdateMessageContent(MessageViewModel message)
         {
-            Panel.Content = message?.Content;
+            Panel.Content = message?.GeneratedContent ?? message?.Content;
 
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text && text.WebPage == null)
@@ -784,14 +794,25 @@ namespace Unigram.Controls.Messages
                 Grid.SetRow(Message, caption ? 4 : 2);
                 Panel.Placeholder = caption;
             }
-            else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
+            else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
             {
                 ContentPanel.Padding = new Thickness(0);
                 Media.Margin = new Thickness(0);
-                FooterToLightMedia(message.IsOutgoing && !message.IsChannelPost);
-                Grid.SetRow(Footer, 3);
-                Grid.SetRow(Message, 2);
-                Panel.Placeholder = false;
+
+                if (message.IsOutgoing && !message.IsChannelPost)
+                {
+                    FooterToLightMedia(true);
+                    Grid.SetRow(Footer, 3);
+                    Grid.SetRow(Message, 2);
+                    Panel.Placeholder = false;
+                }
+                else
+                {
+                    FooterToLightMedia(false);
+                    Grid.SetRow(Footer, content is MessageBigEmoji ? 2 : 3);
+                    Grid.SetRow(Message, 2);
+                    Panel.Placeholder = content is MessageBigEmoji;
+                }
             }
             else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || (content is MessageContact contact && !string.IsNullOrEmpty(contact.Contact.Vcard)))
             {
@@ -1023,6 +1044,11 @@ namespace Unigram.Controls.Messages
                 Span.Inlines.Add(new Run { Text = venue.Venue.Address });
                 result = true;
             }
+            else if (content is MessageBigEmoji bigEmoji)
+            {
+                Span.Inlines.Add(new Run { Text = bigEmoji.Text.Text, FontSize = 32 });
+                result = true;
+            }
 
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
@@ -1095,7 +1121,15 @@ namespace Unigram.Controls.Messages
 
                 if (entity.HasFlag(TextStyle.Monospace))
                 {
-                    span.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length), FontFamily = new FontFamily("Consolas") });
+                    var data = text.Substring(entity.Offset, entity.Length);
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Click += (s, args) => Entity_Click(message, entity.Type, data);
+                    hyperlink.Foreground = GetBrush("MessageForegroundBrush");
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    //hyperlink.Foreground = foreground;
+
+                    span.Inlines.Add(hyperlink);
+                    hyperlink.Inlines.Add(new Run { Text = data, FontFamily = new FontFamily("Consolas") });
                 }
                 else
                 {
@@ -1242,12 +1276,9 @@ namespace Unigram.Controls.Messages
                 }
             }
 
-            if (AdjustEmojis(span, text, fontSize))
-            {
-                Message.FlowDirection = FlowDirection.LeftToRight;
-                adjust = (message.ReplyToMessageId == 0 || message.ReplyToMessageState == ReplyToMessageState.Hidden) && message.Content is MessageText;
-            }
-            else if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
+            span.FontSize = Theme.Current.MessageFontSize;
+
+            if (ApiInfo.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
@@ -1269,31 +1300,6 @@ namespace Unigram.Controls.Messages
             }
 
             return true;
-        }
-
-        private bool AdjustEmojis(Span span, string text, bool fontSize)
-        {
-            if (fontSize && SettingsService.Current.IsLargeEmojiEnabled && Emoji.TryCountEmojis(text, out int count, 3))
-            {
-                switch (count)
-                {
-                    case 1:
-                        //Message.TextAlignment = TextAlignment.Center;
-                        span.FontSize = 32;
-                        return true;
-                    case 2:
-                        //Message.TextAlignment = TextAlignment.Center;
-                        span.FontSize = 28;
-                        return true;
-                    case 3:
-                        //Message.TextAlignment = TextAlignment.Center;
-                        span.FontSize = 24;
-                        return true;
-                }
-            }
-
-            span.FontSize = Theme.Current.MessageFontSize;
-            return false;
         }
 
         private Brush GetBrush(string key)
@@ -1320,7 +1326,7 @@ namespace Unigram.Controls.Messages
             {
                 message.Delegate.OpenUrl("tel:" + data, false);
             }
-            else if (type is TextEntityTypeHashtag || type is TextEntityTypeCashtag)
+            else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag)
             {
                 message.Delegate.OpenHashtag(data);
             }
@@ -1343,6 +1349,10 @@ namespace Unigram.Controls.Messages
             else if (type is TextEntityTypeBankCardNumber)
             {
                 message.Delegate.OpenBankCardNumber(data);
+            }
+            else if (type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
+            {
+                MessageHelper.CopyText(data);
             }
         }
 
@@ -1406,15 +1416,59 @@ namespace Unigram.Controls.Messages
             }
 
             var content = message.GeneratedContent ?? message.Content;
-            if (content is MessageSticker || content is MessageDice || content is MessageVideoNote)
+            if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
             {
                 return;
             }
 
-            var outgoing = message.IsOutgoing && !message.IsChannelPost;
-
             var prev = e.PreviousSize.ToVector2();
             var next = e.NewSize.ToVector2();
+
+            var outgoing = message.IsOutgoing && !message.IsChannelPost;
+            //if (outgoing && prev.X != next.X)
+            //{
+            //    var animText = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    animText.InsertKeyFrame(0, new Vector3(next.X - prev.X, 0, 0));
+            //    animText.InsertKeyFrame(1, Vector3.Zero);
+            //    //animText.Duration = TimeSpan.FromSeconds(1);
+
+            //    var text = ElementCompositionPreview.GetElementVisual(Message);
+            //    text.StartAnimation("Translation", animText);
+            //}
+
+            //if (prev.Y != next.Y || !outgoing)
+            //{
+            //    var animFooter = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    animFooter.InsertKeyFrame(0, new Vector3(outgoing ? 0 : prev.X - next.X, prev.Y - next.Y, 0));
+            //    animFooter.InsertKeyFrame(1, Vector3.Zero);
+            //    //animFooter.Duration = TimeSpan.FromSeconds(1);
+
+            //    var footer = ElementCompositionPreview.GetElementVisual(Footer);
+            //    footer.StartAnimation("Translation", animFooter);
+            //}
+
+            //var visual = ElementCompositionPreview.GetElementVisual(ContentPanel);
+
+            //var clip = visual.Clip;
+            //if (clip == null)
+            //{
+            //    clip = visual.Clip = visual.Compositor.CreateInsetClip();
+            //}
+
+            //var anim1 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            //anim1.InsertKeyFrame(0, next.X - prev.X);
+            //anim1.InsertKeyFrame(1, 0);
+            ////anim1.Duration = TimeSpan.FromSeconds(1);
+
+            //var anim2 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            //anim2.InsertKeyFrame(0, next.Y - prev.Y);
+            //anim2.InsertKeyFrame(1, 0);
+            ////anim2.Duration = TimeSpan.FromSeconds(1);
+
+            //clip.StartAnimation(outgoing ? "LeftInset" : "RightInset", anim1);
+            //clip.StartAnimation("BottomInset", anim2);
+
+            //return;
 
             var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(prev.X / next.X, prev.Y / next.Y, 1));
