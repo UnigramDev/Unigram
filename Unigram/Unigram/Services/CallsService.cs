@@ -395,26 +395,14 @@ namespace Unigram.Services
                 {
                     if (server.Type is CallServerTypeWebrtc webRtc)
                     {
-                        if (webRtc.SupportsStun)
+                        servers.Add(new VoipServer
                         {
-                            servers.Add(new VoipServer
-                            {
-                                Host = server.IpAddress,
-                                Port = (ushort)server.Port,
-                                IsTurn = false
-                            });
-                        }
-                        else
-                        {
-                            servers.Add(new VoipServer
-                            {
-                                Host = server.IpAddress,
-                                Port = (ushort)server.Port,
-                                Login = webRtc.Username,
-                                Password = webRtc.Password,
-                                IsTurn = true
-                            });
-                        }
+                            Host = server.IpAddress,
+                            Port = server.Port,
+                            Login = webRtc.Username,
+                            Password = webRtc.Password,
+                            IsTurn = webRtc.SupportsTurn
+                        });
                     }
                 }
 

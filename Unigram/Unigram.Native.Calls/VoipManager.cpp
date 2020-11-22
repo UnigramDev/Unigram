@@ -106,7 +106,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		for (const VoipServer& x : m_descriptor.Servers()) {
 			rtc.push_back(tgcalls::RtcServer{
 				string_to_unmanaged(x.Host()),
-				x.Port(),
+				static_cast<uint16_t>(x.Port()),
 				string_to_unmanaged(x.Login()),
 				string_to_unmanaged(x.Password()),
 				x.IsTurn()

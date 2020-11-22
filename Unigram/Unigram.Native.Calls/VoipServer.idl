@@ -6,7 +6,7 @@ namespace Unigram.Native.Calls
         VoipServer();
 
         String Host;
-        UInt16 Port;
+        Int32 Port;
         String Login;
         String Password;
         Boolean IsTurn;

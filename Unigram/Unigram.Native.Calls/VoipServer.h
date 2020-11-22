@@ -13,9 +13,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		hstring Host();
 		void Host(hstring value);
 
-		uint16_t m_port;
-		uint16_t Port();
-		void Port(uint16_t value);
+		int32_t m_port;
+		int32_t Port();
+		void Port(int32_t value);
 
 		hstring m_login;
 		hstring Login();
