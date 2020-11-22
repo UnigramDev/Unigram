@@ -145,16 +145,20 @@ namespace Unigram.ViewModels.Settings
             }
             else
             {
-                var picker = new FolderPicker();
-                picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                picker.FileTypeFilter.Add("*");
-
-                var folder = await picker.PickSingleFolderAsync();
-                if (folder != null)
+                try
                 {
-                    StorageApplicationPermissions.MostRecentlyUsedList.AddOrReplace("FilesDirectory", folder);
-                    FilesDirectory = folder.Path;
+                    var picker = new FolderPicker();
+                    picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                    picker.FileTypeFilter.Add("*");
+
+                    var folder = await picker.PickSingleFolderAsync();
+                    if (folder != null)
+                    {
+                        StorageApplicationPermissions.MostRecentlyUsedList.AddOrReplace("FilesDirectory", folder);
+                        FilesDirectory = folder.Path;
+                    }
                 }
+                catch { }
             }
 
             if (string.Equals(path, FilesDirectory, StringComparison.OrdinalIgnoreCase))
