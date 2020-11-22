@@ -1118,6 +1118,13 @@ namespace Unigram.Common
             ClipboardEx.TrySetContent(dataPackage);
         }
 
+        public static void CopyText(string text)
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(text);
+            ClipboardEx.TrySetContent(dataPackage);
+        }
+
 
 
         public static Action GetEntityAction(DependencyObject obj)
