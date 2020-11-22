@@ -112,6 +112,18 @@ namespace Unigram.Services
             return AddOrUpdateValue(_container, key, value);
         }
 
+        protected bool AddOrUpdateValue<T>(ref T storage, string key, T value)
+        {
+            storage = value;
+            return AddOrUpdateValue(_container, key, value);
+        }
+
+        protected bool AddOrUpdateValue<T>(ref T storage, ApplicationDataContainer container, string key, T value)
+        {
+            storage = value;
+            return AddOrUpdateValue(container, key, value);
+        }
+
         protected bool AddOrUpdateValue(ApplicationDataContainer container, string key, Object value)
         {
             bool valueChanged = false;
@@ -132,7 +144,6 @@ namespace Unigram.Services
 
             return valueChanged;
         }
-
 
         public valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
         {
@@ -198,8 +209,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (2UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = "PINNED MESSAGES 2.0, PLAYLISTS AND MORE\r\n\r\nMultiple Pinned Messages\r\n• Pin several messages in any chat, including one-on-one chats.\r\n• Jump between pinned messages or open them all on a separate page via the top bar.\r\n\r\nPlaylists and More\r\n• Send several music tracks as a playlist. \r\n• Send a :slot_machine: emoji to any chat to try your luck.";
+        public const ulong CurrentVersion = (7UL << 48) | (2UL << 32) | (5800UL << 16);
+        public const string CurrentChangelog = "Download location\r\n• You can now change default download folder from Settings > Data and Storage > Storage Path.";
 
         public int Session => _session;
 
@@ -230,40 +241,16 @@ namespace Unigram.Services
         #endregion
 
         private ChatSettingsBase _chats;
-        public ChatSettingsBase Chats
-        {
-            get
-            {
-                return _chats ??= new ChatSettingsBase(_own);
-            }
-        }
+        public ChatSettingsBase Chats => _chats ??= new ChatSettingsBase(_own);
 
         private NotificationsSettings _notifications;
-        public NotificationsSettings Notifications
-        {
-            get
-            {
-                return _notifications ??= new NotificationsSettings(_container);
-            }
-        }
+        public NotificationsSettings Notifications => _notifications ??= new NotificationsSettings(_container);
 
         private static StickersSettings _stickers;
-        public StickersSettings Stickers
-        {
-            get
-            {
-                return _stickers ??= new StickersSettings(_local);
-            }
-        }
+        public StickersSettings Stickers => _stickers ??= new StickersSettings(_local);
 
         private static EmojiSettings _emoji;
-        public EmojiSettings Emoji
-        {
-            get
-            {
-                return _emoji ??= new EmojiSettings();
-            }
-        }
+        public EmojiSettings Emoji => _emoji ??= new EmojiSettings();
 
         private AutoDownloadSettings _autoDownload;
         public AutoDownloadSettings AutoDownload
@@ -280,132 +267,52 @@ namespace Unigram.Services
         }
 
         private static AppearanceSettings _appearance;
-        public AppearanceSettings Appearance
-        {
-            get
-            {
-                return _appearance ??= new AppearanceSettings();
-            }
-        }
+        public AppearanceSettings Appearance => _appearance ??= new AppearanceSettings();
 
         private static DiagnosticsSettings _diagnostics;
-        public DiagnosticsSettings Diagnostics
-        {
-            get
-            {
-                return _diagnostics ??= new DiagnosticsSettings();
-            }
-        }
+        public DiagnosticsSettings Diagnostics => _diagnostics ??= new DiagnosticsSettings();
 
         private FiltersSettings _filters;
-        public FiltersSettings Filters
-        {
-            get
-            {
-                return _filters ??= new FiltersSettings(_own);
-            }
-        }
+        public FiltersSettings Filters => _filters ??= new FiltersSettings(_own);
 
         private static PasscodeLockSettings _passcodeLock;
-        public PasscodeLockSettings PasscodeLock
-        {
-            get
-            {
-                return _passcodeLock ??= new PasscodeLockSettings();
-            }
-        }
+        public PasscodeLockSettings PasscodeLock => _passcodeLock ??= new PasscodeLockSettings();
 
         private static PlaybackSettings _playback;
-        public PlaybackSettings Playback
-        {
-            get
-            {
-                return _playback ??= new PlaybackSettings(_local);
-            }
-        }
+        public PlaybackSettings Playback => _playback ??= new PlaybackSettings(_local);
 
         private static VoIPSettings _voip;
-        public VoIPSettings VoIP
-        {
-            get
-            {
-                return _voip ??= new VoIPSettings();
-            }
-        }
+        public VoIPSettings VoIP => _voip ??= new VoIPSettings();
 
         private string _filesDirectory;
         public string FilesDirectory
         {
-            get
-            {
-                if (_filesDirectory == null)
-                {
-                    _filesDirectory = GetValueOrDefault("FilesDirectory", null as string);
-                }
-
-                return _filesDirectory;
-            }
-            set
-            {
-                _filesDirectory = value;
-                AddOrUpdateValue("FilesDirectory", value);
-            }
+            get => _filesDirectory ??= GetValueOrDefault("FilesDirectory", null as string);
+            set => AddOrUpdateValue(ref _filesDirectory, "FilesDirectory", value);
         }
 
         private int? _verbosityLevel;
         public int VerbosityLevel
         {
-            get
-            {
-                if (_verbosityLevel == null)
 #if DEBUG
-                    _verbosityLevel = GetValueOrDefault(_local, "VerbosityLevel", 5);
-
-                return _verbosityLevel ?? 5;
+            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 5);
 #else
-                    _verbosityLevel = GetValueOrDefault(_local, "VerbosityLevel", 0);
-
-                return _verbosityLevel ?? 0;
+            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 1);
 #endif
-            }
-            set
-            {
-                _verbosityLevel = value;
-                AddOrUpdateValue(_local, "VerbosityLevel", value);
-            }
+            set => AddOrUpdateValue(ref _verbosityLevel, _local, "VerbosityLevel", value);
         }
 
         private bool? _useTestDC;
         public bool UseTestDC
         {
-            get
-            {
-                if (_useTestDC == null)
-                {
-                    _useTestDC = GetValueOrDefault(_own, "UseTestDC", false);
-                }
-
-                return _useTestDC ?? false;
-            }
-            set
-            {
-                _useTestDC = value;
-                AddOrUpdateValue(_own, "UseTestDC", value);
-            }
+            get => _useTestDC ??= GetValueOrDefault(_own, "UseTestDC", false);
+            set => AddOrUpdateValue(ref _useTestDC, _own, "UseTestDC", value);
         }
 
         private int? _userId;
         public int UserId
         {
-            get
-            {
-                if (_userId == null)
-                {
-                    _userId = GetValueOrDefault(_own, "UserId", 0);
-                }
-
-                return _userId ?? 0;
-            }
+            get => _userId ??= GetValueOrDefault(_own, "UserId", 0);
             set
             {
                 _userId = value;
@@ -437,153 +344,57 @@ namespace Unigram.Services
         private static int? _distanceUnits;
         public DistanceUnits DistanceUnits
         {
-            get
-            {
-                if (_distanceUnits == null)
-                {
-                    _distanceUnits = GetValueOrDefault("DistanceUnits", 0);
-                }
-
-                return (DistanceUnits)(_distanceUnits ?? 0);
-            }
-            set
-            {
-                _distanceUnits = (int)value;
-                AddOrUpdateValue("DistanceUnits", (int)value);
-            }
+            get => (DistanceUnits)(_distanceUnits ??= GetValueOrDefault("DistanceUnits", 0));
+            set => AddOrUpdateValue(ref _distanceUnits, "DistanceUnits", (int)value);
         }
 
         private static double? _dialogsWidthRatio;
         public double DialogsWidthRatio
         {
-            get
-            {
-                if (_dialogsWidthRatio == null)
-                {
-                    _dialogsWidthRatio = GetValueOrDefault(_local, "DialogsWidthRatio", 5d / 14d);
-                }
-
-                return _dialogsWidthRatio ?? 5d / 14d;
-            }
-            set
-            {
-                _dialogsWidthRatio = value;
-                AddOrUpdateValue(_local, "DialogsWidthRatio", value);
-            }
+            get => _dialogsWidthRatio ??= GetValueOrDefault(_local, "DialogsWidthRatio", 5d / 14d);
+            set => AddOrUpdateValue(ref _dialogsWidthRatio, _local, "DialogsWidthRatio", value);
         }
 
         private bool? _isSidebarOpen;
         public bool IsSidebarOpen
         {
-            get
-            {
-                if (_isSidebarOpen == null)
-                {
-                    _isSidebarOpen = GetValueOrDefault(_local, "IsSidebarOpen", true);
-                }
-
-                return _isSidebarOpen ?? true;
-            }
-            set
-            {
-                _isSidebarOpen = value;
-                AddOrUpdateValue(_local, "IsSidebarOpen", value);
-            }
+            get => _isSidebarOpen ??= GetValueOrDefault(_local, "IsSidebarOpen", true);
+            set => AddOrUpdateValue(ref _isSidebarOpen, _local, "IsSidebarOpen", value);
         }
 
         private static bool? _isAdaptiveWideEnabled;
         public bool IsAdaptiveWideEnabled
         {
-            get
-            {
-                if (_isAdaptiveWideEnabled == null)
-                {
-                    _isAdaptiveWideEnabled = GetValueOrDefault(_local, "IsAdaptiveWideEnabled", false);
-                }
-
-                return _isAdaptiveWideEnabled ?? false;
-            }
-            set
-            {
-                _isAdaptiveWideEnabled = value;
-                AddOrUpdateValue(_local, "IsAdaptiveWideEnabled", value);
-            }
+            get => _isAdaptiveWideEnabled ??= GetValueOrDefault(_local, "IsAdaptiveWideEnabled", false);
+            set => AddOrUpdateValue(ref _isAdaptiveWideEnabled, _local, "IsAdaptiveWideEnabled", value);
         }
 
         private static bool? _isTrayVisible;
         public bool IsTrayVisible
         {
-            get
-            {
-                if (_isTrayVisible == null)
-                {
-                    _isTrayVisible = GetValueOrDefault(_local, "IsTrayVisible", true);
-                }
-
-                return _isTrayVisible ?? true;
-            }
-            set
-            {
-                _isTrayVisible = value;
-                AddOrUpdateValue(_local, "IsTrayVisible", value);
-            }
+            get => _isTrayVisible ??= GetValueOrDefault(_local, "IsTrayVisible", true);
+            set => AddOrUpdateValue(ref _isTrayVisible, _local, "IsTrayVisible", value);
         }
 
         private static bool? _isLaunchMinimized;
         public bool IsLaunchMinimized
         {
-            get
-            {
-                if (_isLaunchMinimized == null)
-                {
-                    _isLaunchMinimized = GetValueOrDefault(_local, "IsLaunchMinimized", false);
-                }
-
-                return _isLaunchMinimized ?? false;
-            }
-            set
-            {
-                _isLaunchMinimized = value;
-                AddOrUpdateValue(_local, "IsLaunchMinimized", value);
-            }
+            get => _isLaunchMinimized ??= GetValueOrDefault(_local, "IsLaunchMinimized", false);
+            set => AddOrUpdateValue(ref _isLaunchMinimized, _local, "IsLaunchMinimized", value);
         }
 
         private static bool? _collapseArchivedChats;
         public bool CollapseArchivedChats
         {
-            get
-            {
-                if (_collapseArchivedChats == null)
-                {
-                    _collapseArchivedChats = GetValueOrDefault(_local, "CollapseArchivedChats", false);
-                }
-
-                return _collapseArchivedChats ?? false;
-            }
-            set
-            {
-                _collapseArchivedChats = value;
-                AddOrUpdateValue(_local, "CollapseArchivedChats", value);
-            }
+            get => _collapseArchivedChats ??= GetValueOrDefault(_local, "CollapseArchivedChats", false);
+            set => AddOrUpdateValue(ref _collapseArchivedChats, _local, "CollapseArchivedChats", value);
         }
 
         private static bool? _isAccountsSelectorExpanded;
         public bool IsAccountsSelectorExpanded
         {
-            get
-            {
-                if (_isAccountsSelectorExpanded == null)
-                {
-                    _isAccountsSelectorExpanded = GetValueOrDefault(_local, "IsAccountsSelectorExpanded", false);
-                }
-
-                return _isAccountsSelectorExpanded ?? false;
-            }
-            set
-            {
-                _isAccountsSelectorExpanded = value;
-                AddOrUpdateValue(_local, "IsAccountsSelectorExpanded", value);
-            }
+            get => _isAccountsSelectorExpanded ??= GetValueOrDefault(_local, "IsAccountsSelectorExpanded", false);
+            set => AddOrUpdateValue(ref _isAccountsSelectorExpanded, _local, "IsAccountsSelectorExpanded", value);
         }
 
         private int[] _accountsSelectorOrder;
@@ -616,324 +427,120 @@ namespace Unigram.Services
         private static bool? _isAllAccountsNotifications;
         public bool IsAllAccountsNotifications
         {
-            get
-            {
-                if (_isAllAccountsNotifications == null)
-                {
-                    _isAllAccountsNotifications = GetValueOrDefault(_local, "IsAllAccountsNotifications", true);
-                }
-
-                return _isAllAccountsNotifications ?? true;
-            }
-            set
-            {
-                _isAllAccountsNotifications = value;
-                AddOrUpdateValue(_local, "IsAllAccountsNotifications", value);
-            }
+            get => _isAllAccountsNotifications ??= GetValueOrDefault(_local, "IsAllAccountsNotifications", true);
+            set => AddOrUpdateValue(ref _isAllAccountsNotifications, _local, "IsAllAccountsNotifications", value);
         }
 
         private static bool? _isLeftTabsEnabled;
         public bool IsLeftTabsEnabled
         {
-            get
-            {
-                if (_isLeftTabsEnabled == null)
-                {
-                    _isLeftTabsEnabled = GetValueOrDefault(_local, "IsLeftTabsEnabled", false);
-                }
-
-                return _isLeftTabsEnabled ?? false;
-            }
-            set
-            {
-                _isLeftTabsEnabled = value;
-                AddOrUpdateValue(_local, "IsLeftTabsEnabled", value);
-            }
+            get => _isLeftTabsEnabled ??= GetValueOrDefault(_local, "IsLeftTabsEnabled", false);
+            set => AddOrUpdateValue(ref _isLeftTabsEnabled, _local, "IsLeftTabsEnabled", value);
         }
 
         private static bool? _fullScreenGallery;
         public bool FullScreenGallery
         {
-            get
-            {
-                if (_fullScreenGallery == null)
-                {
-                    _fullScreenGallery = GetValueOrDefault(_local, "FullScreenGallery", false);
-                }
-
-                return _fullScreenGallery ?? false;
-            }
-            set
-            {
-                _fullScreenGallery = value;
-                AddOrUpdateValue(_local, "FullScreenGallery", value);
-            }
+            get => _fullScreenGallery ??= GetValueOrDefault(_local, "FullScreenGallery", false);
+            set => AddOrUpdateValue(ref _fullScreenGallery, _local, "FullScreenGallery", value);
         }
 
         private static bool? _disableHighlightWords;
         public bool DisableHighlightWords
         {
-            get
-            {
-                if (_disableHighlightWords == null)
-                {
-                    _disableHighlightWords = GetValueOrDefault(_local, "DisableHighlightWords", false);
-                }
-
-                return _disableHighlightWords ?? false;
-            }
-            set
-            {
-                _disableHighlightWords = value;
-                AddOrUpdateValue(_local, "DisableHighlightWords", value);
-            }
+            get => _disableHighlightWords ??= GetValueOrDefault(_local, "DisableHighlightWords", false);
+            set => AddOrUpdateValue(ref _disableHighlightWords, _local, "DisableHighlightWords", value);
         }
 
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {
-            get
-            {
-                if (_isSendByEnterEnabled == null)
-                {
-                    _isSendByEnterEnabled = GetValueOrDefault("IsSendByEnterEnabled", true);
-                }
-
-                return _isSendByEnterEnabled ?? true;
-            }
-            set
-            {
-                _isSendByEnterEnabled = value;
-                AddOrUpdateValue("IsSendByEnterEnabled", value);
-            }
+            get => _isSendByEnterEnabled ??= GetValueOrDefault("IsSendByEnterEnabled", true);
+            set => AddOrUpdateValue(ref _isSendByEnterEnabled, "IsSendByEnterEnabled", value);
         }
 
         private bool? _isTextFormattingVisible;
         public bool IsTextFormattingVisible
         {
-            get
-            {
-                if (_isTextFormattingVisible == null)
-                {
-                    _isTextFormattingVisible = GetValueOrDefault("IsTextFormattingVisible", false);
-                }
-
-                return _isTextFormattingVisible ?? false;
-            }
-            set
-            {
-                _isTextFormattingVisible = value;
-                AddOrUpdateValue("IsTextFormattingVisible", value);
-            }
+            get => _isTextFormattingVisible ??= GetValueOrDefault("IsTextFormattingVisible", false);
+            set => AddOrUpdateValue(ref _isTextFormattingVisible, "IsTextFormattingVisible", value);
         }
 
         private bool? _isReplaceEmojiEnabled;
         public bool IsReplaceEmojiEnabled
         {
-            get
-            {
-                if (_isReplaceEmojiEnabled == null)
-                {
-                    _isReplaceEmojiEnabled = GetValueOrDefault("IsReplaceEmojiEnabled", true);
-                }
-
-                return _isReplaceEmojiEnabled ?? true;
-            }
-            set
-            {
-                _isReplaceEmojiEnabled = value;
-                AddOrUpdateValue("IsReplaceEmojiEnabled", value);
-            }
+            get => _isReplaceEmojiEnabled ??= GetValueOrDefault("IsReplaceEmojiEnabled", true);
+            set => AddOrUpdateValue(ref _isReplaceEmojiEnabled, "IsReplaceEmojiEnabled", value);
         }
 
         private static bool? _isLargeEmojiEnabled;
         public bool IsLargeEmojiEnabled
         {
-            get
-            {
-                if (_isLargeEmojiEnabled == null)
-                {
-                    _isLargeEmojiEnabled = GetValueOrDefault(_local, "IsLargeEmojiEnabled", true);
-                }
-
-                return _isLargeEmojiEnabled ?? true;
-            }
-            set
-            {
-                _isLargeEmojiEnabled = value;
-                AddOrUpdateValue(_local, "IsLargeEmojiEnabled", value);
-            }
+            get => _isLargeEmojiEnabled ??= GetValueOrDefault(_local, "IsLargeEmojiEnabled", true);
+            set => AddOrUpdateValue(ref _isLargeEmojiEnabled, _local, "IsLargeEmojiEnabled", value);
         }
 
         private bool? _isContactsSyncEnabled;
         public bool IsContactsSyncEnabled
         {
-            get
-            {
-                if (_isContactsSyncEnabled == null)
-                {
-                    _isContactsSyncEnabled = GetValueOrDefault("IsContactsSyncEnabled", true);
-                }
-
-                return _isContactsSyncEnabled ?? true;
-            }
-            set
-            {
-                _isContactsSyncEnabled = value;
-                AddOrUpdateValue("IsContactsSyncEnabled", value);
-            }
+            get => _isContactsSyncEnabled ??= GetValueOrDefault("IsContactsSyncEnabled", true);
+            set => AddOrUpdateValue(ref _isContactsSyncEnabled, "IsContactsSyncEnabled", value);
         }
 
         private bool? _isContactsSyncRequested;
         public bool IsContactsSyncRequested
         {
-            get
-            {
-                if (_isContactsSyncRequested == null)
-                {
-                    _isContactsSyncRequested = GetValueOrDefault("IsContactsSyncRequested", false);
-                }
-
-                return _isContactsSyncRequested ?? false;
-            }
-            set
-            {
-                _isContactsSyncRequested = value;
-                AddOrUpdateValue("IsContactsSyncRequested", value);
-            }
+            get => _isContactsSyncRequested ??= GetValueOrDefault("IsContactsSyncRequested", false);
+            set => AddOrUpdateValue(ref _isContactsSyncRequested, "IsContactsSyncRequested", value);
         }
 
         private bool? _isContactsSortedByEpoch;
         public bool IsContactsSortedByEpoch
         {
-            get
-            {
-                if (_isContactsSortedByEpoch == null)
-                {
-                    _isContactsSortedByEpoch = GetValueOrDefault("IsContactsSortedByEpoch", true);
-                }
-
-                return _isContactsSortedByEpoch ?? true;
-            }
-            set
-            {
-                _isContactsSortedByEpoch = value;
-                AddOrUpdateValue("IsContactsSortedByEpoch", value);
-            }
+            get => _isContactsSortedByEpoch ??= GetValueOrDefault("IsContactsSortedByEpoch", true);
+            set => AddOrUpdateValue(ref _isContactsSortedByEpoch, "IsContactsSortedByEpoch", value);
         }
 
         private bool? _isSecretPreviewsEnabled;
         public bool IsSecretPreviewsEnabled
         {
-            get
-            {
-                if (_isSecretPreviewsEnabled == null)
-                {
-                    _isSecretPreviewsEnabled = GetValueOrDefault("IsSecretPreviewsEnabled", false);
-                }
-
-                return _isSecretPreviewsEnabled ?? true;
-            }
-            set
-            {
-                _isSecretPreviewsEnabled = value;
-                AddOrUpdateValue("IsSecretPreviewsEnabled", value);
-            }
+            get => _isSecretPreviewsEnabled ??= GetValueOrDefault("IsSecretPreviewsEnabled", false);
+            set => AddOrUpdateValue(ref _isSecretPreviewsEnabled, "IsSecretPreviewsEnabled", value);
         }
 
         private bool? _isAutoPlayEnabled;
         public bool IsAutoPlayAnimationsEnabled
         {
-            get
-            {
-                if (_isAutoPlayEnabled == null)
-                {
-                    _isAutoPlayEnabled = GetValueOrDefault("IsAutoPlayEnabled", true);
-                }
-
-                return _isAutoPlayEnabled ?? true;
-            }
-            set
-            {
-                _isAutoPlayEnabled = value;
-                AddOrUpdateValue("IsAutoPlayEnabled", value);
-            }
+            get => _isAutoPlayEnabled ??= GetValueOrDefault("IsAutoPlayEnabled", true);
+            set => AddOrUpdateValue(ref _isAutoPlayEnabled, "IsAutoPlayEnabled", value);
         }
 
         private bool? _isAutoPlayVideosEnabled;
         public bool IsAutoPlayVideosEnabled
         {
-            get
-            {
-                if (_isAutoPlayVideosEnabled == null)
-                {
-                    _isAutoPlayVideosEnabled = GetValueOrDefault("IsAutoPlayVideosEnabled", true);
-                }
-
-                return _isAutoPlayVideosEnabled ?? true;
-            }
-            set
-            {
-                _isAutoPlayVideosEnabled = value;
-                AddOrUpdateValue("IsAutoPlayVideosEnabled", value);
-            }
+            get => _isAutoPlayVideosEnabled ??= GetValueOrDefault("IsAutoPlayVideosEnabled", false);
+            set => AddOrUpdateValue(ref _isAutoPlayVideosEnabled, "IsAutoPlayVideosEnabled", value);
         }
 
         private bool? _isSendGrouped;
         public bool IsSendGrouped
         {
-            get
-            {
-                if (_isSendGrouped == null)
-                {
-                    _isSendGrouped = GetValueOrDefault("IsSendGrouped", true);
-                }
-
-                return _isSendGrouped ?? true;
-            }
-            set
-            {
-                _isSendGrouped = value;
-                AddOrUpdateValue("IsSendGrouped", value);
-            }
+            get => _isSendGrouped ??= GetValueOrDefault("IsSendGrouped", true);
+            set => AddOrUpdateValue(ref _isSendGrouped, "IsSendGrouped", value);
         }
 
         private bool? _isStreamingEnabled;
         public bool IsStreamingEnabled
         {
-            get
-            {
-                if (_isStreamingEnabled == null)
-                {
-                    _isStreamingEnabled = GetValueOrDefault("IsStreamingEnabled", true);
-                }
-
-                return _isStreamingEnabled ?? true;
-            }
-            set
-            {
-                _isStreamingEnabled = value;
-                AddOrUpdateValue("IsStreamingEnabled", value);
-            }
+            get => _isStreamingEnabled ??= GetValueOrDefault("IsStreamingEnabled", true);
+            set => AddOrUpdateValue(ref _isStreamingEnabled, "IsStreamingEnabled", value);
         }
 
         private static double? _volumeLevel;
         public double VolumeLevel
         {
-            get
-            {
-                if (_volumeLevel == null)
-                {
-                    _volumeLevel = GetValueOrDefault("VolumeLevel", 1d);
-                }
-
-                return _volumeLevel ?? 1d;
-            }
-            set
-            {
-                _volumeLevel = value;
-                AddOrUpdateValue("VolumeLevel", value);
-            }
+            get => _volumeLevel ??= GetValueOrDefault("VolumeLevel", 1d);
+            set => AddOrUpdateValue(ref _volumeLevel, "VolumeLevel", value);
         }
 
         private static Vector2? _pencil;
@@ -962,153 +569,57 @@ namespace Unigram.Services
         private int? _lastMessageTtl;
         public int LastMessageTtl
         {
-            get
-            {
-                if (_lastMessageTtl == null)
-                {
-                    _lastMessageTtl = GetValueOrDefault("LastMessageTtl", 7);
-                }
-
-                return _lastMessageTtl ?? 7;
-            }
-            set
-            {
-                _lastMessageTtl = value;
-                AddOrUpdateValue("LastMessageTtl", value);
-            }
+            get => _lastMessageTtl ??= GetValueOrDefault("LastMessageTtl", 7);
+            set => AddOrUpdateValue(ref _lastMessageTtl, "LastMessageTtl", value);
         }
 
         private int? _previousSession;
         public int PreviousSession
         {
-            get
-            {
-                if (_previousSession == null)
-                {
-                    _previousSession = GetValueOrDefault(_local, "PreviousSession", 0);
-                }
-
-                return _activeSession ?? 0;
-            }
-            set
-            {
-                _previousSession = value;
-                AddOrUpdateValue(_local, "PreviousSession", value);
-            }
+            get => _previousSession ??= GetValueOrDefault(_local, "PreviousSession", 0);
+            set => AddOrUpdateValue(ref _previousSession, _local, "PreviousSession", value);
         }
 
         private int? _activeSession;
         public int ActiveSession
         {
-            get
-            {
-                if (_activeSession == null)
-                {
-                    _activeSession = GetValueOrDefault(_local, "SelectedAccount", 0);
-                }
-
-                return _activeSession ?? 0;
-            }
-            set
-            {
-                _activeSession = value;
-                AddOrUpdateValue(_local, "SelectedAccount", value);
-            }
+            get => _activeSession ??= GetValueOrDefault(_local, "SelectedAccount", 0);
+            set => AddOrUpdateValue(ref _activeSession, _local, "SelectedAccount", value);
         }
 
         private string _languagePackId;
         public string LanguagePackId
         {
-            get
-            {
-                if (_languagePackId == null)
-                {
-                    _languagePackId = GetValueOrDefault(_local, "LanguagePackId", ApplicationLanguages.Languages[0].Split('-').First());
-                }
-
-                return _languagePackId;
-            }
-            set
-            {
-                _languagePackId = value;
-                AddOrUpdateValue(_local, "LanguagePackId", value);
-            }
+            get => _languagePackId ??= GetValueOrDefault(_local, "LanguagePackId", ApplicationLanguages.Languages[0].Split('-').First());
+            set => AddOrUpdateValue(ref _languagePackId, _local, "LanguagePackId", value);
         }
 
         private string _languagePluralId;
         public string LanguagePluralId
         {
-            get
-            {
-                if (_languagePluralId == null)
-                {
-                    _languagePluralId = GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0].Split('-').First());
-                }
-
-                return _languagePluralId;
-            }
-            set
-            {
-                _languagePluralId = value;
-                AddOrUpdateValue(_local, "LanguagePluralId", value);
-            }
+            get => _languagePluralId ??= GetValueOrDefault(_local, "LanguagePluralId", ApplicationLanguages.Languages[0].Split('-').First());
+            set => AddOrUpdateValue(ref _languagePluralId, _local, "LanguagePluralId", value);
         }
 
         private string _languageShownId;
         public string LanguageShownId
         {
-            get
-            {
-                if (_languageShownId == null)
-                {
-                    _languageShownId = GetValueOrDefault<string>(_local, "LanguageShownId", null);
-                }
-
-                return _languageShownId;
-            }
-            set
-            {
-                _languageShownId = value;
-                AddOrUpdateValue(_local, "LanguageShownId", value);
-            }
+            get => _languageShownId ??= GetValueOrDefault<string>(_local, "LanguageShownId", null);
+            set => AddOrUpdateValue(ref _languageShownId, _local, "LanguageShownId", value);
         }
 
         private string _pushToken;
         public string PushToken
         {
-            get
-            {
-                if (_pushToken == null)
-                {
-                    _pushToken = GetValueOrDefault<string>("ChannelUri", null);
-                }
-
-                return _pushToken;
-            }
-            set
-            {
-                _pushToken = value;
-                AddOrUpdateValue("ChannelUri", value);
-            }
+            get => _pushToken ??= GetValueOrDefault<string>("ChannelUri", null);
+            set => AddOrUpdateValue(ref _pushToken, "ChannelUri", value);
         }
 
-        private VoipDataSaving? _useLessData;
+        private int? _useLessData;
         public VoipDataSaving UseLessData
         {
-            get
-            {
-                if (_useLessData == null)
-                {
-                    _useLessData = (VoipDataSaving)GetValueOrDefault("UseLessData", 0);
-                }
-
-                return _useLessData ?? VoipDataSaving.Never;
-            }
-            set
-            {
-                _useLessData = value;
-                AddOrUpdateValue("UseLessData", (int)value);
-            }
+            get => (VoipDataSaving)(_useLessData ??= GetValueOrDefault("UseLessData", 0));
+            set => AddOrUpdateValue(ref _useLessData, "UseLessData", (int)value);
         }
 
         public void SetChatPinnedMessage(long chatId, long messageId)

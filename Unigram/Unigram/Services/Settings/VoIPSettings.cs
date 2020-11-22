@@ -10,58 +10,22 @@
         private string _inputDevice;
         public string InputDevice
         {
-            get
-            {
-                if (_inputDevice == null)
-                {
-                    _inputDevice = GetValueOrDefault("InputDevice", "default");
-                }
-
-                return _inputDevice ?? "default";
-            }
-            set
-            {
-                _inputDevice = value;
-                AddOrUpdateValue("InputDevice", value);
-            }
+            get => _inputDevice ??= GetValueOrDefault("InputDevice", "default");
+            set => AddOrUpdateValue(ref _inputDevice, "InputDevice", value);
         }
 
         private string _outputDevice;
         public string OutputDevice
         {
-            get
-            {
-                if (_outputDevice == null)
-                {
-                    _outputDevice = GetValueOrDefault("OutputDevice", "default");
-                }
-
-                return _outputDevice ?? "default";
-            }
-            set
-            {
-                _outputDevice = value;
-                AddOrUpdateValue("OutputDevice", value);
-            }
+            get => _outputDevice ??= GetValueOrDefault("OutputDevice", "default");
+            set => AddOrUpdateValue(ref _outputDevice, "OutputDevice", value);
         }
 
         private string _videoDevice;
         public string VideoDevice
         {
-            get
-            {
-                if (_videoDevice == null)
-                {
-                    _videoDevice = GetValueOrDefault("VideoDevice", "default");
-                }
-
-                return _videoDevice ?? "default";
-            }
-            set
-            {
-                _videoDevice = value;
-                AddOrUpdateValue("VideoDevice", value);
-            }
+            get => _videoDevice ??= GetValueOrDefault("VideoDevice", "default");
+            set => AddOrUpdateValue(ref _videoDevice, "VideoDevice", value);
         }
     }
 }

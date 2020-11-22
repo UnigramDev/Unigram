@@ -14,20 +14,8 @@ namespace Unigram.Services.Settings
         private int? _repeatMode;
         public MediaPlaybackAutoRepeatMode RepeatMode
         {
-            get
-            {
-                if (_repeatMode == null)
-                {
-                    _repeatMode = GetValueOrDefault("RepeatMode", 0);
-                }
-
-                return (MediaPlaybackAutoRepeatMode)(_repeatMode ?? 0);
-            }
-            set
-            {
-                _repeatMode = (int)value;
-                AddOrUpdateValue("RepeatMode", (int)value);
-            }
+            get => (MediaPlaybackAutoRepeatMode)(_repeatMode ??= GetValueOrDefault("RepeatMode", 0));
+            set => AddOrUpdateValue(ref _repeatMode, "RepeatMode", (int)value);
         }
     }
 }

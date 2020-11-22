@@ -28,115 +28,43 @@ namespace Unigram.Services.Settings
         private int? _suggestionMode;
         public StickersSuggestionMode SuggestionMode
         {
-            get
-            {
-                if (_suggestionMode == null)
-                {
-                    _suggestionMode = GetValueOrDefault("SuggestionMode", 0);
-                }
-
-                return (StickersSuggestionMode)(_suggestionMode ?? 0);
-            }
-            set
-            {
-                _suggestionMode = (int)value;
-                AddOrUpdateValue("SuggestionMode", (int)value);
-            }
+            get => (StickersSuggestionMode)(_suggestionMode ??= GetValueOrDefault("SuggestionMode", 0));
+            set => AddOrUpdateValue(ref _suggestionMode, "SuggestionMode", (int)value);
         }
 
         private bool? _isLoopingEnabled;
         public bool IsLoopingEnabled
         {
-            get
-            {
-                if (_isLoopingEnabled == null)
-                {
-                    _isLoopingEnabled = GetValueOrDefault("IsLoopingEnabled", true);
-                }
-
-                return _isLoopingEnabled ?? true;
-            }
-            set
-            {
-                _isLoopingEnabled = value;
-                AddOrUpdateValue("IsLoopingEnabled", value);
-            }
+            get => _isLoopingEnabled ??= GetValueOrDefault("IsLoopingEnabled", true);
+            set => AddOrUpdateValue(ref _isLoopingEnabled, "IsLoopingEnabled", value);
         }
 
         private int? _selectedTab;
         public StickersTab SelectedTab
         {
-            get
-            {
-                if (_selectedTab == null)
-                {
-                    _selectedTab = GetValueOrDefault("SelectedTab", 2);
-                }
-
-                return (StickersTab)(_selectedTab ?? 2);
-            }
-            set
-            {
-                _selectedTab = (int)value;
-                AddOrUpdateValue("SelectedTab", (int)value);
-            }
+            get => (StickersTab)(_selectedTab ??= GetValueOrDefault("SelectedTab", 2));
+            set => AddOrUpdateValue(ref _selectedTab, "SelectedTab", (int)value);
         }
 
         private int? _skinTone;
         public EmojiSkinTone SkinTone
         {
-            get
-            {
-                if (_skinTone == null)
-                {
-                    _skinTone = GetValueOrDefault("SkinTone", 0);
-                }
-
-                return (EmojiSkinTone)(_skinTone ?? 0);
-            }
-            set
-            {
-                _skinTone = (int)value;
-                AddOrUpdateValue("SkinTone", (int)value);
-            }
+            get => (EmojiSkinTone)(_skinTone ??= GetValueOrDefault("SkinTone", 0));
+            set => AddOrUpdateValue(ref _skinTone, "SkinTone", (int)value);
         }
 
         private bool? _isSidebarEnabled;
         public bool IsSidebarEnabled
         {
-            get
-            {
-                if (_isSidebarEnabled == null)
-                {
-                    _isSidebarEnabled = GetValueOrDefault("IsSidebarEnabled", true);
-                }
-
-                return _isSidebarEnabled ?? true;
-            }
-            set
-            {
-                _isSidebarEnabled = value;
-                AddOrUpdateValue("IsSidebarEnabled", value);
-            }
+            get => _isSidebarEnabled ??= GetValueOrDefault("IsSidebarEnabled", true);
+            set => AddOrUpdateValue(ref _isSidebarEnabled, "IsSidebarEnabled", value);
         }
 
         private bool? _isPointerOverEnabled;
         public bool IsPointerOverEnabled
         {
-            get
-            {
-                if (_isPointerOverEnabled == null)
-                {
-                    _isPointerOverEnabled = GetValueOrDefault("IsPointerOverEnabled", true);
-                }
-
-                return _isPointerOverEnabled ?? true;
-            }
-            set
-            {
-                _isPointerOverEnabled = value;
-                AddOrUpdateValue("IsPointerOverEnabled", value);
-            }
+            get => _isPointerOverEnabled ??= GetValueOrDefault("IsPointerOverEnabled", true);
+            set => AddOrUpdateValue(ref _isPointerOverEnabled, "IsPointerOverEnabled", value);
         }
     }
 }
