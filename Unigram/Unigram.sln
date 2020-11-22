@@ -23,18 +23,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libogg", "Libraries\libogg\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libopusfile", "Libraries\libopusfile\libopusfile.vcxproj", "{6766A2C0-AB30-43CC-9EF3-7DDC13736A38}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Shared", "Unigram.Native.Shared\Unigram.Native.Shared.vcxitems", "{C50F57B3-33E1-4235-9D02-0C9F1C4176A8}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Media", "Unigram.Native.Media\Unigram.Native.Media.vcxproj", "{3ADBF08F-0550-4A1C-9794-FEA30CF69E3A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Calls", "Unigram.Native.Calls\Unigram.Native.Calls.vcxproj", "{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{1b521e77-46bd-4d60-89f6-d68e9bb9abff}*SharedItemsImports = 4
-		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{3adbf08f-0550-4a1c-9794-fea30cf69e3a}*SharedItemsImports = 4
-		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{c50f57b3-33e1-4235-9d02-0c9f1c4176a8}*SharedItemsImports = 9
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
