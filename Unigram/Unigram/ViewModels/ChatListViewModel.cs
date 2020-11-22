@@ -593,11 +593,12 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public void SetFilter(ChatList chatList)
+        public async void SetFilter(ChatList chatList)
         {
-            Aggregator.Unsubscribe(Items);
-            Items = new ItemsCollection(ProtoService, Aggregator, this, chatList);
-            RaisePropertyChanged(nameof(Items));
+            await Items.ResetAsync(chatList);
+            //Aggregator.Unsubscribe(Items);
+            //Items = new ItemsCollection(ProtoService, Aggregator, this, chatList);
+            //RaisePropertyChanged(nameof(Items));
         }
 
         public class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading,
@@ -612,12 +613,9 @@ namespace Unigram.ViewModels
 
             private readonly ChatListViewModel _viewModel;
 
-            private readonly ChatList _chatList;
+            private ChatList _chatList;
 
             private bool _hasMoreItems = true;
-
-            private long _internalChatId = 0;
-            private long _internalOrder = long.MaxValue;
 
             private long _lastChatId;
             private long _lastOrder;
@@ -640,6 +638,23 @@ namespace Unigram.ViewModels
                 _ = LoadMoreItemsAsync(0);
             }
 
+            public async Task ResetAsync(ChatList chatList)
+            {
+                using (await _loadMoreLock.WaitAsync())
+                {
+                    _aggregator.Unsubscribe(this);
+
+                    _lastChatId = 0;
+                    _lastOrder = 0;
+
+                    _chatList = chatList;
+
+                    Clear();
+                }
+
+                await LoadMoreItemsAsync();
+            }
+
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
                 return AsyncInfo.Run(token => LoadMoreItemsAsync());
@@ -660,9 +675,6 @@ namespace Unigram.ViewModels
 
                             if (chat != null && order != 0)
                             {
-                                _internalChatId = chat.Id;
-                                _internalOrder = order;
-
                                 var next = NextIndexOf(chat, order);
                                 if (next >= 0)
                                 {
@@ -758,15 +770,44 @@ namespace Unigram.ViewModels
 
             private async void UpdateChatOrder(Chat chat, long order, bool lastMessage)
             {
-                if (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId))
+                using (await _loadMoreLock.WaitAsync())
                 {
-                    using (await _loadMoreLock.WaitAsync())
+                    if (order > _lastOrder || (order == _lastOrder && chat.Id >= _lastChatId))
                     {
                         var next = NextIndexOf(chat, order);
                         if (next >= 0)
                         {
+                            await _viewModel.Dispatcher.DispatchAsync(() =>
+                            {
+                                Remove(chat);
+                                Insert(Math.Min(Count, next), chat);
+
+                                if (next == Count - 1)
+                                {
+                                    _lastChatId = chat.Id;
+                                    _lastOrder = order;
+                                }
+
+                                if (chat.Id == _viewModel._selectedItem)
+                                {
+                                    _viewModel.Delegate?.SetSelectedItem(chat);
+                                }
+                                if (_viewModel.SelectedItems.Contains(chat))
+                                {
+                                    _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
+                                }
+                            });
+                        }
+                        else if (lastMessage)
+                        {
+                            _viewModel.Dispatcher.Dispatch(() => _viewModel.Delegate?.UpdateChatLastMessage(chat));
+                        }
+                    }
+                    else if (Contains(chat))
+                    {
+                        await _viewModel.Dispatcher.DispatchAsync(() =>
+                        {
                             Remove(chat);
-                            Insert(Math.Min(Count, next), chat);
 
                             if (chat.Id == _viewModel._selectedItem)
                             {
@@ -774,35 +815,15 @@ namespace Unigram.ViewModels
                             }
                             if (_viewModel.SelectedItems.Contains(chat))
                             {
+                                _viewModel.SelectedItems.Remove(chat);
                                 _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
                             }
-                        }
-                        else if (lastMessage)
-                        {
-                            _viewModel.Delegate?.UpdateChatLastMessage(chat);
-                        }
-                    }
-                }
-                else
-                {
-                    using (await _loadMoreLock.WaitAsync())
-                    {
-                        Remove(chat);
-                    }
+                        });
 
-                    if (chat.Id == _viewModel._selectedItem)
-                    {
-                        _viewModel.Delegate?.SetSelectedItem(chat);
-                    }
-                    if (_viewModel.SelectedItems.Contains(chat))
-                    {
-                        _viewModel.SelectedItems.Remove(chat);
-                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
-                    }
-
-                    if (!_hasMoreItems)
-                    {
-                        await LoadMoreItemsAsync(0);
+                        //if (!_hasMoreItems)
+                        //{
+                        //    await LoadMoreItemsAsync(0);
+                        //}
                     }
                 }
             }
