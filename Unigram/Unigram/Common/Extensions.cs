@@ -288,10 +288,15 @@ namespace Unigram.Common
             return relativePath;
         }
 
-        public static async Task<InputFileGenerated> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null)
+        public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
             var props = await file.GetBasicPropertiesAsync();
+
+            if (conversion == ConversionType.Copy && arguments == null)
+            {
+                return new InputFileLocal(file.Path);
+            }
 
             return new InputFileGenerated(file.Path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (int)props.Size);
         }
