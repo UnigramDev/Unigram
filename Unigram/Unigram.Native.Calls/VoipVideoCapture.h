@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
 #pragma once
 
 #include "VoipVideoCapture.g.h"
@@ -24,7 +21,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SwitchToDevice(hstring deviceId);
 		void SetState(VoipVideoState state);
 		void SetPreferredAspectRatio(float aspectRatio);
-        void SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas);
+		void SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas);
 
 		void FeedBytes(winrt::Windows::Graphics::Imaging::SoftwareBitmap bitmap);
 

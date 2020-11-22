@@ -1,11 +1,6 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
-// clang-format off
 #include "pch.h"
 #include "SignalingDataEmittedEventArgs.h"
 #include "SignalingDataEmittedEventArgs.g.cpp"
-// clang-format on
 
 using namespace winrt::Windows::Foundation::Collections;
 

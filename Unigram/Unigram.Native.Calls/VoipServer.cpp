@@ -1,14 +1,8 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
-// clang-format off
 #include "pch.h"
 #include "VoipServer.h"
 #include "VoipServer.g.cpp"
-// clang-format on
 
 #include <stddef.h>
-
 #include <memory>
 
 #include "api/media_stream_interface.h"
@@ -38,48 +32,48 @@
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-    VoipServer::VoipServer()
-    {
-    }
+	VoipServer::VoipServer()
+	{
+	}
 
-    hstring VoipServer::Host() {
-        return m_host;
-    }
+	hstring VoipServer::Host() {
+		return m_host;
+	}
 
-    void VoipServer::Host(hstring value) {
-        m_host = value;
-    }
+	void VoipServer::Host(hstring value) {
+		m_host = value;
+	}
 
-    uint16_t VoipServer::Port() {
-        return m_port;
-    }
+	uint16_t VoipServer::Port() {
+		return m_port;
+	}
 
-    void VoipServer::Port(uint16_t value) {
-        m_port = value;
-    }
+	void VoipServer::Port(uint16_t value) {
+		m_port = value;
+	}
 
-    hstring VoipServer::Login() {
-        return m_login;
-    }
+	hstring VoipServer::Login() {
+		return m_login;
+	}
 
-    void VoipServer::Login(hstring value) {
-        m_login = value;
-    }
+	void VoipServer::Login(hstring value) {
+		m_login = value;
+	}
 
-    hstring VoipServer::Password() {
-        return m_password;
-    }
+	hstring VoipServer::Password() {
+		return m_password;
+	}
 
-    void VoipServer::Password(hstring value) {
-        m_password = value;
-    }
+	void VoipServer::Password(hstring value) {
+		m_password = value;
+	}
 
-    bool VoipServer::IsTurn() {
-        return m_isTurn;
-    }
+	bool VoipServer::IsTurn() {
+		return m_isTurn;
+	}
 
-    void VoipServer::IsTurn(bool value) {
-        m_isTurn = value;
-    }
+	void VoipServer::IsTurn(bool value) {
+		m_isTurn = value;
+	}
 
 } // namespace winrt::Unigram::Native::Calls::implementation

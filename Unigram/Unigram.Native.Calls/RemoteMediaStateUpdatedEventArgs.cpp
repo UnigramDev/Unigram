@@ -1,11 +1,6 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
-// clang-format off
 #include "pch.h"
 #include "RemoteMediaStateUpdatedEventArgs.h"
 #include "RemoteMediaStateUpdatedEventArgs.g.cpp"
-// clang-format on
 
 using namespace winrt::Windows::Foundation::Collections;
 

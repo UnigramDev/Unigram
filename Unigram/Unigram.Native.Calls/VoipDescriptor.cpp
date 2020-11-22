@@ -1,17 +1,12 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
-// clang-format off
 #include "pch.h"
 #include "VoipDescriptor.h"
 #include "VoipDescriptor.g.cpp"
-// clang-format on
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-    VoipDescriptor::VoipDescriptor()
-    {
-    }
+	VoipDescriptor::VoipDescriptor()
+	{
+	}
 
 	double VoipDescriptor::InitializationTimeout() {
 		return m_initializationTimeout;

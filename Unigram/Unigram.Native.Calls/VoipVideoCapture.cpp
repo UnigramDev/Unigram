@@ -1,13 +1,8 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
-// clang-format off
 #include "pch.h"
 #include "VoipVideoCapture.h"
 #include "VoipVideoCapture.g.cpp"
 
 #include "winrt/Windows.Graphics.Imaging.h"
-// clang-format on
 
 struct __declspec(uuid("5b0d3235-4dba-4d44-865e-8f1d0e4fd04d")) __declspec(novtable) IMemoryBufferByteAccess : ::IUnknown
 {

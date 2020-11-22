@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
 #pragma once
 
 #include "VoipDescriptor.g.h"

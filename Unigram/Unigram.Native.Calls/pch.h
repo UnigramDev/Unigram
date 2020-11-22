@@ -1,7 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
-
-#pragma once
+﻿#pragma once
 
 // abseil is using some C++ features that were deprecated in C++17.
 // Since we build with warning as errors. The following preprocessor
