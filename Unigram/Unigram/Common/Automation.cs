@@ -127,7 +127,7 @@ namespace Unigram.Common
             return builder.ToString();
         }
 
-        public static string GetSummary(IProtoService protoService, Message message)
+        public static string GetSummary(IProtoService protoService, Message message, bool details = false)
         {
             if (message.IsService())
             {
@@ -198,7 +198,13 @@ namespace Unigram.Common
             }
             else if (message.Content is MessageAnimation animation)
             {
-                return Strings.Resources.AttachGif + GetCaption(animation.Caption.Text) + ", ";
+                var result = Strings.Resources.AttachGif + GetCaption(animation.Caption.Text) + ", ";
+                if (details)
+                {
+                    result += FileSizeConverter.Convert(animation.Animation.AnimationValue.Size) + ", ";
+                }
+
+                return result;
             }
             else if (message.Content is MessageAudio audio)
             {
@@ -216,12 +222,19 @@ namespace Unigram.Common
             }
             else if (message.Content is MessageDocument document)
             {
+                string result;
                 if (string.IsNullOrEmpty(document.Document.FileName))
                 {
-                    return Strings.Resources.AttachDocument + GetCaption(document.Caption.Text) + ", ";
+                    result = Strings.Resources.AttachDocument + GetCaption(document.Caption.Text) + ", ";
                 }
 
-                return document.Document.FileName + GetCaption(document.Caption.Text) + ", ";
+                result = document.Document.FileName + GetCaption(document.Caption.Text) + ", ";
+                if (details)
+                {
+                    result += FileSizeConverter.Convert(document.Document.DocumentValue.Size) + ", ";
+                }
+
+                return result;
             }
             else if (message.Content is MessageInvoice invoice)
             {
