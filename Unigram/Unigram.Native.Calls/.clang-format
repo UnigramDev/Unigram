@@ -1,7 +1,0 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT license.
-
-Language: Cpp
-BasedOnStyle: Microsoft
-IndentWidth: 2
-AlwaysBreakAfterReturnType: AllDefinitions

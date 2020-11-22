@@ -195,7 +195,7 @@ namespace winrt::Unigram::Native::Calls::implementation
     }
 
     //void SetIncomingVideoOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
-    void VoipManager::SetIncomingVideoOutput(Windows::UI::Xaml::UIElement canvas) {
+    void VoipManager::SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas) {
         if (m_impl) {
             if (canvas != nullptr) {
                 //m_renderer = std::make_shared<VoipVideoRenderer>(canvas);

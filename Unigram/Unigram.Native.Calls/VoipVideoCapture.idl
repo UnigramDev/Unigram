@@ -10,7 +10,7 @@ namespace Unigram.Native.Calls
         void SwitchToDevice(String deviceId);
         void SetState(VoipVideoState state);
         void SetPreferredAspectRatio(Single aspectRatio);
-        void SetOutput(Windows.UI.Xaml.UIElement canvas);
+        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
 
         void FeedBytes(Windows.Graphics.Imaging.SoftwareBitmap bitmap);
     }

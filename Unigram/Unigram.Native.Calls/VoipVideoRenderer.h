@@ -31,67 +31,77 @@
 #include "media/base/video_broadcaster.h"
 #include "rtc_base/critical_section.h"
 
+#include <winrt/Microsoft.Graphics.Canvas.h>
+
+#include <Microsoft.Graphics.Canvas.h>
+#include <Microsoft.Graphics.Canvas.native.h>
+
+using namespace winrt::Microsoft::Graphics::Canvas;
+using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
+
 struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 {
-    const winrt::Windows::UI::Core::CoreDispatcher _uiThread;
+    bool m_disposed{ false };
+    bool m_readyToDraw;
 
-    VoipVideoRenderer(winrt::Windows::UI::Xaml::UIElement canvas) : _uiThread(canvas.Dispatcher()) {
-        VoipVideoRendererAsync(canvas);
+    winrt::event_token m_eventToken;
+
+    CanvasControl m_canvasControl{ nullptr };
+    CanvasBitmap m_canvasBitmap{ nullptr };
+
+    VoipVideoRenderer(CanvasControl canvas) {
+        m_canvasControl = canvas;
+        m_readyToDraw = canvas.ReadyToDraw();
+
+        m_eventToken = canvas.Draw([this](const CanvasControl sender, CanvasDrawEventArgs const args) {
+            m_readyToDraw = true;
+
+            if (m_canvasBitmap != nullptr) {
+                float width = m_canvasBitmap.SizeInPixels().Width;
+                float height = m_canvasBitmap.SizeInPixels().Height;
+                float x = 0;
+                float y = 0;
+
+                float ratioX = sender.Size().Width / width;
+                float ratioY = sender.Size().Height / height;
+
+                if (ratioX < ratioY)
+                {
+                    width = sender.Size().Width;
+                    height *= ratioX;
+                    y = (sender.Size().Height - height) / 2;
+                }
+                else
+                {
+                    width *= ratioY;
+                    height = sender.Size().Height;
+                    x = (sender.Size().Width - width) / 2;
+                }
+
+                args.DrawingSession().DrawImage(m_canvasBitmap, winrt::Windows::Foundation::Rect(x, y, width, height));
+            }
+        });
     }
 
     ~VoipVideoRenderer() {
         m_disposed = true;
 
-        _canvasDevice = nullptr;
-        _surface = nullptr;
+        m_canvasControl.Draw(m_eventToken);
+        m_canvasControl = nullptr;
+
+        if (m_canvasBitmap != nullptr)
+        {
+            m_canvasBitmap.Close();
+            m_canvasBitmap = nullptr;
+        }
     }
 
-    bool m_disposed{ false };
-
-    winrt::Microsoft::Graphics::Canvas::CanvasDevice _canvasDevice;
-    winrt::Windows::UI::Composition::CompositionDrawingSurface _surface{ nullptr };
-
-    winrt::Windows::Foundation::IAsyncAction
-        VoipVideoRendererAsync(winrt::Windows::UI::Xaml::UIElement canvas)
+    void OnFrame(const webrtc::VideoFrame& frame) override
     {
-        co_await winrt::resume_foreground(_uiThread);
-
-        if (m_disposed) {
-            co_return;
+        if (m_disposed || !m_readyToDraw) {
+            return;
         }
 
-        winrt::Windows::UI::Composition::Compositor compositor = winrt::Windows::UI::Xaml::Window::Current().Compositor();
-
-        co_await winrt::resume_background();
-
-        if (m_disposed) {
-            co_return;
-        }
-
-        winrt::Windows::UI::Composition::CompositionGraphicsDevice compositionGraphicsDevice =
-            winrt::Microsoft::Graphics::Canvas::UI::Composition::CanvasComposition::CreateCompositionGraphicsDevice(
-                compositor, _canvasDevice);
-        _surface = compositionGraphicsDevice.CreateDrawingSurface(
-            { 0, 0 }, winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized,
-            winrt::Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
-
-        winrt::Windows::UI::Composition::CompositionSurfaceBrush brush = compositor.CreateSurfaceBrush(_surface);
-        brush.HorizontalAlignmentRatio(.5);
-        brush.VerticalAlignmentRatio(.5);
-        brush.Stretch(winrt::Windows::UI::Composition::CompositionStretch::Uniform);
-
-        winrt::Windows::UI::Composition::SpriteVisual visual = compositor.CreateSpriteVisual();
-        visual.Brush(brush);
-        visual.RelativeSizeAdjustment(winrt::Windows::Foundation::Numerics::float2::one());
-
-        co_await winrt::resume_foreground(_uiThread);
-
-        winrt::Windows::UI::Xaml::Hosting::ElementCompositionPreview::SetElementChildVisual(canvas, visual);
-    }
-
-    void
-        OnFrame(const webrtc::VideoFrame& frame) override
-    {
         rtc::scoped_refptr<webrtc::I420BufferInterface> buffer(frame.video_frame_buffer()->ToI420());
 
         webrtc::VideoRotation rotation = frame.rotation();
@@ -110,36 +120,21 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
         libyuv::I420ToARGB(buffer->DataY(), buffer->StrideY(), buffer->DataU(), buffer->StrideU(), buffer->DataV(),
             buffer->StrideV(), data.get(), width * bits / 8, width, height);
 
-        PaintFrameAsync(std::move(data), size, width, height);
-    }
-
-    winrt::Windows::Foundation::IAsyncAction PaintFrameAsync(std::unique_ptr<uint8_t[]> data, size_t length, int32_t width, int32_t height)
-    {
-        if (m_disposed) {
-            return;
-        }
-
         auto raw = data.get();
-        auto view = winrt::array_view<uint8_t const>(raw, raw + length);
-        auto bitmap = winrt::Microsoft::Graphics::Canvas::CanvasBitmap::CreateFromBytes(
-            _canvasDevice, view, width, height,
-            winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized);
 
-        if (_surface.Size() != bitmap.Size())
-            winrt::Microsoft::Graphics::Canvas::UI::Composition::CanvasComposition::Resize(_surface, bitmap.Size());
-
-        co_await winrt::resume_foreground(_uiThread);
-
-        if (m_disposed) {
-            co_return;
-        }
-
-        winrt::Microsoft::Graphics::Canvas::CanvasDrawingSession drawingSession =
-            winrt::Microsoft::Graphics::Canvas::UI::Composition::CanvasComposition::CreateDrawingSession(_surface);
+        if (m_canvasBitmap == nullptr || m_canvasBitmap.SizeInPixels().Width != width || m_canvasBitmap.SizeInPixels().Height != height)
         {
-            drawingSession.Clear(winrt::Windows::UI::Colors::Transparent());
-            drawingSession.DrawImage(bitmap);
+            auto view = winrt::array_view<uint8_t const>(raw, raw + size);
+            m_canvasBitmap = winrt::Microsoft::Graphics::Canvas::CanvasBitmap::CreateFromBytes(
+                m_canvasControl.Device(), view, width, height,
+                winrt::Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized);
         }
-        drawingSession.Close();
+        else
+        {
+            auto bitmapAbi = m_canvasBitmap.as<ABI::Microsoft::Graphics::Canvas::ICanvasBitmap>();
+            bitmapAbi->SetPixelBytes(size, (BYTE *)raw);
+        }
+
+        m_canvasControl.Invalidate();
     }
 };

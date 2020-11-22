@@ -24,7 +24,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SwitchToDevice(hstring deviceId);
 		void SetState(VoipVideoState state);
 		void SetPreferredAspectRatio(float aspectRatio);
-		void SetOutput(Windows::UI::Xaml::UIElement canvas);
+        void SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas);
 
 		void FeedBytes(winrt::Windows::Graphics::Imaging::SoftwareBitmap bitmap);
 

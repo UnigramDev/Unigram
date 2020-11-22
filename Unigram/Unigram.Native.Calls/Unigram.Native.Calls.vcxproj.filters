@@ -154,7 +154,6 @@
     <Midl Include="VoipManager.idl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".clang-format" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
     <None Include="VoipManager.def" />

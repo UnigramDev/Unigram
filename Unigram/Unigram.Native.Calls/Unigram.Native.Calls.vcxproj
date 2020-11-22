@@ -312,7 +312,6 @@
     <Midl Include="VoipVideoCapture.idl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".clang-format" />
     <None Include="VoipManager.def" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />

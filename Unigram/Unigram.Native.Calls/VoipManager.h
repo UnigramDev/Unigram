@@ -37,7 +37,7 @@ struct VoipManager : VoipManagerT<VoipManager>
   void SetEchoCancellationStrength(int strength);
 
   bool SupportsVideo();
-  void SetIncomingVideoOutput(Windows::UI::Xaml::UIElement canvas);
+  void SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas);
 
   void SetAudioInputDevice(hstring id);
   void SetAudioOutputDevice(hstring id);

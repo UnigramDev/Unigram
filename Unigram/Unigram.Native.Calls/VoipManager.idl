@@ -19,7 +19,7 @@ namespace Unigram.Native.Calls
         void SetEchoCancellationStrength(Int32 strength);
 
         Boolean SupportsVideo{ get; };
-        void SetIncomingVideoOutput(Windows.UI.Xaml.UIElement canvas);
+        void SetIncomingVideoOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
 
         void SetAudioInputDevice(String id);
         void SetAudioOutputDevice(String id);
