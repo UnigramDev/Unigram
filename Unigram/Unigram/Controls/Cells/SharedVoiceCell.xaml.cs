@@ -81,7 +81,7 @@ namespace Unigram.Controls.Cells
             this.BeginOnUIThread(() => UpdateFile(_message, voiceNote.Voice));
         }
 
-        private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
+        private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
             var voiceNote = GetContent(_message?.Content);
             if (voiceNote == null)
@@ -92,7 +92,7 @@ namespace Unigram.Controls.Cells
             this.BeginOnUIThread(() => UpdateFile(_message, voiceNote.Voice));
         }
 
-        private void OnPositionChanged(MediaPlaybackSession sender, object args)
+        private void OnPositionChanged(IPlaybackService sender, object args)
         {
             this.BeginOnUIThread(UpdatePosition);
         }

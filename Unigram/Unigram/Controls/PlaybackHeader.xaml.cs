@@ -69,7 +69,7 @@ namespace Unigram.Controls
             UpdateRate();
         }
 
-        private void OnMediaFailed(MediaPlaybackSession sender, MediaPlayerFailedEventArgs args)
+        private void OnMediaFailed(IPlaybackService sender, MediaPlayerFailedEventArgs args)
         {
             if (args.Error != MediaPlayerError.SourceNotSupported)
             {
@@ -93,12 +93,12 @@ namespace Unigram.Controls
             this.BeginOnUIThread(UpdateGlyph);
         }
 
-        private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
+        private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
             this.BeginOnUIThread(UpdateGlyph);
         }
 
-        private void OnPositionChanged(MediaPlaybackSession sender, object args)
+        private void OnPositionChanged(IPlaybackService sender, object args)
         {
             this.BeginOnUIThread(UpdatePosition);
         }
@@ -240,6 +240,8 @@ namespace Unigram.Controls
 
                 ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
             }
+
+            UpdatePosition();
         }
 
         private void UpdateText(long chatId, long messageId, string title, string subtitle)
@@ -325,7 +327,7 @@ namespace Unigram.Controls
         {
             if (_playbackService.Position.TotalSeconds > 5)
             {
-                _playbackService.SetPosition(TimeSpan.Zero);
+                _playbackService.Seek(TimeSpan.Zero);
             }
             else
             {
@@ -420,7 +422,7 @@ namespace Unigram.Controls
 
         private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _playbackService?.SetPosition(TimeSpan.FromSeconds(Slider.Value));
+            _playbackService?.Seek(TimeSpan.FromSeconds(Slider.Value));
             _scrubbing = false;
         }
 
