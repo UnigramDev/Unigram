@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
-using Unigram.Native;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
 using Windows.Graphics.Imaging;
