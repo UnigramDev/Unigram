@@ -70,8 +70,8 @@ namespace Unigram.Common
             if (value)
             {
                 var flyoutItem = new MenuFlyoutItem();
-                flyoutItem.Command = command;
                 flyoutItem.CommandParameter = parameter;
+                flyoutItem.Command = command;
                 flyoutItem.Text = text;
 
                 if (icon != null)
