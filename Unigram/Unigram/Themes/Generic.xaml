@@ -2070,7 +2070,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProgressBarRing">
                     <Grid Background="{TemplateBinding Background}" CornerRadius="24">
-                        <local:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" InnerRadius="20" Radius="22" StartAngle="0" EndAngle="0">
+                        <local:ProgressBarRingSlice x:Name="Indicator" x:Load="False" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" InnerRadius="20" Radius="22" StartAngle="0" EndAngle="0">
                             <Path.RenderTransform>
                                 <RotateTransform x:Name="Rotation" CenterX="22" CenterY="22" Angle="0"/>
                             </Path.RenderTransform>
