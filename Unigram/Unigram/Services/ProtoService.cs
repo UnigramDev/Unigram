@@ -629,9 +629,16 @@ namespace Unigram.Services
             {
                 try
                 {
-                    if (_filesFolder == null && _settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                    if (_filesFolder == null)
                     {
-                        _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                        if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                        {
+                            _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                        }
+                        else
+                        {
+                            return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                        }
                     }
 
                     var relative = System.IO.Path.GetRelativePath(_filesFolder.Path, file.Local.Path);
