@@ -637,7 +637,13 @@ namespace Unigram.Services
                         }
                         else
                         {
-                            return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                            var local = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path);
+                            if (local.StartsWith('.'))
+                            {
+                                return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                            }
+
+                            return await ApplicationData.Current.LocalFolder.GetFileAsync(local);
                         }
                     }
 
@@ -649,7 +655,7 @@ namespace Unigram.Services
 
                     return await _filesFolder.GetFileAsync(relative);
                 }
-                catch
+                catch (System.IO.FileNotFoundException)
                 {
                     Send(new DeleteFileW(file.Id));
                 }
@@ -664,9 +670,22 @@ namespace Unigram.Services
         {
             try
             {
-                if (_filesFolder == null && _settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                if (_filesFolder == null)
                 {
-                    _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                    if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                    {
+                        _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                    }
+                    else
+                    {
+                        var local = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, path);
+                        if (local.StartsWith('.'))
+                        {
+                            return await StorageFile.GetFileFromPathAsync(path);
+                        }
+
+                        return await ApplicationData.Current.LocalFolder.GetFileAsync(local);
+                    }
                 }
 
                 var relative = System.IO.Path.GetRelativePath(_filesFolder.Path, path);
