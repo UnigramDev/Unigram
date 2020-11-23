@@ -116,6 +116,9 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 			bitmapAbi->SetPixelBytes(size, (BYTE*)raw);
 		}
 
-		m_canvasControl.Invalidate();
+		if (m_canvasControl)
+		{
+			m_canvasControl.Invalidate();
+		}
 	}
 };
