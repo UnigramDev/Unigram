@@ -30,7 +30,7 @@ namespace Unigram.Services
         void Send(Function function, Action<BaseObject> handler = null);
         Task<BaseObject> SendAsync(Function function);
 
-        Task<StorageFile> GetFileAsync(File file);
+        Task<StorageFile> GetFileAsync(File file, bool completed = true);
         Task<StorageFile> GetFileAsync(string path);
 
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
@@ -623,9 +623,9 @@ namespace Unigram.Services
 
         private StorageFolder _filesFolder;
 
-        public async Task<StorageFile> GetFileAsync(File file)
+        public async Task<StorageFile> GetFileAsync(File file, bool completed = true)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (file.Local.IsDownloadingCompleted || !completed)
             {
                 try
                 {
