@@ -127,6 +127,7 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            _shouldPlay = false;
             IsUnloaded = true;
 
             Subscribe(false);

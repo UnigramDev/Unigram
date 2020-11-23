@@ -107,6 +107,7 @@ namespace Unigram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            _shouldPlay = false;
             _unloaded = true;
             Subscribe(false);
 
@@ -350,7 +351,7 @@ namespace Unigram.Controls
                 Subscribe(true);
                 //canvas.Paused = false;
             }
-            else
+            else if (!_unloaded)
             {
                 Subscribe(false);
 
