@@ -294,7 +294,7 @@ namespace Unigram.Services
             {
                 try
                 {
-                    var file = await StorageFile.GetFileFromPathAsync(item.File.Local.Path);
+                    var file = await _protoService.GetFileAsync(item.File);
                     await _transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, file);
                 }
                 catch

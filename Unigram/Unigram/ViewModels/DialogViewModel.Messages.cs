@@ -654,17 +654,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (big.Photo.Local.IsDownloadingCompleted)
+            var temp = await ProtoService.GetFileAsync(big.Photo);
+            if (temp != null)
             {
-                try
-                {
-                    var temp = await StorageFile.GetFileFromPathAsync(big.Photo.Local.Path);
-
-                    var dataPackage = new DataPackage();
-                    dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(temp));
-                    ClipboardEx.TrySetContent(dataPackage);
-                }
-                catch { }
+                var dataPackage = new DataPackage();
+                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(temp));
+                ClipboardEx.TrySetContent(dataPackage);
             }
         }
 

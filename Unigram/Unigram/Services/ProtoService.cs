@@ -31,6 +31,7 @@ namespace Unigram.Services
         Task<BaseObject> SendAsync(Function function);
 
         Task<StorageFile> GetFileAsync(File file);
+        Task<StorageFile> GetFileAsync(string path);
 
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
         void CancelDownloadFile(int fileId, bool onlyIfPending = false);
@@ -620,13 +621,26 @@ namespace Unigram.Services
 
         private readonly ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
 
+        private StorageFolder _filesFolder;
+
         public async Task<StorageFile> GetFileAsync(File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
                 try
                 {
-                    return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    if (_filesFolder == null && _settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                    {
+                        _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                    }
+
+                    var relative = System.IO.Path.GetRelativePath(_filesFolder.Path, file.Local.Path);
+                    if (relative.StartsWith('.'))
+                    {
+                        return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    }
+
+                    return await _filesFolder.GetFileAsync(relative);
                 }
                 catch
                 {
@@ -635,6 +649,28 @@ namespace Unigram.Services
 
                 return null;
             }
+
+            return null;
+        }
+
+        public async Task<StorageFile> GetFileAsync(string path)
+        {
+            try
+            {
+                if (_filesFolder == null && _settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                {
+                    _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                }
+
+                var relative = System.IO.Path.GetRelativePath(_filesFolder.Path, path);
+                if (relative.StartsWith('.'))
+                {
+                    return await StorageFile.GetFileFromPathAsync(path);
+                }
+
+                return await _filesFolder.GetFileAsync(relative);
+            }
+            catch { }
 
             return null;
         }

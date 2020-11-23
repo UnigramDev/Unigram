@@ -228,18 +228,17 @@ namespace Unigram.ViewModels.Gallery
             }
 
             var file = item.GetFile();
-
-            if (file.Local.IsDownloadingCompleted)
+            if (file == null)
             {
-                try
-                {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                return;
+            }
 
-                    var dataPackage = new DataPackage();
-                    dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(temp));
-                    ClipboardEx.TrySetContent(dataPackage);
-                }
-                catch { }
+            var temp = await ProtoService.GetFileAsync(file);
+            if (temp != null)
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(temp));
+                ClipboardEx.TrySetContent(dataPackage);
             }
         }
 

@@ -111,7 +111,7 @@ namespace Unigram.Services
 
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.ExpectContinue = false;
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await _protoService.GetFileAsync(update.DestinationPath);
                 var request = new HttpRequestMessage(HttpMethod.Get, result);
                 var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                 var length = int.Parse(response.Content.Headers.GetValues("Content-Length").FirstOrDefault());
@@ -165,7 +165,7 @@ namespace Unigram.Services
             try
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await _protoService.GetFileAsync(update.DestinationPath);
 
                 if (IsTemporary(file))
                 {
@@ -189,7 +189,7 @@ namespace Unigram.Services
             try
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await _protoService.GetFileAsync(update.DestinationPath);
 
                 if (args.Length > 3)
                 {
@@ -227,7 +227,7 @@ namespace Unigram.Services
             try
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await _protoService.GetFileAsync(update.DestinationPath);
 
                 if (args.Length > 3)
                 {
@@ -255,7 +255,7 @@ namespace Unigram.Services
                 if (conversion.Mute)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                    var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                    var temp = await _protoService.GetFileAsync(update.DestinationPath);
 
                     var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
                     if (profile.Audio == null && conversion.Mute && conversion.TrimStartTime == null && conversion.TrimStopTime == null)
@@ -334,7 +334,7 @@ namespace Unigram.Services
                 //if (conversion.Transcode)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                    var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                    var temp = await _protoService.GetFileAsync(update.DestinationPath);
 
                     var props = await file.Properties.GetVideoPropertiesAsync();
 
@@ -391,7 +391,7 @@ namespace Unigram.Services
             try
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+                var temp = await _protoService.GetFileAsync(update.DestinationPath);
 
                 var mode = ThumbnailMode.DocumentsView;
                 if (file.ContentType.StartsWith("audio/"))

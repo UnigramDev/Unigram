@@ -442,7 +442,7 @@ namespace Unigram.ViewModels.Chats
             {
                 try
                 {
-                    var temp = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    var temp = await ProtoService.GetFileAsync(file);
                     var result = await Windows.System.Launcher.LaunchFileAsync(temp);
                     //var folder = await temp.GetParentAsync();
                     //var options = new Windows.System.FolderLauncherOptions();

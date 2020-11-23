@@ -92,7 +92,7 @@ namespace Unigram.Common
 
                     if (_fileStream == null)
                     {
-                        var file = await StorageFile.GetFileFromPathAsync(_file.Local.Path);
+                        var file = await _protoService.GetFileAsync(_file);
                         _fileStream = await file.OpenAsync(FileAccessMode.Read, StorageOpenOptions.AllowReadersAndWriters);
                     }
 
