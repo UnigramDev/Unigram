@@ -9,6 +9,7 @@ using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
+using Windows.ApplicationModel.Core;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
@@ -166,7 +167,14 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            ProtoService.Close(true);
+            // TODO: do this seamlessly
+            var confirm = await MessagePopup.ShowAsync("Do you want to restart the app now?", Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                await CoreApplication.RequestRestartAsync(string.Empty);
+            }
+
+            //ProtoService.Close(true);
         }
 
         public RelayCommand<AutoDownloadType> AutoDownloadCommand { get; }
