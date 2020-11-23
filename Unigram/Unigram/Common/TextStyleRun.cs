@@ -107,6 +107,7 @@ namespace Unigram.Common
                 else if (entity.Type is TextEntityTypeCode || entity.Type is TextEntityTypePre || entity.Type is TextEntityTypePreCode)
                 {
                     newRun.Flags = TextStyle.Monospace;
+                    newRun.Type = entity.Type;
                 }
                 else if (entity.Type is TextEntityTypeMentionName)
                 {
