@@ -84,7 +84,7 @@ namespace winrt::Unigram::Native::implementation
 		}
 	};
 
-	void PlaceholderImageHelper::DrawWebP(hstring fileName, IRandomAccessStream randomAccessStream)
+	void PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream)
 	{
 		FILE* file = _wfopen(fileName.data(), L"rb");
 		if (file == NULL) {
@@ -137,10 +137,10 @@ namespace winrt::Unigram::Native::implementation
 			int width = iter.width;
 			int height = iter.height;
 
-			if (iter.width > 256 || iter.height > 256)
+			if (iter.width > maxWidth || iter.height > maxWidth)
 			{
-				auto ratioX = (double)256 / iter.width;
-				auto ratioY = (double)256 / iter.height;
+				auto ratioX = (double)maxWidth / iter.width;
+				auto ratioY = (double)maxWidth / iter.height;
 				auto ratio = std::min(ratioX, ratioY);
 
 				width = (int)(iter.width * ratio);

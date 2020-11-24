@@ -487,18 +487,20 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetWebPFrame(string path)
+        public static ImageSource GetWebPFrame(string path, double maxWidth = 256)
         {
             //return null;
             //return new BitmapImage(new Uri("file:///" + path));
             //return WebPImage.DecodeFromPath(path);
+
+            var side = (int)maxWidth;
 
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.Current.DrawWebP(path, stream);
+                    PlaceholderImageHelper.Current.DrawWebP(path, side, stream);
                     bitmap.SetSource(stream);
                 }
                 catch { }
