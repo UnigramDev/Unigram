@@ -659,6 +659,7 @@ namespace Unigram.Services
                 {
                     Send(new DeleteFileW(file.Id));
                 }
+                catch { }
 
                 return null;
             }

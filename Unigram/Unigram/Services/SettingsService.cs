@@ -210,7 +210,7 @@ namespace Unigram.Services
         #region App version
 
         public const ulong CurrentVersion = (7UL << 48) | (2UL << 32) | (5800UL << 16);
-        public const string CurrentChangelog = "Download location\r\n• You can now change default download folder from Settings > Data and Storage > Storage Path.";
+        public const string CurrentChangelog = "• You can now change default download folder from Settings > Data and Storage > Storage Path.\n• Improved calls stability and reliability.";
 
         public int Session => _session;
 
