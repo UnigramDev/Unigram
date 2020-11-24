@@ -59,12 +59,9 @@ namespace Unigram
 
             try
             {
-                if (!string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Desktop"))
-                {
-                    _mediaExtensionManager = new MediaExtensionManager();
-                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".ogg", "audio/ogg");
-                    _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".oga", "audio/ogg");
-                }
+                _mediaExtensionManager = new MediaExtensionManager();
+                _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".ogg", "audio/ogg");
+                _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".oga", "audio/ogg");
             }
             catch
             {
@@ -93,7 +90,8 @@ namespace Unigram
             Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Windows",
                 new System.Collections.Generic.Dictionary<string, string>
                 {
-                    { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily }
+                    { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
+                    { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
 #endif
         }
@@ -444,6 +442,8 @@ namespace Unigram
                 }
             }
 #endif
+
+            Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
 
             if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
             {
