@@ -195,7 +195,16 @@ namespace Unigram.Controls
                     }
                 }
 
-                _ellipse.TrimEnd = (float)newValue;
+                _ellipse.TrimEnd = (float)Math.Max(0, Math.Min(1, newValue));
+
+                if (newValue >= 1.0 || newValue <= 0.0)
+                {
+                    Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    Visibility = Visibility.Visible;
+                }
             }
             else if (Indicator != null)
             {
