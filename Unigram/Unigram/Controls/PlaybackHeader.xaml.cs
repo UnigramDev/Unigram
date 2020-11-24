@@ -65,8 +65,8 @@ namespace Unigram.Controls
             _playbackService.PositionChanged += OnPositionChanged;
             _playbackService.PlaylistChanged -= OnPlaylistChanged;
             _playbackService.PlaylistChanged += OnPlaylistChanged;
-            UpdateGlyph();
             UpdateRate();
+            UpdateGlyph();
         }
 
         private void OnMediaFailed(IPlaybackService sender, MediaPlayerFailedEventArgs args)
