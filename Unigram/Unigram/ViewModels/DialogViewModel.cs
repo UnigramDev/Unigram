@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -80,6 +81,7 @@ namespace Unigram.ViewModels
         protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new ConcurrentDictionary<long, IList<ChatAdministrator>>();
 
         protected readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+        protected CancellationTokenSource _loadMoreToken;
 
         protected readonly StickerDrawerViewModel _stickers;
         protected readonly AnimationDrawerViewModel _animations;
@@ -637,8 +639,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            using (await _loadMoreLock.WaitAsync())
+            var token = _loadMoreToken.Token;
+            using (await _loadMoreLock.WaitAsync(token))
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 try
                 {
                     // We don't want to flood with requests when the chat gets initialized
@@ -740,7 +748,7 @@ namespace Unigram.ViewModels
                 _isLoadingNextSlice = false;
                 IsLoading = false;
 
-                LoadPinnedMessagesSliceAsync(maxId.Value, VerticalAlignment.Top);
+                await LoadPinnedMessagesSliceAsync(maxId.Value, VerticalAlignment.Top);
             }
         }
 
@@ -757,8 +765,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            using (await _loadMoreLock.WaitAsync())
+            var token = _loadMoreToken.Token;
+            using (await _loadMoreLock.WaitAsync(token))
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 try
                 {
                     // We don't want to flood with requests when the chat gets initialized
@@ -864,7 +878,7 @@ namespace Unigram.ViewModels
                 _isLoadingPreviousSlice = false;
                 IsLoading = false;
 
-                LoadPinnedMessagesSliceAsync(maxId.Value, VerticalAlignment.Bottom);
+                await LoadPinnedMessagesSliceAsync(maxId.Value, VerticalAlignment.Bottom);
             }
         }
 
@@ -1079,7 +1093,7 @@ namespace Unigram.ViewModels
             TextField?.Focus(FocusState.Programmatic);
         }
 
-        private async void LoadPinnedMessagesSliceAsync(long maxId, VerticalAlignment direction = VerticalAlignment.Center)
+        private async Task LoadPinnedMessagesSliceAsync(long maxId, VerticalAlignment direction = VerticalAlignment.Center)
         {
             await Task.Yield();
 
@@ -1188,61 +1202,69 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (direction == null)
-            {
-                var field = ListField;
-                if (field != null)
-                {
-                    var panel = field.ItemsPanelRoot as ItemsStackPanel;
-                    if (panel != null && panel.FirstVisibleIndex >= 0 && panel.FirstVisibleIndex < Items.Count && Items.Count > 0)
-                    {
-                        direction = Items[panel.FirstVisibleIndex].Id < maxId ? ScrollIntoViewAlignment.Default : ScrollIntoViewAlignment.Leading;
-                    }
-                }
-            }
-
-            if (alignment == VerticalAlignment.Bottom && pixel == null)
-            {
-                pixel = int.MaxValue;
-            }
-
-            var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Messages.ContainsKey(maxId));
-            if (already != null)
-            {
-                var field = ListField;
-                if (field != null)
-                {
-                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
-                }
-
-                if (previousId.HasValue && !_repliesStack.Contains(previousId.Value))
-                {
-                    _repliesStack.Push(previousId.Value);
-                }
-
-                return;
-            }
-            else if (second)
-            {
-                if (maxId == 0)
-                {
-                    ScrollToBottom(null);
-                }
-
-                //var max = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
-                //var offset = _dialog?.UnreadCount > 0 && max > 0 ? -16 : 0;
-                //await LoadFirstSliceAsync(max, offset);
-                return;
-            }
-
             var chat = _chat;
             if (chat == null)
             {
                 return;
             }
 
-            using (await _loadMoreLock.WaitAsync())
+            var token = _loadMoreToken.Token;
+            using (await _loadMoreLock.WaitAsync(token))
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                if (direction == null)
+                {
+                    var field = ListField;
+                    if (field != null)
+                    {
+                        var panel = field.ItemsPanelRoot as ItemsStackPanel;
+                        if (panel != null && panel.FirstVisibleIndex >= 0 && panel.FirstVisibleIndex < Items.Count && Items.Count > 0)
+                        {
+                            direction = Items[panel.FirstVisibleIndex].Id < maxId ? ScrollIntoViewAlignment.Default : ScrollIntoViewAlignment.Leading;
+                        }
+                    }
+                }
+
+                if (alignment == VerticalAlignment.Bottom && pixel == null)
+                {
+                    pixel = int.MaxValue;
+                }
+
+                var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Messages.ContainsKey(maxId));
+                if (already != null)
+                {
+                    var field = ListField;
+                    if (field != null)
+                    {
+                        await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
+                    }
+
+                    if (previousId.HasValue && !_repliesStack.Contains(previousId.Value))
+                    {
+                        _repliesStack.Push(previousId.Value);
+                    }
+
+                    await LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Center);
+                    return;
+                }
+                else if (second)
+                {
+                    if (maxId == 0)
+                    {
+                        ScrollToBottom(null);
+                    }
+
+                    //var max = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
+                    //var offset = _dialog?.UnreadCount > 0 && max > 0 ? -16 : 0;
+                    //await LoadFirstSliceAsync(max, offset);
+                    await LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Center);
+                    return;
+                }
+
                 if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id)
                 {
                     return;
@@ -1405,8 +1427,6 @@ namespace Unigram.ViewModels
                 _isLoadingNextSlice = false;
                 _isLoadingPreviousSlice = false;
                 IsLoading = false;
-
-                LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Center);
             }
 
             await LoadMessageSliceAsync(previousId, maxId, alignment, pixel, direction, disableAnimation, true);
@@ -1415,8 +1435,14 @@ namespace Unigram.ViewModels
 
         public async Task LoadScheduledSliceAsync()
         {
-            using (await _loadMoreLock.WaitAsync())
+            var token = _loadMoreToken.Token;
+            using (await _loadMoreLock.WaitAsync(token))
             {
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+
                 var chat = _chat;
                 if (chat == null)
                 {
@@ -1981,6 +2007,13 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            if (_loadMoreToken != null)
+            {
+                _loadMoreToken.Cancel();
+            }
+
+            _loadMoreToken = new CancellationTokenSource();
+
             if (parameter is string pair)
             {
                 var split = pair.Split(';');
@@ -3087,7 +3120,7 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand PinnedShowCommand { get; }
-        private void PinnedShowExecute()
+        private async void PinnedShowExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -3096,7 +3129,7 @@ namespace Unigram.ViewModels
             }
 
             Settings.SetChatPinnedMessage(chat.Id, 0);
-            LoadPinnedMessagesSliceAsync(0, VerticalAlignment.Center);
+            await LoadPinnedMessagesSliceAsync(0, VerticalAlignment.Center);
         }
 
         public RelayCommand PinnedListCommand { get; }
