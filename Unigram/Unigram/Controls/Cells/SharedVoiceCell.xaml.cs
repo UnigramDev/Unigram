@@ -103,7 +103,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (message.AreEqual(_playbackService.CurrentItem) /*&& !_pressed*/)
+            if (message.IsEqualTo(_playbackService.CurrentItem) /*&& !_pressed*/)
             {
                 Subtitle.Text = FormatTime(_playbackService.Position) + " / " + FormatTime(_playbackService.Duration);
             }
@@ -171,7 +171,7 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                if (message.AreEqual(_playbackService.CurrentItem))
+                if (message.IsEqualTo(_playbackService.CurrentItem))
                 {
                     if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                     {
@@ -240,7 +240,7 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                if (_message.AreEqual(_playbackService.CurrentItem))
+                if (_message.IsEqualTo(_playbackService.CurrentItem))
                 {
                     if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                     {

@@ -219,9 +219,29 @@ namespace Unigram.Common
             return new InputThumbnail(new InputFileId(thumbnail.File.Id), thumbnail.Width, thumbnail.Height);
         }
 
-        public static bool AreEqual(this Message x, Message y)
+        public static bool IsEqualTo(this Message x, Message y)
         {
-            if (y == null)
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            return x.Id == y.Id && x.ChatId == y.ChatId;
+        }
+
+        public static bool IsEqualTo(this MessageViewModel x, Message y)
+        {
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            return x.Id == y.Id && x.ChatId == y.ChatId;
+        }
+
+        public static bool IsEqualTo(this MessageViewModel x, MessageViewModel y)
+        {
+            if (x == null || y == null)
             {
                 return false;
             }

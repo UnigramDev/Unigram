@@ -147,7 +147,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (message.AreEqual(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
+            if (message.IsEqualTo(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
             {
                 Subtitle.Text = FormatTime(message.PlaybackService.Position) + " / " + FormatTime(message.PlaybackService.Duration);
                 Progress.Maximum = /*Slider.Maximum =*/ message.PlaybackService.Duration.TotalMilliseconds;
@@ -221,7 +221,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (message.AreEqual(message.PlaybackService.CurrentItem))
+                if (message.IsEqualTo(message.PlaybackService.CurrentItem))
                 {
                     if (message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                     {
@@ -307,7 +307,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (_message.AreEqual(_message.PlaybackService.CurrentItem))
+                if (_message.IsEqualTo(_message.PlaybackService.CurrentItem))
                 {
                     if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                     {
