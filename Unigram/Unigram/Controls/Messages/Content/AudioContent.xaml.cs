@@ -47,8 +47,6 @@ namespace Unigram.Controls.Messages.Content
 
             message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
             message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
-            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.PlaybackStateChanged += OnPlaybackStateChanged;
 
             var audio = GetContent(message.Content);
             if (audio == null)
@@ -140,7 +138,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (message.Equals(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
+            if (message.AreEqual(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
             {
                 Subtitle.Text = FormatTime(message.PlaybackService.Position) + " / " + FormatTime(message.PlaybackService.Duration);
             }
@@ -171,6 +169,9 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateFile(MessageViewModel message, File file)
         {
+            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            message.PlaybackService.PositionChanged -= OnPositionChanged;
+
             var audio = GetContent(message.Content);
             if (audio == null)
             {
@@ -258,7 +259,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdatePlayback(MessageViewModel message, Audio audio, File file)
         {
-            if (Equals(message, message.PlaybackService.CurrentItem))
+            if (message.AreEqual(message.PlaybackService.CurrentItem))
             {
                 if (message.PlaybackService.PlaybackState != MediaPlaybackState.Paused && message.PlaybackService.PlaybackState != MediaPlaybackState.None)
                 {
@@ -271,7 +272,7 @@ namespace Unigram.Controls.Messages.Content
 
                 UpdatePosition();
 
-                message.PlaybackService.PositionChanged -= OnPositionChanged;
+                message.PlaybackService.PlaybackStateChanged += OnPlaybackStateChanged;
                 message.PlaybackService.PositionChanged += OnPositionChanged;
             }
             else
@@ -366,7 +367,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
             }
-            else if (_message.Equals(_message.PlaybackService.CurrentItem))
+            else if (_message.AreEqual(_message.PlaybackService.CurrentItem))
             {
                 if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                 {
@@ -406,7 +407,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (_message.Equals(_message.PlaybackService.CurrentItem))
+                if (_message.AreEqual(_message.PlaybackService.CurrentItem))
                 {
                     if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                     {

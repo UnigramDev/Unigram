@@ -56,8 +56,6 @@ namespace Unigram.Controls.Cells
 
             _playbackService.PropertyChanged -= OnCurrentItemChanged;
             _playbackService.PropertyChanged += OnCurrentItemChanged;
-            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
 
             var audio = GetContent(message.Content);
             if (audio == null)
@@ -147,6 +145,9 @@ namespace Unigram.Controls.Cells
 
         public void UpdateFile(Message message, File file)
         {
+            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            _playbackService.PositionChanged -= OnPositionChanged;
+
             var audio = GetContent(message.Content);
             if (audio == null)
             {
@@ -234,7 +235,7 @@ namespace Unigram.Controls.Cells
 
         private void UpdatePlayback(Message message, Audio audio, File file)
         {
-            if (Equals(message, _playbackService.CurrentItem))
+            if (message.AreEqual(_playbackService.CurrentItem))
             {
                 if (_playbackService.PlaybackState != MediaPlaybackState.Paused && _playbackService.PlaybackState != MediaPlaybackState.None)
                 {
@@ -247,7 +248,7 @@ namespace Unigram.Controls.Cells
 
                 UpdatePosition();
 
-                _playbackService.PositionChanged -= OnPositionChanged;
+                _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
                 _playbackService.PositionChanged += OnPositionChanged;
             }
             else
@@ -323,7 +324,7 @@ namespace Unigram.Controls.Cells
                 return;
             }
 
-            if (_message.Equals(_playbackService.CurrentItem))
+            if (_message.AreEqual(_playbackService.CurrentItem))
             {
                 if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                 {
@@ -363,7 +364,7 @@ namespace Unigram.Controls.Cells
             }
             else
             {
-                if (_message.Equals(_playbackService.CurrentItem))
+                if (_message.AreEqual(_playbackService.CurrentItem))
                 {
                     if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
                     {

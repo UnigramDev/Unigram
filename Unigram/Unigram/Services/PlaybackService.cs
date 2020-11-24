@@ -14,7 +14,6 @@ using Windows.Media.Audio;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.Render;
-using Windows.Storage;
 
 namespace Unigram.Services
 {
@@ -166,20 +165,6 @@ namespace Unigram.Services
         }
 
         #endregion
-
-        private void OnSourceChanged(MediaPlayer sender, object args)
-        {
-            if (sender.Source is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
-            {
-                CurrentPlayback = item;
-
-                var message = item.Message;
-                if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
-                {
-                    _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
-                }
-            }
-        }
 
         private void OnMediaEnded(MediaSourceAudioInputNode sender, object args)
         {
@@ -552,6 +537,11 @@ namespace Unigram.Services
                         : value == null
                         ? MediaPlaybackAutoRepeatMode.Track
                         : MediaPlaybackAutoRepeatMode.None;
+
+                if (_inputNode != null)
+                {
+                    _inputNode.LoopCount = value == null ? null : 0;
+                }
             }
         }
 
@@ -767,7 +757,8 @@ namespace Unigram.Services
 
                 AudioFrameOutputNode frameOutput = graph.CreateFrameOutputNode();
 
-                CreateMediaSourceAudioInputNodeResult fileInputResult = await graph.CreateMediaSourceAudioInputNodeAsync(item.Source);
+                MediaSource source = CreateMediaSource(item);
+                CreateMediaSourceAudioInputNodeResult fileInputResult = await graph.CreateMediaSourceAudioInputNodeAsync(source);
                 if (MediaSourceAudioInputNodeCreationStatus.Success != fileInputResult.Status)
                 {
                     return null;
@@ -802,20 +793,8 @@ namespace Unigram.Services
         {
             var token = $"{message.ChatId}_{message.Id}";
             var file = GetFile(message);
-            var mime = GetMimeType(message);
-            var duration = GetDuration(message);
 
-            var stream = new RemoteFileStream(_protoService, file, TimeSpan.FromSeconds(duration));
-            var source = MediaSource.CreateFromStream(stream, mime);
-            var item = new PlaybackItem(source);
-
-            _streams[file.Id].Add(stream);
-
-            source.CustomProperties["file"] = file.Id;
-            source.CustomProperties["message"] = message.Id;
-            source.CustomProperties["chat"] = message.ChatId;
-            source.CustomProperties["token"] = token;
-
+            var item = new PlaybackItem(token);
             item.File = file;
             item.Message = message;
             item.Token = token;
@@ -840,6 +819,26 @@ namespace Unigram.Services
             _mapping[token] = item;
 
             return item;
+        }
+
+        private MediaSource CreateMediaSource(PlaybackItem item)
+        {
+            var token = $"{item.Message.ChatId}_{item.Message.Id}";
+
+            var mime = GetMimeType(item.Message);
+            var duration = GetDuration(item.Message);
+
+            var stream = new RemoteFileStream(_protoService, item.File, TimeSpan.FromSeconds(duration));
+            var source = MediaSource.CreateFromStream(stream, mime);
+
+            _streams[item.File.Id].Add(stream);
+
+            source.CustomProperties["file"] = item.File.Id;
+            source.CustomProperties["message"] = item.Message.Id;
+            source.CustomProperties["chat"] = item.Message.ChatId;
+            source.CustomProperties["token"] = token;
+
+            return source;
         }
 
         private File GetFile(Message message)
@@ -992,7 +991,6 @@ namespace Unigram.Services
 
     public class PlaybackItem
     {
-        public MediaSource Source { get; set; }
         public string Token { get; set; }
 
         public Message Message { get; set; }
@@ -1002,9 +1000,9 @@ namespace Unigram.Services
         public string Title { get; set; }
         public string Artist { get; set; }
 
-        public PlaybackItem(MediaSource source)
+        public PlaybackItem(string token)
         {
-            Source = source;
+            Token = token;
         }
 
         public bool UpdateFile(File file)

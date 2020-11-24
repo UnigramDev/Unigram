@@ -43,8 +43,6 @@ namespace Unigram.Controls.Cells
 
             _playbackService.PropertyChanged -= OnCurrentItemChanged;
             _playbackService.PropertyChanged += OnCurrentItemChanged;
-            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
 
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null)
@@ -127,6 +125,9 @@ namespace Unigram.Controls.Cells
 
         public void UpdateFile(Message message, File file)
         {
+            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            _playbackService.PositionChanged -= OnPositionChanged;
+
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null)
             {
@@ -184,6 +185,8 @@ namespace Unigram.Controls.Cells
                     }
 
                     UpdatePosition();
+
+                    _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
                     _playbackService.PositionChanged += OnPositionChanged;
                 }
                 else

@@ -48,8 +48,6 @@ namespace Unigram.Controls.Messages.Content
 
             message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
             message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
-            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.PlaybackStateChanged += OnPlaybackStateChanged;
 
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null)
@@ -149,7 +147,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (message.Equals(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
+            if (message.AreEqual(message.PlaybackService.CurrentItem) /*&& !_pressed*/)
             {
                 Subtitle.Text = FormatTime(message.PlaybackService.Position) + " / " + FormatTime(message.PlaybackService.Duration);
                 Progress.Maximum = /*Slider.Maximum =*/ message.PlaybackService.Duration.TotalMilliseconds;
@@ -183,6 +181,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateFile(MessageViewModel message, File file)
         {
+            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
             message.PlaybackService.QuantumChanged -= OnPositionChanged;
 
             var voiceNote = GetContent(message.Content);
@@ -222,7 +221,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (Equals(message, message.PlaybackService.CurrentItem))
+                if (message.AreEqual(message.PlaybackService.CurrentItem))
                 {
                     if (message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                     {
@@ -236,6 +235,8 @@ namespace Unigram.Controls.Messages.Content
                     }
 
                     UpdatePosition();
+
+                    message.PlaybackService.PlaybackStateChanged += OnPlaybackStateChanged;
                     message.PlaybackService.QuantumChanged += OnPositionChanged;
                 }
                 else
@@ -306,7 +307,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                if (_message.Equals(_message.PlaybackService.CurrentItem))
+                if (_message.AreEqual(_message.PlaybackService.CurrentItem))
                 {
                     if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                     {
