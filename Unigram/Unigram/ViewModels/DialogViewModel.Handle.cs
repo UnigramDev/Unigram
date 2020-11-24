@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Controls.Messages;
 using Unigram.Services;
 using Unigram.Services.Updates;
@@ -213,7 +214,17 @@ namespace Unigram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                BeginOnUIThread(() => Delegate?.UpdateChatOnlineMemberCount(_chat, update.OnlineMemberCount));
+                BeginOnUIThread(() =>
+                {
+                    if (update.OnlineMemberCount > 1)
+                    {
+                        OnlineCount = Locale.Declension("OnlineCount", update.OnlineMemberCount);
+                    }
+                    else
+                    {
+                        OnlineCount = null;
+                    }
+                });
             }
         }
 

@@ -165,14 +165,12 @@ namespace Unigram.Views
             _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
             _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
             _slideVisual = ElementCompositionPreview.GetElementVisual(SlidePanel);
-            _recordVisual = ElementCompositionPreview.GetElementVisual(ButtonRecord);
+            _recordVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
             _rootVisual = ElementCompositionPreview.GetElementVisual(TextArea);
             _compositor = _slideVisual.Compositor;
 
             _ellipseVisual.CenterPoint = new Vector3(48);
             _ellipseVisual.Scale = new Vector3(0);
-
-            _rootVisual.Clip = _compositor.CreateInsetClip(0, -100, 0, 0);
 
             if (DateHeaderPanel != null)
             {
@@ -2579,7 +2577,7 @@ namespace Unigram.Views
 
             _recordVisual.Offset = point;
 
-            if (point.Y < -57)
+            if (point.Y < -120)
             {
                 e.Complete();
                 btnVoiceMessage.LockRecording();
@@ -3257,18 +3255,6 @@ namespace Unigram.Views
             }
         }
 
-        public void UpdateChatOnlineMemberCount(Chat chat, int count)
-        {
-            if (count > 1)
-            {
-                ViewModel.OnlineCount = Locale.Declension("OnlineCount", count);
-            }
-            else
-            {
-                ViewModel.OnlineCount = null;
-            }
-        }
-
 
 
         public void UpdateChatUnreadMentionCount(Chat chat, int count)
@@ -3732,16 +3718,16 @@ namespace Unigram.Views
 
             if (radius > 0)
             {
-                TextArea.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
+                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 640 : double.PositiveInfinity;
-                TextArea.Margin = ChatFooter.Margin = new Thickness(12, 0, 12, 8);
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
             }
             else
             {
-                TextArea.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
+                TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
                     SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
-                TextArea.Margin = ChatFooter.Margin = new Thickness();
+                TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();
             }
 

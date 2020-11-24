@@ -2269,11 +2269,17 @@ namespace Unigram.ViewModels
             _selectedItems = new List<MessageViewModel>();
             _chatActionManager = null;
 
+            OnlineCount = null;
+
             PinnedMessages.Clear();
             LastPinnedMessage = null;
             LockedPinnedMessageId = 0;
 
+            DisposeSearch();
             SelectionMode = ListViewSelectionMode.None;
+
+            IsLastSliceLoaded = null;
+            IsFirstSliceLoaded = null;
 
 #if !DEBUG
             if (chat.Type is ChatTypeSecret)
