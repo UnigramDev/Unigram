@@ -145,19 +145,23 @@ namespace Unigram.Services.Settings
                 {
                     Theme.Current.Initialize(theme);
 
-                    window.UpdateTitleBar();
-
-                    if (window.Content is FrameworkElement element)
+                    try
                     {
-                        if (element.RequestedTheme == theme && state is true)
-                        {
-                            element.RequestedTheme = theme == ElementTheme.Dark
-                                ? ElementTheme.Light
-                                : ElementTheme.Dark;
-                        }
+                        window.UpdateTitleBar();
 
-                        element.RequestedTheme = theme;
+                        if (window.Content is FrameworkElement element)
+                        {
+                            if (element.RequestedTheme == theme && state is true)
+                            {
+                                element.RequestedTheme = theme == ElementTheme.Dark
+                                    ? ElementTheme.Light
+                                    : ElementTheme.Dark;
+                            }
+
+                            element.RequestedTheme = theme;
+                        }
                     }
+                    catch { }
                 });
             }
 
