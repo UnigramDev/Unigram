@@ -18,8 +18,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Windows.Input;
 
 namespace Unigram.Common
@@ -38,14 +36,25 @@ namespace Unigram.Common
             }
 
             _execute = execute;
-            _canExecute = canexecute ?? (() => true);
+            _canExecute = canexecute;
         }
 
         [DebuggerStepThrough]
         public bool CanExecute(object p = null)
         {
-            try { return _canExecute(); }
-            catch { return false; }
+            if (_canExecute != null)
+            {
+                try
+                {
+                    return _canExecute();
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void Execute(object p = null)
@@ -79,14 +88,25 @@ namespace Unigram.Common
             }
 
             _execute = execute;
-            _canExecute = canexecute ?? (e => true);
+            _canExecute = canexecute;
         }
 
         [DebuggerStepThrough]
         public bool CanExecute(object p)
         {
-            try { return _canExecute(ConvertParameterValue(p)); }
-            catch { return false; }
+            if (_canExecute != null)
+            {
+                try
+                {
+                    return _canExecute(ConvertParameterValue(p));
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void Execute(object p)
@@ -110,6 +130,8 @@ namespace Unigram.Common
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
+
+#if BOHBOHBOH
 
     /// <summary>
     /// A command whose sole purpose is to relay its functionality to other
@@ -1146,4 +1168,5 @@ namespace Unigram.Common
             base.MarkForDeletion();
         }
     }
+#endif
 }
