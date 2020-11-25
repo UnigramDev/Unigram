@@ -1151,7 +1151,6 @@
                     <!--ToolTipService.ToolTip="{CustomResource AccDescrEmojiButton}"-->
 
                     <Grid x:Name="ButtonRecord" VerticalAlignment="Bottom" Grid.Column="2" Canvas.ZIndex="1000">
-                        <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <chats:ChatRecordButton
                             x:Name="btnVoiceMessage"
                             AllowFocusOnInteraction="False"
@@ -1197,6 +1196,23 @@
                 </Border>
             </Grid>
         </ContentControl>
+
+        <Border x:Name="ChatRecord" Margin="12,0,12,8" IsHitTestVisible="False" Grid.Row="3">
+            <Grid Width="96" Height="96" Margin="-24" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <!--<xaml:CanvasControl
+                    x:Name="ChatRecordCanvas"
+                    Draw="ChatRecordCanvas_Draw"
+                    Width="120"
+                    Height="120"
+                    Margin="-12"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"/>-->
+                <Border
+                    x:Name="Ellipse"
+                    CornerRadius="48"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+            </Grid>
+        </Border>
 
         <Grid x:Name="ChatFooter" Margin="12,0,12,8" CornerRadius="15" Grid.Row="3">
             <chats:ChatBottomButton
