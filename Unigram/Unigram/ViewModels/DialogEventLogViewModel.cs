@@ -106,13 +106,8 @@ namespace Unigram.ViewModels
 
         public override async Task LoadEventLogSliceAsync(string query = "")
         {
-            var token = _loadMoreToken.Token;
-            using (await _loadMoreLock.WaitAsync(token))
+            using (await _loadMoreLock.WaitAsync())
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
                 var chat = _chat;
                 if (chat == null)
                 {
@@ -176,14 +171,8 @@ namespace Unigram.ViewModels
 
         public async override Task LoadNextSliceAsync(bool force = false, bool init = false)
         {
-            var token = _loadMoreToken.Token;
-            using (await _loadMoreLock.WaitAsync(token))
+            using (await _loadMoreLock.WaitAsync())
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-
                 try
                 {
                     // We don't want to flood with requests when the chat gets initialized

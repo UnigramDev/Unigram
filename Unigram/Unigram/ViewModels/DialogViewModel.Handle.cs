@@ -416,14 +416,8 @@ namespace Unigram.ViewModels
 
                 BeginOnUIThread(async () =>
                 {
-                    var token = _loadMoreToken.Token;
-                    using (await _loadMoreLock.WaitAsync(token))
+                    using (await _loadMoreLock.WaitAsync())
                     {
-                        if (token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-
                         for (int i = 0; i < Items.Count; i++)
                         {
                             var message = Items[i];
@@ -621,7 +615,7 @@ namespace Unigram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 _hasLoadedLastPinnedMessage = false;
-                BeginOnUIThread(() => _ = LoadPinnedMessagesSliceAsync(update.MessageId, VerticalAlignment.Center));
+                BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId, VerticalAlignment.Center));
 
                 Handle(update.MessageId, message =>
                 {
@@ -699,14 +693,8 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var token = _loadMoreToken.Token;
-                using (await _loadMoreLock.WaitAsync(token))
+                using (await _loadMoreLock.WaitAsync())
                 {
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
                     for (int i = 0; i < Items.Count; i++)
                     {
                         var message = Items[i];
@@ -792,14 +780,8 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var token = _loadMoreToken.Token;
-                using (await _loadMoreLock.WaitAsync(token))
+                using (await _loadMoreLock.WaitAsync())
                 {
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
                     for (int i = 0; i < Items.Count; i++)
                     {
                         var message = Items[i];
@@ -910,16 +892,8 @@ namespace Unigram.ViewModels
 
         private async void InsertMessage(Message message, long? oldMessageId = null)
         {
-            var loadMore = false;
-
-            var token = _loadMoreToken.Token;
-            using (await _loadMoreLock.WaitAsync(token))
+            using (await _loadMoreLock.WaitAsync())
             {
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-
                 //if (!IsFirstSliceLoaded)
                 //{
                 //    return;
@@ -952,13 +926,8 @@ namespace Unigram.ViewModels
                 }
                 else if (message.IsOutgoing)
                 {
-                    loadMore = true;
+                    await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
                 }
-            }
-
-            if (loadMore)
-            {
-                await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
             }
         }
 

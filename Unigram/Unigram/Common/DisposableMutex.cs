@@ -13,10 +13,7 @@ namespace Unigram.Common
 
         public void Dispose()
         {
-            if (_semaphore.CurrentCount < 1)
-            {
-                _semaphore.Release();
-            }
+            _semaphore.Release();
         }
 
         public async Task<IDisposable> WaitAsync()
@@ -27,11 +24,7 @@ namespace Unigram.Common
 
         public async Task<IDisposable> WaitAsync(CancellationToken cancellationToken)
         {
-            try
-            {
-                await _semaphore.WaitAsync(cancellationToken);
-            }
-            catch { }
+            await _semaphore.WaitAsync(cancellationToken);
             return this;
         }
 
