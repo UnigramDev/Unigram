@@ -2040,7 +2040,12 @@ namespace Unigram.Views
 
         private bool MessagePin_Loaded(MessageViewModel message)
         {
-            if (message.SchedulingState != null || ViewModel.Type != DialogType.History || message.IsService())
+            if (ViewModel.Type != DialogType.History && ViewModel.Type != DialogType.Pinned)
+            {
+                return false;
+            }
+
+            if (message.SchedulingState != null || message.IsService())
             {
                 return false;
             }
@@ -2101,7 +2106,7 @@ namespace Unigram.Views
 
         private bool MessageThread_Loaded(MessageViewModel message)
         {
-            if (ViewModel.Type != DialogType.History)
+            if (ViewModel.Type != DialogType.History && ViewModel.Type != DialogType.Pinned)
             {
                 return false;
             }
