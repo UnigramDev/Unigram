@@ -430,7 +430,7 @@ namespace Unigram
             catch { }
 
 #if DESKTOP_BRIDGE
-            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {
                 try
                 {

@@ -107,9 +107,8 @@
     <DefaultLanguage>en</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
-    <AppxManifest Include="..\Assets\Bridge\$(ConfigurationName)\Package.appxmanifest">
+    <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
-      <Link>Package.appxmanifest</Link>
     </AppxManifest>
     <None Include="UnigramPackage_TemporaryKey.pfx" />
   </ItemGroup>
