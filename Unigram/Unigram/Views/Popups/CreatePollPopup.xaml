@@ -93,7 +93,7 @@
                                                                        FontStyle="Normal"
                                                                        FontSize="12"
                                                                        Text="&#xE10A;"
-                                                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                                        AutomationProperties.AccessibilityView="Raw" />
                                                         </Grid>
                                                     </ControlTemplate>

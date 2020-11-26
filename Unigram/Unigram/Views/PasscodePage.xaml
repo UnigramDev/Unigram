@@ -144,7 +144,7 @@
                                                                FontStyle="Normal"
                                                                FontSize="16"
                                                                Text="&#xE052;"
-                                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                                AutomationProperties.AccessibilityView="Raw" />
                                                 </Grid>
                                             </ControlTemplate>
@@ -343,7 +343,7 @@
                                        FontStyle="Normal"
                                        FontSize="12"
                                        Text="&#xE72A;"
-                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        AutomationProperties.AccessibilityView="Raw" />
                         </Grid>
                     </ControlTemplate>

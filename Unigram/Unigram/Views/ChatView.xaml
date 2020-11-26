@@ -244,7 +244,7 @@
             <Grid AutomationProperties.Name="{CustomResource UnreadMessages}" Margin="-12,8,-12,4" Background="{ThemeResource MessageBackgroundBrush}">
                 <TextBlock Text="{CustomResource UnreadMessages}" Padding="0" Margin="0,4" TextAlignment="Center" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
 
-                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
                           Glyph="&#xE0E5;"
                           FontSize="12"
                           HorizontalAlignment="Right"
@@ -448,7 +448,7 @@
                         Grid.Column="5">
                     <FontIcon x:Name="EllipsisIcon"
                                 VerticalAlignment="Center"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
                                 FontSize="16"
                                 Glyph="&#xE10C;"
                                 Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />

@@ -282,7 +282,7 @@
                                         ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}">
                                     <FontIcon x:Name="EllipsisIcon"
                                               VerticalAlignment="Center"
-                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}"
                                               FontSize="16"
                                               Glyph="&#xE10C;"
                                               Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />

@@ -94,7 +94,7 @@
                                                Height="32"
                                                Width="32" />
                                     <FontIcon x:Name="CheckGlyph"
-                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}"
                                               Glyph="&#xE001;"
                                               FontSize="24"
                                               Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
@@ -118,7 +118,7 @@
                                                Height="32"
                                                Width="32" />
                                     <FontIcon x:Name="CheckGlyph"
-                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}"
                                               Glyph="&#xE001;"
                                               FontSize="24"
                                               Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
@@ -142,7 +142,7 @@
                                                Height="32"
                                                Width="32" />
                                     <FontIcon x:Name="CheckGlyph"
-                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              FontFamily="{StaticResource SymbolThemeFontFamily}"
                                               Glyph="&#xE001;"
                                               FontSize="24"
                                               Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />

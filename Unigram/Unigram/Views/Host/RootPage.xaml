@@ -53,7 +53,7 @@
                                     <VisualState x:Name="IndeterminateDisabled"/>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
                                       Glyph="&#xE0E5;"
                                       FontSize="12"
                                       Foreground="{ThemeResource CheckBoxForegroundUnchecked}"

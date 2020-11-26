@@ -67,7 +67,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="48" />
         <Setter Property="Width" Value="48" />
@@ -397,7 +397,7 @@
 
                             <Grid VerticalAlignment="Top" Height="32">
                                 <FontIcon x:Name="CheckGlyph"
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     Glyph="&#xE001;"
                                     FontSize="20"
                                     Foreground="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}" />
@@ -665,7 +665,7 @@
                                        FontStyle="Normal"
                                        FontSize="12"
                                        Text="&#xE10A;"
-                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        AutomationProperties.AccessibilityView="Raw" />
                     </Grid>
                 </ControlTemplate>
@@ -729,7 +729,7 @@
                                        FontStyle="Normal"
                                        FontSize="12"
                                        Text="&#xE11A;"
-                                       FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        AutomationProperties.AccessibilityView="Raw" />
                     </Grid>
                 </ControlTemplate>
@@ -980,7 +980,7 @@
                                             </VisualStateGroup>
                                         </VisualStateManager.VisualStateGroups>
                                         <FontIcon x:Name="Arrow"
-                                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                   FontSize="12"
                                                   Foreground="{ThemeResource PivotNextButtonForeground}"
                                                   Glyph="&#xE0E3;"
@@ -1027,7 +1027,7 @@
                                             </VisualStateGroup>
                                         </VisualStateManager.VisualStateGroups>
                                         <FontIcon x:Name="Arrow"
-                                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                   FontSize="12"
                                                   Foreground="{ThemeResource PivotPreviousButtonForeground}"
                                                   Glyph="&#xE0E2;"
@@ -1152,7 +1152,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
@@ -1194,7 +1194,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <TextBlock
-                                FontSize="16"
+                                FontSize="{StaticResource GlyphButtonFontSize}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 AutomationProperties.AccessibilityView="Raw"
@@ -1229,9 +1229,9 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
@@ -1315,9 +1315,9 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
@@ -1393,9 +1393,9 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
@@ -1541,7 +1541,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}"/>
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
@@ -1583,7 +1583,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <TextBlock
-                                FontSize="16"
+                                FontSize="{StaticResource GlyphButtonFontSize}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 AutomationProperties.AccessibilityView="Raw"
@@ -1754,7 +1754,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}" />
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
@@ -1980,7 +1980,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}" />
         <Setter Property="Width" Value="48" />
@@ -3275,7 +3275,7 @@
 
                         <TextBlock Margin="4"
                                    FontSize="12"
-                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    AutomationProperties.AccessibilityView="Raw"
@@ -3381,7 +3381,7 @@
 
                         <TextBlock Margin="4"
                                    FontSize="12"
-                                   FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    AutomationProperties.AccessibilityView="Raw"

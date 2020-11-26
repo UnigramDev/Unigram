@@ -377,7 +377,7 @@
                                     <TranslateTransform x:Name="MultiSelectCheckBoxTransform" />
                                 </Border.RenderTransform>
                                 <FontIcon x:Name="MultiSelectCheck"
-                                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                          FontFamily="{StaticResource SymbolThemeFontFamily}"
                                           Glyph="&#xE001;"
                                           FontSize="20"
                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
