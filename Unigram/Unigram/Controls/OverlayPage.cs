@@ -11,6 +11,7 @@ using Unigram.Services;
 using Unigram.Services.Keyboard;
 using Unigram.Services.ViewService;
 using Windows.ApplicationModel.Core;
+using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.UI.Core;
@@ -66,7 +67,7 @@ namespace Unigram.Controls
                 OnBackRequested(args);
                 e.Handled = args.Handled;
             }
-            else if (pointer.Properties.IsLeftButtonPressed && IsLightDismissEnabled)
+            else if (pointer.Properties.IsLeftButtonPressed && IsLightDismissEnabled && e.Pointer.PointerDeviceType != PointerDeviceType.Touch)
             {
                 OnBackRequestedOverride(this, new HandledEventArgs());
             }
