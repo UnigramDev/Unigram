@@ -287,9 +287,6 @@
     <Compile Include="Controls\FauxCheckBox.cs" />
     <Compile Include="Controls\FileButton.cs" />
     <Compile Include="Controls\FormattedTextBox.cs" />
-    <Compile Include="Controls\Gallery\EmbedUrlView.xaml.cs">
-      <DependentUpon>EmbedUrlView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Gallery\GalleryBottomPanel.cs" />
     <Compile Include="Controls\Gallery\GalleryCompactView.cs" />
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
@@ -1499,10 +1496,6 @@
     <Page Include="Controls\Drawers\StickerDrawer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Gallery\EmbedUrlView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Gallery\GalleryContentView.xaml">
       <Generator>MSBuild:Compile</Generator>
