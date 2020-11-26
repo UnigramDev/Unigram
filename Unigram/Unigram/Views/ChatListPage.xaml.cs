@@ -87,9 +87,9 @@ namespace Unigram.Views
                     {
                         item.CreateFlyoutSeparator();
                         item.CreateFlyoutItem(ViewModel.FolderCreateCommand, chat, Strings.Resources.CreateNewFilter, new FontIcon { Glyph = Icons.Add });
-
-                        flyout.Items.Add(item);
                     }
+
+                    flyout.Items.Add(item);
                 }
             }
 
