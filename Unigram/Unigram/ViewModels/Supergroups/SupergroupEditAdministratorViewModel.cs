@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -407,8 +407,8 @@ namespace Unigram.ViewModels.Supergroups
                 var builder = new StringBuilder();
                 builder.AppendFormat(supergroup.IsChannel ? Strings.Resources.EditChannelAdminTransferAlertText : Strings.Resources.EditAdminTransferAlertText, user.FirstName);
                 builder.AppendLine();
-                builder.AppendLine($"• {Strings.Resources.EditAdminTransferAlertText1}");
-                builder.AppendLine($"• {Strings.Resources.EditAdminTransferAlertText2}");
+                builder.AppendLine($"\u2022 {Strings.Resources.EditAdminTransferAlertText1}");
+                builder.AppendLine($"\u2022 {Strings.Resources.EditAdminTransferAlertText2}");
 
                 if (canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;

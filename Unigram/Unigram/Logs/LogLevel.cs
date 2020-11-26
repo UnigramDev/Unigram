@@ -1,4 +1,4 @@
-namespace Unigram.Logs
+﻿namespace Unigram.Logs
 {
     public enum LogLevel
     {
