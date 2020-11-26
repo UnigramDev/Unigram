@@ -664,7 +664,7 @@
                                        HorizontalAlignment="Center"
                                        FontStyle="Normal"
                                        FontSize="12"
-                                       Text="&#xE10A;"
+                                       Text="&#xE711;"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        AutomationProperties.AccessibilityView="Raw" />
                     </Grid>
@@ -728,7 +728,7 @@
                                        HorizontalAlignment="Center"
                                        FontStyle="Normal"
                                        FontSize="12"
-                                       Text="&#xE11A;"
+                                       Text="&#xE721;"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        AutomationProperties.AccessibilityView="Raw" />
                     </Grid>

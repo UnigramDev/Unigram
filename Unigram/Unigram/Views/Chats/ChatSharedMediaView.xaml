@@ -86,7 +86,7 @@
                                             <Image Stretch="UniformToFill"/>
                                                 
                                             <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" Padding="4,4,8,4">
-                                                <FontIcon Glyph="&#xE102;" Foreground="White" HorizontalAlignment="Left" FontSize="12"/>
+                                                <FontIcon Glyph="&#xE768;" Foreground="White" HorizontalAlignment="Left" FontSize="12"/>
                                                 <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                                             </Grid>
                                         </Grid>
@@ -340,7 +340,7 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:GlyphButton Glyph="&#xE107;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
+                <controls:GlyphButton Glyph="&#xE74D;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
                 <controls:GlyphButton Glyph="&#xE72D;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
 
                 <ContentControl
@@ -362,7 +362,7 @@
                 </ContentControl>
 
                 <controls:GlyphButton Click="Manage_Click"
-                                      Glyph="&#xE10A;"
+                                      Glyph="&#xE711;"
                                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                       Style="{StaticResource HeaderGlyphButtonStyle}"
                                       Grid.Column="4"/>

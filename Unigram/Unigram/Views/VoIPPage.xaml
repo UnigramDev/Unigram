@@ -281,7 +281,7 @@
                 <Border x:Name="Close" Visibility="Collapsed" Background="#FFFFFF" CornerRadius="30" Grid.Column="2">
                     <controls:GlyphButton
                         Click="Close_Click"
-                        Glyph="&#xE10A;"
+                        Glyph="&#xE711;"
                         Foreground="#777777"
                         RequestedTheme="Light"
                         Radius="30"

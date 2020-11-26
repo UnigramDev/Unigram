@@ -55,7 +55,7 @@
 
             <controls:GlyphButton
                 Click="Cancel_Click"
-                Glyph="&#xE10A;"
+                Glyph="&#xE711;"
                 Radius="13,4,4,13"
                 AutomationProperties.Name="{CustomResource Close}"
                 ToolTipService.ToolTip="{CustomResource Close}"/>

@@ -26,7 +26,7 @@
                                Style="{StaticResource BaseTextBlockStyle}"/>
 
                     <controls:GlyphButton
-                        Glyph="&#xE11A;"
+                        Glyph="&#xE721;"
                         Click="Search_Click"
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1"/>

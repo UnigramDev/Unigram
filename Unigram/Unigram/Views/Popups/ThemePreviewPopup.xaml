@@ -59,7 +59,7 @@
                 <TextBlock x:Name="TitleLabel" Text="{CustomResource AppName}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="6,0" Grid.Column="1"/>
 
                 <controls:GlyphButton
-                    Glyph="&#xE11A;"
+                    Glyph="&#xE721;"
                     Style="{StaticResource HeaderGlyphButtonStyle}"
                     AutomationProperties.LandmarkType="Search"
                     AutomationProperties.Name="{CustomResource Search}"
@@ -136,24 +136,12 @@
 
                 <controls:GlyphButton
                         Style="{StaticResource HeaderGlyphButtonStyle}"
-                        Glyph="&#xE13A;"
+                        Glyph="&#xE717;"
                         AutomationProperties.Name="{CustomResource Call}"
                         ToolTipService.ToolTip="{CustomResource Call}"
                         Grid.Column="1"/>
 
-                <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                        Padding="{StaticResource EllipsisButtonPadding}"
-                        Style="{StaticResource EllipsisButton}"
-                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                        Grid.Column="2">
-                    <FontIcon x:Name="EllipsisIcon"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                FontSize="16"
-                                Glyph="&#xE10C;"
-                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                </Button>
+                <controls:MoreButton Grid.Column="2"/>
             </Grid>
         </controls:ContentPageHeader>
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Column="1" Grid.Row="2">

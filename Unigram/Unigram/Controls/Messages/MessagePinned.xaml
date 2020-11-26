@@ -94,7 +94,7 @@
 
         <controls:GlyphButton
             x:Name="HideButton"
-            Glyph="&#xE10A;"
+            Glyph="&#xE711;"
             Grid.Column="3"/>
         <controls:GlyphButton
             x:Name="ListButton"

@@ -20,7 +20,7 @@
         <controls:ButtonPageHeader
             Command="{x:Bind ViewModel.BlockCommand}"
             Text="{CustomResource BlockedUsers}"
-            Glyph="&#xE109;"/>
+            Glyph="&#xE710;"/>
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">

@@ -78,7 +78,7 @@
                 </VisualStateManager.VisualStateGroups>
                 <FontIcon
                     x:Name="Arrow"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                     FontSize="12"
                     Foreground="{ThemeResource FlipViewNextPreviousArrowForeground}"
                     Glyph="&#xE0E3;"
@@ -126,7 +126,7 @@
                 </VisualStateManager.VisualStateGroups>
                 <FontIcon
                     x:Name="Arrow"
-                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                     FontSize="12"
                     Foreground="{ThemeResource FlipViewNextPreviousArrowForeground}"
                     Glyph="&#xE0E2;"
@@ -166,7 +166,7 @@
             </ScrollViewer>
         </Grid>
         <controls:GlyphButton
-            Glyph="&#xE8BB;"
+            Glyph="&#xE711;"
             Click="BackButton_Click"
             Height="{ThemeResource AppBarThemeCompactHeight}"
             AutomationProperties.Name="{CustomResource AccDescrGoBack}"
@@ -220,21 +220,9 @@
                     Glyph="&#xE92C;"
                     FontSize="16"/>
 
-                <Button
+                <controls:MoreButton
                     Click="Menu_ContextRequested"
-                    HorizontalAlignment="Right"
-                    Height="{ThemeResource AppBarThemeCompactHeight}"
-                    Padding="{StaticResource EllipsisButtonPadding}"
-                    Style="{StaticResource EllipsisButton}"
-                    AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                    ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}">
-                    <FontIcon x:Name="EllipsisIcon"
-                            VerticalAlignment="Center"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            FontSize="16"
-                            Glyph="&#xE10C;"
-                            Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                </Button>
+                    HorizontalAlignment="Right"/>
             </StackPanel>
 
             <StackPanel Padding="12" MinWidth="320">

@@ -36,7 +36,7 @@
                         Badge="{CustomResource ClearCacheInfo}"
                         Content="{CustomResource ClearCache}"
                         Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                        Glyph="&#xE107;"
+                        Glyph="&#xE74D;"
                         Click="ClearCache_Click"/>
                 
                     <controls:BadgeButton

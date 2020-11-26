@@ -284,7 +284,7 @@
         <controls:AnimatedGlyphButton
             x:Name="PlaybackButton"
             Click="Toggle_Click"
-            Glyph="&#xE102;"
+            Glyph="&#xE768;"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
             FontSize="16"
             Width="40"
@@ -389,7 +389,7 @@
             ToolTipService.ToolTip="{CustomResource Shuffle}"/>-->
         <controls:GlyphButton
             Click="Clear_Click"
-            Glyph="&#xE10A;"
+            Glyph="&#xE711;"
             FontSize="16"
             Height="40"
             Grid.Column="7"

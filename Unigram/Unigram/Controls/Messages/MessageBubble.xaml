@@ -205,7 +205,7 @@
                         VerticalAlignment="Center"
                         Grid.Column="1"/>
                     <TextBlock
-                        Text="&#xE974;"
+                        Text="&#xE0E3;"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                         VerticalAlignment="Center"
                         FontSize="12"

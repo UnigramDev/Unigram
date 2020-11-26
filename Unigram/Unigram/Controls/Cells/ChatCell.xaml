@@ -91,7 +91,7 @@
         
         <TextBlock
             x:Name="TypeIcon"
-            Text="&#xE125;"
+            Text="&#xE716;"
             FontFamily="{StaticResource SymbolThemeFontFamily}"
             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
             VerticalAlignment="Bottom"
@@ -110,7 +110,7 @@
         </Grid>
         <FontIcon
             x:Name="MutedIcon"
-            Glyph="&#xE198;"
+            Glyph="&#xE74F;"
             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
             VerticalAlignment="Bottom"
             FontSize="16"

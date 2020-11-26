@@ -62,7 +62,7 @@
                             <SolidColorBrush Opacity="0.2" Color="{ThemeResource SystemAccentColor}"/>
                         </Border.Background>
                         <controls:GlyphButton
-                            Glyph="&#xE114;"
+                            Glyph="&#xE722;"
                             Click="EditPhoto_Click"
                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                             AutomationProperties.Name="{CustomResource AccDescrChangeProfilePicture}"
@@ -129,7 +129,7 @@
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource PrivacySettings}"
-                        Glyph="&#xE1F6;"
+                        Glyph="&#xE72E;"
                         Click="Privacy_Click"
                         Style="{StaticResource TextGlyphButtonStyle}"/>
                     <controls:BadgeButton

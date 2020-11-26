@@ -84,7 +84,7 @@
 
                 <controls:GlyphButton
                     x:Name="Call"
-                    Glyph="&#xE13A;"
+                    Glyph="&#xE717;"
                     AutomationProperties.Name="{CustomResource Call}"
                     ToolTipService.ToolTip="{CustomResource Call}"
                     Visibility="Collapsed"

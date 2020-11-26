@@ -64,7 +64,7 @@
                                         <Border x:Name="HeaderContentBorder" Grid.Row="2" Child="{TemplateBinding PaneHeader}"/>
 
                                         <Border x:Name="FooterContentBorder" Grid.Row="3" Child="{TemplateBinding PaneFooter}"/>
-                                        <!--<local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE115;" Grid.Row="5" />-->
+                                        <!--<local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE713;" Grid.Row="5" />-->
                                     </Grid.Children>
                                 </Grid>
                             </SplitView.Pane>
@@ -2088,11 +2088,11 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:RatingBar">
                     <StackPanel Background="{TemplateBinding Background}" Orientation="Horizontal">
-                        <FontIcon x:Name="Star0" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
-                        <FontIcon x:Name="Star1" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
-                        <FontIcon x:Name="Star2" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
-                        <FontIcon x:Name="Star3" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
-                        <FontIcon x:Name="Star4" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE1CE;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star0" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE734;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star1" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE734;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star2" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE734;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star3" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE734;" IsHitTestVisible="False"/>
+                        <FontIcon x:Name="Star4" FontSize="{TemplateBinding FontSize}" Margin="{TemplateBinding Padding}" Foreground="{ThemeResource TextControlBorderBrush}" Glyph="&#xE734;" IsHitTestVisible="False"/>
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
@@ -4388,7 +4388,7 @@
                                                            HorizontalAlignment="Center"
                                                            FontStyle="Normal"
                                                            FontSize="12"
-                                                           Text="&#xE10A;"
+                                                           Text="&#xE711;"
                                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                            AutomationProperties.AccessibilityView="Raw" />
                                             </Grid>

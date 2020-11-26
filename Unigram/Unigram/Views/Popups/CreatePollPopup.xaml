@@ -92,7 +92,7 @@
                                                                        HorizontalAlignment="Center"
                                                                        FontStyle="Normal"
                                                                        FontSize="12"
-                                                                       Text="&#xE10A;"
+                                                                       Text="&#xE711;"
                                                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                                        AutomationProperties.AccessibilityView="Raw" />
                                                         </Grid>

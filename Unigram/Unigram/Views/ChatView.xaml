@@ -152,72 +152,6 @@
             </Setter>
         </Style>
 
-        <Style x:Key="CloseButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
-            <Setter Property="Content" Value="&#xE700;" />
-            <Setter Property="Height" Value="44" />
-            <Setter Property="Width" Value="44" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-
-                            <TextBlock
-                                x:Name="ContentPresenter"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Text="&#xE10A;"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <DataTemplate x:Key="EmptyMessageTemplate"/>
 
         <!-- Region Service -->
@@ -359,7 +293,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="TypeIcon"
-                                Text="&#xE125;"
+                                Text="&#xE716;"
                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
                                 Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                 VerticalAlignment="Bottom"
@@ -421,7 +355,7 @@
                     Visibility="Collapsed"
                     Command="{x:Bind ViewModel.CallCommand}"
                     Style="{StaticResource HeaderGlyphButtonStyle}"
-                    Glyph="&#xE13A;"
+                    Glyph="&#xE717;"
                     AutomationProperties.Name="{CustomResource Call}"
                     ToolTipService.ToolTip="{CustomResource Call}"
                     Grid.Column="3">
@@ -565,7 +499,7 @@
 
                 </Grid>
 
-                <controls:GlyphButton Command="{x:Bind ViewModel.RemoveActionBarCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
+                <controls:GlyphButton Command="{x:Bind ViewModel.RemoveActionBarCommand}" Glyph="&#xE711;" FontSize="16" Height="32" Grid.Column="1"/>
             </Grid>
 
             <StackPanel x:Name="DateHeaderRelative" Grid.Row="2">
@@ -915,7 +849,7 @@
 
                     <controls:ProgressBarRing x:Name="ComposerHeaderUpload" Background="Transparent" Foreground="{ThemeResource MessageHeaderBorderBrush}"/>
 
-                    <controls:GlyphButton x:Name="ComposerHeaderCancel" Command="{x:Bind ViewModel.ClearReplyCommand}" Height="{StaticResource TelegramToolBarHeight}" AllowFocusOnInteraction="False" Glyph="&#xE10A;" Grid.Column="2"/>
+                    <controls:GlyphButton x:Name="ComposerHeaderCancel" Command="{x:Bind ViewModel.ClearReplyCommand}" Height="{StaticResource TelegramToolBarHeight}" AllowFocusOnInteraction="False" Glyph="&#xE711;" Grid.Column="2"/>
                 </Grid>
 
                 <Border Grid.ColumnSpan="4" Grid.Row="2">
@@ -1043,7 +977,7 @@
 
                 <Border HorizontalAlignment="Right" Margin="0,0,84,0" Grid.ColumnSpan="4" Grid.Row="1">
                     <StackPanel x:Name="SlidePanel" SizeChanged="SlidePanel_SizeChanged" Orientation="Horizontal">
-                        <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Glyph="&#xE00E;" FontSize="12" Margin="0,1,4,0"/>
+                        <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Glyph="&#xE0E2;" FontSize="12" Margin="0,1,4,0"/>
                         <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="{CustomResource SlideToCancel}" VerticalAlignment="Center" Margin="0,0,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </Border>

@@ -125,7 +125,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="20"
-                                Text="&#xE160;"/>
+                                Text="&#xE7C3;"/>
                 </Border>
                 <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                     <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
@@ -207,7 +207,7 @@
                         Grid.Column="1"/>
 
                     <controls:GlyphButton
-                        Glyph="&#xE107;"
+                        Glyph="&#xE74D;"
                         Click="Remove_Click"
                         Tag="{x:Bind}"
                         Width="40"
@@ -252,8 +252,8 @@
                 IsChecked="{x:Bind IsMediaSelected, Mode=TwoWay}"
                 Visibility="{x:Bind IsMediaOnly, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <controls:PivotRadioButton
-                Glyph="&#xE160;"
-                CheckedGlyph="&#xE160;"
+                Glyph="&#xE7C3;"
+                CheckedGlyph="&#xE7C3;"
                 Click="PivotRadioButton_Click"
                 Style="{StaticResource ModernPivotRadioButtonStyle}"
                 IsChecked="{x:Bind IsFilesSelected, Mode=TwoWay}"

@@ -258,7 +258,7 @@
                 <controls:GlyphButton
                     x:Name="SearchPrevious"
                     Command="{x:Bind ViewModel.PreviousCommand}"
-                    Glyph="&#xE0A0;"
+                    Glyph="&#xE0E4;"
                     AllowFocusOnInteraction="False"
                     FontSize="{StaticResource GlyphButtonFontSize}"
                     AutomationProperties.Name="{CustomResource AccDescrSearchNext}"
@@ -267,7 +267,7 @@
                 <controls:GlyphButton
                     x:Name="SearchNext"
                     Command="{x:Bind ViewModel.NextCommand}"
-                    Glyph="&#xE0A1;"
+                    Glyph="&#xE0E5;"
                     AllowFocusOnInteraction="False"
                     FontSize="{StaticResource GlyphButtonFontSize}"
                     AutomationProperties.Name="{CustomResource AccDescrSearchPrev}"
@@ -288,7 +288,7 @@
                         </Grid.ColumnDefinitions>
                         <controls:GlyphButton
                             Click="FilterByMember_Click"
-                            Glyph="&#xE2AF;"
+                            Glyph="&#xE77B;"
                             AllowFocusOnInteraction="False"
                             Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                             AutomationProperties.Name="{CustomResource AccDescrSearchByUser}"
@@ -303,7 +303,7 @@
                             Grid.Column="1"/>
                         <controls:GlyphButton
                             Command="{x:Bind ViewModel.Dialog.JumpDateCommand}"
-                            Glyph="&#xE163;"
+                            Glyph="&#xE787;"
                             AllowFocusOnInteraction="False"
                             FontSize="{StaticResource GlyphButtonFontSize}"
                             Grid.Column="2"/>
@@ -311,7 +311,7 @@
 
                     <controls:GlyphButton
                         Click="Close_Click"
-                        Glyph="&#xE10A;"
+                        Glyph="&#xE711;"
                         FontSize="16"
                         Grid.Column="1"/>
                 </Grid>

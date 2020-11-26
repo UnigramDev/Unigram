@@ -320,8 +320,8 @@
                                 <controls:GlyphToggleButton
                                     x:Name="Lock"
                                     Visibility="Collapsed"
-                                    Glyph="&#xE1F7;"
-                                    CheckedGlyph="&#xE1F6;"
+                                    Glyph="&#xE785;"
+                                    CheckedGlyph="&#xE72E;"
                                     Click="Lock_Click"
                                     Style="{StaticResource HeaderGlyphToggleButtonStyle}"
                                     AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
@@ -369,7 +369,7 @@
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
                                 Grid.Column="2"/>
                             <controls:GlyphButton
-                                Glyph="&#xE107;"
+                                Glyph="&#xE74D;"
                                 Command="{x:Bind ViewModel.Chats.ChatsDeleteCommand}"
                                 AutomationProperties.Name="{CustomResource Delete}"
                                 ToolTipService.ToolTip="{CustomResource Delete}"
@@ -404,7 +404,7 @@
 
                             <controls:GlyphButton
                                 Click="Manage_Click"
-                                Glyph="&#xE10A;"
+                                Glyph="&#xE711;"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                 Style="{StaticResource HeaderGlyphButtonStyle}"
                                 Grid.Column="7"/>
@@ -623,7 +623,7 @@
                                                     Command="{x:Bind ViewModel.Chats.ClearRecentChatsCommand}"
                                                     AllowFocusOnInteraction="False"
                                                     VerticalAlignment="Bottom"
-                                                    Glyph="&#xE10A;"
+                                                    Glyph="&#xE711;"
                                                     FontSize="12"
                                                     Width="48"
                                                     Height="32"
