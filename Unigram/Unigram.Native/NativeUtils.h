@@ -27,6 +27,8 @@ namespace winrt::Unigram::Native::implementation
 
 		static hstring GetCurrentCulture();
 
+		static bool IsFileReadable(hstring path);
+
 		static bool IsMediaSupported();
 
 	private:

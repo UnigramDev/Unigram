@@ -16,6 +16,8 @@ namespace Unigram.Native
 
 		static String GetCurrentCulture();
 
+		static Boolean IsFileReadable(String path);
+
 		static Boolean IsMediaSupported();
 	}
 } // namespace Unigram.Native

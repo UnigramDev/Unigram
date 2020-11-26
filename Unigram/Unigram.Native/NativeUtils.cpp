@@ -193,6 +193,38 @@ namespace winrt::Unigram::Native::implementation
 		return buff;
 	}
 
+	bool NativeUtils::IsFileReadable(hstring path)
+	{
+		DWORD desired_access = GENERIC_READ;
+
+		// TODO: share mode
+		DWORD share_mode = FILE_SHARE_READ | FILE_SHARE_DELETE | FILE_SHARE_WRITE;
+
+		DWORD creation_disposition = OPEN_ALWAYS;
+
+		DWORD native_flags = FILE_FLAG_BACKUP_SEMANTICS;
+		//if (flags & Direct) {
+		//	native_flags |= FILE_FLAG_WRITE_THROUGH | FILE_FLAG_NO_BUFFERING;
+		//}
+		//if (flags & WinStat) {
+		//	native_flags |= FILE_FLAG_BACKUP_SEMANTICS;
+		//}
+		CREATEFILE2_EXTENDED_PARAMETERS extended_parameters;
+		std::memset(&extended_parameters, 0, sizeof(extended_parameters));
+		extended_parameters.dwSize = sizeof(extended_parameters);
+		extended_parameters.dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
+		extended_parameters.dwFileFlags = native_flags;
+		auto handle = CreateFile2FromAppW(path.c_str(), desired_access, share_mode, creation_disposition, &extended_parameters);
+
+		if (handle == INVALID_HANDLE_VALUE)
+		{
+			return false;
+		}
+
+		CloseHandle(handle);
+		return true;
+	}
+
 	bool NativeUtils::IsMediaSupported()
 	{
 		HRESULT result;

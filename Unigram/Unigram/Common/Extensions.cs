@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Entities;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -291,13 +292,13 @@ namespace Unigram.Common
         public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
-            var props = await file.GetBasicPropertiesAsync();
 
-            if (conversion == ConversionType.Copy && arguments == null)
+            if (conversion == ConversionType.Copy && arguments == null && NativeUtils.IsFileReadable(file.Path))
             {
                 return new InputFileLocal(file.Path);
             }
 
+            var props = await file.GetBasicPropertiesAsync();
             return new InputFileGenerated(file.Path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (int)props.Size);
         }
 
