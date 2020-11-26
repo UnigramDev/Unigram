@@ -21,12 +21,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{CustomResource ColorThemes}" Foreground="{ThemeResource PageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
 
-                <Button Padding="{StaticResource EllipsisButtonPadding}"
-                        Style="{StaticResource EllipsisButton}"
-                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                        Grid.Column="1">
+                <controls:MoreButton Grid.Column="1">
                     <Button.Flyout>
                         <MenuFlyout x:Name="MenuFlyout">
                             <MenuFlyoutItem Text="{CustomResource CreateNewThemeMenu}"
@@ -37,13 +32,7 @@
                             </MenuFlyoutItem>
                         </MenuFlyout>
                     </Button.Flyout>
-                    <FontIcon x:Name="EllipsisIcon"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                FontSize="16"
-                                Glyph="&#xE10C;"
-                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                </Button>
+                </controls:MoreButton>
             </Grid>
         </controls:ContentPageHeader>
     </local:HostedPage.Header>

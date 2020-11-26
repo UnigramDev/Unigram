@@ -395,6 +395,7 @@
     <Compile Include="Controls\Messages\InvoiceFooter.xaml.cs">
       <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MoreButton.cs" />
     <Compile Include="Controls\MosaicLayout.cs" />
     <Compile Include="Controls\MultipleListView.cs" />
     <Compile Include="Controls\NavigationView.cs" />

@@ -2305,6 +2305,12 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:MoreButton" BasedOn="{StaticResource HeaderGlyphButtonStyle}">
+        <Setter Property="Glyph" Value="&#xE10C;"/>
+        <Setter Property="AutomationProperties.Name" Value="{CustomResource AccDescrMoreOptions}"/>
+        <Setter Property="ToolTipService.ToolTip" Value="{CustomResource AccDescrMoreOptions}"/>
+    </Style>
+
     <Style TargetType="local:BackButton">
         <Setter Property="Glyph" Value="&#xE72B;"/>
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>

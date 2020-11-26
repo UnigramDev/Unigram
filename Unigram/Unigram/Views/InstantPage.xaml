@@ -188,12 +188,7 @@
                      AutomationProperties.Name="{CustomResource ShareLink}"
                      ToolTipService.ToolTip="{CustomResource ShareLink}"                 
                      Grid.Column="1"/>
-                <Button Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                        Padding="{StaticResource EllipsisButtonPadding}"
-                        Style="{StaticResource EllipsisButton}"
-                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                        Grid.Column="2">
+                <controls:MoreButton Grid.Column="2">
                     <Button.Flyout>
                         <MenuFlyout x:Name="EllipsisFlyout">
                             <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}">
@@ -208,13 +203,7 @@
                             </MenuFlyoutItem>
                         </MenuFlyout>
                     </Button.Flyout>
-                    <FontIcon x:Name="EllipsisIcon"
-                              VerticalAlignment="Center"
-                              FontFamily="{StaticResource SymbolThemeFontFamily}"
-                              FontSize="16"
-                              Glyph="&#xE10C;"
-                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                </Button>
+                </controls:MoreButton>
             </Grid>
         </controls:ContentPageHeader>
     </local:HostedPage.Header>

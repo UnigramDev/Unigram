@@ -438,21 +438,10 @@
                     ToolTipService.ToolTip="{CustomResource Search}"
                     Grid.Column="4"/>
 
-                <Button x:Name="Options"
-                        Click="Menu_ContextRequested"
-                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                        Padding="{StaticResource EllipsisButtonPadding}"
-                        Style="{StaticResource EllipsisButton}"
-                        AutomationProperties.Name="{CustomResource AccDescrMoreOptions}"
-                        ToolTipService.ToolTip="{CustomResource AccDescrMoreOptions}"
-                        Grid.Column="5">
-                    <FontIcon x:Name="EllipsisIcon"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                FontSize="16"
-                                Glyph="&#xE10C;"
-                                Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                </Button>
+                <controls:MoreButton
+                    x:Name="Options"
+                    Click="Menu_ContextRequested"
+                    Grid.Column="5"/>
             </Grid>
         </controls:ContentPageHeader>
     </local:HostedPage.Header>
