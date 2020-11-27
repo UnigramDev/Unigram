@@ -88,6 +88,7 @@ namespace Unigram.ViewModels
 
             FilterEditCommand = new RelayCommand<ChatFilterViewModel>(FilterEditExecute);
             FilterAddCommand = new RelayCommand<ChatFilterViewModel>(FilterAddExecute);
+            FilterMarkAsReadCommand = new RelayCommand<ChatFilterViewModel>(FilterMarkAsReadExecute);
             FilterDeleteCommand = new RelayCommand<ChatFilterViewModel>(FilterDeleteExecute);
         }
 
@@ -450,6 +451,33 @@ namespace Unigram.ViewModels
             await viewModel.OnNavigatedToAsync(filter.ChatFilterId, NavigationMode.New, null);
             await viewModel.AddIncludeAsync();
             await viewModel.SendAsync();
+        }
+
+        public RelayCommand<ChatFilterViewModel> FilterMarkAsReadCommand { get; }
+        private async void FilterMarkAsReadExecute(ChatFilterViewModel filter)
+        {
+            var confirm = await MessagePopup.ShowAsync(Strings.Resources.AreYouSure, Strings.Resources.AppName, Strings.Resources.MarkAsRead, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var chats = await ProtoService.GetChatListAsync(filter.ChatList, 0, int.MaxValue);
+            if (chats.TotalCount > chats.ChatIds.Count)
+            {
+                // ???
+            }
+
+            foreach (var id in chats.ChatIds)
+            {
+                var chat = CacheService.GetChat(id);
+                if (chat == null || chat.LastMessage == null || !chat.IsUnread())
+                {
+                    continue;
+                }
+
+                ProtoService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
+            }
         }
 
         public RelayCommand<ChatFilterViewModel> FilterDeleteCommand { get; }

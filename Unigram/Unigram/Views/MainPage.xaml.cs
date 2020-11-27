@@ -2458,10 +2458,12 @@ namespace Unigram.Views
             if (filter.ChatFilterId == Constants.ChatListMain)
             {
                 flyout.CreateFlyoutItem(ViewModel.FilterEditCommand, filter, Strings.Resources.FilterEditAll, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, filter, Strings.Resources.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
             }
             else
             {
                 flyout.CreateFlyoutItem(ViewModel.FilterEditCommand, filter, Strings.Resources.FilterEdit, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, filter, Strings.Resources.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
                 flyout.CreateFlyoutItem(ViewModel.FilterAddCommand, filter, Strings.Resources.FilterAddChats, new FontIcon { Glyph = Icons.Add });
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(ViewModel.FilterDeleteCommand, filter, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
@@ -2492,11 +2494,12 @@ namespace Unigram.Views
 
             if (((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats)
             {
-                flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrExpandPanel, new FontIcon { Glyph = "\uF164" });
+                flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrExpandPanel, new FontIcon { Glyph = Icons.Expand });
+                flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
             }
             else
             {
-                flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = "\uF166" });
+                flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = Icons.Collapse });
             }
 
             args.ShowAt(flyout, element);
