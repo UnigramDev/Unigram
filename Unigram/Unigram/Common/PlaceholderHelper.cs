@@ -254,13 +254,8 @@ namespace Unigram.Common
             {
                 return GetDeletedUser(user, side);
             }
-            else
-            {
 
-                return GetChat(chat, side);
-            }
-
-            return null;
+            return GetChat(chat, side);
         }
 
         public static ImageSource GetChat(IProtoService protoService, ChatInviteLinkInfo chat, int side)
@@ -277,12 +272,8 @@ namespace Unigram.Common
                     protoService?.DownloadFile(file.Id, 1);
                 }
             }
-            else
-            {
-                return GetChat(chat, side);
-            }
 
-            return null;
+            return GetChat(chat, side);
         }
 
         public static ImageSource GetUser(IProtoService protoService, User user, int side)
@@ -303,12 +294,8 @@ namespace Unigram.Common
             {
                 return GetDeletedUser(user, side);
             }
-            else
-            {
-                return GetUser(user, side);
-            }
 
-            return null;
+            return GetUser(user, side);
         }
 
         public static ImageSource GetBitmap(IProtoService protoService, PhotoSize photoSize)
