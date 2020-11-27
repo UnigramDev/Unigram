@@ -222,7 +222,7 @@ namespace Unigram.Services
             _client.Send(new Close());
         }
 
-        private void Initialize(bool online = true)
+        private async void Initialize(bool online = true)
         {
             _client = Client.Create(this);
 
@@ -242,7 +242,11 @@ namespace Unigram.Services
 
             if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
             {
-                parameters.FilesDirectory = _settings.FilesDirectory;
+                var folder = await GetFilesFolderAsync(false);
+                if (folder != null)
+                {
+                    parameters.FilesDirectory = folder.Path;
+                }
             }
 
 #if MOCKUP
@@ -623,37 +627,54 @@ namespace Unigram.Services
 
         private StorageFolder _filesFolder;
 
+        private async Task<StorageFolder> GetFilesFolderAsync(bool allowLocal)
+        {
+            if (_filesFolder == null)
+            {
+                if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                {
+                    try
+                    {
+                        _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                    }
+                    catch
+                    {
+                        _filesFolder = ApplicationData.Current.LocalFolder;
+                    }
+                }
+                else
+                {
+                    _filesFolder = ApplicationData.Current.LocalFolder;
+                }
+            }
+
+            if (_filesFolder == ApplicationData.Current.LocalFolder)
+            {
+                return allowLocal ? _filesFolder : null;
+            }
+
+            return _filesFolder;
+        }
+
         public async Task<StorageFile> GetFileAsync(File file, bool completed = true)
         {
             if (file.Local.IsDownloadingCompleted || !completed)
             {
                 try
                 {
-                    if (_filesFolder == null)
+                    var folder = await GetFilesFolderAsync(true);
+                    if (folder == null)
                     {
-                        if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
-                        {
-                            _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
-                        }
-                        else
-                        {
-                            var local = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path);
-                            if (local.StartsWith('.'))
-                            {
-                                return await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                            }
-
-                            return await ApplicationData.Current.LocalFolder.GetFileAsync(local);
-                        }
+                        folder = ApplicationData.Current.LocalFolder;
                     }
 
-                    var relative = System.IO.Path.GetRelativePath(_filesFolder.Path, file.Local.Path);
+                    var relative = System.IO.Path.GetRelativePath(folder.Path, file.Local.Path);
                     if (relative.StartsWith('.'))
                     {
                         return await StorageFile.GetFileFromPathAsync(file.Local.Path);
                     }
 
-                    return await _filesFolder.GetFileAsync(relative);
+                    return await folder.GetFileAsync(relative);
                 }
                 catch (System.IO.FileNotFoundException)
                 {
@@ -671,31 +692,19 @@ namespace Unigram.Services
         {
             try
             {
-                if (_filesFolder == null)
+                var folder = await GetFilesFolderAsync(true);
+                if (folder == null)
                 {
-                    if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
-                    {
-                        _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
-                    }
-                    else
-                    {
-                        var local = System.IO.Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, path);
-                        if (local.StartsWith('.'))
-                        {
-                            return await StorageFile.GetFileFromPathAsync(path);
-                        }
-
-                        return await ApplicationData.Current.LocalFolder.GetFileAsync(local);
-                    }
+                    folder = ApplicationData.Current.LocalFolder;
                 }
 
-                var relative = System.IO.Path.GetRelativePath(_filesFolder.Path, path);
+                var relative = System.IO.Path.GetRelativePath(folder.Path, path);
                 if (relative.StartsWith('.'))
                 {
                     return await StorageFile.GetFileFromPathAsync(path);
                 }
 
-                return await _filesFolder.GetFileAsync(relative);
+                return await folder.GetFileAsync(relative);
             }
             catch { }
 
