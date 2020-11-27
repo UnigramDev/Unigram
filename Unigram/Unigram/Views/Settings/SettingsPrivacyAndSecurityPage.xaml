@@ -58,19 +58,19 @@
                         Badge="{x:Bind ViewModel.ActiveSessions, Mode=OneWay}"
                         Glyph="&#xE975;"
                         Click="Sessions_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource Passcode}"
                         Badge="{x:Bind ConvertOnOff(ViewModel.IsPasscodeEnabled), Mode=OneWay}"
                         Glyph="&#xE928;"
                         Command="{x:Bind ViewModel.PasscodeCommand}"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource TwoStepVerification}"
                         Badge="{x:Bind ConvertOnOff(ViewModel.IsPasswordEnabled), Mode=OneWay}"
                         Glyph="&#xE192;"
                         Command="{x:Bind ViewModel.PasswordCommand}"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl

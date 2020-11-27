@@ -124,7 +124,7 @@
                                 x:Name="AddNew"
                                 Content="{CustomResource AddSubscriber}"
                                 Command="{x:Bind ViewModel.AddCommand}"
-                                Style="{StaticResource TextGlyphButtonStyle}"
+                                Style="{StaticResource GlyphBadgeButtonStyle}"
                                 Glyph="&#xE8FA;"/>
                         </controls:HeaderedControl>
                     </Border>

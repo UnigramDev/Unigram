@@ -45,7 +45,7 @@
                         Visibility="Collapsed"
                         Content="{CustomResource ChannelAddAdmin}"
                         Command="{x:Bind ViewModel.AddCommand}"
-                        Style="{StaticResource TextGlyphButtonStyle}"
+                        Style="{StaticResource GlyphBadgeButtonStyle}"
                         Glyph="&#xE734;"/>
                 </controls:HeaderedControl>
             </ListView.Header>

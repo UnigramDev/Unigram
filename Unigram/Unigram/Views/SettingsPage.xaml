@@ -113,7 +113,7 @@
                         Content="{CustomResource Filters}"
                         Glyph="&#xF12B;"
                         Click="Folders_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                 </StackPanel>
                 
                 <StackPanel
@@ -126,37 +126,37 @@
                         Content="{CustomResource NotificationsAndSounds}"
                         Glyph="&#xEC42;"
                         Click="Notifications_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource PrivacySettings}"
                         Glyph="&#xE72E;"
                         Click="Privacy_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource DataSettings}"
                         Glyph="&#xEB05;"
                         Click="Data_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource StickersName}"
                         Glyph="&#xF4AA;"
                         Click="Stickers_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource ChatSettings}"
                         Glyph="&#xE8BD;"
                         Click="Appearance_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource Language}"
                         Glyph="&#xE774;"
                         Click="Language_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource PrivacyAdvanced}"
                         Glyph="&#xE9E9;"
                         Click="Advanced_Click"
-                        Style="{StaticResource TextGlyphButtonStyle}"/>
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                 </StackPanel>
                 
                 <StackPanel
@@ -165,14 +165,16 @@
                     <contract7Present:StackPanel.BackgroundTransition>
                         <contract7Present:BrushTransition/>
                     </contract7Present:StackPanel.BackgroundTransition>
-                    <controls:BadgeButton Content="{CustomResource AskAQuestion}"
-                                          Glyph="&#xED15;"
-                                          Command="{x:Bind ViewModel.AskCommand}"
-                                          Style="{StaticResource TextGlyphButtonStyle}"/>
-                    <controls:BadgeButton Content="{CustomResource TelegramFAQ}"
-                                          Glyph="&#xE783;"
-                                          Click="Questions_Click"
-                                          Style="{StaticResource TextGlyphButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource AskAQuestion}"
+                        Glyph="&#xED15;"
+                        Command="{x:Bind ViewModel.AskCommand}"
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="{CustomResource TelegramFAQ}"
+                        Glyph="&#xE783;"
+                        Click="Questions_Click"
+                        Style="{StaticResource GlyphBadgeButtonStyle}"/>
                 </StackPanel>
                 
                 <Grid>
