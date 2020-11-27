@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Background;
+using Windows.System.Profile;
 using Windows.UI.Notifications;
 
 namespace Unigram.Common
@@ -22,6 +23,16 @@ namespace Unigram.Common
                     {
                         t.Value.Unregister(false);
                     }
+                    else if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
+                    {
+                        t.Value.Unregister(false);
+                    }
+                }
+
+                if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
+                {
+                    BackgroundExecutionManager.RemoveAccess();
+                    return;
                 }
 
                 var access = await BackgroundExecutionManager.RequestAccessAsync();
