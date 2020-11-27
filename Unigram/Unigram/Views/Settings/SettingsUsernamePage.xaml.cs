@@ -15,8 +15,8 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsUsernameViewModel>();
 
-            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
-            throttler.Invoked += (s, args) =>
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += (s, args) =>
             {
                 if (ViewModel.UpdateIsValid(Username.Text))
                 {

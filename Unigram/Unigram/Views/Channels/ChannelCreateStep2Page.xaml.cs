@@ -18,8 +18,8 @@ namespace Unigram.Views.Channels
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChannelCreateStep2ViewModel, ISupergroupEditDelegate>(this);
 
-            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
-            throttler.Invoked += (s, args) =>
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Username.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += (s, args) =>
             {
                 if (ViewModel.UpdateIsValid(Username.Value))
                 {

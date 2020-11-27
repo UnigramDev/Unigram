@@ -16,8 +16,8 @@ namespace Unigram.Views.Supergroups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SupergroupEditStickerSetViewModel>();
 
-            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => ShortName.TextChanged += new TextChangedEventHandler(handler));
-            throttler.Invoked += (s, args) =>
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => ShortName.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += (s, args) =>
             {
                 ViewModel.CheckAvailability(ShortName.Value);
             };

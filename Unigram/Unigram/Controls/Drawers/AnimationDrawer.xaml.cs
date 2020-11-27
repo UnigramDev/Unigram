@@ -47,8 +47,8 @@ namespace Unigram.Controls.Drawers
             var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
             shadow.RelativeSizeAdjustment = Vector2.One;
 
-            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
-            throttler.Invoked += (s, args) =>
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += (s, args) =>
             {
                 ViewModel.FindAnimations(FieldAnimations.Text);
                 //var items = ViewModel.Stickers.SearchStickers;

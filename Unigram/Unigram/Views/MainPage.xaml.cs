@@ -1528,8 +1528,8 @@ namespace Unigram.Views
 
         private void InitializeSearch()
         {
-            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            throttler.Invoked += async (s, args) =>
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += async (s, args) =>
             {
                 if (rpMasterTitlebar.SelectedIndex == 0)
                 {

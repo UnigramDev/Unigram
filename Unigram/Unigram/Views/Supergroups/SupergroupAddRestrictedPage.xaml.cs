@@ -25,8 +25,8 @@ namespace Unigram.Views.Supergroups
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SupergroupAddRestrictedViewModel>();
 
-            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            throttler.Invoked += async (s, args) =>
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += async (s, args) =>
             {
                 var items = ViewModel.Search;
                 if (items != null && string.Equals(SearchField.Text, items.Query))

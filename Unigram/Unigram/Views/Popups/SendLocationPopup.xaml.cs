@@ -56,14 +56,14 @@ namespace Unigram.Views.Popups
 
             Loaded += OnLoaded;
 
-            var throttler = new EventThrottler<object>(500, handler => mMap.CenterChanged += new TypedEventHandler<MapControl, object>(handler));
-            throttler.Invoked += async (s, args) =>
+            var debouncer = new EventDebouncer<object>(500, handler => mMap.CenterChanged += new TypedEventHandler<MapControl, object>(handler));
+            debouncer.Invoked += async (s, args) =>
             {
                 await UpdateLocationAsync(mMap.Center);
             };
 
-            var throttler1 = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            throttler1.Invoked += (s, args) =>
+            var debouncer1 = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            debouncer1.Invoked += (s, args) =>
             {
                 if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {

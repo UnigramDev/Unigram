@@ -3,22 +3,20 @@ using Windows.UI.Xaml;
 
 namespace Unigram.Common
 {
-    public class EventThrottler<TEventArgs>
+    public class EventDebouncer<TEventArgs>
     {
-        public delegate void Something(object sender, TEventArgs args);
-
         private readonly DispatcherTimer _timer;
         private readonly Action<Action<object, TEventArgs>> _unsubscription;
 
         private object _lastSender;
         private TEventArgs _lastArgs;
 
-        public EventThrottler(double milliseconds, Action<Action<object, TEventArgs>> subscription, Action<Action<object, TEventArgs>> unsubscription = null)
+        public EventDebouncer(double milliseconds, Action<Action<object, TEventArgs>> subscription, Action<Action<object, TEventArgs>> unsubscription = null)
             : this(TimeSpan.FromMilliseconds(milliseconds), subscription, unsubscription)
         {
         }
 
-        public EventThrottler(TimeSpan throttle, Action<Action<object, TEventArgs>> subscription, Action<Action<object, TEventArgs>> unsubscription = null)
+        public EventDebouncer(TimeSpan throttle, Action<Action<object, TEventArgs>> subscription, Action<Action<object, TEventArgs>> unsubscription = null)
         {
             _timer = new DispatcherTimer();
             _timer.Interval = throttle;

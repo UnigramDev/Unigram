@@ -173,7 +173,7 @@
     <Compile Include="Common\DateTimeParser.cs" />
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
-    <Compile Include="Common\EventThrottler.cs" />
+    <Compile Include="Common\EventDebouncer.cs" />
     <Compile Include="Common\FastFourierTransform.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\LoopThread.cs" />

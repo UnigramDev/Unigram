@@ -228,8 +228,8 @@ namespace Unigram.Views.Chats
 
         private void InitializeSearch(TextBox field, Func<SearchMessagesFilter> filter)
         {
-            var throttler = new EventThrottler<TextChangedEventArgs>(Constants.TypingTimeout, handler => field.TextChanged += new TextChangedEventHandler(handler));
-            throttler.Invoked += (s, args) =>
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => field.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += (s, args) =>
             {
                 ViewModel.Find(filter(), field.Text);
             };
