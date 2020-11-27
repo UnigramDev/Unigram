@@ -2495,12 +2495,13 @@ namespace Unigram.Views
             if (((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats)
             {
                 flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrExpandPanel, new FontIcon { Glyph = Icons.Expand });
-                flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
             }
             else
             {
                 flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = Icons.Collapse });
             }
+
+            flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
             args.ShowAt(flyout, element);
         }
