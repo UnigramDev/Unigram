@@ -32,6 +32,9 @@ namespace Unigram.Common
                 case SoundEffect.Sent:
                     await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3")));
                     break;
+                case SoundEffect.VoipIncoming:
+                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_incoming.mp3")), null, 0);
+                    break;
                 case SoundEffect.VoipRingback:
                     await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_ringback.mp3")), null, 0);
                     break;
@@ -61,7 +64,7 @@ namespace Unigram.Common
                 await Task.Yield();
 
                 // This seems to fail in some conditions.
-                var settings = new AudioGraphSettings(AudioRenderCategory.SoundEffects);
+                var settings = new AudioGraphSettings(AudioRenderCategory.Media);
                 settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.SystemDefault;
 
                 var result = await AudioGraph.CreateAsync(settings);
@@ -107,6 +110,7 @@ namespace Unigram.Common
     public enum SoundEffect
     {
         Sent,
+        VoipIncoming,
         VoipRingback,
         VoipBusy,
         VoipConnecting,
