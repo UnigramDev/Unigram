@@ -1181,11 +1181,6 @@ namespace Unigram.Views
 
         private void CheckMessageBoxEmpty()
         {
-            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
-            {
-                CollapseMarkup(false);
-            }
-
             CheckButtonsVisibility();
 
             var viewModel = ViewModel;
@@ -1541,11 +1536,6 @@ namespace Unigram.Views
 
         private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
-            {
-                CollapseMarkup(false);
-            }
-
             InputPane.GetForCurrentView().TryShow();
         }
 
@@ -3656,7 +3646,9 @@ namespace Unigram.Views
 
                     Grid.SetRow(btnAttach, show ? 2 : 1);
                     Grid.SetRow(ButtonsPanel, show ? 2 : 1);
-                    //Grid.SetColumnSpan(TextFieldPanel, show ? 4 : 2);
+
+                    //TextField.Padding = new Thickness(48, 4, 0, 6);
+                    //Grid.SetColumnSpan(TextFieldPanel, 2);
                 }
 
                 UpdateTextAreaRadius();
@@ -3694,7 +3686,9 @@ namespace Unigram.Views
 
                 Grid.SetRow(btnAttach, show ? 2 : 1);
                 Grid.SetRow(ButtonsPanel, show ? 2 : 1);
-                //Grid.SetColumnSpan(TextFieldPanel, show ? 4 : 2);
+
+                //TextField.Padding = new Thickness(12, 4, 0, 6);
+                //Grid.SetColumnSpan(TextFieldPanel, 4);
             }
             else
             {

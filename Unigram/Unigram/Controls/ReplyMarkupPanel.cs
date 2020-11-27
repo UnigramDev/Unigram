@@ -126,17 +126,18 @@ namespace Unigram.Controls
                     {
                         var button = new GlyphButton();
                         button.Tag = row[i];
-                        button.Margin = new Thickness(1, 2, 1, 0);
                         button.HorizontalAlignment = HorizontalAlignment.Stretch;
                         button.VerticalAlignment = VerticalAlignment.Stretch;
                         button.Click += Button_Click;
 
                         if (inline)
                         {
+                            button.Margin = new Thickness(1, 2, 1, 0);
                             button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
                         }
                         else
                         {
+                            button.Margin = new Thickness(4, 8, 4, 0);
                             button.Style = App.Current.Resources["ReplyKeyboardMarkupButtonStyle"] as Style;
                         }
 
@@ -172,25 +173,28 @@ namespace Unigram.Controls
                             button.Content = keyboardButton.Text;
                         }
 
-                        var topLeft = 4d;
-                        var topRight = 4d;
-                        var bottomRight = 4d;
-                        var bottomLeft = 4d;
-
-                        if (j == rows.Count - 1)
+                        if (inline)
                         {
-                            if (i == 0)
+                            var topLeft = 4d;
+                            var topRight = 4d;
+                            var bottomRight = 4d;
+                            var bottomLeft = 4d;
+
+                            if (j == rows.Count - 1)
                             {
-                                bottomLeft = CornerRadius.BottomLeft;
+                                if (i == 0)
+                                {
+                                    bottomLeft = CornerRadius.BottomLeft;
+                                }
+
+                                if (i == row.Count - 1)
+                                {
+                                    bottomRight = CornerRadius.BottomRight;
+                                }
                             }
 
-                            if (i == row.Count - 1)
-                            {
-                                bottomRight = CornerRadius.BottomRight;
-                            }
+                            button.Radius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
                         }
-
-                        button.Radius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
 
                         panel.Children.Add(button);
                     }

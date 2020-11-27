@@ -3220,11 +3220,12 @@
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Glyph" Value=""/>
         <Setter Property="Width" Value="Auto"/>
-        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="Radius" Value="{StaticResource ControlCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
