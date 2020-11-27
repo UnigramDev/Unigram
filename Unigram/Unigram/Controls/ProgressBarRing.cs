@@ -174,6 +174,10 @@ namespace Unigram.Controls
             //{
             //    newValue = Math.Max(newValue, 0.0001);
             //}
+            if (double.IsNaN(newValue))
+            {
+                newValue = 0;
+            }
 
             if (_ellipse != null)
             {
@@ -195,7 +199,7 @@ namespace Unigram.Controls
                     }
                 }
 
-                _ellipse.TrimEnd = (float)Math.Max(0, Math.Min(1, newValue));
+                _ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
 
                 if (newValue >= 1.0 || newValue <= 0.0)
                 {
