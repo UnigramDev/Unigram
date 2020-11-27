@@ -69,6 +69,8 @@ namespace Unigram.Services
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
+        private readonly DisposableMutex _loadItemLock = new DisposableMutex();
+
         private AudioGraph _audioGraph;
         private MediaSourceAudioInputNode _inputNode;
         private AudioFrameOutputNode _outputNode;
@@ -76,7 +78,6 @@ namespace Unigram.Services
         private readonly SystemMediaTransportControls _transport;
 
         private readonly Dictionary<string, PlaybackItem> _mapping;
-
         private readonly FileContext<RemoteFileStream> _streams = new FileContext<RemoteFileStream>();
 
         private List<PlaybackItem> _items;
@@ -100,10 +101,14 @@ namespace Unigram.Services
             _settingsService = settingsService;
             _aggregator = aggregator;
 
-            _transport = SystemMediaTransportControls.GetForCurrentView();
-            _transport.ButtonPressed += Transport_ButtonPressed;
+            try
+            {
+                _transport = SystemMediaTransportControls.GetForCurrentView();
+                _transport.ButtonPressed += Transport_ButtonPressed;
+                _transport.AutoRepeatMode = _settingsService.Playback.RepeatMode;
+            }
+            catch { }
 
-            _transport.AutoRepeatMode = _settingsService.Playback.RepeatMode;
             _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
                 ? null
                 : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List
@@ -172,6 +177,7 @@ namespace Unigram.Services
             {
                 if (item.Message.Content is MessageAudio && _isRepeatEnabled == null)
                 {
+                    _audioGraph.ResetAllNodes();
                     _audioGraph.Start();
                     //_mediaPlayer.Play();
                 }
@@ -312,46 +318,49 @@ namespace Unigram.Services
 
         private async void Set(PlaybackItem value)
         {
-            if (_inputNode != null)
+            using (await _loadItemLock.WaitAsync())
             {
-                _inputNode.MediaSourceCompleted -= OnMediaEnded;
-                _inputNode = null;
-            }
+                if (_inputNode != null)
+                {
+                    _inputNode.MediaSourceCompleted -= OnMediaEnded;
+                    _inputNode = null;
+                }
 
-            if (_audioGraph != null)
-            {
-                _audioGraph.QuantumProcessed -= OnQuantumProcessed;
-                _audioGraph.Stop();
-                _audioGraph = null;
-            }
+                if (_audioGraph != null)
+                {
+                    _audioGraph.QuantumProcessed -= OnQuantumProcessed;
+                    _audioGraph.Stop();
+                    _audioGraph = null;
+                }
 
-            _currentPlayback = value;
-            _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
-            RaisePropertyChanged(nameof(CurrentItem));
-            UpdateTransport();
+                _currentPlayback = value;
+                _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
+                RaisePropertyChanged(nameof(CurrentItem));
+                UpdateTransport();
 
-            if (value == null)
-            {
-                PlaybackState = MediaPlaybackState.None;
-                return;
-            }
+                if (value == null)
+                {
+                    PlaybackState = MediaPlaybackState.None;
+                    return;
+                }
 
-            PlaybackState = MediaPlaybackState.Playing;
+                PlaybackState = MediaPlaybackState.Playing;
 
-            var result = await CreateAudioGraphAsync(value);
-            if (result == null)
-            {
-                PlaybackState = MediaPlaybackState.None;
-                return;
-            }
+                var result = await CreateAudioGraphAsync(value);
+                if (result == null)
+                {
+                    PlaybackState = MediaPlaybackState.None;
+                    return;
+                }
 
-            PlaybackState = MediaPlaybackState.Playing;
+                PlaybackState = MediaPlaybackState.Playing;
 
-            var message = value.Message;
-            if (message != null && ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing)))
-            {
-                _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
-            }
+                var message = value.Message;
+                if (message != null && ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing)))
+                {
+                    _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                }
+            };
         }
 
         private const int BUFFER_SIZE = 1024;
