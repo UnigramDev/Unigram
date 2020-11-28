@@ -86,12 +86,7 @@ namespace Unigram.Controls
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
-            if (_peer == null)
-            {
-                _peer = new BadgeButtonAutomationPeer(this);
-            }
-
-            return _peer;
+            return _peer ??= new BadgeButtonAutomationPeer(this);
         }
     }
 

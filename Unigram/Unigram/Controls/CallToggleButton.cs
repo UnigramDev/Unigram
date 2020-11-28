@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Shapes;
 
@@ -16,6 +17,11 @@ namespace Unigram.Controls
 
             Checked += OnToggle;
             Unchecked += OnToggle;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new AnimatedGlyphToggleButtonAutomationPeer(this);
         }
 
         protected override void OnApplyTemplate()

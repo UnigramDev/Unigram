@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
@@ -194,6 +195,41 @@ namespace Unigram.Controls
             {
                 base.OnToggle();
             }
+        }
+    }
+
+    public class AnimatedGlyphToggleButtonAutomationPeer : ToggleButtonAutomationPeer
+    {
+        private AnimatedGlyphToggleButton _owner;
+
+        public AnimatedGlyphToggleButtonAutomationPeer(AnimatedGlyphToggleButton owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override object GetPatternCore(PatternInterface patternInterface)
+        {
+            if (patternInterface == PatternInterface.Toggle)
+            {
+                return null;
+            }
+
+            return base.GetPatternCore(patternInterface);
+        }
+
+        protected override string GetNameCore()
+        {
+            if (_owner.IsChecked == true && _owner.CheckedContent is string checkedContent)
+            {
+                return checkedContent;
+            }
+            else if (_owner.IsChecked == false && _owner.Content is string content)
+            {
+                return content;
+            }
+
+            return base.GetNameCore();
         }
     }
 }
