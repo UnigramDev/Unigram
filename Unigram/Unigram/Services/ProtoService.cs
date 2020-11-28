@@ -222,7 +222,7 @@ namespace Unigram.Services
             _client.Send(new Close());
         }
 
-        private async void Initialize(bool online = true)
+        private void Initialize(bool online = true)
         {
             _client = Client.Create(this);
 
@@ -239,15 +239,6 @@ namespace Unigram.Services
                 DeviceModel = _deviceInfoService.DeviceModel,
                 UseTestDc = _settings.UseTestDC
             };
-
-            if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
-            {
-                var folder = await GetFilesFolderAsync(false);
-                if (folder != null)
-                {
-                    parameters.FilesDirectory = folder.Path;
-                }
-            }
 
 #if MOCKUP
             ProfilePhoto ProfilePhoto(string name)
@@ -340,8 +331,17 @@ namespace Unigram.Services
             _chats[10] = new Chat(10, new ChatTypeSecret(1, 7), "Eileen Lockhard \uD83D\uDC99", ChatPhoto("a5.png"),    permissions, null,             new [] { new ChatPosition(new ChatListMain(), 0, false, null) },                    false, false, false, false, false, false, 0, 0, long.MaxValue, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), null, 0, 0, null, string.Empty);
 #endif
 
-            Task.Run(() =>
+            Task.Run(async () =>
             {
+                if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                {
+                    var folder = await GetFilesFolderAsync(false);
+                    if (folder != null)
+                    {
+                        parameters.FilesDirectory = folder.Path;
+                    }
+                }
+
                 InitializeDiagnostics();
 
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
@@ -662,19 +662,40 @@ namespace Unigram.Services
             {
                 try
                 {
+                    static bool IsRelative(string relativeTo, string path, out string relative)
+                    {
+                        var relativeFull = System.IO.Path.GetFullPath(relativeTo);
+                        var pathFull = System.IO.Path.GetFullPath(path);
+
+                        if (pathFull.Length > relativeFull.Length && pathFull[relativeFull.Length] == '\\')
+                        {
+                            if (pathFull.StartsWith(relativeFull, StringComparison.OrdinalIgnoreCase))
+                            {
+                                relative = pathFull.Substring(relativeFull.Length);
+                                return true;
+                            }
+                        }
+
+                        relative = null;
+                        return false;
+                    }
+
                     var folder = await GetFilesFolderAsync(true);
                     if (folder == null)
                     {
                         folder = ApplicationData.Current.LocalFolder;
                     }
 
-                    var relative = System.IO.Path.GetRelativePath(folder.Path, file.Local.Path);
-                    if (relative.StartsWith('.'))
+                    if (IsRelative(ApplicationData.Current.LocalFolder.Path, file.Local.Path, out string relativeLocal))
                     {
-                        return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                        return await ApplicationData.Current.LocalFolder.GetFileAsync(relativeLocal);
+                    }
+                    else if (IsRelative(folder.Path, file.Local.Path, out string relativeFolder))
+                    {
+                        return await folder.GetFileAsync(relativeFolder);
                     }
 
-                    return await folder.GetFileAsync(relative);
+                    return await StorageFile.GetFileFromPathAsync(file.Local.Path);
                 }
                 catch (System.IO.FileNotFoundException)
                 {
@@ -692,19 +713,40 @@ namespace Unigram.Services
         {
             try
             {
+                static bool IsRelative(string relativeTo, string path, out string relative)
+                {
+                    var relativeFull = System.IO.Path.GetFullPath(relativeTo);
+                    var pathFull = System.IO.Path.GetFullPath(path);
+
+                    if (pathFull.Length > relativeFull.Length && pathFull[relativeFull.Length] == '\\')
+                    {
+                        if (pathFull.StartsWith(relativeFull, StringComparison.OrdinalIgnoreCase))
+                        {
+                            relative = pathFull.Substring(0, relativeFull.Length);
+                            return true;
+                        }
+                    }
+
+                    relative = null;
+                    return false;
+                }
+
                 var folder = await GetFilesFolderAsync(true);
                 if (folder == null)
                 {
                     folder = ApplicationData.Current.LocalFolder;
                 }
 
-                var relative = System.IO.Path.GetRelativePath(folder.Path, path);
-                if (relative.StartsWith('.'))
+                if (IsRelative(ApplicationData.Current.LocalFolder.Path, path, out string relativeLocal))
                 {
-                    return await StorageFile.GetFileFromPathAsync(path);
+                    return await ApplicationData.Current.LocalFolder.GetFileAsync(relativeLocal);
+                }
+                else if (IsRelative(folder.Path, path, out string relativeFolder))
+                {
+                    return await folder.GetFileAsync(relativeFolder);
                 }
 
-                return await folder.GetFileAsync(relative);
+                return await StorageFile.GetFileFromPathAsync(path);
             }
             catch { }
 
