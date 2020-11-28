@@ -560,6 +560,7 @@ namespace Unigram.Services
             _options.Clear();
 
             _chats.Clear();
+            _chatActions.Clear();
 
             _secretChats.Clear();
 
@@ -572,18 +573,36 @@ namespace Unigram.Services
             _supergroups.Clear();
             _supergroupsFull.Clear();
 
+            _scopeNotificationSettings.Clear();
+
+            _unreadCounts.Clear();
+
             _chatsMap.Clear();
             _usersMap.Clear();
 
-            _scopeNotificationSettings.Clear();
+            _animatedSet[0] = null;
+            _animatedSet[1] = null;
+            _animatedSetTask[0] = null;
+            _animatedSetTask[1] = null;
 
-            _savedAnimations?.Clear();
-            _favoriteStickers?.Clear();
-            _installedStickerSets?.Clear();
-            _installedMaskSets?.Clear();
+            _animatedSounds.Clear();
+            _animatedSoundsMap.Clear();
+
+            _diceEmojis = null;
+
+            _savedAnimations = null;
+            _favoriteStickers = null;
+            _installedStickerSets = null;
+            _installedMaskSets = null;
+
+            _chatFilters = new ChatFilterInfo[0];
+
+            _animationSearchParameters = null;
 
             _authorizationState = null;
             _connectionState = null;
+
+            _filesFolder = null;
 
             if (_initializeAfterClose)
             {
