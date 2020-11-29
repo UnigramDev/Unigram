@@ -132,7 +132,7 @@ namespace Unigram.Controls.Chats
                     else
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.Target.Chat, "Setting scroll mode to KeepLastItemInView");
+                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
                     }
                 }
             }
@@ -214,7 +214,7 @@ namespace Unigram.Controls.Chats
             var scrollViewer = ScrollingHost;
             if (scrollViewer == null)
             {
-                Logs.Logger.Debug(Logs.Target.Chat, "ScrollingHost == null");
+                Logs.Logger.Debug(Logs.LogTarget.Chat, "ScrollingHost == null");
 
                 return;
             }
@@ -226,7 +226,7 @@ namespace Unigram.Controls.Chats
             var selectorItem = ContainerFromItem(item) as SelectorItem;
             while (selectorItem == null && iter > 0)
             {
-                Logs.Logger.Debug(Logs.Target.Chat, string.Format("selectorItem == null, {0} try", iter + 1));
+                Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("selectorItem == null, {0} try", iter + 1));
 
                 // call task-based ScrollIntoViewAsync to realize the item
                 await this.ScrollIntoViewAsync(item, direction);
@@ -238,7 +238,7 @@ namespace Unigram.Controls.Chats
 
             if (selectorItem == null)
             {
-                Logs.Logger.Debug(Logs.Target.Chat, "selectorItem == null, abort");
+                Logs.Logger.Debug(Logs.LogTarget.Chat, "selectorItem == null, abort");
                 return;
             }
 
@@ -250,17 +250,17 @@ namespace Unigram.Controls.Chats
             // Lets wait for it.
             if (position.Y < 0)
             {
-                Logs.Logger.Debug(Logs.Target.Chat, "position.Y is negative, let's wait for layout");
+                Logs.Logger.Debug(Logs.LogTarget.Chat, "position.Y is negative, let's wait for layout");
 
                 // call task-based UpdateLayoutAsync to realize the item
-                await this.UpdateLayoutAsync(false);
+                await this.UpdateLayoutAsync();
 
                 // this time the item shouldn't be null again
                 selectorItem = ContainerFromItem(item) as SelectorItem;
 
                 if (selectorItem == null)
                 {
-                    Logs.Logger.Debug(Logs.Target.Chat, "selectorItem == null after layout, abort");
+                    Logs.Logger.Debug(Logs.LogTarget.Chat, "selectorItem == null after layout, abort");
                     return;
                 }
 

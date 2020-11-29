@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Unigram.Logs;
 
 namespace Unigram.Services.ViewService
 {
@@ -31,7 +32,7 @@ namespace Unigram.Services.ViewService
             try
             {
                 var count = control.StartViewInUse();
-                Logging.LoggingService.WriteLine("SecondaryViewSynchronizationContextDecorator : OperationStarted: " + count);
+                Logger.Info("SecondaryViewSynchronizationContextDecorator : OperationStarted: " + count);
                 context.OperationStarted();
             }
             catch (ViewLifetimeControl.ViewLifeTimeException)
@@ -57,7 +58,7 @@ namespace Unigram.Services.ViewService
             {
                 context.OperationCompleted();
                 var count = control.StopViewInUse();
-                Logging.LoggingService.WriteLine("SecondaryViewSynchronizationContextDecorator : OperationCompleted: " + count);
+                Logger.Info("SecondaryViewSynchronizationContextDecorator : OperationCompleted: " + count);
             }
             catch (ViewLifetimeControl.ViewLifeTimeException)
             {

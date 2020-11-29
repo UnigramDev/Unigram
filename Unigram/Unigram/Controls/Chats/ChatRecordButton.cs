@@ -70,7 +70,7 @@ namespace Unigram.Controls.Chats
             _timer.Interval = TimeSpan.FromMilliseconds(300);
             _timer.Tick += (s, args) =>
             {
-                Logger.Debug(Target.Recording, "Timer Tick, check for permissions");
+                Logger.Debug(LogTarget.Recording, "Timer Tick, check for permissions");
 
                 _timer.Stop();
                 RecordAudioVideoRunnable();
@@ -93,7 +93,7 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
-            Logger.Debug(Target.Recording, "Permissions granted, mode: " + Mode);
+            Logger.Debug(LogTarget.Recording, "Permissions granted, mode: " + Mode);
 
             _recorder.Start(Mode);
             UpdateRecordingInterface();
@@ -129,7 +129,7 @@ namespace Unigram.Controls.Chats
 
         private void UpdateRecordingInterface()
         {
-            Logger.Debug(Target.Recording, "Updating interface, state: " + recordInterfaceState);
+            Logger.Debug(LogTarget.Recording, "Updating interface, state: " + recordInterfaceState);
 
             if (_recordingLocked && _recordingAudioVideo)
             {
@@ -204,14 +204,14 @@ namespace Unigram.Controls.Chats
                 });
             }
 
-            Logger.Debug(Target.Recording, "Updated interface, state: " + recordInterfaceState);
+            Logger.Debug(LogTarget.Recording, "Updated interface, state: " + recordInterfaceState);
         }
 
         private async void OnClick(object sender, RoutedEventArgs e)
         {
             if (ClickMode == ClickMode.Press)
             {
-                Logger.Debug(Target.Recording, "Click mode: Press");
+                Logger.Debug(LogTarget.Recording, "Click mode: Press");
 
                 if (_recordingLocked)
                 {
@@ -243,7 +243,7 @@ namespace Unigram.Controls.Chats
 
                 if (_hasRecordVideo)
                 {
-                    Logger.Debug(Target.Recording, "Can record videos, start timer to allow switch");
+                    Logger.Debug(LogTarget.Recording, "Can record videos, start timer to allow switch");
 
                     _calledRecordRunnable = false;
                     _recordAudioVideoRunnableStarted = true;
@@ -256,7 +256,7 @@ namespace Unigram.Controls.Chats
             }
             else
             {
-                Logger.Debug(Target.Recording, "Click mode: Release");
+                Logger.Debug(LogTarget.Recording, "Click mode: Release");
 
                 ClickMode = ClickMode.Press;
 
@@ -275,7 +275,7 @@ namespace Unigram.Controls.Chats
             base.OnPointerReleased(e);
             ReleasePointerCapture(e.Pointer);
 
-            Logger.Debug(Target.Recording, "OnPointerReleased");
+            Logger.Debug(LogTarget.Recording, "OnPointerReleased");
 
             OnRelease();
         }
@@ -285,7 +285,7 @@ namespace Unigram.Controls.Chats
             base.OnPointerCanceled(e);
             ReleasePointerCapture(e.Pointer);
 
-            Logger.Debug(Target.Recording, "OnPointerCanceled");
+            Logger.Debug(LogTarget.Recording, "OnPointerCanceled");
 
             OnRelease();
         }
@@ -294,7 +294,7 @@ namespace Unigram.Controls.Chats
         {
             base.OnPointerCaptureLost(e);
 
-            Logger.Debug(Target.Recording, "OnPointerCaptureLost");
+            Logger.Debug(LogTarget.Recording, "OnPointerCaptureLost");
 
             OnRelease();
         }
@@ -303,19 +303,19 @@ namespace Unigram.Controls.Chats
         {
             if (_recordingLocked)
             {
-                Logger.Debug(Target.Recording, "Recording is locked, abort");
+                Logger.Debug(LogTarget.Recording, "Recording is locked, abort");
                 return;
             }
             if (_recordAudioVideoRunnableStarted)
             {
-                Logger.Debug(Target.Recording, "Timer should still tick, change mode to: " + (Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video));
+                Logger.Debug(LogTarget.Recording, "Timer should still tick, change mode to: " + (Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video));
 
                 _timer.Stop();
                 Mode = Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video;
             }
             else if (!_hasRecordVideo || _calledRecordRunnable)
             {
-                Logger.Debug(Target.Recording, "Timer has tick, stopping recording");
+                Logger.Debug(LogTarget.Recording, "Timer has tick, stopping recording");
 
                 _recorder.Stop(ViewModel, false);
                 _recordingAudioVideo = false;
@@ -418,7 +418,7 @@ namespace Unigram.Controls.Chats
 
         public void LockRecording()
         {
-            Logger.Debug(Target.Recording, "Locking recording");
+            Logger.Debug(LogTarget.Recording, "Locking recording");
 
             _enqueuedLocking = false;
             _recordingLocked = true;
@@ -484,15 +484,15 @@ namespace Unigram.Controls.Chats
 
             public async void Start(ChatRecordMode mode)
             {
-                Logger.Debug(Target.Recording, "Start invoked, mode: " + mode);
+                Logger.Debug(LogTarget.Recording, "Start invoked, mode: " + mode);
 
                 await _recordQueue.Enqueue(async () =>
                 {
-                    Logger.Debug(Target.Recording, "Enqueued start invoked");
+                    Logger.Debug(LogTarget.Recording, "Enqueued start invoked");
 
                     if (_recorder != null)
                     {
-                        Logger.Debug(Target.Recording, "_recorder != null, abort");
+                        Logger.Debug(LogTarget.Recording, "_recorder != null, abort");
 
                         RecordingFailed?.Invoke(this, EventArgs.Empty);
                         return;
@@ -540,17 +540,17 @@ namespace Unigram.Controls.Chats
 
                         await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
 
-                        Logger.Debug(Target.Recording, "Devices initialized, starting");
+                        Logger.Debug(LogTarget.Recording, "Devices initialized, starting");
 
                         await _recorder.StartAsync();
 
-                        Logger.Debug(Target.Recording, "Recording started at " + DateTime.Now);
+                        Logger.Debug(LogTarget.Recording, "Recording started at " + DateTime.Now);
 
                         _start = DateTime.Now;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Debug(Target.Recording, "Failed to initialize devices, abort: " + ex);
+                        Logger.Debug(LogTarget.Recording, "Failed to initialize devices, abort: " + ex);
 
                         _recorder?.Dispose();
                         _recorder = null;
@@ -575,11 +575,11 @@ namespace Unigram.Controls.Chats
 
             public async void Stop(DialogViewModel viewModel, bool cancel)
             {
-                Logger.Debug(Target.Recording, "Stop invoked, cancel: " + cancel);
+                Logger.Debug(LogTarget.Recording, "Stop invoked, cancel: " + cancel);
 
                 await _recordQueue.Enqueue(async () =>
                 {
-                    Logger.Debug(Target.Recording, "Enqueued stop invoked");
+                    Logger.Debug(LogTarget.Recording, "Enqueued stop invoked");
 
                     var recorder = _recorder;
                     var file = _file;
@@ -587,7 +587,7 @@ namespace Unigram.Controls.Chats
 
                     if (recorder == null || file == null)
                     {
-                        Logger.Debug(Target.Recording, "recorder or file == null, abort");
+                        Logger.Debug(LogTarget.Recording, "recorder or file == null, abort");
                         return;
                     }
 
@@ -596,11 +596,11 @@ namespace Unigram.Controls.Chats
                     var now = DateTime.Now;
                     var elapsed = now - _start;
 
-                    Logger.Debug(Target.Recording, "stopping recorder, elapsed " + elapsed);
+                    Logger.Debug(LogTarget.Recording, "stopping recorder, elapsed " + elapsed);
 
                     await recorder.StopAsync();
 
-                    Logger.Debug(Target.Recording, "recorder stopped");
+                    Logger.Debug(LogTarget.Recording, "recorder stopped");
 
                     if (cancel || elapsed.TotalMilliseconds < 700)
                     {
@@ -610,7 +610,7 @@ namespace Unigram.Controls.Chats
                         }
                         catch { }
 
-                        Logger.Debug(Target.Recording, "recording canceled or too short, abort");
+                        Logger.Debug(LogTarget.Recording, "recording canceled or too short, abort");
 
                         if (elapsed.TotalMilliseconds < 700)
                         {
@@ -619,7 +619,7 @@ namespace Unigram.Controls.Chats
                     }
                     else
                     {
-                        Logger.Debug(Target.Recording, "sending recorded file");
+                        Logger.Debug(LogTarget.Recording, "sending recorded file");
 
                         Send(viewModel, mode, file, recorder._mirroringPreview, (int)elapsed.TotalSeconds);
                     }

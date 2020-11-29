@@ -204,17 +204,26 @@
                         <!--</controls:HeaderedControl>
                         
                     <controls:HeaderedControl>-->
-                        <Grid x:Name="DescriptionPanel" Visibility="Collapsed">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="48"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ContextFlyout>
+                        <controls:BadgeButton
+                            x:Name="Description"
+                            Visibility="Collapsed"
+                            Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                            BadgeTemplate="{x:Null}"
+                            Glyph="&#xE946;">
+                            <controls:BadgeButton.Badge>
+                                <RichTextBlock
+                                    x:Name="DescriptionLabel"
+                                    ContextRequested="About_ContextRequested"
+                                    ContextMenuOpening="About_ContextMenuOpening"
+                                    Style="{StaticResource BodyRichTextBlockStyle}"
+                                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                    Grid.Column="1">
+                                    <Paragraph>
+                                        <Span x:Name="DescriptionSpan"/>
+                                    </Paragraph>
+                                </RichTextBlock>
+                            </controls:BadgeButton.Badge>
+                            <Button.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Text="{CustomResource Copy}" Command="{x:Bind ViewModel.CopyDescriptionCommand}">
                                         <MenuFlyoutItem.Icon>
@@ -222,33 +231,8 @@
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                 </MenuFlyout>
-                            </Grid.ContextFlyout>
-                            <Border Height="44" VerticalAlignment="Top">
-                                <TextBlock
-                                    FontSize="16"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    Text="&#xE946;"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"/>
-                            </Border>
-
-                            <RichTextBlock x:Name="DescriptionLabel"
-                                            ContextRequested="About_ContextRequested"
-                                            ContextMenuOpening="About_ContextMenuOpening"
-                                            Padding="0,11,12,12"
-                                            Style="{StaticResource BodyRichTextBlockStyle}"
-                                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                            Grid.Column="1">
-                                <Paragraph>
-                                    <Span x:Name="DescriptionSpan"/>
-                                </Paragraph>
-                            </RichTextBlock>
-
-                            <TextBlock x:Name="DescriptionTitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,-14,12,12" Grid.Column="1" Grid.Row="1"/>
-
-                            <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,0" Grid.Row="2" Grid.ColumnSpan="2"/>
-                        </Grid>
+                            </Button.ContextFlyout>
+                        </controls:BadgeButton>
 
                         <controls:BadgeButton
                             x:Name="UserPhone"

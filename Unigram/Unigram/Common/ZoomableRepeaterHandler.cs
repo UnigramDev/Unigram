@@ -20,7 +20,6 @@ namespace Unigram.Common
         private readonly DispatcherTimer _throttler;
 
         private FrameworkElement _element;
-        private Pointer _pointer;
 
         private readonly ZoomableMediaPopup _popupPanel;
         private readonly Popup _popupHost;
@@ -52,7 +51,6 @@ namespace Unigram.Common
                 {
                     _shouldCapture = false;
                     _popupContent = null;
-                    _pointer = null;
 
                     if (_popupHost.IsOpen)
                     {
@@ -126,7 +124,6 @@ namespace Unigram.Common
             }
 
             _element = sender as FrameworkElement;
-            _pointer = e.Pointer;
 
             _popupContent = ItemFromContainer(_element);
             _throttler.Stop();
@@ -139,7 +136,6 @@ namespace Unigram.Common
 
             _shouldCapture = false;
             _popupContent = null;
-            _pointer = null;
 
             if (_popupHost.IsOpen)
             {
@@ -221,15 +217,14 @@ namespace Unigram.Common
                 return;
             }
 
-            if (_pointer != null)
-            {
-                _shouldCapture = true;
-                _element.ReleasePointerCapture(_pointer);
-                _pointer = null;
-            }
-
             if (_element != null)
             {
+                if (_element.PointerCaptures != null)
+                {
+                    _shouldCapture = true;
+                    _element.ReleasePointerCaptures();
+                }
+
                 VisualStateManager.GoToState(_element as Control, "Normal", false);
                 _element = null;
             }

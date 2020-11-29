@@ -667,6 +667,11 @@ namespace Unigram.ViewModels
                                 if (next >= 0)
                                 {
                                     Insert(next, chat);
+
+                                    if (chat.Id == _viewModel._selectedItem)
+                                    {
+                                        _viewModel.Delegate?.SetSelectedItem(chat);
+                                    }
                                 }
 
                                 _lastChatId = chat.Id;

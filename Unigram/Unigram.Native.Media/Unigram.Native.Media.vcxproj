@@ -236,7 +236,6 @@
     <ClInclude Include="ByteStreamHandler.h" />
     <ClInclude Include="FinalizeAsyncOperation.h" />
     <ClInclude Include="Helpers\MediaFoundationHelper.h" />
-    <ClInclude Include="MediaCapturePreview.h" />
     <ClInclude Include="MediaFoundationExtensions.h" />
     <ClInclude Include="MediaSink.h" />
     <ClInclude Include="MediaSource.h" />
@@ -253,7 +252,6 @@
     <ClCompile Include="BufferLock.cpp" />
     <ClCompile Include="ByteStreamHandler.cpp" />
     <ClCompile Include="FinalizeAsyncOperation.cpp" />
-    <ClCompile Include="MediaCapturePreview.cpp" />
     <ClCompile Include="MediaFoundationExtensions.cpp" />
     <ClCompile Include="MediaSink.cpp" />
     <ClCompile Include="MediaSource.cpp" />

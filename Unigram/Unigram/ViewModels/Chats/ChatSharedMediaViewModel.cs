@@ -238,13 +238,13 @@ namespace Unigram.ViewModels.Chats
                 extension = ".dat";
             }
 
-            var picker = new FileSavePicker();
-            picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
-            picker.SuggestedStartLocation = PickerLocationId.Downloads;
-            picker.SuggestedFileName = fileName;
-
             try
             {
+                var picker = new FileSavePicker();
+                picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { extension });
+                picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                picker.SuggestedFileName = fileName;
+
                 var picked = await picker.PickSaveFileAsync();
                 if (picked != null)
                 {

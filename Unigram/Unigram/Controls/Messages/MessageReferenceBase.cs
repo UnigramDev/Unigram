@@ -1,9 +1,12 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -621,6 +624,35 @@ namespace Unigram.Controls.Messages
             }
 
             return title ?? string.Empty;
+        }
+    }
+
+    public class MessageReferenceAutomationPeer : FrameworkElementAutomationPeer
+    {
+        private readonly MessageReferenceBase _owner;
+
+        public MessageReferenceAutomationPeer(MessageReferenceBase owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            var builder = new StringBuilder();
+            var descendants = _owner.DescendantsAndSelf<TextBlock>();
+
+            foreach (TextBlock child in descendants)
+            {
+                if (builder.Length > 0)
+                {
+                    builder.Append(", ");
+                }
+
+                builder.Append(child.Text);
+            }
+
+            return builder.ToString();
         }
     }
 }

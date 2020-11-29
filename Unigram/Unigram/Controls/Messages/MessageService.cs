@@ -561,7 +561,7 @@ namespace Unigram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             var chat = message.GetChat();
-            if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            if (chat != null && chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
                 content = chatChangePhoto.Photo.Animation != null
                     ? Strings.Resources.ActionChannelChangedVideo
@@ -592,7 +592,7 @@ namespace Unigram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             var chat = message.GetChat();
-            if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            if (chat != null && chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
                 content = Strings.Resources.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
             }

@@ -10,7 +10,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
-using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Views;
 using Windows.ApplicationModel.AppService;
@@ -297,11 +296,39 @@ namespace Unigram.Services
             });
         }
 
-        public void Handle(UpdateActiveNotifications update)
+        public async void Handle(UpdateActiveNotifications update)
         {
-            foreach (var group in update.Groups)
+            try
             {
-                _protoService.Send(new RemoveNotificationGroup(group.Id, int.MaxValue));
+                var manager = await GetCollectionHistoryAsync();
+                var history = manager.GetHistory();
+
+                var hash = new HashSet<string>();
+
+                foreach (var item in history)
+                {
+                    hash.Add($"{item.Tag}_{item.Group}");
+                }
+
+                foreach (var group in update.Groups)
+                {
+                    foreach (var notification in group.Notifications)
+                    {
+                        if (hash.Contains($"{notification.Id}_{group.Id}"))
+                        {
+                            continue;
+                        }
+
+                        _protoService.Send(new RemoveNotification(group.Id, notification.Id));
+                    }
+                }
+            }
+            catch
+            {
+                foreach (var group in update.Groups)
+                {
+                    _protoService.Send(new RemoveNotificationGroup(group.Id, int.MaxValue));
+                }
             }
         }
 
@@ -415,7 +442,7 @@ namespace Unigram.Services
 
             await UpdateAsync(chat, async () =>
             {
-                await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
+                await UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
             });
         }
 
@@ -449,7 +476,7 @@ namespace Unigram.Services
 
             await UpdateAsync(chat, async () =>
             {
-                await NativeUtils.UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
+                await UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
             });
 
             if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
@@ -488,6 +515,98 @@ namespace Unigram.Services
                 await action();
             }
         }
+
+        private async Task UpdateToast(string caption, string message, string account, string sound, string launch, string tag, string group, string picture, string date, bool canReply)
+        {
+            string actions = "";
+            if (!string.IsNullOrEmpty(group) && canReply)
+            {
+                actions = "<actions><input id='input' type='text' placeHolderContent='ms-resource:Reply' /><action activationType='background' arguments='action=markAsRead&amp;";
+                actions += launch;
+                //actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
+                actions += "' content='ms-resource:MarkAsRead'/><action activationType='background' arguments='action=reply&amp;";
+                actions += launch;
+                actions += "' content='ms-resource:Send'/></actions>";
+            }
+
+            string audio = "";
+            if (string.Equals(sound, "silent", StringComparison.OrdinalIgnoreCase))
+            {
+                audio = "<audio silent='true'/>";
+            }
+
+            string xml = "<toast launch='";
+            xml += launch;
+            xml += "' displayTimestamp='";
+            xml += date;
+            //xml += L"' hint-people='remoteid:";
+            //xml += group->Data();
+            xml += "'>";
+            //xml += L"<header id='";
+            //xml += account->Data();
+            //xml += L"' title='Camping!!' arguments='action = openConversation & amp; id = 6289'/>";
+            xml += "<visual><binding template='ToastGeneric'>";
+
+            if (!string.IsNullOrEmpty(picture))
+            {
+                xml += "<image placement='appLogoOverride' hint-crop='circle' src='";
+                xml += picture;
+                xml += "'/>";
+            }
+
+            xml += "<text><![CDATA[";
+            xml += caption;
+            xml += "]]></text><text><![CDATA[";
+            xml += message;
+            //xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
+            xml += "]]></text>";
+
+            //xml += L"<text placement='attribution'><![CDATA[";
+            //xml += attribution->Data();
+            //xml += L"]]></text>";
+            xml += "</binding></visual>";
+            xml += actions;
+            xml += audio;
+            xml += "</toast>";
+
+            try
+            {
+                //auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
+                ToastNotifier notifier = await ToastNotificationManager.GetDefault().GetToastNotifierForToastCollectionIdAsync(account);
+
+                if (notifier == null)
+                {
+                    notifier = ToastNotificationManager.CreateToastNotifier("App");
+                }
+
+                var document = new XmlDocument();
+                document.LoadXml(xml);
+
+                var notification = new ToastNotification(document);
+
+                if (!string.IsNullOrEmpty(tag))
+                {
+                    notification.Tag = tag;
+                    notification.RemoteId = tag;
+                }
+
+                if (!string.IsNullOrEmpty(group))
+                {
+                    notification.Group = group;
+
+                    if (!string.IsNullOrEmpty(group))
+                    {
+                        notification.RemoteId += "_";
+                    }
+
+                    notification.RemoteId += group;
+                }
+
+                notifier.Show(notification);
+            }
+            catch (Exception) { }
+        }
+
 
         private string GetTag(Message message)
         {
@@ -1004,34 +1123,35 @@ namespace Unigram.Services
 
             var result = string.Empty;
 
-            User from = null;
-            if (message.Sender is MessageSenderUser senderUser)
+            if (_protoService.TryGetUser(message.Sender, out User senderUser))
             {
-                from = _protoService.GetUser(senderUser.UserId);
-
-                if (from != null && ShowFrom(chat))
+                if (ShowFrom(chat))
                 {
-                    if (!string.IsNullOrEmpty(from.FirstName))
+                    if (!string.IsNullOrEmpty(senderUser.FirstName))
                     {
-                        result = $"{from.FirstName.Trim()}: ";
+                        result = $"{senderUser.FirstName.Trim()}: ";
                     }
-                    else if (!string.IsNullOrEmpty(from.LastName))
+                    else if (!string.IsNullOrEmpty(senderUser.LastName))
                     {
-                        result = $"{from.LastName.Trim()}: ";
+                        result = $"{senderUser.LastName.Trim()}: ";
                     }
-                    else if (!string.IsNullOrEmpty(from.Username))
+                    else if (!string.IsNullOrEmpty(senderUser.Username))
                     {
-                        result = $"{from.Username.Trim()}: ";
+                        result = $"{senderUser.Username.Trim()}: ";
                     }
-                    else if (from.Type is UserTypeDeleted)
+                    else if (senderUser.Type is UserTypeDeleted)
                     {
                         result = $"{Strings.Resources.HiddenName}: ";
                     }
                     else
                     {
-                        result = $"{from.Id}: ";
+                        result = $"{senderUser.Id}: ";
                     }
                 }
+            }
+            else if (ShowFrom(chat))
+            {
+                result = $"{message.SenderName}: ";
             }
 
             string FormatPinned(string key)
@@ -1040,12 +1160,8 @@ namespace Unigram.Services
                 {
                     return string.Format(key, string.Empty).Trim(' ');
                 }
-                else if (from != null)
-                {
-                    return string.Format(key, from.GetFullName());
-                }
 
-                return key;
+                return string.Format(key, message.SenderName);
             }
 
             if (message.Content is PushMessageContentGame gameMedia)
@@ -1070,7 +1186,7 @@ namespace Unigram.Services
             {
                 if (sticker.IsPinned)
                 {
-                    if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
+                    if (string.IsNullOrEmpty(sticker.Sticker?.Emoji))
                     {
                         return FormatPinned(Strings.Resources.NotificationActionPinnedStickerChannel);
                     }
@@ -1078,7 +1194,7 @@ namespace Unigram.Services
                     return FormatPinned(string.Format(Strings.Resources.NotificationActionPinnedStickerEmojiChannel, "{0}", sticker.Emoji));
                 }
 
-                if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
+                if (string.IsNullOrEmpty(sticker.Sticker?.Emoji))
                 {
                     return result + Strings.Resources.AttachSticker;
                 }
@@ -1125,8 +1241,8 @@ namespace Unigram.Services
                     return FormatPinned(Strings.Resources.NotificationActionPinnedMusicChannel);
                 }
 
-                var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio?.Performer;
-                var title = string.IsNullOrEmpty(audio.Audio?.Title) ? null : audio.Audio?.Title;
+                var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio.Performer;
+                var title = string.IsNullOrEmpty(audio.Audio?.Title) ? null : audio.Audio.Title;
 
                 if (performer == null || title == null)
                 {
@@ -1144,7 +1260,7 @@ namespace Unigram.Services
                     return FormatPinned(Strings.Resources.NotificationActionPinnedFileChannel);
                 }
 
-                if (string.IsNullOrEmpty(document.Document.FileName))
+                if (string.IsNullOrEmpty(document.Document?.FileName))
                 {
                     return result + Strings.Resources.AttachDocument;
                 }
@@ -1212,7 +1328,8 @@ namespace Unigram.Services
                     return Strings.Resources.ActionChannelChangedPhoto;
                 }
 
-                return Strings.Resources.ActionChangedPhoto.Replace("un1", from.GetFullName());
+                //Strings.Resources.NotificationMessageAlbum
+                //return Strings.Resources.ActionChangedPhoto.Replace("un1", from.GetFullName());
             }
             else if (message.Content is PushMessageContentChatChangeTitle chatChangeTitle)
             {
@@ -1221,7 +1338,7 @@ namespace Unigram.Services
                     return Strings.Resources.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
                 }
 
-                return Strings.Resources.ActionChangedTitle.Replace("un1", from.GetFullName()).Replace("un2", chatChangeTitle.Title);
+                //return Strings.Resources.ActionChangedTitle.Replace("un1", from.GetFullName()).Replace("un2", chatChangeTitle.Title);
             }
             else if (message.Content is PushMessageContentChatDeleteMember)
             {
@@ -1229,15 +1346,15 @@ namespace Unigram.Services
             }
             else if (message.Content is PushMessageContentChatJoinByLink)
             {
-                return Strings.Resources.ActionInviteUser.Replace("un1", from.GetFullName());
+                //return Strings.Resources.ActionInviteUser.Replace("un1", from.GetFullName());
             }
             else if (message.Content is PushMessageContentContactRegistered)
             {
-                return string.Format(Strings.Resources.NotificationContactJoined, from.GetFullName());
+                //return string.Format(Strings.Resources.NotificationContactJoined, from.GetFullName());
             }
             else if (message.Content is PushMessageContentGameScore)
             {
-
+                return Strings.Resources.NotificationMessageGame;
             }
             else if (message.Content is PushMessageContentHidden)
             {
@@ -1245,11 +1362,11 @@ namespace Unigram.Services
             }
             else if (message.Content is PushMessageContentMediaAlbum)
             {
-
+                return Strings.Resources.NotificationMessageAlbum;
             }
             else if (message.Content is PushMessageContentMessageForwards forwards)
             {
-                return string.Format(Strings.Resources.NotificationMessageForwardFew, Locale.Declension("messages", forwards.TotalCount));
+                //return string.Format(Strings.Resources.NotificationMessageForwardFew, Locale.Declension("messages", forwards.TotalCount));
             }
             else if (message.Content is PushMessageContentScreenshotTaken)
             {

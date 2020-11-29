@@ -1,17 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="WebP">
-      <UniqueIdentifier>{d7592a26-0f4e-44d1-ad1b-3f45b9ac3dd5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Helpers">
       <UniqueIdentifier>{903ec3d1-7f79-41e7-a41d-2ef61411b312}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mrz">
-      <UniqueIdentifier>{9e8ae57f-bce5-4315-9e6d-8ebf3ad1b207}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Proxies">
-      <UniqueIdentifier>{4fa8da03-5bd0-46c1-8618-868e68b3a60c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Qr">
       <UniqueIdentifier>{554d0aa9-cb6c-4e0c-9761-3424c8d861cd}</UniqueIdentifier>
@@ -34,30 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="WebP\WebPFrame.cpp">
-      <Filter>WebP</Filter>
-    </ClCompile>
-    <ClCompile Include="WebP\WebPImage.cpp">
-      <Filter>WebP</Filter>
-    </ClCompile>
     <ClCompile Include="NativeUtils.cpp" />
-    <ClCompile Include="DeviceLostHelper.cpp" />
-    <ClCompile Include="PlaceholderImageHelper.cpp" />
-    <ClCompile Include="Mrz\MrzRecognizer.cpp">
-      <Filter>Mrz</Filter>
-    </ClCompile>
-    <ClCompile Include="Mrz\fast-edge.cpp">
-      <Filter>Mrz</Filter>
-    </ClCompile>
-    <ClCompile Include="Mrz\genann.c">
-      <Filter>Mrz</Filter>
-    </ClCompile>
-    <ClCompile Include="Proxies\TelegramGameProxy.cpp">
-      <Filter>Proxies</Filter>
-    </ClCompile>
-    <ClCompile Include="Proxies\TelegramPaymentProxy.cpp">
-      <Filter>Proxies</Filter>
-    </ClCompile>
     <ClCompile Include="QR\BitBuffer.cpp">
       <Filter>Qr</Filter>
     </ClCompile>
@@ -199,40 +167,24 @@
     <ClCompile Include="libyuv\source\video_common.cc">
       <Filter>libyuv\source</Filter>
     </ClCompile>
+    <ClCompile Include="Proxy\TelegramGameProxy.cpp">
+      <Filter>Proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="Proxy\TelegramPaymentProxy.cpp">
+      <Filter>Proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated Files\module.g.cpp" />
+    <ClCompile Include="TelegramGameProxy.cpp" />
+    <ClCompile Include="TelegramPaymentProxy.cpp" />
+    <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="VideoAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="WebP\WebPFrame.h">
-      <Filter>WebP</Filter>
-    </ClInclude>
-    <ClInclude Include="WebP\WebPImage.h">
-      <Filter>WebP</Filter>
-    </ClInclude>
     <ClInclude Include="Helpers\MathHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="WebP\DemuxerWrapper.h">
-      <Filter>WebP</Filter>
-    </ClInclude>
     <ClInclude Include="NativeUtils.h" />
-    <ClInclude Include="DeviceLostHelper.h" />
-    <ClInclude Include="PlaceholderImageHelper.h" />
-    <ClInclude Include="Mrz\MrzRecognizer.h">
-      <Filter>Mrz</Filter>
-    </ClInclude>
-    <ClInclude Include="Mrz\fast-edge.h">
-      <Filter>Mrz</Filter>
-    </ClInclude>
-    <ClInclude Include="Mrz\genann.h">
-      <Filter>Mrz</Filter>
-    </ClInclude>
-    <ClInclude Include="Proxies\TelegramGameProxy.h">
-      <Filter>Proxies</Filter>
-    </ClInclude>
-    <ClInclude Include="Proxies\TelegramPaymentProxy.h">
-      <Filter>Proxies</Filter>
-    </ClInclude>
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="QR\BitBuffer.hpp">
       <Filter>Qr</Filter>
@@ -306,9 +258,23 @@
     <ClInclude Include="libyuv\include\libyuv\video_common.h">
       <Filter>libyuv\include\libyuv</Filter>
     </ClInclude>
+    <ClInclude Include="Proxy\TelegramPaymentProxy.h">
+      <Filter>Proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="TelegramGameProxy.h" />
+    <ClInclude Include="TelegramPaymentProxy.h" />
+    <ClInclude Include="PlaceholderImageHelper.h" />
     <ClInclude Include="VideoAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Unigram.Native.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="NativeUtils.idl" />
+    <Midl Include="TelegramGameProxy.idl" />
+    <Midl Include="TelegramPaymentProxy.idl" />
+    <Midl Include="PlaceholderImageHelper.idl" />
+    <Midl Include="VideoAnimation.idl" />
   </ItemGroup>
 </Project>

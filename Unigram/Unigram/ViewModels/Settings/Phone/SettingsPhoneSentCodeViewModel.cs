@@ -170,7 +170,7 @@ namespace Unigram.ViewModels.Settings
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
                 }
 
-                Logs.Logger.Error(Logs.Target.API, "account.signIn error " + error);
+                Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);
             }
         }
 

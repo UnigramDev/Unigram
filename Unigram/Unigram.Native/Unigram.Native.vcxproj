@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201102.2\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201102.2\build\native\Microsoft.Windows.CppWinRT.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ARM64">
       <Configuration>Debug</Configuration>
@@ -139,6 +140,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -157,6 +159,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -175,6 +178,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -193,6 +197,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -211,6 +216,7 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -229,10 +235,10 @@
       <AdditionalDependencies>libwebp.lib;d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\$(MappedPlatform)\libwebp\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Unigram.Native.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DeviceLostHelper.h" />
     <ClInclude Include="libyuv\include\libyuv.h" />
     <ClInclude Include="libyuv\include\libyuv\basic_types.h" />
     <ClInclude Include="libyuv\include\libyuv\compare.h" />
@@ -253,27 +259,31 @@
     <ClInclude Include="libyuv\include\libyuv\scale_row.h" />
     <ClInclude Include="libyuv\include\libyuv\version.h" />
     <ClInclude Include="libyuv\include\libyuv\video_common.h" />
-    <ClInclude Include="Mrz\fast-edge.h" />
-    <ClInclude Include="Mrz\genann.h" />
-    <ClInclude Include="Mrz\MrzRecognizer.h" />
-    <ClInclude Include="NativeUtils.h" />
-    <ClInclude Include="PlaceholderImageHelper.h" />
-    <ClInclude Include="Proxies\TelegramGameProxy.h" />
-    <ClInclude Include="Proxies\TelegramPaymentProxy.h" />
+    <ClInclude Include="NativeUtils.h">
+      <DependentUpon>NativeUtils.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="PlaceholderImageHelper.h">
+      <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
+    </ClInclude>
     <ClInclude Include="QR\BitBuffer.hpp" />
     <ClInclude Include="QR\QrCode.hpp" />
     <ClInclude Include="QR\QrSegment.hpp" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="SVG\nanosvg.h" />
-    <ClInclude Include="VideoAnimation.h" />
-    <ClInclude Include="WebP\DemuxerWrapper.h" />
+    <ClInclude Include="TelegramGameProxy.h">
+      <DependentUpon>TelegramGameProxy.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="TelegramPaymentProxy.h">
+      <DependentUpon>TelegramPaymentProxy.idl</DependentUpon>
+    </ClInclude>
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="WebP\WebPFrame.h" />
-    <ClInclude Include="WebP\WebPImage.h" />
+    <ClInclude Include="VideoAnimation.h">
+      <DependentUpon>VideoAnimation.idl</DependentUpon>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DeviceLostHelper.cpp" />
+    <ClCompile Include="Generated Files\module.g.cpp" />
     <ClCompile Include="libyuv\source\compare.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -403,19 +413,15 @@
     <ClCompile Include="libyuv\source\video_common.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Mrz\fast-edge.cpp" />
-    <ClCompile Include="Mrz\genann.c">
-      <CompileAsWinRT>false</CompileAsWinRT>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    <ClCompile Include="NativeUtils.cpp">
+      <DependentUpon>NativeUtils.idl</DependentUpon>
     </ClCompile>
-    <ClCompile Include="Mrz\MrzRecognizer.cpp" />
-    <ClCompile Include="NativeUtils.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PlaceholderImageHelper.cpp" />
-    <ClCompile Include="Proxies\TelegramGameProxy.cpp" />
-    <ClCompile Include="Proxies\TelegramPaymentProxy.cpp" />
+    <ClCompile Include="PlaceholderImageHelper.cpp">
+      <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
+    </ClCompile>
     <ClCompile Include="Qr\BitBuffer.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -426,9 +432,15 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVG\nanosvg.cpp" />
-    <ClCompile Include="VideoAnimation.cpp" />
-    <ClCompile Include="WebP\WebPFrame.cpp" />
-    <ClCompile Include="WebP\WebPImage.cpp" />
+    <ClCompile Include="TelegramGameProxy.cpp">
+      <DependentUpon>TelegramGameProxy.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="TelegramPaymentProxy.cpp">
+      <DependentUpon>TelegramPaymentProxy.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="VideoAnimation.cpp">
+      <DependentUpon>VideoAnimation.idl</DependentUpon>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Libraries\libwebp\libwebp.vcxproj">
@@ -436,12 +448,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Unigram.Native.def" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="NativeUtils.idl" />
+    <Midl Include="PlaceholderImageHelper.idl" />
+    <Midl Include="TelegramGameProxy.idl" />
+    <Midl Include="TelegramPaymentProxy.idl" />
+    <Midl Include="VideoAnimation.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets')" />
     <Import Project="..\packages\FFmpeg.UWP.4.1.3\build\native\FFmpeg.UWP.targets" Condition="Exists('..\packages\FFmpeg.UWP.4.1.3\build\native\FFmpeg.UWP.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.201102.2\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201102.2\build\native\Microsoft.Windows.CppWinRT.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -449,5 +470,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets'))" />
     <Error Condition="!Exists('..\packages\FFmpeg.UWP.4.1.3\build\native\FFmpeg.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FFmpeg.UWP.4.1.3\build\native\FFmpeg.UWP.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201102.2\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201102.2\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.201102.2\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.201102.2\build\native\Microsoft.Windows.CppWinRT.targets'))" />
   </Target>
 </Project>

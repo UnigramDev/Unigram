@@ -118,7 +118,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Logger.Error(Logs.Target.API, "auth.resetAuthotization error " + error);
+                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotization error " + error);
                 }
             }
         }
@@ -136,7 +136,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Logger.Error(Logs.Target.API, "auth.resetAuthotizations error " + error);
+                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotizations error " + error);
                 }
             }
         }

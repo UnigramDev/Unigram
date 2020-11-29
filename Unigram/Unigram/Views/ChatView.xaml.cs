@@ -53,16 +53,16 @@ namespace Unigram.Views
 
         public BindConvert Convert => BindConvert.Current;
 
-        private Func<IDialogDelegate, DialogViewModel> _getViewModel;
+        private readonly Func<IDialogDelegate, DialogViewModel> _getViewModel;
         private DialogViewModel _viewModel;
 
         private readonly TLWindowContext _windowContext;
 
-        private bool _myPeople;
+        private readonly bool _myPeople;
 
         private bool _selectionFromItemClick;
 
-        private DispatcherTimer _slowModeTimer;
+        private readonly DispatcherTimer _slowModeTimer;
 
         private DispatcherTimer _stickersTimer;
         private Visual _stickersPanel;
@@ -71,23 +71,23 @@ namespace Unigram.Views
 
         private const double SIDEBAR_MIN_WIDTH = 380 + 320;
 
-        private DispatcherTimer _elapsedTimer;
-        private Visual _messageVisual;
-        private Visual _ellipseVisual;
-        private Visual _elapsedVisual;
-        private Visual _slideVisual;
-        private Visual _recordVisual;
-        private Visual _rootVisual;
-        private Visual _textShadowVisual;
+        private readonly DispatcherTimer _elapsedTimer;
+        private readonly Visual _messageVisual;
+        private readonly Visual _ellipseVisual;
+        private readonly Visual _elapsedVisual;
+        private readonly Visual _slideVisual;
+        private readonly Visual _recordVisual;
+        private readonly Visual _rootVisual;
+        private readonly Visual _textShadowVisual;
 
-        private DispatcherTimer _dateHeaderTimer;
-        private Visual _dateHeaderPanel;
-        private Visual _dateHeader;
+        private readonly DispatcherTimer _dateHeaderTimer;
+        private readonly Visual _dateHeaderPanel;
+        private readonly Visual _dateHeader;
 
-        private Compositor _compositor;
+        private readonly Compositor _compositor;
 
-        private ZoomableListHandler _autocompleteZoomer;
-        private AnimatedListHandler<Sticker> _autocompleteHandler;
+        private readonly ZoomableListHandler _autocompleteZoomer;
+        private readonly AnimatedListHandler<Sticker> _autocompleteHandler;
 
         public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
         {
@@ -544,7 +544,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                await Messages.ItemsStack.UpdateLayoutAsync(false);
+                await Messages.ItemsStack.UpdateLayoutAsync();
 
                 var owner = Messages.ContainerFromItem(args.NewItems[0]) as SelectorItem;
                 if (owner == null)
@@ -566,7 +566,7 @@ namespace Unigram.Views
                     {
                         continue;
                     }
-                    
+
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
 
                     var visual = ElementCompositionPreview.GetElementVisual(child);
@@ -1391,7 +1391,7 @@ namespace Unigram.Views
                 if (message != 0)
                 {
                     await ViewModel.LoadMessageSliceAsync(null, message);
-                    
+
                     ViewModel.LockedPinnedMessageId = message;
                     UpdatePinnedMessage();
                 }
@@ -1622,7 +1622,7 @@ namespace Unigram.Views
             }
             else
             {
-                ViewModel.MessageShareCommand.Execute(message);
+                ViewModel.MessageForwardCommand.Execute(message);
             }
         }
 
@@ -1685,17 +1685,20 @@ namespace Unigram.Views
             {
                 flyout.CreateFlyoutItem(ViewModel.SetTimerCommand, Strings.Resources.SetTimer, new FontIcon { Glyph = Icons.Timer });
             }
-            if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
+            if (ViewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
-                flyout.CreateFlyoutItem(ViewModel.ChatClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
-            }
-            if (user != null)
-            {
-                flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.Resources.DeleteChatUser, new FontIcon { Glyph = Icons.Delete });
-            }
-            if (basicGroup != null)
-            {
-                flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
+                if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.ChatClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
+                }
+                if (user != null)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.Resources.DeleteChatUser, new FontIcon { Glyph = Icons.Delete });
+                }
+                if (basicGroup != null)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.ChatDeleteCommand, Strings.Resources.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
+                }
             }
             if ((user != null && user.Id != ViewModel.CacheService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
@@ -1812,7 +1815,8 @@ namespace Unigram.Views
             if (args.TryGetPosition(Window.Current.Content as FrameworkElement, out Point point))
             {
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(point, element);
-                var textBlock = children.FirstOrDefault(x => x is RichTextBlock) as RichTextBlock;
+
+                var textBlock = children.FirstOrDefault() as RichTextBlock;
                 if (textBlock != null)
                 {
                     MessageHelper.Hyperlink_ContextRequested(message, textBlock, args);
@@ -1894,7 +1898,40 @@ namespace Unigram.Views
 
                 // Generic
                 flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });
-                flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+
+                if (true /*message.Content is MessageText*/)
+                {
+                    flyout.CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, message, Strings.Resources.Edit, new FontIcon { Glyph = Icons.Edit });
+                }
+                else if (MessageEdit_Loaded(message))
+                {
+                    var edit = new MenuFlyoutSubItem();
+                    edit.Text = Strings.Resources.Edit;
+                    edit.Icon = new FontIcon { Glyph = Icons.Edit };
+
+                    var caption = message.Content.GetCaption();
+                    if (string.IsNullOrEmpty(caption?.Text))
+                    {
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Add a Caption", new FontIcon { Glyph = Icons.EditText });
+                    }
+                    else
+                    {
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Edit Caption", new FontIcon { Glyph = Icons.EditText });
+                    }
+
+                    if (message.Content is MessagePhoto)
+                    {
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Edit This Photo", new FontIcon { Glyph = Icons.Draw });
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Replace Photo", new FontIcon { Glyph = Icons.ReplaceFile });
+                    }
+                    else
+                    {
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Replace File", new FontIcon { Glyph = Icons.ReplaceFile });
+                    }
+
+                    flyout.Items.Add(edit);
+                }
+
                 flyout.CreateFlyoutItem(MessageThread_Loaded, ViewModel.MessageThreadCommand, message, message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 ? Locale.Declension("ViewReplies", message.InteractionInfo.ReplyInfo.ReplyCount) : Strings.Resources.ViewThread, new FontIcon { Glyph = Icons.Thread, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
 
                 flyout.CreateFlyoutSeparator();
@@ -2725,15 +2762,6 @@ namespace Unigram.Views
         }
 
         #endregion
-
-        private void Share_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as FrameworkElement;
-            if (button.Tag is MessageViewModel message)
-            {
-                ViewModel.MessageShareCommand.Execute(message);
-            }
-        }
 
         private async void Date_Click(object sender, RoutedEventArgs e)
         {
@@ -3942,7 +3970,14 @@ namespace Unigram.Views
                 {
                     if (ViewModel.Type == DialogType.Thread)
                     {
-                        ShowArea();
+                        if (!chat.Permissions.CanSendMessages)
+                        {
+                            ShowAction(Strings.Resources.GlobalSendMessageRestricted, false);
+                        }
+                        else
+                        {
+                            ShowArea();
+                        }
                     }
                     else
                     {

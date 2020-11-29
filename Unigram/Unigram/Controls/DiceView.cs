@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas.UI;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using RLottie;
 using System;
+using System.Buffers;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -54,22 +55,20 @@ namespace Unigram.Controls
         private bool _shouldPlay;
 
         // Detect from hardware?
-        private bool _limitFps = true;
+        private readonly bool _limitFps = true;
 
         private bool _skipFrame;
 
-        private int[] _index = new int[_parts];
-        private int[] _startIndex = new int[_parts];
+        private readonly int[] _index = new int[_parts];
+        private readonly int[] _startIndex = new int[_parts];
 
-        private bool[] _isLoopingEnabled = new bool[_parts];
+        private readonly bool[] _isLoopingEnabled = new bool[_parts];
 
         private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
 
-        private LoopThread _thread;
-        private LoopThread _threadUI;
+        private readonly LoopThread _thread;
+        private readonly LoopThread _threadUI;
         private bool _subscribed;
-
-        private ICanvasResourceCreator _device;
 
         public DiceView()
             : this(CompositionCapabilities.GetForCurrentView().AreEffectsFast())
@@ -164,26 +163,9 @@ namespace Unigram.Controls
             _canvas?.Invalidate();
         }
 
-        private static object _reusableLock = new object();
-        private static byte[] _reusableBuffer;
-
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            lock (_reusableLock)
-            {
-                if (_reusableBuffer == null)
-                {
-                    _reusableBuffer = new byte[256 * 256 * 4];
-                }
-            }
-
-            _device = sender;
             _bitmaps = new CanvasBitmap[_parts];
-
-            //for (int i = 0; i < _bitmaps.Length; i++)
-            //{
-            //    _bitmaps[i] = CanvasBitmap.CreateFromBytes(sender, _reusableBuffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
-            //}
 
             if (args.Reason == CanvasCreateResourcesReason.FirstTime)
             {
@@ -194,8 +176,6 @@ namespace Unigram.Controls
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            _device = args.DrawingSession.Device;
-
             if (_bitmaps != null)
             {
                 for (int i = 0; i < _bitmaps.Length; i++)
@@ -221,7 +201,7 @@ namespace Unigram.Controls
         public void Invalidate()
         {
             var animations = _animations;
-            if (animations == null || _canvas == null || _device == null)
+            if (animations == null || _canvas == null || _bitmaps == null)
             {
                 return;
             }
@@ -248,7 +228,9 @@ namespace Unigram.Controls
                 {
                     if (animations[i] != null)
                     {
-                        _bitmaps[i] = CanvasBitmap.CreateFromBytes(_device, _reusableBuffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                        var buffer = ArrayPool<byte>.Shared.Rent(256 * 256 * 4);
+                        _bitmaps[i] = CanvasBitmap.CreateFromBytes(_canvas, buffer, _frameSize.Width, _frameSize.Height, DirectXPixelFormat.B8G8R8A8UIntNormalized);
+                        ArrayPool<byte>.Shared.Return(buffer);
                     }
                     else
                     {
@@ -460,26 +442,32 @@ namespace Unigram.Controls
             }
         }
 
-        public void Play()
+        public bool Play()
         {
             var canvas = _canvas;
             if (canvas == null)
             {
                 _shouldPlay = true;
-                return;
+                return false;
             }
 
             var animations = _animations;
             if (animations == null)
             {
                 _shouldPlay = true;
-                return;
+                return false;
             }
 
             _shouldPlay = false;
 
+            if (_subscribed)
+            {
+                return false;
+            }
+
             //canvas.Paused = false;
             Subscribe(true);
+            return true;
             //OnInvalidate();
         }
 

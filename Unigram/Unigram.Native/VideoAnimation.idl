@@ -1,0 +1,17 @@
+namespace Unigram.Native
+{
+	[default_interface]
+	runtimeclass VideoAnimation
+	{
+        static VideoAnimation LoadFromFile(String filePath, Boolean preview, Boolean limitFps);
+
+        void Stop();
+        void PrepareToSeek();
+        void SeekToMilliseconds(Int64 ms, Boolean precise);
+
+        Int32 RenderSync(Microsoft.Graphics.Canvas.CanvasBitmap bitmap, Boolean preview);
+
+        Int32 PixelWidth{ get; };
+        Int32 PixelHeight{ get; };
+    }
+} // namespace Unigram.Native

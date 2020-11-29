@@ -7,9 +7,15 @@ namespace Unigram.Logs
     public sealed class Logger
     {
         [Conditional("DEBUG")]
-        public static void Critical(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Critical(LogTarget tag, string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Critical, null, message, member, filePath, line);
+        }
+
+        [Conditional("DEBUG")]
+        public static void Critical(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            Log(LogTarget.None, LogLevel.Critical, null, message, member, filePath, line);
         }
 
         //[Conditional("DEBUG")]
@@ -19,9 +25,15 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        public static void Debug(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Debug(LogTarget tag, string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Debug, null, message, member, filePath, line);
+        }
+
+        [Conditional("DEBUG")]
+        public static void Debug(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            Log(LogTarget.None, LogLevel.Debug, null, message, member, filePath, line);
         }
 
         //[Conditional("DEBUG")]
@@ -31,9 +43,15 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        public static void Error(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Error(LogTarget tag, string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Error, null, message, member, filePath, line);
+        }
+
+        [Conditional("DEBUG")]
+        public static void Error(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            Log(LogTarget.None, LogLevel.Error, null, message, member, filePath, line);
         }
 
         //[Conditional("DEBUG")]
@@ -43,9 +61,15 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        public static void Info(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Info(LogTarget tag, string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Info, null, message, member, filePath, line);
+        }
+
+        [Conditional("DEBUG")]
+        public static void Info(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            Log(LogTarget.None, LogLevel.Info, null, message, member, filePath, line);
         }
 
         //[Conditional("DEBUG")]
@@ -55,7 +79,7 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        private static void Log(Target tag, LogLevel level, Type type, string message, string member, string filePath, int line)
+        private static void Log(LogTarget tag, LogLevel level, Type type, string message, string member, string filePath, int line)
         {
             //Logs.Log.Write(LogHelper.CreateEntryWithoutType(DateTime.Now, level, member, line, message));
             System.Diagnostics.Debug.WriteLine(LogHelper.CreateEntryWithoutType(DateTime.Now, level, member, line, message));
@@ -68,9 +92,15 @@ namespace Unigram.Logs
         //}
 
         [Conditional("DEBUG")]
-        public static void Warning(Target tag, string message, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Warning(LogTarget tag, string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
             Log(tag, LogLevel.Warning, null, message, member, filePath, line);
+        }
+
+        [Conditional("DEBUG")]
+        public static void Warning(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            Log(LogTarget.None, LogLevel.Warning, null, message, member, filePath, line);
         }
 
         //[Conditional("DEBUG")]
@@ -81,13 +111,16 @@ namespace Unigram.Logs
     }
 
     [Flags]
-    public enum Target
+    public enum LogTarget
     {
+        None,
+
         Lifecycle,
         API,
         Chat,
         Notifications,
         Contacts,
-        Recording
+        Recording,
+        BootStrapper
     }
 }

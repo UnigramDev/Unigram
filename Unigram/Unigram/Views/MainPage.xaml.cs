@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
@@ -74,6 +73,7 @@ namespace Unigram.Views
         public MainViewModel ViewModel => DataContext as MainViewModel;
         public RootPage Root { get; set; }
 
+        private readonly IProtoService _protoService;
         private readonly ICacheService _cacheService;
 
         private bool _unloaded;
@@ -83,6 +83,7 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<MainViewModel>();
 
+            _protoService = ViewModel.ProtoService;
             _cacheService = ViewModel.CacheService;
 
             SettingsView.DataContext = ViewModel.Settings;
@@ -135,7 +136,6 @@ namespace Unigram.Views
                 {
                     viewModel.Settings.Delegate = null;
                     viewModel.Chats.Delegate = null;
-                    viewModel.Chats.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
 
                     viewModel.Aggregator.Unsubscribe(this);
                     viewModel.Dispose();
@@ -240,9 +240,10 @@ namespace Unigram.Views
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatActions(chat, ViewModel.ProtoService.GetChatActions(chat.Id)));
         }
 
-        public void Handle(UpdateUserStatus update)
+        public async void Handle(UpdateUserStatus update)
         {
-            if (_cacheService.TryGetChatFromUser(update.UserId, out Chat result))
+            var response = await _protoService.SendAsync(new CreatePrivateChat(update.UserId, true));
+            if (response is Chat result)
             {
                 var user = _cacheService.GetUser(update.UserId);
                 if (user != null && user.Type is UserTypeRegular && user.Id != _cacheService.Options.MyId && user.Id != 777000)
@@ -262,9 +263,10 @@ namespace Unigram.Views
             Handle(update.ChatId, update.MessageId, chat => chat.LastMessage.Content = update.NewContent, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
         }
 
-        public void Handle(UpdateSecretChat update)
+        public async void Handle(UpdateSecretChat update)
         {
-            if (_cacheService.TryGetChatFromSecret(update.SecretChat.Id, out Chat result))
+            var response = await _protoService.SendAsync(new CreateSecretChat(update.SecretChat.Id));
+            if (response is Chat result)
             {
                 Handle(result.Id, (chatView, chat) => chatView.UpdateChatLastMessage(chat));
             }
@@ -559,7 +561,9 @@ namespace Unigram.Views
             }
 
             if (ChatTabs == null)
+            {
                 FindName(nameof(ChatTabs));
+            }
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
             if (element == null)
@@ -642,7 +646,9 @@ namespace Unigram.Views
             }
 
             if (ChatTabsLeft == null)
+            {
                 FindName(nameof(ChatTabsLeft));
+            }
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
             if (element == null)
@@ -748,6 +754,7 @@ namespace Unigram.Views
             else if (ViewModel.Chats.Items.ChatList is ChatListFilter || ViewModel.Chats.Items.ChatList is ChatListArchive)
             {
                 ViewModel.SelectedFilter = ChatFilterViewModel.Main;
+                ConvertFilter(ChatFilterViewModel.Main);
                 args.Handled = true;
             }
             else
@@ -922,7 +929,14 @@ namespace Unigram.Views
             foreach (var command in invoked.Commands)
             {
 #if DEBUG
-                if (command == ShortcutCommand.Quit)
+                if (command == ShortcutCommand.Close)
+                {
+                    ViewModels.Drawers.StickerDrawerViewModel.GetForCurrentView(ViewModel.ProtoService.SessionId).Update(null);
+                    ViewModels.Drawers.AnimationDrawerViewModel.GetForCurrentView(ViewModel.ProtoService.SessionId).Update();
+                    return;
+
+                }
+                else if (command == ShortcutCommand.Quit)
                 {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
@@ -1318,7 +1332,7 @@ namespace Unigram.Views
                 if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
                 {
                     ChatsList.SelectionMode = ListViewSelectionMode.Single;
-                    ChatsList.SelectedItem = ViewModel.Chats.SelectedItem;
+                    ChatsList.SelectedItem = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == ViewModel.Chats.SelectedItem);
                 }
 
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
@@ -1501,24 +1515,7 @@ namespace Unigram.Views
             }
         }
 
-        private async void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            UpdateManage();
-
-            var listView = sender as ListView;
-            if (listView.SelectedItem != null)
-            {
-                //listView.ScrollIntoView(listView.SelectedItem);
-            }
-            else
-            {
-                // Find another solution
-                await Task.Delay(500);
-                UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
-            }
-        }
-
-        private void SelectedItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateManage();
         }
@@ -2762,10 +2759,11 @@ namespace Unigram.Views
             }
         }
 
-        public void SetSelectedItem(Chat chat)
+        public async void SetSelectedItem(Chat chat)
         {
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
+                await System.Threading.Tasks.Task.Delay(100);
                 ChatsList.SelectedItem = chat;
             }
         }

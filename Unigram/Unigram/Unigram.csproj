@@ -539,7 +539,6 @@
     <Compile Include="Services\Keyboard\KeyboardEventArgs.cs" />
     <Compile Include="Services\Keyboard\KeyboardHelper.cs" />
     <Compile Include="Services\Keyboard\KeyboardService.cs" />
-    <Compile Include="Services\Logging\LoggingService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacy\IPropertyMapping.cs" />
     <Compile Include="Services\SettingsLegacy\ISettingsService.cs" />
@@ -1382,7 +1381,6 @@
     <Content Include="Assets\Logos\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Logos\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Mockup\theme_preview_image.jpg" />
-    <Content Include="Assets\secureid_ocr_nn.bin" />
     <PRIResource Include="Strings\tr\Resources.resw" />
     <PRIResource Include="Strings\ca\Resources.resw" />
     <PRIResource Include="Strings\pl\Resources.resw" />
@@ -2309,10 +2307,7 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\Messages\" />
-    <Folder Include="Views\Messages\" />
-  </ItemGroup>
+  <ItemGroup />
   <!--<ItemGroup>
     <Reference Include="Unigram.Native.Calls">
       <HintPath>$(SolutionDir)\Unigram.Native.Calls\$(Platform)\Unigram.Native.Calls.winmd</HintPath>

@@ -33,7 +33,7 @@ namespace Unigram.Controls.Messages
             }
 
             ThumbRoot.CornerRadius =
-                ThumbEllipse.CornerRadius = _defaultRadius;
+                ThumbEllipse.CornerRadius = radius == default ? _defaultRadius : radius;
         }
 
         protected override void SetThumbnail(ImageSource value)

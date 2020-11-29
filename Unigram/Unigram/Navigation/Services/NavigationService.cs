@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Logs;
 using Unigram.Services.ViewService;
 using Unigram.Views;
 using Windows.ApplicationModel.Core;
@@ -91,14 +90,6 @@ namespace Unigram.Navigation.Services
 
         public IDictionary<string, long> CacheKeyToChatId { get; } = new Dictionary<string, long>();
 
-        #region Debug
-
-        [Conditional("DEBUG")]
-        static void DebugWrite(string text = null, Unigram.Services.Logging.Severities severity = Unigram.Services.Logging.Severities.Template10, [CallerMemberName] string caller = null) =>
-            Unigram.Services.Logging.LoggingService.WriteLine(text, severity, caller: $"NavigationService.{caller}");
-
-        #endregion
-
         public static INavigationService GetForFrame(Frame frame) =>
             WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).FirstOrDefault(x => x.FrameFacade.Frame.Equals(frame));
 
@@ -155,7 +146,7 @@ namespace Unigram.Navigation.Services
                 }
                 catch (Exception ex)
                 {
-                    DebugWrite($"DispatchAsync/NavigateToAsync {ex.Message}");
+                    Logger.Error($"DispatchAsync/NavigateToAsync {ex.Message}");
                     throw;
                 }
                 //}, 1).ConfigureAwait(false);
@@ -180,7 +171,7 @@ namespace Unigram.Navigation.Services
         // before navigate (cancellable)
         bool NavigatingFrom(Page page, Type targetPageType, object targetPageParameter, INavigable dataContext, bool suspending, NavigationMode mode)
         {
-            DebugWrite($"Suspending: {suspending}");
+            Logger.Info($"Suspending: {suspending}");
 
             dataContext.NavigationService = this;
             dataContext.Dispatcher = this.GetDispatcherWrapper();
@@ -202,7 +193,7 @@ namespace Unigram.Navigation.Services
         // after navigate
         async Task NavigateFromAsync(Page page, INavigable dataContext, bool suspending)
         {
-            DebugWrite($"Suspending: {suspending}");
+            Logger.Info($"Suspending: {suspending}");
 
             dataContext.NavigationService = this;
             dataContext.Dispatcher = this.GetDispatcherWrapper();
@@ -214,7 +205,7 @@ namespace Unigram.Navigation.Services
 
         async Task NavigateToAsync(NavigationMode mode, object parameter, object frameContent = null)
         {
-            DebugWrite($"Mode: {mode}, Parameter: {parameter} FrameContent: {frameContent}");
+            Logger.Info($"Mode: {mode}, Parameter: {parameter} FrameContent: {frameContent}");
 
             frameContent = frameContent ?? FrameFacade.Frame.Content;
 
@@ -260,13 +251,13 @@ namespace Unigram.Navigation.Services
 
         public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf)
         {
-            DebugWrite($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
+            Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
         public bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
         {
-            DebugWrite($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
+            Logger.Info($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
 
             if (page == null)
             {
@@ -310,7 +301,7 @@ namespace Unigram.Navigation.Services
 
         public async Task SaveAsync()
         {
-            DebugWrite($"Frame: {FrameFacade.FrameId}");
+            Logger.Info($"Frame: {FrameFacade.FrameId}");
 
             if (CurrentPageType == null)
             {
@@ -342,7 +333,7 @@ namespace Unigram.Navigation.Services
 
         public async Task<bool> LoadAsync()
         {
-            DebugWrite($"Frame: {FrameFacade.FrameId}");
+            Logger.Info($"Frame: {FrameFacade.FrameId}");
 
             try
             {
@@ -386,7 +377,7 @@ namespace Unigram.Navigation.Services
 
         public void ClearCache(bool removeCachedPagesInBackStack = false)
         {
-            DebugWrite($"Frame: {FrameFacade.FrameId}");
+            Logger.Info($"Frame: {FrameFacade.FrameId}");
 
             int currentSize = FrameFacade.Frame.CacheSize;
 
@@ -413,7 +404,7 @@ namespace Unigram.Navigation.Services
 
         public async void Resuming()
         {
-            DebugWrite($"Frame: {FrameFacade.FrameId}");
+            Logger.Info($"Frame: {FrameFacade.FrameId}");
 
             var page = FrameFacade.Content as Page;
             if (page != null)
@@ -443,7 +434,7 @@ namespace Unigram.Navigation.Services
 
         public async Task SuspendingAsync()
         {
-            DebugWrite($"Frame: {FrameFacade.FrameId}");
+            Logger.Info($"Frame: {FrameFacade.FrameId}");
 
             await SaveAsync();
 

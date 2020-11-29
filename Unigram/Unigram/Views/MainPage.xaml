@@ -559,19 +559,23 @@
                                     <ListView.Header>
                                         <StackPanel Visibility="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                                             <Border Visibility="{x:Bind ViewModel.Chats.TopChats.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageBackgroundDarkBrush}">
-                                                <TextBlock Text="{CustomResource ChatHints}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                                <TextBlock
+                                                    Text="{CustomResource ChatHints}"
+                                                    Style="{StaticResource SettingsGroupTextBlockStyle}"
+                                                    Margin="12,16,12,6" />
                                             </Border>
-                                            <ListView SelectionMode="None"
-                                                      IsItemClickEnabled="True"
-                                                      ItemClick="ListView_ItemClick"
-                                                      ContainerContentChanging="TopChats_ContainerContentChanging"
-                                                      ItemsSource="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay}"
-                                                      Style="{StaticResource HorizontalListViewStyle}">
+                                            <controls:TextListView
+                                                SelectionMode="None"
+                                                IsItemClickEnabled="True"
+                                                ItemClick="ListView_ItemClick"
+                                                ContainerContentChanging="TopChats_ContainerContentChanging"
+                                                ItemsSource="{x:Bind ViewModel.Chats.TopChats, Mode=OneWay}"
+                                                Style="{StaticResource HorizontalListViewStyle}">
                                                 <ListView.ItemTemplate>
                                                     <DataTemplate>
                                                         <StackPanel Width="72" Padding="0,12" Background="Transparent" ContextRequested="TopChat_ContextRequested">
                                                             <Grid Width="48" Height="48" Margin="12,0">
-                                                                <controls:ProfilePicture IsHitTestVisible="False"/>
+                                                                <controls:ProfilePicture IsHitTestVisible="False" IsTabStop="False"/>
                                                                 <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                                         MinWidth="20"
                                                                         Height="20"
@@ -612,15 +616,26 @@
                                                 <ListView.ItemContainerTransitions>
                                                     <TransitionCollection/>
                                                 </ListView.ItemContainerTransitions>
-                                            </ListView>
+                                            </controls:TextListView>
 
                                             <Grid Visibility="{x:Bind ViewModel.Chats.Search.Local.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource PageBackgroundDarkBrush}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{CustomResource Recent}" Padding="12,0,0,0" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                                                <controls:GlyphButton Command="{x:Bind ViewModel.Chats.ClearRecentChatsCommand}" AllowFocusOnInteraction="False" Glyph="&#xE10A;" FontSize="12" Width="48" Height="32" Grid.Column="1"/>
+                                                <TextBlock
+                                                    Text="{CustomResource Recent}"
+                                                    Style="{StaticResource SettingsGroupTextBlockStyle}"
+                                                    Margin="12,16,12,6" />
+                                                <controls:GlyphButton
+                                                    Command="{x:Bind ViewModel.Chats.ClearRecentChatsCommand}"
+                                                    AllowFocusOnInteraction="False"
+                                                    VerticalAlignment="Bottom"
+                                                    Glyph="&#xE10A;"
+                                                    FontSize="12"
+                                                    Width="48"
+                                                    Height="32"
+                                                    Grid.Column="1"/>
                                             </Grid>
                                         </StackPanel>
                                     </ListView.Header>
@@ -797,12 +812,14 @@
                                         DataContext="{x:Bind ViewModel.Chats}"
                                         ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
                                         SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
+                                        SelectionChanged="ListView_SelectionChanged"
                                         Grid.Row="1">
                                         <ListView.Header>
                                             <Grid x:Name="ArchivedChatsPresenter">
                                                 <Button
                                                     x:Name="ArchivedChatsPanel"
                                                     Click="ArchivedChats_Click"
+                                                    AutomationProperties.Name="{CustomResource ArchivedChats}"
                                                     Style="{StaticResource EmptyButtonStyle}">
                                                     <cells:ChatCell
                                                         x:Name="ArchivedChats"

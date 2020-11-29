@@ -456,20 +456,20 @@ namespace Unigram
                 {
                     _extendedSession = session;
 
-                    Logs.Logger.Info(Logs.Target.Lifecycle, "ExtendedExecutionResult.Allowed");
+                    Logs.Logger.Info(Logs.LogTarget.Lifecycle, "ExtendedExecutionResult.Allowed");
                 }
                 else
                 {
                     session.Dispose();
 
-                    Logs.Logger.Warning(Logs.Target.Lifecycle, "ExtendedExecutionResult.Denied");
+                    Logs.Logger.Warning(Logs.LogTarget.Lifecycle, "ExtendedExecutionResult.Denied");
                 }
             }
         }
 
         public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Logs.Logger.Info(Logs.Target.Lifecycle, "OnResuming");
+            Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnResuming");
 
             // #1225: Will this work? No one knows.
             foreach (var network in TLContainer.Current.ResolveAll<INetworkService>())
@@ -485,7 +485,7 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            Logs.Logger.Info(Logs.Target.Lifecycle, "OnSuspendingAsync");
+            Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnSuspendingAsync");
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }

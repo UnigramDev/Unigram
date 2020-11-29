@@ -224,7 +224,7 @@ namespace Unigram.Controls.Chats
                     provider.Invoke();
                 }
 
-                Logs.Logger.Debug(Logs.Target.Chat, "Tab pressed and handled");
+                Logs.Logger.Debug(Logs.LogTarget.Chat, "Tab pressed and handled");
                 e.Handled = true;
             }
             else if (e.Key == VirtualKey.Tab)

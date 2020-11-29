@@ -2,13 +2,13 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Unigram.Logs;
 using Unigram.Navigation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using static Unigram.Services.Logging.LoggingService;
 
 namespace Unigram.Services.ViewService
 {
@@ -117,7 +117,7 @@ namespace Unigram.Services.ViewService
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
             ViewSizePreference size = ViewSizePreference.UseHalf, int session = 0, string id = "0")
         {
-            WriteLine($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
+            Logger.Info($"Page: {page}, Parameter: {parameter}, Title: {title}, Size: {size}");
 
             var currentView = ApplicationView.GetForCurrentView();
             title = title ?? currentView.Title;

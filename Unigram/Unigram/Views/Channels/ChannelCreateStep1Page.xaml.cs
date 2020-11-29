@@ -28,22 +28,26 @@ namespace Unigram.Views.Channels
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
-
-            var media = await picker.PickSingleMediaAsync();
-            if (media != null)
+            try
             {
-                var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
 
-                var confirm = await dialog.ShowAsync();
-                if (confirm == ContentDialogResult.Primary)
+                var media = await picker.PickSingleMediaAsync();
+                if (media != null)
                 {
-                    ViewModel.EditPhotoCommand.Execute(media);
+                    var dialog = new EditMediaPopup(media, ImageCropperMask.Ellipse);
+
+                    var confirm = await dialog.ShowAsync();
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        ViewModel.EditPhotoCommand.Execute(media);
+                    }
                 }
             }
+            catch { }
         }
 
         #region Binding

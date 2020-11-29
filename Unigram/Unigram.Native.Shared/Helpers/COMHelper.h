@@ -80,7 +80,7 @@ inline void ThrowException(HRESULT hr)
 	throw Exception::CreateException(hr);
 }
 
-
+#endif
 
 class HResultException
 {
@@ -170,5 +170,3 @@ inline void CheckMakeResult(bool result)
 	if (!result)
 		ThrowBadAlloc();
 }
-
-#endif

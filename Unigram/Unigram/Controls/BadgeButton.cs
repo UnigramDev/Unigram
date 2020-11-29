@@ -34,7 +34,7 @@ namespace Unigram.Controls
 
         private void OnBadgeChanged(object newValue, object oldValue)
         {
-            if (_peer != null)
+            if (_peer != null && (newValue is string || newValue is null))
             {
                 var newText = newValue?.ToString() ?? string.Empty;
                 var oldText = oldValue?.ToString() ?? string.Empty;
@@ -42,6 +42,19 @@ namespace Unigram.Controls
                 _peer.RaisePropertyChangedEvent(ValuePatternIdentifiers.ValueProperty, oldText, newText);
             }
         }
+
+        #endregion
+
+        #region BadgeTemplate
+
+        public DataTemplate BadgeTemplate
+        {
+            get { return (DataTemplate)GetValue(BadgeTemplateProperty); }
+            set { SetValue(BadgeTemplateProperty, value); }
+        }
+
+        public static readonly DependencyProperty BadgeTemplateProperty =
+            DependencyProperty.Register("BadgeTemplate", typeof(DataTemplate), typeof(BadgeButton), new PropertyMetadata(null));
 
         #endregion
 
@@ -55,6 +68,19 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty BadgeVisibilityProperty =
             DependencyProperty.Register("BadgeVisibility", typeof(Visibility), typeof(BadgeButton), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+
+        #region BadgeLabel
+
+        public string BadgeLabel
+        {
+            get { return (string)GetValue(BadgeLabelProperty); }
+            set { SetValue(BadgeLabelProperty, value); }
+        }
+
+        public static readonly DependencyProperty BadgeLabelProperty =
+            DependencyProperty.Register("BadgeLabel", typeof(string), typeof(BadgeButton), new PropertyMetadata(null, OnBadgeChanged));
 
         #endregion
 
@@ -88,7 +114,7 @@ namespace Unigram.Controls
 
     public class BadgeButtonAutomationPeer : ButtonAutomationPeer, IValueProvider
     {
-        private BadgeButton _owner;
+        private readonly BadgeButton _owner;
 
         public BadgeButtonAutomationPeer(BadgeButton owner) : base(owner)
         {
@@ -114,7 +140,12 @@ namespace Unigram.Controls
         {
             get
             {
-                return _owner.Badge?.ToString();
+                if (_owner.Badge is string badge)
+                {
+                    return badge;
+                }
+
+                return _owner.BadgeLabel ?? string.Empty;
             }
         }
 

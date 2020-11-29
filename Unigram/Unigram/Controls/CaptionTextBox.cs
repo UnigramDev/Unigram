@@ -65,7 +65,7 @@ namespace Unigram.Controls
                     provider.Invoke();
                 }
 
-                Logs.Logger.Debug(Logs.Target.Chat, "Tab pressed and handled");
+                Logs.Logger.Debug(Logs.LogTarget.Chat, "Tab pressed and handled");
                 e.Handled = true;
             }
             else if (e.Key == VirtualKey.Tab)
@@ -83,7 +83,7 @@ namespace Unigram.Controls
 
                 var send = false;
 
-                if (ViewModel.Settings.IsSendByEnterEnabled)
+                if (ViewModel != null && ViewModel.Settings.IsSendByEnterEnabled)
                 {
                     send = !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                 }

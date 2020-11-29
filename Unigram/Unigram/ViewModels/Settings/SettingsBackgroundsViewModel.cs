@@ -87,17 +87,21 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand LocalCommand { get; }
         private async void LocalExecute()
         {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
-
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
+            try
             {
-                var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
-                NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperLocalFileName + $"#{token}");
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
+
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
+                    NavigationService.Navigate(typeof(BackgroundPage), Constants.WallpaperLocalFileName + $"#{token}");
+                }
             }
+            catch { }
         }
 
         public RelayCommand ColorCommand { get; }
