@@ -13,62 +13,76 @@
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
 
-    <Grid Margin="10,0,10,0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel VerticalAlignment="Top">
-            <TextBlock
-                x:Name="Question"
-                TextWrapping="Wrap"
-                Style="{StaticResource BaseTextBlockStyle}"
-                FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                IsTextSelectionEnabled="True"/>
-            <StackPanel
-                Orientation="Horizontal">
+    <UserControl x:Name="LayoutRoot">
+        <Grid Margin="10,0,10,0">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="RunningOut">
+                        <VisualState.Setters>
+                            <Setter Target="Timeout.Foreground" Value="{ThemeResource MessagePollWrongBrush}"/>
+                            <Setter Target="TimeoutGlyph.Foreground" Value="{ThemeResource MessagePollWrongBrush}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Default"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel VerticalAlignment="Top">
                 <TextBlock
-                    x:Name="Type"
-                    Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    VerticalAlignment="Top"
-                    Margin="0,0,4,4"/>
-
+                    x:Name="Question"
+                    TextWrapping="Wrap"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                    IsTextSelectionEnabled="True"/>
                 <StackPanel
-                    Orientation="Horizontal"
-                    x:Name="RecentVoters"/>
+                    Orientation="Horizontal">
+                    <TextBlock
+                        x:Name="Type"
+                        Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        VerticalAlignment="Top"
+                        Margin="0,0,4,4"/>
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        x:Name="RecentVoters"/>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
 
-        <StackPanel
-            x:Name="TimeoutLabel"
-            Orientation="Horizontal"
-            VerticalAlignment="Bottom"
-            Margin="10,0,0,4"
-            Grid.Column="1">
-            <TextBlock
-                x:Name="Timeout"
-                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-                Style="{StaticResource BodyTextBlockStyle}"/>
-
-            <TextBlock
-                Text="&#xE916;"
-                FontSize="16"
-                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-                TextLineBounds="Tight"
+            <StackPanel
+                x:Name="TimeoutLabel"
+                Orientation="Horizontal"
                 VerticalAlignment="Bottom"
-                Margin="4,0,0,2"/>
-        </StackPanel>
-        
-        <controls:GlyphButton
-            x:Name="Explanation"
-            Click="Explanation_Click"
-            Glyph="&#xEA80;"
-            Foreground="{ThemeResource MessageSubtleForegroundBrush}"
-            Margin="0,-4,-10,-5"
-            Grid.Column="1"/>
-    </Grid>
+                Margin="10,0,0,4"
+                Grid.Column="1">
+                <TextBlock
+                    x:Name="Timeout"
+                    Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                    Style="{StaticResource BodyTextBlockStyle}"/>
+
+                <TextBlock
+                    x:Name="TimeoutGlyph"
+                    Text="&#xE916;"
+                    FontSize="16"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                    TextLineBounds="Tight"
+                    VerticalAlignment="Bottom"
+                    Margin="4,0,0,2"/>
+            </StackPanel>
+
+            <controls:GlyphButton
+                x:Name="Explanation"
+                Click="Explanation_Click"
+                Glyph="&#xEA80;"
+                Foreground="{ThemeResource MessageSubtleForegroundBrush}"
+                Margin="0,-4,-10,-5"
+                Grid.Column="1"/>
+        </Grid>
+    </UserControl>
 
     <StackPanel
         x:Name="Options"/>

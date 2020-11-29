@@ -16,6 +16,7 @@ namespace Unigram.Controls.Messages.Content
         public MessageViewModel Message => _message;
 
         private DispatcherTimer _timeoutTimer;
+        private bool _runningOut;
 
         public PollContent(MessageViewModel message)
         {
@@ -204,10 +205,16 @@ namespace Unigram.Controls.Messages.Content
             if (diff > 0)
             {
                 Timeout.Text = TimeSpan.FromSeconds(diff).ToString("m\\:ss");
-                VisualState.GoToState(LayoutRoot, "Normal", false);
-                if (diff <= 5)
+
+                if (diff <= 5 && !_runningOut)
                 {
-                    VisualState.GoToState(LayoutRoot, "TimingOut", false);
+                    _runningOut = true;
+                    VisualStateManager.GoToState(LayoutRoot, "RunningOut", false);
+                }
+                else if (diff > 5 && _runningOut)
+                {
+                    _runningOut = false;
+                    VisualStateManager.GoToState(LayoutRoot, "Default", false);
                 }
             }
             else
