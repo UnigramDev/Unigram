@@ -297,7 +297,6 @@
     <Compile Include="Controls\Gallery\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Gallery\GalleryVolumeButton.cs" />
     <Compile Include="Controls\HeaderedControl.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
     <Compile Include="Controls\InlineBotResultsView.xaml.cs">
