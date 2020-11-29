@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -47,9 +47,9 @@ namespace Unigram.Controls
 
             Tick.Visibility = (results && correct) || option.IsChosen ? Visibility.Visible : Visibility.Collapsed;
 
-            if (option.IsChosen && poll.Type is PollTypeQuiz && !correct)
+            if (option.IsChosen && poll.Type is PollTypeQuiz)
             {
-                VisualStateManager.GoToState(LayoutRoot, "Wrong", false);
+                VisualStateManager.GoToState(LayoutRoot, correct ? "Correct" : "Wrong", false);
             }
             else
             {
