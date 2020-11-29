@@ -2501,7 +2501,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(new RelayCommand(ToggleArchive), Strings.Resources.AccDescrCollapsePanel, new FontIcon { Glyph = Icons.Collapse });
             }
 
-            flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+            flyout.CreateFlyoutItem(ViewModel.FilterMarkAsReadCommand, ChatFilterViewModel.Archive, Strings.Resources.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
             args.ShowAt(flyout, element);
         }
