@@ -651,7 +651,10 @@ namespace Unigram.Services
                 }
                 catch
                 {
-                    return fallbackToLocal ? ApplicationData.Current.LocalFolder : null;
+                    if (fallbackToLocal)
+                    {
+                        return ApplicationData.Current.LocalFolder;
+                    }
                 }
             }
             else if (fallbackToLocal)
