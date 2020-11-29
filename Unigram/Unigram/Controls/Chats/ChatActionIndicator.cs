@@ -13,6 +13,9 @@ namespace Unigram.Controls.Chats
 {
     public class ChatActionIndicator : FrameworkElement
     {
+        // This should be held in memory, or animation will stop
+        private CompositionPropertySet _props;
+
         private Visual _previous;
         private AnimationType _action;
 
@@ -40,6 +43,12 @@ namespace Unigram.Controls.Chats
                 _previous = null;
             }
 
+            if (_props != null)
+            {
+                _props.Dispose();
+                _props = null;
+            }
+
             if (!ApiInfo.CanUseDirectComposition)
             {
                 return;
@@ -50,14 +59,12 @@ namespace Unigram.Controls.Chats
             var color = Fill?.Color ?? Colors.Black;
 
             var visual = GetVisual(type, Window.Current.Compositor, width, height, color);
-            //if (visual != null)
-            {
-                _action = type;
-                _previous = visual;
 
-                ElementCompositionPreview.SetElementChildVisual(this, visual);
-                InvalidateMeasure();
-            }
+            _action = type;
+            _previous = visual;
+
+            ElementCompositionPreview.SetElementChildVisual(this, visual);
+            InvalidateMeasure();
         }
 
         #region Fill
@@ -183,6 +190,7 @@ namespace Unigram.Controls.Chats
             dot2.StartAnimation("Radius", radiusDot2);
             dot3.StartAnimation("Radius", radiusDot3);
 
+            _props = null;
             return shape;
         }
 
@@ -280,6 +288,7 @@ namespace Unigram.Controls.Chats
             brushDot2.StartAnimation("Color", colorDot2);
             brushDot3.StartAnimation("Color", colorDot3);
 
+            _props = props;
             return shape;
         }
 
@@ -325,6 +334,7 @@ namespace Unigram.Controls.Chats
             ellipseBrush.StartAnimation("Color", colorEllipse);
             ellipse.StartAnimation("Radius", radiusEllipse);
 
+            _props = props;
             return shape;
         }
 
@@ -392,6 +402,7 @@ namespace Unigram.Controls.Chats
 
             bar.StartAnimation("Offset", moveBar);
 
+            _props = props;
             return shape;
         }
 
@@ -504,6 +515,7 @@ namespace Unigram.Controls.Chats
             mouth.StartAnimation("TrimStart", start);
             mouth.StartAnimation("TrimEnd", end);
 
+            _props = props;
             return shape;
         }
 
