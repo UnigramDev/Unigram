@@ -78,8 +78,6 @@ namespace Unigram.Services
 
         bool TryGetChat(long chatId, out Chat chat);
         bool TryGetChat(MessageSender sender, out Chat value);
-        //bool TryGetChatFromUser(int userId, out Chat chat);
-        //bool TryGetChatFromSecret(int secretId, out Chat chat);
 
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChat(Chat chat);
@@ -144,9 +142,6 @@ namespace Unigram.Services
 
         private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
         private readonly ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<int, ChatAction>>();
-
-        //private readonly Dictionary<int, long> _userToChat = new Dictionary<int, long>();
-        //private readonly Dictionary<int, long> _secretChatToChat = new Dictionary<int, long>();
 
         private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
 
@@ -335,6 +330,10 @@ namespace Unigram.Services
             {
                 if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
                 {
+#if DEBUG
+                    await Task.Delay(5000);
+#endif
+
                     var folder = await GetFilesFolderAsync(false);
                     if (folder != null)
                     {
@@ -602,8 +601,6 @@ namespace Unigram.Services
             _authorizationState = null;
             _connectionState = null;
 
-            _filesFolder = null;
-
             if (_initializeAfterClose)
             {
                 _initializeAfterClose = false;
@@ -644,35 +641,25 @@ namespace Unigram.Services
 
         private readonly ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
 
-        private StorageFolder _filesFolder;
-
-        private async Task<StorageFolder> GetFilesFolderAsync(bool allowLocal)
+        private async Task<StorageFolder> GetFilesFolderAsync(bool fallbackToLocal)
         {
-            if (_filesFolder == null)
+            if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
             {
-                if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                try
                 {
-                    try
-                    {
-                        _filesFolder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
-                    }
-                    catch
-                    {
-                        _filesFolder = ApplicationData.Current.LocalFolder;
-                    }
+                    return await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
                 }
-                else
+                catch
                 {
-                    _filesFolder = ApplicationData.Current.LocalFolder;
+                    return fallbackToLocal ? ApplicationData.Current.LocalFolder : null;
                 }
             }
-
-            if (_filesFolder == ApplicationData.Current.LocalFolder)
+            else if (fallbackToLocal)
             {
-                return allowLocal ? _filesFolder : null;
+                return ApplicationData.Current.LocalFolder;
             }
 
-            return _filesFolder;
+            return null;
         }
 
         public async Task<StorageFile> GetFileAsync(File file, bool completed = true)
@@ -681,35 +668,17 @@ namespace Unigram.Services
             {
                 try
                 {
-                    static bool IsRelative(string relativeTo, string path, out string relative)
-                    {
-                        var relativeFull = System.IO.Path.GetFullPath(relativeTo);
-                        var pathFull = System.IO.Path.GetFullPath(path);
-
-                        if (pathFull.Length > relativeFull.Length && pathFull[relativeFull.Length] == '\\')
-                        {
-                            if (pathFull.StartsWith(relativeFull, StringComparison.OrdinalIgnoreCase))
-                            {
-                                relative = pathFull.Substring(relativeFull.Length);
-                                return true;
-                            }
-                        }
-
-                        relative = null;
-                        return false;
-                    }
-
                     var folder = await GetFilesFolderAsync(true);
                     if (folder == null)
                     {
                         folder = ApplicationData.Current.LocalFolder;
                     }
 
-                    if (IsRelative(ApplicationData.Current.LocalFolder.Path, file.Local.Path, out string relativeLocal))
+                    if (IsRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path, out string relativeLocal))
                     {
                         return await ApplicationData.Current.LocalFolder.GetFileAsync(relativeLocal);
                     }
-                    else if (IsRelative(folder.Path, file.Local.Path, out string relativeFolder))
+                    else if (IsRelativePath(folder.Path, file.Local.Path, out string relativeFolder))
                     {
                         return await folder.GetFileAsync(relativeFolder);
                     }
@@ -732,35 +701,17 @@ namespace Unigram.Services
         {
             try
             {
-                static bool IsRelative(string relativeTo, string path, out string relative)
-                {
-                    var relativeFull = System.IO.Path.GetFullPath(relativeTo);
-                    var pathFull = System.IO.Path.GetFullPath(path);
-
-                    if (pathFull.Length > relativeFull.Length && pathFull[relativeFull.Length] == '\\')
-                    {
-                        if (pathFull.StartsWith(relativeFull, StringComparison.OrdinalIgnoreCase))
-                        {
-                            relative = pathFull.Substring(0, relativeFull.Length);
-                            return true;
-                        }
-                    }
-
-                    relative = null;
-                    return false;
-                }
-
                 var folder = await GetFilesFolderAsync(true);
                 if (folder == null)
                 {
                     folder = ApplicationData.Current.LocalFolder;
                 }
 
-                if (IsRelative(ApplicationData.Current.LocalFolder.Path, path, out string relativeLocal))
+                if (IsRelativePath(ApplicationData.Current.LocalFolder.Path, path, out string relativeLocal))
                 {
                     return await ApplicationData.Current.LocalFolder.GetFileAsync(relativeLocal);
                 }
-                else if (IsRelative(folder.Path, path, out string relativeFolder))
+                else if (IsRelativePath(folder.Path, path, out string relativeFolder))
                 {
                     return await folder.GetFileAsync(relativeFolder);
                 }
@@ -770,6 +721,24 @@ namespace Unigram.Services
             catch { }
 
             return null;
+        }
+
+        private static bool IsRelativePath(string relativeTo, string path, out string relative)
+        {
+            var relativeFull = System.IO.Path.GetFullPath(relativeTo);
+            var pathFull = System.IO.Path.GetFullPath(path);
+
+            if (pathFull.Length > relativeFull.Length && pathFull[relativeFull.Length] == '\\')
+            {
+                if (pathFull.StartsWith(relativeFull, StringComparison.OrdinalIgnoreCase))
+                {
+                    relative = pathFull.Substring(relativeFull.Length + 1);
+                    return true;
+                }
+            }
+
+            relative = null;
+            return false;
         }
 
         public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
@@ -1064,29 +1033,6 @@ namespace Unigram.Services
             value = null;
             return false;
         }
-
-        //public bool TryGetChatFromUser(int userId, out Chat chat)
-        //{
-        //    if (_userToChat.TryGetValue(userId, out long chatId))
-        //    {
-        //        return TryGetChat(chatId, out chat);
-        //    }
-
-        //    chat = null;
-        //    return false;
-        //}
-
-        //public bool TryGetChatFromSecret(int secretId, out Chat chat)
-        //{
-        //    if (_secretChatToChat.TryGetValue(secretId, out long chatId))
-        //    {
-        //        return TryGetChat(chatId, out chat);
-        //    }
-
-        //    chat = null;
-        //    return false;
-        //}
-
 
         public IList<Chat> GetChats(IList<long> ids)
         {
