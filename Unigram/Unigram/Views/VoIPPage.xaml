@@ -30,11 +30,11 @@
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{StaticResource GlyphLargeFontSize}" />
+            <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Glyph" Value="&#xE700;" />
             <Setter Property="Height" Value="48" />
             <Setter Property="Width" Value="48" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="FontSize" Value="20" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
             <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
@@ -210,7 +210,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock
                     Text="&#xE610;"
-                    FontSize="16"
+                    FontSize="{StaticResource GlyphMediumFontSize}"
                     FontFamily="{StaticResource TelegramThemeFontFamily}"
                     VerticalAlignment="Bottom"
                     Margin="0,0,8,0"/>
@@ -233,7 +233,7 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock
                     Text="&#xE714;"
-                    FontSize="20"
+                    FontSize="{StaticResource GlyphMediumFontSize}"
                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                     VerticalAlignment="Bottom"
                     Margin="0,-2,8,-2"/>
@@ -264,8 +264,7 @@
                     Content="{CustomResource VoipStartVideo}"
                     CheckedContent="{CustomResource VoipStopVideo}"
                     HorizontalAlignment="Right"
-                    Margin="0,0,16,0"
-                    FontSize="24"/>
+                    Margin="0,0,16,0"/>
                 <controls:CallToggleButton
                     x:Name="Audio"
                     Click="Audio_Click"
@@ -278,7 +277,7 @@
                     Margin="0,0,16,0"
                     Grid.Column="1"/>
 
-                <Border x:Name="Close" Visibility="Collapsed" Background="#FFFFFF" CornerRadius="30" Grid.Column="2">
+                <Border x:Name="Close" Visibility="Collapsed" Background="#FFFFFF" VerticalAlignment="Top" CornerRadius="30" Grid.Column="2">
                     <controls:GlyphButton
                         Click="Close_Click"
                         Glyph="&#xE711;"

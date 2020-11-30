@@ -214,7 +214,7 @@
                             <ColumnDefinition Width="{ThemeResource AppBarThemeCompactHeight}"/>
                         </Grid.ColumnDefinitions>
                         <!--<controls:GlyphButton Glyph="&#xE721;"
-                                                FontSize="{StaticResource GlyphButtonFontSize}"
+                                                FontSize="{StaticResource GlyphMediumFontSize}"
                                                 Width="{ThemeResource AppBarThemeCompactHeight}"
                                                 Height="{ThemeResource AppBarThemeCompactHeight}"/>-->
 
@@ -223,7 +223,7 @@
                             Index="0"
                             Glyph="&#xE76E;"
                             CheckedGlyph="&#xE76E;"
-                            FontSize="{StaticResource GlyphButtonFontSize}"
+                            FontSize="{StaticResource GlyphMediumFontSize}"
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource Emoji}"
                             ToolTipService.ToolTip="{CustomResource Emoji}"
@@ -235,7 +235,7 @@
                             Index="1"
                             Glyph="&#xF4A9;"
                             CheckedGlyph="&#xF4A9;"
-                            FontSize="{StaticResource GlyphButtonFontSize}"
+                            FontSize="{StaticResource GlyphMediumFontSize}"
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource AccDescrGIFs}"
                             ToolTipService.ToolTip="{CustomResource AccDescrGIFs}"
@@ -247,7 +247,7 @@
                             Index="2"
                             Glyph="&#xF4AA;"
                             CheckedGlyph="&#xF4AA;"
-                            FontSize="{StaticResource GlyphButtonFontSize}"
+                            FontSize="{StaticResource GlyphMediumFontSize}"
                             Style="{StaticResource ModernPivotRadioButtonStyle}"
                             AutomationProperties.Name="{CustomResource AccDescrStickers}"
                             ToolTipService.ToolTip="{CustomResource AccDescrStickers}"

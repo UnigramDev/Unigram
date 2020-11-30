@@ -193,12 +193,12 @@
                         <MenuFlyout x:Name="EllipsisFlyout">
                             <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE7AC;"/>
+                                    <FontIcon Glyph="&#xE7AC;" Style="{StaticResource DefaultFontIconStyle}"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutItem Command="{x:Bind ViewModel.CopyCommand}" Text="{CustomResource CopyLink}">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE8C8;"/>
+                                    <FontIcon Glyph="&#xE8C8;" Style="{StaticResource DefaultFontIconStyle}"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyout>

@@ -32,9 +32,9 @@ namespace Unigram.Controls
                 var hangup = IsChecked == true;
 
                 _visual = ElementCompositionPreview.GetElementVisual(presenter);
-                _visual.CenterPoint = new Vector3(10, 10, 0);
-                _visual.RotationAngleInDegrees = hangup ? 135 : 0;
-                _visual.Scale = hangup ? new Vector3(1.1f, 1.1f, 1) : Vector3.One;
+                _visual.CenterPoint = new Vector3(12, 12, 0);
+                _visual.RotationAngleInDegrees = hangup ? 120 : 0;
+                //_visual.Scale = hangup ? new Vector3(1.1f, 1.1f, 1) : Vector3.One;
             }
 
             base.OnApplyTemplate();
@@ -55,15 +55,15 @@ namespace Unigram.Controls
             var hangup = IsChecked == true;
 
             var rotation = _visual.Compositor.CreateScalarKeyFrameAnimation();
-            rotation.InsertKeyFrame(0, hangup ? 0 : 135);
-            rotation.InsertKeyFrame(1, hangup ? 135 : 0);
+            rotation.InsertKeyFrame(0, hangup ? 0 : 120);
+            rotation.InsertKeyFrame(1, hangup ? 120 : 0);
 
-            var scale = _visual.Compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(0, hangup ? Vector3.One : new Vector3(1.1f, 1.1f, 1));
-            scale.InsertKeyFrame(1, hangup ? new Vector3(1.1f, 1.1f, 1) : Vector3.One);
+            //var scale = _visual.Compositor.CreateVector3KeyFrameAnimation();
+            //scale.InsertKeyFrame(0, hangup ? Vector3.One : new Vector3(1.1f, 1.1f, 1));
+            //scale.InsertKeyFrame(1, hangup ? new Vector3(1.1f, 1.1f, 1) : Vector3.One);
 
             _visual.StartAnimation("RotationAngleInDegrees", rotation);
-            _visual.StartAnimation("Scale", scale);
+            //_visual.StartAnimation("Scale", scale);
         }
     }
 }

@@ -68,11 +68,11 @@
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}" />
+        <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="48" />
         <Setter Property="Width" Value="48" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="20" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
@@ -1153,8 +1153,8 @@
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
+        <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
@@ -1240,7 +1240,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}"/>
+        <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
@@ -1318,7 +1318,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}"/>
+        <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
@@ -1506,7 +1506,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <TextBlock
-                                FontSize="{StaticResource GlyphButtonFontSize}"
+                                FontSize="{StaticResource GlyphMediumFontSize}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 AutomationProperties.AccessibilityView="Raw"
@@ -1681,7 +1681,7 @@
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}" />
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}" />
+        <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}" />
         <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -1811,11 +1811,11 @@
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}" />
+        <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}" />
         <Setter Property="Width" Value="48" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}" />
         <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>

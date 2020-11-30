@@ -132,13 +132,14 @@ namespace Unigram.Controls
 
                         if (inline)
                         {
-                            button.Margin = new Thickness(1, 2, 1, 0);
                             button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
+                            button.Margin = new Thickness(1, 2, 1, 0);
                         }
                         else
                         {
-                            button.Margin = new Thickness(4, 8, 4, 0);
                             button.Style = App.Current.Resources["ReplyKeyboardMarkupButtonStyle"] as Style;
+                            button.Margin = new Thickness(4, 8, 4, 0);
+                            button.Height = resize ? 36 : double.NaN;
                         }
 
                         if (row[i] is InlineKeyboardButton inlineButton)
@@ -158,11 +159,6 @@ namespace Unigram.Controls
                             {
                                 button.Glyph = "\uEE35";
                             }
-                            // TODO: ku fu???
-                            //else if (row[i] is TLKeyboardButton && inline)
-                            //{
-                            //    button.Glyph = "\uE15F";
-                            //}
                             else if (inlineButton.Type is InlineKeyboardButtonTypeBuy && receipt)
                             {
                                 button.Content = Strings.Resources.PaymentReceipt;

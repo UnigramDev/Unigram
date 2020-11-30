@@ -282,14 +282,14 @@
                                                 Click="EditName_Click"
                                                 Text="{CustomResource EditName}">
                                                 <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE104;"/>
+                                                    <FontIcon Glyph="&#xE104;" Style="{StaticResource DefaultFontIconStyle}"/>
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
                                             <MenuFlyoutItem
                                                 Click="LogOut_Click"
                                                 Text="{CustomResource LogOut}">
                                                 <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xF3B1;"/>
+                                                    <FontIcon Glyph="&#xF3B1;" Style="{StaticResource DefaultFontIconStyle}"/>
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
                                         </MenuFlyout>
@@ -310,7 +310,7 @@
                             <StackPanel x:Name="ChatsOptions" Orientation="Horizontal" Grid.Column="1">
                                 <controls:GlyphButton
                                     x:Name="Proxy"
-                                    Glyph="&#xE915;"
+                                    Glyph="&#xEA19;"
                                     Click="Proxy_Click"
                                     Visibility="Collapsed"
                                     FontFamily="{StaticResource TelegramThemeFontFamily}"
@@ -334,7 +334,6 @@
                             Click="BackButton_Click"
                             Glyph="&#xE72B;"
                             Height="{ThemeResource AppBarThemeCompactHeight}"
-                            FontSize="15"
                             Width="40"
                             Visibility="Collapsed"
                             AutomationProperties.Name="{CustomResource AccDescrGoBack}"

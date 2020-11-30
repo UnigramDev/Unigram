@@ -22,6 +22,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
 {
@@ -977,7 +978,7 @@ namespace Unigram.Common
                 {
                     var link = text.SelectedText;
 
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                     copy.Click += LinkCopy_Click;
 
                     var flyout = new MenuFlyout();
@@ -1022,7 +1023,7 @@ namespace Unigram.Common
 
                     if (type == null || type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
                     {
-                        var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
+                        var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                         var action = GetEntityAction(hyperlink);
                         if (action != null)
@@ -1037,7 +1038,7 @@ namespace Unigram.Common
                         flyout.Items.Add(open);
                     }
 
-                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
+                    var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
                     copy.Click += LinkCopy_Click;
                     flyout.Items.Add(copy);
 
@@ -1069,8 +1070,8 @@ namespace Unigram.Common
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenInNewWindow } };
-                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.Copy } };
+                var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
 
                 open.Click += LinkOpen_Click;
                 copy.Click += LinkCopy_Click;

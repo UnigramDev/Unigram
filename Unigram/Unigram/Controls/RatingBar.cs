@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Unigram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -82,7 +83,7 @@ namespace Unigram.Controls
             for (int i = 0; i < _unselected.Count; i++)
             {
                 var brush = i <= value || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
-                var glyph = i <= value && (index == -1 ? true : i <= index) ? "\uE1CF" : "\uE1CE";
+                var glyph = i <= value && (index == -1 ? true : i <= index) ? Icons.StarFilled : Icons.Star;
 
                 _unselected[i].Foreground = App.Current.Resources[brush] as SolidColorBrush;
                 _unselected[i].Glyph = glyph;

@@ -53,7 +53,7 @@
 
             <TextBlock
                 Text="&#xE916;"
-                FontSize="16"
+                FontSize="{StaticResource GlyphMediumFontSize}"
                 FontFamily="{StaticResource SymbolThemeFontFamily}"
                 Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                 TextLineBounds="Tight"

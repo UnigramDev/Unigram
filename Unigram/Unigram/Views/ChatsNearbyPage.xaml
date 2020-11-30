@@ -95,7 +95,7 @@
                         <!--<controls:BadgeButton
                             Content="{CustomResource NearbyCreateGroup}"
                             Style="{StaticResource GlyphBadgeButtonStyle}"
-                            Glyph="&#xE902;"/>-->
+                            Glyph="&#xE716;"/>-->
 
                         <microsoft:ItemsRepeater
                             Layout="{StaticResource ThreadStackLayout}"

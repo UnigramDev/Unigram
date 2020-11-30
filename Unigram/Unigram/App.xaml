@@ -156,12 +156,13 @@
             <!-- WinUI bug: https://github.com/microsoft/microsoft-ui-xaml/issues/2623 -->
             <!--<muxc:StackLayout x:Name="ThreadStackLayout"/>-->
 
-            <Thickness x:Key="EllipsisButtonPadding">12,19,12,0</Thickness>
             <x:Double x:Key="ChatPhotoSize">36</x:Double>
             <x:Double x:Key="AppBarThemeCompactHeight">48</x:Double>
             <x:Double x:Key="NavigationViewTopPaneHeight">48</x:Double>
 
-            <x:Double x:Key="GlyphButtonFontSize">16</x:Double>
+            <x:Double x:Key="GlyphSmallFontSize">16</x:Double>
+            <x:Double x:Key="GlyphMediumFontSize">20</x:Double>
+            <x:Double x:Key="GlyphLargeFontSize">24</x:Double>
             <Thickness x:Key="GlyphButtonPadding">4</Thickness>
             <CornerRadius x:Key="GlyphButtonCornerRadius">4</CornerRadius>
             
@@ -200,6 +201,8 @@
             </Style>
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
+            <FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
+            <FontFamily x:Key="LegacyThemeFontFamily">Segoe MDL2 Assets</FontFamily>
 
             <x:Double x:Key="TelegramLightMediaMaxWidth">200</x:Double>
             <x:Double x:Key="TelegramLightMediaMaxHeight">200</x:Double>
@@ -277,6 +280,11 @@
                 <Setter Property="FontFamily" Value="{ThemeResource EmojiThemeFontFamily}"/>
             </Style>
 
+            <Style x:Key="DefaultFontIconStyle" TargetType="FontIcon">
+                <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
+                <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}"/>
+            </Style>
+
             <ResourceDictionary.MergedDictionaries>
                 <muxc:XamlControlsResources/>
 
@@ -284,6 +292,7 @@
                 <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml"/>
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <ResourceDictionary Source="ms-appx:///Themes/TeachingTip.xaml"/>
+                <ResourceDictionary Source="ms-appx:///Themes/MenuFlyout_themeresources.xaml"/>
                 <themes:Messages/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

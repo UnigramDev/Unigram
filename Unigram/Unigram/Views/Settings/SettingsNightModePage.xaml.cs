@@ -94,7 +94,7 @@ namespace Unigram.Views.Settings
             var theme = List.ItemFromContainer(element) as ThemeInfoBase;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Theme });
+            flyout.CreateFlyoutItem(ViewModel.ThemeCreateCommand, theme, Strings.Resources.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
 
             if (!theme.IsOfficial)
             {

@@ -27,7 +27,7 @@
                             <MenuFlyoutItem Text="{CustomResource CreateNewThemeMenu}"
                                     Command="{x:Bind ViewModel.NewThemeCommand}">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE2B1;"/>
+                                    <FontIcon Glyph="&#xE2B1;" Style="{StaticResource DefaultFontIconStyle}"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyout>

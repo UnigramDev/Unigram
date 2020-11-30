@@ -26,10 +26,10 @@
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}" />
+            <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Height" Value="48" />
             <Setter Property="Width" Value="48" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="FontSize" Value="20" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
             <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
@@ -276,7 +276,6 @@
             IsPrevious="True"
             Glyph="&#xE892;"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-            FontSize="16"
             Width="40"
             Height="40"
             AutomationProperties.Name="{CustomResource AccDescrPrevious}"
@@ -286,7 +285,6 @@
             Click="Toggle_Click"
             Glyph="&#xE768;"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-            FontSize="16"
             Width="40"
             Height="40"
             Grid.Column="1"/>
@@ -296,7 +294,6 @@
             IsPrevious="False"
             Glyph="&#xE893;"
             Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-            FontSize="16"
             Width="40"
             Height="40"
             Grid.Column="2"
@@ -306,7 +303,6 @@
         <controls:GlyphButton
             x:Name="VolumeButton"
             Glyph="&#xE74F;"
-            FontSize="16"
             Width="40"
             Height="40"
             Grid.Column="4"
@@ -336,7 +332,6 @@
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
             Glyph="&#xEC57;"
             CheckedGlyph="&#xEC58;"
-            FontSize="16"
             Width="40"
             Height="40"
             Grid.Column="5"
@@ -349,10 +344,11 @@
             Click="Repeat_Click"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+            FontFamily="{StaticResource LegacyThemeFontFamily}"
+            FontSize="16"
             Glyph="&#xE8EE;"
             CheckedGlyph="&#xE8EE;"
             IndeterminateGlyph="&#xE8ED;"
-            FontSize="16"
             Width="40"
             Height="40"
             Grid.Column="5"
@@ -366,7 +362,6 @@
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
             Glyph="&#xE8CB;"
             CheckedGlyph="&#xE8CB;"
-            FontSize="16"
             Width="40"
             Height="40"
             Grid.Column="6"
@@ -381,7 +376,6 @@
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
             Glyph="&#xE8B1;"
             CheckedGlyph="&#xE8B1;"
-            FontSize="16"
             Width="40"
             Height="40"
             Grid.Column="5"
@@ -390,7 +384,6 @@
         <controls:GlyphButton
             Click="Clear_Click"
             Glyph="&#xE711;"
-            FontSize="16"
             Height="40"
             Grid.Column="7"
             AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"

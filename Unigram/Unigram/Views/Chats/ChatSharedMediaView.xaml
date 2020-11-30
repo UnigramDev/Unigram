@@ -330,43 +330,5 @@
                 </controls:SelectListView>
             </PivotItem>
         </Pivot>
-
-        <controls:ContentPageHeader x:Name="ManagePanel" Visibility="Collapsed">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <controls:GlyphButton Glyph="&#xE74D;" Command="{x:Bind ViewModel.MessagesDeleteCommand}" Style="{StaticResource HeaderGlyphButtonStyle}"/>
-                <controls:GlyphButton Glyph="&#xE72D;" Command="{x:Bind ViewModel.MessagesForwardCommand}" Style="{StaticResource HeaderGlyphButtonStyle}" Grid.Column="1"/>
-
-                <ContentControl
-                    Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    FontWeight="SemiBold"
-                    Padding="12,0"
-                    Height="{ThemeResource AppBarThemeCompactHeight}"
-                    Grid.Column="3">
-                    <ContentControl.ContentTransitions>
-                        <TransitionCollection>
-                            <EntranceThemeTransition/>
-                        </TransitionCollection>
-                    </ContentControl.ContentTransitions>
-                    <ContentControl.Clip>
-                        <RectangleGeometry Rect="0,0,200,48"/>
-                    </ContentControl.Clip>
-                </ContentControl>
-
-                <controls:GlyphButton Click="Manage_Click"
-                                      Glyph="&#xE711;"
-                                      Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                      Style="{StaticResource HeaderGlyphButtonStyle}"
-                                      Grid.Column="4"/>
-            </Grid>
-        </controls:ContentPageHeader>
     </Grid>
 </UserControl>

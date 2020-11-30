@@ -538,7 +538,7 @@ namespace Unigram.Views
         {
             var panel = new StackPanel();
 
-            var header = new BadgeButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? "\uE098" : "\uE099", Style = App.Current.Resources["GlyphBadgeButtonStyle"] as Style, Margin = new Thickness(-12, 0, -12, 0) };
+            var header = new BadgeButton { Content = ProcessText(details, false), Glyph = details.IsOpen ? Icons.ChevronUp : Icons.ChevronDown, Style = App.Current.Resources["GlyphBadgeButtonStyle"] as Style, Margin = new Thickness(-12, 0, -12, 0) };
             var inner = new StackPanel { Padding = new Thickness(0, 12, 0, 12), Visibility = details.IsOpen ? Visibility.Visible : Visibility.Collapsed };
 
             panel.Children.Add(header);
@@ -552,7 +552,7 @@ namespace Unigram.Views
             header.Click += (s, args) =>
             {
                 inner.Visibility = inner.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-                header.Glyph = inner.Visibility == Visibility.Visible ? "\uE098" : "\uE099";
+                header.Glyph = inner.Visibility == Visibility.Visible ? Icons.ChevronUp : Icons.ChevronDown;
             };
 
             return panel;

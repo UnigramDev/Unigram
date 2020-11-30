@@ -178,7 +178,7 @@ namespace Unigram.Controls
 
             VolumeSlider.Value = _playbackService.Volume * 100;
 
-            PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
+            PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Playing ? Icons.Pause : Icons.Play;
             Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Playing ? Strings.Resources.AccActionPause : Strings.Resources.AccActionPlay);
 
             var webPage = message.Content is MessageText text ? text.WebPage : null;
@@ -341,17 +341,24 @@ namespace Unigram.Controls
 
             switch (_playbackService.Volume)
             {
-                case double n when n >= 1d / 3d * 2d:
-                    VolumeButton.Glyph = "\uE995";
+                case double n when n >= 1d / 2d:
+                    VolumeButton.Glyph = Icons.Speaker;
                     break;
-                case double n when n >= 1d / 3d && n < 1d / 3d * 2d:
-                    VolumeButton.Glyph = "\uE994";
+                case double n when n > 0 && n < 1d / 2d:
+                    VolumeButton.Glyph = Icons.Speaker1;
                     break;
-                case double n when n > 0 && n < 1d / 3d:
-                    VolumeButton.Glyph = "\uE993";
-                    break;
+
+                //case double n when n >= 1d / 3d * 2d:
+                //    VolumeButton.Glyph = Icons.Speaker;
+                //    break;
+                //case double n when n >= 1d / 3d && n < 1d / 3d * 2d:
+                //    VolumeButton.Glyph = "\uE994";
+                //    break;
+                //case double n when n > 0 && n < 1d / 3d:
+                //    VolumeButton.Glyph = Icons.Speaker1;
+                //    break;
                 default:
-                    VolumeButton.Glyph = "\uE74F";
+                    VolumeButton.Glyph = Icons.SpeakerNone;
                     break;
             }
         }

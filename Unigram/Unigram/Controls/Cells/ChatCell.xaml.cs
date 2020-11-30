@@ -903,15 +903,15 @@ namespace Unigram.Controls.Cells
         {
             if (chat.Type is ChatTypeSupergroup supergroup)
             {
-                return supergroup.IsChannel ? Icons.Channel : Icons.Group;
+                return supergroup.IsChannel ? Icons.Megaphone : Icons.People;
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
-                return Icons.Group;
+                return Icons.People;
             }
             else if (chat.Type is ChatTypeSecret)
             {
-                return Icons.Secret;
+                return Icons.Lock;
             }
             else if (chat.Type is ChatTypePrivate privata && _protoService != null)
             {
@@ -1034,7 +1034,7 @@ namespace Unigram.Controls.Cells
             TitleLabel.Text = title;
             Photo.Source = type is ChatTypeSupergroup ? PlaceholderHelper.GetNameForChat(title, 48, color) : PlaceholderHelper.GetNameForUser(title, 48, color);
             //UpdateChatType(chat);
-            TypeIcon.Text = type is ChatTypeSupergroup ? Icons.Group : string.Empty;
+            TypeIcon.Text = type is ChatTypeSupergroup ? Icons.People : string.Empty;
             TypeIcon.Visibility = type is ChatTypeSupergroup ? Visibility.Visible : Visibility.Collapsed;
 
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;

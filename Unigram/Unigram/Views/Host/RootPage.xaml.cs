@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -332,8 +333,8 @@ namespace Unigram.Views.Host
                 {
                     var flyout = new MenuFlyout();
 
-                    flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: false))), "Production Server", new FontIcon { Glyph = "\uE774" });
-                    flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: true))), "Test Server", new FontIcon { Glyph = "\uE825" });
+                    flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: false))), "Production Server", new FontIcon { Glyph = Icons.Globe });
+                    flyout.CreateFlyoutItem(new RelayCommand(() => Switch(_lifetime.Create(test: true))), "Test Server", new FontIcon { Glyph = Icons.Bug });
 
                     args.ShowAt(flyout, container);
                 }
@@ -386,61 +387,61 @@ namespace Unigram.Views.Host
                 {
                     content.IsChecked = destination == _navigationViewSelected;
 
-                    if (destination == RootDestination.SavedMessages)
-                    {
-                        content.FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
-                    }
-                    else
-                    {
-                        content.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                    }
+                    //if (destination == RootDestination.SavedMessages)
+                    //{
+                    //    content.FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
+                    //}
+                    //else
+                    //{
+                    //    content.FontFamily = new FontFamily("Segoe MDL2 Assets");
+                    //}
                 }
 
                 switch (destination)
                 {
                     case RootDestination.AddAccount:
                         content.Text = Strings.Resources.AddAccount;
-                        content.Glyph = "\uE109";
+                        content.Glyph = Icons.Add;
                         break;
 
                     case RootDestination.NewChat:
                         content.Text = Strings.Resources.NewGroup;
-                        content.Glyph = "\uE902";
+                        content.Glyph = Icons.People;
                         break;
                     case RootDestination.NewSecretChat:
                         content.Text = Strings.Resources.NewSecretChat;
-                        content.Glyph = "\uE1F6";
+                        content.Glyph = Icons.Lock;
                         break;
                     case RootDestination.NewChannel:
                         content.Text = Strings.Resources.NewChannel;
-                        content.Glyph = "\uE789";
+                        content.Glyph = Icons.Megaphone;
                         break;
 
                     case RootDestination.Chats:
                         content.Text = Strings.Resources.FilterChats;
-                        content.Glyph = "\uE8BD";
+                        content.Glyph = Icons.Comment;
                         break;
                     case RootDestination.Contacts:
                         content.Text = Strings.Resources.Contacts;
-                        content.Glyph = "\uE716";
+                        content.Glyph = Icons.Person;
                         break;
                     case RootDestination.Calls:
                         content.Text = Strings.Resources.Calls;
-                        content.Glyph = "\uE717";
+                        content.Glyph = Icons.Phone;
                         break;
                     case RootDestination.Settings:
                         content.Text = Strings.Resources.Settings;
-                        content.Glyph = "\uE115";
+                        content.Glyph = Icons.Settings;
                         break;
 
                     case RootDestination.SavedMessages:
                         content.Text = Strings.Resources.SavedMessages;
-                        content.Glyph = "\uE907";
+                        content.Glyph = Icons.Bookmark;
                         break;
 
                     case RootDestination.News:
                         content.Text = "News";
-                        content.Glyph = "\uE789";
+                        content.Glyph = Icons.Megaphone;
                         break;
                 }
             }

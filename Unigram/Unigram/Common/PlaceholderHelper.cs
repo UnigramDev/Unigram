@@ -234,7 +234,7 @@ namespace Unigram.Common
                 }
                 else if (protoService.IsRepliesChat(chat))
                 {
-                    return GetGlyph(Icons.Reply, 5, side);
+                    return GetGlyph(Icons.ArrowReply, 5, side);
                 }
             }
 

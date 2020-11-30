@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -9,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Unigram.Charts;
 using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
@@ -30,6 +34,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -161,6 +166,8 @@ namespace Unigram.Views
 
             PinnedMessage.InitializeParent(Clipper);
 
+            ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
+
             _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
             _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
             _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
@@ -169,7 +176,7 @@ namespace Unigram.Views
             _rootVisual = ElementCompositionPreview.GetElementVisual(TextArea);
             _compositor = _slideVisual.Compositor;
 
-            _ellipseVisual.CenterPoint = new Vector3(48);
+            _ellipseVisual.CenterPoint = new Vector3(60);
             _ellipseVisual.Scale = new Vector3(0);
 
             if (DateHeaderPanel != null)
@@ -244,6 +251,9 @@ namespace Unigram.Views
             _textShadowVisual.IsVisible = false;
 
             //TextField.Language = Native.NativeUtils.GetCurrentCulture();
+            _drawable ??= new AvatarWavesDrawable();
+            _drawable.update((Color)App.Current.Resources["SystemAccentColor"]);
+            Controls.Chats.ChatRecordButton.Recorder.Current.QuantumProcessed += Current_QuantumProcessed;
         }
 
         private void InitializeAutomation()
@@ -326,13 +336,13 @@ namespace Unigram.Views
             switch (ViewModel.Settings.Stickers.SelectedTab)
             {
                 case Services.Settings.StickersTab.Emoji:
-                    ButtonStickers.Glyph = "\uE76E";
+                    ButtonStickers.Glyph = Icons.Emoji;
                     break;
                 case Services.Settings.StickersTab.Animations:
-                    ButtonStickers.Glyph = "\uF4A9";
+                    ButtonStickers.Glyph = Icons.Gif;
                     break;
                 case Services.Settings.StickersTab.Stickers:
-                    ButtonStickers.Glyph = "\uF4AA";
+                    ButtonStickers.Glyph = Icons.Sticker;
                     break;
             }
         }
@@ -1509,7 +1519,7 @@ namespace Unigram.Views
         {
             ReplyMarkupPanel.Visibility = Visibility.Collapsed;
 
-            ButtonMarkup.Glyph = "\uE90F";
+            ButtonMarkup.Glyph = Icons.AppFolder;
             Automation.SetToolTip(ButtonMarkup, Strings.Resources.AccDescrBotCommands);
 
             if (keyboard)
@@ -1525,7 +1535,7 @@ namespace Unigram.Views
         {
             ReplyMarkupPanel.Visibility = Visibility.Visible;
 
-            ButtonMarkup.Glyph = "\uE910";
+            ButtonMarkup.Glyph = Icons.ChevronDown;
             Automation.SetToolTip(ButtonMarkup, Strings.Resources.AccDescrShowKeyboard);
 
             Focus(FocusState.Programmatic);
@@ -1653,7 +1663,7 @@ namespace Unigram.Views
 
             if (supergroup != null && !(supergroup.Status is ChatMemberStatusCreator) && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
             {
-                flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.Report });
+                flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
             }
             if (user != null && user.Id != ViewModel.CacheService.Options.MyId)
             {
@@ -1661,7 +1671,7 @@ namespace Unigram.Views
                 {
                     if (!string.IsNullOrEmpty(user.PhoneNumber))
                     {
-                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts, new FontIcon { Glyph = Icons.AddUser });
+                        flyout.CreateFlyoutItem(ViewModel.AddContactCommand, Strings.Resources.AddToContacts, new FontIcon { Glyph = Icons.PersonAdd });
                     }
                     else
                     {
@@ -1677,7 +1687,7 @@ namespace Unigram.Views
             {
                 if (user != null || basicGroup != null || (supergroup != null && !supergroup.IsChannel && string.IsNullOrEmpty(supergroup.Username)))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ChatClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
+                    flyout.CreateFlyoutItem(ViewModel.ChatClearCommand, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Broom });
                 }
                 if (user != null)
                 {
@@ -1694,7 +1704,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(
                     muted ? ViewModel.UnmuteCommand : ViewModel.MuteCommand,
                     muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications,
-                    new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
+                    new FontIcon { Glyph = muted ? Icons.Alert : Icons.AlertOff });
             }
 
             //if (currentUser == null || !currentUser.IsSelf)
@@ -1755,8 +1765,8 @@ namespace Unigram.Views
             var self = ViewModel.CacheService.IsSavedMessages(chat);
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
-            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.ScheduleAsync()), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
+            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
+            flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.ScheduleAsync()), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
             {
@@ -1851,21 +1861,21 @@ namespace Unigram.Views
             {
                 if (selected.Contains(message))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.MessagesForwardCommand, "Forward Selected", new FontIcon { Glyph = Icons.Forward });
+                    flyout.CreateFlyoutItem(ViewModel.MessagesForwardCommand, "Forward Selected", new FontIcon { Glyph = Icons.Share });
 
                     if (chat.CanBeReported)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.MessagesReportCommand, "Report Selected", new FontIcon { Glyph = Icons.Report });
+                        flyout.CreateFlyoutItem(ViewModel.MessagesReportCommand, "Report Selected", new FontIcon { Glyph = Icons.ShieldError });
                     }
 
                     flyout.CreateFlyoutItem(ViewModel.MessagesDeleteCommand, "Delete Selected", new FontIcon { Glyph = Icons.Delete });
                     flyout.CreateFlyoutItem(ViewModel.MessagesUnselectCommand, "Clear Selection");
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(ViewModel.MessagesCopyCommand, "Copy Selected as Text", new FontIcon { Glyph = Icons.Copy });
+                    flyout.CreateFlyoutItem(ViewModel.MessagesCopyCommand, "Copy Selected as Text", new FontIcon { Glyph = Icons.DocumentCopy });
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Select });
+                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Multiselect });
                 }
             }
             else if (message.SendingState is MessageSendingStateFailed || message.SendingState is MessageSendingStatePending)
@@ -1875,17 +1885,17 @@ namespace Unigram.Views
                     flyout.CreateFlyoutItem(MessageRetry_Loaded, ViewModel.MessageRetryCommand, message, Strings.Resources.Retry, new FontIcon { Glyph = Icons.Retry });
                 }
 
-                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy, new FontIcon { Glyph = Icons.Copy });
+                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy });
                 flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
             }
             else
             {
                 // Scheduled
                 flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.MessageSendNowCommand, message, Strings.Resources.MessageScheduleSend, new FontIcon { Glyph = Icons.Send, FontFamily = new FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram") });
-                flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.MessageRescheduleCommand, message, Strings.Resources.MessageScheduleEditTime, new FontIcon { Glyph = Icons.Schedule });
+                flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.MessageRescheduleCommand, message, Strings.Resources.MessageScheduleEditTime, new FontIcon { Glyph = Icons.CalendarClock });
 
                 // Generic
-                flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.Reply });
+                flyout.CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, message, Strings.Resources.Reply, new FontIcon { Glyph = Icons.ArrowReply });
 
                 if (true /*message.Content is MessageText*/)
                 {
@@ -1900,21 +1910,21 @@ namespace Unigram.Views
                     var caption = message.Content.GetCaption();
                     if (string.IsNullOrEmpty(caption?.Text))
                     {
-                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Add a Caption", new FontIcon { Glyph = Icons.EditText });
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Add a Caption", new FontIcon { Glyph = Icons.Compose });
                     }
                     else
                     {
-                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Edit Caption", new FontIcon { Glyph = Icons.EditText });
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Edit Caption", new FontIcon { Glyph = Icons.Compose });
                     }
 
                     if (message.Content is MessagePhoto)
                     {
-                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Edit This Photo", new FontIcon { Glyph = Icons.Draw });
-                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Replace Photo", new FontIcon { Glyph = Icons.ReplaceFile });
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Edit This Photo", new FontIcon { Glyph = Icons.Signature });
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Replace Photo", new FontIcon { Glyph = Icons.Document });
                     }
                     else
                     {
-                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Replace File", new FontIcon { Glyph = Icons.ReplaceFile });
+                        edit.CreateFlyoutItem(ViewModel.MessageEditCommand, message, "Replace File", new FontIcon { Glyph = Icons.Document });
                     }
 
                     flyout.Items.Add(edit);
@@ -1925,43 +1935,43 @@ namespace Unigram.Views
                 flyout.CreateFlyoutSeparator();
 
                 // Manage
-                flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, message.IsPinned ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = message.IsPinned ? Icons.Unpin : Icons.Pin });
-                flyout.CreateFlyoutItem(MessageStatistics_Loaded, ViewModel.MessageStatisticsCommand, message, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.Statistics });
+                flyout.CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, message, message.IsPinned ? Strings.Resources.UnpinMessage : Strings.Resources.PinMessage, new FontIcon { Glyph = message.IsPinned ? Icons.PinOff : Icons.Pin });
+                flyout.CreateFlyoutItem(MessageStatistics_Loaded, ViewModel.MessageStatisticsCommand, message, Strings.Resources.Statistics, new FontIcon { Glyph = Icons.DataUsage });
 
-                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Forward });
-                flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.Report });
+                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.MessageReportCommand, message, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
                 flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
-                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Select });
+                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Multiselect });
 
                 flyout.CreateFlyoutSeparator();
 
                 // Copy
-                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy, new FontIcon { Glyph = Icons.Copy });
-                flyout.CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Resources.CopyLink, new FontIcon { Glyph = Icons.CopyLink });
-                flyout.CreateFlyoutItem(MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Additional.CopyImage, new FontIcon { Glyph = Icons.CopyImage });
+                flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, message, Strings.Resources.Copy, new FontIcon { Glyph = Icons.DocumentCopy });
+                flyout.CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, message, Strings.Resources.CopyLink, new FontIcon { Glyph = Icons.Link });
+                flyout.CreateFlyoutItem(MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, message, Strings.Additional.CopyImage, new FontIcon { Glyph = Icons.Image });
 
                 flyout.CreateFlyoutSeparator();
 
                 // Stickers
-                flyout.CreateFlyoutItem(MessageAddSticker_Loaded, ViewModel.MessageAddStickerCommand, message, Strings.Resources.AddToStickers, new FontIcon { Glyph = Icons.Stickers });
-                flyout.CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Favorite });
-                flyout.CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.Unfavorite });
+                flyout.CreateFlyoutItem(MessageAddSticker_Loaded, ViewModel.MessageAddStickerCommand, message, Strings.Resources.AddToStickers, new FontIcon { Glyph = Icons.Sticker });
+                flyout.CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, message, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Star });
+                flyout.CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, message, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
 
                 flyout.CreateFlyoutSeparator();
 
                 // Files
-                flyout.CreateFlyoutItem(MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs, new FontIcon { Glyph = Icons.Animations });
+                flyout.CreateFlyoutItem(MessageSaveAnimation_Loaded, ViewModel.MessageSaveAnimationCommand, message, Strings.Resources.SaveToGIFs, new FontIcon { Glyph = Icons.Gif });
                 flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, message, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
                 flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenWithCommand, message, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
-                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, Strings.Additional.ShowInFolder, new FontIcon { Glyph = Icons.Folder });
+                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageOpenFolderCommand, message, Strings.Additional.ShowInFolder, new FontIcon { Glyph = Icons.FolderOpen });
 
                 // Contacts
-                flyout.CreateFlyoutItem(MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle, new FontIcon { Glyph = Icons.Contact });
+                flyout.CreateFlyoutItem(MessageAddContact_Loaded, ViewModel.MessageAddContactCommand, message, Strings.Resources.AddContactTitle, new FontIcon { Glyph = Icons.Person });
                 //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, Strings.Resources.SaveToDownloads);
 
                 // Polls
-                flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote, new FontIcon { Glyph = Icons.Undo });
-                flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.Restricted });
+                flyout.CreateFlyoutItem(MessageUnvotePoll_Loaded, ViewModel.MessageUnvotePollCommand, message, Strings.Resources.Unvote, new FontIcon { Glyph = Icons.ArrowUndo });
+                flyout.CreateFlyoutItem(MessageStopPoll_Loaded, ViewModel.MessageStopPollCommand, message, Strings.Resources.StopPoll, new FontIcon { Glyph = Icons.Lock });
 
 #if DEBUG
                 flyout.CreateFlyoutItem(x => true, new RelayCommand<MessageViewModel>(x =>
@@ -2414,6 +2424,10 @@ namespace Unigram.Views
 
         private void VoiceButton_RecordingStarted(object sender, EventArgs e)
         {
+            // TODO: video message
+            ChatRecordPopup.IsOpen = true;
+            ChatRecordGlyph.Text = Icons.MicOnFilled;
+
             var slideWidth = (float)SlidePanel.ActualWidth;
             var elapsedWidth = (float)ElapsedPanel.ActualWidth;
 
@@ -2490,6 +2504,8 @@ namespace Unigram.Views
                 DetachExpression();
                 //DetachTextAreaExpression();
 
+                ChatRecordPopup.IsOpen = false;
+
                 ButtonCancelRecording.Visibility = Visibility.Collapsed;
                 ElapsedLabel.Text = "0:00,0";
 
@@ -2504,10 +2520,10 @@ namespace Unigram.Views
 
                 _elapsedVisual.Offset = point;
 
-                point = _recordVisual.Offset;
+                _recordVisual.Properties.TryGetVector3("Translation", out point);
                 point.Y = 0;
 
-                _recordVisual.Offset = point;
+                _recordVisual.Properties.InsertVector3("Translation", point);
             };
             batch.End();
 
@@ -2518,13 +2534,15 @@ namespace Unigram.Views
 
         private void VoiceButton_RecordingLocked(object sender, EventArgs e)
         {
+            ChatRecordGlyph.Text = Icons.SendFilled;
+
             DetachExpression();
 
             var ellipseAnimation = _compositor.CreateScalarKeyFrameAnimation();
             ellipseAnimation.InsertKeyFrame(0, -57);
             ellipseAnimation.InsertKeyFrame(1, 0);
 
-            _recordVisual.StartAnimation("Offset.Y", ellipseAnimation);
+            _recordVisual.StartAnimation("Translation.Y", ellipseAnimation);
 
             ButtonCancelRecording.Visibility = Visibility.Visible;
             btnVoiceMessage.Focus(FocusState.Programmatic);
@@ -2546,10 +2564,10 @@ namespace Unigram.Views
 
                 _slideVisual.Offset = point;
 
-                point = _recordVisual.Offset;
+                _recordVisual.Properties.TryGetVector3("Translation", out point);
                 point.Y = 0;
 
-                _recordVisual.Offset = point;
+                _recordVisual.Properties.InsertVector3("Translation", point);
 
                 return;
             }
@@ -2567,10 +2585,10 @@ namespace Unigram.Views
                 return;
             }
 
-            point = _recordVisual.Offset;
+            _recordVisual.Properties.TryGetVector3("Translation", out point);
             point.Y = Math.Min(0, cumulative.Y);
 
-            _recordVisual.Offset = point;
+            _recordVisual.Properties.InsertVector3("Translation", point);
 
             if (point.Y < -120)
             {
@@ -2771,7 +2789,7 @@ namespace Unigram.Views
                 if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
                 {
                     var first = dialog.SelectedDates.FirstOrDefault();
-                    var offset = first.Date.ToTimestamp();
+                    var offset = Unigram.Common.Extensions.ToTimestamp(first.Date);
 
                     await ViewModel.LoadDateSliceAsync(offset);
                 }
@@ -2825,13 +2843,13 @@ namespace Unigram.Views
             switch (ViewModel.Settings.Stickers.SelectedTab)
             {
                 case Services.Settings.StickersTab.Emoji:
-                    ButtonStickers.Glyph = "\uE76E";
+                    ButtonStickers.Glyph = Icons.Emoji;
                     break;
                 case Services.Settings.StickersTab.Animations:
-                    ButtonStickers.Glyph = "\uF4A9";
+                    ButtonStickers.Glyph = Icons.Gif;
                     break;
                 case Services.Settings.StickersTab.Stickers:
-                    ButtonStickers.Glyph = "\uF4AA";
+                    ButtonStickers.Glyph = Icons.Sticker;
                     break;
             }
         }
@@ -3044,7 +3062,7 @@ namespace Unigram.Views
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
             UpdateChatDefaultDisableNotification(chat, chat.DefaultDisableNotification);
 
-            TypeIcon.Text = chat.Type is ChatTypeSecret ? Icons.Secret : string.Empty;
+            TypeIcon.Text = chat.Type is ChatTypeSecret ? Icons.Lock : string.Empty;
             TypeIcon.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
 
             ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.History ? Visibility.Visible : Visibility.Collapsed;
@@ -3104,7 +3122,7 @@ namespace Unigram.Views
         {
             if (ViewModel.Type == DialogType.Thread)
             {
-                Photo.Source = PlaceholderHelper.GetGlyph(Icons.Reply, 5, (int)Photo.Width);
+                Photo.Source = PlaceholderHelper.GetGlyph(Icons.ArrowReply, 5, (int)Photo.Width);
             }
             else
             {
@@ -3338,7 +3356,7 @@ namespace Unigram.Views
                 AttachContact.Visibility = Visibility.Visible;
                 AttachCurrent.Visibility = Visibility.Collapsed;
 
-                ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
+                ButtonAttach.Glyph = Icons.Attach;
                 ButtonAttach.IsEnabled = true;
 
                 SecondaryButtonsPanel.Visibility = Visibility.Visible;
@@ -3362,19 +3380,19 @@ namespace Unigram.Views
                         case MessageAnimation animation:
                         case MessageAudio audio:
                         case MessageDocument document:
-                            ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachEditGlyph;
+                            ButtonAttach.Glyph = Icons.AttachArrowRight;
                             ButtonAttach.IsEnabled = true;
                             break;
                         case MessagePhoto photo:
-                            ButtonAttach.Glyph = !photo.IsSecret ? ReplyInfoToGlyphConverter.AttachEditGlyph : ReplyInfoToGlyphConverter.AttachGlyph;
+                            ButtonAttach.Glyph = !photo.IsSecret ? Icons.AttachArrowRight : Icons.Attach;
                             ButtonAttach.IsEnabled = !photo.IsSecret;
                             break;
                         case MessageVideo video:
-                            ButtonAttach.Glyph = !video.IsSecret ? ReplyInfoToGlyphConverter.AttachEditGlyph : ReplyInfoToGlyphConverter.AttachGlyph;
+                            ButtonAttach.Glyph = !video.IsSecret ? Icons.AttachArrowRight : Icons.Attach;
                             ButtonAttach.IsEnabled = !video.IsSecret;
                             break;
                         default:
-                            ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
+                            ButtonAttach.Glyph = Icons.Attach;
                             ButtonAttach.IsEnabled = false;
                             break;
                     }
@@ -3390,7 +3408,7 @@ namespace Unigram.Views
                     AttachContact.Visibility = Visibility.Collapsed;
                     AttachCurrent.Visibility = editing.Content is MessagePhoto || editing.Content is MessageVideo ? Visibility.Visible : Visibility.Collapsed;
 
-                    ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.EditGlyph;
+                    ComposerHeaderGlyph.Glyph = Icons.Edit;
 
                     Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelEdit);
 
@@ -3416,20 +3434,20 @@ namespace Unigram.Views
                     AttachContact.Visibility = Visibility.Visible;
                     AttachCurrent.Visibility = Visibility.Collapsed;
 
-                    ButtonAttach.Glyph = ReplyInfoToGlyphConverter.AttachGlyph;
+                    ButtonAttach.Glyph = Icons.Attach;
                     ButtonAttach.IsEnabled = true;
 
                     if (header.WebPagePreview != null)
                     {
-                        ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.GlobeGlyph;
+                        ComposerHeaderGlyph.Glyph = Icons.Globe;
                     }
                     else if (header.ReplyToMessage != null)
                     {
-                        ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.ReplyGlyph;
+                        ComposerHeaderGlyph.Glyph = Icons.ArrowReply;
                     }
                     else
                     {
-                        ComposerHeaderGlyph.Glyph = ReplyInfoToGlyphConverter.LoadingGlyph;
+                        ComposerHeaderGlyph.Glyph = Icons.Loading;
                     }
 
                     Automation.SetToolTip(ComposerHeaderCancel, Strings.Resources.AccDescrCancelReply);
@@ -4353,6 +4371,22 @@ namespace Unigram.Views
                 Collapse_Click(StickersPanel, null);
             }
         }
+
+        private AvatarWavesDrawable _drawable;
+
+        private void Current_QuantumProcessed(object sender, float[] e)
+        {
+            if (e != null)
+            {
+                _drawable ??= new AvatarWavesDrawable();
+                _drawable.setAmplitude(e[0] * 100, ChatRecordCanvas);
+            }
+        }
+
+        private void ChatRecordCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            _drawable.draw(args.DrawingSession, 60, 60, sender);
+        }
     }
 
     public enum StickersPanelMode
@@ -4361,4 +4395,315 @@ namespace Unigram.Views
         Overlay,
         Sidebar
     }
+
+
+
+
+
+
+
+
+
+
+
+    public class AvatarWavesDrawable
+    {
+        float amplitude;
+        float animateAmplitudeDiff;
+        float animateToAmplitude;
+        private BlobDrawable blobDrawable = new BlobDrawable(6);
+        private BlobDrawable blobDrawable2 = new BlobDrawable(8);
+        bool showWaves = true;
+        float wavesEnter = 0.0f;
+
+        public AvatarWavesDrawable()
+        {
+            this.blobDrawable.minRadius = 56; // 22.0f;
+            this.blobDrawable.maxRadius = 64; //28.0f;
+            this.blobDrawable2.minRadius = 52; // 22.0f;
+            this.blobDrawable2.maxRadius = 60; // 28.0f;
+            this.blobDrawable.generateBlob();
+            this.blobDrawable2.generateBlob();
+            //this.blobDrawable.paint.setColor(ColorUtils.setAlphaComponent(Theme.getColor("voipgroup_speakingText"), 38));
+            //this.blobDrawable2.paint.setColor(ColorUtils.setAlphaComponent(Theme.getColor("voipgroup_speakingText"), 38));
+            blobDrawable.paint.A = 76;
+            blobDrawable2.paint.A = 38;
+        }
+
+        public void update(Color color)
+        {
+            blobDrawable.paint = color;
+            blobDrawable2.paint = color;
+
+            blobDrawable.paint.A = 76;
+            blobDrawable2.paint.A = 38;
+        }
+
+        public void draw(CanvasDrawingSession canvas, float f, float f2, CanvasControl view)
+        {
+            float f3 = this.animateToAmplitude;
+            float f4 = this.amplitude;
+            if (f3 != f4)
+            {
+                float f5 = this.animateAmplitudeDiff;
+                float f6 = f4 + (16.0f * f5);
+                this.amplitude = f6;
+                if (f5 > 0.0f)
+                {
+                    if (f6 > f3)
+                    {
+                        this.amplitude = f3;
+                    }
+                }
+                else if (f6 < f3)
+                {
+                    this.amplitude = f3;
+                }
+                view.Invalidate();
+            }
+            float f7 = (this.amplitude * 0.2f) + 0.8f;
+            if (this.showWaves || this.wavesEnter != 0.0f)
+            {
+                //canvas.save();
+                bool z = this.showWaves;
+                if (z)
+                {
+                    float f8 = this.wavesEnter;
+                    if (f8 != 1.0f)
+                    {
+                        float f9 = f8 + 0.064f;
+                        this.wavesEnter = f9;
+                        if (f9 > 1.0f)
+                        {
+                            this.wavesEnter = 1.0f;
+                        }
+                        float interpolation = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
+                        //canvas.scale(interpolation, interpolation, f, f2);
+                        canvas.Transform = Matrix3x2.CreateScale(interpolation, interpolation, new Vector2(f, f2));
+                        this.blobDrawable.update(this.amplitude, 1.0f);
+                        this.blobDrawable.draw(f, f2, canvas, this.blobDrawable.paint);
+                        this.blobDrawable2.update(this.amplitude, 1.0f);
+                        this.blobDrawable2.draw(f, f2, canvas, this.blobDrawable.paint);
+                        view.Invalidate();
+                        canvas.Transform = Matrix3x2.Identity;
+                        //canvas.restore();
+                    }
+                }
+                if (!z)
+                {
+                    float f10 = this.wavesEnter;
+                    if (f10 != 0.0f)
+                    {
+                        float f11 = f10 - 0.064f;
+                        this.wavesEnter = f11;
+                        if (f11 < 0.0f)
+                        {
+                            this.wavesEnter = 0.0f;
+                        }
+                    }
+                }
+                float interpolation2 = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
+                //canvas.scale(interpolation2, interpolation2, f, f2);
+                canvas.Transform = Matrix3x2.CreateScale(interpolation2, interpolation2, new Vector2(f, f2));
+                this.blobDrawable.update(this.amplitude, 1.0f);
+                this.blobDrawable.draw(f, f2, canvas, this.blobDrawable.paint);
+                this.blobDrawable2.update(this.amplitude, 1.0f);
+                this.blobDrawable2.draw(f, f2, canvas, this.blobDrawable.paint);
+                view.Invalidate();
+                canvas.Transform = Matrix3x2.Identity;
+                //canvas.restore();
+            }
+        }
+
+        public float getAvatarScale()
+        {
+            float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
+            return (((this.amplitude * 0.2f) + 0.8f) * interpolation) + ((1.0f - interpolation) * 1.0f);
+        }
+
+        public void setShowWaves(bool z)
+        {
+            this.showWaves = z;
+        }
+
+        public void setAmplitude(double d, CanvasControl view)
+        {
+            float f = ((float)d) / 100.0f;
+            float f2 = 0.0f;
+            if (!this.showWaves)
+            {
+                f = 0.0f;
+            }
+            if (f > 1.0f)
+            {
+                f2 = 1.0f;
+            }
+            else if (f >= 0.0f)
+            {
+                f2 = f;
+            }
+            this.animateToAmplitude = f2;
+            this.animateAmplitudeDiff = (f2 - this.amplitude) / 150.0f;
+            view.Invalidate();
+        }
+    }
+
+    public class BlobDrawable
+    {
+        public static float AMPLITUDE_SPEED = 0.33f;
+        public static float FORM_BIG_MAX = 0.6f;
+        public static float FORM_BUTTON_MAX = 0.0f;
+        public static float FORM_SMALL_MAX = 0.6f;
+        public static float GLOBAL_SCALE = 1.0f;
+        public static float GRADIENT_SPEED_MAX = 0.01f;
+        public static float GRADIENT_SPEED_MIN = 0.5f;
+        public static float LIGHT_GRADIENT_SIZE = 0.5f;
+        public static float MAX_SPEED = 8.2f;
+        public static float MIN_SPEED = 0.8f;
+        public static float SCALE_BIG = 0.807f;
+        public static float SCALE_BIG_MIN = 0.878f;
+        public static float SCALE_SMALL = 0.704f;
+        public static float SCALE_SMALL_MIN = 0.926f;
+        private readonly float L;
+        private readonly float N;
+        private float[] angle;
+        private float[] angleNext;
+        public float cubicBezierK = 1.0f;
+        private Matrix3x2 m;
+        public float maxRadius;
+        public float minRadius;
+        public Color paint = Colors.Red;
+        private Vector2[] pointEnd = new Vector2[2];
+        private Vector2[] pointStart = new Vector2[2];
+        private float[] progress;
+        private float[] radius;
+        private float[] radiusNext;
+        readonly Random random = new Random();
+        private float[] speed;
+
+        public BlobDrawable(int i)
+        {
+            float f = (float)i;
+            this.N = f;
+            float d = (float)(f * 2.0f);
+            //Double.isNaN(d);
+            this.L = (float)(MathF.Tan(3.141592653589793f / d) * 1.3333333333333333f);
+            this.radius = new float[i];
+            this.angle = new float[i];
+            this.radiusNext = new float[i];
+            this.angleNext = new float[i];
+            this.progress = new float[i];
+            this.speed = new float[i];
+            for (int i2 = 0; ((float)i2) < this.N; i2++)
+            {
+                generateBlob(this.radius, this.angle, i2);
+                generateBlob(this.radiusNext, this.angleNext, i2);
+                this.progress[i2] = 0.0f;
+            }
+        }
+
+        private void generateBlob(float[] fArr, float[] fArr2, int i)
+        {
+            float f = this.maxRadius;
+            float f2 = this.minRadius;
+            fArr[i] = f2 + (MathF.Abs((((float)this.random.Next()) % 100.0f) / 100.0f) * (f - f2));
+            fArr2[i] = ((360.0f / this.N) * ((float)i)) + (((((float)this.random.Next()) % 100.0f) / 100.0f) * (360.0f / this.N) * 0.05f);
+            float[] fArr3 = this.speed;
+            double abs = (double)(MathF.Abs(((float)this.random.Next()) % 100.0f) / 100.0f);
+            Double.IsNaN(abs);
+            fArr3[i] = (float)((abs * 0.003d) + 0.017d);
+        }
+
+        public void update(float f, float f2)
+        {
+            for (int i = 0; ((float)i) < this.N; i++)
+            {
+                float f3 = progress[i];
+                progress[i] = f3 + (speed[i] * MIN_SPEED) + (speed[i] * f * MAX_SPEED * f2);
+                if (progress[i] >= 1.0f)
+                {
+                    progress[i] = 0.0f;
+                    radius[i] = radiusNext[i];
+                    angle[i] = angleNext[i];
+                    generateBlob(radiusNext, angleNext, i);
+                }
+            }
+        }
+
+        public void draw(float x, float y, CanvasDrawingSession canvas, Color paint2)
+        {
+            var path = new CanvasPathBuilder(canvas);
+            int i = 0;
+            while (true)
+            {
+                float f5 = this.N;
+                if (((float)i) < f5)
+                {
+                    float[] fArr = this.progress;
+                    float f6 = fArr[i];
+                    int i2 = i + 1;
+                    int i3 = ((float)i2) < f5 ? i2 : 0;
+                    float f7 = fArr[i3];
+                    float f8 = 1.0f - f6;
+                    float f9 = (radius[i] * f8) + (radiusNext[i] * f6);
+                    float f10 = 1.0f - f7;
+                    float f11 = (radius[i3] * f10) + (radiusNext[i3] * f7);
+                    float f12 = angle[i] * f8;
+                    float f13 = (angle[i3] * f10) + (angleNext[i3] * f7);
+                    float min = this.L * (MathF.Min(f9, f11) + ((Math.Max(f9, f11) - Math.Min(f9, f11)) / 2.0f)) * this.cubicBezierK;
+                    pointStart[0].X = x;
+                    pointStart[0].Y = y - f9;
+                    pointStart[1].X = x + min;
+                    pointStart[1].Y = y - f9;
+                    m = SetRotate(f12 + (angleNext[i] * f6), x, y);
+                    pointStart[0] = Vector2.Transform(pointStart[0], m);
+                    pointStart[1] = Vector2.Transform(pointStart[1], m);
+                    pointEnd[0].X = x;
+                    pointEnd[0].Y = y - f11;
+                    pointEnd[1].X = x - min;
+                    pointEnd[1].Y = y - f11;
+                    m = SetRotate(f13, x, y);
+                    pointEnd[0] = Vector2.Transform(pointEnd[0], m);
+                    pointEnd[1] = Vector2.Transform(pointEnd[1], m);
+                    if (i == 0)
+                    {
+                        path.BeginFigure(pointStart[0]);
+                    }
+                    path.AddCubicBezier(pointStart[1], pointEnd[1], pointEnd[0]);
+                    i = i2;
+                }
+                else
+                {
+                    //canvas.save();
+                    //canvas.drawPath(this.path, paint2);
+                    //canvas.restore();
+                    path.EndFigure(CanvasFigureLoop.Closed);
+                    canvas.FillGeometry(CanvasGeometry.CreatePath(path), paint2);
+                    return;
+                }
+            }
+        }
+
+        private Matrix3x2 SetRotate(float degree, float px, float py)
+        {
+            return Matrix3x2.CreateRotation(ToRadians(degree), new Vector2(px, py));
+        }
+
+        private float ToRadians(float degrees)
+        {
+            float radians = (MathF.PI / 180) * degrees;
+            return radians;
+        }
+
+        public void generateBlob()
+        {
+            for (int i = 0; ((float)i) < this.N; i++)
+            {
+                generateBlob(this.radius, this.angle, i);
+                generateBlob(this.radiusNext, this.angleNext, i);
+                this.progress[i] = 0.0f;
+            }
+        }
+    }
+
 }

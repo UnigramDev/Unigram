@@ -472,7 +472,7 @@ namespace Unigram.Views
                 }
             }
 
-            Proxy.Glyph = connectionState is ConnectionStateReady && proxyId != 0 ? "\uE916" : "\uE915";
+            Proxy.Glyph = connectionState is ConnectionStateReady && proxyId != 0 ? Icons.ShieldCheckmark : Icons.ShieldError;
         }
 
         private void ShowState(string text)
@@ -1643,7 +1643,7 @@ namespace Unigram.Views
                     break;
                 case 3:
                     Root?.SetSelectedIndex(RootDestination.Settings);
-                    
+
                     if (SettingsView == null)
                     {
                         FindName(nameof(SettingsRoot));
@@ -2823,7 +2823,7 @@ namespace Unigram.Views
             if (ViewModel.Chats.SelectedItems.Count > 0)
             {
                 var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.CacheService.GetNotificationSettingsMuteFor(x) > 0);
-                ManageMute.Glyph = muted ? Icons.Unmute : Icons.Mute;
+                ManageMute.Glyph = muted ? Icons.Alert : Icons.AlertOff;
                 Automation.SetToolTip(ManageMute, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications);
 
                 var unread = ViewModel.Chats.SelectedItems.Any(x => x.IsUnread());
@@ -2848,7 +2848,7 @@ namespace Unigram.Views
         {
             if (filter == ChatListFilterFlags.ExcludeMuted)
             {
-                return Icons.Unmute;
+                return Icons.Alert;
             }
             else if (filter == ChatListFilterFlags.ExcludeRead)
             {
@@ -2860,19 +2860,19 @@ namespace Unigram.Views
             }
             else if (filter == ChatListFilterFlags.IncludeContacts)
             {
-                return Icons.Contact;
+                return Icons.Person;
             }
             else if (filter == ChatListFilterFlags.IncludeNonContacts)
             {
-                return Icons.Help;
+                return Icons.PersonQuestionMark;
             }
             else if (filter == ChatListFilterFlags.IncludeGroups)
             {
-                return Icons.Group;
+                return Icons.People;
             }
             else if (filter == ChatListFilterFlags.IncludeChannels)
             {
-                return Icons.Channel;
+                return Icons.Megaphone;
             }
             else if (filter == ChatListFilterFlags.IncludeBots)
             {

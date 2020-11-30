@@ -93,7 +93,7 @@
         <Setter Property="Height" Value="48" />
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontSize" Value="24" />
         <Setter Property="Radius" Value="24" />
         <Setter Property="Template">
             <Setter.Value>
@@ -276,7 +276,7 @@
         <Setter Property="Height" Value="Auto" />
         <Setter Property="Width" Value="Auto" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontSize" Value="24" />
         <Setter Property="Radius" Value="24" />
         <Setter Property="RequestedTheme" Value="Dark" />
         <Setter Property="Template">

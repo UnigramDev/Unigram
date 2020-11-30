@@ -34,7 +34,7 @@
             <Setter Property="MinHeight" Value="{ThemeResource AppBarThemeCompactHeight}" />
             <Setter Property="MinWidth" Value="{ThemeResource AppBarThemeCompactHeight}" />
             <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="FontSize" Value="{StaticResource GlyphButtonFontSize}" />
+            <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}" />
             <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -119,13 +119,13 @@
                 <Border x:Name="Overlay" Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
                     <!--<controls:FileButton x:Name="Button" Style="{StaticResource InlineFileButtonStyle}"/>-->
                     <TextBlock
-                                x:Name="Glyph"
-                                Foreground="{ThemeResource MessageMediaForegroundBrush}"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="20"
-                                Text="&#xE7C3;"/>
+                        x:Name="Glyph"
+                        Foreground="{ThemeResource MessageMediaForegroundBrush}"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="{StaticResource GlyphLargeFontSize}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="&#xE7C3;"/>
                 </Border>
                 <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                     <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
@@ -148,9 +148,9 @@
                         Text="&#xE768;"
                         Foreground="{ThemeResource MessageMediaForegroundBrush}"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="{StaticResource GlyphLargeFontSize}"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="20"/>
+                        VerticalAlignment="Center"/>
                 </Border>
 
                 <Grid HorizontalAlignment="Right"
@@ -186,7 +186,6 @@
                         Tag="{x:Bind}"
                         Width="40"
                         Height="40"
-                        FontSize="{StaticResource GlyphButtonFontSize}"
                         IsChecked="{x:Bind IsEdited, Mode=OneWay}"
                         AutomationProperties.Name="{CustomResource CropImage}"
                         ToolTipService.ToolTip="{CustomResource CropImage}"
@@ -212,7 +211,6 @@
                         Tag="{x:Bind}"
                         Width="40"
                         Height="40"
-                        FontSize="{StaticResource GlyphButtonFontSize}"
                         Radius="4,12,12,4"
                         Grid.Column="2"/>
                 </Grid>
@@ -272,7 +270,6 @@
                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                 Click="Album_Click"
                 FontFamily="{StaticResource TelegramThemeFontFamily}"
-                FontSize="{StaticResource GlyphButtonFontSize}"
                 Visibility="{x:Bind IsAlbumAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
                 IsOneWay="False"

@@ -232,7 +232,7 @@
                                 <Border AutomationProperties.Name="{x:Bind Title}"
                                         ToolTipService.ToolTip="{x:Bind Title}"
                                         Background="Transparent">
-                                    <FontIcon Glyph="&#xE208;" Margin="0,0,0,2"/>
+                                    <FontIcon Glyph="&#xE734;" Style="{StaticResource DefaultFontIconStyle}" />
                                 </Border>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.FavedTemplate>
@@ -240,7 +240,7 @@
                 </ListView.ItemTemplateSelector>
                 <ListView.Footer>
                     <StackPanel Orientation="Horizontal">
-                        <controls:GlyphButton Click="Settings_Click" Width="{ThemeResource AppBarThemeCompactHeight}" Height="{ThemeResource AppBarThemeCompactHeight}" Glyph="&#xE115;"/>
+                        <controls:GlyphButton Click="Settings_Click" Width="{ThemeResource AppBarThemeCompactHeight}" Height="{ThemeResource AppBarThemeCompactHeight}" Glyph="&#xE713;"/>
                     </StackPanel>
                 </ListView.Footer>
                 <ListView.ItemContainerTransitions>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Views;
 using Unigram.Views.Folders;
 using Unigram.Views.Settings;
@@ -88,9 +89,9 @@ namespace Unigram.Services
                 BuildDataAndStorage(),
                 BuildStickersAndMasks(),
                 BuildAppearance(),
-                new SettingsSearchPage(null, Strings.Resources.Language, "\uE164"),
-                new SettingsSearchPage(null, Strings.Resources.AskAQuestion, "\uED15"),
-                new SettingsSearchPage(typeof(FoldersPage), Strings.Resources.Filters, "\uF12B")
+                new SettingsSearchPage(null, Strings.Resources.Language, Icons.Globe),
+                new SettingsSearchPage(null, Strings.Resources.AskAQuestion, Icons.QuestionCircle),
+                new SettingsSearchPage(typeof(FoldersPage), Strings.Resources.Filters, Icons.FolderOpen)
             };
 
             // FAQ indexing is done asyncronously
@@ -135,31 +136,31 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildNotificationsAndSounds()
         {
-            return new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.NotificationsAndSounds, "\uEC42", new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.NotificationsAndSounds, Icons.Channel, new SettingsSearchEntry[]
             {
                 // Notifications for private chats
-                new SettingsSearchPage(null, Strings.Resources.NotificationsForPrivateChats, "\uEC42", new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.NotificationsForPrivateChats, Icons.Channel, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.MessagePreview),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.Sound)
                 }),
 
                 // Notifications for groups
-                new SettingsSearchPage(null, Strings.Resources.NotificationsForGroups, "\uEC42", new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.NotificationsForGroups, Icons.Channel, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.MessagePreview),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.Sound)
                 }),
 
                 // Notifications for channels
-                new SettingsSearchPage(null, Strings.Resources.NotificationsForChannels, "\uEC42", new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.NotificationsForChannels, Icons.Channel, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.MessagePreview),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.Sound)
                 }),
 
                 // In-app notifications
-                new SettingsSearchPage(null, Strings.Resources.InAppNotifications, "\uEC42", new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.InAppNotifications, Icons.Channel, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.InAppSounds),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.InAppVibrate),
@@ -167,14 +168,14 @@ namespace Unigram.Services
                 }),
 
                 // Events
-                new SettingsSearchPage(null, Strings.Resources.Events, "\uEC42", new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.Events, Icons.Channel, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.ContactJoined),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.PinnedMessages)
                 }),
 
                 // Badge Counter
-                new SettingsSearchPage(null, Strings.Resources.BadgeNumber, "\uEC42", new SettingsSearchEntry[]
+                new SettingsSearchPage(null, Strings.Resources.BadgeNumber, Icons.Channel, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.BadgeNumberShow),
                     new SettingsSearchPage(typeof(SettingsNotificationsPage), Strings.Resources.BadgeNumberMutedChats),
@@ -188,7 +189,7 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildPrivacyAndSecurity()
         {
-            return new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.Resources.PrivacySettings, "\uE1F6", new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsPrivacyAndSecurityPage), Strings.Resources.PrivacySettings, Icons.Lock, new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsBlockedChatsPage), Strings.Resources.BlockedUsers),
                 new SettingsSearchPage(typeof(SettingsPrivacyShowStatusPage), Strings.Resources.PrivacyLastSeen),
@@ -209,16 +210,16 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildDataAndStorage()
         {
-            return new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.DataSettings, "\uEE94", new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.DataSettings, Icons.DataPie, new SettingsSearchEntry[]
             {
                 // Storage Usage
-                new SettingsSearchPage(typeof(SettingsStoragePage), Strings.Resources.StorageUsage, "\uEE94", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsStoragePage), Strings.Resources.StorageUsage, Icons.DataPie, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsStoragePage), Strings.Resources.KeepMedia)
                 }),
 
                 // Data Usage
-                new SettingsSearchPage(typeof(SettingsNetworkPage), Strings.Resources.NetworkUsage, "\uEE94", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsNetworkPage), Strings.Resources.NetworkUsage, Icons.DataPie, new SettingsSearchEntry[]
                 {
 
                 }),
@@ -227,20 +228,20 @@ namespace Unigram.Services
 
                 new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.ResetAutomaticMediaDownload),
 
-                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.AutoplayMedia, "\uEE94", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.AutoplayMedia, Icons.DataPie, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.AutoplayGifs),
                     new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.AutoplayVideo)
                 }),
 
                 // Calls
-                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.Calls, "\uEE94", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.Calls, Icons.DataPie, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsDataAndStoragePage), Strings.Resources.VoipUseLessData)
                 }),
 
                 // Proxy
-                new SettingsSearchPage(typeof(SettingsProxiesPage), Strings.Resources.Proxy, "\uEE94", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsProxiesPage), Strings.Resources.Proxy, Icons.DataPie, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsProxiesPage), Strings.Resources.AddProxy)
                 })
@@ -249,13 +250,13 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildStickersAndMasks()
         {
-            return new SettingsSearchPage(typeof(SettingsStickersPage), Strings.Resources.StickersAndMasks, "\uF4AA", new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsStickersPage), Strings.Resources.StickersAndMasks, Icons.Sticker, new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsStickersPage), Strings.Resources.SuggestStickers),
                 new SettingsSearchPage(typeof(SettingsStickersFeaturedPage), Strings.Resources.FeaturedStickers),
 
                 // Masks
-                new SettingsSearchPage(typeof(SettingsMasksPage), Strings.Resources.Masks, "\uF4AA", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsMasksPage), Strings.Resources.Masks, Icons.Sticker, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsMasksArchivedPage), Strings.Resources.ArchivedMasks)
                 }),
@@ -266,11 +267,11 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildAppearance()
         {
-            return new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.Resources.Appearance, "\uE2B1", new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.Resources.Appearance, Icons.Color, new SettingsSearchEntry[]
             {
                 new SettingsSearchPage(typeof(SettingsAppearancePage), Strings.Resources.TextSizeHeader),
 
-                new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.ChatBackground, "\uE2B1", new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.ChatBackground, Icons.Color, new SettingsSearchEntry[]
                 {
                     new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.SelectFromGallery),
                     new SettingsSearchPage(typeof(SettingsBackgroundsPage), Strings.Resources.SetColor)

@@ -263,10 +263,10 @@ namespace Unigram.Views.Popups
 
             var glyph = root.FindName("Glyph") as TextBlock;
             glyph.Text = storage is StoragePhoto
-                ? "\uEB9F"
+                ? Icons.Image
                 : storage is StorageVideo
-                ? "\uE768"
-                : "\uE160";
+                ? Icons.Play
+                : Icons.Document;
 
             var title = root.FindName("Title") as TextBlock;
             var subtitle = root.FindName("Subtitle") as TextBlock;
@@ -597,8 +597,8 @@ namespace Unigram.Views.Popups
             var self = IsSavedMessages;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.Mute });
-            flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
+            flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
             {

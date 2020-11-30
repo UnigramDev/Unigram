@@ -260,7 +260,7 @@
                     Command="{x:Bind ViewModel.PreviousCommand}"
                     Glyph="&#xE0E4;"
                     AllowFocusOnInteraction="False"
-                    FontSize="{StaticResource GlyphButtonFontSize}"
+                    FontSize="{StaticResource GlyphMediumFontSize}"
                     AutomationProperties.Name="{CustomResource AccDescrSearchNext}"
                     ToolTipService.ToolTip="{CustomResource AccDescrSearchNext}"
                     Width="40"/>
@@ -269,7 +269,7 @@
                     Command="{x:Bind ViewModel.NextCommand}"
                     Glyph="&#xE0E5;"
                     AllowFocusOnInteraction="False"
-                    FontSize="{StaticResource GlyphButtonFontSize}"
+                    FontSize="{StaticResource GlyphMediumFontSize}"
                     AutomationProperties.Name="{CustomResource AccDescrSearchPrev}"
                     ToolTipService.ToolTip="{CustomResource AccDescrSearchPrev}"
                     Width="40"
@@ -293,26 +293,25 @@
                             Visibility="{x:Bind ViewModel.IsFromEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                             AutomationProperties.Name="{CustomResource AccDescrSearchByUser}"
                             ToolTipService.ToolTip="{CustomResource AccDescrSearchByUser}"
-                            FontSize="{StaticResource GlyphButtonFontSize}"/>
+                            FontSize="{StaticResource GlyphMediumFontSize}"/>
                         <controls:GlyphButton
                             Click="FilterByMedia_Click"
                             Glyph="&#xEA69;"
                             AllowFocusOnInteraction="False"
-                            FontSize="{StaticResource GlyphButtonFontSize}"
+                            FontSize="{StaticResource GlyphMediumFontSize}"
                             Visibility="Collapsed"
                             Grid.Column="1"/>
                         <controls:GlyphButton
                             Command="{x:Bind ViewModel.Dialog.JumpDateCommand}"
                             Glyph="&#xE787;"
                             AllowFocusOnInteraction="False"
-                            FontSize="{StaticResource GlyphButtonFontSize}"
+                            FontSize="{StaticResource GlyphMediumFontSize}"
                             Grid.Column="2"/>
                     </Grid>
 
                     <controls:GlyphButton
                         Click="Close_Click"
                         Glyph="&#xE711;"
-                        FontSize="16"
                         Grid.Column="1"/>
                 </Grid>
             </Grid>

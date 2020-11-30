@@ -41,7 +41,7 @@
                             <MenuFlyoutItem Text="{CustomResource ViewChannelStats}"
                                     Command="{x:Bind ViewModel.OpenChannelCommand}">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE9D9;"/>
+                                    <FontIcon Glyph="&#xE9D9;" Style="{StaticResource DefaultFontIconStyle}"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyout>

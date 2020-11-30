@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 
@@ -95,14 +96,14 @@ namespace Unigram.ViewModels.Chats
             {
                 return new List<ChatSearchMediaFilter>
                 {
-                    new ChatSearchMediaFilter(new SearchMessagesFilterPhoto(), "\uEB9F", Strings.Resources.AutoDownloadPhotos),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterVideo(), "\uE768", Strings.Resources.AutoDownloadVideos),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterDocument(), "\uE160", Strings.Resources.AutoDownloadFiles),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterUrl(), "\uE71B", Strings.Resources.SharedLinks),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterAudio(), "\uE8D6", Strings.Resources.SharedAudioFiles),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterVoiceNote(), "\uE720", Strings.Resources.AudioAutodownload),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterPhoto(), Icons.Image, Strings.Resources.AutoDownloadPhotos),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterVideo(), Icons.Play, Strings.Resources.AutoDownloadVideos),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterDocument(), Icons.Document, Strings.Resources.AutoDownloadFiles),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterUrl(), Icons.Link, Strings.Resources.SharedLinks),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterAudio(), Icons.MusicNote, Strings.Resources.SharedAudioFiles),
+                    new ChatSearchMediaFilter(new SearchMessagesFilterVoiceNote(), Icons.MicOn, Strings.Resources.AudioAutodownload),
                     new ChatSearchMediaFilter(new SearchMessagesFilterVideoNote(), "\uE612", Strings.Resources.VideoMessagesAutodownload),
-                    new ChatSearchMediaFilter(new SearchMessagesFilterAnimation(), "\uF4A9", Strings.Resources.AccDescrGIFs)
+                    new ChatSearchMediaFilter(new SearchMessagesFilterAnimation(), Icons.Gif, Strings.Resources.AccDescrGIFs)
                     //new SearchMessagesFilterCall(),
                     //new SearchMessagesFilterChatPhoto(),
                     //new SearchMessagesFilterMention(),

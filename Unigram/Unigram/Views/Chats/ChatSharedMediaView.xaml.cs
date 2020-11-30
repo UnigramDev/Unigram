@@ -286,40 +286,6 @@ namespace Unigram.Views.Chats
             await GalleryView.GetForCurrentView().ShowAsync(viewModel, () => element);
         }
 
-        private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            //ScrollingMedia.IsItemClickEnabled = ViewModel.SelectionMode == ListViewSelectionMode.None;
-            //ScrollingFiles.IsItemClickEnabled = ViewModel.SelectionMode == ListViewSelectionMode.None;
-            //ScrollingLinks.IsItemClickEnabled = ViewModel.SelectionMode == ListViewSelectionMode.None;
-            //ScrollingMusic.IsItemClickEnabled = ViewModel.SelectionMode == ListViewSelectionMode.None;
-
-            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
-            {
-                ManagePanel.Visibility = Visibility.Collapsed;
-                //InfoPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ManagePanel.Visibility = Visibility.Visible;
-                //InfoPanel.Visibility = Visibility.Collapsed;
-            }
-
-            ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
-            ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
-        }
-
-        private void Manage_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
-            {
-                ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
-            }
-            else
-            {
-                ViewModel.SelectionMode = ListViewSelectionMode.None;
-            }
-        }
-
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
@@ -330,7 +296,6 @@ namespace Unigram.Views.Chats
 
         private bool ConvertSelectionMode(ListViewSelectionMode mode)
         {
-            List_SelectionModeChanged(null, null);
             return mode == ListViewSelectionMode.None ? false : true;
         }
 
@@ -343,11 +308,37 @@ namespace Unigram.Views.Chats
             var element = sender as FrameworkElement;
             var message = element.Tag as Message;
 
-            flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Message });
-            flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
-            flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Forward });
-            flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Select });
-            flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
+            var selected = ViewModel.SelectedItems;
+            if (selected.Count > 0)
+            {
+                if (selected.Contains(message))
+                {
+                    flyout.CreateFlyoutItem(ViewModel.MessagesForwardCommand, "Forward Selected", new FontIcon { Glyph = Icons.Share });
+
+                    //if (chat.CanBeReported)
+                    //{
+                    //    flyout.CreateFlyoutItem(ViewModel.MessagesReportCommand, "Report Selected", new FontIcon { Glyph = Icons.ShieldError });
+                    //}
+
+                    flyout.CreateFlyoutItem(ViewModel.MessagesDeleteCommand, "Delete Selected", new FontIcon { Glyph = Icons.Delete });
+                    flyout.CreateFlyoutItem(ViewModel.MessagesUnselectCommand, "Clear Selection");
+                    //flyout.CreateFlyoutSeparator();
+                    //flyout.CreateFlyoutItem(ViewModel.MessagesCopyCommand, "Copy Selected as Text", new FontIcon { Glyph = Icons.DocumentCopy });
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Multiselect });
+                }
+            }
+            else
+            {
+
+                flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.MessageViewCommand, message, Strings.Resources.ShowInChat, new FontIcon { Glyph = Icons.Comment });
+                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, message, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, message, Strings.Resources.Forward, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, message, Strings.Additional.Select, new FontIcon { Glyph = Icons.Multiselect });
+                flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.MessageSaveCommand, message, Strings.Additional.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
+            }
 
             args.ShowAt(flyout, element);
         }
@@ -374,7 +365,7 @@ namespace Unigram.Views.Chats
 
         private bool MessageSelect_Loaded(Message message)
         {
-            return ViewModel.SelectionMode == ListViewSelectionMode.None;
+            return true;
         }
 
         #endregion

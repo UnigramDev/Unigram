@@ -20,8 +20,7 @@
             Glyph="&#xE8DD;"
             CheckedGlyph="&#xE8DD;"
             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-            IsOneWay="False"
-            FontSize="16"/>
+            IsOneWay="False"/>
         <controls:GlyphToggleButton
             x:Name="Italic"
             Click="Italic_Click"
@@ -31,8 +30,7 @@
             Glyph="&#xE8DB;"
             CheckedGlyph="&#xE8DB;"
             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-            IsOneWay="False"
-            FontSize="16"/>
+            IsOneWay="False"/>
         <controls:GlyphToggleButton
             x:Name="Underline"
             Click="Underline_Click"
@@ -42,8 +40,7 @@
             Glyph="&#xE8DC;"
             CheckedGlyph="&#xE8DC;"
             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-            IsOneWay="False"
-            FontSize="16"/>
+            IsOneWay="False"/>
         <controls:GlyphToggleButton
             x:Name="Strikethrough"
             Click="Strikethrough_Click"
@@ -54,8 +51,7 @@
             CheckedGlyph="&#xE8DE;"
             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
             FontFamily="{StaticResource TelegramThemeFontFamily}"
-            IsOneWay="False"
-            FontSize="16"/>
+            IsOneWay="False"/>
 
         <controls:GlyphToggleButton
             x:Name="Monospace"
@@ -66,8 +62,7 @@
             Glyph="&#xE943;"
             CheckedGlyph="&#xE943;"
             CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
-            IsOneWay="False"
-            FontSize="16"/>
+            IsOneWay="False"/>
 
         <Rectangle
             Fill="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
@@ -79,6 +74,7 @@
             Click="Link_Click"
             AutomationProperties.Name="{CustomResource CreateLink}"
             ToolTipService.ToolTip="{CustomResource CreateLink}"
-            Glyph="&#xE71B;"/>
+            Glyph="&#xE71B;"
+            FontSize="{StaticResource GlyphMediumFontSize}"/>
     </StackPanel>
 </UserControl>

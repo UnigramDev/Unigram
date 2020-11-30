@@ -196,9 +196,9 @@
                         x:Name="ThreadGlyph"
                         Text="&#xE8BD;"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="{StaticResource GlyphMediumFontSize}"
                         VerticalAlignment="Center"
-                        Margin="0,1,0,-1"
-                        FontSize="16"/>
+                        Margin="0,1,0,-1"/>
                     <TextBlock
                         x:Name="ThreadLabel"
                         Margin="8,-1,12,1"

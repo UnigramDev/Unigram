@@ -10,6 +10,7 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:contract8Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)" xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
     Loaded="OnLoaded"
     Unloaded="OnUnloaded"
@@ -180,7 +181,7 @@
 
                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
                           Glyph="&#xE0E5;"
-                          FontSize="12"
+                          FontSize="16"
                           HorizontalAlignment="Right"
                           VerticalAlignment="Center"
                           Margin="0,2,18,0"/>
@@ -215,7 +216,7 @@
                         Click="Action_Click"
                         Foreground="{ThemeResource MessageServiceForegroundBrush}"
                         Style="{StaticResource RoundGlyphButtonStyle}"
-                        FontSize="14"
+                        FontSize="{StaticResource GlyphSmallFontSize}"
                         Width="30"
                         Height="30"
                         Radius="15"/>
@@ -250,7 +251,7 @@
                         Click="Action_Click"
                         Foreground="{ThemeResource MessageServiceForegroundBrush}"
                         Style="{StaticResource RoundGlyphButtonStyle}"
-                        FontSize="14"
+                        FontSize="{StaticResource GlyphSmallFontSize}"
                         Width="30"
                         Height="30"
                         Radius="15"/>
@@ -292,7 +293,8 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="TypeIcon"
+                            <TextBlock
+                                x:Name="TypeIcon"
                                 Text="&#xE716;"
                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
                                 Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
@@ -499,7 +501,11 @@
 
                 </Grid>
 
-                <controls:GlyphButton Command="{x:Bind ViewModel.RemoveActionBarCommand}" Glyph="&#xE711;" FontSize="16" Height="32" Grid.Column="1"/>
+                <controls:GlyphButton
+                    Command="{x:Bind ViewModel.RemoveActionBarCommand}"
+                    Glyph="&#xE711;"
+                    Height="32"
+                    Grid.Column="1"/>
             </Grid>
 
             <StackPanel x:Name="DateHeaderRelative" Grid.Row="2">
@@ -706,13 +712,10 @@
                                 Width="36">
                             <controls:GlyphButton
                                 Command="{x:Bind ViewModel.NextMentionCommand}"
-                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                FontSize="20"
                                 Width="36"
                                 Height="36"
-                                Glyph="@"
+                                Glyph="&#xE168;"
                                 Radius="24"
-                                Padding="0,0,0,4"
                                 AutomationProperties.Name="{CustomResource AccDescrMentionDown}"
                                 ToolTipService.ToolTip="{CustomResource AccDescrMentionDown}"
                                 Style="{StaticResource RoundGlyphButtonStyle}"/>
@@ -746,7 +749,6 @@
                             <controls:GlyphButton
                                 Command="{x:Bind ViewModel.PreviousSliceCommand}"
                                 RightTapped="Arrow_RightTapped"
-                                FontSize="16"
                                 Width="36"
                                 Height="36"
                                 Glyph="&#xE74B;"
@@ -845,11 +847,18 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <messages:MessageReference x:Name="ComposerHeaderReference" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-10,0,0,0" BorderBrush="Transparent" Grid.Column="1"/>
-                    <FontIcon x:Name="ComposerHeaderGlyph" Foreground="{ThemeResource MessageHeaderBorderBrush}"/>
+                    <FontIcon x:Name="ComposerHeaderGlyph" Foreground="{ThemeResource MessageHeaderBorderBrush}" Style="{StaticResource DefaultFontIconStyle}"/>
 
                     <controls:ProgressBarRing x:Name="ComposerHeaderUpload" Background="Transparent" Foreground="{ThemeResource MessageHeaderBorderBrush}"/>
 
-                    <controls:GlyphButton x:Name="ComposerHeaderCancel" Command="{x:Bind ViewModel.ClearReplyCommand}" Height="{StaticResource TelegramToolBarHeight}" AllowFocusOnInteraction="False" Glyph="&#xE711;" Grid.Column="2"/>
+                    <controls:GlyphButton
+                        x:Name="ComposerHeaderCancel"
+                        Command="{x:Bind ViewModel.ClearReplyCommand}"
+                        FontSize="{StaticResource GlyphLargeFontSize}"
+                        Height="{StaticResource TelegramToolBarHeight}"
+                        AllowFocusOnInteraction="False"
+                        Glyph="&#xE711;"
+                        Grid.Column="2"/>
                 </Grid>
 
                 <Border Grid.ColumnSpan="4" Grid.Row="2">
@@ -888,9 +897,10 @@
                         x:Name="ButtonAttach"
                         Click="Attach_Click"
                         Glyph="&#xE917;"
-                        FontFamily="{StaticResource TelegramThemeFontFamily}"
                         AllowFocusOnInteraction="False"
                         VerticalAlignment="Bottom"
+                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                        FontSize="{StaticResource GlyphLargeFontSize}"
                         AutomationProperties.Name="{CustomResource AccDescrAttachButton}"
                         ToolTipService.ToolTip="{CustomResource AccDescrAttachButton}"
                         Grid.Row="1">
@@ -912,7 +922,7 @@
                                     Text="{CustomResource ChatGallery}"
                                     Command="{x:Bind ViewModel.SendMediaCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xEB9F;"/>
+                                        <FontIcon Glyph="&#xEB9F;" Style="{StaticResource DefaultFontIconStyle}"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutItem
@@ -920,7 +930,7 @@
                                     Text="{CustomResource ChatCamera}"
                                     Command="{x:Bind ViewModel.SendCameraCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE722;"/>
+                                        <FontIcon Glyph="&#xE722;" Style="{StaticResource DefaultFontIconStyle}"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutItem
@@ -928,7 +938,7 @@
                                     Text="{CustomResource ChatDocument}"
                                     Command="{x:Bind ViewModel.SendDocumentCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE160;"/>
+                                        <FontIcon Glyph="&#xE7C3;" Style="{StaticResource DefaultFontIconStyle}"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutItem
@@ -936,7 +946,7 @@
                                     Text="{CustomResource ChatLocation}"
                                     Command="{x:Bind ViewModel.SendLocationCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE1C4;"/>
+                                        <FontIcon Glyph="&#xE1C4;" Style="{StaticResource DefaultFontIconStyle}"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutItem
@@ -944,7 +954,7 @@
                                     Text="{CustomResource Poll}"
                                     Command="{x:Bind ViewModel.SendPollCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE91F;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                                        <FontIcon Glyph="&#xE91F;" Style="{StaticResource DefaultFontIconStyle}"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutItem
@@ -952,7 +962,7 @@
                                     Text="{CustomResource AttachContact}"
                                     Command="{x:Bind ViewModel.SendContactCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE77B;"/>
+                                        <FontIcon Glyph="&#xE77B;" Style="{StaticResource DefaultFontIconStyle}"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                                 <MenuFlyoutItem
@@ -960,7 +970,7 @@
                                     Text="{CustomResource Edit}"
                                     Command="{x:Bind ViewModel.EditCurrentCommand}">
                                     <MenuFlyoutItem.Icon>
-                                        <FontIcon Glyph="&#xE7A8;"/>
+                                        <FontIcon Glyph="&#xE7A8;" Style="{StaticResource DefaultFontIconStyle}"/>
                                     </MenuFlyoutItem.Icon>
                                 </MenuFlyoutItem>
                             </MenuFlyout>
@@ -1009,6 +1019,7 @@
                                 x:Name="ButtonScheduled"
                                 Glyph="&#xE81C;"
                                 Command="{x:Bind ViewModel.ScheduledCommand}"
+                                FontSize="{StaticResource GlyphLargeFontSize}"
                                 AutomationProperties.Name="{CustomResource ScheduledMessages}"
                                 ToolTipService.ToolTip="{CustomResource ScheduledMessages}"                  
                                 VerticalAlignment="Bottom"/>
@@ -1020,6 +1031,7 @@
                             Glyph="&#xEA8F;"
                             CheckedGlyph="&#xE7ED;"
                             Command="{x:Bind ViewModel.ToggleSilentCommand}"
+                            FontSize="{StaticResource GlyphLargeFontSize}"
                             VerticalAlignment="Bottom"
                             Grid.Column="1"/>
 
@@ -1028,6 +1040,7 @@
                             x:Name="ButtonTimer"
                             Glyph="&#xE916;"
                             Command="{x:Bind ViewModel.SetTimerCommand}"
+                            FontSize="{StaticResource GlyphLargeFontSize}"
                             VerticalAlignment="Bottom"
                             Grid.Column="1"/>
 
@@ -1040,6 +1053,7 @@
                                 Glyph="&#xE613;"
                                 Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="{StaticResource GlyphLargeFontSize}"
                                 VerticalAlignment="Bottom"
                                 AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
                                 ToolTipService.ToolTip="{CustomResource AccDescrBotCommands}"
@@ -1052,9 +1066,10 @@
                                 x:Name="ButtonMarkup"
                                 Click="Markup_Click"
                                 AllowFocusOnInteraction="False"
-                                Glyph="&#xE90F;"
+                                Glyph="&#xF122;"
                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                FontSize="{StaticResource GlyphLargeFontSize}"
                                 VerticalAlignment="Bottom"
                                 AutomationProperties.Name="{CustomResource AccDescrBotKeyboard}"
                                 ToolTipService.ToolTip="{CustomResource AccDescrBotKeyboard}"
@@ -1121,20 +1136,32 @@
         </ContentControl>
 
         <Border x:Name="ChatRecord" Margin="12,0,12,8" IsHitTestVisible="False" Grid.Row="3">
-            <Grid Width="96" Height="96" Margin="-24" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                <!--<xaml:CanvasControl
-                    x:Name="ChatRecordCanvas"
-                    Draw="ChatRecordCanvas_Draw"
-                    Width="120"
-                    Height="120"
-                    Margin="-12"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"/>-->
-                <Border
-                    x:Name="Ellipse"
-                    CornerRadius="48"
-                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-            </Grid>
+            <Border Width="120" Height="240" Margin="-36,-156,-36,-36" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Popup x:Name="ChatRecordPopup" contract8Present:ShouldConstrainToRootBounds="False">
+                    <Border Height="240">
+                        <Grid x:Name="Ellipse" Width="120" Height="120" VerticalAlignment="Bottom" IsHitTestVisible="False">
+                            <xaml:CanvasControl
+                                x:Name="ChatRecordCanvas"
+                                Draw="ChatRecordCanvas_Draw"
+                                Width="120"
+                                Height="120"/>
+                            <Border
+                                CornerRadius="40"
+                                Width="80"
+                                Height="80"
+                                Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+                                <TextBlock
+                                        x:Name="ChatRecordGlyph"
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        FontSize="{StaticResource GlyphLargeFontSize}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </Popup>
+            </Border>
         </Border>
 
         <Grid x:Name="ChatFooter" Margin="12,0,12,8" CornerRadius="15" Grid.Row="3">

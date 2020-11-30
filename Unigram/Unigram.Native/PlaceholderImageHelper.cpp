@@ -643,7 +643,7 @@ namespace winrt::Unigram::Native::implementation
 
 		HRESULT result;
 		DWRITE_TEXT_METRICS textMetrics;
-		ReturnIfFailed(result, MeasureText(text, m_mdl2Format.get(), &textMetrics));
+		ReturnIfFailed(result, MeasureText(text, m_symbolFormat.get(), &textMetrics));
 
 		m_d2dContext->SetTarget(m_targetBitmap.get());
 		m_d2dContext->BeginDraw();
@@ -663,7 +663,7 @@ namespace winrt::Unigram::Native::implementation
 		m_d2dContext->FillRectangle({ 0, 0, 192, 192 }, brush.get());
 
 		D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (192.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
-		m_d2dContext->DrawText(text, 1, m_mdl2Format.get(), &layoutRect, m_textBrush.get());
+		m_d2dContext->DrawText(text, 1, m_symbolFormat.get(), &layoutRect, m_textBrush.get());
 
 		if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
 		{
@@ -884,7 +884,7 @@ namespace winrt::Unigram::Native::implementation
 			DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
 			DWRITE_FONT_STYLE_NORMAL,				// font style
 			DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-			82.0f,									// font size
+			92.0f,									// font size
 			L"",									// locale name
 			m_symbolFormat.put()
 		));

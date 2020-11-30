@@ -821,7 +821,7 @@ namespace Unigram.Views
                         }
                         else
                         {
-                            button.Glyph = "\uE72A";
+                            button.Glyph = Icons.ArrowRight;
                             action.Visibility = Visibility.Visible;
 
                             Automation.SetToolTip(button, Strings.Resources.AccDescrOpenChat);
@@ -829,7 +829,7 @@ namespace Unigram.Views
                     }
                     else if (message.IsShareable())
                     {
-                        button.Glyph = "\uE72D";
+                        button.Glyph = Icons.Share;
                         action.Visibility = Visibility.Visible;
 
                         Automation.SetToolTip(button, Strings.Resources.ShareFile);

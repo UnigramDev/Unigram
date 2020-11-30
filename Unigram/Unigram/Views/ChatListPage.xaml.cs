@@ -57,11 +57,11 @@ namespace Unigram.Views
 
             var muted = ViewModel.CacheService.GetNotificationSettingsMuteFor(chat) > 0;
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ChatArchiveCommand, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Resources.Unarchive : Strings.Resources.Archive, new FontIcon { Glyph = Icons.Archive });
-            flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.Unpin : Icons.Pin });
+            flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.ChatPinCommand, chat, position.IsPinned ? Strings.Resources.UnpinFromTop : Strings.Resources.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.PinOff : Icons.Pin });
 
             if (viewModel.Items.ChatList is ChatListFilter chatListFilter)
             {
-                flyout.CreateFlyoutItem(viewModel.FolderRemoveCommand, (chatListFilter.ChatFilterId, chat), Strings.Resources.FilterRemoveFrom, new FontIcon { Glyph = "\uE92B", FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+                flyout.CreateFlyoutItem(viewModel.FolderRemoveCommand, (chatListFilter.ChatFilterId, chat), Strings.Resources.FilterRemoveFrom, new FontIcon { Glyph = Icons.FolderMove, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
             }
             else
             {
@@ -72,14 +72,14 @@ namespace Unigram.Views
 
                     var item = new MenuFlyoutSubItem();
                     item.Text = Strings.Resources.FilterAddTo;
-                    item.Icon = new FontIcon { Glyph = "\uE929", FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                    item.Icon = new FontIcon { Glyph = Icons.FolderAdd, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
                     foreach (var chatList in response.ChatListsValue.OfType<ChatListFilter>())
                     {
                         var filter = filters.FirstOrDefault(x => x.Id == chatList.ChatFilterId);
                         if (filter != null)
                         {
-                            item.CreateFlyoutItem(ViewModel.FolderAddCommand, (filter.Id, chat), filter.Title, new FontIcon { Glyph = Icons.FromFilter(Icons.ParseFilter(filter.IconName)), FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
+                            item.CreateFlyoutItem(ViewModel.FolderAddCommand, (filter.Id, chat), filter.Title);
                         }
                     }
 
@@ -89,19 +89,22 @@ namespace Unigram.Views
                         item.CreateFlyoutItem(ViewModel.FolderCreateCommand, chat, Strings.Resources.CreateNewFilter, new FontIcon { Glyph = Icons.Add });
                     }
 
-                    flyout.Items.Add(item);
+                    if (item.Items.Count > 0)
+                    {
+                        flyout.Items.Add(item);
+                    }
                 }
             }
 
-            flyout.CreateFlyoutItem(DialogNotify_Loaded, viewModel.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Unmute : Icons.Mute });
+            flyout.CreateFlyoutItem(DialogNotify_Loaded, viewModel.ChatNotifyCommand, chat, muted ? Strings.Resources.UnmuteNotifications : Strings.Resources.MuteNotifications, new FontIcon { Glyph = muted ? Icons.Alert : Icons.AlertOff });
             flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.ChatMarkCommand, chat, chat.IsUnread() ? Strings.Resources.MarkAsRead : Strings.Resources.MarkAsUnread, new FontIcon { Glyph = chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily });
-            flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Clear });
+            flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ChatClearCommand, chat, Strings.Resources.ClearHistory, new FontIcon { Glyph = Icons.Broom });
             flyout.CreateFlyoutItem(DialogDelete_Loaded, viewModel.ChatDeleteCommand, chat, DialogDelete_Text(chat), new FontIcon { Glyph = Icons.Delete });
 
             if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Additional.Select, new FontIcon { Glyph = Icons.Select });
+                flyout.CreateFlyoutItem(viewModel.ChatSelectCommand, chat, Strings.Additional.Select, new FontIcon { Glyph = Icons.Multiselect });
             }
 
             args.ShowAt(flyout, element);

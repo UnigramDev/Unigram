@@ -71,8 +71,7 @@
                             Width="36"
                             Height="36"
                             Radius="18"
-                            Padding="0,0,0,0"
-                            FontSize="16"/>
+                            Padding="0,0,0,0"/>
                     </Border>
                 </Grid>
 
