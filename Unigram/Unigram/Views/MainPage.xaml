@@ -814,11 +814,11 @@
                                                 <Button
                                                     x:Name="ArchivedChatsPanel"
                                                     Click="ArchivedChats_Click"
+                                                    ContextRequested="ArchivedChats_ContextRequested"
                                                     AutomationProperties.Name="{CustomResource ArchivedChats}"
                                                     Style="{StaticResource EmptyButtonStyle}">
                                                     <cells:ChatCell
                                                         x:Name="ArchivedChats"
-                                                        ContextRequested="ArchivedChats_ContextRequested"
                                                         Visibility="Collapsed"
                                                         Stroke="{ThemeResource ChatLastMessageStateBrush}"
                                                         SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
