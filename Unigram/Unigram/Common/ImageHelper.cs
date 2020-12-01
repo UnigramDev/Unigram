@@ -288,8 +288,18 @@ namespace Unigram.Common
                     cropRectangle.Width * decoder.PixelWidth,
                     cropRectangle.Height * decoder.PixelHeight);
 
-                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), min, max);
+                if (rotation != BitmapRotation.None)
+                {
+                    cropRectangle = RotateArea(cropRectangle, decoder.PixelWidth, decoder.PixelHeight, (int)rotation);
+                }
 
+                if (flip == BitmapFlip.Horizontal)
+                {
+                    cropRectangle = FlipArea(cropRectangle, decoder.PixelWidth);
+                }
+
+                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), min, max);
+                
                 var bounds = new BitmapBounds();
                 bounds.X = (uint)scaledCrop.X;
                 bounds.Y = (uint)scaledCrop.Y;
@@ -316,6 +326,29 @@ namespace Unigram.Common
             }
 
             return file;
+        }
+
+        private static Rect RotateArea(Rect area, uint width, uint height, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var point = new Point(height - area.Bottom, width - (width - area.X));
+                area = new Rect(point.X, point.Y, area.Height, area.Width);
+                
+                var temp = width;
+                width = height;
+                height = temp;
+            }
+
+            return area;
+        }
+
+        private static Rect FlipArea(Rect area, uint width)
+        {
+            var point = new Point(width - area.Right, area.Y);
+            var result = new Rect(point.X, point.Y, area.Width, area.Height);
+
+            return result;
         }
 
         private static (Rect, Size) Scale(Rect rect, Size start, Size size, int min, int max)
@@ -397,6 +430,16 @@ namespace Unigram.Common
                 editState.Rectangle.Y * decoder.PixelHeight,
                 editState.Rectangle.Width * decoder.PixelWidth,
                 editState.Rectangle.Height * decoder.PixelHeight);
+
+            if (editState.Rotation != BitmapRotation.None)
+            {
+                cropRectangle = RotateArea(cropRectangle, decoder.PixelWidth, decoder.PixelHeight, (int)editState.Rotation);
+            }
+
+            if (editState.Flip == BitmapFlip.Horizontal)
+            {
+                cropRectangle = FlipArea(cropRectangle, decoder.PixelWidth);
+            }
 
             var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(decoder.PixelWidth, decoder.PixelHeight), new Size(cropWidth, cropHeight), 1280, 0);
 
