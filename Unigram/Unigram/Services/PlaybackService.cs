@@ -60,7 +60,7 @@ namespace Unigram.Services
         event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
         event TypedEventHandler<IPlaybackService, object> PlaybackStateChanged;
         event TypedEventHandler<IPlaybackService, object> PositionChanged;
-        event TypedEventHandler<IPlaybackService, float[]> QuantumChanged;
+        event TypedEventHandler<IPlaybackService, float> QuantumProcessed;
         event EventHandler PlaylistChanged;
     }
 
@@ -88,7 +88,7 @@ namespace Unigram.Services
         public event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
         public event TypedEventHandler<IPlaybackService, object> PlaybackStateChanged;
         public event TypedEventHandler<IPlaybackService, object> PositionChanged;
-        public event TypedEventHandler<IPlaybackService, float[]> QuantumChanged;
+        public event TypedEventHandler<IPlaybackService, float> QuantumProcessed;
         public event EventHandler PlaylistChanged;
 
         public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -257,7 +257,7 @@ namespace Unigram.Services
             var items = _items;
             var item = CurrentPlayback;
 
-            if (items == null || item == null)
+            if (items == null || item?.File == null)
             {
                 _transport.IsEnabled = false;
                 _transport.DisplayUpdater.ClearAll();
@@ -365,8 +365,13 @@ namespace Unigram.Services
             };
         }
 
-        private const int BUFFER_SIZE = 1024;
-        private readonly FastFourierTransform _fft = new FastFourierTransform(BUFFER_SIZE, 48000);
+        //private const int BUFFER_SIZE = 1024;
+        //private readonly FastFourierTransform _fft = new FastFourierTransform(BUFFER_SIZE, 48000);
+        //private int _lastUpdateTime;
+
+        private float _micLevelPeak = 0;
+        private int _micLevelPeakCount = 0;
+
         private int _lastUpdateTime;
 
         [ComImport]
@@ -386,7 +391,7 @@ namespace Unigram.Services
             }
 
             var position = PositionChanged;
-            var quantum = QuantumChanged;
+            var quantum = QuantumProcessed;
 
             if (position != null || quantum != null)
             {
@@ -413,75 +418,103 @@ namespace Unigram.Services
                     // Get the buffer from the AudioFrame
                     ((IMemoryBufferByteAccess)bufferReference).GetBuffer(out byte* buffer, out uint capacity);
 
-                    if (capacity < BUFFER_SIZE /*> MAX_BUFFER_SIZE || len == 0*/)
-                    {
-                        //audioUpdateHandler.removeCallbacksAndMessages(null);
-                        //audioVisualizerDelegate.onVisualizerUpdate(false, true, null);
-                        return;
-                        //                len = MAX_BUFFER_SIZE;
-                        //                byte[] bytes = new byte[BUFFER_SIZE];
-                        //                buffer.get(bytes);
-                        //                byteBuffer.put(bytes, 0, BUFFER_SIZE);
-                    }
-                    else
-                    {
-                        //byteBuffer.put(buffer);
-                    }
 
-                    capacity = BUFFER_SIZE;
+                    var samples = (float*)buffer;
+                    var count = capacity / 4;
 
-                    _fft.Forward((short*)buffer, BUFFER_SIZE);
-
-                    float sum = 0;
-                    for (int i = 0; i < capacity; i++)
+                    for (int i = 0; i < count; i++)
                     {
-                        float r = _fft.SpectrumReal[i];
-                        float img = _fft.SpectrumImaginary[i];
-                        float peak = (float)MathF.Sqrt(r * r + img * img) / 30f;
-                        if (peak > 1f)
+                        var sample = samples[i];
+                        if (sample < 0)
                         {
-                            peak = 1f;
+                            sample = Math.Abs(sample);
                         }
-                        else if (peak < 0)
+
+                        if (_micLevelPeak < sample)
                         {
-                            peak = 0;
+                            _micLevelPeak = sample;
                         }
-                        sum += peak * peak;
-                    }
-                    float amplitude = MathF.Sqrt(sum / capacity);
 
-                    float[] partsAmplitude = new float[7];
-                    partsAmplitude[6] = amplitude;
-                    if (amplitude < 0.4f)
-                    {
-                        for (int k = 0; k < 7; k++)
+                        _micLevelPeakCount += 1;
+
+                        if (_micLevelPeakCount >= 1200)
                         {
-                            partsAmplitude[k] = 0;
-                        }
-                    }
-                    else
-                    {
-                        int part = (int)capacity / 6;
+                            quantum?.Invoke(this, _micLevelPeak);
 
-                        for (int k = 0; k < 6; k++)
-                        {
-                            int start = part * k;
-                            float r = _fft.SpectrumReal[start];
-                            float img = _fft.SpectrumImaginary[start];
-                            partsAmplitude[k] = MathF.Sqrt(r * r + img * img) / 30f;
-
-                            if (partsAmplitude[k] > 1f)
-                            {
-                                partsAmplitude[k] = 1f;
-                            }
-                            else if (partsAmplitude[k] < 0)
-                            {
-                                partsAmplitude[k] = 0;
-                            }
+                            _micLevelPeak = 0;
+                            _micLevelPeakCount = 0;
                         }
                     }
 
-                    quantum?.Invoke(this, partsAmplitude);
+                    //if (capacity < BUFFER_SIZE /*> MAX_BUFFER_SIZE || len == 0*/)
+                    //{
+                    //    //audioUpdateHandler.removeCallbacksAndMessages(null);
+                    //    //audioVisualizerDelegate.onVisualizerUpdate(false, true, null);
+                    //    return;
+                    //    //                len = MAX_BUFFER_SIZE;
+                    //    //                byte[] bytes = new byte[BUFFER_SIZE];
+                    //    //                buffer.get(bytes);
+                    //    //                byteBuffer.put(bytes, 0, BUFFER_SIZE);
+                    //}
+                    //else
+                    //{
+                    //    //byteBuffer.put(buffer);
+                    //}
+
+                    //capacity = BUFFER_SIZE;
+
+                    //_fft.Forward((short*)buffer, BUFFER_SIZE);
+
+                    //float sum = 0;
+                    //for (int i = 0; i < capacity; i++)
+                    //{
+                    //    float r = _fft.SpectrumReal[i];
+                    //    float img = _fft.SpectrumImaginary[i];
+                    //    float peak = (float)MathF.Sqrt(r * r + img * img) / 30f;
+                    //    if (peak > 1f)
+                    //    {
+                    //        peak = 1f;
+                    //    }
+                    //    else if (peak < 0)
+                    //    {
+                    //        peak = 0;
+                    //    }
+                    //    sum += peak * peak;
+                    //}
+                    //float amplitude = MathF.Sqrt(sum / capacity);
+
+                    //float[] partsAmplitude = new float[7];
+                    //partsAmplitude[6] = amplitude;
+                    //if (amplitude < 0.4f)
+                    //{
+                    //    for (int k = 0; k < 7; k++)
+                    //    {
+                    //        partsAmplitude[k] = 0;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    int part = (int)capacity / 6;
+
+                    //    for (int k = 0; k < 6; k++)
+                    //    {
+                    //        int start = part * k;
+                    //        float r = _fft.SpectrumReal[start];
+                    //        float img = _fft.SpectrumImaginary[start];
+                    //        partsAmplitude[k] = MathF.Sqrt(r * r + img * img) / 30f;
+
+                    //        if (partsAmplitude[k] > 1f)
+                    //        {
+                    //            partsAmplitude[k] = 1f;
+                    //        }
+                    //        else if (partsAmplitude[k] < 0)
+                    //        {
+                    //            partsAmplitude[k] = 0;
+                    //        }
+                    //    }
+                    //}
+
+                    //quantum?.Invoke(this, partsAmplitude);
                 }
                 catch { }
             }
@@ -798,6 +831,11 @@ namespace Unigram.Services
 
                 fileInput.OutgoingGain = _settingsService.VolumeLevel;
                 fileInput.PlaybackSpeedFactor = _playbackRate;
+
+                if (_playbackRate > 1)
+                {
+                    fileInput.EffectDefinitions.Add(new AudioEffectDefinition(typeof(AudioPitchEffect).FullName));
+                }
 
                 fileInput.MediaSourceCompleted += OnMediaEnded;
 

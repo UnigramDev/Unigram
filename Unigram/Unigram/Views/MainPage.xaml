@@ -750,6 +750,7 @@
                                                 CanReorderItems="False"
                                                 DragItemsStarting="ChatFilters_DragItemsStarting"
                                                 DragItemsCompleted="ChatFilters_DragItemsCompleted"
+                                                ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                                 Height="40">
                                                 <controls:TopNavView.ItemTemplate>
                                                     <DataTemplate x:DataType="viewModels:ChatFilterViewModel">

@@ -182,7 +182,8 @@
                           VerticalScrollBarVisibility="Disabled"
                           VerticalScrollMode="Disabled"
                           HorizontalScrollBarVisibility="Hidden"
-                          HorizontalScrollMode="Auto">
+                          HorizontalScrollMode="Auto"
+                          IsHorizontalScrollChainingEnabled="False">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>

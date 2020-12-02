@@ -82,6 +82,7 @@
                 IsItemClickEnabled="True"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 ScrollViewer.HorizontalScrollMode="Auto"
+                ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
                 ScrollViewer.VerticalScrollMode="Disabled"
                 Grid.Row="0">

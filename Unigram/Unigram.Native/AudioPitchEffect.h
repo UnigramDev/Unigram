@@ -30,7 +30,7 @@ namespace winrt::Unigram::Native::implementation
 
 		bool UseInputFrameForOutput()
 		{
-			return true;
+			return false;
 		}
 
 		IVectorView<AudioEncodingProperties> SupportedEncodingProperties()
@@ -76,28 +76,39 @@ namespace winrt::Unigram::Native::implementation
 
 		void ProcessFrame(ProcessAudioFrameContext context)
 		{
-			AudioFrame frame = context.InputFrame();
-			AudioBuffer audio_buff = frame.LockBuffer(AudioBufferAccessMode::ReadWrite);
-			IMemoryBufferReference buffer_reference = audio_buff.CreateReference();
-			com_ptr<IMemoryBufferByteAccess> byte_buffer_access = buffer_reference.as<IMemoryBufferByteAccess>();
+			AudioFrame inputFrame = context.InputFrame();
+			AudioFrame outputFrame = context.OutputFrame();
 
-			uint8_t* buff = nullptr;
-			uint32_t buffer_size = 0;
-			winrt::check_hresult(byte_buffer_access->GetBuffer(&buff, &buffer_size));
+			AudioBuffer inputBuffer = inputFrame.LockBuffer(AudioBufferAccessMode::Read);
+			AudioBuffer outputBuffer = outputFrame.LockBuffer(AudioBufferAccessMode::Write);
 
-			float* indata = (float*)buff;
-			float* outdata = new float[buffer_size / 4];
+			IMemoryBufferReference inputReference = inputBuffer.CreateReference();
+			IMemoryBufferReference outputReference = outputBuffer.CreateReference();
 
-			size_t indata_size = buffer_size / 4;
-			size_t max_size = 2048;
+			com_ptr<IMemoryBufferByteAccess> inputAccess = inputReference.as<IMemoryBufferByteAccess>();
+			com_ptr<IMemoryBufferByteAccess> outputAccess = outputReference.as<IMemoryBufferByteAccess>();
 
-			smbPitchShift(0.5, indata_size, std::min(indata_size, max_size), 10, 48000, indata, outdata);
-			memmove(indata, outdata, buffer_size);
+			uint8_t* inputDataInBytes = nullptr;
+			uint8_t* outputDataInBytes = nullptr;
 
-			delete[] outdata;
+			uint32_t inputCapacity = 0;
+			uint32_t outputCapacity = 0;
 
-			buffer_reference.Close();
-			audio_buff.Close();
+			winrt::check_hresult(inputAccess->GetBuffer(&inputDataInBytes, &inputCapacity));
+			winrt::check_hresult(outputAccess->GetBuffer(&outputDataInBytes, &outputCapacity));
+
+			float* indata = (float*)inputDataInBytes;
+			float* outdata = (float*)outputDataInBytes;
+
+			size_t dataInFloatLength = (int)inputBuffer.Length() / sizeof(float);
+
+			smbPitchShift(0.5, dataInFloatLength, 2048, 10, 48000, indata, outdata);
+
+			outputReference.Close();
+			inputReference.Close();
+
+			outputBuffer.Close();
+			inputBuffer.Close();
 		}
 
 		void Close(MediaEffectClosedReason reason)
