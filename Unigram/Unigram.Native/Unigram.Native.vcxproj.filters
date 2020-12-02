@@ -282,5 +282,6 @@
     <Midl Include="TelegramPaymentProxy.idl" />
     <Midl Include="PlaceholderImageHelper.idl" />
     <Midl Include="VideoAnimation.idl" />
+    <Midl Include="AudioPitchEffect.idl" />
   </ItemGroup>
 </Project>

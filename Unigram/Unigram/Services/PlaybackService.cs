@@ -6,12 +6,14 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Services.Updates;
 using Windows.Foundation;
 using Windows.Media;
 using Windows.Media.Audio;
 using Windows.Media.Core;
+using Windows.Media.Effects;
 using Windows.Media.Playback;
 using Windows.Media.Render;
 
@@ -584,6 +586,22 @@ namespace Unigram.Services
                 if (_inputNode != null)
                 {
                     _inputNode.PlaybackSpeedFactor = value;
+
+                    if (value > 1)
+                    {
+                        if (_inputNode.EffectDefinitions.Count > 0)
+                        {
+                            _inputNode.EnableEffectsByDefinition(_inputNode.EffectDefinitions[0]);
+                        }
+                        else
+                        {
+                            _inputNode.EffectDefinitions.Add(new AudioEffectDefinition(typeof(AudioPitchEffect).FullName));
+                        }
+                    }
+                    else if (_inputNode.EffectDefinitions.Count > 0)
+                    {
+                        _inputNode.DisableEffectsByDefinition(_inputNode.EffectDefinitions[0]);
+                    }
                 }
             }
         }

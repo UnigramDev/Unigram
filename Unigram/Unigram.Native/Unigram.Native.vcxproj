@@ -237,6 +237,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AudioPitchEffect.h">
+      <DependentUpon>AudioPitchEffect.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Helpers\COMHelper.h" />
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
@@ -285,6 +289,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioPitchEffect.cpp">
+      <DependentUpon>AudioPitchEffect.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Generated Files\module.g.cpp" />
     <ClCompile Include="Helpers\LibraryHelper.cpp" />
     <ClCompile Include="libyuv\source\compare.cc">
@@ -455,6 +463,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Midl Include="AudioPitchEffect.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="NativeUtils.idl" />
     <Midl Include="PlaceholderImageHelper.idl" />
     <Midl Include="TelegramGameProxy.idl" />
