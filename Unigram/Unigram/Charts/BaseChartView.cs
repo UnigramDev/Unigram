@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
 using Unigram.Charts.Data;
 using Unigram.Charts.DataView;
 using Unigram.Common;

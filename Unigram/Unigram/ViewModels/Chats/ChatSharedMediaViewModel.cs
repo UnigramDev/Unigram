@@ -9,7 +9,6 @@ using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
-using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,6 +29,7 @@ namespace Unigram.ViewModels.Chats
 
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, MessagesForwardCanExecute);
             MessagesDeleteCommand = new RelayCommand(MessagesDeleteExecute, MessagesDeleteCanExecute);
+            MessagesUnselectCommand = new RelayCommand(MessagesUnselectExecute);
             MessageViewCommand = new RelayCommand<Message>(MessageViewExecute);
             MessageSaveCommand = new RelayCommand<Message>(MessageSaveExecute);
             MessageDeleteCommand = new RelayCommand<Message>(MessageDeleteExecute);
@@ -413,6 +413,16 @@ namespace Unigram.ViewModels.Chats
 
             SelectedItems = new List<Message> { message };
             RaisePropertyChanged("SelectedItems");
+        }
+
+        #endregion
+
+        #region Unselect
+
+        public RelayCommand MessagesUnselectCommand { get; }
+        private void MessagesUnselectExecute()
+        {
+            SelectionMode = ListViewSelectionMode.None;
         }
 
         #endregion

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -14,7 +14,6 @@ using Unigram.Views.Chats;
 using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -526,7 +525,7 @@ namespace Unigram.ViewModels
             SelectionMode = ListViewSelectionMode.Multiple;
             ListField?.SelectedItems.Add(message);
 
-            ExpandSelection(new[] { message });
+            //ExpandSelection(new[] { message });
         }
 
         #endregion
@@ -1181,7 +1180,7 @@ namespace Unigram.ViewModels
                     var response = await ProtoService.SendAsync(new GetMe());
                     if (response is Telegram.Td.Api.User cached)
                     {
-                        var chat = CacheService.GetChat(message.ChatId);
+                        var chat = CacheService.GetChat(message?.ChatId ?? _chat?.Id ?? 0);
                         if (chat == null)
                         {
                             return;

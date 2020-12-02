@@ -213,16 +213,13 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateUnreadChatCount update)
         {
-            BeginOnUIThread(() =>
+            foreach (var filter in _filters)
             {
-                foreach (var filter in _filters)
+                if (filter.ChatList is ChatListFilter && filter.ChatList.ListEquals(update.ChatList))
                 {
-                    if (filter.ChatList is ChatListFilter && filter.ChatList.ListEquals(update.ChatList))
-                    {
-                        filter.UpdateCount(update);
-                    }
+                    BeginOnUIThread(() => filter.UpdateCount(update));
                 }
-            });
+            }
         }
 
         public void Handle(UpdateChatFilters update)

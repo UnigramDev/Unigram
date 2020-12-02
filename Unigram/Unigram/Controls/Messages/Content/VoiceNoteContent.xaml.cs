@@ -55,7 +55,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Progress.UpdateWave(voiceNote);
+            Progress.UpdateWaveform(voiceNote);
 
             //UpdateDuration();
             UpdateFile(message, voiceNote.Voice);
@@ -63,7 +63,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void Mockup(MessageVoiceNote voiceNote)
         {
-            Progress.UpdateWave(voiceNote.VoiceNote);
+            Progress.UpdateWaveform(voiceNote.VoiceNote);
             Progress.Minimum = 0;
             Progress.Maximum = 1;
             Progress.Value = 0.3;

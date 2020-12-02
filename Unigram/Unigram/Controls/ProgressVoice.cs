@@ -24,7 +24,7 @@ namespace Unigram.Controls
 
             if (_deferred != null)
             {
-                UpdateSlide(_deferred);
+                UpdateWaveform(_deferred);
                 _deferred = null;
             }
 
@@ -33,12 +33,12 @@ namespace Unigram.Controls
 
         private IList<byte> _deferred;
 
-        public void UpdateWave(VoiceNote voiceNote)
+        public void UpdateWaveform(VoiceNote voiceNote)
         {
-            UpdateSlide(voiceNote.Waveform);
+            UpdateWaveform(voiceNote.Waveform);
         }
 
-        private void UpdateSlide(IList<byte> waveform)
+        public void UpdateWaveform(IList<byte> waveform)
         {
             if (ProgressBarIndicator == null || HorizontalTrackRect == null)
             {

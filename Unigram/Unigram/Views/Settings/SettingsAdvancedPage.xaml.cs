@@ -1,6 +1,5 @@
 ﻿using Unigram.Common;
 using Unigram.ViewModels.Settings;
-using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Settings

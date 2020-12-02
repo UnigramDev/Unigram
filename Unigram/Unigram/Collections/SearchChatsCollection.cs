@@ -344,15 +344,15 @@ namespace Unigram.Collections
                 switch (_filter)
                 {
                     case SearchMessagesFilterPhotoAndVideo photoAndVideo:
-                        return Icons.Photo;
+                        return Icons.Image;
                     case SearchMessagesFilterDocument document:
                         return Icons.Document;
                     case SearchMessagesFilterUrl url:
                         return Icons.Link;
                     case SearchMessagesFilterAudio audio:
-                        return Icons.Music;
+                        return Icons.MusicNote;
                     case SearchMessagesFilterVoiceNote voiceNote:
-                        return Icons.Microphone;
+                        return Icons.MicOn;
                     default:
                         return null;
                 }
@@ -381,12 +381,12 @@ namespace Unigram.Collections
             {
                 switch (_chat.Type)
                 {
-                    case ChatTypePrivate privata:
-                        return Icons.Contact;
-                    case ChatTypeBasicGroup basicGroup:
-                        return Icons.BasicGroup;
+                    case ChatTypePrivate _:
+                        return Icons.Person;
+                    case ChatTypeBasicGroup _:
+                        return Icons.People;
                     case ChatTypeSupergroup supergroup:
-                        return supergroup.IsChannel ? Icons.Group : Icons.Channel;
+                        return supergroup.IsChannel ? Icons.People : Icons.Megaphone;
                     default:
                         return null;
                 }
@@ -426,7 +426,7 @@ namespace Unigram.Collections
             }
         }
 
-        public string Glyph => "\uE787";
+        public string Glyph => Icons.Calendar;
     }
 
     public enum SearchChatsType
