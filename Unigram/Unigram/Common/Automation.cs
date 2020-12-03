@@ -258,6 +258,24 @@ namespace Unigram.Common
             }
             else if (message.Content is MessagePoll poll)
             {
+                if (details)
+                {
+                    string type = null;
+                    if (poll.Poll.Type is PollTypeRegular)
+                    {
+                        type = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousPoll : Strings.Resources.PublicPoll;
+                    }
+                    else if (poll.Poll.Type is PollTypeQuiz)
+                    {
+                        type = poll.Poll.IsClosed ? Strings.Resources.FinalResults : poll.Poll.IsAnonymous ? Strings.Resources.AnonymousQuizPoll : Strings.Resources.QuizPoll;
+                    }
+
+                    if (type != null)
+                    {
+                        return type + ", " + poll.Poll.Question + ", ";
+                    }
+                }
+
                 return Strings.Resources.Poll + ", " + poll.Poll.Question + ", ";
             }
             else if (message.Content is MessageCall call)
