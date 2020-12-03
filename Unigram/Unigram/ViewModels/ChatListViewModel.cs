@@ -202,7 +202,10 @@ namespace Unigram.ViewModels
         {
             if (chat.UnreadCount > 0)
             {
-                ProtoService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
+                if (chat.LastMessage != null)
+                {
+                    ProtoService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
+                }
 
                 if (chat.UnreadMentionCount > 0)
                 {
@@ -228,7 +231,7 @@ namespace Unigram.ViewModels
             {
                 if (unread)
                 {
-                    if (chat.UnreadCount > 0)
+                    if (chat.UnreadCount > 0 && chat.LastMessage != null)
                     {
                         ProtoService.Send(new ViewMessages(chat.Id, 0, new[] { chat.LastMessage.Id }, true));
                     }
@@ -595,13 +598,14 @@ namespace Unigram.ViewModels
 
         public async void SetFilter(ChatList chatList)
         {
-            await Items.ResetAsync(chatList);
+            await Items.ReloadAsync(chatList);
             //Aggregator.Unsubscribe(Items);
             //Items = new ItemsCollection(ProtoService, Aggregator, this, chatList);
             //RaisePropertyChanged(nameof(Items));
         }
 
         public class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading,
+            IHandle<UpdateAuthorizationState>,
             IHandle<UpdateChatDraftMessage>,
             IHandle<UpdateChatLastMessage>,
             IHandle<UpdateChatPosition>
@@ -638,7 +642,7 @@ namespace Unigram.ViewModels
                 _ = LoadMoreItemsAsync(0);
             }
 
-            public async Task ResetAsync(ChatList chatList)
+            public async Task ReloadAsync(ChatList chatList)
             {
                 using (await _loadMoreLock.WaitAsync())
                 {
@@ -678,7 +682,8 @@ namespace Unigram.ViewModels
                                 var next = NextIndexOf(chat, order);
                                 if (next >= 0)
                                 {
-                                    Insert(next, chat);
+                                    Remove(chat);
+                                    Insert(Math.Min(Count, next), chat);
 
                                     if (chat.Id == _viewModel._selectedItem)
                                     {
@@ -711,6 +716,14 @@ namespace Unigram.ViewModels
             public bool HasMoreItems => _hasMoreItems;
 
             #region Handle
+
+            public void Handle(UpdateAuthorizationState update)
+            {
+                if (update.AuthorizationState is AuthorizationStateReady)
+                {
+                    _viewModel.BeginOnUIThread(async () => await ReloadAsync(_chatList));
+                }
+            }
 
             public void Handle(UpdateChatPosition update)
             {
