@@ -64,6 +64,7 @@ namespace Unigram.CodeGen
                 ( typeof(ICloudUpdateService), typeof(CloudUpdateService) ),
                 ( typeof(IShortcutsService), typeof(ShortcutsService) ),
                 ( typeof(IVoipService), typeof(VoipService) ),
+                ( typeof(IGroupCallService), typeof(GroupCallService) ),
                 ( typeof(IDeviceInfoService), typeof(DeviceInfoService) ),
                 ( typeof(IEventAggregator), typeof(EventAggregator) ),
                 ( typeof(IContactsService), typeof(ContactsService) ),
