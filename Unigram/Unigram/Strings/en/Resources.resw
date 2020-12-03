@@ -580,6 +580,21 @@
   <data name="ActionCreateMega" xml:space="preserve">
     <value>Group created</value>
   </data>
+  <data name="ActionGroupCallEnded" xml:space="preserve">
+    <value>Voice chat finished ({0})</value>
+  </data>
+  <data name="ActionGroupCallInvited" xml:space="preserve">
+    <value>un1 invited un2 to the voice chat</value>
+  </data>
+  <data name="ActionGroupCallInvitedYou" xml:space="preserve">
+    <value>un1 invited you to the voice chat</value>
+  </data>
+  <data name="ActionGroupCallStarted" xml:space="preserve">
+    <value>un1 started a voice chat</value>
+  </data>
+  <data name="ActionGroupCallYouInvited" xml:space="preserve">
+    <value>You invited un2 to the voice chat</value>
+  </data>
   <data name="ActionInviteUser" xml:space="preserve">
     <value>un1 joined the group via invite link</value>
   </data>
@@ -660,6 +675,12 @@
   </data>
   <data name="ActionTakeScreenshootYou" xml:space="preserve">
     <value>You took a screenshot!</value>
+  </data>
+  <data name="ActionUserInvitedToChannel" xml:space="preserve">
+    <value>un1 invited you to this channel</value>
+  </data>
+  <data name="ActionUserInvitedToGroup" xml:space="preserve">
+    <value>un1 invited you to this group</value>
   </data>
   <data name="ActionUserScored" xml:space="preserve">
     <value>un1 scored {0}</value>
@@ -4299,6 +4320,9 @@ have been found.</value>
   <data name="EventLogPromotedEditMessages" xml:space="preserve">
     <value>Edit messages</value>
   </data>
+  <data name="EventLogPromotedManageCall" xml:space="preserve">
+    <value>Manage voice chats</value>
+  </data>
   <data name="EventLogPromotedInviteLink" xml:space="preserve">
     <value>Invite via link</value>
   </data>
@@ -5875,6 +5899,9 @@ This link will only work for members of this chat.</value>
   <data name="Links_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="Listening" xml:space="preserve">
+    <value>listening</value>
+  </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>Shared Links</value>
   </data>
@@ -6271,6 +6298,27 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="MembersOverviewTitle" xml:space="preserve">
     <value>Members</value>
+  </data>
+  <data name="MembersTalkingNobody" xml:space="preserve">
+    <value>Nobody talking</value>
+  </data>
+  <data name="MembersTalking_few" xml:space="preserve">
+    <value>{0} members talking</value>
+  </data>
+  <data name="MembersTalking_many" xml:space="preserve">
+    <value>{0} members talking</value>
+  </data>
+  <data name="MembersTalking_one" xml:space="preserve">
+    <value>{0} member talking</value>
+  </data>
+  <data name="MembersTalking_other" xml:space="preserve">
+    <value>{0} members talking</value>
+  </data>
+  <data name="MembersTalking_two" xml:space="preserve">
+    <value>{0} members talking</value>
+  </data>
+  <data name="MembersTalking_zero" xml:space="preserve">
+    <value>{0} members talking</value>
   </data>
   <data name="Mention" xml:space="preserve">
     <value>Mention</value>
@@ -7123,11 +7171,20 @@ You can customize notifications for a chat by opening its profile and choosing '
   <data name="NotificationGroupAlbum" xml:space="preserve">
     <value>{0} sent an album to the group {1}</value>
   </data>
+  <data name="NotificationGroupCreatedCall" xml:space="preserve">
+    <value>{0} started a voice chat in the group {1}</value>
+  </data>
   <data name="NotificationGroupFew" xml:space="preserve">
     <value>{0} sent {2} to the group {1}</value>
   </data>
   <data name="NotificationGroupForwardedFew" xml:space="preserve">
     <value>{0} forwarded {2} to the group {1}</value>
+  </data>
+  <data name="NotificationGroupInvitedToCall" xml:space="preserve">
+    <value>{0} invited {2} to a voice chat in the group {1}</value>
+  </data>
+  <data name="NotificationGroupInvitedYouToCall" xml:space="preserve">
+    <value>{0} invited you to a voice chat in the group {1}</value>
   </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>{0} removed {2} from the group {1}</value>
@@ -10479,6 +10536,9 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   <data name="SoundMuted" xml:space="preserve">
     <value>Sound muted</value>
   </data>
+  <data name="Speaking" xml:space="preserve">
+    <value>speaking</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
   </data>
@@ -10490,6 +10550,21 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>Please confirm your country code and enter your phone number.</value>
+  </data>
+  <data name="StartVoipChat" xml:space="preserve">
+    <value>Start Voice chat</value>
+  </data>
+  <data name="StartVoipChatAlertOnlyAdmins" xml:space="preserve">
+    <value>Only admins can talk</value>
+  </data>
+  <data name="StartVoipChatAlertText" xml:space="preserve">
+    <value>Do you really want to start a voice chat in this group?</value>
+  </data>
+  <data name="StartVoipChatPermission" xml:space="preserve">
+    <value>Manage Voice Chats</value>
+  </data>
+  <data name="StartVoipChatTitle" xml:space="preserve">
+    <value>Voice Chat</value>
   </data>
   <data name="StatisticOpenProfile" xml:space="preserve">
     <value>Open Profile</value>
@@ -11840,6 +11915,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipCallEnded" xml:space="preserve">
     <value>Call ended</value>
   </data>
+  <data name="VoipChatJoin" xml:space="preserve">
+    <value>Join</value>
+  </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Connecting</value>
   </data>
@@ -11864,8 +11942,74 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipFlip" xml:space="preserve">
     <value>Flip</value>
   </data>
+  <data name="VoipGroupAllCanSpeak" xml:space="preserve">
+    <value>New participants can speak</value>
+  </data>
+  <data name="VoipGroupConnecting" xml:space="preserve">
+    <value>Connecting...</value>
+  </data>
+  <data name="VoipGroupEnd" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="VoipGroupEndAlertText" xml:space="preserve">
+    <value>Are you sure you want to end this voice chat?</value>
+  </data>
+  <data name="VoipGroupEndAlertTitle" xml:space="preserve">
+    <value>End voice chat</value>
+  </data>
+  <data name="VoipGroupEndChat" xml:space="preserve">
+    <value>End voice chat</value>
+  </data>
+  <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
+    <value>The selected user is already in this voice chat.</value>
+  </data>
+  <data name="VoipGroupInviteText" xml:space="preserve">
+    <value>Hey! Join our voice chat: {0}</value>
+  </data>
+  <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
+    <value>un1 invited un2 to the voice chat</value>
+  </data>
+  <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
+    <value>Sorry, you can't join voice chats as an anonymous administrator.</value>
+  </data>
+  <data name="VoipGroupJoinCall" xml:space="preserve">
+    <value>Join voice chat</value>
+  </data>
+  <data name="VoipGroupLeave" xml:space="preserve">
+    <value>Leave</value>
+  </data>
+  <data name="VoipGroupLeaveAlertEndChat" xml:space="preserve">
+    <value>End voice chat</value>
+  </data>
+  <data name="VoipGroupLeaveAlertText" xml:space="preserve">
+    <value>Are you sure you want to leave this voice chat?</value>
+  </data>
+  <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
+    <value>Leave voice chat</value>
+  </data>
+  <data name="VoipGroupMuteMemberAlertText" xml:space="preserve">
+    <value>Are you sure you want to mute **{0}** in this voice chat?</value>
+  </data>
+  <data name="VoipGroupMuteMemberAlertTitle" xml:space="preserve">
+    <value>Mute microphone</value>
+  </data>
+  <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
+    <value>New paricipants are muted</value>
+  </data>
+  <data name="VoipGroupShareInviteLink" xml:space="preserve">
+    <value>Share invite link</value>
+  </data>
+  <data name="VoipGroupViewVoiceChat" xml:space="preserve">
+    <value>VIEW VOICE CHAT</value>
+  </data>
+  <data name="VoipGroupVoiceChat" xml:space="preserve">
+    <value>Voice Chat</value>
+  </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Hanging up</value>
+  </data>
+  <data name="VoipHoldAndTalk" xml:space="preserve">
+    <value>or hold and talk</value>
   </data>
   <data name="VoipInCallBranding" xml:space="preserve">
     <value>Telegram Call</value>
@@ -11884,6 +12028,12 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="VoipMute" xml:space="preserve">
     <value>Mute</value>
+  </data>
+  <data name="VoipMutedByAdmin" xml:space="preserve">
+    <value>Muted by admin</value>
+  </data>
+  <data name="VoipMutedByAdminInfo" xml:space="preserve">
+    <value>You are in Listen Only Mode</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Telegram needs access to your microphone and camera so that you can make video calls.</value>
@@ -11912,8 +12062,20 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipOngoingAlert" xml:space="preserve">
     <value>You currently have an ongoing call with **{0}**. Would you like to hang up and start a new one with **{1}**?</value>
   </data>
+  <data name="VoipOngoingAlert2" xml:space="preserve">
+    <value>You currently have an ongoing call with **{0}**. Would you like to hang up and start a new voice chat in **{1}**?</value>
+  </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
     <value>Another call in progress</value>
+  </data>
+  <data name="VoipOngoingChatAlert" xml:space="preserve">
+    <value>You currently have an ongoing voice chat in **{0}**. Would you like to hang up and start a new one in **{1}**?</value>
+  </data>
+  <data name="VoipOngoingChatAlert2" xml:space="preserve">
+    <value>You currently have an ongoing voice chat in **{0}**. Would you like to hang up and start a new call with **{1}**?</value>
+  </data>
+  <data name="VoipOngoingChatAlertTitle" xml:space="preserve">
+    <value>Another voice chat in progress</value>
   </data>
   <data name="VoipOutgoingCall" xml:space="preserve">
     <value>Ongoing Telegram call</value>
@@ -11972,6 +12134,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipSwitchToVideoCall" xml:space="preserve">
     <value>Switch to video call?</value>
   </data>
+  <data name="VoipTapToMute" xml:space="preserve">
+    <value>You're Live</value>
+  </data>
   <data name="VoipUnmute" xml:space="preserve">
     <value>Unmute</value>
   </data>
@@ -11986,6 +12151,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="VoipVideoUnavailable" xml:space="preserve">
     <value>Video</value>
+  </data>
+  <data name="VoipVoiceChat" xml:space="preserve">
+    <value>Ongoing Voice Chat</value>
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>Waiting</value>
