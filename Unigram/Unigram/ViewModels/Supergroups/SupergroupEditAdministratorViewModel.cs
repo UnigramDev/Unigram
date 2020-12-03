@@ -96,6 +96,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = administrator.CanPostMessages;
                     CanPromoteMembers = administrator.CanPromoteMembers;
                     CanRestrictMembers = administrator.CanRestrictMembers;
+                    CanManageCalls = administrator.CanManageCalls;
                     IsAnonymous = administrator.IsAnonymous;
 
                     CustomTitle = administrator.CustomTitle;
@@ -108,6 +109,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanInviteUsers = true;
                     CanPinMessages = true;
                     CanPostMessages = true;
+                    CanManageCalls = true;
                     CanPromoteMembers = member.Status is ChatMemberStatusCreator;
                     CanRestrictMembers = true;
 
@@ -163,7 +165,8 @@ namespace Unigram.ViewModels.Supergroups
                     (supergroup.IsChannel ? _canEditMessages : true) &&
                     (supergroup.IsChannel ? true : _canPinMessages) &&
                     (supergroup.IsChannel ? _canPostMessages : true) &&
-                    (supergroup.IsChannel ? true : _canRestrictMembers);
+                    (supergroup.IsChannel ? true : _canRestrictMembers) &&
+                    (supergroup.IsChannel ? true : _canManageCalls);
             }
         }
 
@@ -267,6 +270,20 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
+        private bool _canManageCalls;
+        public bool CanManageCalls
+        {
+            get
+            {
+                return _canManageCalls;
+            }
+            set
+            {
+                Set(ref _canManageCalls, value);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
+            }
+        }
+
         private bool _isAnonymous;
         public bool IsAnonymous
         {
@@ -355,6 +372,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = channel ? _canPostMessages : false,
                     CanPromoteMembers = _canPromoteMembers,
                     CanRestrictMembers = channel ? false : _canRestrictMembers,
+                    CanManageCalls = channel ? false : _canManageCalls,
                     CustomTitle = _customTitle ?? string.Empty
                 };
             }

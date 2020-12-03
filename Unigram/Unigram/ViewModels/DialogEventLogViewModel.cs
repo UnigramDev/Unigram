@@ -733,6 +733,10 @@ namespace Unigram.ViewModels
                     {
                         AppendChange(n.CanPinMessages, Strings.Resources.EventLogPromotedPinMessages);
                     }
+                    if (o.CanManageCalls != n.CanManageCalls)
+                    {
+                        AppendChange(n.CanManageCalls, Strings.Resources.EventLogPromotedManageCall);
+                    }
                 }
 
                 return new MessageText(new FormattedText(builder.ToString(), entities), null);
