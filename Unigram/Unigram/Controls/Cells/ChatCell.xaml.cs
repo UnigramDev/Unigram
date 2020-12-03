@@ -43,7 +43,15 @@ namespace Unigram.Controls.Cells
 
         private IProtoService _protoService;
 
-        private readonly Visual _onlineBadge;
+        private Visual _onlineBadge;
+        private bool _onlineCall;
+
+        // Used only to prevent garbage collection
+        private CompositionAnimation _size1;
+        private CompositionAnimation _size2;
+        private CompositionAnimation _offset1;
+        private CompositionAnimation _offset2;
+        private CompositionAnimation _offset3;
 
         private MessageTicksState _ticksState;
 
@@ -52,11 +60,6 @@ namespace Unigram.Controls.Cells
             InitializeComponent();
             InitializeSelection();
             InitializeTicks();
-
-            _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
-            _onlineBadge.CenterPoint = new Vector3(6.5f);
-            _onlineBadge.Opacity = 0;
-            _onlineBadge.Scale = new Vector3(0);
         }
 
         public void UpdateService(IProtoService protoService)
@@ -400,16 +403,56 @@ namespace Unigram.Controls.Cells
 
         public void UpdateUserStatus(Chat chat, UserStatus status)
         {
-            UpdateOnlineBadge(status is UserStatusOnline);
+            UpdateOnlineBadge(status is UserStatusOnline, false);
         }
 
-        private void UpdateOnlineBadge(bool visible)
+        private void UpdateOnlineBadge(bool visible, bool activeCall)
         {
+            if (OnlineBadge == null)
+            {
+                FindName(nameof(OnlineBadge));
+
+                _onlineBadge = ElementCompositionPreview.GetElementVisual(OnlineBadge);
+                _onlineBadge.CenterPoint = new Vector3(6.5f);
+                //_onlineBadge.Opacity = 0;
+                //_onlineBadge.Scale = new Vector3(0);
+            }
+            else if (OnlineBadge.Visibility == Visibility.Collapsed && !visible)
+            {
+                return;
+            }
+
+            if (_onlineCall != activeCall)
+            {
+                if (activeCall)
+                {
+                    OnlineBadge.Margin = new Thickness(0, 0, -1, -1);
+                    OnlineBadge.Width = OnlineBadge.Height = 20;
+                    OnlineBadge.CornerRadius = new CornerRadius(10);
+                    OnlineHeart.Width = OnlineHeart.Height = 16;
+                    OnlineHeart.CornerRadius = new CornerRadius(8);
+
+                    _onlineBadge.CenterPoint = new Vector3(10);
+                }
+                else
+                {
+                    OnlineBadge.Margin = new Thickness(0, 0, 1, 1);
+                    OnlineBadge.Width = OnlineBadge.Height = 13;
+                    OnlineBadge.CornerRadius = new CornerRadius(6.5);
+                    OnlineHeart.Width = OnlineHeart.Height = 9;
+                    OnlineHeart.CornerRadius = new CornerRadius(4.5);
+
+                    _onlineBadge.CenterPoint = new Vector3(6.5f);
+                }
+
+                _onlineCall = activeCall;
+            }
+
             OnlineBadge.Visibility = Visibility.Visible;
 
             var scale = _onlineBadge.Compositor.CreateVector3KeyFrameAnimation();
             //scale.InsertKeyFrame(0, new System.Numerics.Vector3(visible ? 0 : 1));
-            scale.InsertKeyFrame(1, new System.Numerics.Vector3(visible ? 1 : 0));
+            scale.InsertKeyFrame(1, new Vector3(visible ? 1 : 0));
 
             var opacity = _onlineBadge.Compositor.CreateScalarKeyFrameAnimation();
             //opacity.InsertKeyFrame(0, visible ? 0 : 1);
@@ -420,6 +463,133 @@ namespace Unigram.Controls.Cells
 
             _onlineBadge.StartAnimation("Scale", scale);
             _onlineBadge.StartAnimation("Opacity", opacity);
+
+            if (visible && activeCall && ApiInfo.CanUseDirectComposition)
+            {
+                var compositor = Window.Current.Compositor;
+
+                var line1 = compositor.CreateRoundedRectangleGeometry();
+                line1.CornerRadius = Vector2.One;
+                line1.Size = new Vector2(2, 2);
+                line1.Offset = new Vector2(3, 7);
+
+                var shape1 = compositor.CreateSpriteShape();
+                shape1.Geometry = line1;
+                shape1.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+
+                var line2 = compositor.CreateRoundedRectangleGeometry();
+                line2.CornerRadius = Vector2.One;
+                line2.Size = new Vector2(2, 2);
+                line2.Offset = new Vector2(7, 7);
+
+                var shape2 = compositor.CreateSpriteShape();
+                shape2.Geometry = line2;
+                shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+
+                var line3 = compositor.CreateRoundedRectangleGeometry();
+                line3.CornerRadius = Vector2.One;
+                line3.Size = new Vector2(2, 2);
+                line3.Offset = new Vector2(11, 7);
+
+                var shape3 = compositor.CreateSpriteShape();
+                shape3.Geometry = line3;
+                shape3.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+
+                var visual = compositor.CreateShapeVisual();
+                visual.Shapes.Add(shape3);
+                visual.Shapes.Add(shape2);
+                visual.Shapes.Add(shape1);
+                visual.Size = new Vector2(16, 16);
+                visual.CenterPoint = new Vector3(8);
+
+                var size1 = compositor.CreateVector2KeyFrameAnimation();
+                var size2 = compositor.CreateVector2KeyFrameAnimation();
+                var offset1 = compositor.CreateVector2KeyFrameAnimation();
+                var offset2 = compositor.CreateVector2KeyFrameAnimation();
+                var offset3 = compositor.CreateVector2KeyFrameAnimation();
+
+                // 1
+                size1.InsertKeyFrame(0.0f, new Vector2(2, 4));
+                offset1.InsertKeyFrame(0.0f, new Vector2(3, 6));
+
+                size2.InsertKeyFrame(0.0f, new Vector2(2, 10));
+                offset2.InsertKeyFrame(0.0f, new Vector2(7, 3));
+
+                offset3.InsertKeyFrame(0.0f, new Vector2(11, 6));
+
+                // 2
+                size1.InsertKeyFrame(0.25f, new Vector2(2, 10));
+                offset1.InsertKeyFrame(0.25f, new Vector2(3, 3));
+
+                size2.InsertKeyFrame(0.25f, new Vector2(2, 4));
+                offset2.InsertKeyFrame(0.25f, new Vector2(7, 6));
+
+                offset3.InsertKeyFrame(0.25f, new Vector2(11, 3));
+
+                // 3
+                size1.InsertKeyFrame(0.50f, new Vector2(2, 4));
+                offset1.InsertKeyFrame(0.50f, new Vector2(3, 6));
+
+                size2.InsertKeyFrame(0.50f, new Vector2(2, 8));
+                offset2.InsertKeyFrame(0.50f, new Vector2(7, 4));
+
+                offset3.InsertKeyFrame(0.50f, new Vector2(11, 6));
+
+                // 4
+                size1.InsertKeyFrame(0.75f, new Vector2(2, 8));
+                offset1.InsertKeyFrame(0.75f, new Vector2(3, 4));
+
+                size2.InsertKeyFrame(0.75f, new Vector2(2, 4));
+                offset2.InsertKeyFrame(0.75f, new Vector2(7, 6));
+
+                offset3.InsertKeyFrame(0.75f, new Vector2(11, 4));
+
+                // 1
+                size1.InsertKeyFrame(1.0f, new Vector2(2, 4));
+                offset1.InsertKeyFrame(1.0f, new Vector2(3, 6));
+
+                size2.InsertKeyFrame(1.0f, new Vector2(2, 10));
+                offset2.InsertKeyFrame(1.0f, new Vector2(7, 3));
+
+                offset3.InsertKeyFrame(1.0f, new Vector2(11, 6));
+
+                size1.IterationBehavior = AnimationIterationBehavior.Forever;
+                size1.Duration *= 8;
+                offset1.IterationBehavior = AnimationIterationBehavior.Forever;
+                offset1.Duration *= 8;
+                size2.IterationBehavior = AnimationIterationBehavior.Forever;
+                size2.Duration *= 8;
+                offset2.IterationBehavior = AnimationIterationBehavior.Forever;
+                offset2.Duration *= 8;
+                offset3.IterationBehavior = AnimationIterationBehavior.Forever;
+                offset3.Duration *= 8;
+
+                line1.StartAnimation("Size", size1);
+                line2.StartAnimation("Size", size2);
+                line3.StartAnimation("Size", size1);
+
+                line1.StartAnimation("Offset", offset1);
+                line2.StartAnimation("Offset", offset2);
+                line3.StartAnimation("Offset", offset3);
+
+                _size1 = size1;
+                _size2 = size2;
+                _offset1 = offset1;
+                _offset2 = offset2;
+                _offset3 = offset3;
+
+                ElementCompositionPreview.SetElementChildVisual(OnlineHeart, visual);
+            }
+            else
+            {
+                _size1 = null;
+                _size2 = null;
+                _offset1 = null;
+                _offset2 = null;
+                _offset3 = null;
+
+                ElementCompositionPreview.SetElementChildVisual(OnlineHeart, null);
+            }
         }
 
         private void Update(Chat chat, ChatList chatList)
@@ -443,12 +613,15 @@ namespace Unigram.Controls.Cells
             UpdateNotificationSettings(chat);
             UpdateChatActions(chat, _protoService.GetChatActions(chat.Id));
 
-            var user = _protoService.GetUser(chat);
-            if (user != null && user.Type is UserTypeRegular && user.Id != _protoService.Options.MyId && user.Id != 777000)
+            if (_protoService.TryGetUser(chat, out User user) && user.Type is UserTypeRegular && user.Id != _protoService.Options.MyId && user.Id != 777000)
             {
                 UpdateUserStatus(chat, user.Status);
             }
-            else
+            else if (_protoService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
+            {
+                UpdateOnlineBadge(supergroup.HasActiveCall, true);
+            }
+            else if (OnlineBadge != null)
             {
                 OnlineBadge.Visibility = Visibility.Collapsed;
             }
@@ -1058,8 +1231,10 @@ namespace Unigram.Controls.Cells
                 _container.IsVisible = false;
             }
 
-            _onlineBadge.Opacity = online ? 1 : 0;
-            _onlineBadge.Scale = new Vector3(online ? 1 : 0);
+            if (online)
+            {
+                FindName(nameof(OnlineBadge));
+            }
         }
 
 
