@@ -920,6 +920,8 @@ namespace Unigram.Common
                 case MessageContactRegistered _:
                 case MessageCustomServiceAction _:
                 case MessageGameScore _:
+                case MessageGroupCall _:
+                case MessageInviteGroupCallMembers _:
                 case MessageProximityAlertTriggered _:
                 case MessagePassportDataSent _:
                 case MessagePaymentSuccessful _:

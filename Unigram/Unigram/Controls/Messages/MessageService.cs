@@ -73,6 +73,10 @@ namespace Unigram.Controls.Messages
                     return UpdateCustomServiceAction(message, customServiceAction, active);
                 case MessageGameScore gameScore:
                     return UpdateGameScore(message, gameScore, active);
+                case MessageGroupCall groupCall:
+                    return UpdateGroupCall(message, groupCall, active);
+                case MessageInviteGroupCallMembers inviteGroupCallMembers:
+                    return UpdateInviteGroupCallMembers(message, inviteGroupCallMembers, active);
                 case MessageProximityAlertTriggered proximityAlertTriggered:
                     return UpdateProximityAlertTriggered(message, proximityAlertTriggered, active);
                 case MessagePassportDataSent passportDataSent:
@@ -795,6 +799,75 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
+        private static (string, IList<TextEntity>) UpdateGroupCall(MessageViewModel message, MessageGroupCall groupCall, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
+            {
+                //if (senderUser.Id == message.ProtoService.Options.MyId)
+                //{
+                //    content = Strings.Resources.ActionGroupCallStarted;
+                //}
+                //else
+                {
+                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallStarted, "un1", senderUser, ref entities);
+                }
+            }
+            else if (message.ProtoService.TryGetChat(message.Sender, out Chat senderChat))
+            {
+                content = ReplaceWithLink(Strings.Resources.ActionGroupCallStarted, "un1", senderChat, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateInviteGroupCallMembers(MessageViewModel message, MessageInviteGroupCallMembers inviteGroupCallMembers, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            int singleUserId = 0;
+            if (singleUserId == 0 && inviteGroupCallMembers.UserIds.Count == 1)
+            {
+                singleUserId = inviteGroupCallMembers.UserIds[0];
+            }
+
+            var fromUser = message.GetSender();
+
+            if (singleUserId != 0)
+            {
+                var whoUser = message.ProtoService.GetUser(singleUserId);
+                if (message.IsOutgoing)
+                {
+                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallYouInvited, "un2", whoUser, ref entities);
+                }
+                else if (singleUserId == message.ProtoService.Options.MyId)
+                {
+                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallInvitedYou, "un1", fromUser, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallInvited, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un2", whoUser, ref entities);
+                }
+            }
+            else
+            {
+                if (message.IsOutgoing)
+                {
+                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallYouInvited, "un2", inviteGroupCallMembers.UserIds, message.ProtoService, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallInvited, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un2", inviteGroupCallMembers.UserIds, message.ProtoService, ref entities);
+                }
+            }
+
+            return (content, entities);
+        }
 
         private static (string, IList<TextEntity>) UpdateProximityAlertTriggered(MessageViewModel message, MessageProximityAlertTriggered proximityAlertTriggered, bool active)
         {
