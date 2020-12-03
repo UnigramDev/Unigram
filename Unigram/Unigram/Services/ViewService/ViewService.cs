@@ -56,8 +56,8 @@ namespace Unigram.Services.ViewService
                     var preferences = ViewModePreferences.CreateDefault(viewMode);
                     preferences.CustomSize = new Size(width, height);
 
-                    await ApplicationViewSwitcher
-                    .TryShowAsViewModeAsync(newAppView.Id, viewMode, preferences);
+                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, viewMode, preferences);
+                    newAppView.TryResizeView(new Size(width, height));
 
                     return control;
                 }).ConfigureAwait(false);
@@ -65,6 +65,15 @@ namespace Unigram.Services.ViewService
             }
             else
             {
+                //if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
+                //{
+                //    try
+                //    {
+                //        ApplicationView.ClearPersistedState("Calls");
+                //    }
+                //    catch { }
+                //}
+
                 var newView = CoreApplication.CreateNewView();
                 var dispatcher = new DispatcherContext(newView.Dispatcher);
                 _windows[parameter] = dispatcher;
@@ -105,8 +114,9 @@ namespace Unigram.Services.ViewService
 
                     var preferences = ViewModePreferences.CreateDefault(viewMode);
                     preferences.CustomSize = new Size(width, height);
-
+                     
                     await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, viewMode, preferences);
+                    newAppView.TryResizeView(new Size(width, height));
 
                     return control;
                 }).ConfigureAwait(false);
@@ -146,6 +156,15 @@ namespace Unigram.Services.ViewService
             }
             else
             {
+                //if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
+                //{
+                //    try
+                //    {
+                //        ApplicationView.ClearPersistedState("Calls");
+                //    }
+                //    catch { }
+                //}
+
                 var newView = CoreApplication.CreateNewView();
                 var dispatcher = new DispatcherContext(newView.Dispatcher);
 
