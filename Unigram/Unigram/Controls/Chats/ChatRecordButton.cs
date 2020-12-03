@@ -60,6 +60,8 @@ namespace Unigram.Controls.Chats
             }
         }
 
+        public byte[] GetWaveform() => _recorder.GetWaveform();
+
         public ChatRecordButton()
         {
             DefaultStyleKey = typeof(ChatRecordButton);
@@ -80,9 +82,27 @@ namespace Unigram.Controls.Chats
             };
 
             _recorder = Recorder.Current;
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
             _recorder.RecordingStarted += Current_RecordingStarted;
             _recorder.RecordingStopped += Current_RecordingStopped;
             _recorder.RecordingFailed += Current_RecordingStopped;
+
+            _recorder.QuantumProcessed = amplitude => QuantumProcessed?.Invoke(this, amplitude);
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _recorder.RecordingStarted -= Current_RecordingStarted;
+            _recorder.RecordingStopped -= Current_RecordingStopped;
+            _recorder.RecordingFailed -= Current_RecordingStopped;
+
+            _recorder.QuantumProcessed = null;
         }
 
         private async void RecordAudioVideoRunnable()
@@ -150,6 +170,22 @@ namespace Unigram.Controls.Chats
                     RecordingLocked?.Invoke(this, EventArgs.Empty);
                 });
             }
+            else if (_recordingLocked && _recordingStopped)
+            {
+                if (recordInterfaceState == 3)
+                {
+                    return;
+                }
+                recordInterfaceState = 3;
+
+                this.BeginOnUIThread(() =>
+                {
+                    VisualStateManager.GoToState(this, "Locked", false);
+
+                    ClickMode = ClickMode.Press;
+                    RecordingStopped?.Invoke(this, EventArgs.Empty);
+                });
+            }
             else if (_recordingAudioVideo)
             {
                 if (recordInterfaceState == 1)
@@ -188,6 +224,7 @@ namespace Unigram.Controls.Chats
                 }
                 recordInterfaceState = 0;
 
+                _recordingStopped = false;
                 _recordingLocked = false;
 
                 this.BeginOnUIThread(() =>
@@ -269,6 +306,21 @@ namespace Unigram.Controls.Chats
             }
         }
 
+        public void Release()
+        {
+            if (_recordingLocked)
+            {
+                Logger.Debug(LogTarget.Recording, "Click mode: Release - Programmatic");
+
+                if (!_hasRecordVideo || _calledRecordRunnable)
+                {
+                    _recorder.Stop(ViewModel, false);
+                    _recordingAudioVideo = false;
+                    UpdateRecordingInterface();
+                }
+            }
+        }
+
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
             CapturePointer(e.Pointer);
@@ -277,31 +329,30 @@ namespace Unigram.Controls.Chats
 
         protected override void OnPointerReleased(PointerRoutedEventArgs e)
         {
-            base.OnPointerReleased(e);
             ReleasePointerCapture(e.Pointer);
 
             Logger.Debug(LogTarget.Recording, "OnPointerReleased");
 
             OnRelease();
+            base.OnPointerReleased(e);
         }
 
         protected override void OnPointerCanceled(PointerRoutedEventArgs e)
         {
-            base.OnPointerCanceled(e);
             ReleasePointerCapture(e.Pointer);
 
             Logger.Debug(LogTarget.Recording, "OnPointerCanceled");
 
             OnRelease();
+            base.OnPointerCanceled(e);
         }
 
         protected override void OnPointerCaptureLost(PointerRoutedEventArgs e)
         {
-            base.OnPointerCaptureLost(e);
-
             Logger.Debug(LogTarget.Recording, "OnPointerCaptureLost");
 
             OnRelease();
+            base.OnPointerCaptureLost(e);
         }
 
         private void OnRelease()
@@ -411,12 +462,15 @@ namespace Unigram.Controls.Chats
 
         private bool _recordingAudioVideo;
 
+        private bool _recordingStopped;
+
         private bool _recordingLocked;
         private bool _enqueuedLocking;
 
-        public void CancelRecording()
+        public void StopRecording(bool cancel)
         {
-            _recorder.Stop(null, true);
+            _recorder.Stop(null, cancel ? true : new bool?());
+            _recordingStopped = !cancel;
             _recordingAudioVideo = false;
             UpdateRecordingInterface();
         }
@@ -464,6 +518,8 @@ namespace Unigram.Controls.Chats
         public event EventHandler RecordingStopped;
         public event EventHandler RecordingLocked;
 
+        public event EventHandler<float> QuantumProcessed;
+
         public class Recorder
         {
             public event EventHandler RecordingFailed;
@@ -471,7 +527,7 @@ namespace Unigram.Controls.Chats
             public event EventHandler RecordingStopped;
             public event EventHandler RecordingTooShort;
 
-            public event EventHandler<float[]> QuantumProcessed;
+            public Action<float> QuantumProcessed;
 
             [ThreadStatic]
             private static Recorder _current;
@@ -553,7 +609,7 @@ namespace Unigram.Controls.Chats
 
                         Logger.Debug(LogTarget.Recording, "Devices initialized, starting");
 
-                        //await InitializeQuantumAsync();
+                        await InitializeQuantumAsync();
                         await _recorder.StartAsync();
 
                         Logger.Debug(LogTarget.Recording, "Recording started at " + DateTime.Now);
@@ -587,8 +643,6 @@ namespace Unigram.Controls.Chats
 
             public async Task InitializeQuantumAsync()
             {
-                var test = _recorder.m_mediaCapture.FrameSources.ToArray();
-
                 var frameSource = _recorder.m_mediaCapture.FrameSources.FirstOrDefault(x => x.Value.Info.MediaStreamType == MediaStreamType.Audio);
                 if (frameSource.Value == null)
                 {
@@ -624,9 +678,16 @@ namespace Unigram.Controls.Chats
                 _reader = mediaFrameReader;
             }
 
-            private const int BUFFER_SIZE = 1024;
-            private const int MAX_BUFFER_SIZE = BUFFER_SIZE * 8;
-            private readonly FastFourierTransform _fft = new FastFourierTransform(BUFFER_SIZE, 48000);
+            private float[] _compressedWaveformSamples = new float[200];
+            private int _compressedWaveformPosition = 0;
+
+            private float _currentPeak;
+            private int _currentPeakCount;
+            private int _peakCompressionFactor = 1;
+
+            private float _micLevelPeak = 0;
+            private int _micLevelPeakCount = 0;
+
             private int _lastUpdateTime;
 
             [ComImport]
@@ -660,78 +721,119 @@ namespace Unigram.Controls.Chats
                 // Get the buffer from the AudioFrame
                 ((IMemoryBufferByteAccess)bufferReference).GetBuffer(out byte* buffer, out uint capacity);
 
-                if (capacity < BUFFER_SIZE /*> MAX_BUFFER_SIZE || len == 0*/)
-                {
-                    //audioUpdateHandler.removeCallbacksAndMessages(null);
-                    //audioVisualizerDelegate.onVisualizerUpdate(false, true, null);
-                    return;
-                    //                len = MAX_BUFFER_SIZE;
-                    //                byte[] bytes = new byte[BUFFER_SIZE];
-                    //                buffer.get(bytes);
-                    //                byteBuffer.put(bytes, 0, BUFFER_SIZE);
-                }
-                else
-                {
-                    //byteBuffer.put(buffer);
-                }
+                var samples = (float*)buffer;
+                var count = capacity / 4;
 
-                capacity = BUFFER_SIZE;
-
-                _fft.Forward((short*)buffer, BUFFER_SIZE);
-
-                float sum = 0;
-                for (int i = 0; i < capacity; i++)
+                for (int i = 0; i < count; i++)
                 {
-                    float r = _fft.SpectrumReal[i];
-                    float img = _fft.SpectrumImaginary[i];
-                    float peak = (float)MathF.Sqrt(r * r + img * img) / 30f;
-                    if (peak > 1f)
+                    var sample = samples[i];
+                    if (sample < 0)
                     {
-                        peak = 1f;
+                        sample = Math.Abs(sample);
                     }
-                    else if (peak < 0)
-                    {
-                        peak = 0;
-                    }
-                    sum += peak * peak;
-                }
-                float amplitude = MathF.Sqrt(sum / capacity);
 
-                float[] partsAmplitude = new float[7];
-                partsAmplitude[6] = amplitude;
-                if (amplitude < 0.4f)
-                {
-                    for (int k = 0; k < 7; k++)
-                    {
-                        partsAmplitude[k] = 0;
-                    }
-                }
-                else
-                {
-                    int part = (int)capacity / 6;
+                    _currentPeak = Math.Max(_currentPeak, sample);
+                    _currentPeakCount++;
 
-                    for (int k = 0; k < 6; k++)
+                    if (_currentPeakCount == _peakCompressionFactor)
                     {
-                        int start = part * k;
-                        float r = _fft.SpectrumReal[start];
-                        float img = _fft.SpectrumImaginary[start];
-                        partsAmplitude[k] = MathF.Sqrt(r * r + img * img) / 30f;
+                        _compressedWaveformSamples[_compressedWaveformPosition++] = _currentPeak;
 
-                        if (partsAmplitude[k] > 1f)
+                        _currentPeakCount = 0;
+
+                        if (_compressedWaveformPosition == _compressedWaveformSamples.Length)
                         {
-                            partsAmplitude[k] = 1f;
+                            for (int j = 0; j < _compressedWaveformSamples.Length / 2; j++)
+                            {
+                                _compressedWaveformSamples[j] = Math.Max(_compressedWaveformSamples[j * 2 + 0], _compressedWaveformSamples[j * 2 + 1]);
+                            }
+
+                            _compressedWaveformPosition = _compressedWaveformSamples.Length / 2;
+                            _peakCompressionFactor *= 2;
                         }
-                        else if (partsAmplitude[k] < 0)
-                        {
-                            partsAmplitude[k] = 0;
-                        }
+
+                    }
+
+                    if (_micLevelPeak < sample)
+                    {
+                        _micLevelPeak = sample;
+                    }
+
+                    _micLevelPeakCount += 1;
+
+                    if (_micLevelPeakCount >= 1200)
+                    {
+                        QuantumProcessed?.Invoke(_micLevelPeak);
+
+                        _micLevelPeak = 0;
+                        _micLevelPeakCount = 0;
                     }
                 }
-
-                QuantumProcessed?.Invoke(this, partsAmplitude);
             }
 
-            public async void Stop(DialogViewModel viewModel, bool cancel)
+            public unsafe byte[] GetWaveform()
+            {
+                var count = _compressedWaveformPosition;
+                var scaledSamples = new short[100];
+
+                for (int i = 0; i < count; i++)
+                {
+                    var sample = _compressedWaveformSamples[i] * short.MaxValue;
+                    var index = i * 100 / count;
+                    if (scaledSamples[index] < sample)
+                    {
+                        scaledSamples[index] = (short)sample;
+                    }
+                }
+
+                short peak = 0;
+                long sumSamples = 0;
+                for (int i = 0; i < 100; i++)
+                {
+                    var sample = scaledSamples[i];
+                    if (peak < sample)
+                    {
+                        peak = sample;
+                    }
+                    sumSamples += sample;
+                }
+
+                var calculatedPeak = (ushort)((double)sumSamples * 1.8 / 100.0);
+                if (calculatedPeak < 2500)
+                {
+                    calculatedPeak = 2500;
+                }
+
+                for (int i = 0; i < 100; i++)
+                {
+                    uint sample = (ushort)scaledSamples[i];
+                    var minPeak = Math.Min(sample, calculatedPeak);
+                    var resultPeak = minPeak * 31 / calculatedPeak;
+                    scaledSamples[i] = (short)(/*clamping:*/ Math.Min(31, resultPeak));
+                }
+
+                var bitstreamLength = scaledSamples.Length * 5 / 8 + 1;
+                var result = new byte[bitstreamLength];
+
+                fixed (byte* data = result)
+                {
+                    static void set_bits(byte* bytes, int bitOffset, int value)
+                    {
+                        bytes += bitOffset / 8;
+                        bitOffset %= 8;
+                        *((int*)bytes) |= (value << bitOffset);
+                    }
+
+                    for (int i = 0; i < scaledSamples.Length; i++)
+                    {
+                        set_bits(data, i * 5, (short)scaledSamples[i] & 31);
+                    }
+                }
+
+                return result;
+            }
+
+            public async void Stop(DialogViewModel viewModel, bool? cancel)
             {
                 Logger.Debug(LogTarget.Recording, "Stop invoked, cancel: " + cancel);
 
@@ -764,7 +866,7 @@ namespace Unigram.Controls.Chats
                         reader.FrameArrived -= OnAudioFrameArrived;
                         reader.Dispose();
 
-                        QuantumProcessed?.Invoke(this, null);
+                        QuantumProcessed?.Invoke(0);
                     }
 
                     Logger.Debug(LogTarget.Recording, "stopping recorder, elapsed " + elapsed);
@@ -773,7 +875,7 @@ namespace Unigram.Controls.Chats
 
                     Logger.Debug(LogTarget.Recording, "recorder stopped");
 
-                    if (cancel || elapsed.TotalMilliseconds < 700)
+                    if (cancel == true || elapsed.TotalMilliseconds < 700)
                     {
                         try
                         {
@@ -792,7 +894,10 @@ namespace Unigram.Controls.Chats
                     {
                         Logger.Debug(LogTarget.Recording, "sending recorded file");
 
-                        Send(viewModel, mode, chat, file, recorder._mirroringPreview, (int)elapsed.TotalSeconds);
+                        if (cancel == false)
+                        {
+                            Send(viewModel, mode, chat, file, recorder._mirroringPreview, (int)elapsed.TotalSeconds);
+                        }
                     }
 
                     _recorder = null;
@@ -901,8 +1006,8 @@ namespace Unigram.Controls.Chats
                 private void InitializeSettings()
                 {
                     settings = new MediaCaptureInitializationSettings();
-                    settings.MediaCategory = MediaCategory.Speech;
-                    settings.AudioProcessing = m_isVideo ? AudioProcessing.Default : AudioProcessing.Raw;
+                    settings.MediaCategory = MediaCategory.Media;
+                    settings.AudioProcessing = AudioProcessing.Default;
                     settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
                     settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
                     settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;

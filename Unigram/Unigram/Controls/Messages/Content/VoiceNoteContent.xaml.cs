@@ -10,6 +10,7 @@ using Windows.Media.Playback;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -39,7 +40,7 @@ namespace Unigram.Controls.Messages.Content
 
             message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
             message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.QuantumChanged -= OnPositionChanged;
+            message.PlaybackService.QuantumProcessed -= OnPositionChanged;
         }
 
         public void UpdateMessage(MessageViewModel message)
@@ -97,18 +98,18 @@ namespace Unigram.Controls.Messages.Content
             this.BeginOnUIThread(() => UpdateFile(_message, voiceNote.Voice));
         }
 
-        private VoiceBlobDrawable _drawable;
+        private Views.AvatarWavesDrawable _drawable;
 
-        private void OnPositionChanged(IPlaybackService sender, float[] args)
+        private void OnPositionChanged(IPlaybackService sender, float args)
         {
             this.BeginOnUIThread(UpdatePosition);
 
-            //var canvas = Canvas;
-            //if (canvas != null)
-            //{
-            //    _drawable ??= new VoiceBlobDrawable(canvas.Invalidate);
-            //    _drawable.SetWaveform(true, true, args);
-            //}
+            var canvas = Canvas;
+            if (canvas != null)
+            {
+                _drawable ??= new Views.AvatarWavesDrawable(false, false);
+                _drawable.SetAmplitude(args * 100, canvas);
+            }
         }
 
         private void UpdateDuration()
@@ -153,10 +154,10 @@ namespace Unigram.Controls.Messages.Content
                 Progress.Maximum = /*Slider.Maximum =*/ message.PlaybackService.Duration.TotalMilliseconds;
                 Progress.Value = /*Slider.Value =*/ message.PlaybackService.Position.TotalMilliseconds;
 
-                //if (Canvas == null)
-                //{
-                //    FindName(nameof(Canvas));
-                //}
+                if (Canvas == null)
+                {
+                    FindName(nameof(Canvas));
+                }
             }
         }
 
@@ -182,7 +183,7 @@ namespace Unigram.Controls.Messages.Content
         public void UpdateFile(MessageViewModel message, File file)
         {
             message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.QuantumChanged -= OnPositionChanged;
+            message.PlaybackService.QuantumProcessed -= OnPositionChanged;
 
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null)
@@ -226,27 +227,25 @@ namespace Unigram.Controls.Messages.Content
                     if (message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
                     {
                         //Button.Glyph = Icons.Pause;
+                        _drawable?.SetShowWaves(true);
                         Button.SetGlyph(file.Id, MessageContentState.Pause);
                     }
                     else
                     {
                         //Button.Glyph = Icons.Play;
+                        _drawable?.SetShowWaves(false);
                         Button.SetGlyph(file.Id, MessageContentState.Play);
                     }
 
                     UpdatePosition();
 
                     message.PlaybackService.PlaybackStateChanged += OnPlaybackStateChanged;
-                    message.PlaybackService.QuantumChanged += OnPositionChanged;
+                    message.PlaybackService.QuantumProcessed += OnPositionChanged;
                 }
                 else
                 {
-                    if (_drawable != null)
-                    {
-                        _drawable.SetWaveform(false, true, null);
-                    }
-
                     //Button.Glyph = Icons.Play;
+                    _drawable?.SetShowWaves(false);
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     UpdateDuration();
                 }
@@ -327,7 +326,12 @@ namespace Unigram.Controls.Messages.Content
 
         private void OnDraw(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasDrawEventArgs args)
         {
-            _drawable?.Draw(args.DrawingSession, 30, 30, false);
+            if (Border.Background is SolidColorBrush brush)
+            {
+                _drawable?.Update(brush.Color, false);
+            }
+
+            _drawable?.Draw(args.DrawingSession, 36, 36, sender);
         }
     }
 

@@ -978,28 +978,6 @@
                     </controls:GlyphButton>
                 </Border>
 
-                <Border HorizontalAlignment="Left" Margin="0,0,48,0" Grid.ColumnSpan="4" Grid.Row="1">
-                    <StackPanel x:Name="ElapsedPanel" SizeChanged="ElapsedPanel_SizeChanged" Orientation="Horizontal">
-                        <Ellipse Fill="Red" Width="12" Height="12" Margin="12,0,8,0"/>
-                        <TextBlock x:Name="ElapsedLabel" Text="0:00,00" Margin="0,0,0,1" Width="64" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-
-                <Border HorizontalAlignment="Right" Margin="0,0,84,0" Grid.ColumnSpan="4" Grid.Row="1">
-                    <StackPanel x:Name="SlidePanel" SizeChanged="SlidePanel_SizeChanged" Orientation="Horizontal">
-                        <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Glyph="&#xE0E2;" FontSize="12" Margin="0,1,4,0"/>
-                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="{CustomResource SlideToCancel}" VerticalAlignment="Center" Margin="0,0,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    </StackPanel>
-                </Border>
-
-                <HyperlinkButton x:Name="ButtonCancelRecording"
-                                 Click="ButtonCancelRecording_Click"
-                                 Content="{CustomResource Cancel}"
-                                 HorizontalAlignment="Center"
-                                 Visibility="Collapsed"
-                                 Grid.ColumnSpan="4"
-                                 Grid.Row="1"/>
-
                 <Grid x:Name="ButtonsPanel" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -1095,6 +1073,7 @@
                             RecordingStarted="VoiceButton_RecordingStarted"
                             RecordingStopped="VoiceButton_RecordingStopped"
                             RecordingLocked="VoiceButton_RecordingLocked"
+                            QuantumProcessed="VoiceButton_QuantumProcessed"
                             ManipulationDelta="VoiceButton_ManipulationDelta"
                             ManipulationMode="TranslateX,TranslateY"/>
                     </Grid>
@@ -1135,34 +1114,104 @@
             </Grid>
         </ContentControl>
 
-        <Border x:Name="ChatRecord" Margin="12,0,12,8" IsHitTestVisible="False" Grid.Row="3">
+        <Grid x:Name="ChatRecord" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,0,12,8" Visibility="Collapsed" Grid.Row="3">
+            <Grid VerticalAlignment="Bottom" Height="{StaticResource TelegramToolBarHeight}">
+
+                <Border HorizontalAlignment="Left" Margin="0,0,48,0" Grid.ColumnSpan="4" Grid.Row="1">
+                    <Grid x:Name="ElapsedPanel" SizeChanged="ElapsedPanel_SizeChanged">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Ellipse Fill="Red" Width="12" Height="12" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="ElapsedLabel" Text="0:00,00" Margin="0,0,0,1" Width="64" VerticalAlignment="Center" Grid.Column="1"/>
+                    </Grid>
+                </Border>
+
+                <Border HorizontalAlignment="Right" Margin="0,0,84,0" Grid.ColumnSpan="4" Grid.Row="1">
+                    <StackPanel x:Name="SlidePanel" SizeChanged="SlidePanel_SizeChanged" Orientation="Horizontal">
+                        <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Glyph="&#xE0E2;" FontSize="12" Margin="0,1,4,0"/>
+                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" Text="{CustomResource SlideToCancel}" VerticalAlignment="Center" Margin="0,0,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </StackPanel>
+                </Border>
+
+                <HyperlinkButton
+                    x:Name="ButtonCancelRecording"
+                    Click="ButtonCancelRecording_Click"
+                    Content="{CustomResource Cancel}"
+                    HorizontalAlignment="Center"
+                    Visibility="Collapsed"
+                    Grid.ColumnSpan="4"
+                    Grid.Row="1"/>
+
+                <controls:ProgressVoice x:Name="Poggers" x:Load="False" Visibility="Collapsed">
+                    <controls:ProgressVoice.Style>
+                        <Style TargetType="controls:ProgressVoice">
+                            <Setter Property="Foreground" Value="{ThemeResource MessageHeaderBorderBrush}" />
+                            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
+                            <Setter Property="BorderThickness" Value="{ThemeResource ProgressBarBorderThemeThickness}" />
+                            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
+                            <Setter Property="Maximum" Value="100" />
+                            <Setter Property="MinHeight" Value="{ThemeResource ProgressBarThemeMinHeight}" />
+                            <Setter Property="IsTabStop" Value="False" />
+                            <Setter Property="VerticalAlignment" Value="Stretch" />
+                            <!--<Setter Property="Width" Value="209"/>-->
+                            <Setter Property="MinWidth" Value="142"/>
+                            <Setter Property="Margin" Value="0,0,0,2"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="controls:ProgressVoice">
+                                        <Grid>
+                                            <Path x:Name="HorizontalTrackRect"
+                                  Margin="{TemplateBinding Padding}"
+                                  Fill="{TemplateBinding Background}"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  HorizontalAlignment="Stretch" />
+                                            <Path x:Name="ProgressBarIndicator"
+                                  Margin="{TemplateBinding Padding}"
+                                  Fill="{TemplateBinding Foreground}"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  HorizontalAlignment="Left" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </controls:ProgressVoice.Style>
+                </controls:ProgressVoice>
+            </Grid>
             <Border Width="120" Height="240" Margin="-36,-156,-36,-36" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <Popup x:Name="ChatRecordPopup" contract8Present:ShouldConstrainToRootBounds="False">
                     <Border Height="240">
-                        <Grid x:Name="Ellipse" Width="120" Height="120" VerticalAlignment="Bottom" IsHitTestVisible="False">
+                        <Grid x:Name="Ellipse" Width="120" Height="120" VerticalAlignment="Bottom">
                             <xaml:CanvasControl
                                 x:Name="ChatRecordCanvas"
                                 Draw="ChatRecordCanvas_Draw"
                                 Width="120"
                                 Height="120"/>
-                            <Border
+                            <Grid
                                 CornerRadius="40"
                                 Width="80"
-                                Height="80"
-                                Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+                                Height="80">
                                 <TextBlock
-                                        x:Name="ChatRecordGlyph"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="{StaticResource GlyphLargeFontSize}"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Foreground="White"/>
-                            </Border>
+                                    x:Name="ChatRecordGlyph"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    FontSize="{StaticResource GlyphLargeFontSize}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="White"/>
+                                <Button
+                                    Click="ChatRecordLocked_Click"
+                                    Style="{StaticResource EmptyButtonStyle}"
+                                    Opacity="0"/>
+                            </Grid>
                         </Grid>
                     </Border>
                 </Popup>
             </Border>
-        </Border>
+        </Grid>
 
         <Grid x:Name="ChatFooter" Margin="12,0,12,8" CornerRadius="15" Grid.Row="3">
             <chats:ChatBottomButton

@@ -56,14 +56,14 @@
     <xaml:CanvasControl
         x:Name="Canvas"
         x:Load="False"
-        Width="60"
-        Height="60"
-        Margin="-6"
+        Width="72"
+        Height="72"
+        Margin="-12"
         VerticalAlignment="Top"
         HorizontalAlignment="Left"
         Draw="OnDraw"/>
 
-    <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+    <Border x:Name="Border" Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
         <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource InlineFileButtonStyle}"/>
     </Border>
     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">

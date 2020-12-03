@@ -77,7 +77,6 @@ namespace Unigram.Views
         private const double SIDEBAR_MIN_WIDTH = 380 + 320;
 
         private readonly DispatcherTimer _elapsedTimer;
-        private readonly Visual _messageVisual;
         private readonly Visual _ellipseVisual;
         private readonly Visual _elapsedVisual;
         private readonly Visual _slideVisual;
@@ -168,11 +167,10 @@ namespace Unigram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
 
-            _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
             _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
             _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
             _slideVisual = ElementCompositionPreview.GetElementVisual(SlidePanel);
-            _recordVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
+            _recordVisual = ElementCompositionPreview.GetElementVisual(ChatRecord);
             _rootVisual = ElementCompositionPreview.GetElementVisual(TextArea);
             _compositor = _slideVisual.Compositor;
 
@@ -251,9 +249,8 @@ namespace Unigram.Views
             _textShadowVisual.IsVisible = false;
 
             //TextField.Language = Native.NativeUtils.GetCurrentCulture();
-            _drawable ??= new AvatarWavesDrawable();
-            _drawable.update((Color)App.Current.Resources["SystemAccentColor"]);
-            Controls.Chats.ChatRecordButton.Recorder.Current.QuantumProcessed += Current_QuantumProcessed;
+            _drawable ??= new AvatarWavesDrawable(true, true);
+            _drawable.Update((Color)App.Current.Resources["SystemAccentColor"], true);
         }
 
         private void InitializeAutomation()
@@ -852,7 +849,7 @@ namespace Unigram.Views
             }
             else if (args.VirtualKey == Windows.System.VirtualKey.D && ctrl && !alt && !shift)
             {
-                btnVoiceMessage.CancelRecording();
+                btnVoiceMessage.StopRecording(true);
                 args.Handled = true;
             }
             else if (args.VirtualKey == Windows.System.VirtualKey.Escape && !ctrl && !alt && !shift)
@@ -2425,6 +2422,8 @@ namespace Unigram.Views
         private void VoiceButton_RecordingStarted(object sender, EventArgs e)
         {
             // TODO: video message
+            ChatRecord.Visibility = Visibility.Visible;
+
             ChatRecordPopup.IsOpen = true;
             ChatRecordGlyph.Text = Icons.MicOnFilled;
 
@@ -2434,13 +2433,11 @@ namespace Unigram.Views
             _slideVisual.Opacity = 1;
 
             var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-
-            var messageAnimation = _compositor.CreateScalarKeyFrameAnimation();
-            messageAnimation.InsertKeyFrame(0, 0);
-            messageAnimation.InsertKeyFrame(1, 48);
-            messageAnimation.Duration = TimeSpan.FromMilliseconds(300);
-
-            AttachTextAreaExpression();
+            batch.Completed += (s, args) =>
+            {
+                _elapsedTimer.Start();
+                AttachExpression();
+            };
 
             var slideAnimation = _compositor.CreateScalarKeyFrameAnimation();
             slideAnimation.InsertKeyFrame(0, slideWidth + 36);
@@ -2452,23 +2449,20 @@ namespace Unigram.Views
             elapsedAnimation.InsertKeyFrame(1, 0);
             elapsedAnimation.Duration = TimeSpan.FromMilliseconds(300);
 
+            var visibleAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            visibleAnimation.InsertKeyFrame(0, 0);
+            visibleAnimation.InsertKeyFrame(1, 1);
+
             var ellipseAnimation = _compositor.CreateVector3KeyFrameAnimation();
             ellipseAnimation.InsertKeyFrame(0, new Vector3(56f / 96f));
             ellipseAnimation.InsertKeyFrame(1, new Vector3(1));
             ellipseAnimation.Duration = TimeSpan.FromMilliseconds(200);
 
-            _messageVisual.StartAnimation("Offset.Y", messageAnimation);
             _slideVisual.StartAnimation("Offset.X", slideAnimation);
             _elapsedVisual.StartAnimation("Offset.X", elapsedAnimation);
+            _recordVisual.StartAnimation("Opacity", visibleAnimation);
             _ellipseVisual.StartAnimation("Scale", ellipseAnimation);
 
-            batch.Completed += (s, args) =>
-            {
-                _elapsedTimer.Start();
-
-                AttachExpression();
-                //DetachTextAreaExpression();
-            };
             batch.End();
 
             ViewModel.ChatActionManager.SetTyping(btnVoiceMessage.IsChecked.Value ? (ChatAction)new ChatActionRecordingVideoNote() : new ChatActionRecordingVoiceNote());
@@ -2476,36 +2470,28 @@ namespace Unigram.Views
 
         private void VoiceButton_RecordingStopped(object sender, EventArgs e)
         {
+            //if (btnVoiceMessage.IsLocked)
+            //{
+            //    Poggers.Visibility = Visibility.Visible;
+            //    Poggers.UpdateWaveform(btnVoiceMessage.GetWaveform());
+            //    return;
+            //}
+
             AttachExpression();
-            AttachTextAreaExpression();
 
             var slidePosition = (float)(LayoutRoot.ActualWidth - 48 - 36);
             var difference = (float)(slidePosition - ElapsedPanel.ActualWidth);
 
             var batch = _compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-
-            var slideAnimation = _compositor.CreateScalarKeyFrameAnimation();
-            slideAnimation.InsertKeyFrame(0, _slideVisual.Offset.X);
-            slideAnimation.InsertKeyFrame(1, -slidePosition);
-            slideAnimation.Duration = TimeSpan.FromMilliseconds(200);
-
-            var messageAnimation = _compositor.CreateScalarKeyFrameAnimation();
-            messageAnimation.InsertKeyFrame(0, 48);
-            messageAnimation.InsertKeyFrame(1, 0);
-            messageAnimation.Duration = TimeSpan.FromMilliseconds(200);
-
-            _slideVisual.StartAnimation("Offset.X", slideAnimation);
-            _messageVisual.StartAnimation("Offset.Y", messageAnimation);
-
             batch.Completed += (s, args) =>
             {
                 _elapsedTimer.Stop();
 
                 DetachExpression();
-                //DetachTextAreaExpression();
 
                 ChatRecordPopup.IsOpen = false;
 
+                ChatRecord.Visibility = Visibility.Collapsed;
                 ButtonCancelRecording.Visibility = Visibility.Collapsed;
                 ElapsedLabel.Text = "0:00,0";
 
@@ -2520,11 +2506,24 @@ namespace Unigram.Views
 
                 _elapsedVisual.Offset = point;
 
-                _recordVisual.Properties.TryGetVector3("Translation", out point);
+                _ellipseVisual.Properties.TryGetVector3("Translation", out point);
                 point.Y = 0;
 
-                _recordVisual.Properties.InsertVector3("Translation", point);
+                _ellipseVisual.Properties.InsertVector3("Translation", point);
             };
+
+            var slideAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            slideAnimation.InsertKeyFrame(0, _slideVisual.Offset.X);
+            slideAnimation.InsertKeyFrame(1, -slidePosition);
+            slideAnimation.Duration = TimeSpan.FromMilliseconds(200);
+
+            var visibleAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            visibleAnimation.InsertKeyFrame(0, 1);
+            visibleAnimation.InsertKeyFrame(1, 0);
+
+            _slideVisual.StartAnimation("Offset.X", slideAnimation);
+            _recordVisual.StartAnimation("Opacity", visibleAnimation);
+
             batch.End();
 
             ViewModel.ChatActionManager.CancelTyping();
@@ -2542,7 +2541,7 @@ namespace Unigram.Views
             ellipseAnimation.InsertKeyFrame(0, -57);
             ellipseAnimation.InsertKeyFrame(1, 0);
 
-            _recordVisual.StartAnimation("Translation.Y", ellipseAnimation);
+            _ellipseVisual.StartAnimation("Translation.Y", ellipseAnimation);
 
             ButtonCancelRecording.Visibility = Visibility.Visible;
             btnVoiceMessage.Focus(FocusState.Programmatic);
@@ -2564,10 +2563,10 @@ namespace Unigram.Views
 
                 _slideVisual.Offset = point;
 
-                _recordVisual.Properties.TryGetVector3("Translation", out point);
+                _ellipseVisual.Properties.TryGetVector3("Translation", out point);
                 point.Y = 0;
 
-                _recordVisual.Properties.InsertVector3("Translation", point);
+                _ellipseVisual.Properties.InsertVector3("Translation", point);
 
                 return;
             }
@@ -2581,14 +2580,14 @@ namespace Unigram.Views
             if (point.X < -80)
             {
                 e.Complete();
-                btnVoiceMessage.CancelRecording();
+                btnVoiceMessage.StopRecording(true);
                 return;
             }
 
-            _recordVisual.Properties.TryGetVector3("Translation", out point);
+            _ellipseVisual.Properties.TryGetVector3("Translation", out point);
             point.Y = Math.Min(0, cumulative.Y);
 
-            _recordVisual.Properties.InsertVector3("Translation", point);
+            _ellipseVisual.Properties.InsertVector3("Translation", point);
 
             if (point.Y < -120)
             {
@@ -2599,7 +2598,7 @@ namespace Unigram.Views
 
         private void ButtonCancelRecording_Click(object sender, RoutedEventArgs e)
         {
-            btnVoiceMessage.CancelRecording();
+            btnVoiceMessage.StopRecording(true);
         }
 
         private void AttachExpression()
@@ -2609,7 +2608,7 @@ namespace Unigram.Views
             elapsedExpression.SetReferenceParameter("elapsed", _elapsedVisual);
             elapsedExpression.SetReferenceParameter("root", _rootVisual);
 
-            var ellipseExpression = _compositor.CreateExpressionAnimation("Vector3(max(0, 1 + slide.Offset.X / (root.Size.X - 48 - 36)), max(0, 1 + slide.Offset.X / (root.Size.X - 48 - 36)), 1)");
+            var ellipseExpression = _compositor.CreateExpressionAnimation("Vector3(max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), 1)");
             ellipseExpression.SetReferenceParameter("slide", _slideVisual);
             ellipseExpression.SetReferenceParameter("elapsed", _elapsedVisual);
             ellipseExpression.SetReferenceParameter("root", _rootVisual);
@@ -2625,25 +2624,6 @@ namespace Unigram.Views
         {
             _elapsedVisual.StopAnimation("Offset.X");
             _ellipseVisual.StopAnimation("Scale");
-        }
-
-        private void AttachTextAreaExpression()
-        {
-            AttachTextAreaExpression(ButtonAttach);
-            AttachTextAreaExpression(SecondaryButtonsPanel);
-            AttachTextAreaExpression(ButtonStickers);
-            AttachTextAreaExpression(btnSendMessage);
-        }
-
-        private void AttachTextAreaExpression(FrameworkElement element)
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-
-            var expression = _compositor.CreateExpressionAnimation("visual.Offset.Y");
-            expression.SetReferenceParameter("visual", _messageVisual);
-
-            visual.StopAnimation("Offset.Y");
-            visual.StartAnimation("Offset.Y", expression);
         }
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
@@ -3727,7 +3707,7 @@ namespace Unigram.Views
             btnEdit.Radius = new CornerRadius(4, max, min, 4);
 
             ComposerHeaderCancel.Radius = new CornerRadius(4, min, 4, 4);
-            TextRoot.CornerRadius = ChatFooter.CornerRadius = new CornerRadius(radius);
+            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = new CornerRadius(radius);
 
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);
             ListAutocomplete.Padding = new Thickness(0, 0, 0, radius);
@@ -4374,18 +4354,20 @@ namespace Unigram.Views
 
         private AvatarWavesDrawable _drawable;
 
-        private void Current_QuantumProcessed(object sender, float[] e)
+        private void VoiceButton_QuantumProcessed(object sender, float amplitude)
         {
-            if (e != null)
-            {
-                _drawable ??= new AvatarWavesDrawable();
-                _drawable.setAmplitude(e[0] * 100, ChatRecordCanvas);
-            }
+            _drawable ??= new AvatarWavesDrawable(true, true);
+            _drawable.SetAmplitude(amplitude * 100, ChatRecordCanvas);
         }
 
         private void ChatRecordCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
-            _drawable.draw(args.DrawingSession, 60, 60, sender);
+            _drawable.Draw(args.DrawingSession, 60, 60, sender);
+        }
+
+        private void ChatRecordLocked_Click(object sender, RoutedEventArgs e)
+        {
+            btnVoiceMessage.Release();
         }
     }
 
@@ -4411,35 +4393,48 @@ namespace Unigram.Views
         float amplitude;
         float animateAmplitudeDiff;
         float animateToAmplitude;
+        private BlobDrawable buttonDrawable = new BlobDrawable(4);
         private BlobDrawable blobDrawable = new BlobDrawable(6);
         private BlobDrawable blobDrawable2 = new BlobDrawable(8);
         bool showWaves = true;
         float wavesEnter = 0.0f;
 
-        public AvatarWavesDrawable()
+        public AvatarWavesDrawable(bool large, bool button)
         {
-            this.blobDrawable.minRadius = 56; // 22.0f;
-            this.blobDrawable.maxRadius = 64; //28.0f;
-            this.blobDrawable2.minRadius = 52; // 22.0f;
-            this.blobDrawable2.maxRadius = 60; // 28.0f;
-            this.blobDrawable.generateBlob();
-            this.blobDrawable2.generateBlob();
+            if (button)
+            {
+                this.buttonDrawable.minRadius = large ? 36 : 20; // 22.0f;
+                this.buttonDrawable.maxRadius = large ? 40 : 24; //28.0f;
+                this.buttonDrawable.GenerateBlob();
+            }
+
+            this.blobDrawable.minRadius = large ? 56 : 32; // 22.0f;
+            this.blobDrawable.maxRadius = large ? 64 : 36; //28.0f;
+            this.blobDrawable2.minRadius = large ? 52 : 30; // 22.0f;
+            this.blobDrawable2.maxRadius = large ? 60 : 34; // 28.0f;
+            this.blobDrawable.GenerateBlob();
+            this.blobDrawable2.GenerateBlob();
             //this.blobDrawable.paint.setColor(ColorUtils.setAlphaComponent(Theme.getColor("voipgroup_speakingText"), 38));
             //this.blobDrawable2.paint.setColor(ColorUtils.setAlphaComponent(Theme.getColor("voipgroup_speakingText"), 38));
-            blobDrawable.paint.A = 76;
-            blobDrawable2.paint.A = 38;
+            blobDrawable.paint.A = large ? 38 : 61;
+            blobDrawable2.paint.A = large ? 38 : 61;
         }
 
-        public void update(Color color)
+        public void Update(Color color, bool large)
         {
+            if (buttonDrawable != null)
+            {
+                buttonDrawable.paint = color;
+            }
+
             blobDrawable.paint = color;
             blobDrawable2.paint = color;
 
-            blobDrawable.paint.A = 76;
-            blobDrawable2.paint.A = 38;
+            blobDrawable.paint.A = large ? 38 : 61;
+            blobDrawable2.paint.A = large ? 38 : 61;
         }
 
-        public void draw(CanvasDrawingSession canvas, float f, float f2, CanvasControl view)
+        public void Draw(CanvasDrawingSession canvas, float x, float y, CanvasControl view)
         {
             float f3 = this.animateToAmplitude;
             float f4 = this.amplitude;
@@ -4479,13 +4474,18 @@ namespace Unigram.Views
                         }
                         float interpolation = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
                         //canvas.scale(interpolation, interpolation, f, f2);
-                        canvas.Transform = Matrix3x2.CreateScale(interpolation, interpolation, new Vector2(f, f2));
-                        this.blobDrawable.update(this.amplitude, 1.0f);
-                        this.blobDrawable.draw(f, f2, canvas, this.blobDrawable.paint);
-                        this.blobDrawable2.update(this.amplitude, 1.0f);
-                        this.blobDrawable2.draw(f, f2, canvas, this.blobDrawable.paint);
-                        view.Invalidate();
+                        canvas.Transform = Matrix3x2.CreateScale(interpolation, interpolation, new Vector2(x, y));
+                        this.blobDrawable.Update(this.amplitude, 1.0f);
+                        this.blobDrawable.Draw(canvas, x, y);
+                        this.blobDrawable2.Update(this.amplitude, 1.0f);
+                        this.blobDrawable2.Draw(canvas, x, y);
                         canvas.Transform = Matrix3x2.Identity;
+                        if (buttonDrawable != null)
+                        {
+                            this.buttonDrawable.Update(this.amplitude, 1.0f);
+                            this.buttonDrawable.Draw(canvas, x, y);
+                        }
+                        view.Invalidate();
                         //canvas.restore();
                     }
                 }
@@ -4504,29 +4504,37 @@ namespace Unigram.Views
                 }
                 float interpolation2 = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
                 //canvas.scale(interpolation2, interpolation2, f, f2);
-                canvas.Transform = Matrix3x2.CreateScale(interpolation2, interpolation2, new Vector2(f, f2));
-                this.blobDrawable.update(this.amplitude, 1.0f);
-                this.blobDrawable.draw(f, f2, canvas, this.blobDrawable.paint);
-                this.blobDrawable2.update(this.amplitude, 1.0f);
-                this.blobDrawable2.draw(f, f2, canvas, this.blobDrawable.paint);
-                view.Invalidate();
+                canvas.Transform = Matrix3x2.CreateScale(interpolation2, interpolation2, new Vector2(x, y));
+                this.blobDrawable.Update(this.amplitude, 1.0f);
+                this.blobDrawable.Draw(canvas, x, y);
+                this.blobDrawable2.Update(this.amplitude, 1.0f);
+                this.blobDrawable2.Draw(canvas, x, y);
                 canvas.Transform = Matrix3x2.Identity;
+                if (buttonDrawable != null)
+                {
+                    this.buttonDrawable.Update(this.amplitude, 1.0f);
+                    this.buttonDrawable.Draw(canvas, x, y);
+                }
+                view.Invalidate();
                 //canvas.restore();
             }
         }
 
-        public float getAvatarScale()
+        public float AvatarScale
         {
-            float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
-            return (((this.amplitude * 0.2f) + 0.8f) * interpolation) + ((1.0f - interpolation) * 1.0f);
+            get
+            {
+                float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
+                return (((this.amplitude * 0.2f) + 0.8f) * interpolation) + ((1.0f - interpolation) * 1.0f);
+            }
         }
 
-        public void setShowWaves(bool z)
+        public void SetShowWaves(bool z)
         {
             this.showWaves = z;
         }
 
-        public void setAmplitude(double d, CanvasControl view)
+        public void SetAmplitude(double d, CanvasControl view)
         {
             float f = ((float)d) / 100.0f;
             float f2 = 0.0f;
@@ -4604,17 +4612,14 @@ namespace Unigram.Views
 
         private void generateBlob(float[] fArr, float[] fArr2, int i)
         {
-            float f = this.maxRadius;
-            float f2 = this.minRadius;
-            fArr[i] = f2 + (MathF.Abs((((float)this.random.Next()) % 100.0f) / 100.0f) * (f - f2));
+            fArr[i] = minRadius + (MathF.Abs((((float)this.random.Next()) % 100.0f) / 100.0f) * (maxRadius - minRadius));
             fArr2[i] = ((360.0f / this.N) * ((float)i)) + (((((float)this.random.Next()) % 100.0f) / 100.0f) * (360.0f / this.N) * 0.05f);
-            float[] fArr3 = this.speed;
             double abs = (double)(MathF.Abs(((float)this.random.Next()) % 100.0f) / 100.0f);
             Double.IsNaN(abs);
-            fArr3[i] = (float)((abs * 0.003d) + 0.017d);
+            speed[i] = (float)((abs * 0.003d) + 0.017d);
         }
 
-        public void update(float f, float f2)
+        public void Update(float f, float f2)
         {
             for (int i = 0; ((float)i) < this.N; i++)
             {
@@ -4630,7 +4635,7 @@ namespace Unigram.Views
             }
         }
 
-        public void draw(float x, float y, CanvasDrawingSession canvas, Color paint2)
+        public void Draw(CanvasDrawingSession canvas, float x, float y)
         {
             var path = new CanvasPathBuilder(canvas);
             int i = 0;
@@ -4678,7 +4683,7 @@ namespace Unigram.Views
                     //canvas.drawPath(this.path, paint2);
                     //canvas.restore();
                     path.EndFigure(CanvasFigureLoop.Closed);
-                    canvas.FillGeometry(CanvasGeometry.CreatePath(path), paint2);
+                    canvas.FillGeometry(CanvasGeometry.CreatePath(path), paint);
                     return;
                 }
             }
@@ -4686,16 +4691,10 @@ namespace Unigram.Views
 
         private Matrix3x2 SetRotate(float degree, float px, float py)
         {
-            return Matrix3x2.CreateRotation(ToRadians(degree), new Vector2(px, py));
+            return Matrix3x2.CreateRotation(MathFEx.ToRadians(degree), new Vector2(px, py));
         }
 
-        private float ToRadians(float degrees)
-        {
-            float radians = (MathF.PI / 180) * degrees;
-            return radians;
-        }
-
-        public void generateBlob()
+        public void GenerateBlob()
         {
             for (int i = 0; ((float)i) < this.N; i++)
             {
