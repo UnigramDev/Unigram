@@ -138,6 +138,8 @@ namespace Unigram.Converters
 
         public const string AppFolder = "\uF122";
 
+        public const string ChatBubblesQuestion = "\uE783";
+
         public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]
         {
             ChatFilterIcon.Cat,
