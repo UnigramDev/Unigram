@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Services;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -113,7 +114,15 @@ namespace Unigram.Controls
                 return;
             }
 
-            rectangle.RequestedTheme = RequestedTheme;
+            if (ActualTheme == ElementTheme.Dark)
+            {
+                rectangle.Fill = new SolidColorBrush(Color.FromArgb(0x99, 0x00, 0x00, 0x00));
+            }
+            else
+            {
+                rectangle.Fill = new SolidColorBrush(Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF));
+            }
+
             rectangle.PointerReleased += Rectangle_PointerReleased;
         }
 
