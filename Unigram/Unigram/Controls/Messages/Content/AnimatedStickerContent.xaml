@@ -20,6 +20,7 @@
         <controls:LottieView
             x:Name="Player"
             AutoPlay="False"
+            FirstFrameRendered="Player_FirstFrameRendered"
             Width="200"
             Height="200"/>
     </Grid>

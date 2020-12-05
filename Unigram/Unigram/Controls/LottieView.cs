@@ -174,6 +174,8 @@ namespace Unigram.Controls
             {
                 _hideThumbnail = false;
                 _thumbnail.Opacity = 0;
+
+                FirstFrameRendered?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -569,6 +571,8 @@ namespace Unigram.Controls
 
         public event EventHandler<double> PositionChanged;
         public event EventHandler<int> IndexChanged;
+
+        public event EventHandler FirstFrameRendered;
 
         public IReadOnlyDictionary<uint, uint> ColorReplacements { get; set; }
     }

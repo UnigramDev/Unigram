@@ -1,9 +1,11 @@
-﻿using Telegram.Td.Api;
+﻿using System.Collections.Generic;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
@@ -12,6 +14,8 @@ namespace Unigram.Controls.Messages.Content
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private CompositionAnimation _thumbnailShimmer;
 
         public StickerContent(MessageViewModel message)
         {
@@ -33,9 +37,9 @@ namespace Unigram.Controls.Messages.Content
             Texture.Source = null;
             Texture.Constraint = message;
 
-            if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
+            if (sticker.Contours.Count > 0 && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
-                UpdateThumbnail(message, sticker.Thumbnail, sticker.Thumbnail.File);
+                UpdateThumbnail(message, sticker.Contours);
             }
 
             UpdateFile(message, sticker.StickerValue);
@@ -51,12 +55,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (sticker.Thumbnail != null && sticker.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, sticker.Thumbnail, file);
-                return;
-            }
-            else if (sticker.StickerValue.Id != file.Id)
+            if (sticker.StickerValue.Id != file.Id)
             {
                 return;
             }
@@ -71,15 +70,12 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Thumbnail thumbnail, File file)
+        private void UpdateThumbnail(MessageViewModel message, IList<ClosedVectorPath> contours)
         {
-            if (file.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatWebp)
+            if (ApiInfo.CanUseDirectComposition)
             {
-                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetWebPFrame(file.Local.Path) };
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                message.ProtoService.DownloadFile(file.Id, 1);
+                _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, ActualWidth, out ShapeVisual visual);
+                ElementCompositionPreview.SetElementChildVisual(this, visual);
             }
         }
 

@@ -1,11 +1,15 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Collections.Generic;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -13,6 +17,8 @@ namespace Unigram.Controls.Messages.Content
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private CompositionAnimation _thumbnailShimmer;
 
         public DiceContent(MessageViewModel message)
         {
@@ -36,9 +42,9 @@ namespace Unigram.Controls.Messages.Content
             var state = dice.GetState();
             if (state is DiceStickersRegular regular)
             {
-                if (regular.Sticker.Thumbnail != null && !regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
+                if (regular.Sticker.Contours.Count > 0 && !regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
                 {
-                    UpdateThumbnail(message, regular.Sticker.Thumbnail.File);
+                    UpdateThumbnail(message, regular.Sticker.Contours);
                 }
             }
 
@@ -68,15 +74,10 @@ namespace Unigram.Controls.Messages.Content
 
             if (state is DiceStickersRegular regular)
             {
-                if (regular.Sticker.Thumbnail != null && regular.Sticker.Thumbnail.File.Id == file?.Id)
+                if (regular.Sticker.StickerValue.Id != file?.Id)
                 {
-                    UpdateThumbnail(message, file);
                     return;
                 }
-                //else if (regular.Sticker.StickerValue.Id != file?.Id)
-                //{
-                //    return;
-                //}
             }
 
             if (state.IsDownloadingCompleted())
@@ -111,16 +112,19 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, IList<ClosedVectorPath> contours)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (ApiInfo.CanUseDirectComposition)
             {
-                Player.Thumbnail = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, ActualWidth, out ShapeVisual visual);
+                ElementCompositionPreview.SetElementChildVisual(this, visual);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                message.ProtoService.DownloadFile(file.Id, 1);
-            }
+        }
+
+        private void Player_FirstFrameRendered(object sender, EventArgs e)
+        {
+            _thumbnailShimmer = null;
+            ElementCompositionPreview.SetElementChildVisual(Player, null);
         }
 
         private void DownloadFile(MessageViewModel message, DiceStickers stickers)

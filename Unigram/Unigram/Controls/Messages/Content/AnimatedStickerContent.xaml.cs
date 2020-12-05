@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -12,6 +15,8 @@ namespace Unigram.Controls.Messages.Content
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
+
+        private CompositionAnimation _thumbnailShimmer;
 
         public AnimatedStickerContent(MessageViewModel message)
         {
@@ -48,9 +53,9 @@ namespace Unigram.Controls.Messages.Content
                 Player.ColorReplacements = null;
             }
 
-            if (sticker.Thumbnail != null && !sticker.StickerValue.Local.IsDownloadingCompleted)
+            if (sticker.Contours.Count > 0 && !sticker.StickerValue.Local.IsDownloadingCompleted)
             {
-                UpdateThumbnail(message, sticker.Thumbnail.File);
+                UpdateThumbnail(message, sticker.Contours);
             }
 
             UpdateFile(message, sticker.StickerValue);
@@ -66,12 +71,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (sticker.Thumbnail != null && sticker.Thumbnail.File.Id == file.Id)
-            {
-                UpdateThumbnail(message, file);
-                return;
-            }
-            else if (sticker.StickerValue.Id != file.Id)
+            if (sticker.StickerValue.Id != file.Id)
             {
                 return;
             }
@@ -87,16 +87,19 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, File file)
+        private void UpdateThumbnail(MessageViewModel message, IList<ClosedVectorPath> contours)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (contours != null && ApiInfo.CanUseDirectComposition)
             {
-                Player.Thumbnail = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, Player.Width, out ShapeVisual visual);
+                ElementCompositionPreview.SetElementChildVisual(Player, visual);
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                message.ProtoService.DownloadFile(file.Id, 1);
-            }
+        }
+
+        private void Player_FirstFrameRendered(object sender, EventArgs e)
+        {
+            _thumbnailShimmer = null;
+            ElementCompositionPreview.SetElementChildVisual(Player, null);
         }
 
         public bool IsValid(MessageContent content, bool primary)

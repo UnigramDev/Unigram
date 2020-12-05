@@ -19,6 +19,7 @@
     <Grid x:Name="LayoutRoot">
         <controls:DiceView
             x:Name="Player"
+            FirstFrameRendered="Player_FirstFrameRendered"
             AutoPlay="False"
             Width="200"
             Height="200"/>
