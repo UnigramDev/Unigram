@@ -7,7 +7,9 @@ using Unigram.Controls;
 using Unigram.Native.Calls;
 using Unigram.Services;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -32,6 +34,7 @@ namespace Unigram.Views
         private readonly IEventAggregator _aggregator;
 
         private readonly IVoipService _service;
+        private VoipManager _manager;
 
         private VoipState _state;
 
@@ -99,11 +102,11 @@ namespace Unigram.Views
 
             #endregion
 
-            //var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            //titleBar.ButtonBackgroundColor = Colors.Transparent;
-            //titleBar.ButtonForegroundColor = Colors.White;
-            //titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            //titleBar.ButtonInactiveForegroundColor = Colors.White;
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonForegroundColor = Colors.White;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveForegroundColor = Colors.White;
 
             //Window.Current.SetTitleBar(BlurPanel);
 
@@ -268,15 +271,14 @@ namespace Unigram.Views
             _debugTimer.Stop();
             _durationTimer.Stop();
 
-            var controller = _service.Manager;
-            if (controller != null)
+            if (_manager != null)
             {
-                controller.StateUpdated -= OnStateUpdated;
-                controller.SignalBarsUpdated -= OnSignalBarsUpdated;
-                controller.RemoteMediaStateUpdated -= OnRemoteMediaStateUpdated;
+                _manager.StateUpdated -= OnStateUpdated;
+                _manager.SignalBarsUpdated -= OnSignalBarsUpdated;
+                _manager.RemoteMediaStateUpdated -= OnRemoteMediaStateUpdated;
 
-                controller.SetIncomingVideoOutput(null);
-                //_controller = null;
+                _manager.SetIncomingVideoOutput(null);
+                _manager = null;
             }
 
             var capturer = _service.Capturer;
@@ -293,18 +295,29 @@ namespace Unigram.Views
                 return;
             }
 
-            //_controller = controller;
+            if (_manager != null)
+            {
+                // Let's avoid duplicated events
+                _manager.StateUpdated -= OnStateUpdated;
+                _manager.SignalBarsUpdated -= OnSignalBarsUpdated;
+                _manager.RemoteMediaStateUpdated -= OnRemoteMediaStateUpdated;
 
-            controller.SetIncomingVideoOutput(BackgroundPanel);
+                if (_manager != controller)
+                {
+                    _manager.SetIncomingVideoOutput(BackgroundPanel);
+                }
+            }
 
-            // Let's avoid duplicated events
-            controller.StateUpdated -= OnStateUpdated;
-            controller.SignalBarsUpdated -= OnSignalBarsUpdated;
-            controller.RemoteMediaStateUpdated -= OnRemoteMediaStateUpdated;
+            if (_manager != controller)
+            {
+                controller.SetIncomingVideoOutput(BackgroundPanel);
+            }
 
             controller.StateUpdated += OnStateUpdated;
             controller.SignalBarsUpdated += OnSignalBarsUpdated;
             controller.RemoteMediaStateUpdated += OnRemoteMediaStateUpdated;
+
+            _manager = controller;
 
             //controller.SetMuteMicrophone(_isMuted);
 

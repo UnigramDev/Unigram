@@ -172,7 +172,7 @@
         </Grid>
 
         <controls:GlyphButton
-            Glyph="&#xE713;"
+            Glyph="&#xE9E9;"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="0,0,12,0"
