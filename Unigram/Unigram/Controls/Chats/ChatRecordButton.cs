@@ -657,12 +657,6 @@ namespace Unigram.Controls.Chats
                     return;
                 }
 
-                if (/*format.AudioEncodingProperties.ChannelCount != 1 ||*/ format.AudioEncodingProperties.SampleRate != 48000)
-                {
-                    Logger.Info("No audio frame source was found.");
-                    return;
-                }
-
                 var mediaFrameReader = await _recorder.m_mediaCapture.CreateFrameReaderAsync(frameSource.Value);
 
                 // Optionally set acquisition mode. Buffered is the default mode for audio.
