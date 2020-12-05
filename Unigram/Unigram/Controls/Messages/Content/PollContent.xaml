@@ -68,7 +68,6 @@
                     Text="&#xE916;"
                     FontSize="{StaticResource GlyphMediumFontSize}"
                     FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                     Foreground="{ThemeResource MessageSubtleForegroundBrush}"
                     TextLineBounds="Tight"
                     VerticalAlignment="Bottom"
