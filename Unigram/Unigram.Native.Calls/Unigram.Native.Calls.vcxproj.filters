@@ -63,6 +63,9 @@
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClCompile>
     <ClCompile Include="VoipVideoCapture.cpp" />
+    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -140,18 +143,21 @@
     </ClInclude>
     <ClInclude Include="VoipVideoCapture.h" />
     <ClInclude Include="VoipVideoRenderer.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="Unigram.Native.Calls.idl" />
-    <Midl Include="VoipServer.idl" />
     <Midl Include="VoipVideoCapture.idl" />
     <Midl Include="VoipDescriptor.idl" />
     <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />
     <Midl Include="SignalingDataEmittedEventArgs.idl" />
     <Midl Include="VoipManager.idl" />
+    <Midl Include="VoipGroupManager.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -170,6 +176,9 @@
     </Filter>
     <Filter Include="tgcalls\platform\tdesktop">
       <UniqueIdentifier>{e2fd9230-7dfa-417e-827c-ed7ae5504134}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\group">
+      <UniqueIdentifier>{c5de79dc-c96f-4804-97e3-f15f0e2f6d31}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

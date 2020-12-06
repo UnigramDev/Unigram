@@ -25,9 +25,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		winrt::Windows::Foundation::Collections::IVector<uint8_t> PersistentState();
 		void PersistentState(winrt::Windows::Foundation::Collections::IVector<uint8_t> value);
 
-		winrt::Windows::Foundation::Collections::IVector<VoipServer> m_servers{ nullptr };
-		winrt::Windows::Foundation::Collections::IVector<VoipServer> Servers();
-		void Servers(winrt::Windows::Foundation::Collections::IVector<VoipServer> value);
+		winrt::Windows::Foundation::Collections::IVector<Telegram::Td::Api::CallServer> m_servers{ nullptr };
+		winrt::Windows::Foundation::Collections::IVector<Telegram::Td::Api::CallServer> Servers();
+		void Servers(winrt::Windows::Foundation::Collections::IVector<Telegram::Td::Api::CallServer> value);
 
 		winrt::Windows::Foundation::Collections::IVector<uint8_t> m_encryptionKey{ nullptr };
 		winrt::Windows::Foundation::Collections::IVector<uint8_t> EncryptionKey();

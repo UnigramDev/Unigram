@@ -40,11 +40,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_persistentState = value;
 	}
 
-	winrt::Windows::Foundation::Collections::IVector<VoipServer> VoipDescriptor::Servers() {
+	winrt::Windows::Foundation::Collections::IVector<Telegram::Td::Api::CallServer> VoipDescriptor::Servers() {
 		return m_servers;
 	}
 
-	void VoipDescriptor::Servers(winrt::Windows::Foundation::Collections::IVector<VoipServer> value) {
+	void VoipDescriptor::Servers(winrt::Windows::Foundation::Collections::IVector<Telegram::Td::Api::CallServer> value) {
 		m_servers = value;
 	}
 

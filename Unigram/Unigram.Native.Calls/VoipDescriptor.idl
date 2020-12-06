@@ -1,4 +1,3 @@
-import "VoipServer.idl";
 import "VoipVideoCapture.idl";
 
 namespace Unigram.Native.Calls
@@ -11,7 +10,7 @@ namespace Unigram.Native.Calls
         Double InitializationTimeout;
         Double ReceiveTimeout;
         Windows.Foundation.Collections.IVector<byte> PersistentState;
-        Windows.Foundation.Collections.IVector<VoipServer> Servers;
+        Windows.Foundation.Collections.IVector<Telegram.Td.Api.CallServer> Servers;
         Windows.Foundation.Collections.IVector<byte> EncryptionKey;
         Boolean IsOutgoing;
         Boolean EnableP2p;

@@ -27,6 +27,10 @@
 #include "media/base/video_broadcaster.h"
 #include "rtc_base/critical_section.h"
 
+#include <winrt/Telegram.Td.Api.h>
+
+using namespace winrt::Telegram::Td::Api;
+
 namespace winrt::Unigram::Native::Calls::implementation
 {
 	VoipManager::VoipManager(VoipDescriptor descriptor)
@@ -38,14 +42,14 @@ namespace winrt::Unigram::Native::Calls::implementation
 	VoipManager::~VoipManager()
 	{
 		m_descriptor = nullptr;
-		m_capturer = nullptr;
-		m_impl = nullptr;
+		m_capturer.reset();
+		m_impl.reset();
 	}
 
 	void VoipManager::Close() {
 		m_descriptor = nullptr;
-		m_capturer = nullptr;
-		m_impl = nullptr;
+		m_capturer.reset();
+		m_impl.reset();
 	}
 
 	void VoipManager::Start()
@@ -103,23 +107,24 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		auto rtc = std::vector<tgcalls::RtcServer>();
 
-		for (const VoipServer& x : m_descriptor.Servers()) {
-			rtc.push_back(tgcalls::RtcServer{
-				string_to_unmanaged(x.Host()),
-				static_cast<uint16_t>(x.Port()),
-				string_to_unmanaged(x.Login()),
-				string_to_unmanaged(x.Password()),
-				x.IsTurn()
-				});
-		}
+		for (const CallServer& x : m_descriptor.Servers()) {
+			auto webRtc = x.Type().try_as<CallServerTypeWebrtc>();
 
-		auto a = 1 + 2;
+			if (webRtc != nullptr) {
+				rtc.push_back(tgcalls::RtcServer{
+					string_to_unmanaged(x.IpAddress()),
+					static_cast<uint16_t>(x.Port()),
+					string_to_unmanaged(webRtc.Username()),
+					string_to_unmanaged(webRtc.Password()),
+					webRtc.SupportsTurn()
+				});
+			}
+		}
 
 		if (m_descriptor.VideoCapture()) {
 			auto implementation = winrt::get_self<implementation::VoipVideoCapture>(m_descriptor.VideoCapture());
 			m_capturer = implementation->m_impl;
 		}
-
 
 		tgcalls::Descriptor descriptor = tgcalls::Descriptor
 		{
