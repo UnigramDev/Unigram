@@ -370,9 +370,9 @@ namespace Unigram.Controls.Cells
             if (actions != null && actions.Count > 0)
             {
                 TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _protoService.GetUser, out ChatAction commonAction);
-                TypingLabel.Visibility = Visibility.Visible;
-                BriefInfo.Visibility = Visibility.Collapsed;
-                Minithumbnail.Visibility = Visibility.Collapsed;
+                TypingLabel.Visibility = commonAction != null ? Visibility.Visible : Visibility.Collapsed;
+                BriefInfo.Visibility = commonAction != null ? Visibility.Collapsed : Visibility.Visible;
+                Minithumbnail.Visibility = commonAction != null ? Visibility.Collapsed : Visibility.Visible;
             }
             else
             {

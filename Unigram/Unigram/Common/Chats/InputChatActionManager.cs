@@ -7,6 +7,26 @@ namespace Unigram.Common.Chats
 {
     public class InputChatActionManager
     {
+        public static string GetSpeakingString(Chat chat, IDictionary<int, ChatAction> typingUsers)
+        {
+            var count = 0;
+
+            foreach (var pu in typingUsers)
+            {
+                if (pu.Value is ChatActionSpeakingInCall)
+                {
+                    count++;
+                }
+            }
+
+            if (count > 0)
+            {
+                return Locale.Declension("MembersTalking", count);
+            }
+
+            return string.Empty;
+        }
+
         public static string GetTypingString(Chat chat, IDictionary<int, ChatAction> typingUsers, Func<int, User> getUser, out ChatAction commonAction)
         {
             if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
@@ -27,8 +47,8 @@ namespace Unigram.Common.Chats
                         case ChatActionRecordingVoiceNote recordAudio:
                             commonAction = recordAudio;
                             return Strings.Resources.RecordingAudio;
-                        case ChatActionRecordingVideoNote recordRound:
-                        case ChatActionUploadingVideoNote uploadRound:
+                        case ChatActionRecordingVideoNote _:
+                        case ChatActionUploadingVideoNote _:
                             commonAction = new ChatActionRecordingVideoNote();
                             return Strings.Resources.RecordingRound;
                         //case TLSendMessageTypingAction typing:
@@ -42,10 +62,14 @@ namespace Unigram.Common.Chats
                         case ChatActionUploadingPhoto uploadPhoto:
                             commonAction = uploadPhoto;
                             return Strings.Resources.SendingPhoto;
-                        case ChatActionRecordingVideo recordVideo:
-                        case ChatActionUploadingVideo uploadVideo:
+                        case ChatActionRecordingVideo _:
+                        case ChatActionUploadingVideo _:
                             commonAction = new ChatActionUploadingVideo();
                             return Strings.Resources.SendingVideoStatus;
+
+                        case ChatActionSpeakingInCall _:
+                            commonAction = null;
+                            return string.Empty;
                     }
                 }
 
@@ -81,8 +105,8 @@ namespace Unigram.Common.Chats
                         case ChatActionRecordingVoiceNote recordAudio:
                             commonAction = recordAudio;
                             return string.Format(Strings.Resources.IsRecordingAudio, userName);
-                        case ChatActionRecordingVideoNote recordRound:
-                        case ChatActionUploadingVideoNote uploadRound:
+                        case ChatActionRecordingVideoNote _:
+                        case ChatActionUploadingVideoNote _:
                             commonAction = new ChatActionRecordingVideoNote();
                             return string.Format(Strings.Resources.IsSendingVideo, userName);
                         //case TLSendMessageTypingAction typing:
@@ -96,10 +120,14 @@ namespace Unigram.Common.Chats
                         case ChatActionUploadingPhoto uploadPhoto:
                             commonAction = uploadPhoto;
                             return string.Format(Strings.Resources.IsSendingPhoto, userName);
-                        case ChatActionRecordingVideo recordVideo:
-                        case ChatActionUploadingVideo uploadVideo:
+                        case ChatActionRecordingVideo _:
+                        case ChatActionUploadingVideo _:
                             commonAction = new ChatActionUploadingVideo();
                             return string.Format(Strings.Resources.IsSendingVideo, userName);
+
+                        case ChatActionSpeakingInCall _:
+                            commonAction = null;
+                            return string.Empty;
                     }
                 }
 
@@ -110,16 +138,23 @@ namespace Unigram.Common.Chats
             {
 
                 var count = 0;
+                var total = 0;
+
                 var label = string.Empty;
                 foreach (var pu in typingUsers)
                 {
+                    if (pu.Value is ChatActionSpeakingInCall)
+                    {
+                        continue;
+                    }
+
                     var user = getUser.Invoke(pu.Key);
                     if (user == null)
                     {
 
                     }
 
-                    if (user != null)
+                    if (user != null && count < 2)
                     {
                         if (label.Length > 0)
                         {
@@ -128,10 +163,8 @@ namespace Unigram.Common.Chats
                         label += string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
                         count++;
                     }
-                    if (count == 2)
-                    {
-                        break;
-                    }
+
+                    total++;
                 }
 
                 if (label.Length > 0)
@@ -143,10 +176,10 @@ namespace Unigram.Common.Chats
                     }
                     else
                     {
-                        if (typingUsers.Count > 2)
+                        if (total > 2)
                         {
                             commonAction = new ChatActionTyping();
-                            return string.Format("{0} {1}", label, Locale.Declension("AndMoreTyping", typingUsers.Count - 2));
+                            return string.Format("{0} {1}", label, Locale.Declension("AndMoreTyping", total - 2));
                         }
                         else
                         {
