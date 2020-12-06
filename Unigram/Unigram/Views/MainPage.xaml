@@ -244,9 +244,16 @@
         
         <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Update="OnUpdate" Grid.Column="1" Grid.Row="1">
             <controls:MasterDetailView.Banner>
-                <Border>
+                <Grid>
                     <controls:PlaybackHeader x:Name="Playback" x:Load="False"/>
-                </Border>
+                    
+                    <Grid x:Name="CallBanner" x:Load="False" Height="40" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
+                        <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
+                            <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </Button>
+                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+                    </Grid>
+                </Grid>
             </controls:MasterDetailView.Banner>
             <controls:MasterDetailView.MasterHeader>
                 <controls:ContentPageHeader x:Name="PageHeader" BackVisibility="Collapsed" Grid.Row="1">
@@ -483,14 +490,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-
-                <Grid x:Name="CallBanner" Visibility="Collapsed" Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}" Grid.Row="2">
-                    <Button Command="{x:Bind ViewModel.ReturnToCallCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
-                        <TextBlock Text="{CustomResource ReturnToCall}" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    </Button>
-                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                </Grid>
-
                 <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="3">
                     <PivotItem x:Name="TabChats" Header="Chats">
                         <Grid>
