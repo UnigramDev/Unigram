@@ -790,6 +790,8 @@ namespace Unigram.Services
             {
                 value.UnreadChatCount = chatCount ?? value.UnreadChatCount;
                 value.UnreadMessageCount = messageCount ?? value.UnreadMessageCount;
+
+                return;
             }
 
             _unreadCounts[id] = new ChatListUnreadCount
