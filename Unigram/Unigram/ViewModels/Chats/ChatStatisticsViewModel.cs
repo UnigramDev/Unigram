@@ -139,6 +139,11 @@ namespace Unigram.ViewModels.Chats
 
                     foreach (var message in messages.MessagesValue)
                     {
+                        if (message == null)
+                        {
+                            continue;
+                        }
+
                         var counters = channelStats.RecentMessageInteractions.FirstOrDefault(x => x.MessageId == message.Id);
                         interactions.Add(new MessageInteractionCounters(message, counters.ForwardCount, counters.ViewCount));
                     }
