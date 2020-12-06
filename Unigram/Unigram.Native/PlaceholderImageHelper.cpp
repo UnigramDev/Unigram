@@ -657,9 +657,9 @@ namespace winrt::Unigram::Native::implementation
 		stops[0] = { 1, D2D1::ColorF(top.R / 255.0f, top.G / 255.0f, top.B / 255.0f, top.A / 255.0f) };
 		stops[1] = { 0, D2D1::ColorF(bottom.R / 255.0f, bottom.G / 255.0f, bottom.B / 255.0f, bottom.A / 255.0f) };
 		winrt::com_ptr<ID2D1GradientStopCollection> collection;
-		m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put());
+		ReturnIfFailed(result, m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put()));
 		winrt::com_ptr<ID2D1LinearGradientBrush> brush;
-		m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put());
+		ReturnIfFailed(result, m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put()));
 		m_d2dContext->FillRectangle({ 0, 0, 192, 192 }, brush.get());
 
 		D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (192.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
@@ -695,9 +695,9 @@ namespace winrt::Unigram::Native::implementation
 		stops[0] = { 1, D2D1::ColorF(top.R / 255.0f, top.G / 255.0f, top.B / 255.0f, top.A / 255.0f) };
 		stops[1] = { 0, D2D1::ColorF(bottom.R / 255.0f, bottom.G / 255.0f, bottom.B / 255.0f, bottom.A / 255.0f) };
 		winrt::com_ptr<ID2D1GradientStopCollection> collection;
-		m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put());
+		ReturnIfFailed(result, m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put()));
 		winrt::com_ptr<ID2D1LinearGradientBrush> brush;
-		m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put());
+		ReturnIfFailed(result, m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put()));
 		m_d2dContext->FillRectangle({ 0, 0, 192, 192 }, brush.get());
 
 		D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (192.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
@@ -733,9 +733,9 @@ namespace winrt::Unigram::Native::implementation
 		stops[0] = { 1, D2D1::ColorF(top.R / 255.0f, top.G / 255.0f, top.B / 255.0f, top.A / 255.0f) };
 		stops[1] = { 0, D2D1::ColorF(bottom.R / 255.0f, bottom.G / 255.0f, bottom.B / 255.0f, bottom.A / 255.0f) };
 		winrt::com_ptr<ID2D1GradientStopCollection> collection;
-		m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put());
+		ReturnIfFailed(result, m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put()));
 		winrt::com_ptr<ID2D1LinearGradientBrush> brush;
-		m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put());
+		ReturnIfFailed(result, m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put()));
 		m_d2dContext->FillRectangle({ 0, 0, 192, 192 }, brush.get());
 
 		D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (184.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
@@ -770,9 +770,9 @@ namespace winrt::Unigram::Native::implementation
 		stops[0] = { 1, D2D1::ColorF(top.R / 255.0f, top.G / 255.0f, top.B / 255.0f, top.A / 255.0f) };
 		stops[1] = { 0, D2D1::ColorF(bottom.R / 255.0f, bottom.G / 255.0f, bottom.B / 255.0f, bottom.A / 255.0f) };
 		winrt::com_ptr<ID2D1GradientStopCollection> collection;
-		m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put());
+		ReturnIfFailed(result, m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put()));
 		winrt::com_ptr<ID2D1LinearGradientBrush> brush;
-		m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put());
+		ReturnIfFailed(result, m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put()));
 		m_d2dContext->FillRectangle({ 0, 0, 192, 192 }, brush.get());
 
 		D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (180.0f - textMetrics.height) / 2.0f, 192.0f, 192.0f };
