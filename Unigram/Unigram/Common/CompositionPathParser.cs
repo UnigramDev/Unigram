@@ -65,7 +65,7 @@ namespace Unigram.Common
             return new CompositionPath(CanvasGeometry.CreatePath(builder));
         }
 
-        public static CompositionAnimation ParseThumbnail(IList<ClosedVectorPath> contours, double side, out ShapeVisual visual)
+        public static CompositionAnimation ParseThumbnail(IList<ClosedVectorPath> contours, double side, out ShapeVisual visual, bool animated = true)
         {
             var path = Parse(contours);
 
@@ -90,14 +90,6 @@ namespace Unigram.Common
             var foregroundShape = Window.Current.Compositor.CreateSpriteShape(foreground);
             foregroundShape.FillBrush = gradient;
 
-            var animation = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-            animation.InsertKeyFrame(0, new Vector2(-512, 0));
-            animation.InsertKeyFrame(1, new Vector2(512, 0));
-            animation.IterationBehavior = AnimationIterationBehavior.Forever;
-            animation.Duration = TimeSpan.FromSeconds(1);
-
-            foregroundShape.StartAnimation("Offset", animation);
-
             visual = Window.Current.Compositor.CreateShapeVisual();
             visual.Clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(path));
             visual.Shapes.Add(backgroundShape);
@@ -105,7 +97,20 @@ namespace Unigram.Common
             visual.Size = new Vector2(512, 512);
             visual.Scale = new Vector3((float)side / 512f, (float)side / 512f, 1);
 
-            return animation;
+            if (animated)
+            {
+                var animation = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                animation.InsertKeyFrame(0, new Vector2(-512, 0));
+                animation.InsertKeyFrame(1, new Vector2(512, 0));
+                animation.IterationBehavior = AnimationIterationBehavior.Forever;
+                animation.Duration = TimeSpan.FromSeconds(1);
+
+                foregroundShape.StartAnimation("Offset", animation);
+
+                return animation;
+            }
+
+            return null;
         }
 
         public struct PathSegment
