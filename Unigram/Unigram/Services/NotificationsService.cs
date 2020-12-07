@@ -769,13 +769,20 @@ namespace Unigram.Services
 
         private async Task<ToastNotificationHistory> GetCollectionHistoryAsync()
         {
-            var collectionHistory = await ToastNotificationManager.GetDefault().GetHistoryForToastCollectionIdAsync($"{_sessionService.Id}");
-            if (collectionHistory == null)
+            try
             {
-                collectionHistory = ToastNotificationManager.History;
-            }
+                var collectionHistory = await ToastNotificationManager.GetDefault().GetHistoryForToastCollectionIdAsync($"{_sessionService.Id}");
+                if (collectionHistory == null)
+                {
+                    collectionHistory = ToastNotificationManager.History;
+                }
 
-            return collectionHistory;
+                return collectionHistory;
+            }
+            catch
+            {
+                return ToastNotificationManager.History;
+            }
         }
 
         public async Task UnregisterAsync()
@@ -1419,7 +1426,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private void BeginOnUIThread(Action action, Action fallback = null)
+        private void BeginOnUIThread(Windows.UI.Core.DispatchedHandler action, Action fallback = null)
         {
             var dispatcher = WindowContext.Default()?.Dispatcher;
             if (dispatcher != null)
