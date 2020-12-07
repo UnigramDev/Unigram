@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using Telegram.Td.Api;
@@ -16,6 +17,11 @@ namespace Unigram.Common
 {
     public static class TdExtensions
     {
+        public static Vector2 ToVector2(this Telegram.Td.Api.Point point)
+        {
+            return new Vector2((float)point.X, (float)point.Y);
+        }
+
         public static bool IsValidState(this Call call)
         {
             if (call == null || call.State is CallStateDiscarded || call.State is CallStateError)
@@ -1272,6 +1278,19 @@ namespace Unigram.Common
             return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
+        public static string GetDuration(this MessageGroupCall groupCall)
+        {
+            var duration = TimeSpan.FromSeconds(groupCall.Duration);
+            if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
+        }
+
         public static string GetDuration(this Video video)
         {
             var duration = TimeSpan.FromSeconds(video.Duration);
@@ -1414,6 +1433,16 @@ namespace Unigram.Common
             }
 
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanChangeInfo;
+        }
+
+        public static bool CanManageCalls(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageCalls;
         }
 
         public static bool CanPostMessages(this Supergroup supergroup)
