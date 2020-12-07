@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -33,6 +34,8 @@ namespace Unigram.Services
         private const int QUANTITY_MANY = 0x0010;
 
         private readonly ResourceLoader _loader;
+
+        private readonly Regex _stringFormat = new Regex("%([0-9]*?)\\$[ds]", RegexOptions.Compiled);
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _languagePack = new ConcurrentDictionary<string, ConcurrentDictionary<string, string>>();
         private string _languageCode;
@@ -393,10 +396,10 @@ namespace Unigram.Services
             value = value.Replace("%%", "%");
             value = value.Replace("%s", "{0}");
 
-            return System.Text.RegularExpressions.Regex.Replace(value, "%([0-9]*?)\\$[ds]", match =>
+            return _stringFormat.Replace(value, match =>
             {
                 var index = int.Parse(match.Groups[1].Value);
-                return "{" + (index - 1) + "}";
+                return $"{{{index - 1}}}";
             });
         }
 
