@@ -111,13 +111,38 @@ namespace winrt::Unigram::Native::Calls::implementation
 			auto webRtc = x.Type().try_as<CallServerTypeWebrtc>();
 
 			if (webRtc != nullptr) {
-				rtc.push_back(tgcalls::RtcServer{
-					string_to_unmanaged(x.IpAddress()),
-					static_cast<uint16_t>(x.Port()),
-					string_to_unmanaged(webRtc.Username()),
-					string_to_unmanaged(webRtc.Password()),
-					webRtc.SupportsTurn()
-				});
+				const auto host = string_to_unmanaged(x.IpAddress());
+				const auto hostv6 = string_to_unmanaged(x.Ipv6Address());
+				const auto port = uint16_t(x.Port());
+				if (webRtc.SupportsTurn()) {
+					const auto pushStun = [&](const std::string& host) {
+						if (host.empty()) {
+							return;
+						}
+						tgcalls::RtcServer server;
+						server.host = host;
+						server.port = port;
+						server.isTurn = false;
+						rtc.push_back(server);
+					};
+					pushStun(host);
+					pushStun(hostv6);
+				}
+				const auto username = string_to_unmanaged(webRtc.Username());
+				const auto password = string_to_unmanaged(webRtc.Password());
+				if (webRtc.SupportsTurn() && !username.empty() && !password.empty()) {
+					const auto pushTurn = [&](const std::string& host) {
+						tgcalls::RtcServer server;
+						server.host = host;
+						server.port = port;
+						server.login = username;
+						server.password = password;
+						server.isTurn = true;
+						rtc.push_back(server);
+					};
+					pushTurn(host);
+					pushTurn(hostv6);
+				}
 			}
 		}
 
