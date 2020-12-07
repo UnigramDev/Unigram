@@ -168,6 +168,7 @@ namespace Unigram.Common
                 else
                 {
                     var local = span;
+                    var substring = text.Substring(entity.Offset, entity.Length);
 
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
@@ -175,10 +176,9 @@ namespace Unigram.Common
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
-                    else if (entity.Type is TextEntityTypeUrl url)
+                    else if (entity.Type is TextEntityTypeUrl url && Uri.TryCreate(substring, UriKind.Absolute, out Uri uri))
                     {
-                        var data = text.Substring(entity.Offset, entity.Length);
-                        var hyperlink = new Hyperlink { NavigateUri = new Uri(data) };
+                        var hyperlink = new Hyperlink { NavigateUri = uri };
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
