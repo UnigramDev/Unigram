@@ -1168,7 +1168,16 @@ namespace Unigram.Controls.Gallery
             var mediaPlayer = _mediaPlayer;
             var fileStream = _fileStream;
 
-            _compactLifetime = await viewService.OpenAsync(control => new GalleryCompactView(aggregator, control, mediaPlayer, fileStream), "PIP", width, height);
+            var parameters = new ViewServiceParams
+            {
+                ViewMode = ApplicationViewMode.CompactOverlay,
+                Width = width,
+                Height = height,
+                PersistentId = "PIP",
+                Content = control => new GalleryCompactView(aggregator, control, mediaPlayer, fileStream)
+            };
+
+            _compactLifetime = await viewService.OpenAsync(parameters);
             OnBackRequestedOverride(this, new HandledEventArgs());
         }
 

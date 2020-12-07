@@ -20,7 +20,7 @@ using Windows.Media.Capture;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Profile;
-using Windows.UI.ViewManagement;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
@@ -594,7 +594,15 @@ namespace Unigram.Services
         {
             if (_callPage == null)
             {
-                _callLifetime = await _viewService.OpenAsync(control => _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this), call.Id, 720, 540, ApplicationViewMode.Default);
+                var parameters = new ViewServiceParams
+                {
+                    Width = 720,
+                    Height = 540,
+                    PersistentId = "Call",
+                    Content = control => _callPage = new VoIPPage(ProtoService, CacheService, Aggregator, this)
+                };
+
+                _callLifetime = await _viewService.OpenAsync(parameters);
                 _callLifetime.Released -= ApplicationView_Released;
                 _callLifetime.Released += ApplicationView_Released;
 

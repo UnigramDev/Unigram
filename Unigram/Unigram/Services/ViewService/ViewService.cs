@@ -25,7 +25,19 @@ namespace Unigram.Services.ViewService
         /// It won't not be called before all previously started async operations on <see cref="CoreDispatcher"/> complete. <remarks>DO NOT call operations on Dispatcher after this</remarks></returns>
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, ViewSizePreference size = ViewSizePreference.UseHalf, int session = 0, string id = "0");
 
-        Task<ViewLifetimeControl> OpenAsync(Func<ViewLifetimeControl, UIElement> content, object parameter, double width = 340, double height = 200, ApplicationViewMode viewMode = ApplicationViewMode.CompactOverlay);
+        Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters);
+    }
+
+    public class ViewServiceParams
+    {
+        public ApplicationViewMode ViewMode { get; set; } = ApplicationViewMode.Default;
+
+        public double Width { get; set; }
+        public double Height { get; set; }
+
+        public Func<ViewLifetimeControl, UIElement> Content { get; set; }
+
+        public string PersistentId { get; set; }
     }
 
     public sealed class ViewService : IViewService
@@ -44,20 +56,19 @@ namespace Unigram.Services.ViewService
             }
         }
 
-        public async Task<ViewLifetimeControl> OpenAsync(Func<ViewLifetimeControl, UIElement> content, object parameter, double width, double height, ApplicationViewMode viewMode)
+        public async Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters)
         {
-            if (_windows.TryGetValue(parameter, out IDispatcherContext value))
+            if (_windows.TryGetValue(parameters.PersistentId, out IDispatcherContext value))
             {
                 var newControl = await value.DispatchAsync(async () =>
                 {
                     var control = ViewLifetimeControl.GetForCurrentView();
                     var newAppView = ApplicationView.GetForCurrentView();
 
-                    var preferences = ViewModePreferences.CreateDefault(viewMode);
-                    preferences.CustomSize = new Size(width, height);
+                    var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
+                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
 
-                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, viewMode, preferences);
-                    newAppView.TryResizeView(new Size(width, height));
+                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
 
                     return control;
                 }).ConfigureAwait(false);
@@ -76,24 +87,24 @@ namespace Unigram.Services.ViewService
 
                 var newView = CoreApplication.CreateNewView();
                 var dispatcher = new DispatcherContext(newView.Dispatcher);
-                _windows[parameter] = dispatcher;
+                _windows[parameters.PersistentId] = dispatcher;
 
                 var newControl = await dispatcher.DispatchAsync(async () =>
                 {
                     var newWindow = Window.Current;
                     newWindow.Closed += (s, args) =>
                     {
-                        _windows.TryRemove(parameter, out _);
+                        _windows.TryRemove(parameters.PersistentId, out _);
                     };
                     newWindow.CoreWindow.Closed += (s, args) =>
                     {
-                        _windows.TryRemove(parameter, out _);
+                        _windows.TryRemove(parameters.PersistentId, out _);
                     };
 
                     var newAppView = ApplicationView.GetForCurrentView();
                     newAppView.Consolidated += (s, args) =>
                     {
-                        _windows.TryRemove(parameter, out _);
+                        _windows.TryRemove(parameters.PersistentId, out _);
                         newWindow.Close();
                     };
 
@@ -105,18 +116,18 @@ namespace Unigram.Services.ViewService
                     var control = ViewLifetimeControl.GetForCurrentView();
                     control.Released += (s, args) =>
                     {
-                        _windows.TryRemove(parameter, out _);
                         newWindow.Close();
+                        _windows.TryRemove(parameters.PersistentId, out _);
                     };
 
-                    newWindow.Content = content(control);
+                    newWindow.Content = parameters.Content(control);
                     newWindow.Activate();
 
-                    var preferences = ViewModePreferences.CreateDefault(viewMode);
-                    preferences.CustomSize = new Size(width, height);
-                     
-                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, viewMode, preferences);
-                    newAppView.TryResizeView(new Size(width, height));
+                    var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
+                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+
+                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
+                    newAppView.TryResizeView(new Size(parameters.Width, parameters.Height));
 
                     return control;
                 }).ConfigureAwait(false);
