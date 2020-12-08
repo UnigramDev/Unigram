@@ -8,7 +8,7 @@
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-	VoipGroupManager::VoipGroupManager() {
+	VoipGroupManager::VoipGroupManager(VoipGroupDescriptor descriptor) {
 		auto logPath = Windows::Storage::ApplicationData::Current().LocalFolder().Path();
 		logPath = logPath + hstring(L"\\tgcalls_group.txt");
 
@@ -16,7 +16,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 			logPath.data()
 		};
 
-		tgcalls::GroupInstanceDescriptor descriptor = tgcalls::GroupInstanceDescriptor{
+		tgcalls::GroupInstanceDescriptor impl = tgcalls::GroupInstanceDescriptor{
 			config,
 			[this](bool state) {
 				m_networkStateUpdated(*this, state);
@@ -33,16 +33,12 @@ namespace winrt::Unigram::Native::Calls::implementation
 			[this](float level) {
 				m_myAudioLevelUpdated(*this, level);
 			},
-			"default",
-			"default",
+			string_to_unmanaged(descriptor.AudioInputId()),
+			string_to_unmanaged(descriptor.AudioOutputId()),
 			false
 		};
 
-		m_impl = std::make_unique<tgcalls::GroupInstanceImpl>(std::move(descriptor));
-	}
-
-	VoipGroupManager::~VoipGroupManager() {
-		m_impl.reset();
+		m_impl = std::make_unique<tgcalls::GroupInstanceImpl>(std::move(impl));
 	}
 
 	void VoipGroupManager::Close() {

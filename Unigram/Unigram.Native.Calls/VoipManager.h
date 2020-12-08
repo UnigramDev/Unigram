@@ -16,7 +16,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 	struct VoipManager : VoipManagerT<VoipManager>
 	{
 		VoipManager(VoipDescriptor descriptor);
-		~VoipManager();
 
 		void Close();
 

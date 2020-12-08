@@ -210,6 +210,10 @@
       <DependentUpon>VoipDescriptor.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="VoipGroupDescriptor.h">
+      <DependentUpon>VoipGroupDescriptor.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="VoipGroupManager.h">
       <DependentUpon>VoipGroupManager.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -293,6 +297,10 @@
     <ClCompile Include="VoipDescriptor.cpp">
       <DependentUpon>VoipDescriptor.idl</DependentUpon>
     </ClCompile>
+    <ClCompile Include="VoipGroupDescriptor.cpp">
+      <DependentUpon>VoipGroupDescriptor.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="VoipGroupManager.cpp">
       <DependentUpon>VoipGroupManager.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -313,6 +321,9 @@
     <Midl Include="SignalingDataEmittedEventArgs.idl" />
     <Midl Include="Unigram.Native.Calls.idl" />
     <Midl Include="VoipDescriptor.idl" />
+    <Midl Include="VoipGroupDescriptor.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="VoipGroupManager.idl">
       <SubType>Designer</SubType>
     </Midl>

@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="VoipServer.cpp" />
     <ClCompile Include="SignalingDataEmittedEventArgs.cpp" />
     <ClCompile Include="VoipManager.cpp" />
     <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp" />
@@ -70,7 +69,6 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="VoipServer.h" />
     <ClInclude Include="SignalingDataEmittedEventArgs.h" />
     <ClInclude Include="VoipManager.h" />
     <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h" />
@@ -158,6 +156,7 @@
     <Midl Include="SignalingDataEmittedEventArgs.idl" />
     <Midl Include="VoipManager.idl" />
     <Midl Include="VoipGroupManager.idl" />
+    <Midl Include="VoipGroupDescriptor.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

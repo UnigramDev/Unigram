@@ -1,3 +1,5 @@
+import "VoipGroupDescriptor.idl";
+
 namespace Unigram.Native.Calls
 {
     delegate void EmitJsonPayloadDelegate(Int32 ssrc, Telegram.Td.Api.GroupCallPayload payload);
@@ -5,7 +7,7 @@ namespace Unigram.Native.Calls
     [default_interface]
     runtimeclass VoipGroupManager : Windows.Foundation.IClosable
     {
-        VoipGroupManager();
+        VoipGroupManager(VoipGroupDescriptor descriptor);
 
         void EmitJoinPayload(EmitJsonPayloadDelegate completion);
         void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponse payload);
@@ -18,6 +20,5 @@ namespace Unigram.Native.Calls
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Boolean> NetworkStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<UInt32, Single> > AudioLevelsUpdated;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Single> MyAudioLevelUpdated;
-
     }
 }

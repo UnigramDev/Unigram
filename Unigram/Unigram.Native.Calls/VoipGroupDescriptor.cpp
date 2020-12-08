@@ -1,0 +1,24 @@
+﻿#include "pch.h"
+#include "VoipGroupDescriptor.h"
+#if __has_include("VoipGroupDescriptor.g.cpp")
+#include "VoipGroupDescriptor.g.cpp"
+#endif
+
+namespace winrt::Unigram::Native::Calls::implementation
+{
+	hstring VoipGroupDescriptor::AudioInputId() {
+		return m_audioInputId;
+	}
+
+	void VoipGroupDescriptor::AudioInputId(hstring value) {
+		m_audioInputId = value;
+	}
+
+	hstring VoipGroupDescriptor::AudioOutputId() {
+		return m_audioOutputId;
+	}
+
+	void VoipGroupDescriptor::AudioOutputId(hstring value) {
+		m_audioOutputId = value;
+	}
+}

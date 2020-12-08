@@ -10,8 +10,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 {
     struct VoipGroupManager : VoipGroupManagerT<VoipGroupManager>
     {
-        VoipGroupManager();
-		~VoipGroupManager();
+        VoipGroupManager(VoipGroupDescriptor descriptor);
 
 		void Close();
 

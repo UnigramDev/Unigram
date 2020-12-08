@@ -1,0 +1,11 @@
+namespace Unigram.Native.Calls
+{
+    [default_interface]
+    runtimeclass VoipGroupDescriptor 
+    {
+        VoipGroupDescriptor();
+
+        String AudioInputId;
+        String AudioOutputId;
+    }
+}

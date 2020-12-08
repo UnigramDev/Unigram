@@ -39,13 +39,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 		tgcalls::Register<tgcalls::InstanceImpl>();
 	}
 
-	VoipManager::~VoipManager()
-	{
-		m_descriptor = nullptr;
-		m_capturer.reset();
-		m_impl.reset();
-	}
-
 	void VoipManager::Close() {
 		m_descriptor = nullptr;
 		m_capturer.reset();
@@ -108,9 +101,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		auto rtc = std::vector<tgcalls::RtcServer>();
 
 		for (const CallServer& x : m_descriptor.Servers()) {
-			auto webRtc = x.Type().try_as<CallServerTypeWebrtc>();
-
-			if (webRtc != nullptr) {
+			if (auto webRtc = x.Type().try_as<CallServerTypeWebrtc>()) {
 				const auto host = string_to_unmanaged(x.IpAddress());
 				const auto hostv6 = string_to_unmanaged(x.Ipv6Address());
 				const auto port = uint16_t(x.Port());
