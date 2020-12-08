@@ -693,7 +693,6 @@
     <Compile Include="ViewModels\Settings\SettingsShortcutsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsVoIPViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
@@ -995,9 +994,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsThemesPage.xaml.cs">
       <DependentUpon>SettingsThemesPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsVoIPPage.xaml.cs">
-      <DependentUpon>SettingsVoIPPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsWebSessionsPage.xaml.cs">
       <DependentUpon>SettingsWebSessionsPage.xaml</DependentUpon>
@@ -2078,10 +2074,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsThemesPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsVoIPPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

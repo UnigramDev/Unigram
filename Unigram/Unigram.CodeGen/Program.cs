@@ -163,7 +163,6 @@ namespace Unigram.CodeGen
                 typeof(SettingsThemesViewModel),
                 typeof(SettingsNightModeViewModel),
                 typeof(SettingsBackgroundsViewModel),
-                typeof(SettingsVoIPViewModel),
                 typeof(SettingsShortcutsViewModel),
                 typeof(BackgroundViewModel),
                 typeof(AttachedStickersViewModel),

@@ -16,14 +16,11 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <StackPanel>
-                <controls:HeaderedControl>
-                    <!--<controls:BadgeButton
-                        Content="Shortcuts"
-                        Click="Shortcuts_Click"/>-->
+                <!--<controls:HeaderedControl>
                     <controls:BadgeButton
-                        Content="Call Settings"
-                        Click="VoIP_Click"/>
-                </controls:HeaderedControl>
+                        Content="Shortcuts"
+                        Click="Shortcuts_Click"/>
+                </controls:HeaderedControl>-->
 
                 <controls:HeaderedControl>
                     <ToggleSwitch
