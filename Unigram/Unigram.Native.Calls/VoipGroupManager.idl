@@ -19,6 +19,5 @@ namespace Unigram.Native.Calls
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Boolean> NetworkStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<UInt32, Single> > AudioLevelsUpdated;
-        event Windows.Foundation.TypedEventHandler<VoipGroupManager, Single> MyAudioLevelUpdated;
     }
 }

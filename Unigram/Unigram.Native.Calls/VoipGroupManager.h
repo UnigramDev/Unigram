@@ -32,11 +32,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 			IMapView<uint32_t, float>> const& value);
 		void AudioLevelsUpdated(winrt::event_token const& token);
 
-		winrt::event_token MyAudioLevelUpdated(Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			float> const& value);
-		void MyAudioLevelUpdated(winrt::event_token const& token);
-
 	private:
 		std::unique_ptr<tgcalls::GroupInstanceImpl> m_impl = nullptr;
 
@@ -46,9 +41,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
 			IMapView<uint32_t, float>>> m_audioLevelsUpdated;
-		winrt::event<Windows::Foundation::TypedEventHandler<
-			winrt::Unigram::Native::Calls::VoipGroupManager,
-			float>> m_myAudioLevelUpdated;
     };
 }
 

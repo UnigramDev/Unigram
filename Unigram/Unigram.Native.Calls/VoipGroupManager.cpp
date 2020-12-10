@@ -30,9 +30,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 				m_audioLevelsUpdated(*this, args.GetView());
 			},
-			[this](float level) {
-				m_myAudioLevelUpdated(*this, level);
-			},
 			string_to_unmanaged(descriptor.AudioInputId()),
 			string_to_unmanaged(descriptor.AudioOutputId()),
 			false
@@ -159,19 +156,4 @@ namespace winrt::Unigram::Native::Calls::implementation
 	{
 		m_audioLevelsUpdated.remove(token);
 	}
-
-
-
-	winrt::event_token VoipGroupManager::MyAudioLevelUpdated(Windows::Foundation::TypedEventHandler<
-		winrt::Unigram::Native::Calls::VoipGroupManager,
-		float> const& value)
-	{
-		return m_myAudioLevelUpdated.add(value);
-	}
-
-	void VoipGroupManager::MyAudioLevelUpdated(winrt::event_token const& token)
-	{
-		m_myAudioLevelUpdated.remove(token);
-	}
-
 }
