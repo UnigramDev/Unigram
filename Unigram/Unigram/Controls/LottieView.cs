@@ -19,18 +19,18 @@ using Windows.Storage;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    [TemplatePart(Name = "Thumbnail", Type = typeof(Image))]
     public class LottieView : Control, IPlayerView
     {
         private CanvasControl _canvas;
         private CanvasBitmap _bitmap;
 
-        private Image _thumbnail;
+        private Grid _layoutRoot;
+
         private bool _hideThumbnail = true;
 
         private string _source;
@@ -78,13 +78,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(LottieView);
         }
 
-        //~LottieView()
-        //{
-        //    Dispose();
-        //}
-
-        public bool IsUnloaded => _unloaded;
-
         protected override void OnApplyTemplate()
         {
             var canvas = GetTemplateChild("Canvas") as CanvasControl;
@@ -98,11 +91,33 @@ namespace Unigram.Controls
             _canvas.Draw += OnDraw;
             _canvas.Unloaded += OnUnloaded;
 
-            _thumbnail = (Image)GetTemplateChild("Thumbnail");
+            _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
+            _layoutRoot.Loaded += OnLoaded;
 
             OnSourceChanged(UriToPath(Source), _source);
 
             base.OnApplyTemplate();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_unloaded)
+            {
+                while (_layoutRoot.Children.Count > 0)
+                {
+                    _layoutRoot.Children.Remove(_layoutRoot.Children[0]);
+                }
+
+                _canvas = new CanvasControl();
+                _canvas.CreateResources += OnCreateResources;
+                _canvas.Draw += OnDraw;
+                _canvas.Unloaded += OnUnloaded;
+
+                _layoutRoot.Children.Add(_canvas);
+
+                _unloaded = false;
+                OnSourceChanged(UriToPath(Source), _source);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -170,12 +185,12 @@ namespace Unigram.Controls
 
             args.DrawingSession.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
 
-            if (_hideThumbnail && _thumbnail != null)
+            if (_hideThumbnail)
             {
                 _hideThumbnail = false;
-                _thumbnail.Opacity = 0;
 
                 FirstFrameRendered?.Invoke(this, EventArgs.Empty);
+                ElementCompositionPreview.SetElementChildVisual(this, null);
             }
         }
 
@@ -329,6 +344,7 @@ namespace Unigram.Controls
 
             _source = newValue;
             _animation = animation;
+            _hideThumbnail = true;
 
             _animationShouldCache = animation.ShouldCache;
             _animationFrameRate = animation.FrameRate;
@@ -553,19 +569,6 @@ namespace Unigram.Controls
         {
             ((LottieView)d).OnSourceChanged((Uri)e.NewValue, (Uri)e.OldValue);
         }
-
-        #endregion
-
-        #region Thumbnail
-
-        public ImageSource Thumbnail
-        {
-            get { return (ImageSource)GetValue(ThumbnailProperty); }
-            set { SetValue(ThumbnailProperty, value); }
-        }
-
-        public static readonly DependencyProperty ThumbnailProperty =
-            DependencyProperty.Register("Thumbnail", typeof(ImageSource), typeof(LottieView), new PropertyMetadata(null));
 
         #endregion
 

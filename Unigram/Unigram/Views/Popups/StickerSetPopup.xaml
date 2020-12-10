@@ -15,6 +15,32 @@
     Loaded="OnLoaded"
     Unloaded="OnUnloaded">
 
+    <ContentDialog.Resources>
+        <DataTemplate x:Key="AnimatedItemTemplate">
+            <Grid Margin="2">
+                <controls:LottieView
+                    x:Name="Player"
+                    AutoPlay="False"/>
+                <TextBlock
+                    FontSize="20"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"/>
+            </Grid>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="ItemTemplate">
+            <Grid Margin="2">
+                <Image/>
+                <TextBlock
+                    FontSize="20"
+                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"/>
+            </Grid>
+        </DataTemplate>
+    </ContentDialog.Resources>
+    
     <ContentDialog.Title>
         <Grid x:Name="Header">
             <Grid.ColumnDefinitions>

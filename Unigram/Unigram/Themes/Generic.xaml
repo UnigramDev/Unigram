@@ -205,8 +205,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:LottieView">
-                    <Grid>
-                        <Image x:Name="Thumbnail" Source="{TemplateBinding Thumbnail}"/>
+                    <Grid x:Name="LayoutRoot">
                         <xaml:CanvasControl x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                     </Grid>
                 </ControlTemplate>
@@ -219,8 +218,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:DiceView">
-                    <Grid>
-                        <Image x:Name="Thumbnail" Source="{TemplateBinding Thumbnail}"/>
+                    <Grid x:Name="LayoutRoot">
                         <xaml:CanvasControl x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                     </Grid>
                 </ControlTemplate>
@@ -233,7 +231,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimationView">
-                    <Grid>
+                    <Grid x:Name="LayoutRoot">
                         <Image x:Name="Thumbnail" Source="{TemplateBinding Thumbnail}"/>
                         <xaml:CanvasControl x:Name="Canvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                     </Grid>

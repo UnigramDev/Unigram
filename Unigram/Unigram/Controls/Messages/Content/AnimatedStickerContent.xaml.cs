@@ -104,12 +104,6 @@ namespace Unigram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            // We can't recycle it as we must destroy CanvasAnimatedControl on Unload.
-            if (Player.IsUnloaded)
-            {
-                return false;
-            }
-
             if (content is MessageSticker sticker)
             {
                 return sticker.Sticker.IsAnimated;

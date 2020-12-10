@@ -130,52 +130,66 @@ namespace Unigram.Views.Popups
 
         private void UpdateFile(Sticker sticker, File file, bool download)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (Dispatcher.HasThreadAccess)
             {
-                if (sticker.IsAnimated)
+                if (file.Local.IsDownloadingCompleted)
                 {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = null;
-                    Container.Child = new LottieView { Source = new Uri("file:///" + file.Local.Path) };
+                    if (sticker.IsAnimated)
+                    {
+                        Thumbnail.Opacity = 0;
+                        Texture.Source = null;
+                        Container.Child = new LottieView { Source = new Uri("file:///" + file.Local.Path) };
+                    }
+                    else
+                    {
+                        Thumbnail.Opacity = 0;
+                        Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                        Container.Child = new Border();
+                    }
                 }
-                else
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                    Thumbnail.Opacity = 1;
+                    Texture.Source = null;
                     Container.Child = new Border();
+
+                    if (download)
+                    {
+                        DownloadFile?.Invoke(file.Id);
+                    }
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+            else
             {
-                Thumbnail.Opacity = 1;
-                Texture.Source = null;
-                Container.Child = new Border();
-
-                if (download)
-                {
-                    DownloadFile?.Invoke(file.Id);
-                }
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => UpdateFile(sticker, file, download));
             }
         }
 
         private void UpdateFile(Animation animation, File file, bool download)
         {
-            if (file.Local.IsDownloadingCompleted)
+            if (Dispatcher.HasThreadAccess)
             {
-                Thumbnail.Opacity = 0;
-                Texture.Source = null;
-                Container.Child = new AnimationView { Source = new Uri("file:///" + file.Local.Path) };
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                Thumbnail.Opacity = 1;
-                Texture.Source = null;
-                Container.Child = new Border();
-
-                if (download)
+                if (file.Local.IsDownloadingCompleted)
                 {
-                    DownloadFile?.Invoke(file.Id);
+                    Thumbnail.Opacity = 0;
+                    Texture.Source = null;
+                    Container.Child = new AnimationView { Source = new Uri("file:///" + file.Local.Path) };
                 }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    Thumbnail.Opacity = 1;
+                    Texture.Source = null;
+                    Container.Child = new Border();
+
+                    if (download)
+                    {
+                        DownloadFile?.Invoke(file.Id);
+                    }
+                }
+            }
+            else
+            {
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => UpdateFile(animation, file, download));
             }
         }
 

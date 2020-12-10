@@ -464,7 +464,7 @@ namespace Unigram.ViewModels.Drawers
             var placeholders = new List<StickerViewModel>();
             for (int i = 0; i < (info.IsInstalled ? info.Size : info.Covers?.Count ?? 0); i++)
             {
-                placeholders.Add(new StickerViewModel(_protoService, _aggregator, info.Id));
+                placeholders.Add(new StickerViewModel(_protoService, _aggregator, info.Id, info.IsAnimated));
             }
 
             Stickers = new MvxObservableCollection<StickerViewModel>(placeholders);
@@ -542,16 +542,18 @@ namespace Unigram.ViewModels.Drawers
     {
         private Sticker _sticker;
         private readonly long _setId;
+        private readonly bool _animated;
 
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
 
-        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, long setId)
+        public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, long setId, bool animated)
         {
             _protoService = protoService;
             _aggregator = aggregator;
 
             _setId = setId;
+            _animated = animated;
         }
 
         public StickerViewModel(IProtoService protoService, IEventAggregator aggregator, Sticker sticker)
@@ -560,6 +562,7 @@ namespace Unigram.ViewModels.Drawers
             _aggregator = aggregator;
 
             _sticker = sticker;
+            _animated = sticker.IsAnimated;
         }
 
         public void Update(Sticker sticker)
@@ -586,9 +589,9 @@ namespace Unigram.ViewModels.Drawers
         }
 
         public File StickerValue => _sticker?.StickerValue;
-        public Thumbnail Thumbnail => _sticker?.Thumbnail;
+        public IList<ClosedVectorPath> Contours => _sticker?.Contours;
         public MaskPosition MaskPosition => _sticker?.MaskPosition;
-        public bool IsAnimated => _sticker?.IsAnimated ?? false;
+        public bool IsAnimated => _sticker?.IsAnimated ?? _animated;
         public bool IsMask => _sticker?.IsMask ?? false;
         public string Emoji => _sticker?.Emoji;
         public int Height => _sticker?.Height ?? 0;

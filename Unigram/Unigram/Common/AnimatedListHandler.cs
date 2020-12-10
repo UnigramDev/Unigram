@@ -4,6 +4,7 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.ViewModels.Drawers;
+using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -13,7 +14,7 @@ namespace Unigram.Common
     public class AnimatedListHandler<T>
     {
         private readonly ListViewBase _listView;
-        private readonly DispatcherTimer _throttler;
+        private readonly DispatcherTimer _debouncer;
 
         public AnimatedListHandler(ListViewBase listView)
         {
@@ -21,11 +22,11 @@ namespace Unigram.Common
             _listView.Loaded += OnLoaded;
             _listView.Unloaded += OnUnloaded;
 
-            _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _throttler.Tick += (s, args) =>
+            _debouncer = new DispatcherTimer();
+            _debouncer.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
+            _debouncer.Tick += (s, args) =>
             {
-                _throttler.Stop();
+                _debouncer.Stop();
                 LoadVisibleItems(/*e.IsIntermediate*/ false);
             };
         }
@@ -59,8 +60,8 @@ namespace Unigram.Common
         {
             if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
             {
-                _throttler.Stop();
-                _throttler.Start();
+                _debouncer.Stop();
+                _debouncer.Start();
             }
         }
 
@@ -68,13 +69,13 @@ namespace Unigram.Common
         {
             LoadVisibleItems(true);
 
-            _throttler.Stop();
-            _throttler.Start();
+            _debouncer.Stop();
+            _debouncer.Start();
             return;
 
             if (e.IsIntermediate)
             {
-                _throttler.Start();
+                _debouncer.Start();
             }
             else
             {
@@ -86,13 +87,13 @@ namespace Unigram.Common
 
         public void ThrottleVisibleItems()
         {
-            _throttler.Stop();
-            _throttler.Start();
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         public void LoadVisibleItems(bool intermediate)
         {
-            if (intermediate && _old.Count < 1)
+            if (intermediate && _prev.Count < 1)
             {
                 return;
             }
@@ -158,9 +159,9 @@ namespace Unigram.Common
 
         public void UnloadVisibleItems()
         {
-            foreach (var item in _old.Values)
+            foreach (var item in _prev.Values)
             {
-                var presenter = item.Presenter;
+                var presenter = item.Player;
                 if (presenter != null)
                 {
                     try
@@ -168,35 +169,26 @@ namespace Unigram.Common
                         presenter.Pause();
                     }
                     catch { }
-
-                    try
-                    {
-                        item.Container.Children[0].Opacity = 1;
-                        item.Container.Children.Remove(presenter);
-                    }
-                    catch { }
                 }
             }
 
-            _old.Clear();
+            _prev.Clear();
         }
 
         class MediaPlayerItem
         {
-            public File File { get; set; }
-            public Grid Container { get; set; }
-            public LottieView Presenter { get; set; }
+            public IPlayerView Player { get; set; }
         }
 
-        private readonly Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
+        private readonly Dictionary<long, MediaPlayerItem> _prev = new Dictionary<long, MediaPlayerItem>();
 
         private void Play(IEnumerable<(SelectorItem Contaner, T Sticker)> items, bool auto)
         {
-            var news = new Dictionary<long, MediaPlayerItem>();
+            var next = new Dictionary<long, MediaPlayerItem>();
 
             foreach (var item in items)
             {
-                File animation;
+                File animation = null;
                 if (item.Sticker is StickerViewModel viewModel)
                 {
                     animation = viewModel.StickerValue;
@@ -213,46 +205,36 @@ namespace Unigram.Common
                 {
                     animation = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
-                else
+                
+                if (animation == null)
                 {
                     continue;
                 }
 
                 if (animation.Local.IsDownloadingCompleted)
                 {
-                    var panel = item.Contaner.ContentTemplateRoot as Grid;
-                    if (panel is Grid final)
+                    var panel = item.Contaner.ContentTemplateRoot;
+                    if (panel is FrameworkElement final)
                     {
-                        final.Tag = item.Sticker;
-                        news[item.Sticker.GetHashCode()] = new MediaPlayerItem
+                        var lottie = final.FindName("Player") as IPlayerView;
+                        if (lottie != null)
                         {
-                            File = animation,
-                            Container = final
-                        };
+                            lottie.Tag = item.Sticker;
+                            next[item.Sticker.GetHashCode()] = new MediaPlayerItem { Player = lottie };
+                        }
                     }
-                }
-                else if (animation.Local.CanBeDownloaded && !animation.Local.IsDownloadingActive)
-                {
-                    DownloadFile?.Invoke(animation.Id, item.Sticker);
                 }
             }
 
-            foreach (var item in _old.Keys.Except(news.Keys).ToList())
+            foreach (var item in _prev.Keys.Except(next.Keys).ToList())
             {
-                var presenter = _old[item].Presenter;
+                var presenter = _prev[item].Player;
                 if (presenter != null)
                 {
-                    //presenter.Dispose();
+                    presenter.Pause();
                 }
 
-                var container = _old[item].Container;
-                if (container != null && presenter != null)
-                {
-                    container.Children[0].Opacity = 1;
-                    container.Children.Remove(presenter);
-                }
-
-                _old.Remove(item);
+                _prev.Remove(item);
             }
 
             if (!auto)
@@ -260,32 +242,19 @@ namespace Unigram.Common
                 return;
             }
 
-            foreach (var item in news.Keys.Except(_old.Keys).ToList())
+            foreach (var item in next)
             {
-                if (_old.ContainsKey(item))
+                //if (_oldStickers.ContainsKey(item))
+                //{
+                //    continue;
+                //}
+
+                if (item.Value.Player != null)
                 {
-                    continue;
+                    item.Value.Player.Play();
                 }
 
-                if (news.TryGetValue(item, out MediaPlayerItem data) && data.Container != null && data.Container.Children.Count < 5)
-                {
-                    var presenter = new LottieView(false);
-                    presenter.AutoPlay = true;
-                    presenter.IsLoopingEnabled = true;
-                    presenter.Source = new Uri("file:///" + data.File.Local.Path);
-
-                    if (data.Container.Children[0] is Image img)
-                    {
-                        presenter.Thumbnail = img.Source;
-                    }
-
-                    data.Presenter = presenter;
-
-                    data.Container.Children[0].Opacity = 0;
-                    data.Container.Children.Insert(1, presenter);
-                }
-
-                _old[item] = news[item];
+                _prev[item.Key] = item.Value;
             }
         }
     }

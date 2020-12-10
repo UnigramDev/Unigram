@@ -19,18 +19,15 @@ using Windows.Graphics.DirectX;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
-    [TemplatePart(Name = "Thumbnail", Type = typeof(Image))]
     public class DiceView : Control, IPlayerView
     {
         private CanvasControl _canvas;
         private CanvasBitmap[] _bitmaps;
 
-        private Image _thumbnail;
         private bool _hideThumbnail = true;
 
         private const int _parts = 3;
@@ -103,8 +100,6 @@ namespace Unigram.Controls
             _canvas.CreateResources += OnCreateResources;
             _canvas.Draw += OnDraw;
             _canvas.Unloaded += OnUnloaded;
-
-            _thumbnail = (Image)GetTemplateChild("Thumbnail");
 
             SetValue(_previousState, _previous);
 
@@ -191,11 +186,9 @@ namespace Unigram.Controls
                     }
                 }
 
-                if (_hideThumbnail && _thumbnail != null)
+                if (_hideThumbnail)
                 {
                     _hideThumbnail = false;
-                    _thumbnail.Opacity = 0;
-
                     FirstFrameRendered?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -328,6 +321,8 @@ namespace Unigram.Controls
 
             _enqueued = 0;
             _enqueuedState = null;
+
+            _hideThumbnail = true;
 
             var initial = newValue == 0;
             var shouldPlay = _shouldPlay;
@@ -543,19 +538,6 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty IsContentUnreadProperty =
             DependencyProperty.Register("IsContentUnread", typeof(bool), typeof(DiceView), new PropertyMetadata(false));
-
-        #endregion
-
-        #region Thumbnail
-
-        public ImageSource Thumbnail
-        {
-            get { return (ImageSource)GetValue(ThumbnailProperty); }
-            set { SetValue(ThumbnailProperty, value); }
-        }
-
-        public static readonly DependencyProperty ThumbnailProperty =
-            DependencyProperty.Register("Thumbnail", typeof(ImageSource), typeof(DiceView), new PropertyMetadata(null));
 
         #endregion
 

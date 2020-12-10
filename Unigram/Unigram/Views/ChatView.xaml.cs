@@ -2975,30 +2975,56 @@ namespace Unigram.Views
             else if (args.Item is Sticker sticker)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
-                var photo = content.Children[0] as Image;
+                var file = sticker?.StickerValue;
 
-                while (content.Children.Count > 1)
+                if (file == null)
                 {
-                    content.Children.RemoveAt(1);
-                }
+                    if (content.Children[0] is Image photo)
+                    {
+                        photo.Source = null;
+                    }
+                    else if (content.Children[0] is LottieView lottie)
+                    {
+                        lottie.Source = null;
+                    }
 
-                photo.Opacity = 1;
-
-                if (sticker == null || sticker.Thumbnail == null)
-                {
-                    photo.Source = null;
                     return;
                 }
 
-                var file = sticker.Thumbnail.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                    if (content.Children[0] is Image photo)
+                    {
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                    }
+                    else if (content.Children[0] is LottieView lottie)
+                    {
+                        lottie.Source = new Uri("file:///" + file.Local.Path);
+                    }
+
+                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    //DownloadFile(file.Id, sticker);
-                    photo.Source = null;
+                    if (content.Children[0] is Image photo)
+                    {
+                        photo.Source = null;
+                    }
+                    else if (content.Children[0] is LottieView lottie)
+                    {
+                        lottie.Source = null;
+                    }
+
+                    if (sticker.Contours.Count > 0)
+                    {
+                        CompositionPathParser.ParseThumbnail(sticker.Contours, 60, out ShapeVisual visual, false);
+                        ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
+                    }
+                    else
+                    {
+                        ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
+                    }
+
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
             }
@@ -4289,26 +4315,26 @@ namespace Unigram.Views
                 {
                     if (sticker.UpdateFile(file) && file.Local.IsDownloadingCompleted)
                     {
-                        if (file.Id == sticker.Thumbnail?.File.Id)
+                        var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
+                        if (container == null)
                         {
-                            var container = ListAutocomplete.ContainerFromItem(sticker) as SelectorItem;
-                            if (container == null)
-                            {
-                                continue;
-                            }
-
-                            var content = container.ContentTemplateRoot as Grid;
-                            var photo = content?.Children[0] as Image;
-
-                            if (photo == null)
-                            {
-                                continue;
-                            }
-
-                            photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                            continue;
                         }
-                        else if (file.Id == sticker.StickerValue.Id)
+
+                        var content = container.ContentTemplateRoot as Grid;
+                        if (content == null)
                         {
+                            continue;
+                        }
+
+                        if (content.Children[0] is Image photo)
+                        {
+                            photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                            ElementCompositionPreview.SetElementChildVisual(photo, null);
+                        }
+                        else if (content.Children[0] is LottieView lottie)
+                        {
+                            lottie.Source = new Uri("file:///" + file.Local.Path);
                             _autocompleteHandler.ThrottleVisibleItems();
                         }
                     }
