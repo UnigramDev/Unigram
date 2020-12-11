@@ -24,6 +24,7 @@ namespace Unigram.Services
         private readonly FileContext<CloudUpdate> _mapping = new FileContext<CloudUpdate>();
 
         private readonly IProtoService _protoService;
+        private readonly INetworkService _networkService;
         private readonly IEventAggregator _aggregator;
 
         private long? _chatId;
@@ -32,9 +33,10 @@ namespace Unigram.Services
         private long _lastCheck;
         private bool _checking;
 
-        public CloudUpdateService(IProtoService protoService, IEventAggregator aggregator)
+        public CloudUpdateService(IProtoService protoService, INetworkService networkService, IEventAggregator aggregator)
         {
             _protoService = protoService;
+            _networkService = networkService;
             _aggregator = aggregator;
 
             _aggregator.Subscribe(this);
@@ -107,7 +109,13 @@ namespace Unigram.Services
                 }
                 else if (cloud.Document.Local.CanBeDownloaded && !cloud.Document.Local.IsDownloadingActive)
                 {
-                    _protoService.DownloadFile(cloud.Document.Id, 16);
+                    var date = Utils.ToDateTime(cloud.Date);
+                    var epoch = DateTime.Now - date;
+
+                    if (epoch.TotalDays >= 3 || !_networkService.IsMetered)
+                    {
+                        _protoService.DownloadFile(cloud.Document.Id, 16);
+                    }
                 }
             }
 
@@ -315,7 +323,8 @@ namespace Unigram.Services
                         MessageId = message.Id,
                         Changelog = changelog,
                         Version = version,
-                        Document = document.Document.DocumentValue
+                        Document = document.Document.DocumentValue,
+                        Date = message.Date
                     };
 
                     _mapping[document.Document.DocumentValue.Id].Add(set);
@@ -368,6 +377,8 @@ namespace Unigram.Services
 
         public File Document { get; set; }
         public StorageFile File { get; set; }
+
+        public int Date { get; set; }
 
         public bool UpdateFile(File file)
         {
