@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Views.Popups;
@@ -16,9 +17,13 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsProxiesViewModel : TLViewModelBase, IHandle<UpdateConnectionState>, IHandle<UpdateOption>
     {
-        public SettingsProxiesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly INetworkService _networkService;
+
+        public SettingsProxiesViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INetworkService networkService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
+            _networkService = networkService;
+
             Items = new MvxObservableCollection<ConnectionViewModel>();
 
             AddCommand = new RelayCommand(AddExecute);
@@ -32,14 +37,28 @@ namespace Unigram.ViewModels.Settings
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            var systemId = await _networkService.GetSystemProxyId();
+
             var response = await ProtoService.SendAsync(new GetProxies());
             if (response is Proxies proxies)
             {
-                var items = proxies.ProxiesValue.Select(x => new ProxyViewModel(x) as ConnectionViewModel).ToList();
+                var items = proxies.ProxiesValue.Select(x => x.Id == systemId ? new SystemProxyViewModel(x) : new ProxyViewModel(x)).ToList<ConnectionViewModel>();
+                var system = items.FirstOrDefault(x => x.Id == systemId);
+                if (system != null)
+                {
+                    system.IsEnabled = _networkService.UseSystemProxy;
+                    items.Remove(system);
+                }
+
                 items.Insert(0, new ConnectionViewModel());
 
+                if (system != null)
+                {
+                    items.Insert(1, system);
+                }
+
                 Items.ReplaceWith(items);
-                SelectedItem = items.OfType<ProxyViewModel>().FirstOrDefault(x => x.IsEnabled) ?? items.FirstOrDefault();
+                SelectedItem = _networkService.UseSystemProxy && system != null ? system : items.OfType<ProxyViewModel>().FirstOrDefault(x => x.IsEnabled) ?? items.FirstOrDefault();
 
                 if (_selectedItem != null)
                 {
@@ -50,12 +69,26 @@ namespace Unigram.ViewModels.Settings
                 {
                     await UpdateAsync(item);
                 });
+
+                _networkService.ProxyChanged += OnSystemProxyChanged;
             }
+        }
+
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            _networkService.ProxyChanged -= OnSystemProxyChanged;
+            return base.OnNavigatedFromAsync(pageState, suspending);
         }
 
         private async Task UpdateAsync(ConnectionViewModel proxy)
         {
-            var status = await ProtoService.SendAsync(new PingProxy(proxy.Id));
+            var proxyId = proxy.Id;
+            if (proxy is SystemProxyViewModel && !HttpProxyWatcher.Current.IsEnabled)
+            {
+                proxyId = 0;
+            }
+
+            var status = await ProtoService.SendAsync(new PingProxy(proxyId));
             BeginOnUIThread(() =>
             {
                 if (status is Seconds seconds)
@@ -70,6 +103,36 @@ namespace Unigram.ViewModels.Settings
                     proxy.Error = error;
                     proxy.Status = new ConnectionStatusError(error);
                 }
+            });
+        }
+
+        private void OnSystemProxyChanged(object sender, Proxy proxy)
+        {
+            var connection = Items.FirstOrDefault(x => x is SystemProxyViewModel);
+            if (connection == null || proxy == null)
+            {
+                return;
+            }
+
+            BeginOnUIThread(async () =>
+            {
+                var selected = SelectedItem == connection;
+                var index = Items.IndexOf(connection);
+                if (index != 1)
+                {
+                    return;
+                }
+
+                var edited = new SystemProxyViewModel(proxy);
+                Items.Remove(connection);
+                Items.Insert(index, edited);
+
+                if (selected)
+                {
+                    SelectedItem = edited;
+                }
+
+                await UpdateAsync(edited);
             });
         }
 
@@ -90,7 +153,14 @@ namespace Unigram.ViewModels.Settings
         {
             foreach (var item in Items)
             {
-                item.IsEnabled = item.Id == enabledProxyId;
+                if (_networkService.UseSystemProxy)
+                {
+                    item.IsEnabled = item is SystemProxyViewModel;
+                }
+                else
+                {
+                    item.IsEnabled = item.Id == enabledProxyId;
+                }
 
                 if (!item.IsEnabled)
                 {
@@ -162,12 +232,19 @@ namespace Unigram.ViewModels.Settings
         {
             MarkAsEnabled(connection);
 
-            if (connection is ProxyViewModel proxy)
+            if (connection is SystemProxyViewModel)
             {
+                _networkService.UseSystemProxy = true;
+                await _networkService.UpdateSystemProxy();
+            }
+            else if (connection is ProxyViewModel proxy)
+            {
+                _networkService.UseSystemProxy = false;
                 await ProtoService.SendAsync(new EnableProxy(proxy.Id));
             }
             else
             {
+                _networkService.UseSystemProxy = false;
                 await ProtoService.SendAsync(new DisableProxy());
             }
 
@@ -240,18 +317,14 @@ namespace Unigram.ViewModels.Settings
         private ConnectionStatus _status = new ConnectionStatusChecking();
         public ConnectionStatus Status
         {
-            get
-            {
-                return _status;
-            }
-            set
-            {
-                Set(ref _status, value);
-            }
+            get => _status;
+            set => Set(ref _status, value);
         }
 
         public double Seconds { get; set; }
         public Error Error { get; set; }
+
+        public virtual string DisplayName { get; } = "Without Proxy";
 
         public virtual bool IsEnabled { get; set; }
         public virtual int Id { get; private set; }
@@ -272,6 +345,18 @@ namespace Unigram.ViewModels.Settings
         public int Port => _proxy.Port;
         public string Server => _proxy.Server;
         public override int Id => _proxy.Id;
+
+        public override string DisplayName => $"{Server}:{Port}";
+    }
+
+    public class SystemProxyViewModel : ProxyViewModel
+    {
+        public SystemProxyViewModel(Proxy proxy)
+            : base(proxy)
+        {
+        }
+
+        public override string DisplayName => "Use System Proxy Settings";
     }
 
     public interface ConnectionStatus

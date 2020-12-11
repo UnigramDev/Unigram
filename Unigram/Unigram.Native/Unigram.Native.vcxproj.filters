@@ -283,5 +283,6 @@
     <Midl Include="PlaceholderImageHelper.idl" />
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="AudioPitchEffect.idl" />
+    <Midl Include="HttpProxyWatcher.idl" />
   </ItemGroup>
 </Project>

@@ -32,7 +32,7 @@ namespace Unigram.Views.Settings
             var element = sender as FrameworkElement;
 
             var proxy = List.ItemFromContainer(element) as ProxyViewModel;
-            if (proxy == null)
+            if (proxy == null || proxy is SystemProxyViewModel)
             {
                 return;
             }
@@ -58,10 +58,10 @@ namespace Unigram.Views.Settings
             {
                 args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Proxy_ContextRequested;
             }
 
-            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
             args.IsContainerPrepared = true;
         }
 

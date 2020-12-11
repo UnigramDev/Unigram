@@ -53,6 +53,8 @@ namespace Unigram.Services
         bool IsAccountsSelectorExpanded { get; set; }
         bool IsAllAccountsNotifications { get; set; }
 
+        bool UseSystemProxy { get; set; }
+
         int[] AccountsSelectorOrder { get; set; }
 
         bool IsLeftTabsEnabled { get; set; }
@@ -429,6 +431,13 @@ namespace Unigram.Services
         {
             get => _isAllAccountsNotifications ??= GetValueOrDefault(_local, "IsAllAccountsNotifications", true);
             set => AddOrUpdateValue(ref _isAllAccountsNotifications, _local, "IsAllAccountsNotifications", value);
+        }
+
+        private static bool? _useSystemProxy;
+        public bool UseSystemProxy
+        {
+            get => _useSystemProxy ??= GetValueOrDefault(_own, "UseSystemProxy", false);
+            set => AddOrUpdateValue(ref _useSystemProxy, _own, "UseSystemProxy", value);
         }
 
         private static bool? _isLeftTabsEnabled;

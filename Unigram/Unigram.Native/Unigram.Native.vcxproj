@@ -245,6 +245,10 @@
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
     <ClInclude Include="Helpers\StringHelper.h" />
+    <ClInclude Include="HttpProxyWatcher.h">
+      <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="libyuv\include\libyuv.h" />
     <ClInclude Include="libyuv\include\libyuv\basic_types.h" />
     <ClInclude Include="libyuv\include\libyuv\compare.h" />
@@ -295,6 +299,10 @@
     </ClCompile>
     <ClCompile Include="Generated Files\module.g.cpp" />
     <ClCompile Include="Helpers\LibraryHelper.cpp" />
+    <ClCompile Include="HttpProxyWatcher.cpp">
+      <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="libyuv\source\compare.cc">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -464,6 +472,9 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="AudioPitchEffect.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="HttpProxyWatcher.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="NativeUtils.idl" />

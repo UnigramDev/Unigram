@@ -1,4 +1,9 @@
-﻿using Telegram.Td.Api;
+﻿using System;
+using System.Threading.Tasks;
+using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Native;
+using Windows.Foundation;
 using Windows.Networking.Connectivity;
 
 namespace Unigram.Services
@@ -7,16 +12,35 @@ namespace Unigram.Services
     {
         void Reconnect();
 
+        Task<int> GetSystemProxyId();
+        Task<Proxy> UpdateSystemProxy();
+
         NetworkType Type { get; }
+        bool IsMetered { get; }
+
+        bool UseSystemProxy { get; set; }
+        event EventHandler<Proxy> ProxyChanged;
     }
 
     public class NetworkService : INetworkService
     {
         private readonly IProtoService _protoService;
+        private readonly ISettingsService _settingsService;
+        private readonly IEventAggregator _aggregator;
 
-        public NetworkService(IProtoService protoService)
+        private readonly HttpProxyWatcher _watcher;
+        private readonly EventDebouncer<bool> _debouncer;
+
+        public NetworkService(IProtoService protoService, ISettingsService settingsService, IEventAggregator aggregator)
         {
             _protoService = protoService;
+            _settingsService = settingsService;
+            _aggregator = aggregator;
+
+            _watcher = HttpProxyWatcher.Current;
+            _debouncer = new EventDebouncer<bool>(Constants.HoldingThrottle,
+                handler => _watcher.Changed += new TypedEventHandler<HttpProxyWatcher, bool>(handler),
+                handler => _watcher.Changed -= new TypedEventHandler<HttpProxyWatcher, bool>(handler), true);
 
             NetworkInformation.NetworkStatusChanged += OnNetworkStatusChanged;
 
@@ -25,6 +49,162 @@ namespace Unigram.Services
                 Update(NetworkInformation.GetInternetConnectionProfile());
             }
             catch { }
+
+            Initialize();
+        }
+
+        public bool UseSystemProxy
+        {
+            get => _settingsService.UseSystemProxy;
+            set
+            {
+                if (_settingsService.UseSystemProxy != value)
+                {
+                    _settingsService.UseSystemProxy = value;
+
+                    if (value)
+                    {
+                        ProxyChanged += OnProxyChanged;
+                    }
+                    else
+                    {
+                        ProxyChanged -= OnProxyChanged;
+                    }
+                }
+            }
+        }
+
+        private void OnProxyChanged(object sender, Proxy e)
+        {
+            // This is used only to keep the event subscribed.
+            // No action should be performed here.
+        }
+
+        private event EventHandler<Proxy> _proxyChanged;
+        public event EventHandler<Proxy> ProxyChanged
+        {
+            add
+            {
+                if (_proxyChanged == null)
+                {
+                    _debouncer.Invoked += OnProxyChanged;
+                }
+
+                _proxyChanged += value;
+            }
+            remove
+            {
+                _proxyChanged -= value;
+
+                if (_proxyChanged == null)
+                {
+                    _debouncer.Invoked -= OnProxyChanged;
+                }
+            }
+        }
+
+        private async void OnProxyChanged(object sender, bool args)
+        {
+            _proxyChanged?.Invoke(this, await UpdateSystemProxy());
+        }
+
+        private async void Initialize()
+        {
+            if (UseSystemProxy)
+            {
+                await UpdateSystemProxy();
+                ProxyChanged += OnProxyChanged;
+            }
+        }
+
+        public async Task<int> GetSystemProxyId()
+        {
+            var response = await _protoService.SendAsync(new GetOption("x_system_proxy"));
+            if (response is OptionValueInteger integer)
+            {
+                return (int)integer.Value;
+            }
+
+            string host;
+            int port;
+            if (TryCreateUri(_watcher.Server, out Uri result))
+            {
+                host = result.Host;
+                port = result.Port;
+            }
+            else
+            {
+                host = "localhost";
+                port = 80;
+            }
+
+            var proxy = await _protoService.SendAsync(new AddProxy(host, port, false, new ProxyTypeHttp())) as Proxy;
+            if (proxy != null)
+            {
+                _protoService.Send(new SetOption("x_system_proxy", new OptionValueInteger(proxy.Id)));
+                return proxy.Id;
+            }
+
+            return 0;
+        }
+
+        public async Task<Proxy> UpdateSystemProxy()
+        {
+            if (_settingsService.UseSystemProxy && !_watcher.IsEnabled)
+            {
+                _protoService.Send(new DisableProxy());
+            }
+
+            string host;
+            int port;
+            if (TryCreateUri(_watcher.Server, out Uri result))
+            {
+                host = result.Host;
+                port = result.Port;
+            }
+            else
+            {
+                host = "localhost";
+                port = 80;
+            }
+
+            var enabled = _settingsService.UseSystemProxy && _watcher.IsEnabled;
+
+            var response = await _protoService.SendAsync(new GetOption("x_system_proxy"));
+            if (response is OptionValueInteger integer)
+            {
+                return await _protoService.SendAsync(new EditProxy((int)integer.Value, host, port, enabled, new ProxyTypeHttp())) as Proxy;
+            }
+
+            var proxy = await _protoService.SendAsync(new AddProxy(host, port, enabled, new ProxyTypeHttp())) as Proxy;
+            if (proxy != null)
+            {
+                _protoService.Send(new SetOption("x_system_proxy", new OptionValueInteger(proxy.Id)));
+                return proxy;
+            }
+
+            return null;
+        }
+
+        private bool TryCreateUri(string server, out Uri result)
+        {
+            var query = server.Split(';');
+
+            foreach (var part in query)
+            {
+                var split = part.Split('=');
+                if (split.Length == 2 && string.Equals(split[0], "http"))
+                {
+                    return MessageHelper.TryCreateUri(split[1], out result);
+                }
+                else if (split.Length == 1)
+                {
+                    return MessageHelper.TryCreateUri(split[0], out result);
+                }
+            }
+
+            result = null;
+            return false;
         }
 
         public void Reconnect()
@@ -54,6 +234,16 @@ namespace Unigram.Services
                 return new NetworkTypeWiFi();
             }
 
+            var cost = profile.GetConnectionCost();
+            if (cost != null)
+            {
+                IsMetered = cost.NetworkCostType != NetworkCostType.Unrestricted && cost.NetworkCostType != NetworkCostType.Unknown;
+            }
+            else
+            {
+                IsMetered = false;
+            }
+
             var level = profile.GetNetworkConnectivityLevel();
             if (level == NetworkConnectivityLevel.LocalAccess || level == NetworkConnectivityLevel.None)
             {
@@ -61,7 +251,6 @@ namespace Unigram.Services
                 return new NetworkTypeWiFi();
             }
 
-            var cost = profile.GetConnectionCost();
             if (cost != null && cost.Roaming)
             {
                 return new NetworkTypeMobileRoaming();
@@ -83,8 +272,15 @@ namespace Unigram.Services
         private NetworkType _type = new NetworkTypeOther();
         public NetworkType Type
         {
-            get { return _type; }
-            private set { _type = value; }
+            get => _type;
+            private set => _type = value;
+        }
+
+        private bool _isMetered;
+        public bool IsMetered
+        {
+            get => _isMetered;
+            set => _isMetered = value;
         }
     }
 }

@@ -50,36 +50,18 @@
                     </Border>
                 </StackPanel>
             </ListView.Header>
-            <ListView.ItemTemplateSelector>
-                <selectors:ConnectionTemplateSelector>
-                    <selectors:ConnectionTemplateSelector.ItemTemplate>
-                        <DataTemplate x:DataType="viewModels:ConnectionViewModel">
-                            <Grid Padding="0,12" Background="Transparent">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Text="Without Proxy" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-                                <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}" VerticalAlignment="Top" Grid.Row="1"/>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:ConnectionTemplateSelector.ItemTemplate>
-                    <selectors:ConnectionTemplateSelector.ProxyTemplate>
-                        <DataTemplate x:DataType="viewModels:ProxyViewModel">
-                            <Grid Padding="0,12" Background="Transparent">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis">
-                                    <Run Text="{x:Bind Server}"/><Run Text=":"/><Run Text="{x:Bind Port}"/>
-                                </TextBlock>
-                                <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}" VerticalAlignment="Top" Grid.Row="1"/>
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:ConnectionTemplateSelector.ProxyTemplate>
-                </selectors:ConnectionTemplateSelector>
-            </ListView.ItemTemplateSelector>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:ConnectionViewModel">
+                    <Grid Padding="0,12" Background="Transparent">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{x:Bind DisplayName}" VerticalAlignment="Bottom" Style="{StaticResource BaseTextBlockStyle}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                        <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}" VerticalAlignment="Top" Grid.Row="1"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
