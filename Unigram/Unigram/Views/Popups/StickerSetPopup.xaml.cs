@@ -232,7 +232,7 @@ namespace Unigram.Views.Popups
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                if (sticker.Contours.Count > 0)
+                if (sticker.Contours.Count > 0 && ApiInfo.CanUseDirectComposition)
                 {
                     CompositionPathParser.ParseThumbnail(sticker.Contours, 60, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);

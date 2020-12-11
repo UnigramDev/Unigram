@@ -3015,7 +3015,7 @@ namespace Unigram.Views
                         lottie.Source = null;
                     }
 
-                    if (sticker.Contours.Count > 0)
+                    if (sticker.Contours.Count > 0 && ApiInfo.CanUseDirectComposition)
                     {
                         CompositionPathParser.ParseThumbnail(sticker.Contours, 60, out ShapeVisual visual, false);
                         ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);

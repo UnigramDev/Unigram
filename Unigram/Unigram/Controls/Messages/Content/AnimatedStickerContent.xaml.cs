@@ -89,7 +89,7 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, IList<ClosedVectorPath> contours)
         {
-            if (contours != null && ApiInfo.CanUseDirectComposition)
+            if (ApiInfo.CanUseDirectComposition)
             {
                 _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, Player.Width, out ShapeVisual visual);
                 ElementCompositionPreview.SetElementChildVisual(Player, visual);
