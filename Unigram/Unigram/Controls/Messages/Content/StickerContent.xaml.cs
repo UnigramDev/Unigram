@@ -37,7 +37,7 @@ namespace Unigram.Controls.Messages.Content
             Texture.Source = null;
             Texture.Constraint = message;
 
-            if (sticker.Contours.Count > 0 && !sticker.StickerValue.Local.IsDownloadingCompleted)
+            if (!sticker.StickerValue.Local.IsDownloadingCompleted)
             {
                 UpdateThumbnail(message, sticker.Contours);
             }

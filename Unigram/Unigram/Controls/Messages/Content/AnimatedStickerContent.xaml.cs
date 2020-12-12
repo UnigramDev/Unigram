@@ -53,7 +53,7 @@ namespace Unigram.Controls.Messages.Content
                 Player.ColorReplacements = null;
             }
 
-            if (sticker.Contours.Count > 0 && !sticker.StickerValue.Local.IsDownloadingCompleted)
+            if (!sticker.StickerValue.Local.IsDownloadingCompleted)
             {
                 UpdateThumbnail(message, sticker.Contours);
             }
