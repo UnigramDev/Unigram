@@ -32,7 +32,9 @@
 
         <DataTemplate x:Key="ItemTemplate">
             <Grid Margin="2">
-                <Image/>
+                <Border>
+                    <Image/>
+                </Border>
                 <TextBlock
                     FontSize="20"
                     FontFamily="{ThemeResource EmojiThemeFontFamily}"

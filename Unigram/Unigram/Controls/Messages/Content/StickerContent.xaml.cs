@@ -63,6 +63,7 @@ namespace Unigram.Controls.Messages.Content
             if (file.Local.IsDownloadingCompleted)
             {
                 Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                ElementCompositionPreview.SetElementChildVisual(this, null);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -74,7 +75,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (ApiInfo.CanUseDirectComposition)
             {
-                _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, ActualWidth, out ShapeVisual visual);
+                _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, 200, out ShapeVisual visual);
                 ElementCompositionPreview.SetElementChildVisual(this, visual);
             }
         }

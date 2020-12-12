@@ -2993,16 +2993,15 @@ namespace Unigram.Views
 
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    if (content.Children[0] is Image photo)
+                    if (content.Children[0] is Border border && border.Child is Image photo)
                     {
                         photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                        ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                     }
                     else if (content.Children[0] is LottieView lottie)
                     {
                         lottie.Source = new Uri("file:///" + file.Local.Path);
                     }
-
-                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -3019,10 +3018,6 @@ namespace Unigram.Views
                     {
                         CompositionPathParser.ParseThumbnail(sticker.Contours, 60, out ShapeVisual visual, false);
                         ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-                    }
-                    else
-                    {
-                        ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                     }
 
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
@@ -4327,10 +4322,10 @@ namespace Unigram.Views
                             continue;
                         }
 
-                        if (content.Children[0] is Image photo)
+                        if (content.Children[0] is Border border && border.Child is Image photo)
                         {
                             photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                            ElementCompositionPreview.SetElementChildVisual(photo, null);
+                            ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                         }
                         else if (content.Children[0] is LottieView lottie)
                         {

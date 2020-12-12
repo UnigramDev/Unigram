@@ -104,7 +104,9 @@
         <selectors:AutocompleteTemplateSelector.StickerTemplate>
             <DataTemplate>
                 <Grid Padding="4,8" Width="68" Height="76">
-                    <Image/>
+                    <Border>
+                        <Image/>
+                    </Border>
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.StickerTemplate>

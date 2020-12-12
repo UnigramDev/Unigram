@@ -67,7 +67,15 @@ namespace Unigram.Common
 
         public static CompositionAnimation ParseThumbnail(IList<ClosedVectorPath> contours, double side, out ShapeVisual visual, bool animated = true)
         {
-            var path = Parse(contours);
+            CompositionPath path;
+            if (contours.Count > 0)
+            {
+                path = Parse(contours);
+            }
+            else
+            {
+                path = new CompositionPath(CanvasGeometry.CreateRoundedRectangle(null, 0, 0, 512, 512, 80, 80));
+            }
 
             var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
             var foregroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
