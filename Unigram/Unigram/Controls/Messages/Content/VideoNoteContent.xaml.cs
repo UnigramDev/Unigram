@@ -4,7 +4,6 @@ using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 
 namespace Unigram.Controls.Messages.Content
@@ -82,18 +81,24 @@ namespace Unigram.Controls.Messages.Content
                 //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
+
+                Player.Source = null;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
                 //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
+
+                Player.Source = null;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
                 //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
+
+                Player.Source = null;
 
                 if (message.Delegate.CanBeDownloaded(message))
                 {
@@ -107,12 +112,16 @@ namespace Unigram.Controls.Messages.Content
                     //Button.Glyph = Icons.Ttl;
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
+
+                    Player.Source = null;
                 }
                 else
                 {
                     //Button.Glyph = Icons.Play;
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 1;
+
+                    Player.Source = new Uri("file:///" + file.Local.Path);
                 }
             }
         }
@@ -168,9 +177,9 @@ namespace Unigram.Controls.Messages.Content
             return null;
         }
 
-        public Border GetPlaybackElement()
+        public IPlayerView GetPlaybackElement()
         {
-            return Element;
+            return Player;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

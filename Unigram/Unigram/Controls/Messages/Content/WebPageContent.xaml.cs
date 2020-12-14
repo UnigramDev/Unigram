@@ -4,7 +4,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -137,7 +136,7 @@ namespace Unigram.Controls.Messages.Content
             return content is MessageText text && text.WebPage != null && !text.WebPage.IsSmallPhoto();
         }
 
-        public Border GetPlaybackElement()
+        public IPlayerView GetPlaybackElement()
         {
             if (Media.Child is IContentWithPlayback content)
             {

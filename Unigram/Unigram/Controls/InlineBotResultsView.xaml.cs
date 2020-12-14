@@ -29,10 +29,6 @@ namespace Unigram.Controls
             InitializeComponent();
 
             _handler = new AnimatedRepeaterHandler<InlineQueryResult>(Repeater, ScrollingHost);
-            _handler.DownloadFile = (id, result) =>
-            {
-                DownloadFile(_files, id, result);
-            };
 
             _zoomer = new ZoomableRepeaterHandler(Repeater);
             _zoomer.Opening = _handler.UnloadVisibleItems;
@@ -127,7 +123,7 @@ namespace Unigram.Controls
                     var content = button.Content as Grid;
                     if (content.Children[0] is Image image)
                     {
-                        if (result is InlineQueryResultAnimation || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
+                        if (result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
                         {
                             image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
                         }
@@ -135,6 +131,10 @@ namespace Unigram.Controls
                         {
                             image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
                         }
+                    }
+                    else if (content.Children[0] is AnimationView animationView)
+                    {
+                        animationView.Thumbnail = new BitmapImage(new Uri("file:///" + file.Local.Path));
                     }
                     else if (content.Children[0] is Grid presenter)
                     {
@@ -161,6 +161,17 @@ namespace Unigram.Controls
                     if (button == null)
                     {
                         continue;
+                    }
+
+                    var content = button.Content as Grid;
+                    if (content.Children[0] is LottieView stickerView)
+                    {
+                        stickerView.Source = new Uri("file:///" + file.Local.Path);
+                    }
+                    else if (content.Children[0] is AnimationView animationView)
+                    {
+                        animationView.Source = new Uri("file:///" + file.Local.Path);
+                        animationView.Thumbnail = null;
                     }
 
                     _handler.ThrottleVisibleItems();
@@ -204,12 +215,12 @@ namespace Unigram.Controls
             else if (collection.All(x => x.IsMedia()) /* animation, photo, video without title */)
             {
                 Repeater.Layout = Resources["MosaicLayout"] as Layout;
-                Repeater.ItemTemplate = Resources["MediaTemplate"];
+                Repeater.ItemTemplate = Resources["MediaTemplateSelector"];
             }
             else if (collection.All(x => x is InlineQueryResultSticker))
             {
                 Repeater.Layout = Resources["GridLayout"] as Layout;
-                Repeater.ItemTemplate = Resources["StickerTemplate"];
+                Repeater.ItemTemplate = Resources["MediaTemplateSelector"];
             }
             else
             {
@@ -230,14 +241,10 @@ namespace Unigram.Controls
             {
                 _zoomer.ElementPrepared(args.Element);
 
-                if (result is InlineQueryResultAnimation || result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
+                if (result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
                 {
                     File file = null;
-                    if (result is InlineQueryResultAnimation animation)
-                    {
-                        file = animation.Animation.Thumbnail?.File;
-                    }
-                    else if (result is InlineQueryResultPhoto photo)
+                    if (result is InlineQueryResultPhoto photo)
                     {
                         file = photo.Photo.GetSmall().Photo;
                     }
@@ -277,6 +284,60 @@ namespace Unigram.Controls
                     {
                         image.Source = null;
                         DownloadFile(_thumbnails, file.Id, result);
+                    }
+                }
+            }
+            else if (content.Children[0] is LottieView stickerView && result is InlineQueryResultSticker sticker)
+            {
+                _zoomer.ElementPrepared(args.Element);
+
+                var file = sticker.Sticker.StickerValue;
+                if (file == null)
+                {
+                    return;
+                }
+
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    stickerView.Source = new Uri("file:///" + file.Local.Path);
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    stickerView.Source = null;
+                    DownloadFile(_files, file.Id, result);
+                }
+            }
+            else if (content.Children[0] is AnimationView animationView && result is InlineQueryResultAnimation animation)
+            {
+                _zoomer.ElementPrepared(args.Element);
+
+                var file = animation.Animation.AnimationValue;
+                if (file == null)
+                {
+                    return;
+                }
+
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    animationView.Source = new Uri("file:///" + file.Local.Path);
+                }
+                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                {
+                    animationView.Source = null;
+                    DownloadFile(_files, file.Id, result);
+
+                    var thumbnail = animation.Animation.Thumbnail?.File;
+                    if (thumbnail != null)
+                    {
+                        if (thumbnail.Local.IsDownloadingCompleted)
+                        {
+                            animationView.Thumbnail = new BitmapImage(new Uri("file:///" + thumbnail.Local.Path));
+                        }
+                        else if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
+                        {
+                            animationView.Thumbnail = null;
+                            DownloadFile(_thumbnails, thumbnail.Id, animation);
+                        }
                     }
                 }
             }
@@ -441,6 +502,28 @@ namespace Unigram.Controls
 
                 _loadMoreDrop = false;
             }
+        }
+    }
+
+    public class InlineQueryTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate AnimatedStickerTemplate { get; set; }
+        public DataTemplate StickerTemplate { get; set; }
+        public DataTemplate AnimationTemplate { get; set; }
+        public DataTemplate MediaTemplate { get; set; }
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        {
+            if (item is InlineQueryResultSticker sticker)
+            {
+                return sticker.Sticker.IsAnimated ? AnimatedStickerTemplate : StickerTemplate;
+            }
+            else if (item is InlineQueryResultAnimation)
+            {
+                return AnimationTemplate;
+            }
+
+            return MediaTemplate;
         }
     }
 }

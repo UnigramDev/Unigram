@@ -14,7 +14,9 @@ namespace Unigram.Common
     {
         private readonly ItemsRepeater _listView;
         private readonly ScrollViewer _scrollingHost;
-        private readonly DispatcherTimer _throttler;
+        private readonly DispatcherTimer _debouncer;
+
+        private readonly Dictionary<long, IPlayerView> _prev = new Dictionary<long, IPlayerView>();
 
         public AnimatedRepeaterHandler(ItemsRepeater listView, ScrollViewer scrollingHost)
         {
@@ -25,16 +27,14 @@ namespace Unigram.Common
             _scrollingHost = scrollingHost;
             _scrollingHost.ViewChanged += OnViewChanged;
 
-            _throttler = new DispatcherTimer();
-            _throttler.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
-            _throttler.Tick += (s, args) =>
+            _debouncer = new DispatcherTimer();
+            _debouncer.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
+            _debouncer.Tick += (s, args) =>
             {
-                _throttler.Stop();
+                _debouncer.Stop();
                 LoadVisibleItems(/*e.IsIntermediate*/ false);
             };
         }
-
-        public Action<int, T> DownloadFile { get; set; }
 
         public Action<FrameworkElement, LottieView> LoadView { get; set; }
         public Action<FrameworkElement, LottieView> UnloadView { get; set; }
@@ -48,8 +48,8 @@ namespace Unigram.Common
         {
             if (e.PreviousSize.Width < _listView.ActualWidth || e.PreviousSize.Height < _listView.ActualHeight)
             {
-                _throttler.Stop();
-                _throttler.Start();
+                _debouncer.Stop();
+                _debouncer.Start();
             }
         }
 
@@ -57,13 +57,13 @@ namespace Unigram.Common
         {
             LoadVisibleItems(true);
 
-            _throttler.Stop();
-            _throttler.Start();
+            _debouncer.Stop();
+            _debouncer.Start();
             return;
 
             if (e.IsIntermediate)
             {
-                _throttler.Start();
+                _debouncer.Start();
             }
             else
             {
@@ -75,13 +75,13 @@ namespace Unigram.Common
 
         public void ThrottleVisibleItems()
         {
-            _throttler.Stop();
-            _throttler.Start();
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         public void LoadVisibleItems(bool intermediate)
         {
-            if (intermediate && _old.Count < 1)
+            if (intermediate && _prev.Count < 1)
             {
                 return;
             }
@@ -105,7 +105,7 @@ namespace Unigram.Common
                 return;
             }
 
-            var animations = new List<(Button, T)>(lastVisibleIndex - firstVisibleIndex);
+            var next = new Dictionary<long, IPlayerView>();
 
             for (int i = firstVisibleIndex; i <= lastVisibleIndex; i++)
             {
@@ -115,169 +115,99 @@ namespace Unigram.Common
                     continue;
                 }
 
+                File file = null;
+
                 var item = container.DataContext;
                 if (item is StickerViewModel viewModel && viewModel.IsAnimated)
                 {
-                    animations.Add((container, (T)(object)viewModel));
+                    file = viewModel.StickerValue;
                 }
                 else if (item is StickerSetViewModel setViewModel && setViewModel.IsAnimated)
                 {
-                    animations.Add((container, (T)(object)setViewModel));
+                    file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else if (item is Sticker sticker && sticker.IsAnimated)
                 {
-                    animations.Add((container, (T)(object)sticker));
+                    file = sticker.StickerValue;
                 }
                 else if (item is StickerSetInfo set && set.IsAnimated)
                 {
-                    animations.Add((container, (T)(object)set));
+                    file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else if (item is Animation animation)
                 {
-                    animations.Add((container, (T)(object)animation));
+                    file = animation.AnimationValue;
                 }
                 else if (item is InlineQueryResultAnimation inlineQueryResultAnimation)
                 {
-                    animations.Add((container, (T)(object)inlineQueryResultAnimation));
+                    file = inlineQueryResultAnimation.Animation.AnimationValue;
+                }
+                else if (item is InlineQueryResultSticker inlineQueryResultSticker && inlineQueryResultSticker.Sticker.IsAnimated)
+                {
+                    file = inlineQueryResultSticker.Sticker.StickerValue;
+                }
+
+                if (file == null || !file.Local.IsDownloadingCompleted)
+                {
+                    continue;
+                }
+
+                var panel = container.ContentTemplateRoot;
+                if (panel is FrameworkElement final)
+                {
+                    var lottie = final.FindName("Player") as IPlayerView;
+                    if (lottie != null)
+                    {
+                        lottie.Tag = item;
+                        next[item.GetHashCode()] = lottie;
+                    }
                 }
             }
 
-            if (animations.Count > 0)
+            foreach (var item in _prev.Keys.Except(next.Keys).ToList())
             {
-                Play(animations, !intermediate);
+                var presenter = _prev[item];
+                if (presenter != null)
+                {
+                    presenter.Pause();
+                }
+
+                _prev.Remove(item);
+            }
+
+            if (intermediate)
+            {
+                return;
+            }
+
+            foreach (var item in next)
+            {
+                //if (_prev.ContainsKey(item))
+                //{
+                //    continue;
+                //}
+
+                if (item.Value != null)
+                {
+                    item.Value.Play();
+                }
+
+                _prev[item.Key] = item.Value;
             }
         }
 
         public void UnloadVisibleItems()
         {
-            foreach (var item in _old.Values)
+            foreach (var item in _prev.Values)
             {
-                var presenter = item.Presenter;
-                if (presenter != null)
+                try
                 {
-                    try
-                    {
-                        presenter.Pause();
-                    }
-                    catch { }
-
-                    try
-                    {
-                        item.Container.Children.Remove(presenter);
-                    }
-                    catch { }
+                    item.Pause();
                 }
+                catch { }
             }
 
-            _old.Clear();
-        }
-
-        class MediaPlayerItem
-        {
-            public File File { get; set; }
-            public Grid Container { get; set; }
-            public AnimationView Presenter { get; set; }
-        }
-
-        private readonly Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
-
-        private void Play(IEnumerable<(Button Contaner, T Sticker)> items, bool auto)
-        {
-            var news = new Dictionary<long, MediaPlayerItem>();
-
-            foreach (var item in items)
-            {
-                File file;
-                if (item.Sticker is StickerViewModel viewModel)
-                {
-                    file = viewModel.StickerValue;
-                }
-                else if (item.Sticker is StickerSetViewModel setViewModel)
-                {
-                    file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
-                }
-                else if (item.Sticker is Sticker sticker)
-                {
-                    file = sticker.StickerValue;
-                }
-                else if (item.Sticker is StickerSetInfo set)
-                {
-                    file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
-                }
-                else if (item.Sticker is Animation animation)
-                {
-                    file = animation.AnimationValue;
-                }
-                else if (item.Sticker is InlineQueryResultAnimation inlineQueryResultAnimation)
-                {
-                    file = inlineQueryResultAnimation.Animation.AnimationValue;
-                }
-                else
-                {
-                    continue;
-                }
-
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    var panel = item.Contaner.ContentTemplateRoot as Grid;
-                    if (panel is Grid final)
-                    {
-                        final.Tag = item.Sticker;
-                        news[item.Sticker.GetHashCode()] = new MediaPlayerItem
-                        {
-                            File = file,
-                            Container = final
-                        };
-                    }
-                }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    DownloadFile?.Invoke(file.Id, item.Sticker);
-                }
-            }
-
-            foreach (var item in _old.Keys.Except(news.Keys).ToList())
-            {
-                var presenter = _old[item].Presenter;
-                if (presenter != null)
-                {
-                    //presenter.Dispose();
-                }
-
-                var container = _old[item].Container;
-                if (container != null && presenter != null)
-                {
-                    container.Children.Remove(presenter);
-                }
-
-                _old.Remove(item);
-            }
-
-            if (!auto)
-            {
-                return;
-            }
-
-            foreach (var item in news.Keys.Except(_old.Keys).ToList())
-            {
-                if (_old.ContainsKey(item))
-                {
-                    continue;
-                }
-
-                if (news.TryGetValue(item, out MediaPlayerItem data) && data.Container != null && data.Container.Children.Count < 2)
-                {
-                    var presenter = new AnimationView();
-                    presenter.AutoPlay = true;
-                    presenter.IsLoopingEnabled = true;
-                    presenter.Source = UriEx.GetLocal(data.File.Local.Path);
-
-                    data.Presenter = presenter;
-                    data.Container.Children.Insert(1, presenter);
-                }
-
-                _old[item] = news[item];
-            }
+            _prev.Clear();
         }
     }
 }

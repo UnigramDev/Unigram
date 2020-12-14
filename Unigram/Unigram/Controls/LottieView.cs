@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Unigram.Common;
-using Unigram.Views;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Graphics;
@@ -23,6 +22,16 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
+    public interface IPlayerView
+    {
+        bool Play();
+        void Pause();
+
+        bool IsLoopingEnabled { get; }
+
+        object Tag { get; set; }
+    }
+
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     public class LottieView : Control, IPlayerView
     {

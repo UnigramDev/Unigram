@@ -4,7 +4,6 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.ViewModels.Drawers;
-using Unigram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,6 +14,8 @@ namespace Unigram.Common
     {
         private readonly ListViewBase _listView;
         private readonly DispatcherTimer _debouncer;
+
+        private readonly Dictionary<long, IPlayerView> _prev = new Dictionary<long, IPlayerView>();
 
         public AnimatedListHandler(ListViewBase listView)
         {
@@ -120,7 +121,7 @@ namespace Unigram.Common
                 return;
             }
 
-            var animations = new List<(SelectorItem, T)>(lastVisibleIndex - firstVisibleIndex);
+            var next = new Dictionary<long, IPlayerView>();
 
             for (int i = firstVisibleIndex; i <= lastVisibleIndex; i++)
             {
@@ -130,92 +131,30 @@ namespace Unigram.Common
                     continue;
                 }
 
+                File file = null;
+
                 var item = _listView.ItemFromContainer(container);
                 if (item is StickerViewModel viewModel && viewModel.IsAnimated)
                 {
-                    animations.Add((container, (T)(object)viewModel));
+                    file = viewModel.StickerValue;
                 }
                 else if (item is StickerSetViewModel setViewModel && setViewModel.IsAnimated)
                 {
-                    animations.Add((container, (T)(object)setViewModel));
+                    file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else if (item is Sticker sticker && sticker.IsAnimated)
                 {
-                    animations.Add((container, (T)(object)sticker));
+                    file = sticker.StickerValue;
                 }
                 else if (item is StickerSetInfo set && set.IsAnimated)
                 {
-                    animations.Add((container, (T)(object)set));
+                    file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else if (item is Animation animation)
                 {
-                    animations.Add((container, (T)(object)animation));
+                    file = animation.AnimationValue;
                 }
                 else if (item is InlineQueryResultAnimation inlineQueryResultAnimation)
-                {
-                    animations.Add((container, (T)(object)inlineQueryResultAnimation));
-                }
-            }
-
-            if (animations.Count > 0)
-            {
-                Play(animations, !intermediate);
-            }
-        }
-
-        public void UnloadVisibleItems()
-        {
-            foreach (var item in _prev.Values)
-            {
-                var presenter = item.Player;
-                if (presenter != null)
-                {
-                    try
-                    {
-                        presenter.Pause();
-                    }
-                    catch { }
-                }
-            }
-
-            _prev.Clear();
-        }
-
-        class MediaPlayerItem
-        {
-            public IPlayerView Player { get; set; }
-        }
-
-        private readonly Dictionary<long, MediaPlayerItem> _prev = new Dictionary<long, MediaPlayerItem>();
-
-        private void Play(IEnumerable<(SelectorItem Contaner, T Sticker)> items, bool auto)
-        {
-            var next = new Dictionary<long, MediaPlayerItem>();
-
-            foreach (var item in items)
-            {
-                File file = null;
-                if (item.Sticker is StickerViewModel viewModel)
-                {
-                    file = viewModel.StickerValue;
-                }
-                else if (item.Sticker is StickerSetViewModel setViewModel)
-                {
-                    file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
-                }
-                else if (item.Sticker is Sticker sticker)
-                {
-                    file = sticker.StickerValue;
-                }
-                else if (item.Sticker is StickerSetInfo set)
-                {
-                    file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
-                }
-                else if (item.Sticker is Animation animationz)
-                {
-                    file = animationz.AnimationValue;
-                }
-                else if (item.Sticker is InlineQueryResultAnimation inlineQueryResultAnimation)
                 {
                     file = inlineQueryResultAnimation.Animation.AnimationValue;
                 }
@@ -225,21 +164,21 @@ namespace Unigram.Common
                     continue;
                 }
 
-                var panel = item.Contaner.ContentTemplateRoot;
+                var panel = container.ContentTemplateRoot;
                 if (panel is FrameworkElement final)
                 {
                     var lottie = final.FindName("Player") as IPlayerView;
                     if (lottie != null)
                     {
-                        lottie.Tag = item.Sticker;
-                        next[item.Sticker.GetHashCode()] = new MediaPlayerItem { Player = lottie };
+                        lottie.Tag = item;
+                        next[item.GetHashCode()] = lottie;
                     }
                 }
             }
 
             foreach (var item in _prev.Keys.Except(next.Keys).ToList())
             {
-                var presenter = _prev[item].Player;
+                var presenter = _prev[item];
                 if (presenter != null)
                 {
                     presenter.Pause();
@@ -248,25 +187,39 @@ namespace Unigram.Common
                 _prev.Remove(item);
             }
 
-            if (!auto)
+            if (intermediate)
             {
                 return;
             }
 
             foreach (var item in next)
             {
-                //if (_oldStickers.ContainsKey(item))
+                //if (_prev.ContainsKey(item))
                 //{
                 //    continue;
                 //}
 
-                if (item.Value.Player != null)
+                if (item.Value != null)
                 {
-                    item.Value.Player.Play();
+                    item.Value.Play();
                 }
 
                 _prev[item.Key] = item.Value;
             }
+        }
+
+        public void UnloadVisibleItems()
+        {
+            foreach (var item in _prev.Values)
+            {
+                try
+                {
+                    item.Pause();
+                }
+                catch { }
+            }
+
+            _prev.Clear();
         }
     }
 }

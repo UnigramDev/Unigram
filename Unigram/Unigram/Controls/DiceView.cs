@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Views;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Graphics;

@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class DiceContent : HyperlinkButton, IContentWithFile
+    public sealed partial class DiceContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -42,7 +42,7 @@ namespace Unigram.Controls.Messages.Content
             var state = dice.GetState();
             if (state is DiceStickersRegular regular)
             {
-                if (regular.Sticker.Contours.Count > 0 && !regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
+                if (!regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
                 {
                     UpdateThumbnail(message, regular.Sticker.Contours);
                 }
@@ -175,6 +175,11 @@ namespace Unigram.Controls.Messages.Content
             }
 
             return false;
+        }
+
+        public IPlayerView GetPlaybackElement()
+        {
+            return Player;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

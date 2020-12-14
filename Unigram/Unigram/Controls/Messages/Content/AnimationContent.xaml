@@ -15,11 +15,21 @@
     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
     MaxHeight="{ThemeResource TelegramMediaMaxHeight}">
 
-    <Image x:Name="Texture" Stretch="UniformToFill"/>
+    <Image
+        x:Name="Texture"
+        Stretch="UniformToFill"/>
     
-    <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
-    
-    <Border x:Name="Element"/>
+    <controls:FileButton
+        x:Name="Button"
+        Click="Button_Click"
+        Style="{StaticResource ImmersiveFileButtonStyle}"/>
+
+    <Border>
+        <controls:AnimationView
+            x:Name="Player"
+            AutoPlay="False"
+            IsHitTestVisible="False"/>
+    </Border>
 
     <Border x:Name="Overlay" Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="8,4,8,4" Margin="4">
         <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" TextWrapping="NoWrap"/>

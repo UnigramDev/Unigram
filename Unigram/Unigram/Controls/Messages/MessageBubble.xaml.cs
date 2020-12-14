@@ -970,7 +970,7 @@ namespace Unigram.Controls.Messages
             }
         }
 
-        public Border GetPlaybackElement()
+        public IPlayerView GetPlaybackElement()
         {
             if (Media.Child is IContentWithPlayback content)
             {

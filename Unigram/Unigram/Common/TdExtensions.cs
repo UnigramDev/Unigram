@@ -609,10 +609,26 @@ namespace Unigram.Common
             var content = message.GeneratedContent ?? message.Content;
             switch (content)
             {
+                case MessageAnimation animation:
+                    return animation.Animation.AnimationValue.Local.IsDownloadingCompleted;
                 case MessageSticker sticker:
-                    return sticker.Sticker.IsAnimated ? sticker.Sticker.StickerValue.Local.IsDownloadingCompleted : false;
+                    return sticker.Sticker.IsAnimated && sticker.Sticker.StickerValue.Local.IsDownloadingCompleted;
+                case MessageVideoNote videoNote:
+                    return videoNote.VideoNote.Video.Local.IsDownloadingCompleted;
                 case MessageText text:
-                    return text.WebPage?.Sticker?.IsAnimated ?? false ? text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted : false;
+                    if (text.WebPage?.Animation != null)
+                    {
+                        return text.WebPage.Animation.AnimationValue.Local.IsDownloadingCompleted;
+                    }
+                    else if (text.WebPage?.Sticker  != null)
+                    {
+                        return text.WebPage.Sticker.IsAnimated && text.WebPage.Sticker.StickerValue.Local.IsDownloadingCompleted;
+                    }
+                    else if (text.WebPage?.VideoNote != null)
+                    {
+                        return text.WebPage.VideoNote.Video.Local.IsDownloadingCompleted;
+                    }
+                    return false;
                 case MessageDice dice:
                     var state = dice.InitialState;
                     if (state is DiceStickersRegular regular)
@@ -953,8 +969,8 @@ namespace Unigram.Common
         {
             switch (result)
             {
-                case InlineQueryResultAnimation animation:
-                case InlineQueryResultPhoto photo:
+                case InlineQueryResultAnimation _:
+                case InlineQueryResultPhoto _:
                     return true;
                 case InlineQueryResultVideo video:
                     return string.IsNullOrEmpty(video.Title);

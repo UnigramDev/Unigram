@@ -56,12 +56,9 @@
                                 ContextRequested="OnContextRequested"
                                 Style="{StaticResource GridViewButtonStyle}"
                                 Margin="0,0,2,2">
-                                <Grid>
-                                    <Image
-                                        Stretch="UniformToFill"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"/>
-                                </Grid>
+                                <controls:AnimationView
+                                    x:Name="Player"
+                                    AutoPlay="False"/>
                             </Button>
                         </DataTemplate>
                     </muxc:ItemsRepeater.ItemTemplate>

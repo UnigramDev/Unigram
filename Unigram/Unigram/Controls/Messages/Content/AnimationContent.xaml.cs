@@ -76,6 +76,8 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                 Overlay.Opacity = 1;
+
+                Player.Source = null;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
@@ -85,6 +87,8 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
                 Overlay.Opacity = 1;
+
+                Player.Source = null;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
@@ -94,6 +98,8 @@ namespace Unigram.Controls.Messages.Content
 
                 Subtitle.Text = Strings.Resources.AttachGif + ", " + FileSizeConverter.Convert(size);
                 Overlay.Opacity = 1;
+
+                Player.Source = null;
 
                 if (message.Delegate.CanBeDownloaded(message))
                 {
@@ -110,6 +116,8 @@ namespace Unigram.Controls.Messages.Content
 
                     Subtitle.Text = Locale.FormatTtl(Math.Max(message.Ttl, animation.Duration), true);
                     Overlay.Opacity = 1;
+
+                    Player.Source = null;
                 }
                 else
                 {
@@ -119,6 +127,8 @@ namespace Unigram.Controls.Messages.Content
 
                     Subtitle.Text = Strings.Resources.AttachGif;
                     Overlay.Opacity = 1;
+
+                    Player.Source = new Uri("file:///" + file.Local.Path);
                 }
             }
         }
@@ -172,9 +182,9 @@ namespace Unigram.Controls.Messages.Content
             return null;
         }
 
-        public Border GetPlaybackElement()
+        public IPlayerView GetPlaybackElement()
         {
-            return Element;
+            return Player;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

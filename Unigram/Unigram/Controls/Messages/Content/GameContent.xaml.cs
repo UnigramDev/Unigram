@@ -87,7 +87,7 @@ namespace Unigram.Controls.Messages.Content
             return content is MessageGame;
         }
 
-        public Border GetPlaybackElement()
+        public IPlayerView GetPlaybackElement()
         {
             if (Media.Child is IContentWithPlayback content)
             {

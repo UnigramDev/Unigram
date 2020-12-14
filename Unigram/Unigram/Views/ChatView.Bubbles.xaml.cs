@@ -58,41 +58,16 @@ namespace Unigram.Views
 
         private void UnloadVisibleMessages()
         {
-            foreach (var item in _old.Values)
+            foreach (var item in _prev.Values)
             {
-                var presenter = item.Player;
-                if (presenter != null /*&& presenter.MediaPlayer != null*/)
+                try
                 {
-                    //try
-                    //{
-                    //    presenter.MediaPlayer.Dispose();
-                    //    presenter.MediaPlayer = null;
-                    //}
-                    //catch { }
-
-                    try
-                    {
-                        item.Element.Child = null;
-                    }
-                    catch { }
+                    item.Pause();
                 }
+                catch { }
             }
 
-            foreach (var item in _oldStickers.Values)
-            {
-                var presenter = item.Player;
-                if (presenter != null)
-                {
-                    try
-                    {
-                        presenter.Pause();
-                    }
-                    catch { }
-                }
-            }
-
-            _old.Clear();
-            _oldStickers.Clear();
+            _prev.Clear();
         }
 
         public void UpdatePinnedMessage()
@@ -340,20 +315,7 @@ namespace Unigram.Views
             batch.End();
         }
 
-        class MediaPlayerItem
-        {
-            public File File { get; set; }
-            public Border Element { get; set; }
-            public AnimationView Player { get; set; }
-        }
-
-        class LottieViewItem
-        {
-            public IPlayerView Player { get; set; }
-        }
-
-        private readonly Dictionary<long, MediaPlayerItem> _old = new Dictionary<long, MediaPlayerItem>();
-        private readonly Dictionary<long, LottieViewItem> _oldStickers = new Dictionary<long, LottieViewItem>();
+        private readonly Dictionary<long, IPlayerView> _prev = new Dictionary<long, IPlayerView>();
 
         public async void PlayMessage(MessageViewModel message, FrameworkElement target)
         {
@@ -362,7 +324,7 @@ namespace Unigram.Views
             // If autoplay is enabled and the message contains a video note, then we want a different behavior
             if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageVideoNote || text?.WebPage != null && text.WebPage.Video != null))
             {
-                ViewModel.PlaybackService.Enqueue(message.Get());
+                ViewModel.PlaybackService.Enqueue(message, ViewModel.ThreadId);
                 //if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
                 //{
                 //    if (item.Presenter == null || item.Presenter.MediaPlayer == null)
@@ -407,7 +369,7 @@ namespace Unigram.Views
             }
             else if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageAnimation || (text?.WebPage != null && text.WebPage.Animation != null) || (message.Content is MessageGame game && game.Game.Animation != null)))
             {
-                if (_old.TryGetValue(message.AnimationHash(), out MediaPlayerItem item))
+                if (_prev.TryGetValue(message.AnimationHash(), out IPlayerView item))
                 {
                     GalleryViewModelBase viewModel;
                     if (message.Content is MessageAnimation)
@@ -428,7 +390,7 @@ namespace Unigram.Views
             }
             else
             {
-                if (_old.ContainsKey(message.AnimationHash()))
+                if (_prev.ContainsKey(message.AnimationHash()))
                 {
                     Play(new (SelectorItem, MessageViewModel)[0], false, false);
                 }
@@ -447,114 +409,7 @@ namespace Unigram.Views
 
         public void Play(IEnumerable<(SelectorItem Container, MessageViewModel Message)> items, bool auto, bool audio)
         {
-            PlayStickers(items);
-
-            var next = new Dictionary<long, MediaPlayerItem>();
-
-            foreach (var pair in items)
-            {
-                var message = pair.Message;
-                var container = pair.Container;
-
-                var animation = message.GetAnimation();
-                if (animation == null || !animation.Local.IsDownloadingCompleted)
-                {
-                    continue;
-                }
-
-                var root = container.ContentTemplateRoot as FrameworkElement;
-                if (root == null)
-                {
-                    continue;
-                }
-
-                if (root is MessageBubble == false)
-                {
-                    root = root.FindName("Bubble") as FrameworkElement;
-                }
-
-                var bubble = root as MessageBubble;
-                if (bubble == null)
-                {
-                    continue;
-                }
-
-                var panel = bubble.GetPlaybackElement();
-                if (panel != null)
-                {
-                    panel.Tag = message;
-                    next[message.AnimationHash()] = new MediaPlayerItem { File = animation, Element = panel };
-                }
-            }
-
-            foreach (var item in _old.Keys.Except(next.Keys).ToList())
-            {
-                var presenter = _old[item].Player;
-                //if (presenter != null && presenter.MediaPlayer != null)
-                //{
-                //    presenter.MediaPlayer.Dispose();
-                //    presenter.MediaPlayer = null;
-                //}
-
-                var container = _old[item].Element;
-                if (container != null && presenter != null)
-                {
-                    container.Child = null;
-                }
-
-                _old.Remove(item);
-            }
-
-            if (!auto)
-            {
-                return;
-            }
-
-            foreach (var item in next)
-            {
-                if (_old.ContainsKey(item.Key))
-                {
-                    continue;
-                }
-
-                if (item.Value.Element != null && item.Value.Element.Child == null)
-                {
-                    var presenter = new AnimationView();
-                    presenter.AutoPlay = true;
-                    presenter.IsLoopingEnabled = true;
-                    presenter.IsHitTestVisible = false;
-                    presenter.Source = UriEx.GetLocal(item.Value.File.Local.Path);
-
-                    //if (data.Clip && ApiInformation.IsTypePresent("Windows.UI.Composition.CompositionGeometricClip"))
-                    //{
-                    //    var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
-                    //    ellipse.Center = new Vector2(100, 100);
-                    //    ellipse.Radius = new Vector2(100, 100);
-
-                    //    var clip = ellipse.Compositor.CreateGeometricClip();
-                    //    clip.ViewBox = ellipse.Compositor.CreateViewBox();
-                    //    clip.ViewBox.Size = new Vector2(200, 200);
-                    //    clip.ViewBox.Stretch = CompositionStretch.UniformToFill;
-                    //    clip.Geometry = ellipse;
-
-                    //    var visual = ElementCompositionPreview.GetElementVisual(presenter);
-                    //    visual.Clip = clip;
-                    //}
-
-                    item.Value.Player = presenter;
-                    //container.Children.Insert(news[item].Watermark ? 2 : 2, presenter);
-                    //container.Children.Add(presenter);
-
-                    item.Value.Element.Child = presenter;
-                }
-
-                _old[item.Key] = item.Value;
-            }
-        }
-
-        public void PlayStickers(IEnumerable<(SelectorItem Container, MessageViewModel Message)> items)
-        {
-            var next = new Dictionary<long, LottieViewItem>();
+            var next = new Dictionary<long, IPlayerView>();
             var prev = new HashSet<long>();
 
             foreach (var pair in items)
@@ -594,39 +449,29 @@ namespace Unigram.Views
                     root = root.FindName("Bubble") as FrameworkElement;
                 }
 
-                if (root == null)
+                var bubble = root as MessageBubble;
+                if (bubble == null)
                 {
                     continue;
                 }
 
-                var target = message.Content as object;
-                var media = root.FindName("Media") as Border;
-                var panel = media.Child as FrameworkElement;
-
-                if (target is MessageText messageText && messageText.WebPage != null)
+                var player = bubble.GetPlaybackElement();
+                if (player != null)
                 {
-                    media = panel?.FindName("Media") as Border;
-                    panel = media?.Child as FrameworkElement;
-                }
-
-                var lottie = panel?.FindName("Player") as IPlayerView;
-                if (lottie != null)
-                {
-                    lottie.Tag = message;
-                    next[message.AnimationHash()] = new LottieViewItem { Player = lottie };
-                    System.Diagnostics.Debug.WriteLine("Hash: " + message.AnimationHash());
+                    player.Tag = message;
+                    next[message.AnimationHash()] = player;
                 }
             }
 
-            foreach (var item in _oldStickers.Keys.Except(next.Keys.Union(prev)).ToList())
+            foreach (var item in _prev.Keys.Except(next.Keys.Union(prev)).ToList())
             {
-                var presenter = _oldStickers[item].Player;
+                var presenter = _prev[item];
                 if (presenter != null && presenter.IsLoopingEnabled)
                 {
                     presenter.Pause();
                 }
 
-                _oldStickers.Remove(item);
+                _prev.Remove(item);
             }
 
             foreach (var item in next)
@@ -636,12 +481,12 @@ namespace Unigram.Views
                 //    continue;
                 //}
 
-                if (item.Value.Player != null)
+                if (item.Value != null)
                 {
-                    item.Value.Player.Play();
+                    item.Value.Play();
                 }
 
-                _oldStickers[item.Key] = item.Value;
+                _prev[item.Key] = item.Value;
             }
         }
 
@@ -1025,15 +870,5 @@ namespace Unigram.Views
     {
         void Play(MessageViewModel message);
         void Play(IEnumerable<MessageViewModel> items, bool auto);
-    }
-
-    public interface IPlayerView
-    {
-        bool Play();
-        void Pause();
-
-        bool IsLoopingEnabled { get; }
-
-        object Tag { get; set; }
     }
 }

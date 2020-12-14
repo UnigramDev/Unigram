@@ -25,7 +25,12 @@
     <!-- Used to host the MediaPlayer -->
     <!-- TODO: future, remove this and use CompositionGeometricClip
          when most more desktop users will be on RS5 -->
-    <Border x:Name="Element" CornerRadius="100"/>
+    <Border x:Name="Element" CornerRadius="100">
+        <controls:AnimationView
+            x:Name="Player"
+            AutoPlay="False"
+            IsHitTestVisible="False"/>
+    </Border>
 
     <Border x:Name="Overlay" IsHitTestVisible="False" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Padding="8,4,8,4" Margin="4">
         <TextBlock x:Name="Subtitle" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>

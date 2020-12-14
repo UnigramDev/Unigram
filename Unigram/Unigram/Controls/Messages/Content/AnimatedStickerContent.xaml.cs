@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls.Messages.Content
 {
-    public sealed partial class AnimatedStickerContent : HyperlinkButton, IContentWithFile
+    public sealed partial class AnimatedStickerContent : HyperlinkButton, IContentWithFile, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -83,6 +83,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
+                Player.Source = null;
                 message.ProtoService.DownloadFile(file.Id, 1);
             }
         }
@@ -129,6 +130,11 @@ namespace Unigram.Controls.Messages.Content
             }
 
             return null;
+        }
+
+        public IPlayerView GetPlaybackElement()
+        {
+            return Player;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

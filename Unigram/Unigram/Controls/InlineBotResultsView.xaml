@@ -43,21 +43,48 @@
             </Button>
         </DataTemplate>
 
-        <DataTemplate x:Key="MediaTemplate">
-            <Button Click="Result_Click" Margin="0,0,2,2" Style="{StaticResource GridViewButtonStyle}">
-                <Grid>
-                    <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Grid>
-            </Button>
-        </DataTemplate>
-
-        <DataTemplate x:Key="StickerTemplate">
-            <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
-                <Grid>
-                    <Image Stretch="Uniform"/>
-                </Grid>
-            </Button>
-        </DataTemplate>
+        <local:InlineQueryTemplateSelector x:Key="MediaTemplateSelector">
+            <local:InlineQueryTemplateSelector.AnimatedStickerTemplate>
+                <DataTemplate>
+                    <Button Click="Result_Click" Margin="0,0,2,2" Style="{StaticResource GridViewButtonStyle}">
+                        <Grid>
+                            <controls:LottieView
+                                x:Name="Player"
+                                AutoPlay="False"/>
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </local:InlineQueryTemplateSelector.AnimatedStickerTemplate>
+            <local:InlineQueryTemplateSelector.StickerTemplate>
+                <DataTemplate>
+                    <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
+                        <Grid>
+                            <Image Stretch="Uniform"/>
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </local:InlineQueryTemplateSelector.StickerTemplate>
+            <local:InlineQueryTemplateSelector.AnimationTemplate>
+                <DataTemplate>
+                    <Button Click="Result_Click" Style="{StaticResource GridViewButtonStyle}">
+                        <Grid>
+                            <controls:AnimationView
+                                x:Name="Player"
+                                AutoPlay="False"/>
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </local:InlineQueryTemplateSelector.AnimationTemplate>
+            <local:InlineQueryTemplateSelector.MediaTemplate>
+                <DataTemplate>
+                    <Button Click="Result_Click" Margin="0,0,2,2" Style="{StaticResource GridViewButtonStyle}">
+                        <Grid>
+                            <Image Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+                </DataTemplate>
+            </local:InlineQueryTemplateSelector.MediaTemplate>
+        </local:InlineQueryTemplateSelector>
 
         <controls:MosaicLayout x:Key="MosaicLayout"/>
         

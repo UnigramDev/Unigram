@@ -35,7 +35,6 @@ namespace Unigram.Controls.Drawers
             InitializeComponent();
 
             _handler = new AnimatedRepeaterHandler<Animation>(Repeater, ScrollingHost);
-            _handler.DownloadFile = DownloadFile;
 
             _zoomer = new ZoomableRepeaterHandler(Repeater);
             _zoomer.Opening = _handler.UnloadVisibleItems;
@@ -114,10 +113,9 @@ namespace Unigram.Controls.Drawers
 
             button.Tag = animation;
 
-            var content = button.Content as Grid;
-            var image = content.Children[0] as Image;
+            var content = button.Content as AnimationView;
 
-            var file = animation.Thumbnail?.File;
+            var file = animation.AnimationValue;
             if (file == null)
             {
                 return;
@@ -125,12 +123,27 @@ namespace Unigram.Controls.Drawers
 
             if (file.Local.IsDownloadingCompleted)
             {
-                image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                content.Source = new Uri("file:///" + file.Local.Path);
+                content.Thumbnail = null;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                image.Source = null;
+                content.Source = null;
                 DownloadFile(file.Id, animation);
+
+                var thumbnail = animation.Thumbnail?.File;
+                if (thumbnail != null)
+                {
+                    if (thumbnail.Local.IsDownloadingCompleted)
+                    {
+                        content.Thumbnail = new BitmapImage(new Uri("file:///" + thumbnail.Local.Path));
+                    }
+                    else if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
+                    {
+                        content.Thumbnail = null;
+                        DownloadFile(thumbnail.Id, animation);
+                    }
+                }
             }
         }
 
@@ -189,21 +202,21 @@ namespace Unigram.Controls.Drawers
                         continue;
                     }
 
+                    var button = Repeater.TryGetElement(index) as Button;
+                    if (button == null)
+                    {
+                        continue;
+                    }
+
+                    var content = button.Content as AnimationView;
+
                     if (item.Thumbnail?.File.Id == file.Id)
                     {
-                        var button = Repeater.TryGetElement(index) as Button;
-                        if (button == null)
-                        {
-                            continue;
-                        }
-
-                        var content = button.Content as Grid;
-                        var image = content.Children[0] as Image;
-
-                        image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        content.Thumbnail = new BitmapImage(new Uri("file:///" + file.Local.Path));
                     }
                     else if (item.AnimationValue.Id == file.Id)
                     {
+                        content.Source = new Uri("file:///" + file.Local.Path);
                         _handler.ThrottleVisibleItems();
                     }
                 }

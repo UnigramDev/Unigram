@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Native;
-using Unigram.Views;
 using Windows.Foundation;
 using Windows.Graphics.DirectX;
 using Windows.Storage;
@@ -24,6 +23,8 @@ namespace Unigram.Controls
     {
         private CanvasControl _canvas;
         private CanvasBitmap _bitmap;
+
+        private Grid _layoutRoot;
 
         private Image _thumbnail;
         private bool? _hideThumbnail;
@@ -45,13 +46,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(AnimationView);
         }
 
-        //~AnimationView()
-        //{
-        //    Dispose();
-        //}
-
-        public bool IsUnloaded => _unloaded;
-
         protected override void OnApplyTemplate()
         {
             var canvas = GetTemplateChild("Canvas") as CanvasControl;
@@ -65,11 +59,35 @@ namespace Unigram.Controls
             _canvas.Draw += OnDraw;
             _canvas.Unloaded += OnUnloaded;
 
+            _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
+            _layoutRoot.Loaded += OnLoaded;
+
             _thumbnail = (Image)GetTemplateChild("Thumbnail");
 
             OnSourceChanged(UriToPath(Source), _source);
 
             base.OnApplyTemplate();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_unloaded)
+            {
+                while (_layoutRoot.Children.Count > 1)
+                {
+                    _layoutRoot.Children.Remove(_layoutRoot.Children[1]);
+                }
+
+                _canvas = new CanvasControl();
+                _canvas.CreateResources += OnCreateResources;
+                _canvas.Draw += OnDraw;
+                _canvas.Unloaded += OnUnloaded;
+
+                _layoutRoot.Children.Add(_canvas);
+
+                _unloaded = false;
+                OnSourceChanged(UriToPath(Source), _source);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -112,32 +130,22 @@ namespace Unigram.Controls
 
         private void OnCreateResources(CanvasControl sender, CanvasCreateResourcesEventArgs args)
         {
-            args.TrackAsyncAction(Task.Run(() =>
-            {
-                var animation = VideoAnimation.LoadFromFile(_source, false, true);
-                if (animation == null)
-                {
-                    return;
-                }
 
-                _animation = animation;
-
-                if (_bitmap != null)
-                {
-                    _bitmap.Dispose();
-                }
-
-                var buffer = ArrayPool<byte>.Shared.Rent(_animation.PixelWidth * _animation.PixelHeight * 4);
-                _bitmap = CanvasBitmap.CreateFromBytes(sender, buffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
-                ArrayPool<byte>.Shared.Return(buffer);
-
-            }).AsAsyncAction());
         }
 
         private void OnDraw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             if (_animation == null || _unloaded)
             {
+                return;
+            }
+
+            if (_bitmap == null)
+            {
+                var buffer = ArrayPool<byte>.Shared.Rent(_animation.PixelWidth * _animation.PixelHeight * 4);
+                _bitmap = CanvasBitmap.CreateFromBytes(_canvas, buffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                ArrayPool<byte>.Shared.Return(buffer);
+
                 return;
             }
 
@@ -196,7 +204,7 @@ namespace Unigram.Controls
             OnSourceChanged(UriToPath(newValue), UriToPath(oldValue));
         }
 
-        private void OnSourceChanged(string newValue, string oldValue)
+        private  async void OnSourceChanged(string newValue, string oldValue)
         {
             var canvas = _canvas;
             if (canvas == null)
@@ -218,7 +226,23 @@ namespace Unigram.Controls
                 return;
             }
 
+            var shouldPlay = _shouldPlay;
+
+            var animation = await Task.Run(() => VideoAnimation.LoadFromFile(newValue, false, true));
+            if (animation == null)
+            {
+                // The app can't access the file specified
+                return;
+            }
+
+            if (_shouldPlay)
+            {
+                shouldPlay = true;
+            }
+
             _source = newValue;
+            _animation = animation;
+            _bitmap = null;
 
             if (AutoPlay || _shouldPlay)
             {
@@ -229,9 +253,16 @@ namespace Unigram.Controls
             {
                 Subscribe(false);
 
-                //// Invalidate to render the first frame
-                //Invalidate();
-                //_canvas.Invalidate();
+                if (_canvas.ReadyToDraw)
+                {
+                    var buffer = ArrayPool<byte>.Shared.Rent(_animation.PixelWidth * _animation.PixelHeight * 4);
+                    _bitmap = CanvasBitmap.CreateFromBytes(_canvas, buffer, _animation.PixelWidth, _animation.PixelHeight, DirectXPixelFormat.R8G8B8A8UIntNormalized);
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
+
+                // Invalidate to render the first frame
+                await Task.Run(Invalidate);
+                _canvas.Invalidate();
             }
         }
 
