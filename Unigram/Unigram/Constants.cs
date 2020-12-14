@@ -25,6 +25,8 @@
         public const int ChatListMain = 0;
         public const int ChatListArchive = 1;
 
+        public const string DefaultDeviceId = "";
+
         public static readonly string[] TelegramHosts = new string[]
         {
             "telegram.me",

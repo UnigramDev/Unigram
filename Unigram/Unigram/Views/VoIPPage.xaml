@@ -172,21 +172,14 @@
         </Grid>
 
         <controls:GlyphButton
+            Click="Menu_ContextRequested"
             Glyph="&#xE9E9;"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="0,0,12,0"
             AutomationProperties.Name="{CustomResource Settings}"
             ToolTipService.ToolTip="{CustomResource Settings}"
-            Grid.Column="1">
-            <Button.Flyout>
-                <Flyout>
-                    <settings:SettingsVoIPPage
-                        Width="296"
-                        Margin="-12"/>
-                </Flyout>
-            </Button.Flyout>
-        </controls:GlyphButton>
+            Grid.Column="1"/>
 
         <StackPanel x:Name="BottomPanel" VerticalAlignment="Bottom">
             <StackPanel.ChildrenTransitions>

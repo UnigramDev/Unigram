@@ -1,6 +1,4 @@
-﻿using Microsoft.Graphics.Canvas;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -13,14 +11,7 @@ using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
-using Windows.Graphics.Capture;
-using Windows.Graphics.DirectX;
-using Windows.Graphics.Imaging;
-using Windows.Media.Capture;
 using Windows.Storage;
-using Windows.System;
-using Windows.System.Profile;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
@@ -41,20 +32,23 @@ namespace Unigram.Services
 
         void Start(long chatId, bool video);
 
-        void StartCaptureInternal(GraphicsCaptureItem item);
-
         CallProtocol GetProtocol();
-
-        Task<bool> CheckAccessAsync(bool video);
     }
 
     public class VoipService : TLViewModelBase, IVoipService
     {
         private readonly IViewService _viewService;
 
+        private readonly MediaDeviceWatcher _videoWatcher;
+
+        private readonly MediaDeviceWatcher _inputWatcher;
+        private readonly MediaDeviceWatcher _outputWatcher;
+
+        private readonly DisposableMutex _updateLock = new DisposableMutex();
+
         private Call _call;
         private DateTime _callStarted;
-        private VoipManager _controller;
+        private VoipManager _manager;
         private VoipVideoCapture _capturer;
 
         private VoIPPage _callPage;
@@ -64,6 +58,11 @@ namespace Unigram.Services
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _viewService = viewService;
+
+            _videoWatcher = new MediaDeviceWatcher(DeviceClass.VideoCapture, id => _capturer?.SwitchToDevice(id));
+            _inputWatcher = new MediaDeviceWatcher(DeviceClass.AudioCapture, id => _manager?.SetAudioInputDevice(id));
+            _outputWatcher = new MediaDeviceWatcher(DeviceClass.AudioRender, id => _manager?.SetAudioOutputDevice(id));
+
             aggregator.Subscribe(this);
         }
 
@@ -72,66 +71,16 @@ namespace Unigram.Services
             return new CallProtocol(true, true, 92, 92, new[] { "3.0.0" });
         }
 
-        public VoipManager Manager => _controller;
+        public VoipManager Manager => _manager;
         public VoipVideoCapture Capturer
         {
             get => _capturer;
             set => _capturer = value;
         }
 
-        private GraphicsCaptureItem _item;
-        private Direct3D11CaptureFramePool _framePool;
-        private CanvasDevice _canvasDevice;
-        private GraphicsCaptureSession _session;
-
-        public void StartCaptureInternal(GraphicsCaptureItem item)
-        {
-            _item = item;
-            _canvasDevice = new CanvasDevice();
-
-            _framePool = Direct3D11CaptureFramePool.Create(
-                _canvasDevice, // D3D device
-                DirectXPixelFormat.B8G8R8A8UIntNormalized, // Pixel format
-                2, // Number of frames
-                _item.Size); // Size of the buffers
-
-            _session = _framePool.CreateCaptureSession(_item);
-            _session.StartCapture();
-
-            _framePool.FrameArrived += (s, a) =>
-            {
-                using (var frame = _framePool.TryGetNextFrame())
-                {
-                    ProcessFrame(frame);
-                }
-            };
-        }
-
-        private async void ProcessFrame(Direct3D11CaptureFrame frame)
-        {
-            if (Capturer != null)
-            {
-                //using (var bitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(frame.Surface))
-                {
-
-                    //var bitmap = CanvasBitmap.CreateFromDirect3D11Surface(_canvasDevice, frame.Surface);
-                    //var bytes = bitmap.GetPixelBytes();
-
-                    //Capturer.FeedBytes(frame.ContentSize.Width, frame.ContentSize.Height, bytes.ToArray());
-                    var bitmap = await SoftwareBitmap.CreateCopyFromSurfaceAsync(frame.Surface);
-                    Capturer.FeedBytes(bitmap);
-                }
-            }
-            else
-            {
-                //_framePool.Dispose();
-                //_session.Dispose();
-            }
-        }
-
         public async void Start(long chatId, bool video)
         {
-            var permissions = await CheckAccessAsync(video);
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video);
             if (permissions == false)
             {
                 return;
@@ -195,279 +144,59 @@ namespace Unigram.Services
             }
         }
 
-        public async Task<bool> CheckAccessAsync(bool video)
-        {
-            var audioPermission = await CheckDeviceAccessAsync(true, video);
-            if (audioPermission == false)
-            {
-                return false;
-            }
-
-            if (video)
-            {
-                var videoPermission = await CheckDeviceAccessAsync(false, true);
-                if (videoPermission == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private async Task<bool> CheckDeviceAccessAsync(bool audio, bool video)
-        {
-            // For some reason, as far as I understood, CurrentStatus is always Unspecified on Xbox
-            if (string.Equals(AnalyticsInfo.VersionInfo.DeviceFamily, "Windows.Xbox"))
-            {
-                return true;
-            }
-
-            var access = DeviceAccessInformation.CreateFromDeviceClass(audio ? DeviceClass.AudioCapture : DeviceClass.VideoCapture);
-            if (access.CurrentStatus == DeviceAccessStatus.Unspecified)
-            {
-                MediaCapture capture = null;
-                bool success = false;
-                try
-                {
-                    capture = new MediaCapture();
-                    var settings = new MediaCaptureInitializationSettings();
-                    settings.StreamingCaptureMode = video
-                        ? StreamingCaptureMode.AudioAndVideo
-                        : StreamingCaptureMode.Audio;
-                    await capture.InitializeAsync(settings);
-                    success = true;
-                }
-                catch { }
-                finally
-                {
-                    if (capture != null)
-                    {
-                        capture.Dispose();
-                        capture = null;
-                    }
-                }
-
-                return success;
-            }
-            else if (access.CurrentStatus != DeviceAccessStatus.Allowed)
-            {
-                var message = audio
-                    ? video
-                    ? Strings.Resources.PermissionNoAudio
-                    : Strings.Resources.PermissionNoAudioVideo
-                    : Strings.Resources.PermissionNoCamera;
-
-                BeginOnUIThread(async () =>
-                {
-                    var confirm = await MessagePopup.ShowAsync(message, Strings.Resources.AppName, Strings.Resources.PermissionOpenSettings, Strings.Resources.OK);
-                    if (confirm == ContentDialogResult.Primary)
-                    {
-                        await Launcher.LaunchUriAsync(new Uri("ms-settings:appsfeatures-app"));
-                    }
-                });
-
-                return false;
-            }
-
-            return true;
-        }
-
         public string CurrentAudioInput
         {
-            get
-            {
-                return SettingsService.Current.VoIP.InputDevice;
-            }
-            set
-            {
-                SettingsService.Current.VoIP.InputDevice = value;
-
-                if (_controller != null)
-                {
-                    _controller.SetAudioInputDevice(value);
-                }
-            }
+            get => _videoWatcher.Get();
+            set => _videoWatcher.Set(value);
         }
 
         public string CurrentVideoInput
         {
-            get
-            {
-                return SettingsService.Current.VoIP.VideoDevice;
-            }
-            set
-            {
-                SettingsService.Current.VoIP.VideoDevice = value;
-
-                if (_capturer != null)
-                {
-                    _capturer.SwitchToDevice(value);
-                }
-            }
+            get => _inputWatcher.Get();
+            set => _inputWatcher.Set(value);
         }
 
         public string CurrentAudioOutput
         {
-            get
-            {
-                return SettingsService.Current.VoIP.OutputDevice;
-            }
-            set
-            {
-                SettingsService.Current.VoIP.OutputDevice = value;
-
-                if (_controller != null)
-                {
-                    _controller.SetAudioOutputDevice(value);
-                }
-            }
+            get => _outputWatcher.Get();
+            set => _outputWatcher.Set(value);
         }
 
         public void Handle(UpdateNewCallSignalingData update)
         {
-            if (_controller != null)
+            if (_manager != null)
             {
-                _controller.ReceiveSignalingData(update.Data);
+                _manager.ReceiveSignalingData(update.Data);
             }
         }
 
-        public void Handle(UpdateCall update)
+        public async void Handle(UpdateCall update)
         {
-            if (_call != null && _call.Id != update.Call.Id)
+            using (await _updateLock.WaitAsync())
             {
-                return;
-            }
-
-            _call = update.Call;
-
-            if (update.Call.State is CallStatePending pending)
-            {
-                if (update.Call.IsOutgoing && pending.IsCreated && pending.IsReceived)
+                if (_call != null && _call.Id != update.Call.Id)
                 {
-                    SoundEffects.Play(SoundEffect.VoipRingback);
+                    return;
                 }
-            }
-            else if (update.Call.State is CallStateExchangingKeys exchangingKeys)
-            {
-                SoundEffects.Play(SoundEffect.VoipConnecting);
-            }
-            else if (update.Call.State is CallStateReady ready)
-            {
-                var user = CacheService.GetUser(update.Call.UserId);
-                if (user == null)
+                else if (_call == null && !update.Call.IsValidState())
                 {
                     return;
                 }
 
-                //VoIPControllerWrapper.UpdateServerConfig(ready.Config);
+                _call = update.Call;
 
-                var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", $"voip{update.Call.Id}.txt");
-                var statsDumpFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.statsDump.txt");
-
-                var call_packet_timeout_ms = CacheService.Options.CallPacketTimeoutMs;
-                var call_connect_timeout_ms = CacheService.Options.CallConnectTimeoutMs;
-
-                if (_controller != null)
+                if (update.Call.State is CallStatePending pending)
                 {
-                    //_controller.Dispose();
-                    _controller = null;
-                }
-
-                //var config = new VoIPConfig
-                //{
-                //    initTimeout = call_packet_timeout_ms / 1000.0,
-                //    recvTimeout = call_connect_timeout_ms / 1000.0,
-                //    dataSaving = base.Settings.UseLessData,
-                //    enableAEC = true,
-                //    enableNS = true,
-                //    enableAGC = true,
-
-                //    enableVolumeControl = true,
-
-                //    logFilePath = logFile,
-                //    statsDumpFilePath = statsDumpFile
-                //};
-
-                var servers = new List<VoipServer>();
-
-                foreach (var server in ready.Servers)
-                {
-                    if (server.Type is CallServerTypeWebrtc webRtc)
+                    if (pending.IsCreated && pending.IsReceived)
                     {
-                        servers.Add(new VoipServer
-                        {
-                            Host = server.IpAddress,
-                            Port = server.Port,
-                            Login = webRtc.Username,
-                            Password = webRtc.Password,
-                            IsTurn = webRtc.SupportsTurn
-                        });
+                        SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
                     }
                 }
-
-                _capturer = update.Call.IsVideo
-                    ? new VoipVideoCapture(SettingsService.Current.VoIP.VideoDevice)
-                    : null;
-
-                var descriptor = new VoipDescriptor
+                else if (update.Call.State is CallStateExchangingKeys exchangingKeys)
                 {
-                    InitializationTimeout = call_packet_timeout_ms / 1000.0,
-                    ReceiveTimeout = call_connect_timeout_ms / 1000.0,
-                    Servers = servers,
-                    EncryptionKey = ready.EncryptionKey,
-                    IsOutgoing = update.Call.IsOutgoing,
-                    EnableP2p = ready.Protocol.UdpP2p && ready.AllowP2p,
-                    VideoCapture = _capturer,
-                    AudioInputId = SettingsService.Current.VoIP.InputDevice,
-                    AudioOutputId = SettingsService.Current.VoIP.OutputDevice
-                };
-
-                _controller = new VoipManager(descriptor);
-                _controller.StateUpdated += OnStateUpdated;
-                _controller.SignalingDataEmitted += OnSignalingDataEmitted;
-
-                BeginOnUIThread(() =>
-                {
-                    Show(update.Call, _controller, _capturer, _callStarted);
-                });
-
-                _controller.Start();
-            }
-            else if (update.Call.State is CallStateDiscarded discarded)
-            {
-                if (discarded.NeedDebugInformation)
-                {
-                    //ProtoService.Send(new SendCallDebugInformation(update.Call.Id, _controller.GetDebugLog()));
+                    SoundEffects.Play(SoundEffect.VoipConnecting);
                 }
-
-                if (discarded.NeedRating)
-                {
-                    BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
-                }
-
-                if (_controller != null)
-                {
-                    _controller.StateUpdated -= OnStateUpdated;
-                    _controller.SignalingDataEmitted -= OnSignalingDataEmitted;
-
-                    _controller.SetIncomingVideoOutput(null);
-                    _controller.Dispose();
-                    _controller = null;
-                }
-
-                if (_capturer != null)
-                {
-                    _capturer.SetOutput(null);
-                    _capturer.Dispose();
-                    _capturer = null;
-                }
-
-                _call = null;
-            }
-            else if (update.Call.State is CallStateError error)
-            {
-                if (string.Equals(error.Error.Message, "PARTICIPANT_VERSION_OUTDATED", StringComparison.OrdinalIgnoreCase))
+                else if (update.Call.State is CallStateReady ready)
                 {
                     var user = CacheService.GetUser(update.Call.UserId);
                     if (user == null)
@@ -475,33 +204,131 @@ namespace Unigram.Services
                         return;
                     }
 
-                    var message = update.Call.IsVideo
-                        ? Strings.Resources.VoipPeerVideoOutdated
-                        : Strings.Resources.VoipPeerOutdated;
-                    BeginOnUIThread(async () => await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK));
-                }
-            }
+                    //VoIPControllerWrapper.UpdateServerConfig(ready.Config);
 
-            switch (update.Call.State)
-            {
-                case CallStateDiscarded discarded:
-                    if (update.Call.IsOutgoing && discarded.Reason is CallDiscardReasonDeclined)
+                    var logFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", $"voip{update.Call.Id}.txt");
+                    var statsDumpFile = Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{SessionId}", "tgvoip.statsDump.txt");
+
+                    var call_packet_timeout_ms = CacheService.Options.CallPacketTimeoutMs;
+                    var call_connect_timeout_ms = CacheService.Options.CallConnectTimeoutMs;
+
+                    if (_manager != null)
                     {
-                        SoundEffects.Play(SoundEffect.VoipBusy);
-                        Show(update.Call, null, null, _callStarted);
+                        //_controller.Dispose();
+                        _manager = null;
                     }
-                    else
+
+                    //var config = new VoIPConfig
+                    //{
+                    //    initTimeout = call_packet_timeout_ms / 1000.0,
+                    //    recvTimeout = call_connect_timeout_ms / 1000.0,
+                    //    dataSaving = base.Settings.UseLessData,
+                    //    enableAEC = true,
+                    //    enableNS = true,
+                    //    enableAGC = true,
+
+                    //    enableVolumeControl = true,
+
+                    //    logFilePath = logFile,
+                    //    statsDumpFilePath = statsDumpFile
+                    //};
+
+                    _capturer = update.Call.IsVideo
+                        ? new VoipVideoCapture(await _videoWatcher.GetAndUpdateAsync())
+                        : null;
+
+                    var descriptor = new VoipDescriptor
                     {
-                        SoundEffects.Stop();
-                        Hide();
+                        InitializationTimeout = call_packet_timeout_ms / 1000.0,
+                        ReceiveTimeout = call_connect_timeout_ms / 1000.0,
+                        Servers = ready.Servers,
+                        EncryptionKey = ready.EncryptionKey,
+                        IsOutgoing = update.Call.IsOutgoing,
+                        EnableP2p = ready.Protocol.UdpP2p && ready.AllowP2p,
+                        VideoCapture = _capturer,
+                        AudioInputId = await _inputWatcher.GetAndUpdateAsync(),
+                        AudioOutputId = await _outputWatcher.GetAndUpdateAsync()
+                    };
+
+                    _manager = new VoipManager(descriptor);
+                    _manager.StateUpdated += OnStateUpdated;
+                    _manager.SignalingDataEmitted += OnSignalingDataEmitted;
+
+                    _manager.Start();
+
+                    await ShowAsync(update.Call, _manager, _capturer, _callStarted);
+                }
+                else if (update.Call.State is CallStateDiscarded discarded)
+                {
+                    if (discarded.NeedDebugInformation)
+                    {
+                        //ProtoService.Send(new SendCallDebugInformation(update.Call.Id, _controller.GetDebugLog()));
                     }
-                    break;
-                case CallStateError error:
-                    Hide();
-                    break;
-                default:
-                    Show(update.Call, _controller, _capturer, _callStarted);
-                    break;
+
+                    if (discarded.NeedRating)
+                    {
+                        BeginOnUIThread(async () => await SendRatingAsync(update.Call.Id));
+                    }
+
+                    if (_manager != null)
+                    {
+                        _manager.StateUpdated -= OnStateUpdated;
+                        _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
+
+                        _manager.SetIncomingVideoOutput(null);
+                        _manager.Dispose();
+                        _manager = null;
+                    }
+
+                    if (_capturer != null)
+                    {
+                        _capturer.SetOutput(null);
+                        _capturer.Dispose();
+                        _capturer = null;
+                    }
+
+                    _call = null;
+                }
+                else if (update.Call.State is CallStateError error)
+                {
+                    if (string.Equals(error.Error.Message, "PARTICIPANT_VERSION_OUTDATED", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var user = CacheService.GetUser(update.Call.UserId);
+                        if (user == null)
+                        {
+                            return;
+                        }
+
+                        var message = update.Call.IsVideo
+                            ? Strings.Resources.VoipPeerVideoOutdated
+                            : Strings.Resources.VoipPeerOutdated;
+                        BeginOnUIThread(async () => await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.Resources.AppName, Strings.Resources.OK));
+                    }
+
+                    _call = null;
+                }
+
+                switch (update.Call.State)
+                {
+                    case CallStateDiscarded discarded:
+                        if (update.Call.IsOutgoing && discarded.Reason is CallDiscardReasonDeclined)
+                        {
+                            SoundEffects.Play(SoundEffect.VoipBusy);
+                            await ShowAsync(update.Call, null, null, _callStarted);
+                        }
+                        else
+                        {
+                            SoundEffects.Stop();
+                            await HideAsync();
+                        }
+                        break;
+                    case CallStateError error:
+                        await HideAsync();
+                        break;
+                    default:
+                        await ShowAsync(update.Call, _manager, _capturer, _callStarted);
+                        break;
+                }
             }
         }
 
@@ -527,14 +354,14 @@ namespace Unigram.Services
             }
             else
             {
-                if (_controller != null)
+                if (_manager != null)
                 {
-                    _controller.StateUpdated -= OnStateUpdated;
-                    _controller.SignalingDataEmitted -= OnSignalingDataEmitted;
+                    _manager.StateUpdated -= OnStateUpdated;
+                    _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
 
-                    _controller.SetIncomingVideoOutput(null);
-                    _controller.Dispose();
-                    _controller = null;
+                    _manager.SetIncomingVideoOutput(null);
+                    _manager.Dispose();
+                    _manager = null;
                 }
 
                 if (_capturer != null)
@@ -578,11 +405,11 @@ namespace Unigram.Services
         public Call Call => _call;
         public DateTime CallStarted => _callStarted;
 
-        public void Show()
+        public async void Show()
         {
             if (_call != null)
             {
-                Show(_call, _controller, _capturer, _callStarted);
+                await ShowAsync(_call, _manager, _capturer, _callStarted);
             }
             else
             {
@@ -590,7 +417,7 @@ namespace Unigram.Services
             }
         }
 
-        private async void Show(Call call, VoipManager controller, VoipVideoCapture capturer, DateTime started)
+        private async Task ShowAsync(Call call, VoipManager controller, VoipVideoCapture capturer, DateTime started)
         {
             if (_callPage == null)
             {
@@ -603,7 +430,7 @@ namespace Unigram.Services
                 };
 
                 _callLifetime = await _viewService.OpenAsync(parameters);
-                _callLifetime.Released -= ApplicationView_Released;
+                _callLifetime.Closed += ApplicationView_Closed;
                 _callLifetime.Released += ApplicationView_Released;
 
                 Aggregator.Publish(new UpdateCallDialog(call, true));
@@ -627,7 +454,7 @@ namespace Unigram.Services
             });
         }
 
-        private async void Hide()
+        private async Task HideAsync()
         {
             Aggregator.Publish(new UpdateCallDialog(_call, true));
 
@@ -638,16 +465,23 @@ namespace Unigram.Services
             {
                 _callLifetime = null;
 
-                await lifetime.CoreDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                await lifetime.Dispatcher.DispatchAsync(() =>
                 {
-                    if (lifetime.WindowWrapper.Content is VoIPPage callPage)
+                    if (lifetime.Window.Content is VoIPPage callPage)
                     {
                         callPage.Dispose();
                     }
 
-                    lifetime.WindowWrapper.Window.Close();
+                    lifetime.Window.Close();
                 });
             }
+        }
+
+        private void ApplicationView_Closed(object sender, EventArgs e)
+        {
+            _callPage = null;
+            _callLifetime = null;
+            Aggregator.Publish(new UpdateCallDialog(_call, false));
         }
 
         private void ApplicationView_Released(object sender, EventArgs e)

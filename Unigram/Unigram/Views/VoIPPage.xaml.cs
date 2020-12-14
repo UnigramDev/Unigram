@@ -4,14 +4,18 @@ using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.Native.Calls;
 using Unigram.Services;
+using Windows.Devices.Enumeration;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -718,7 +722,7 @@ namespace Unigram.Views
             }
             else
             {
-                var permissions = await _service.CheckAccessAsync(call.IsVideo);
+                var permissions = await MediaDeviceWatcher.CheckAccessAsync(call.IsVideo);
                 if (permissions == false)
                 {
                     _protoService.Send(new DiscardCall(call.Id, false, 0, call.IsVideo, 0));
@@ -781,6 +785,70 @@ namespace Unigram.Views
             if (_service.Manager != null)
             {
                 _service.Manager.SetMuteMicrophone(Audio.IsChecked == false);
+            }
+        }
+
+        private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            FontIcon GetCheckmark(bool condition)
+            {
+                return condition ? new FontIcon { Glyph = Icons.Checkmark } : null;
+            }
+
+            var videoId = _service.CurrentVideoInput;
+            var inputId = _service.CurrentAudioInput;
+            var outputId = _service.CurrentAudioOutput;
+
+            var video = new MenuFlyoutSubItem();
+            video.Text = "Webcam";
+            video.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+
+            var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            foreach (var device in videoDevices)
+            {
+                video.CreateFlyoutItem(id => _service.CurrentVideoInput = id, device.Id, device.Name, GetCheckmark(inputId == device.Id));
+            }
+
+            var input = new MenuFlyoutSubItem();
+            input.Text = "Microphone";
+            input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            input.CreateFlyoutItem(id => _service.CurrentAudioInput = id, "", Strings.Resources.Default, GetCheckmark(inputId == ""));
+
+            var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+            foreach (var device in inputDevices)
+            {
+                input.CreateFlyoutItem(id => _service.CurrentAudioInput = id, device.Id, device.Name, GetCheckmark(inputId == device.Id));
+            }
+
+            var output = new MenuFlyoutSubItem();
+            output.Text = "Speaker";
+            output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            output.CreateFlyoutItem(id => _service.CurrentAudioOutput = id, "", Strings.Resources.Default, GetCheckmark(outputId == ""));
+
+            var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+            foreach (var device in outputDevices)
+            {
+                output.CreateFlyoutItem(id => _service.CurrentAudioOutput = id, device.Id, device.Name, GetCheckmark(outputId == device.Id));
+            }
+
+            flyout.Items.Add(input);
+            flyout.Items.Add(output);
+
+            if (video.Items.Count > 0)
+            {
+                flyout.Items.Add(video);
+            }
+
+            if (flyout.Items.Count > 0)
+            {
+                if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedLeft"))
+                {
+                    flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft;
+                }
+
+                flyout.ShowAt((Button)sender);
             }
         }
 
