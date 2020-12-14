@@ -592,6 +592,9 @@
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>un1 started a voice chat</value>
   </data>
+  <data name="ActionGroupCallStartedByYou" xml:space="preserve">
+    <value>You started a voice chat</value>
+  </data>
   <data name="ActionGroupCallYouInvited" xml:space="preserve">
     <value>You invited un2 to the voice chat</value>
   </data>
@@ -10554,11 +10557,8 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   <data name="StartVoipChat" xml:space="preserve">
     <value>Start Voice chat</value>
   </data>
-  <data name="StartVoipChatAlertOnlyAdmins" xml:space="preserve">
-    <value>Only admins can talk</value>
-  </data>
   <data name="StartVoipChatAlertText" xml:space="preserve">
-    <value>Do you really want to start a voice chat in this group?</value>
+    <value>Do you want to start a voice chat in this group?</value>
   </data>
   <data name="StartVoipChatPermission" xml:space="preserve">
     <value>Manage Voice Chats</value>
@@ -11942,11 +11942,29 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipFlip" xml:space="preserve">
     <value>Flip</value>
   </data>
+  <data name="VoipGroupAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="VoipGroupAddMemberText" xml:space="preserve">
+    <value>Do you want to add **{0}** to **{1}**?</value>
+  </data>
+  <data name="VoipGroupAddMemberTitle" xml:space="preserve">
+    <value>Add Member</value>
+  </data>
   <data name="VoipGroupAllCanSpeak" xml:space="preserve">
     <value>New participants can speak</value>
   </data>
+  <data name="VoipGroupAllowToSpeak" xml:space="preserve">
+    <value>Allow to speak</value>
+  </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Connecting...</value>
+  </data>
+  <data name="VoipGroupCopyInviteLink" xml:space="preserve">
+    <value>Copy Invite Link</value>
+  </data>
+  <data name="VoipGroupCopyInviteLinkCopied" xml:space="preserve">
+    <value>Invite link copied to clipboard.</value>
   </data>
   <data name="VoipGroupEnd" xml:space="preserve">
     <value>End</value>
@@ -11960,8 +11978,14 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipGroupEndChat" xml:space="preserve">
     <value>End voice chat</value>
   </data>
+  <data name="VoipGroupEndedStartNew" xml:space="preserve">
+    <value>Voice chat has ended. Start a new one?</value>
+  </data>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>The selected user is already in this voice chat.</value>
+  </data>
+  <data name="VoipGroupInviteMember" xml:space="preserve">
+    <value>Invite Member</value>
   </data>
   <data name="VoipGroupInviteText" xml:space="preserve">
     <value>Hey! Join our voice chat: {0}</value>
@@ -11987,17 +12011,50 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
     <value>Leave voice chat</value>
   </data>
+  <data name="VoipGroupMute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
   <data name="VoipGroupMuteMemberAlertText" xml:space="preserve">
     <value>Are you sure you want to mute **{0}** in this voice chat?</value>
   </data>
   <data name="VoipGroupMuteMemberAlertTitle" xml:space="preserve">
     <value>Mute microphone</value>
   </data>
+  <data name="VoipGroupOffline" xml:space="preserve">
+    <value>You're currently offline. Please connect to the Internet in order to join voice chats.</value>
+  </data>
+  <data name="VoipGroupOfflineAirplane" xml:space="preserve">
+    <value>You currently have airplane mode enabled. Please turn it off or connect to Wi-Fi in order to join voice chats.</value>
+  </data>
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>New paricipants are muted</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertText" xml:space="preserve">
+    <value>Are you sure you want to remove **{0}** from the group chat?</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
+    <value>Remove member</value>
+  </data>
+  <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
+    <value>**{0}** removed from the group.</value>
+  </data>
+  <data name="VoipGroupSearchMembers" xml:space="preserve">
+    <value>Search members...</value>
+  </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Share invite link</value>
+  </data>
+  <data name="VoipGroupUnmute" xml:space="preserve">
+    <value>Unmute</value>
+  </data>
+  <data name="VoipGroupUserCanNowSpeak" xml:space="preserve">
+    <value>**{0}** can now speak.</value>
+  </data>
+  <data name="VoipGroupUserCantNowSpeak" xml:space="preserve">
+    <value>**{0}** is now muted in this chat.</value>
+  </data>
+  <data name="VoipGroupUserRemove" xml:space="preserve">
+    <value>Remove</value>
   </data>
   <data name="VoipGroupViewVoiceChat" xml:space="preserve">
     <value>VIEW VOICE CHAT</value>

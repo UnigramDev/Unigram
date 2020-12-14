@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/03/2020 10:20:46
+// 	Generated: 12/09/2020 18:09:20
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1990,6 +1990,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ActionGroupCallStarted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You started a voice chat"
+        /// </summary>
+        public static string ActionGroupCallStartedByYou
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGroupCallStartedByYou");
             }
         }
         
@@ -38116,18 +38127,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Only admins can talk"
-        /// </summary>
-        public static string StartVoipChatAlertOnlyAdmins
-        {
-            get
-            {
-                return resourceLoader.GetString("StartVoipChatAlertOnlyAdmins");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Do you really want to start a voice chat in this group?"
+        /// Localized resource similar to "Do you want to start a voice chat in this group?"
         /// </summary>
         public static string StartVoipChatAlertText
         {
@@ -43144,6 +43144,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Add"
+        /// </summary>
+        public static string VoipGroupAdd
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupAdd");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to add **{0}** to **{1}**?"
+        /// </summary>
+        public static string VoipGroupAddMemberText
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupAddMemberText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add Member"
+        /// </summary>
+        public static string VoipGroupAddMemberTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupAddMemberTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "New participants can speak"
         /// </summary>
         public static string VoipGroupAllCanSpeak
@@ -43155,6 +43188,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Allow to speak"
+        /// </summary>
+        public static string VoipGroupAllowToSpeak
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupAllowToSpeak");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Connecting..."
         /// </summary>
         public static string VoipGroupConnecting
@@ -43162,6 +43206,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipGroupConnecting");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy Invite Link"
+        /// </summary>
+        public static string VoipGroupCopyInviteLink
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupCopyInviteLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite link copied to clipboard."
+        /// </summary>
+        public static string VoipGroupCopyInviteLinkCopied
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupCopyInviteLinkCopied");
             }
         }
         
@@ -43210,6 +43276,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Voice chat has ended. Start a new one?"
+        /// </summary>
+        public static string VoipGroupEndedStartNew
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupEndedStartNew");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "The selected user is already in this voice chat."
         /// </summary>
         public static string VoipGroupInviteAlreadyParticipant
@@ -43217,6 +43294,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipGroupInviteAlreadyParticipant");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite Member"
+        /// </summary>
+        public static string VoipGroupInviteMember
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupInviteMember");
             }
         }
         
@@ -43309,6 +43397,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Mute"
+        /// </summary>
+        public static string VoipGroupMute
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupMute");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Are you sure you want to mute **{0}** in this voice chat?"
         /// </summary>
         public static string VoipGroupMuteMemberAlertText
@@ -43331,6 +43430,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "You're currently offline. Please connect to the Internet in order to join voice chats."
+        /// </summary>
+        public static string VoipGroupOffline
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupOffline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You currently have airplane mode enabled. Please turn it off or connect to Wi-Fi in order to join voice chats."
+        /// </summary>
+        public static string VoipGroupOfflineAirplane
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupOfflineAirplane");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "New paricipants are muted"
         /// </summary>
         public static string VoipGroupOnlyAdminsCanSpeak
@@ -43342,6 +43463,50 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Are you sure you want to remove **{0}** from the group chat?"
+        /// </summary>
+        public static string VoipGroupRemoveMemberAlertText
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupRemoveMemberAlertText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove member"
+        /// </summary>
+        public static string VoipGroupRemoveMemberAlertTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupRemoveMemberAlertTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** removed from the group."
+        /// </summary>
+        public static string VoipGroupRemovedFromGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupRemovedFromGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Search members..."
+        /// </summary>
+        public static string VoipGroupSearchMembers
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupSearchMembers");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Share invite link"
         /// </summary>
         public static string VoipGroupShareInviteLink
@@ -43349,6 +43514,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipGroupShareInviteLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unmute"
+        /// </summary>
+        public static string VoipGroupUnmute
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupUnmute");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** can now speak."
+        /// </summary>
+        public static string VoipGroupUserCanNowSpeak
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupUserCanNowSpeak");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** is now muted in this chat."
+        /// </summary>
+        public static string VoipGroupUserCantNowSpeak
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupUserCantNowSpeak");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove"
+        /// </summary>
+        public static string VoipGroupUserRemove
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupUserRemove");
             }
         }
         
