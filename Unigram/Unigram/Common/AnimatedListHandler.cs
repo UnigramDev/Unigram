@@ -31,8 +31,6 @@ namespace Unigram.Common
             };
         }
 
-        public Action<int, T> DownloadFile { get; set; }
-
         public Action<FrameworkElement, LottieView> LoadView { get; set; }
         public Action<FrameworkElement, LottieView> UnloadView { get; set; }
 
@@ -149,6 +147,14 @@ namespace Unigram.Common
                 {
                     animations.Add((container, (T)(object)set));
                 }
+                else if (item is Animation animation)
+                {
+                    animations.Add((container, (T)(object)animation));
+                }
+                else if (item is InlineQueryResultAnimation inlineQueryResultAnimation)
+                {
+                    animations.Add((container, (T)(object)inlineQueryResultAnimation));
+                }
             }
 
             if (animations.Count > 0)
@@ -188,40 +194,45 @@ namespace Unigram.Common
 
             foreach (var item in items)
             {
-                File animation = null;
+                File file = null;
                 if (item.Sticker is StickerViewModel viewModel)
                 {
-                    animation = viewModel.StickerValue;
+                    file = viewModel.StickerValue;
                 }
                 else if (item.Sticker is StickerSetViewModel setViewModel)
                 {
-                    animation = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
+                    file = setViewModel.Thumbnail?.File ?? setViewModel.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
                 else if (item.Sticker is Sticker sticker)
                 {
-                    animation = sticker.StickerValue;
+                    file = sticker.StickerValue;
                 }
                 else if (item.Sticker is StickerSetInfo set)
                 {
-                    animation = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
+                    file = set.Thumbnail?.File ?? set.Covers.FirstOrDefault()?.Thumbnail?.File;
                 }
-                
-                if (animation == null)
+                else if (item.Sticker is Animation animationz)
+                {
+                    file = animationz.AnimationValue;
+                }
+                else if (item.Sticker is InlineQueryResultAnimation inlineQueryResultAnimation)
+                {
+                    file = inlineQueryResultAnimation.Animation.AnimationValue;
+                }
+
+                if (file == null || !file.Local.IsDownloadingCompleted)
                 {
                     continue;
                 }
 
-                if (animation.Local.IsDownloadingCompleted)
+                var panel = item.Contaner.ContentTemplateRoot;
+                if (panel is FrameworkElement final)
                 {
-                    var panel = item.Contaner.ContentTemplateRoot;
-                    if (panel is FrameworkElement final)
+                    var lottie = final.FindName("Player") as IPlayerView;
+                    if (lottie != null)
                     {
-                        var lottie = final.FindName("Player") as IPlayerView;
-                        if (lottie != null)
-                        {
-                            lottie.Tag = item.Sticker;
-                            next[item.Sticker.GetHashCode()] = new MediaPlayerItem { Player = lottie };
-                        }
+                        lottie.Tag = item.Sticker;
+                        next[item.Sticker.GetHashCode()] = new MediaPlayerItem { Player = lottie };
                     }
                 }
             }

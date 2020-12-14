@@ -50,10 +50,6 @@ namespace Unigram.Controls.Drawers
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             _handler = new AnimatedListHandler<StickerViewModel>(Stickers);
-            _handler.DownloadFile = (id, sticker) =>
-            {
-                DownloadFile(_stickers, id, sticker);
-            };
 
             _zoomer = new ZoomableListHandler(Stickers);
             _zoomer.Opening = _handler.UnloadVisibleItems;

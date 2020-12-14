@@ -104,10 +104,6 @@ namespace Unigram.Views
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             _autocompleteHandler = new AnimatedListHandler<Sticker>(ListAutocomplete);
-            _autocompleteHandler.DownloadFile = (id, sticker) =>
-            {
-                _viewModel?.ProtoService.DownloadFile(id, 1);
-            };
 
             _autocompleteZoomer = new ZoomableListHandler(ListAutocomplete);
             _autocompleteZoomer.Opening = _autocompleteHandler.UnloadVisibleItems;
