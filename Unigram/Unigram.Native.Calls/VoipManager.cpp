@@ -159,21 +159,24 @@ namespace winrt::Unigram::Native::Calls::implementation
 			/*signalBarsUpdated =*/ [this](int signalBars) {
 				m_signalBarsUpdatedEventSource(*this, signalBars);
 			},
+				/*audioLevelUpdated =*/ [this](float level) {
+					m_audioLevelUpdated(*this, level);
+				},
 				/*remoteBatteryLevelIsLowUpdated =*/ [this](bool low) {
 					m_remoteBatteryLevelIsLowUpdatedEventSource(*this, low);
 				},
-				/*remoteMediaStateUpdated =*/ [this](tgcalls::AudioState audio, tgcalls::VideoState video) {
-					auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
-					m_remoteMediaStateUpdatedEventSource(*this, *args);
-				},
+					/*remoteMediaStateUpdated =*/ [this](tgcalls::AudioState audio, tgcalls::VideoState video) {
+						auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::RemoteMediaStateUpdatedEventArgs>((VoipAudioState)audio, (VoipVideoState)video);
+						m_remoteMediaStateUpdatedEventSource(*this, *args);
+					},
 					/*remotePrefferedAspectRatioUpdated =*/ [this](float aspect) {
 						m_remotePrefferedAspectRatioUpdatedEventSource(*this, aspect);
 					},
-					/*signalingDataEmitted =*/ [this](std::vector<uint8_t> data) {
-						auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
-						auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::SignalingDataEmittedEventArgs>(bytes);
-						m_signalingDataEmittedEventSource(*this, *args);
-					}
+						/*signalingDataEmitted =*/ [this](std::vector<uint8_t> data) {
+							auto bytes = winrt::single_threaded_vector<uint8_t>(std::move(data));
+							auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::SignalingDataEmittedEventArgs>(bytes);
+							m_signalingDataEmittedEventSource(*this, *args);
+						}
 		};
 
 		m_impl = tgcalls::Meta::Create("3.0.0", std::move(descriptor));
@@ -347,6 +350,20 @@ namespace winrt::Unigram::Native::Calls::implementation
 	void VoipManager::SignalBarsUpdated(winrt::event_token const& token)
 	{
 		m_signalBarsUpdatedEventSource.remove(token);
+	}
+
+
+
+	winrt::event_token VoipManager::AudioLevelUpdated(Windows::Foundation::TypedEventHandler<
+		winrt::Unigram::Native::Calls::VoipManager,
+		float> const& value)
+	{
+		return m_audioLevelUpdated.add(value);
+	}
+
+	void VoipManager::AudioLevelUpdated(winrt::event_token const& token)
+	{
+		m_audioLevelUpdated.remove(token);
 	}
 
 

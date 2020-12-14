@@ -44,6 +44,7 @@ namespace Unigram.Native.Calls
 
         event Windows.Foundation.TypedEventHandler<VoipManager, VoipState> StateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, Int32> SignalBarsUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipManager, Single> AudioLevelUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, Boolean> RemoteBatteryLevelIsLowUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, RemoteMediaStateUpdatedEventArgs> RemoteMediaStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipManager, Single> RemotePrefferedAspectRatioUpdated;

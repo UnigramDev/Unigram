@@ -21,11 +21,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 			[this](bool state) {
 				m_networkStateUpdated(*this, state);
 			},
-			[this](std::vector<std::pair<uint32_t, float>> const& levels) {
-				auto args = winrt::single_threaded_map<uint32_t, float>(/*std::move(levels)*/);
+			[this](std::vector<std::pair<uint32_t, std::pair<float, bool>>> const& levels) {
+				auto args = winrt::single_threaded_map<uint32_t, IKeyValuePair<float, bool>>(/*std::move(levels)*/);
 
-				for (const std::pair<uint32_t, float>& x : levels) {
-					args.Insert(x.first, x.second);
+				for (const std::pair<uint32_t, std::pair<float, bool>>& x : levels) {
+					args.Insert(x.first, winrt::make<winrt::impl::key_value_pair<IKeyValuePair<float, bool>>>(x.second.first, x.second.second));
 				}
 
 				m_audioLevelsUpdated(*this, args.GetView());
@@ -147,7 +147,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	winrt::event_token VoipGroupManager::AudioLevelsUpdated(Windows::Foundation::TypedEventHandler<
 		winrt::Unigram::Native::Calls::VoipGroupManager,
-		IMapView<uint32_t, float>> const& value)
+		IMapView<uint32_t, IKeyValuePair<float, bool>>> const& value)
 	{
 		return m_audioLevelsUpdated.add(value);
 	}

@@ -66,6 +66,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 			int> const& value);
 		void SignalBarsUpdated(winrt::event_token const& token);
 
+		winrt::event_token AudioLevelUpdated(Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipManager,
+			float> const& value);
+		void AudioLevelUpdated(winrt::event_token const& token);
+
 		winrt::event_token RemoteBatteryLevelIsLowUpdated(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipManager,
 			bool> const& value);
@@ -93,6 +98,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipManager,
 			int>> m_signalBarsUpdatedEventSource;
+		winrt::event<Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipManager,
+			float>> m_audioLevelUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipManager,
 			bool>> m_remoteBatteryLevelIsLowUpdatedEventSource;

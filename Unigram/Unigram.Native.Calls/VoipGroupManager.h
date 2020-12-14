@@ -29,7 +29,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		winrt::event_token AudioLevelsUpdated(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			IMapView<uint32_t, float>> const& value);
+			IMapView<uint32_t, IKeyValuePair<float, bool>>> const& value);
 		void AudioLevelsUpdated(winrt::event_token const& token);
 
 	private:
@@ -40,7 +40,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 			bool>> m_networkStateUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			IMapView<uint32_t, float>>> m_audioLevelsUpdated;
+			IMapView<uint32_t, IKeyValuePair<float, bool>>>> m_audioLevelsUpdated;
     };
 }
 
