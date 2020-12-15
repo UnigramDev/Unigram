@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/09/2020 18:09:20
+// 	Generated: 12/15/2020 10:23:07
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -15111,6 +15111,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "un1 ended the voice chat"
+        /// </summary>
+        public static string EventLogEndedVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEndedVoiceChat");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "All actions"
         /// </summary>
         public static string EventLogFilterAll
@@ -15118,6 +15129,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EventLogFilterAll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Voice chats"
+        /// </summary>
+        public static string EventLogFilterCalls
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterCalls");
             }
         }
         
@@ -15817,6 +15839,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "un1 started a voice chat"
+        /// </summary>
+        public static string EventLogStartedVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogStartedVoiceChat");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "un1 stopped the poll:"
         /// </summary>
         public static string EventLogStopPoll
@@ -15934,6 +15967,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EventLogUnpinnedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 allowed new participants to speak"
+        /// </summary>
+        public static string EventLogVoiceChatAllowedToSpeak
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogVoiceChatAllowedToSpeak");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 muted un2"
+        /// </summary>
+        public static string EventLogVoiceChatMuted
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogVoiceChatMuted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 muted new participants"
+        /// </summary>
+        public static string EventLogVoiceChatNotAllowedToSpeak
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogVoiceChatNotAllowedToSpeak");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "un1 unmuted un2"
+        /// </summary>
+        public static string EventLogVoiceChatUnmuted
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogVoiceChatUnmuted");
             }
         }
         

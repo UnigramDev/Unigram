@@ -417,6 +417,7 @@
                         <CheckBox x:Name="MessageEdits" Click="Event_Toggled" Content="{CustomResource EventLogFilterEditedMessages}"/>
                         <CheckBox x:Name="MessagePins" Click="Event_Toggled" Content="{CustomResource EventLogFilterPinnedMessages}"/>
                         <CheckBox x:Name="MemberLeaves" Click="Event_Toggled" Content="{CustomResource EventLogFilterLeavingMembers}"/>
+                        <CheckBox x:Name="VoiceChatChanges" Click="Event_Toggled" Content="{CustomResource EventLogFilterCalls}"/>
                     </StackPanel>
 
                     <CheckBox x:Name="FieldAllAdmins"

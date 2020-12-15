@@ -96,8 +96,8 @@
                             Header="{CustomResource EditAdminPinMessages}"
                             Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch
-                            x:Name="ManageCalls"
-                            IsOn="{x:Bind ViewModel.CanManageCalls, Mode=TwoWay}"
+                            x:Name="ManageVoiceChats"
+                            IsOn="{x:Bind ViewModel.CanManageVoiceChats, Mode=TwoWay}"
                             Header="{CustomResource StartVoipChatPermission}"
                             Style="{StaticResource CheckButtonStyle}"/>
                         <ToggleSwitch

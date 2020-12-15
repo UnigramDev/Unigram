@@ -73,10 +73,8 @@ namespace Unigram.Controls.Messages
                     return UpdateCustomServiceAction(message, customServiceAction, active);
                 case MessageGameScore gameScore:
                     return UpdateGameScore(message, gameScore, active);
-                case MessageGroupCall groupCall:
-                    return UpdateGroupCall(message, groupCall, active);
-                case MessageInviteGroupCallMembers inviteGroupCallMembers:
-                    return UpdateInviteGroupCallMembers(message, inviteGroupCallMembers, active);
+                case MessageInviteVoiceChatParticipants inviteVoiceChatParticipants:
+                    return UpdateInviteVoiceChatParticipants(message, inviteVoiceChatParticipants, active);
                 case MessageProximityAlertTriggered proximityAlertTriggered:
                     return UpdateProximityAlertTriggered(message, proximityAlertTriggered, active);
                 case MessagePassportDataSent passportDataSent:
@@ -89,6 +87,10 @@ namespace Unigram.Controls.Messages
                     return UpdateScreenshotTaken(message, screenshotTaken, active);
                 case MessageSupergroupChatCreate supergroupChatCreate:
                     return UpdateSupergroupChatCreate(message, supergroupChatCreate, active);
+                case MessageVoiceChatEnded voiceChatEnded:
+                    return UpdateVoiceChatEnded(message, voiceChatEnded, active);
+                case MessageVoiceChatStarted voiceChatStarted:
+                    return UpdateVoiceChatStarted(message, voiceChatStarted, active);
                 case MessageWebsiteConnected websiteConnected:
                     return UpdateWebsiteConnected(message, websiteConnected, active);
                 case MessageExpiredPhoto expiredPhoto:
@@ -127,6 +129,14 @@ namespace Unigram.Controls.Messages
                             return UpdatePollStopped(message, pollStopped, active);
                         case ChatEventSlowModeDelayChanged slowModeDelayChanged:
                             return UpdateSlowModeDelayChanged(message, slowModeDelayChanged, active);
+                        case ChatEventVoiceChatCreated voiceChatCreated:
+                            return UpdateVoiceChatCreated(message, voiceChatCreated, active);
+                        case ChatEventVoiceChatDiscarded voiceChatDiscarded:
+                            return UpdateVoiceChatDiscarded(message, voiceChatDiscarded, active);
+                        case ChatEventVoiceChatMuteNewParticipantsToggled voiceChatMuteNewParticipantsToggled:
+                            return UpdateVoiceChatMuteNewParticipantsToggled(message, voiceChatMuteNewParticipantsToggled, active);
+                        case ChatEventVoiceChatParticipantIsMutedToggled voiceChatParticipantIsMutedToggled:
+                            return UpdateVoiceChatParticipantIsMutedToggled(message, voiceChatParticipantIsMutedToggled, active);
                         default:
                             return (string.Empty, null);
                     }
@@ -427,6 +437,76 @@ namespace Unigram.Controls.Messages
             else if (poll.Poll.Type is PollTypeQuiz)
             {
                 content = ReplaceWithLink(Strings.Resources.EventLogStopQuiz, "un1", fromUser, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateVoiceChatCreated(MessageViewModel message, ChatEventVoiceChatCreated voiceChatCreated, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
+            {
+                content = ReplaceWithLink(Strings.Resources.EventLogStartedVoiceChat, "un1", fromUser, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateVoiceChatDiscarded(MessageViewModel message, ChatEventVoiceChatDiscarded voiceChatDiscarded, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
+            {
+                content = ReplaceWithLink(Strings.Resources.EventLogEndedVoiceChat, "un1", fromUser, ref entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateVoiceChatMuteNewParticipantsToggled(MessageViewModel message, ChatEventVoiceChatMuteNewParticipantsToggled voiceChatMuteNewParticipantsToggled, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
+            {
+                if (voiceChatMuteNewParticipantsToggled.MuteNewParticipants)
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogVoiceChatNotAllowedToSpeak, "un1", fromUser, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogVoiceChatAllowedToSpeak, "un1", fromUser, ref entities);
+                }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateVoiceChatParticipantIsMutedToggled(MessageViewModel message, ChatEventVoiceChatParticipantIsMutedToggled voiceChatParticipantIsMutedToggled, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var whoUser = message.ProtoService.GetUser(voiceChatParticipantIsMutedToggled.UserId);
+
+            if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
+            {
+                if (voiceChatParticipantIsMutedToggled.IsMuted)
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogVoiceChatMuted, "un1", fromUser, ref entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.Resources.EventLogVoiceChatUnmuted, "un1", fromUser, ref entities);
+                }
+
+                content = ReplaceWithLink(content, "un2", whoUser, ref entities);
             }
 
             return (content, entities);
@@ -799,18 +879,28 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdateGroupCall(MessageViewModel message, MessageGroupCall groupCall, bool active)
+        private static (string, IList<TextEntity>) UpdateVoiceChatEnded(MessageViewModel message, MessageVoiceChatEnded voiceChatEnded, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            content = string.Format(Strings.Resources.ActionGroupCallEnded, voiceChatEnded.GetDuration());
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateVoiceChatStarted(MessageViewModel message, MessageVoiceChatStarted voiceChatStarted, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
             if (message.ProtoService.TryGetUser(message.Sender, out User senderUser))
             {
-                //if (senderUser.Id == message.ProtoService.Options.MyId)
-                //{
-                //    content = Strings.Resources.ActionGroupCallStarted;
-                //}
-                //else
+                if (senderUser.Id == message.ProtoService.Options.MyId)
+                {
+                    content = Strings.Resources.ActionGroupCallStartedByYou;
+                }
+                else
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionGroupCallStarted, "un1", senderUser, ref entities);
                 }
@@ -823,15 +913,15 @@ namespace Unigram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string, IList<TextEntity>) UpdateInviteGroupCallMembers(MessageViewModel message, MessageInviteGroupCallMembers inviteGroupCallMembers, bool active)
+        private static (string, IList<TextEntity>) UpdateInviteVoiceChatParticipants(MessageViewModel message, MessageInviteVoiceChatParticipants inviteVoiceChatParticipants, bool active)
         {
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
             int singleUserId = 0;
-            if (singleUserId == 0 && inviteGroupCallMembers.UserIds.Count == 1)
+            if (singleUserId == 0 && inviteVoiceChatParticipants.UserIds.Count == 1)
             {
-                singleUserId = inviteGroupCallMembers.UserIds[0];
+                singleUserId = inviteVoiceChatParticipants.UserIds[0];
             }
 
             var fromUser = message.GetSender();
@@ -857,12 +947,12 @@ namespace Unigram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallYouInvited, "un2", inviteGroupCallMembers.UserIds, message.ProtoService, ref entities);
+                    content = ReplaceWithLink(Strings.Resources.ActionGroupCallYouInvited, "un2", inviteVoiceChatParticipants.UserIds, message.ProtoService, ref entities);
                 }
                 else
                 {
                     content = ReplaceWithLink(Strings.Resources.ActionGroupCallInvited, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", inviteGroupCallMembers.UserIds, message.ProtoService, ref entities);
+                    content = ReplaceWithLink(content, "un2", inviteVoiceChatParticipants.UserIds, message.ProtoService, ref entities);
                 }
             }
 

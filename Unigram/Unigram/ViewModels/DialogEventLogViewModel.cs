@@ -17,8 +17,8 @@ namespace Unigram.ViewModels
 {
     public class DialogEventLogViewModel : DialogViewModel
     {
-        public DialogEventLogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, INetworkService networkService, IMessageFactory messageFactory)
-            : base(protoService, cacheService, settingsService, aggregator, locationService, pushService, playbackService, voipService, networkService, messageFactory)
+        public DialogEventLogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INetworkService networkService, IMessageFactory messageFactory)
+            : base(protoService, cacheService, settingsService, aggregator, locationService, pushService, playbackService, voipService, groupCallService, networkService, messageFactory)
         {
             HelpCommand = new RelayCommand(HelpExecute);
         }
@@ -27,7 +27,7 @@ namespace Unigram.ViewModels
 
         private long _minEventId = long.MaxValue;
 
-        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true);
+        private ChatEventLogFilters _filters = new ChatEventLogFilters(true, true, true, true, true, true, true, true, true, true, true);
         public ChatEventLogFilters Filters
         {
             get => _filters;
@@ -282,34 +282,38 @@ namespace Unigram.ViewModels
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatAddMembers(new[] { memberInvited.UserId });
                         break;
-                    case ChatEventSlowModeDelayChanged slowModeDelayChanged:
-                    case ChatEventPermissionsChanged permissionsChanged:
-                    case ChatEventMemberRestricted memberRestricted:
-                    case ChatEventMemberPromoted memberPromoted:
+                    case ChatEventSlowModeDelayChanged:
+                    case ChatEventPermissionsChanged:
+                    case ChatEventMemberRestricted:
+                    case ChatEventMemberPromoted:
                         message = GetMessage(_chat.Id, channel, item);
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
                         break;
-                    case ChatEventSignMessagesToggled signMessagesToggled:
-                    case ChatEventStickerSetChanged stickerSetChanged:
-                    case ChatEventInvitesToggled invitesToggled:
-                    case ChatEventIsAllHistoryAvailableToggled isAllHistoryAvailableToggled:
-                    case ChatEventMessageUnpinned messageUnpinned:
-                    case ChatEventLinkedChatChanged linkedChatChanged:
-                    case ChatEventLocationChanged locationChanged:
+                    case ChatEventSignMessagesToggled:
+                    case ChatEventStickerSetChanged:
+                    case ChatEventInvitesToggled:
+                    case ChatEventIsAllHistoryAvailableToggled:
+                    case ChatEventMessageUnpinned:
+                    case ChatEventLinkedChatChanged:
+                    case ChatEventLocationChanged:
+                    case ChatEventVoiceChatCreated:
+                    case ChatEventVoiceChatDiscarded:
+                    case ChatEventVoiceChatMuteNewParticipantsToggled:
+                    case ChatEventVoiceChatParticipantIsMutedToggled:
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatEvent(item);
                         break;
-                    case ChatEventMemberLeft memberLeft:
+                    case ChatEventMemberLeft:
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatDeleteMember(item.UserId);
                         break;
-                    case ChatEventDescriptionChanged descriptionChanged:
-                    case ChatEventUsernameChanged usernameChanged:
-                    case ChatEventMessageDeleted messageDeleted:
-                    case ChatEventMessageEdited messageEdited:
-                    case ChatEventMessagePinned messagePinned:
-                    case ChatEventPollStopped pollStopped:
+                    case ChatEventDescriptionChanged:
+                    case ChatEventUsernameChanged:
+                    case ChatEventMessageDeleted:
+                    case ChatEventMessageEdited:
+                    case ChatEventMessagePinned:
+                    case ChatEventPollStopped:
                         message = GetMessage(_chat.Id, channel, item, true);
                         //message.Content = new MessageChatEvent(item, true);
                         message.Content = GetMessageContent(item, channel);
@@ -327,7 +331,7 @@ namespace Unigram.ViewModels
 
                         message.Content = new MessageChatChangePhoto(photoChanged.NewPhoto);
                         break;
-                    case ChatEventMemberJoined memberJoined:
+                    case ChatEventMemberJoined:
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatAddMembers(new int[] { item.UserId });
                         break;
@@ -733,9 +737,9 @@ namespace Unigram.ViewModels
                     {
                         AppendChange(n.CanPinMessages, Strings.Resources.EventLogPromotedPinMessages);
                     }
-                    if (o.CanManageCalls != n.CanManageCalls)
+                    if (o.CanManageVoiceChats != n.CanManageVoiceChats)
                     {
-                        AppendChange(n.CanManageCalls, Strings.Resources.EventLogPromotedManageCall);
+                        AppendChange(n.CanManageVoiceChats, Strings.Resources.EventLogPromotedManageCall);
                     }
                 }
 

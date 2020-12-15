@@ -96,7 +96,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = administrator.CanPostMessages;
                     CanPromoteMembers = administrator.CanPromoteMembers;
                     CanRestrictMembers = administrator.CanRestrictMembers;
-                    CanManageCalls = administrator.CanManageCalls;
+                    CanManageVoiceChats = administrator.CanManageVoiceChats;
                     IsAnonymous = administrator.IsAnonymous;
 
                     CustomTitle = administrator.CustomTitle;
@@ -109,7 +109,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanInviteUsers = true;
                     CanPinMessages = true;
                     CanPostMessages = true;
-                    CanManageCalls = true;
+                    CanManageVoiceChats = true;
                     CanPromoteMembers = member.Status is ChatMemberStatusCreator;
                     CanRestrictMembers = true;
 
@@ -166,7 +166,7 @@ namespace Unigram.ViewModels.Supergroups
                     (supergroup.IsChannel ? true : _canPinMessages) &&
                     (supergroup.IsChannel ? _canPostMessages : true) &&
                     (supergroup.IsChannel ? true : _canRestrictMembers) &&
-                    (supergroup.IsChannel ? true : _canManageCalls);
+                    (supergroup.IsChannel ? true : _canManageVoiceChats);
             }
         }
 
@@ -270,16 +270,16 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        private bool _canManageCalls;
-        public bool CanManageCalls
+        private bool _canManageVoiceChats;
+        public bool CanManageVoiceChats
         {
             get
             {
-                return _canManageCalls;
+                return _canManageVoiceChats;
             }
             set
             {
-                Set(ref _canManageCalls, value);
+                Set(ref _canManageVoiceChats, value);
                 RaisePropertyChanged(nameof(CanTransferOwnership));
             }
         }
@@ -372,7 +372,7 @@ namespace Unigram.ViewModels.Supergroups
                     CanPostMessages = channel ? _canPostMessages : false,
                     CanPromoteMembers = _canPromoteMembers,
                     CanRestrictMembers = channel ? false : _canRestrictMembers,
-                    CanManageCalls = channel ? false : _canManageCalls,
+                    CanManageVoiceChats = channel ? false : _canManageVoiceChats,
                     CustomTitle = _customTitle ?? string.Empty
                 };
             }

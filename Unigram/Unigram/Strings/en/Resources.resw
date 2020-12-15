@@ -4221,8 +4221,14 @@ have been found.</value>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>No recent actions that contain '**{0}**' have been found.</value>
   </data>
+  <data name="EventLogEndedVoiceChat" xml:space="preserve">
+    <value>un1 ended the voice chat</value>
+  </data>
   <data name="EventLogFilterAll" xml:space="preserve">
     <value>All actions</value>
+  </data>
+  <data name="EventLogFilterCalls" xml:space="preserve">
+    <value>Voice chats</value>
   </data>
   <data name="EventLogFilterChannelInfo" xml:space="preserve">
     <value>Channel info</value>
@@ -4415,6 +4421,9 @@ Duration: {1}</value>
   <data name="EventLogSelectedEvents" xml:space="preserve">
     <value>Selected actions</value>
   </data>
+  <data name="EventLogStartedVoiceChat" xml:space="preserve">
+    <value>un1 started a voice chat</value>
+  </data>
   <data name="EventLogStopPoll" xml:space="preserve">
     <value>un1 stopped the poll:</value>
   </data>
@@ -4447,6 +4456,18 @@ Duration: {1}</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
     <value>un1 unpinned message</value>
+  </data>
+  <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
+    <value>un1 allowed new participants to speak</value>
+  </data>
+  <data name="EventLogVoiceChatMuted" xml:space="preserve">
+    <value>un1 muted un2</value>
+  </data>
+  <data name="EventLogVoiceChatNotAllowedToSpeak" xml:space="preserve">
+    <value>un1 muted new participants</value>
+  </data>
+  <data name="EventLogVoiceChatUnmuted" xml:space="preserve">
+    <value>un1 unmuted un2</value>
   </data>
   <data name="EventLogYouChannelJoined" xml:space="preserve">
     <value>You joined channel</value>
