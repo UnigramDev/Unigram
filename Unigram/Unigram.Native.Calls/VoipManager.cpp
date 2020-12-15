@@ -105,7 +105,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 				const auto host = string_to_unmanaged(x.IpAddress());
 				const auto hostv6 = string_to_unmanaged(x.Ipv6Address());
 				const auto port = uint16_t(x.Port());
-				if (webRtc.SupportsTurn()) {
+				if (webRtc.SupportsStun()) {
 					const auto pushStun = [&](const std::string& host) {
 						if (host.empty()) {
 							return;
