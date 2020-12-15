@@ -3222,14 +3222,12 @@ namespace Unigram.Views
                 return;
             }
 
-            GroupCall.UpdateChatActions(actions);
-
             if (actions != null && actions.Count > 0)
             {
                 ChatActionLabel.Text = InputChatActionManager.GetTypingString(chat, actions, ViewModel.CacheService.GetUser, out ChatAction commonAction);
                 ChatActionIndicator.UpdateAction(commonAction);
-                ChatActionPanel.Visibility = commonAction != null ? Visibility.Visible : Visibility.Collapsed;
-                Subtitle.Opacity = commonAction != null ? 0 : 1;
+                ChatActionPanel.Visibility = Visibility.Visible;
+                Subtitle.Opacity = 0;
             }
             else
             {
