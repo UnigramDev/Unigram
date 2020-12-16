@@ -41,7 +41,7 @@ namespace Unigram.Common
 
         public static void CreateFlyoutSeparator(this MenuFlyout flyout)
         {
-            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem)
+            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem || flyout.Items[flyout.Items.Count - 1] is MenuFlyoutSubItem))
             {
                 flyout.Items.Add(new MenuFlyoutSeparator());
             }
@@ -49,7 +49,7 @@ namespace Unigram.Common
 
         public static void CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
         {
-            if (flyout.Items.Count > 0 && flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem)
+            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem || flyout.Items[flyout.Items.Count - 1] is MenuFlyoutSubItem))
             {
                 flyout.Items.Add(new MenuFlyoutSeparator());
             }
@@ -136,6 +136,11 @@ namespace Unigram.Common
             }
         }
 
+        public static void CreateFlyoutItem(this MenuFlyout flyout, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
+            CreateFlyoutItem(flyout, new RelayCommand(command), text, icon, key, modifiers);
+        }
+
         public static void CreateFlyoutItem(this MenuFlyout flyout, ICommand command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
@@ -179,6 +184,16 @@ namespace Unigram.Common
         public static void CreateFlyoutItem(this MenuFlyoutSubItem flyout, bool enabled, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             flyout.Items.CreateFlyoutItem(enabled, new RelayCommand(command), null, text, icon, key, modifiers);
+        }
+
+        public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
+            flyout.Items.CreateFlyoutItem(true, new RelayCommand<T>(command), parameter, text, icon, key, modifiers);
+        }
+
+        public static void CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        {
+            flyout.Items.CreateFlyoutItem(true, new RelayCommand<T>(command), parameter, text, icon, key, modifiers);
         }
 
         public static void CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, bool enabled, ICommand command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
