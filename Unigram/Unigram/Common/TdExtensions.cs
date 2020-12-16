@@ -942,14 +942,15 @@ namespace Unigram.Common
                 case MessageContactRegistered _:
                 case MessageCustomServiceAction _:
                 case MessageGameScore _:
-                case MessageGroupCall _:
-                case MessageInviteGroupCallMembers _:
+                case MessageInviteVoiceChatParticipants _:
                 case MessageProximityAlertTriggered _:
                 case MessagePassportDataSent _:
                 case MessagePaymentSuccessful _:
                 case MessagePinMessage _:
                 case MessageScreenshotTaken _:
                 case MessageSupergroupChatCreate _:
+                case MessageVoiceChatEnded _:
+                case MessageVoiceChatStarted:
                 case MessageWebsiteConnected _:
                     return true;
                 case MessageExpiredPhoto _:
@@ -1010,6 +1011,31 @@ namespace Unigram.Common
                 default:
                     return null;
             }
+        }
+
+        public static File GetThumbnail(this StickerSetInfo stickerSet, out IList<ClosedVectorPath> outline, out bool animated)
+        {
+            if (stickerSet.Thumbnail != null)
+            {
+                outline = stickerSet.ThumbnailOutline;
+                animated = stickerSet.Thumbnail.Format is ThumbnailFormatTgs;
+
+                return stickerSet.Thumbnail.File;
+            }
+
+            var cover = stickerSet.Covers.FirstOrDefault();
+            if (cover != null)
+            {
+                outline = cover.Outline;
+                animated = cover.IsAnimated;
+
+                return cover.StickerValue;
+            }
+
+            outline = null;
+            animated = false;
+
+            return null;
         }
 
         public static string GetRestrictionReason(this User user)
@@ -1294,9 +1320,9 @@ namespace Unigram.Common
             return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
-        public static string GetDuration(this MessageGroupCall groupCall)
+        public static string GetDuration(this MessageVoiceChatEnded voiceChatEnded)
         {
-            var duration = TimeSpan.FromSeconds(groupCall.Duration);
+            var duration = TimeSpan.FromSeconds(voiceChatEnded.Duration);
             if (duration.TotalHours >= 1)
             {
                 return duration.ToString("h\\:mm\\:ss");
@@ -1451,14 +1477,14 @@ namespace Unigram.Common
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanChangeInfo;
         }
 
-        public static bool CanManageCalls(this Supergroup supergroup)
+        public static bool CanManageVoiceChats(this Supergroup supergroup)
         {
             if (supergroup.Status == null)
             {
                 return false;
             }
 
-            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageCalls;
+            return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVoiceChats;
         }
 
         public static bool CanPostMessages(this Supergroup supergroup)
@@ -1707,6 +1733,26 @@ namespace Unigram.Common
                 default:
                     return false;
             }
+        }
+
+        public static bool UpdateFile(this StickerSetInfo stickerSet, File file)
+        {
+            var any = false;
+            if (stickerSet.Thumbnail != null && stickerSet.Thumbnail.File.Id == file.Id)
+            {
+                stickerSet.Thumbnail.File = file;
+                any = true;
+            }
+
+            foreach (var cover in stickerSet.Covers)
+            {
+                if (cover.UpdateFile(file))
+                {
+                    any = true;
+                }
+            }
+
+            return any;
         }
 
 
