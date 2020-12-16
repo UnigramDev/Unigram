@@ -401,6 +401,11 @@ namespace Unigram.Controls.Cells
             VerifiedIcon.Visibility = verified ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        public void UpdateChatVoiceChat(Chat chat)
+        {
+            UpdateOnlineBadge(chat.VoiceChatGroupCallId != 0 && !chat.IsVoiceChatEmpty, true);
+        }
+
         public void UpdateUserStatus(Chat chat, UserStatus status)
         {
             UpdateOnlineBadge(status is UserStatusOnline, false);
@@ -617,9 +622,9 @@ namespace Unigram.Controls.Cells
             {
                 UpdateUserStatus(chat, user.Status);
             }
-            else if (_protoService.TryGetSupergroup(chat, out Supergroup supergroup) && !supergroup.IsChannel)
+            else if (chat.VoiceChatGroupCallId != 0)
             {
-                UpdateOnlineBadge(supergroup.HasActiveCall, true);
+                UpdateOnlineBadge(!chat.IsVoiceChatEmpty, true);
             }
             else if (OnlineBadge != null)
             {

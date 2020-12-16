@@ -53,8 +53,9 @@ namespace Unigram.Views
         IHandle<UpdateChatUnreadMentionCount>,
         IHandle<UpdateChatTitle>,
         IHandle<UpdateChatPhoto>,
-        IHandle<UpdateUserChatAction>,
+        IHandle<UpdateChatVoiceChat>,
         IHandle<UpdateUserStatus>,
+        IHandle<UpdateUserChatAction>,
         IHandle<UpdateMessageMentionRead>,
         IHandle<UpdateUnreadChatCount>,
         //IHandle<UpdateMessageContent>,
@@ -235,9 +236,9 @@ namespace Unigram.Views
             Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatPhoto(chat));
         }
 
-        public void Handle(UpdateUserChatAction update)
+        public void Handle(UpdateChatVoiceChat update)
         {
-            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatActions(chat, ViewModel.ProtoService.GetChatActions(chat.Id)));
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatVoiceChat(chat));
         }
 
         public async void Handle(UpdateUserStatus update)
@@ -251,6 +252,11 @@ namespace Unigram.Views
                     Handle(result.Id, (chatView, chat) => chatView.UpdateUserStatus(chat, update.Status));
                 }
             }
+        }
+
+        public void Handle(UpdateUserChatAction update)
+        {
+            Handle(update.ChatId, (chatView, chat) => chatView.UpdateChatActions(chat, ViewModel.ProtoService.GetChatActions(chat.Id)));
         }
 
         public void Handle(UpdateMessageMentionRead update)
