@@ -27,6 +27,8 @@ namespace Unigram.Controls
         private CanvasControl _canvas;
         private CanvasBitmap[] _bitmaps;
 
+        private Grid _layoutRoot;
+
         private bool _hideThumbnail = true;
 
         private const int _parts = 3;
@@ -66,6 +68,8 @@ namespace Unigram.Controls
         private readonly LoopThread _threadUI;
         private bool _subscribed;
 
+        private bool _unloaded;
+
         public DiceView()
             : this(CompositionCapabilities.GetForCurrentView().AreEffectsFast())
         {
@@ -80,13 +84,6 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(DiceView);
         }
 
-        //~DiceView()
-        //{
-        //    Dispose();
-        //}
-
-        public bool IsUnloaded { get; private set; }
-
         protected override void OnApplyTemplate()
         {
             var canvas = GetTemplateChild("Canvas") as CanvasControl;
@@ -100,30 +97,39 @@ namespace Unigram.Controls
             _canvas.Draw += OnDraw;
             _canvas.Unloaded += OnUnloaded;
 
+            _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
+            _layoutRoot.Loaded += OnLoaded;
+
             SetValue(_previousState, _previous);
 
             base.OnApplyTemplate();
         }
 
-        public void Dispose()
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            //if (_animation is IDisposable disposable)
-            //{
-            //    Debug.WriteLine("Disposing animation for: " + Path.GetFileName(_source));
-            //    disposable.Dispose();
-            //}
+            if (_unloaded)
+            {
+                while (_layoutRoot.Children.Count > 0)
+                {
+                    _layoutRoot.Children.Remove(_layoutRoot.Children[0]);
+                }
 
-            //_animation = null;
-            _valueState = null;
-            _enqueuedState = null;
-            _previousState = null;
+                _canvas = new CanvasControl();
+                _canvas.CreateResources += OnCreateResources;
+                _canvas.Draw += OnDraw;
+                _canvas.Unloaded += OnUnloaded;
+
+                _layoutRoot.Children.Add(_canvas);
+
+                _unloaded = false;
+                SetValue(_previousState, _previous);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _shouldPlay = false;
-            IsUnloaded = true;
-
+            _unloaded = true;
             Subscribe(false);
 
             _canvas.CreateResources -= OnCreateResources;
@@ -132,13 +138,13 @@ namespace Unigram.Controls
             _canvas.RemoveFromVisualTree();
             _canvas = null;
 
-            Dispose();
-
-            //_animation?.Dispose();
-            _animations = null;
+            _valueState = null;
 
             //_bitmap?.Dispose();
             _bitmaps = null;
+
+            //_animation?.Dispose();
+            _animations = null;
         }
 
         private void OnTick(object sender, EventArgs args)
@@ -290,7 +296,7 @@ namespace Unigram.Controls
                 //canvas.ResetElapsedTime();
                 Subscribe(false);
 
-                Dispose();
+                //Dispose();
                 return;
             }
 

@@ -55,7 +55,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (!sticker.StickerValue.Local.IsDownloadingCompleted)
             {
-                UpdateThumbnail(message, sticker.Contours);
+                UpdateThumbnail(message, sticker.Outline);
             }
 
             UpdateFile(message, sticker.StickerValue);

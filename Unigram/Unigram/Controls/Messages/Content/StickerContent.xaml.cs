@@ -39,7 +39,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (!sticker.StickerValue.Local.IsDownloadingCompleted)
             {
-                UpdateThumbnail(message, sticker.Contours);
+                UpdateThumbnail(message, sticker.Outline);
             }
 
             UpdateFile(message, sticker.StickerValue);
@@ -47,7 +47,7 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message) { }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        public async void UpdateFile(MessageViewModel message, File file)
         {
             var sticker = GetContent(message.Content);
             if (sticker == null)
@@ -62,7 +62,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                Texture.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

@@ -44,7 +44,7 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (!regular.Sticker.StickerValue.Local.IsDownloadingCompleted)
                 {
-                    UpdateThumbnail(message, regular.Sticker.Contours);
+                    UpdateThumbnail(message, regular.Sticker.Outline);
                 }
             }
 
@@ -74,10 +74,10 @@ namespace Unigram.Controls.Messages.Content
 
             if (state is DiceStickersRegular regular)
             {
-                if (regular.Sticker.StickerValue.Id != file?.Id)
-                {
-                    return;
-                }
+                //if (regular.Sticker.StickerValue.Id != file?.Id)
+                //{
+                //    return;
+                //}
             }
 
             if (state.IsDownloadingCompleted())
@@ -117,7 +117,7 @@ namespace Unigram.Controls.Messages.Content
             if (ApiInfo.CanUseDirectComposition)
             {
                 _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, ActualWidth, out ShapeVisual visual);
-                ElementCompositionPreview.SetElementChildVisual(this, visual);
+                ElementCompositionPreview.SetElementChildVisual(Player, visual);
             }
         }
 
@@ -163,12 +163,6 @@ namespace Unigram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            // We can't recycle it as we must destroy CanvasAnimatedControl on Unload.
-            if (Player.IsUnloaded)
-            {
-                return false;
-            }
-
             if (content is MessageDice)
             {
                 return true;

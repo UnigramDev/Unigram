@@ -219,27 +219,31 @@ namespace Unigram.Views.Popups
             var file = sticker.StickerValue;
             if (file.Local.IsDownloadingCompleted)
             {
-                if (content.Children[0] is Image photo)
+                if (content.Children[0] is Border border && border.Child is Image photo)
                 {
                     photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
+                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                 }
                 else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
                 {
                     lottie.Source = new Uri("file:///" + file.Local.Path);
                 }
-
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
+                if (content.Children[0] is Border border && border.Child is Image photo)
+                {
+                    photo.Source = null;
+                }
+                else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
+                {
+                    lottie.Source = null;
+                }
+
                 if (ApiInfo.CanUseDirectComposition)
                 {
-                    CompositionPathParser.ParseThumbnail(sticker.Contours, 60, out ShapeVisual visual, false);
+                    CompositionPathParser.ParseThumbnail(sticker.Outline, 60, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-                }
-                else
-                {
-                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                 }
 
                 _filesMap[file.Id].Add(sticker);
@@ -303,10 +307,10 @@ namespace Unigram.Views.Popups
                             continue;
                         }
 
-                        if (content.Children[0] is Image photo)
+                        if (content.Children[0] is Border border && border.Child is Image photo)
                         {
                             photo.Source = await PlaceholderHelper.GetWebPFrameAsync(update.File.Local.Path);
-                            ElementCompositionPreview.SetElementChildVisual(photo, null);
+                            ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                         }
                         else if (content.Children[0] is LottieView lottie)
                         {

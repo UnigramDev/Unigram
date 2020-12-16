@@ -402,7 +402,7 @@ namespace Unigram.Controls.Drawers
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
             {
-                if (content.Children[0] is Image photo)
+                if (content.Children[0] is Border border && border.Child is Image photo)
                 {
                     photo.Source = null;
                 }
@@ -413,7 +413,7 @@ namespace Unigram.Controls.Drawers
 
                 if (ApiInfo.CanUseDirectComposition)
                 {
-                    CompositionPathParser.ParseThumbnail(sticker.Contours, 60, out ShapeVisual visual, false);
+                    CompositionPathParser.ParseThumbnail(sticker.Outline, 60, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
                 }
 
