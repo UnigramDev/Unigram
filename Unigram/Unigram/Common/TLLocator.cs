@@ -941,38 +941,6 @@ namespace Unigram.Views
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Settings.SettingsStickersTrendingViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.Settings.SettingsStickersTrendingViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
-            else if (type == typeof(Unigram.ViewModels.Settings.SettingsStickersArchivedViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.Settings.SettingsStickersArchivedViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
-            else if (type == typeof(Unigram.ViewModels.Settings.SettingsMasksViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.Settings.SettingsMasksViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
-            else if (type == typeof(Unigram.ViewModels.Settings.SettingsMasksArchivedViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.Settings.SettingsMasksArchivedViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsLanguageViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.Settings.SettingsLanguageViewModel(

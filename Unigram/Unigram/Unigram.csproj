@@ -470,6 +470,7 @@
     <Compile Include="ViewModels\DialogThreadViewModel.cs" />
     <Compile Include="ViewModels\Chats\MessageStatisticsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
     </Compile>
@@ -691,19 +692,12 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsShortcutsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsStickersTrendingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignInRecoveryViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsMasksArchivedViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsMasksViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsStickersArchivedViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsStickersArchivedViewModelBase.cs" />
-    <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsStickersViewModelBase.cs" />
     <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IMemberDelegate.cs" />
@@ -1004,15 +998,6 @@
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsMasksArchivedPage.xaml.cs">
-      <DependentUpon>SettingsMasksArchivedPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsMasksPage.xaml.cs">
-      <DependentUpon>SettingsMasksPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsStickersArchivedPage.xaml.cs">
-      <DependentUpon>SettingsStickersArchivedPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Supergroups\SupergroupAddAdministratorPage.xaml.cs">
       <DependentUpon>SupergroupAddAdministratorPage.xaml</DependentUpon>
     </Compile>
@@ -1161,9 +1146,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsDataAndStoragePage.xaml.cs">
       <DependentUpon>SettingsDataAndStoragePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsStickersFeaturedPage.xaml.cs">
-      <DependentUpon>SettingsStickersFeaturedPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsNotificationsPage.xaml.cs">
       <DependentUpon>SettingsNotificationsPage.xaml</DependentUpon>
@@ -2114,22 +2096,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsDataAndStoragePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsMasksArchivedPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsStickersArchivedPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsStickersFeaturedPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsMasksPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

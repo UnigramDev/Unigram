@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.ViewModels.Settings;
 using Unigram.Views;
 using Unigram.Views.Folders;
 using Unigram.Views.Settings;
@@ -117,7 +118,7 @@ namespace Unigram.Services
 
                         if (!string.IsNullOrEmpty(title) && items.Count > 0)
                         {
-                            cicci.Add(new SettingsSearchPage(null, title, "\uE783", items.ToArray()));
+                            cicci.Add(new SettingsSearchPage(null, title, Icons.ChatBubblesQuestion, items.ToArray()));
                         }
                     }
                     else if (block is PageBlockParagraph para)
@@ -130,7 +131,7 @@ namespace Unigram.Services
                     }
                 }
 
-                _searchIndex.Add(new SettingsSearchPage(typeof(InstantPage), Strings.Resources.SettingsSearchFaq, "\uE783", cicci.ToArray()));
+                _searchIndex.Add(new SettingsSearchPage(typeof(InstantPage), Strings.Resources.SettingsSearchFaq, Icons.ChatBubblesQuestion, cicci.ToArray()));
             }
         }
 
@@ -250,18 +251,18 @@ namespace Unigram.Services
 
         private SettingsSearchEntry BuildStickersAndMasks()
         {
-            return new SettingsSearchPage(typeof(SettingsStickersPage), Strings.Resources.StickersAndMasks, Icons.Sticker, new SettingsSearchEntry[]
+            return new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.Resources.StickersAndMasks, Icons.Sticker, new SettingsSearchEntry[]
             {
-                new SettingsSearchPage(typeof(SettingsStickersPage), Strings.Resources.SuggestStickers),
-                new SettingsSearchPage(typeof(SettingsStickersFeaturedPage), Strings.Resources.FeaturedStickers),
+                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Installed, Strings.Resources.SuggestStickers),
+                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Trending, Strings.Resources.FeaturedStickers),
 
                 // Masks
-                new SettingsSearchPage(typeof(SettingsMasksPage), Strings.Resources.Masks, Icons.Sticker, new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Masks, Strings.Resources.Masks, Icons.Sticker, new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsMasksArchivedPage), Strings.Resources.ArchivedMasks)
+                    new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.MasksArchived, Strings.Resources.ArchivedMasks)
                 }),
 
-                new SettingsSearchPage(typeof(SettingsStickersArchivedPage), Strings.Resources.ArchivedStickers)
+                new SettingsSearchPage(typeof(SettingsStickersPage), (int)StickersType.Archived, Strings.Resources.ArchivedStickers)
             });
         }
 
@@ -304,13 +305,41 @@ namespace Unigram.Services
             }
         }
 
+        public SettingsSearchPage(Type page, object parameter, string text, string glyph = null, SettingsSearchEntry[] items = null)
+            : base(text, glyph)
+        {
+            Page = page;
+            Items = items;
+
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    item.Parent = this;
+
+                    if (item.Glyph == null)
+                    {
+                        item.Glyph = glyph;
+                    }
+                }
+            }
+        }
+
         public SettingsSearchPage(Type page, string text)
-            : base(text, null)
+            : this(page, null, text)
         {
             Page = page;
         }
 
+        public SettingsSearchPage(Type page, object parameter, string text)
+            : base(text, null)
+        {
+            Page = page;
+            Parameter = parameter;
+        }
+
         public Type Page { get; set; }
+        public object Parameter { get; set; }
         public SettingsSearchEntry[] Items { get; set; }
 
         public override SettingsSearchEntry Clone()

@@ -230,7 +230,7 @@ namespace Unigram.ViewModels
                 //}
                 else
                 {
-                    NavigationService.Navigate(page.Page);
+                    NavigationService.Navigate(page.Page, page.Parameter);
                 }
             }
             else if (entry is SettingsSearchFaq faq)
