@@ -211,7 +211,7 @@ namespace Unigram.Controls.Messages
                     return SetPollTemplate(message, poll, title);
                 case MessageSticker sticker:
                     return SetStickerTemplate(message, sticker, title);
-                case MessageUnsupported unsupported:
+                case MessageUnsupported _:
                     return SetUnsupportedMediaTemplate(message, title);
                 case MessageVenue venue:
                     return SetVenueTemplate(message, venue, title);
@@ -222,26 +222,32 @@ namespace Unigram.Controls.Messages
                 case MessageVoiceNote voiceNote:
                     return SetVoiceNoteTemplate(message, voiceNote, title);
 
-                case MessageBasicGroupChatCreate basicGroupChatCreate:
-                case MessageChatAddMembers chatAddMembers:
-                case MessageChatChangePhoto chatChangePhoto:
-                case MessageChatChangeTitle chatChangeTitle:
-                case MessageChatDeleteMember chatDeleteMember:
-                case MessageChatDeletePhoto chatDeletePhoto:
-                case MessageChatJoinByLink chatJoinByLink:
-                case MessageChatSetTtl chatSetTtl:
-                case MessageChatUpgradeFrom chatUpgradeFrom:
-                case MessageChatUpgradeTo chatUpgradeTo:
-                case MessageContactRegistered contactRegistered:
-                case MessageCustomServiceAction customServiceAction:
-                case MessageGameScore gameScore:
-                case MessagePaymentSuccessful paymentSuccessful:
-                case MessagePinMessage pinMessage:
-                case MessageScreenshotTaken screenshotTaken:
-                case MessageSupergroupChatCreate supergroupChatCreate:
+                case MessageBasicGroupChatCreate _:
+                case MessageChatAddMembers _:
+                case MessageChatChangePhoto _:
+                case MessageChatChangeTitle _:
+                case MessageChatDeleteMember _:
+                case MessageChatDeletePhoto _:
+                case MessageChatJoinByLink _:
+                case MessageChatSetTtl _:
+                case MessageChatUpgradeFrom _:
+                case MessageChatUpgradeTo _:
+                case MessageContactRegistered _:
+                case MessageCustomServiceAction _:
+                case MessageGameScore _:
+                case MessageInviteVoiceChatParticipants _:
+                case MessageProximityAlertTriggered _:
+                case MessagePassportDataSent _:
+                case MessagePaymentSuccessful _:
+                case MessagePinMessage _:
+                case MessageScreenshotTaken _:
+                case MessageSupergroupChatCreate _:
+                case MessageVoiceChatEnded _:
+                case MessageVoiceChatStarted:
+                case MessageWebsiteConnected _:
                     return SetServiceTextTemplate(message, title);
-                case MessageExpiredPhoto expiredPhoto:
-                case MessageExpiredVideo expiredVideo:
+                case MessageExpiredPhoto _:
+                case MessageExpiredVideo _:
                     return SetServiceTextTemplate(message, title);
             }
 
