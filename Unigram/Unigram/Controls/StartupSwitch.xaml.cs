@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Unigram.Services;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
@@ -36,8 +37,23 @@ namespace Unigram.Controls
                 ToggleMinimized.Toggled -= Minimized_Toggled;
             }
 
-            var task = await StartupTask.GetAsync("Telegram");
-            if (task.State == StartupTaskState.Enabled)
+            var task = await GetTaskAsync();
+            if (task == null || task.State == StartupTaskState.DisabledByUser)
+            {
+                Toggle.IsOn = false;
+                Toggle.IsEnabled = false;
+
+                if (ToggleMinimized != null)
+                {
+                    ToggleMinimized.IsOn = false;
+                    ToggleMinimized.Visibility = Visibility.Collapsed;
+                }
+
+                Headered.Footer = "You can enable this in the Startup tab in Task Manager.";
+
+                Visibility = Visibility.Visible;
+            }
+            else if (task.State == StartupTaskState.Enabled)
             {
                 Toggle.IsOn = true;
                 Toggle.IsEnabled = true;
@@ -67,21 +83,6 @@ namespace Unigram.Controls
 
                 Visibility = Visibility.Visible;
             }
-            else if (task.State == StartupTaskState.DisabledByUser)
-            {
-                Toggle.IsOn = false;
-                Toggle.IsEnabled = false;
-
-                if (ToggleMinimized != null)
-                {
-                    ToggleMinimized.IsOn = false;
-                    ToggleMinimized.Visibility = Visibility.Collapsed;
-                }
-
-                Headered.Footer = "You can enable this in the Startup tab in Task Manager.";
-
-                Visibility = Visibility.Visible;
-            }
             else
             {
                 Visibility = Visibility.Collapsed;
@@ -97,7 +98,12 @@ namespace Unigram.Controls
 
         private async void OnToggled(object sender, RoutedEventArgs e)
         {
-            var task = await StartupTask.GetAsync("Telegram");
+            var task = await GetTaskAsync();
+            if (task == null)
+            {
+                return;
+            }
+
             if (Toggle.IsOn)
             {
                 await task.RequestEnableAsync();
@@ -108,6 +114,18 @@ namespace Unigram.Controls
             }
 
             OnLoaded();
+        }
+
+        private async Task<StartupTask> GetTaskAsync()
+        {
+            try
+            {
+                return await StartupTask.GetAsync("Telegram");
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private void Minimized_Toggled(object sender, RoutedEventArgs e)
