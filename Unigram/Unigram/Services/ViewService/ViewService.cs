@@ -32,6 +32,8 @@ namespace Unigram.Services.ViewService
     {
         public ApplicationViewMode ViewMode { get; set; } = ApplicationViewMode.Default;
 
+        public string Title { get; set; }
+
         public double Width { get; set; }
         public double Height { get; set; }
 
@@ -58,81 +60,48 @@ namespace Unigram.Services.ViewService
 
         public async Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters)
         {
-            if (_windows.TryGetValue(parameters.PersistentId, out IDispatcherContext value))
+            //if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
+            //{
+            //    try
+            //    {
+            //        ApplicationView.ClearPersistedState("Calls");
+            //    }
+            //    catch { }
+            //}
+
+            var newView = CoreApplication.CreateNewView();
+            var dispatcher = new DispatcherContext(newView.DispatcherQueue);
+
+            var newControl = await dispatcher.DispatchAsync(async () =>
             {
-                var newControl = await value.DispatchAsync(async () =>
+                var newWindow = Window.Current;
+                var newAppView = ApplicationView.GetForCurrentView();
+
+                newAppView.Title = parameters.Title ?? string.Empty;
+
+                if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
                 {
-                    var control = ViewLifetimeControl.GetForCurrentView();
-                    var newAppView = ApplicationView.GetForCurrentView();
+                    newAppView.PersistedStateId = "Calls";
+                }
 
-                    var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
-                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
-
-                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-
-                    return control;
-                }).ConfigureAwait(false);
-                return newControl;
-            }
-            else
-            {
-                //if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-                //{
-                //    try
-                //    {
-                //        ApplicationView.ClearPersistedState("Calls");
-                //    }
-                //    catch { }
-                //}
-
-                var newView = CoreApplication.CreateNewView();
-                var dispatcher = new DispatcherContext(newView.Dispatcher);
-                _windows[parameters.PersistentId] = dispatcher;
-
-                var newControl = await dispatcher.DispatchAsync(async () =>
+                var control = ViewLifetimeControl.GetForCurrentView();
+                control.Released += (s, args) =>
                 {
-                    var newWindow = Window.Current;
-                    newWindow.Closed += (s, args) =>
-                    {
-                        _windows.TryRemove(parameters.PersistentId, out _);
-                    };
-                    newWindow.CoreWindow.Closed += (s, args) =>
-                    {
-                        _windows.TryRemove(parameters.PersistentId, out _);
-                    };
+                    newWindow.Close();
+                };
 
-                    var newAppView = ApplicationView.GetForCurrentView();
-                    newAppView.Consolidated += (s, args) =>
-                    {
-                        _windows.TryRemove(parameters.PersistentId, out _);
-                        newWindow.Close();
-                    };
+                newWindow.Content = parameters.Content(control);
+                newWindow.Activate();
 
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-                    {
-                        newAppView.PersistedStateId = "Calls";
-                    }
+                var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
+                preferences.CustomSize = new Size(parameters.Width, parameters.Height);
 
-                    var control = ViewLifetimeControl.GetForCurrentView();
-                    control.Released += (s, args) =>
-                    {
-                        newWindow.Close();
-                        _windows.TryRemove(parameters.PersistentId, out _);
-                    };
+                await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
+                newAppView.TryResizeView(new Size(parameters.Width, parameters.Height));
 
-                    newWindow.Content = parameters.Content(control);
-                    newWindow.Activate();
-
-                    var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
-                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
-
-                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-                    newAppView.TryResizeView(new Size(parameters.Width, parameters.Height));
-
-                    return control;
-                }).ConfigureAwait(false);
-                return newControl;
-            }
+                return control;
+            }).ConfigureAwait(false);
+            return newControl;
         }
 
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
@@ -177,7 +146,7 @@ namespace Unigram.Services.ViewService
                 //}
 
                 var newView = CoreApplication.CreateNewView();
-                var dispatcher = new DispatcherContext(newView.Dispatcher);
+                var dispatcher = new DispatcherContext(newView.DispatcherQueue);
 
                 if (parameter != null)
                 {
@@ -205,7 +174,7 @@ namespace Unigram.Services.ViewService
                             _windows.TryRemove(parameter, out IDispatcherContext _);
                         }
 
-                        newWindow.Close();
+                        //newWindow.Close();
                     };
 
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, id, false);
