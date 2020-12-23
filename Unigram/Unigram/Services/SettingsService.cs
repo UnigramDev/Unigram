@@ -211,8 +211,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (2UL << 32) | (5800UL << 16);
-        public const string CurrentChangelog = "• You can now change default download folder from Settings > Data and Storage > Storage Path.\n• Improved calls stability and reliability.";
+        public const ulong CurrentVersion = (7UL << 48) | (3UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = "Introducing Voice Chats and More\r\n\r\nVoice Chats in Groups\r\n• Turn any of your group chats into a hop-on, hop-off conference call.\r\n• Choose 'Start Voice Chat' under ⋮ in the group profile to create a voice chat.\r\n• Get up to several thousand participants in each voice chat.\r\n• Control the number of speakers with flexible admin tools.\r\n\r\nSticker Outlines\r\n• Download stickers faster and watch shimmering outlines as they load.\r\n\r\nMore Animated Emoji\r\n• Send a single 🤗🥺🤠🥴🤫🤥🤑🤩🤭☠️\r\n🔍🔎💤✨⚡️⭐️🦾 or 💪 to see the latest animated emoji.";
 
         public int Session => _session;
 
