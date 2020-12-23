@@ -142,6 +142,9 @@
   <data name="AccDescrChanSilentOn" xml:space="preserve">
     <value>ارسال به صورت بی‌صدا</value>
   </data>
+  <data name="AccDescrCloseMenu" xml:space="preserve">
+    <value>بستن فهرست</value>
+  </data>
   <data name="AccDescrClosePlayer" xml:space="preserve">
     <value>بستن پخش کننده صدا</value>
   </data>
@@ -249,6 +252,9 @@
   </data>
   <data name="AccDescrOpenMenu" xml:space="preserve">
     <value>باز کردن فهرست مسیریابی</value>
+  </data>
+  <data name="AccDescrOpenMenu2" xml:space="preserve">
+    <value>باز کردن فهرست</value>
   </data>
   <data name="AccDescrPageDown" xml:space="preserve">
     <value>رفتن به پایین صفحه</value>
@@ -581,6 +587,24 @@
   <data name="ActionCreateMega" xml:space="preserve">
     <value>گروه ایجاد شد</value>
   </data>
+  <data name="ActionGroupCallEnded" xml:space="preserve">
+    <value>گفتگوی صوتی به پایان رسید (⁨{0}⁩)</value>
+  </data>
+  <data name="ActionGroupCallInvited" xml:space="preserve">
+    <value>⁨un1⁩، ⁨un2⁩ را به گفتگوی صوتی دعوت کرد</value>
+  </data>
+  <data name="ActionGroupCallInvitedYou" xml:space="preserve">
+    <value>⁨un1⁩ شما را به گفتگوی صوتی دعوت کرد</value>
+  </data>
+  <data name="ActionGroupCallStarted" xml:space="preserve">
+    <value>⁨un1⁩ یک گفتگوی صوتی شروع کرد</value>
+  </data>
+  <data name="ActionGroupCallStartedByYou" xml:space="preserve">
+    <value>شما یک گفتگوی صوتی را شروع کردید</value>
+  </data>
+  <data name="ActionGroupCallYouInvited" xml:space="preserve">
+    <value>شما ⁨un2⁩ را به گفتگوی صوتی دعوت کردید</value>
+  </data>
   <data name="ActionInviteUser" xml:space="preserve">
     <value>⁨un1⁩ از طریق لینک دعوت به گروه پیوست</value>
   </data>
@@ -661,6 +685,12 @@
   </data>
   <data name="ActionTakeScreenshootYou" xml:space="preserve">
     <value>شما از صفحه عکس گرفتید!</value>
+  </data>
+  <data name="ActionUserInvitedToChannel" xml:space="preserve">
+    <value>⁨un1⁩ شما را به این کانال دعوت کرد</value>
+  </data>
+  <data name="ActionUserInvitedToGroup" xml:space="preserve">
+    <value>⁨un1⁩ شما را به این گروه دعوت کرد</value>
   </data>
   <data name="ActionUserScored" xml:space="preserve">
     <value>⁨un1⁩ امتیاز ⁨{0}⁩ را کسب کرد</value>
@@ -798,7 +828,7 @@
     <value>100 پیام اخیر برای اعضای جدید نمایش داده شوند</value>
   </data>
   <data name="AddMutual" xml:space="preserve">
-    <value>مخاطبین را به کانال خود اضافه کنید</value>
+    <value>افرادی را به کانال خود اضافه کنید</value>
   </data>
   <data name="AddOneMemberAlertTitle" xml:space="preserve">
     <value>افزودن عضو</value>
@@ -1093,7 +1123,7 @@
     <value>استیکر بایگانی شده‌ای موجود نیست</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
-    <value>شما می‌توانید تا سقف 200 بسته استیکر اضافه کنید.
+    <value>شما می‌توانید 200 بسته استیکر فعال داشته باشید.
 در صورت افزودن بسته‌های بیشتر، بسته‌های استفاده نشده بایگانی می‌شوند.</value>
   </data>
   <data name="ArchiveHidden" xml:space="preserve">
@@ -1125,6 +1155,9 @@
   </data>
   <data name="ArchivePinnedInfo" xml:space="preserve">
     <value>با کشیدن به سمت چپ بر روی بایگانی، آن را پنهان کنید.</value>
+  </data>
+  <data name="ArchiveSearchFilter" xml:space="preserve">
+    <value>بایگانی</value>
   </data>
   <data name="ArchiveStickersAlertMessage" xml:space="preserve">
     <value>آیا از بایگانی کردن بسته‌های استیکر انتخاب شده اطمینان دارید؟</value>
@@ -1238,7 +1271,7 @@
     <value>آیا از حذف گفتگوی **⁨{0}⁩** اطمینان دارید؟</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithSecretUser" xml:space="preserve">
-    <value>آیا از حذف گفتگوی محرمانه با **⁨{0}⁩** اطمینان دارید؟</value>
+    <value>آیا از حذف گفتگوی محرمانه خود با **⁨{0}⁩** اطمینان دارید؟</value>
   </data>
   <data name="AreYouSureDeleteThisChatWithUser" xml:space="preserve">
     <value>آیا از حذف گفتگو با **⁨{0}⁩** اطمینان دارید؟</value>
@@ -1873,7 +1906,7 @@
     <value>انتقال مالکیت ربات</value>
   </data>
   <data name="BotOwnershipTransferAlertText" xml:space="preserve">
-    <value>شما فقط در صورت داشتن موارد زیر می‌توانید ربات را انتقال دهید:</value>
+    <value>شما فقط در صورت داشتن موارد زیر می‌توانید این ربات را انتقال دهید:</value>
   </data>
   <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
     <value>تغییر مالک</value>
@@ -2069,7 +2102,7 @@
     <value>لغو ارسال</value>
   </data>
   <data name="CantAddBotAsAdmin" xml:space="preserve">
-    <value>متأسفانه ربات‌ها فقط می‌توانند به عنوان مدیر به کانال‌ها اضافه شوند.</value>
+    <value>ربات‌ها فقط می‌توانند به عنوان مدیر به کانال‌ها اضافه شوند.</value>
   </data>
   <data name="CantPlayVideo" xml:space="preserve">
     <value>برنامه قادر به پخش این ویدیو نبود. با پخش کننده خارجی امتحان می‌کنید؟</value>
@@ -2119,7 +2152,7 @@
     <value>شماره تلفن ⁨{0}⁩ قبلاً به یک حساب کاربری تلگرام متصل شده است. لطفاً آن حساب کاربری را پیش از انتقال به شماره جدید حذف کنید.</value>
   </data>
   <data name="ChangePublicLimitReached" xml:space="preserve">
-    <value>متأسفانه شما بیش از حد مجاز نام کاربری عمومی انتخاب کرده‌اید. شما می‌توانید توسط یکی از گروه‌ها یا کانال‌های قبلی خود لینک را باطل کرده، یا در عوض یک هویت خصوصی ایجاد کنید.</value>
+    <value>شما بیش از حد مجاز لینک عمومی انتخاب کرده‌اید. می‌توانید لینک را از یک گروه یا کانال قدیمی باطل کرده، یا در عوض یک لینک خصوصی ایجاد کنید.</value>
   </data>
   <data name="ChangeRecoveryEmail" xml:space="preserve">
     <value>تغییر ایمیل بازیابی</value>
@@ -2458,7 +2491,7 @@
     <value>صدادار کردن</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
-    <value>متأسفانه شما می‌توانید فقط 200 عضو را در ابتدا به کانال اضافه کنید. توجه داشته باشید تعداد افراد نامحدودی می‌توانند از طریق لینک کانال به آن بپیوندند.</value>
+    <value>متأسفانه شما می‌توانید فقط 200 مشترک را در ابتدا به کانال اضافه کنید. توجه داشته باشید تعداد افراد نامحدودی می‌توانند از طریق لینک کانال به آن بپیوندند.</value>
   </data>
   <data name="ChannelUserCantAdd" xml:space="preserve">
     <value>متأسفانه شما نمی‌توانید این کاربر را به کانال‌ها اضافه کنید.</value>
@@ -2470,9 +2503,9 @@
     <value>متأسفانه تعداد مدیران در این کانال بسیار زیاد است.</value>
   </data>
   <data name="ChannelUserLeftError" xml:space="preserve">
-    <value>متأسفانه اگر کاربری دیگر عضو یک کانال نباشد، جهت بازگرداندن او به کانال، شما باید در مخاطبین تلگرام او باشید.
+    <value>متأسفانه اگر شخصی دیگر عضو یک کانال نباشد، جهت بازگرداندن او، شما باید در مخاطبین تلگرام او باشید.
 
-توجه داشته باشید، تا زمانی که او در فهرست کاربران حذف شده نباشد، همچنان می‌تواند از طریق لینک دعوت به کانال بپیوندد.</value>
+توجه داشته باشید، تا زمانی که او در فهرست کاربران حذف شده نباشد، همچنان می‌تواند از طریق لینک دعوت کانال به آن بپیوندد.</value>
   </data>
   <data name="ChannelUsernameHelp" xml:space="preserve">
     <value>در صورتی که یک لینک همیشگی تنظیم کنید، سایر افراد می‌توانند کانال شما را پیدا کرده و به آن بپیوندند.
@@ -3115,10 +3148,10 @@
   <data name="ConvertGroupInfo" xml:space="preserve">
     <value>**به سقف تعداد اعضای مجاز رسیدید.**
 
-برای پیشروی از سقف مجاز و دریافت امکانات بیشتر، گروه را به یک ابرگروه ارتقاء دهید:
+برای فضا و امکانات بیشتر، گروه را به یک ابرگروه ارتقاء دهید:
 
 • ابرگروه‌ها می‌توانند تا سقف ⁨{0}⁩ داشته باشند
-• اعضای جدید می‌توانند تاریخچه تمامی پیام‌ها را ببینند
+• اعضای جدید می‌توانند تاریخچه کامل پیام‌ها را ببینند
 • پیام‌های حذف شده برای تمامی اعضا ناپدید خواهد شد
 • مدیران می‌توانند برای گروه توضیحاتی اضافه کنند
 • ایجاد کننده می‌تواند یک لینک عمومی برای گروه تنظیم کند</value>
@@ -3126,7 +3159,7 @@
   <data name="ConvertGroupInfo2" xml:space="preserve">
     <value>**در ابرگروه‌ها:**
 
-• اعضای جدید می‌توانند تمامی تاریخچه پیام‌ها را ببینند
+• اعضای جدید می‌توانند تاریخچه کامل پیام‌ها را ببینند
 • پیام‌های حذف شده برای تمامی اعضا ناپدید خواهد شد
 • مدیران می‌توانند برای گروه توضیحاتی اضافه کنند
 • ایجاد کننده می‌تواند یک لینک عمومی برای گروه تنظیم کند</value>
@@ -3231,7 +3264,7 @@
     <value>استیکرهای گروه</value>
   </data>
   <data name="CurrentSession" xml:space="preserve">
-    <value>نشست فعلی</value>
+    <value>این دستگاه</value>
   </data>
   <data name="CurvesAll" xml:space="preserve">
     <value>همه</value>
@@ -3249,7 +3282,7 @@
     <value>علی‌رغم تنظیمات بالا، این کاربران خواهند یا نخواهند توانست با شما تماس بگیرند.</value>
   </data>
   <data name="CustomHelp" xml:space="preserve">
-    <value>توجه: شما قادر به دیدن زمان آخرین بازدید و وضعیت آنلاین بودن افرادی که این تنظیمات خود را با آن‌ها به اشتراک نمی‌گذارید، نیستید. در عوض، زمان آخرین بازدید تقریبی نمایش داده خواهد شد (به تازگی، ظرف یک هفته پیش، ظرف یک ماه پیش).</value>
+    <value>توجه: شما قادر به دیدن زمان آخرین بازدید یا وضعیت آنلاین بودن افرادی که این تنظیمات خود را با آن‌ها به اشتراک نمی‌گذارید، نیستید. در عوض، زمان‌های تقریبی نمایش داده خواهد شد (به تازگی، ظرف یک هفته پیش، ظرف یک ماه پیش).</value>
   </data>
   <data name="CustomNotifications" xml:space="preserve">
     <value>اعلان‌های سفارشی</value>
@@ -3474,7 +3507,7 @@
     <value>حذف از اخیراً</value>
   </data>
   <data name="DeleteGif" xml:space="preserve">
-    <value>گیف حذف شود؟</value>
+    <value>گیف از این قسمت حذف شود؟</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>فایل زبان حذف شود؟</value>
@@ -3627,7 +3660,7 @@
     <value>عکس محرمانه</value>
   </data>
   <data name="DisappearingVideo" xml:space="preserve">
-    <value>ویدیوی محرمانه</value>
+    <value>ویدیوی ناپدید شونده</value>
   </data>
   <data name="DiscardChanges" xml:space="preserve">
     <value>تغییرات حذف شوند؟</value>
@@ -3675,7 +3708,7 @@
     <value>ایجاد گروه جدید</value>
   </data>
   <data name="DiscussionGroupHelp" xml:space="preserve">
-    <value>**⁨{0}⁩** گروه را به عنوان صفحه بحث خود متصل کرده است.</value>
+    <value>این گروه به عنوان صفحه بحث ⁨{0}⁩ متصل شده است.</value>
   </data>
   <data name="DiscussionGroupHelp2" xml:space="preserve">
     <value>تمامی پیام‌های جدید ارسال شده در این کانال، به این گروه هدایت می‌شوند.</value>
@@ -3808,10 +3841,10 @@
     <value>ویرایش اختیارات مدیر</value>
   </data>
   <data name="EditAdminSendAnonymously" xml:space="preserve">
-    <value>ارسال به صورت ناشناس</value>
+    <value>ناشناس ماندن</value>
   </data>
   <data name="EditAdminTransferAlertText" xml:space="preserve">
-    <value>شما تنها در صورتی می‌توانید این گروه را به **⁨{0}⁩** منتقل کنید که:</value>
+    <value>شما تنها در صورتی می‌توانید این گروه را به **⁨{0}⁩** انتقال دهید که:</value>
   </data>
   <data name="EditAdminTransferAlertText1" xml:space="preserve">
     <value>تأیید دو مرحله‌ای بیش از **7 روز** پیش برای حساب کاربری شما فعال شده باشد.</value>
@@ -3835,7 +3868,7 @@
     <value>**⁨{0}⁩** هم اکنون مالک گروه است.</value>
   </data>
   <data name="EditAdminTransferReadyAlertText" xml:space="preserve">
-    <value>این کار **اختیارات مالک** متعلق به **⁨{0}⁩** را به صورت کامل به **⁨{1}⁩** منتقل خواهد کرد.</value>
+    <value>این کار **اختیارات مالک** متعلق به **⁨{0}⁩** را به صورت کامل به **⁨{1}⁩** انتقال خواهد داد.</value>
   </data>
   <data name="EditAdminTransferSetPassword" xml:space="preserve">
     <value>تنظیم گذرواژه</value>
@@ -3853,7 +3886,7 @@
     <value>ویرایش عنوان</value>
   </data>
   <data name="EditChannelAdminTransferAlertText" xml:space="preserve">
-    <value>شما تنها در صورتی می‌توانید این کانال را به **⁨{0}⁩** منتقل کنید که:</value>
+    <value>شما تنها در صورتی می‌توانید این کانال را به **⁨{0}⁩** انتقال دهید که:</value>
   </data>
   <data name="EditContact" xml:space="preserve">
     <value>ویرایش مخاطب</value>
@@ -3864,11 +3897,32 @@
   <data name="EditMessage" xml:space="preserve">
     <value>ویرایش پیام</value>
   </data>
+  <data name="EditMessageEditPhoto" xml:space="preserve">
+    <value>ویرایش عکس</value>
+  </data>
+  <data name="EditMessageEditVideo" xml:space="preserve">
+    <value>ویرایش ویدیو</value>
+  </data>
   <data name="EditMessageError" xml:space="preserve">
     <value>متأسفانه شما نمی‌توانید این پیام را ویرایش کنید.</value>
   </data>
   <data name="EditMessageMedia" xml:space="preserve">
     <value>برای ویرایش رسانه ضربه بزنید</value>
+  </data>
+  <data name="EditMessageReplaceAudio" xml:space="preserve">
+    <value>جایگزین کردن فایل صدا</value>
+  </data>
+  <data name="EditMessageReplaceFile" xml:space="preserve">
+    <value>جایگزینی فایل</value>
+  </data>
+  <data name="EditMessageReplaceGif" xml:space="preserve">
+    <value>جایگزینی رسانه</value>
+  </data>
+  <data name="EditMessageReplacePhoto" xml:space="preserve">
+    <value>جایگزینی عکس</value>
+  </data>
+  <data name="EditMessageReplaceVideo" xml:space="preserve">
+    <value>جایگزینی ویدیو</value>
   </data>
   <data name="EditName" xml:space="preserve">
     <value>ویرایش نام</value>
@@ -3946,6 +4000,9 @@
   </data>
   <data name="EmptyExceptions" xml:space="preserve">
     <value>خالی</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>فعال کردن</value>
   </data>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>برخی از ویدیوها نمی‌توانند به صورت پیوسته پخش شوند – مانند تمامی ویدیوهایی که از دستگاه اندروید توسط تلگرام نسخه 4.7 یا قدیمی‌تر ارسال شده‌اند.</value>
@@ -4102,7 +4159,7 @@
     <value>⁨un1⁩ موقعیت مکانی گروه را به «⁨{0}⁩» تغییر داد</value>
   </data>
   <data name="EventLogChangedOwnership" xml:space="preserve">
-    <value>مالکیت به ⁨{0}⁩ منتقل شد</value>
+    <value>مالکیت به ⁨{0}⁩ انتقال یافت</value>
   </data>
   <data name="EventLogChangedStickersSet" xml:space="preserve">
     <value>⁨un1⁩ بسته استیکر گروه را تغییر داد</value>
@@ -4174,14 +4231,21 @@
   </data>
   <data name="EventLogEmptySearch" xml:space="preserve">
     <value>**فعالیتی یافت نشد**
+
 فعالیت اخیری مطابق با
 جستجوی شما یافت نشد.</value>
   </data>
   <data name="EventLogEmptyTextSearch" xml:space="preserve">
     <value>فعالیت اخیری که شامل «**⁨{0}⁩**» باشد یافت نشد.</value>
   </data>
+  <data name="EventLogEndedVoiceChat" xml:space="preserve">
+    <value>⁨un1⁩ به گفتگوی صوتی پایان داد</value>
+  </data>
   <data name="EventLogFilterAll" xml:space="preserve">
     <value>تمامی فعالیت‌ها</value>
+  </data>
+  <data name="EventLogFilterCalls" xml:space="preserve">
+    <value>گفتگوهای صوتی</value>
   </data>
   <data name="EventLogFilterChannelInfo" xml:space="preserve">
     <value>اطلاعات کانال</value>
@@ -4214,7 +4278,7 @@
     <value>⁨un1⁩ به گروه پیوست</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
-    <value>این فهرستی از تمامی فعالیت‌های سرویس انجام شده توسط اعضا و مدیران این گروه در 48 ساعت گذشته است.</value>
+    <value>این فهرستی از فعالیت‌های مهم انجام شده توسط اعضا و مدیران در 48 ساعت گذشته است.</value>
   </data>
   <data name="EventLogInfoDetailChannel" xml:space="preserve">
     <value>این فهرستی از تمامی فعالیت‌های سرویس انجام شده توسط مدیران کانال در 48 ساعت گذشته است.</value>
@@ -4262,13 +4326,16 @@
     <value>تغییر اطلاعات کانال</value>
   </data>
   <data name="EventLogPromotedChangeGroupInfo" xml:space="preserve">
-    <value>تغییر اطلاعات گروه</value>
+    <value>ویرایش اطلاعات گروه</value>
   </data>
   <data name="EventLogPromotedDeleteMessages" xml:space="preserve">
     <value>حذف پیام‌ها</value>
   </data>
   <data name="EventLogPromotedEditMessages" xml:space="preserve">
     <value>ویرایش پیام‌ها</value>
+  </data>
+  <data name="EventLogPromotedManageCall" xml:space="preserve">
+    <value>مدیریت گفتگوهای صوتی</value>
   </data>
   <data name="EventLogPromotedPinMessages" xml:space="preserve">
     <value>سنجاق کردن پیام‌ها</value>
@@ -4280,7 +4347,7 @@
     <value>عنوان</value>
   </data>
   <data name="EventLogPromotedSendAnonymously" xml:space="preserve">
-    <value>ارسال به صورت ناشناس</value>
+    <value>ناشناس ماندن</value>
   </data>
   <data name="EventLogPromotedTitle" xml:space="preserve">
     <value>عنوان: ⁨{0}⁩</value>
@@ -4344,6 +4411,9 @@
   <data name="EventLogSelectedEvents" xml:space="preserve">
     <value>فعالیت‌های انتخاب شده</value>
   </data>
+  <data name="EventLogStartedVoiceChat" xml:space="preserve">
+    <value>⁨un1⁩ یک گفتگوی صوتی شروع کرد</value>
+  </data>
   <data name="EventLogStopPoll" xml:space="preserve">
     <value>⁨un1⁩ نظرسنجی را متوقف کرد:</value>
   </data>
@@ -4375,7 +4445,19 @@
     <value>⁨un1⁩ زمان‌سنج حالت آرام را بر روی ⁨{0}⁩ تنظیم کرد</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
-    <value>⁨un1⁩ سنجاق پیام را برداشت</value>
+    <value>⁨un1⁩ سنجاق یک پیام را برداشت</value>
+  </data>
+  <data name="EventLogVoiceChatAllowedToSpeak" xml:space="preserve">
+    <value>⁨un1⁩ به شرکت کنندگان جدید در گفتگوی صوتی اجازه صحبت داد</value>
+  </data>
+  <data name="EventLogVoiceChatMuted" xml:space="preserve">
+    <value>⁨un1⁩، ⁨un2⁩ را در یک گفتگوی صوتی بی‌صدا کرد</value>
+  </data>
+  <data name="EventLogVoiceChatNotAllowedToSpeak" xml:space="preserve">
+    <value>⁨un1⁩ شرکت کنندگان جدید در گفتگوی صوتی را بی‌صدا کرد</value>
+  </data>
+  <data name="EventLogVoiceChatUnmuted" xml:space="preserve">
+    <value>⁨un1⁩، ⁨un2⁩ را در یک گفتگوی صوتی صدادار کرد</value>
   </data>
   <data name="Events" xml:space="preserve">
     <value>رویدادها</value>
@@ -4624,7 +4706,7 @@
     <value>گفتگویی موجود نیست</value>
   </data>
   <data name="FilterNoChatsToDisplay" xml:space="preserve">
-    <value>گفتگویی یافت نشد</value>
+    <value>پوشه خالی است</value>
   </data>
   <data name="FilterNoChatsToDisplayInfo" xml:space="preserve">
     <value>در حال حاضر هیچ گفتگویی متعلق به این پوشه نیست.</value>
@@ -4732,7 +4814,7 @@
     <value>نام (الزامی)</value>
   </data>
   <data name="FloodWait" xml:space="preserve">
-    <value>بیش از حد مجاز امتحان کردید، لطفاً بعداً تلاش کنید</value>
+    <value>بیش از حد مجاز امتحان کردید، لطفاً بعداً تلاش کنید.</value>
   </data>
   <data name="FloodWaitTime" xml:space="preserve">
     <value>بیش از حد مجاز امتحان کردید، لطفاً پس از ⁨{0}⁩ دوباره تلاش کنید</value>
@@ -5267,9 +5349,9 @@
     <value>متأسفانه تعداد ربات‌ها در این گروه بسیار زیاد است.</value>
   </data>
   <data name="GroupUserLeftError" xml:space="preserve">
-    <value>متأسفانه اگر کاربری دیگر عضو یک گروه نباشد، جهت بازگرداندن او به گروه، شما باید در مخاطبین تلگرام او باشید.
+    <value>متأسفانه اگر شخصی دیگر عضو یک گروه نباشد، جهت بازگرداندن او، شما باید در مخاطبین تلگرام او باشید.
 
-توجه داشته باشید، تا زمانی که او در فهرست کاربران حذف شده نباشد، همچنان می‌تواند از طریق لینک دعوت به گروه بپیوندد.</value>
+توجه داشته باشید، تا زمانی که او در فهرست کاربران حذف شده نباشد، همچنان می‌تواند از طریق لینک دعوت گروه به آن بپیوندد.</value>
   </data>
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>رشد</value>
@@ -5422,7 +5504,7 @@
     <value>فضای ذخیره‌سازی داخلی</value>
   </data>
   <data name="InvalidCode" xml:space="preserve">
-    <value>کد نامعتبر است</value>
+    <value>کد نامعتبر است، لطفاً دوباره تلاش کنید.</value>
   </data>
   <data name="InvalidFirstName" xml:space="preserve">
     <value>نام نامعتبر است</value>
@@ -5456,6 +5538,9 @@
   </data>
   <data name="Invite" xml:space="preserve">
     <value>دعوت</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>دعوت شد</value>
   </data>
   <data name="InviteFriends" xml:space="preserve">
     <value>دعوت از دوستان</value>
@@ -5816,6 +5901,9 @@
   <data name="LinksTitle" xml:space="preserve">
     <value>لینک‌های اشتراکی</value>
   </data>
+  <data name="Listening" xml:space="preserve">
+    <value>در حال گوش دادن</value>
+  </data>
   <data name="LiveLocationAlertGroup" xml:space="preserve">
     <value>انتخاب کنید که تا چه مدت افراد در این گفتگو بتوانند موقعیت مکانی لحظه‌ای شما را ببینند.</value>
   </data>
@@ -5841,7 +5929,7 @@
     <value>لطفاً تا زمان تولید نمودارها چند لحظه صبر کنید.</value>
   </data>
   <data name="LocalAudioCache" xml:space="preserve">
-    <value>پیام‌های صوتی/ویدیویی</value>
+    <value>پیام‌های صوتی و ویدیویی</value>
   </data>
   <data name="LocalCache" xml:space="preserve">
     <value>سایر فایل‌ها</value>
@@ -6034,7 +6122,7 @@
     <value>ماسک‌ها بایگانی شدند.</value>
   </data>
   <data name="MasksArchivedInfo" xml:space="preserve">
-    <value>⁨{0}⁩ به بایگانی شما منتقل شد.</value>
+    <value>⁨{0}⁩ به بایگانی شما انتقال یافت.</value>
   </data>
   <data name="MasksCount_few" xml:space="preserve">
     <value/>
@@ -6210,6 +6298,27 @@
   </data>
   <data name="MembersOverviewTitle" xml:space="preserve">
     <value>اعضا</value>
+  </data>
+  <data name="MembersTalking_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersTalking_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersTalking_one" xml:space="preserve">
+    <value>⁨{0}⁩ عضو در حال صحبت است</value>
+  </data>
+  <data name="MembersTalking_other" xml:space="preserve">
+    <value>⁨{0}⁩ عضو در حال صحبت هستند</value>
+  </data>
+  <data name="MembersTalking_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersTalking_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MembersTalkingNobody" xml:space="preserve">
+    <value>برای پیوستن ضربه بزنید</value>
   </data>
   <data name="Mention" xml:space="preserve">
     <value>اشاره کردن</value>
@@ -6485,7 +6594,7 @@
     <value>جهت ارسال فایل‌های موسیقی</value>
   </data>
   <data name="MuteDisable" xml:space="preserve">
-    <value>بی‌صدا کردن برای همیشه</value>
+    <value>غیرفعال کردن</value>
   </data>
   <data name="MuteFor" xml:space="preserve">
     <value>بی‌صدا کردن به مدت ⁨{0}⁩</value>
@@ -6572,7 +6681,7 @@
     <value>افزودن مخاطب</value>
   </data>
   <data name="NewContactAlertMessage" xml:space="preserve">
-    <value>شماره تلفن **⁨{0}⁩** در فهرست مخاطبین شما نیست. آیا می‌خواهید آن را اضافه کنید؟</value>
+    <value>شماره تلفن **⁨{0}⁩** در مخاطبین شما نیست. آیا می‌خواهید آن را اضافه کنید؟</value>
   </data>
   <data name="NewContactAlertTitle" xml:space="preserve">
     <value>مخاطب جدید</value>
@@ -6692,7 +6801,7 @@
     <value>متأسفانه شما در حال حاضر از ارسال پیام به گروه‌های عمومی محدود شده‌اید.</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
-    <value>شما هنوز تماسی برقرار نکرده‌اید.</value>
+    <value>هنوز تماسی در اینجا موجود نیست...</value>
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>به تلگرام خوش آمدید</value>
@@ -7027,7 +7136,7 @@
     <value>⁨{0}⁩ یک ویدیو را سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedVoice" xml:space="preserve">
-    <value>⁨{0}⁩ یک پیام صوتی را در گروه ⁨{1}⁩ سنجاق کرد</value>
+    <value>⁨{0}⁩ یک پیام صوتی را ⁨{1}⁩ سنجاق کرد</value>
   </data>
   <data name="NotificationActionPinnedVoiceChannel" xml:space="preserve">
     <value>⁨{0}⁩ یک پیام صوتی را سنجاق کرد</value>
@@ -7062,11 +7171,23 @@
   <data name="NotificationGroupAlbum" xml:space="preserve">
     <value>⁨{0}⁩ یک آلبوم را در گروه ⁨{1}⁩ سنجاق کرد</value>
   </data>
+  <data name="NotificationGroupCreatedCall" xml:space="preserve">
+    <value>⁨{0}⁩ یک گفتگوی صوتی در ⁨{1}⁩ شروع کرد</value>
+  </data>
+  <data name="NotificationGroupEndedCall" xml:space="preserve">
+    <value>⁨{0}⁩ به گفتگوی صوتی در ⁨{1}⁩ پایان داد</value>
+  </data>
   <data name="NotificationGroupFew" xml:space="preserve">
     <value>⁨{0}⁩ ⁨{2}⁩ را به گروه ⁨{1}⁩ ارسال کرد</value>
   </data>
   <data name="NotificationGroupForwardedFew" xml:space="preserve">
     <value>⁨{0}⁩ ⁨{2}⁩ را به گروه ⁨{1}⁩ هدایت کرد</value>
+  </data>
+  <data name="NotificationGroupInvitedToCall" xml:space="preserve">
+    <value>⁨{0}⁩، ⁨{2}⁩ را به یک گفتگوی صوتی در ⁨{1}⁩ دعوت کرد</value>
+  </data>
+  <data name="NotificationGroupInvitedYouToCall" xml:space="preserve">
+    <value>⁨{0}⁩ شما را به یک گفتگوی صوتی در ⁨{1}⁩ دعوت کرد</value>
   </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>⁨{0}⁩ ⁨{2}⁩ را از گروه ⁨{1}⁩ حذف کرد</value>
@@ -7126,7 +7247,7 @@
     <value>⁨{0}⁩ برای شما یک گیف ارسال کرد</value>
   </data>
   <data name="NotificationMessageGroupAudio" xml:space="preserve">
-    <value>⁨{0}⁩ یک پیام صوتی به گروه ⁨{1}⁩ ارسال کرد</value>
+    <value>⁨{0}⁩ یک پیام صوتی به ⁨{1}⁩ ارسال کرد</value>
   </data>
   <data name="NotificationMessageGroupContact" xml:space="preserve">
     <value>⁨{0}⁩ یک مخاطب را در گروه ⁨{1}⁩ به اشتراک گذاشت</value>
@@ -7261,11 +7382,17 @@
   <data name="NotificationsChartTitle" xml:space="preserve">
     <value>اعلان‌ها</value>
   </data>
+  <data name="NotificationsChatInApp" xml:space="preserve">
+    <value>⁨{0}⁩ درون‌برنامه</value>
+  </data>
   <data name="NotificationsCustom" xml:space="preserve">
     <value>سفارشی</value>
   </data>
   <data name="NotificationsCustomize" xml:space="preserve">
     <value>سفارشی‌سازی</value>
+  </data>
+  <data name="NotificationsDefault" xml:space="preserve">
+    <value>پیش‌فرض</value>
   </data>
   <data name="NotificationsDefaultOff" xml:space="preserve">
     <value>پیش‌فرض (غیرفعال)</value>
@@ -7311,6 +7438,9 @@
   </data>
   <data name="NotificationsImportance" xml:space="preserve">
     <value>اهمیت</value>
+  </data>
+  <data name="NotificationsInAppDefault" xml:space="preserve">
+    <value>پیش‌فرض درون‌برنامه</value>
   </data>
   <data name="NotificationsLed" xml:space="preserve">
     <value>LED</value>
@@ -7384,6 +7514,9 @@
   <data name="NotificationsServiceInfo" xml:space="preserve">
     <value>برنامه در صورت متوقف شدن مجدداً اجرا می‌شود.این گزینه را برای اعلان‌های قابل اطمینان فعال کنید.</value>
   </data>
+  <data name="NotificationsSilent" xml:space="preserve">
+    <value>بی‌صدا</value>
+  </data>
   <data name="NotificationsTurnOff" xml:space="preserve">
     <value>غیرفعال کردن</value>
   </data>
@@ -7403,9 +7536,9 @@
 دستگاه: ⁨{2}⁩
 موقعیت مکانی: ⁨{3}⁩
 
-اگر این ورود توسط شما انجام نشده است، می‌توانید با مراجعه به قسمت تنظیمات > حریم خصوصی و امنیت > نشست‌ها، به آن نشست پایان دهید.
+اگر این ورود توسط شما انجام نشده است، می‌توانید با مراجعه به قسمت تنظیمات > دستگاه‌ها، به آن نشست پایان دهید.
 
-اگر فکر می‌کنید کسى بدون اجازه شما وارد حساب کاربریتان شده است، می‌توانید تأیید دو مرحله‌ای را در قسمت حریم خصوصی و امنیت فعال نمایید.
+اگر فکر می‌کنید کسى بدون اجازه شما وارد حساب کاربریتان شده است، می‌توانید تأیید دو مرحله‌ای را در قسمت تنظیمات حریم خصوصی و امنیت فعال نمایید.
 
 با احترام،
 تیم تلگرام</value>
@@ -7666,6 +7799,24 @@
   </data>
   <data name="PaintRegular" xml:space="preserve">
     <value>معمولی</value>
+  </data>
+  <data name="Participants_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Participants_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Participants_one" xml:space="preserve">
+    <value>⁨{0}⁩ شرکت کننده</value>
+  </data>
+  <data name="Participants_other" xml:space="preserve">
+    <value>⁨{0}⁩ شرکت کننده</value>
+  </data>
+  <data name="Participants_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="Participants_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="Passcode" xml:space="preserve">
     <value>قفل با گذرواژه</value>
@@ -8148,7 +8299,7 @@
     <value>اطلاعات درخواستی</value>
   </data>
   <data name="PassportRequestPasswordInfo" xml:space="preserve">
-    <value>لطفاً جهت رمزگشایی داده‌های خود گذرواژه تلگرامتان را وارد کنید.</value>
+    <value>جهت رمزگشایی داده‌های خود گذرواژه تلگرامتان را وارد کنید.</value>
   </data>
   <data name="PassportRequiredDocuments" xml:space="preserve">
     <value>سندهای مورد نیاز</value>
@@ -8346,7 +8497,7 @@
     <value>دسترسی به سرور پرداخت امکان‌پذیر نیست. لطفاً اتصال اینترنت خود را بررسی کرده و دوباره تلاش کنید.</value>
   </data>
   <data name="PaymentEmailToProvider" xml:space="preserve">
-    <value>آدرس ایمیل به عنوان اطلاعات صدور قبض به ⁨{0}⁩ منتقل خواهد شد.</value>
+    <value>آدرس ایمیل به عنوان اطلاعات صدور قبض به ⁨{0}⁩ ارسال خواهد شد.</value>
   </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>متأسفانه پرداخت پذیرفته نشد.</value>
@@ -8382,10 +8533,10 @@
     <value>گذرواژه</value>
   </data>
   <data name="PaymentPhoneEmailToProvider" xml:space="preserve">
-    <value>شماره تلفن و ایمیل به عنوان اطلاعات صدور قبض به ⁨{0}⁩ منتقل خواهند شد.</value>
+    <value>شماره تلفن و ایمیل به عنوان اطلاعات صدور قبض به ⁨{0}⁩ ارسال خواهند شد.</value>
   </data>
   <data name="PaymentPhoneToProvider" xml:space="preserve">
-    <value>شماره تلفن به عنوان اطلاعات صدور قبض به ⁨{0}⁩ منتقل خواهد شد.</value>
+    <value>شماره تلفن به عنوان اطلاعات صدور قبض به ⁨{0}⁩ ارسال خواهد شد.</value>
   </data>
   <data name="PaymentPrecheckoutFailed" xml:space="preserve">
     <value>متأسفانه پرداخت توسط ربات لغو شد.</value>
@@ -8439,10 +8590,10 @@
     <value>کد پستی</value>
   </data>
   <data name="PaymentSuccessfullyPaid" xml:space="preserve">
-    <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ برای ⁨{2}⁩ منتقل کردید</value>
+    <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ برای ⁨{2}⁩ انتقال دادید</value>
   </data>
   <data name="PaymentSuccessfullyPaidNoItem" xml:space="preserve">
-    <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ منتقل کردید</value>
+    <value>شما با موفقیت مبلغ ⁨{0}⁩ را به ⁨{1}⁩ انتقال دادید</value>
   </data>
   <data name="PaymentTestInvoice" xml:space="preserve">
     <value>صورت‌حساب آزمایشی</value>
@@ -8509,8 +8660,17 @@
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>تلگرام جهت پخش ویدیوها در حالت تصویر در تصویر باید به گزینه فعال بودن بر روی سایر برنامه‌ها دسترسی داشته باشد.</value>
   </data>
+  <data name="PermissionDrawAboveOtherAppsGroupCall" xml:space="preserve">
+    <value>حالت هم‌پوشانی به شما اجازه می‌دهد از قابلیت زدن برای صحبت استفاده کنید و حتی هنگامی که خارج از تلگرام هستید، ببینید چه کسانی در حال صحبت هستند.</value>
+  </data>
+  <data name="PermissionDrawAboveOtherAppsGroupCallTitle" xml:space="preserve">
+    <value>هم‌پوشانی گفتگوی صوتی</value>
+  </data>
+  <data name="PermissionDrawAboveOtherAppsTitle" xml:space="preserve">
+    <value>تصویر در تصویر</value>
+  </data>
   <data name="PermissionNoAudio" xml:space="preserve">
-    <value>تلگرام باید به میکروفن شما دسترسی داشته باشد تا بتوانید پیام‌های صوتی ارسال کنید.</value>
+    <value>تلگرام باید به میکروفن دسترسی داشته باشد تا بتوانید پیام‌های صوتی ارسال کنید.</value>
   </data>
   <data name="PermissionNoAudioVideo" xml:space="preserve">
     <value>تلگرام باید به میکروفن شما دسترسی داشته باشد تا بتوانید ویدیو ضبط کنید.</value>
@@ -8663,7 +8823,7 @@
     <value>سنجاق کردن</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>آیا می‌خواهید این پیام را برای تمامی اعضای این گروه سنجاق کنید؟</value>
+    <value>این پیام در گروه سنجاق شود؟</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>آیا می‌خواهید این پیام را در این کانال سنجاق کنید؟</value>
@@ -8849,7 +9009,7 @@
     <value>وبسایت‌هایی که از تلگرام برای ورود به آن‌ها استفاده کرده‌اید.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
-    <value>با غیرفعال کردن همتا به همتا، تمامی تماس‌ها از طریق سرورهای تلگرام منتقل می‌شوند تا از آشکار شدن آدرس IP شما جلوگیری شود، اما ممکن است کیفیت صدا و ویدیو پایین بیاید.</value>
+    <value>با غیرفعال کردن همتا به همتا، تمامی تماس‌ها از طریق سرورهای تلگرام انتقال خواهند یافت تا از آشکار شدن آدرس IP شما جلوگیری شود، اما ممکن است کیفیت صدا و ویدیو پایین بیاید.</value>
   </data>
   <data name="PrivacyCallsP2PTitle" xml:space="preserve">
     <value>همتا به همتا</value>
@@ -8951,7 +9111,7 @@
     <value>https://telegram.org/privacy</value>
   </data>
   <data name="PrivacyProfilePhoto" xml:space="preserve">
-    <value>عکس پروفایل</value>
+    <value>عکس‌های پروفایل</value>
   </data>
   <data name="PrivacyProfilePhotoInfo" xml:space="preserve">
     <value>شما می‌توانید کسانی که قادرند عکس پروفایل شما را ببینند را محدود کنید.</value>
@@ -8960,7 +9120,7 @@
     <value>شما می‌توانید کاربران یا کل یک گروه را به عنوان استثناهایی اضافه کنید که جایگزین تنظیمات بالا خواهند شد.</value>
   </data>
   <data name="PrivacyProfilePhotoTitle" xml:space="preserve">
-    <value>چه کسی می‌تواند عکس پروفایل مرا ببیند؟</value>
+    <value>چه کسی می‌تواند عکس‌ها و ویدیوهای پروفایل مرا ببیند؟</value>
   </data>
   <data name="PrivacySettings" xml:space="preserve">
     <value>حریم خصوصی و امنیت</value>
@@ -9282,6 +9442,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="RepeatSong" xml:space="preserve">
     <value>تکرار آهنگ</value>
   </data>
+  <data name="ReplacePhoto" xml:space="preserve">
+    <value>جایگزینی عکس</value>
+  </data>
   <data name="Replies_few" xml:space="preserve">
     <value/>
   </data>
@@ -9396,7 +9559,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>تلاش‌های اخیر شما برای بازنشانی این حساب کاربری توسط کاربر فعالش لغو شده است. لطفاً پس از 7 روز دوباره تلاش کنید.</value>
   </data>
   <data name="ResetAccountInfo" xml:space="preserve">
-    <value>از آنجا که حساب کاربری **⁨{0}⁩** فعال است و با یک گذرواژه محافظت می‌شود، ما پس از 1 هفته این حساب کاربری را به دلایل امنیتی حذف خواهیم کرد.
+    <value>از آنجا که حساب کاربری **⁨{0}⁩** فعال است و با یک گذرواژه محافظت می‌شود، پس از 1 هفته حذف خواهد شد. این تأخیر به دلایل امنیتی لازم است.
 
 شما می‌توانید این فرآیند را در هر زمانی لغو کنید.</value>
   </data>
@@ -9473,7 +9636,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>بازیابی کد</value>
   </data>
   <data name="RestoreEmailTrouble" xml:space="preserve">
-    <value>در دسترسی به ایمیل خود ⁨{0}⁩ مشکلی دارید؟</value>
+    <value>به ⁨{0}⁩ دسترسی ندارید؟</value>
   </data>
   <data name="RestoreEmailTroubleNoEmail" xml:space="preserve">
     <value>در دسترسی به ایمیل خود مشکل دارید؟</value>
@@ -9749,7 +9912,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>گفتگوهای محرمانه</value>
   </data>
   <data name="SecretChatContextBotAlert" xml:space="preserve">
-    <value>لطفاً توجه داشته باشید که ربات‌های درون خطی توسط توسعه‌دهندگان شخص ثالث ارائه شده‌اند. برای این که رباتی کار کند، نمادهایی که شما بعد از نام کاربری ربات می‌نویسید به توسعه‌دهنده مربوطه ارسال می‌شوند.</value>
+    <value>لطفاً توجه داشته باشید که ربات‌های درون خطی توسط توسعه‌دهندگان شخص ثالث ارائه شده‌اند. برای این که رباتی کار کند، نمادهایی که شما بعد از نام کاربری ربات می‌نویسید به توسعه‌دهنده آن ارسال می‌شوند.</value>
   </data>
   <data name="SecretChatName" xml:space="preserve">
     <value>تلگرام</value>
@@ -9770,7 +9933,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>هفته</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
-    <value>آیا تمایل دارید پیش‌نمایش‌های لینک را در گفتگوهای محرمانه فعال کنید؟ توجه داشته باشید که پیش‌نمایش‌های لینک در سرورهای تلگرام ایجاد می‌شوند.</value>
+    <value>پیش‌نمایش‌های لینک را در گفتگوهای محرمانه فعال شود؟ توجه داشته باشید که پیش‌نمایش‌های لینک در سرورهای تلگرام ایجاد می‌شوند.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>پیش‌نمایش‌های لینک</value>
@@ -9819,6 +9982,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SendAsFiles" xml:space="preserve">
     <value>ارسال به صورت فایل</value>
+  </data>
+  <data name="SendAsNewPhoto" xml:space="preserve">
+    <value>ارسال به صورت یک عکس جدید</value>
   </data>
   <data name="SendByEnter" xml:space="preserve">
     <value>ارسال با کلید Enter</value>
@@ -10000,7 +10166,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>شما می‌توانید گذرواژه‌ای تنظیم کنید تا هنگام ورود به حساب کاربری تلگرام در یک دستگاه جدید، علاوه بر کد تأییدی که با پیامک دریافت می‌کنید از شما خواسته شود.</value>
   </data>
   <data name="SetAdmins" xml:space="preserve">
-    <value>انتخاب مدیران</value>
+    <value>افزودن مدیران</value>
   </data>
   <data name="SetAdminsAll" xml:space="preserve">
     <value>تمامی اعضا مدیر هستند</value>
@@ -10431,6 +10597,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="SoundMuted" xml:space="preserve">
     <value>بی‌صدا</value>
   </data>
+  <data name="Speaking" xml:space="preserve">
+    <value>در حال صحبت</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>شروع</value>
   </data>
@@ -10442,6 +10611,18 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="StartText" xml:space="preserve">
     <value>لطفاً کد کشور خود را تأیید کرده و شماره تلفن خود را وارد نمایید.</value>
+  </data>
+  <data name="StartVoipChat" xml:space="preserve">
+    <value>شروع گفتگوی صوتی</value>
+  </data>
+  <data name="StartVoipChatAlertText" xml:space="preserve">
+    <value>گفتگوی صوتی جدیدی را در این گروه شروع می‌کنید؟</value>
+  </data>
+  <data name="StartVoipChatPermission" xml:space="preserve">
+    <value>مدیریت گفتگوهای صوتی</value>
+  </data>
+  <data name="StartVoipChatTitle" xml:space="preserve">
+    <value>گفتگوی صوتی</value>
   </data>
   <data name="StatisticOpenProfile" xml:space="preserve">
     <value>باز کردن پروفایل</value>
@@ -10483,7 +10664,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>استیکرها بایگانی شدند.</value>
   </data>
   <data name="StickersArchivedInfo" xml:space="preserve">
-    <value>⁨{0}⁩ به بایگانی شما منتقل  شد.</value>
+    <value>⁨{0}⁩ به بایگانی شما انتقال یافت.</value>
   </data>
   <data name="StickersBotInfo" xml:space="preserve">
     <value>هنرمندان می‌توانند بسته‌های استیکر خود را با استفاده از ربات @stickers اضافه کنند.</value>
@@ -10561,7 +10742,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>متوقف کردن به اشتراک گذاری مکان</value>
   </data>
   <data name="StopLiveLocationAlertToUser" xml:space="preserve">
-    <value>آیا از متوقف کردن به اشتراک گذاری موقعیت مکانی لحظه‌ای خود با ⁨{0}⁩ اطمینان دارید؟</value>
+    <value>به اشتراک گذاری موقعیت مکانی زنده خود با ⁨{0}⁩ را متوقف می‌کنید؟</value>
   </data>
   <data name="StopLiveLocationAlertToUserText" xml:space="preserve">
     <value>آیا می‌خواهید به اشتراک گذاری موقعیت مکانی لحظه‌ای خود را با **⁨{0}⁩** متوقف کنید؟</value>
@@ -10592,6 +10773,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="StopVerification" xml:space="preserve">
     <value>آیا می‌خواهید فرآیند تأیید را متوقف کنید؟</value>
+  </data>
+  <data name="StoragePath" xml:space="preserve">
+    <value>مسیر ذخیره‌سازی</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>میزان استفاده از حافظه</value>
@@ -11211,7 +11395,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>از ضمیمه پشتیبانی نمی‌شود</value>
   </data>
   <data name="UnsupportedMedia" xml:space="preserve">
-    <value>این پیام در نسخه فعلی تلگرام شما پشتیبانی نمی‌شود. برای مشاهده پیام، برنامه را به‌روزرسانی کنید: https://telegram.org/update</value>
+    <value>این پیام توسط نسخه فعلی تلگرام شما پشتیبانی نمی‌شود. برای مشاهده پیام، برنامه را به‌روزرسانی کنید: https://telegram.org/update</value>
   </data>
   <data name="Unvote" xml:space="preserve">
     <value>پس گرفتن رأی</value>
@@ -11370,7 +11554,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>خالی</value>
   </data>
   <data name="UsernameHelp" xml:space="preserve">
-    <value>شما می‌توانید در**تلگرام** برای خود یک نام کاربری انتخاب کنید. با این کار، سایر افراد می‌توانند بدون دانستن شماره تلفن شما، با استفاده از این نام کاربری شما را پیدا کرده و با شما ارتباط برقرار کنند.
+    <value>شما می‌توانید در**تلگرام** برای خود یک نام کاربری انتخاب کنید. با این کار، افراد می‌توانند بدون نیاز به شماره تلفن شما، با استفاده از این نام کاربری شما را پیدا کرده و با شما ارتباط برقرار کنند.
 
 شما می‌توانید از کاراکترهای **9–0**، **a–z** و زیرخط استفاده کنید. حداقل طول مجاز **5** کاراکتر است.</value>
   </data>
@@ -11391,13 +11575,16 @@ https://telegram.org/blog/coronavirus</value>
     <value>نام کاربری باید حداقل دارای 5 کاراکتر باشد.</value>
   </data>
   <data name="UsernameInvalidStartNumber" xml:space="preserve">
-    <value>متأسفانه نام کاربری نمی‌تواند با عدد آغاز شود.</value>
+    <value>نام‌های کاربری نمی‌توانند با عدد آغاز شوند.</value>
   </data>
   <data name="UsernamePlaceholder" xml:space="preserve">
     <value>نام کاربری شما </value>
   </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>حذف شده توسط ⁨{0}⁩</value>
+  </data>
+  <data name="UserRemovedFromChatHint" xml:space="preserve">
+    <value>**⁨{0}⁩** از **⁨{1}⁩** حذف شد</value>
   </data>
   <data name="UserRestricted" xml:space="preserve">
     <value>متأسفانه شما اجازه انجام این کار را ندارید.</value>
@@ -11771,6 +11958,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipCallEnded" xml:space="preserve">
     <value>تماس پایان یافت</value>
   </data>
+  <data name="VoipChatJoin" xml:space="preserve">
+    <value>پیوستن</value>
+  </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>در حال اتصال</value>
   </data>
@@ -11795,8 +11985,138 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipFlip" xml:space="preserve">
     <value>برگرداندن</value>
   </data>
+  <data name="VoipGroupAdd" xml:space="preserve">
+    <value>افزودن</value>
+  </data>
+  <data name="VoipGroupAddMemberText" xml:space="preserve">
+    <value>آیا می‌خواهید **⁨{0}⁩** را به **⁨{1}⁩** دعوت کنید؟</value>
+  </data>
+  <data name="VoipGroupAddMemberTitle" xml:space="preserve">
+    <value>افزودن عضو</value>
+  </data>
+  <data name="VoipGroupAllCanSpeak" xml:space="preserve">
+    <value>اعضای جدید می‌توانند صحبت کنند</value>
+  </data>
+  <data name="VoipGroupAllowToSpeak" xml:space="preserve">
+    <value>اجازه صحبت</value>
+  </data>
+  <data name="VoipGroupConnecting" xml:space="preserve">
+    <value>در حال اتصال...</value>
+  </data>
+  <data name="VoipGroupCopyInviteLink" xml:space="preserve">
+    <value>کپی لینک دعوت</value>
+  </data>
+  <data name="VoipGroupCopyInviteLinkCopied" xml:space="preserve">
+    <value>لینک دعوت در حافظه کپی شد.</value>
+  </data>
+  <data name="VoipGroupEnd" xml:space="preserve">
+    <value>پایان دادن</value>
+  </data>
+  <data name="VoipGroupEndAlertText" xml:space="preserve">
+    <value>آیا از پایان دادن به این گفتگوی صوتی اطمینان دارید؟</value>
+  </data>
+  <data name="VoipGroupEndAlertTitle" xml:space="preserve">
+    <value>پایان دادن به گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupEndChat" xml:space="preserve">
+    <value>پایان دادن به گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupEndedStartNew" xml:space="preserve">
+    <value>گفتگوی صوتی به پایان رسید. گفتگوی جدیدی را شروع می‌کنید؟</value>
+  </data>
+  <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
+    <value>کاربر انتخاب شده در حال حاضر عضو این گفتگوی صوتی است.</value>
+  </data>
+  <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
+    <value>⁨un1⁩، ⁨un2⁩ را به گفتگوی صوتی دعوت کرد</value>
+  </data>
+  <data name="VoipGroupInvitedUser" xml:space="preserve">
+    <value>شما **⁨{0}⁩** را به گفتگوی صوتی دعوت کردید.</value>
+  </data>
+  <data name="VoipGroupInviteMember" xml:space="preserve">
+    <value>دعوت اعضا</value>
+  </data>
+  <data name="VoipGroupInviteText" xml:space="preserve">
+    <value>سلام! وارد گفتگوی صوتی ما شو: ⁨{0}⁩</value>
+  </data>
+  <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
+    <value>متأسفانه شما نمی‌توانید به عنوان مدیر ناشناس به گفتگوهای صوتی بپیوندید.</value>
+  </data>
+  <data name="VoipGroupJoinCall" xml:space="preserve">
+    <value>پیوستن به گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupLeave" xml:space="preserve">
+    <value>ترک کردن</value>
+  </data>
+  <data name="VoipGroupLeaveAlertEndChat" xml:space="preserve">
+    <value>پایان دادن به گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupLeaveAlertText" xml:space="preserve">
+    <value>آیا از ترک این گفتگوی صوتی اطمینان دارید؟</value>
+  </data>
+  <data name="VoipGroupLeaveAlertTitle" xml:space="preserve">
+    <value>ترک کردن گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupMute" xml:space="preserve">
+    <value>بی‌صدا کردن
+</value>
+  </data>
+  <data name="VoipGroupMuteMemberAlertText" xml:space="preserve">
+    <value>آیا از بی‌صدا کردن **⁨{0}⁩** در این گفتگوی صوتی اطمینان دارید؟</value>
+  </data>
+  <data name="VoipGroupMuteMemberAlertTitle" xml:space="preserve">
+    <value>بی‌صدا کردن میکروفن</value>
+  </data>
+  <data name="VoipGroupOffline" xml:space="preserve">
+    <value>شما در حال حاضر آفلاین هستید. لطفاً جهت پیوستن به گفتگوهای صوتی به اینترنت متصل شوید.</value>
+  </data>
+  <data name="VoipGroupOfflineAirplane" xml:space="preserve">
+    <value>در حال حاضر حالت پرواز فعال است. لطفاً جهت پیوستن به گفتگوهای صوتی، آن را غیرفعال کرده یا به وای فای متصل شوید.</value>
+  </data>
+  <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
+    <value>اعضای جدید بی‌صدا می‌شوند</value>
+  </data>
+  <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
+    <value>باز کردن گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
+    <value>**⁨{0}⁩** از گروه حذف شد.</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertText" xml:space="preserve">
+    <value>آیا می‌خواهید ⁨{0}⁩ را از گفتگوی گروهی حذف کنید؟</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
+    <value>حذف کاربر</value>
+  </data>
+  <data name="VoipGroupSearchMembers" xml:space="preserve">
+    <value>جستجوی اعضا برای دعوت...</value>
+  </data>
+  <data name="VoipGroupShareInviteLink" xml:space="preserve">
+    <value>به اشتراک گذاشتن لینک دعوت</value>
+  </data>
+  <data name="VoipGroupUnmute" xml:space="preserve">
+    <value>صدادار کردن</value>
+  </data>
+  <data name="VoipGroupUserCanNowSpeak" xml:space="preserve">
+    <value>**⁨{0}⁩** اکنون می تواند صحبت کند.</value>
+  </data>
+  <data name="VoipGroupUserCantNowSpeak" xml:space="preserve">
+    <value>**⁨{0}⁩** اکنون در این گفتگو بی‌صدا است.</value>
+  </data>
+  <data name="VoipGroupUserRemove" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="VoipGroupViewVoiceChat" xml:space="preserve">
+    <value>مشاهده گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupVoiceChat" xml:space="preserve">
+    <value>گفتگوی صوتی</value>
+  </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>در حال قطع کردن</value>
+  </data>
+  <data name="VoipHoldAndTalk" xml:space="preserve">
+    <value>یا نگه داشته و صحبت کنید</value>
   </data>
   <data name="VoipInCallBranding" xml:space="preserve">
     <value>تماس تلگرامی</value>
@@ -11816,6 +12136,15 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipMute" xml:space="preserve">
     <value>بی‌صدا کردن</value>
+  </data>
+  <data name="VoipMutedByAdmin" xml:space="preserve">
+    <value>بی‌صدا شده توسط مدیر</value>
+  </data>
+  <data name="VoipMutedByAdminInfo" xml:space="preserve">
+    <value>شما در حالت فقط گوش دادن هستید</value>
+  </data>
+  <data name="VoipMutedByAdminShort" xml:space="preserve">
+    <value>بی‌صدا</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>تلگرام باید به میکروفن و دوربین شما دسترسی داشته باشد تا بتوانید تماس ویدیویی برقرار کنید.</value>
@@ -11842,10 +12171,22 @@ https://telegram.org/blog/coronavirus</value>
     <value>آفلاین</value>
   </data>
   <data name="VoipOngoingAlert" xml:space="preserve">
-    <value>در حال حاضر، شما در حال تماس با **⁨{0}⁩** هستید. آیا تمایل دارید آن را قطع کرده و تماس جدیدی را با **⁨{1}⁩** شروع کنید؟</value>
+    <value>تماس با **⁨{0}⁩** پایان یافته و تماس جدیدی با **⁨{1}⁩** شروع شود؟</value>
+  </data>
+  <data name="VoipOngoingAlert2" xml:space="preserve">
+    <value>تماس با **⁨{0}⁩** پایان یافته و گفتگوی صوتی جدیدی در **⁨{1}⁩** شروع شود؟</value>
   </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
     <value>تماس دیگری در حال انجام است</value>
+  </data>
+  <data name="VoipOngoingChatAlert" xml:space="preserve">
+    <value>گفتگوی صوتی در **⁨{0}⁩** را ترک کرده و گفتگوی صوتی جدیدی را در **⁨{1}⁩** شروع می‌کنید؟</value>
+  </data>
+  <data name="VoipOngoingChatAlert2" xml:space="preserve">
+    <value>گفتگوی صوتی در **⁨{0}⁩** را ترک کرده و با **⁨{1}⁩** تماس می‌گیرید؟</value>
+  </data>
+  <data name="VoipOngoingChatAlertTitle" xml:space="preserve">
+    <value>گفتگوی صوتی دیگری در حال انجام است</value>
   </data>
   <data name="VoipOutgoingCall" xml:space="preserve">
     <value>تماس تلگرامی در حال انجام</value>
@@ -11904,11 +12245,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipSwitchToVideoCall" xml:space="preserve">
     <value>به تماس ویدیویی تغییر می‌دهید؟</value>
   </data>
+  <data name="VoipTapToMute" xml:space="preserve">
+    <value>شما در حال صحبت هستید</value>
+  </data>
   <data name="VoipUnmute" xml:space="preserve">
     <value>صدادار کردن</value>
   </data>
   <data name="VoipUseLessData" xml:space="preserve">
-    <value>استفاده از داده کمتر برای تماس‌ها</value>
+    <value>داده کمتر برای تماس‌ها</value>
   </data>
   <data name="VoipUserCameraIsOff" xml:space="preserve">
     <value>دوربین ⁨{0}⁩ غیرفعال است</value>
@@ -11918,6 +12262,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipVideoUnavailable" xml:space="preserve">
     <value>ویدیو</value>
+  </data>
+  <data name="VoipVoiceChat" xml:space="preserve">
+    <value>گفتگوی صوتی در حال انجام</value>
   </data>
   <data name="VoipWaiting" xml:space="preserve">
     <value>در حال انتظار</value>

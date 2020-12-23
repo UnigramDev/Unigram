@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/16/2020 17:50:44
+// 	Generated: 12/23/2020 12:04:01
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -340,6 +340,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrChanSilentOn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Close menu"
+        /// </summary>
+        public static string AccDescrCloseMenu
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrCloseMenu");
             }
         }
         
@@ -736,6 +747,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AccDescrOpenMenu");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Open menu"
+        /// </summary>
+        public static string AccDescrOpenMenu2
+        {
+            get
+            {
+                return resourceLoader.GetString("AccDescrOpenMenu2");
             }
         }
         
@@ -1950,7 +1972,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat finished ({0})"
+        /// Localized resource similar to "Voice chat ended ({0})"
         /// </summary>
         public static string ActionGroupCallEnded
         {
@@ -2830,7 +2852,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Add contacts to your channel"
+        /// Localized resource similar to "Add people to your channel"
         /// </summary>
         public static string AddMutual
         {
@@ -3920,7 +3942,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can add up to 200 sticker sets.
+        /// Localized resource similar to "You can have 200 active sticker sets.
         ///Unused sets are archived when you add more."
         /// </summary>
         public static string ArchivedStickersInfo
@@ -4038,6 +4060,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ArchivePinnedInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Archive"
+        /// </summary>
+        public static string ArchiveSearchFilter
+        {
+            get
+            {
+                return resourceLoader.GetString("ArchiveSearchFilter");
             }
         }
         
@@ -4449,7 +4482,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to delete the secret chat with **{0}**?"
+        /// Localized resource similar to "Are you sure you want to delete your secret chat with **{0}**?"
         /// </summary>
         public static string AreYouSureDeleteThisChatWithSecretUser
         {
@@ -6748,7 +6781,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can transfer bot only if you have:"
+        /// Localized resource similar to "You can transfer this bot only if you have:"
         /// </summary>
         public static string BotOwnershipTransferAlertText
         {
@@ -7456,7 +7489,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, bots can only be added to channels as administrators."
+        /// Localized resource similar to "Bots can only be added to channels as admins."
         /// </summary>
         public static string CantAddBotAsAdmin
         {
@@ -7634,7 +7667,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you have reserved too many public usernames. You can revoke the link from one of your older groups or channels, or create a private entity instead."
+        /// Localized resource similar to "You have reserved too many public links. Try revoking the link from an older group or channel, or create a private one instead."
         /// </summary>
         public static string ChangePublicLimitReached
         {
@@ -7777,7 +7810,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Administrator"
+        /// Localized resource similar to "Admin"
         /// </summary>
         public static string ChannelAdministrator
         {
@@ -8206,7 +8239,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Only channel administrators can see this list."
+        /// Localized resource similar to "Only channel admins can see this list."
         /// </summary>
         public static string ChannelMembersInfo
         {
@@ -8879,7 +8912,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, you can only add the first 200 members to a channel. Note that an unlimited number of people may join via the channel's link."
+        /// Localized resource similar to "Sorry, you can only add the first 200 subscribers to a channel. Note that an unlimited number of people may join via the channel's link."
         /// </summary>
         public static string ChannelUserAddLimit
         {
@@ -11262,15 +11295,15 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**Members limit reached.**
+        /// Localized resource similar to "**Member limit reached.**
         ///
-        ///To go over the limit and get additional features, upgrade to a supergroup:
+        ///For more space and additional features, upgrade to a supergroup:
         ///
-        ///• Supergroups can get up to {0}
+        ///• Supergroups can hold up to {0}
         ///• New members can see the full message history
         ///• Deleted messages will disappear for all members
         ///• Admins can add a description to the group
-        ///• Creator can set a public link for the group"
+        ///• Owner can set a public link for the group"
         /// </summary>
         public static string ConvertGroupInfo
         {
@@ -11651,7 +11684,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Current session"
+        /// Localized resource similar to "This device"
         /// </summary>
         public static string CurrentSession
         {
@@ -11717,7 +11750,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You won't see Last Seen and Online statuses for people with whom you don't share yours. Approximate last seen will be shown instead (recently, within a week, within a month)."
+        /// Localized resource similar to "You won't see Last Seen or Online statuses for people with whom you don't share yours. Approximate times will be shown instead (recently, within a week, within a month)."
         /// </summary>
         public static string CustomHelp
         {
@@ -12531,7 +12564,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Delete from Recent"
+        /// Localized resource similar to "Remove from Recent"
         /// </summary>
         public static string DeleteFromRecent
         {
@@ -12542,7 +12575,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Delete GIF?"
+        /// Localized resource similar to "Remove GIF from this section?"
         /// </summary>
         public static string DeleteGif
         {
@@ -13103,7 +13136,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Secret Video"
+        /// Localized resource similar to "Disappearing Video"
         /// </summary>
         public static string DisappearingVideo
         {
@@ -13279,7 +13312,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**{0}** is linking the group as its discussion board."
+        /// Localized resource similar to "This group is linked as the discussion board for {0}."
         /// </summary>
         public static string DiscussionGroupHelp
         {
@@ -13756,7 +13789,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Send Anonymously"
+        /// Localized resource similar to "Remain Anonymous"
         /// </summary>
         public static string EditAdminSendAnonymously
         {
@@ -13778,7 +13811,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Enabled **2-Step Verification** more than **7 days** ago."
+        /// Localized resource similar to "Enabled **Two-Step Verification** more than **7 days** ago."
         /// </summary>
         public static string EditAdminTransferAlertText1
         {
@@ -13965,6 +13998,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Edit this photo"
+        /// </summary>
+        public static string EditMessageEditPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageEditPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit this video"
+        /// </summary>
+        public static string EditMessageEditVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageEditVideo");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, you can't edit this message."
         /// </summary>
         public static string EditMessageError
@@ -13983,6 +14038,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EditMessageMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Replace audio file"
+        /// </summary>
+        public static string EditMessageReplaceAudio
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageReplaceAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Replace file"
+        /// </summary>
+        public static string EditMessageReplaceFile
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageReplaceFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Replace media"
+        /// </summary>
+        public static string EditMessageReplaceGif
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageReplaceGif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Replace photo"
+        /// </summary>
+        public static string EditMessageReplacePhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageReplacePhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Replace video"
+        /// </summary>
+        public static string EditMessageReplaceVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageReplaceVideo");
             }
         }
         
@@ -14252,6 +14362,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EmptyExceptions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable"
+        /// </summary>
+        public static string Enable
+        {
+            get
+            {
+                return resourceLoader.GetString("Enable");
             }
         }
         
@@ -14792,7 +14913,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 changed group location to "{0}""
+        /// Localized resource similar to "un1 changed the group location to "{0}""
         /// </summary>
         public static string EventLogChangedLocation
         {
@@ -15089,7 +15210,7 @@ namespace Unigram.Strings
         /// Localized resource similar to "**No actions found**
         ///
         ///No recent actions that match your query
-        ///have been found."
+        ///were found."
         /// </summary>
         public static string EventLogEmptySearch
         {
@@ -15265,7 +15386,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This is a list of all service actions taken by the group's members and admins in the last 48 hours."
+        /// Localized resource similar to "This is a list of notable actions by members and admins in the last 48 hours."
         /// </summary>
         public static string EventLogInfoDetail
         {
@@ -15474,7 +15595,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Change group Info"
+        /// Localized resource similar to "Edit group info"
         /// </summary>
         public static string EventLogPromotedChangeGroupInfo
         {
@@ -15507,17 +15628,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Manage voice chats"
-        /// </summary>
-        public static string EventLogPromotedManageCall
-        {
-            get
-            {
-                return resourceLoader.GetString("EventLogPromotedManageCall");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Invite via link"
         /// </summary>
         public static string EventLogPromotedInviteLink
@@ -15525,6 +15635,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EventLogPromotedInviteLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Manage voice chats"
+        /// </summary>
+        public static string EventLogPromotedManageCall
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedManageCall");
             }
         }
         
@@ -15562,7 +15683,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Send anonymously"
+        /// Localized resource similar to "Remain Anonymous"
         /// </summary>
         public static string EventLogPromotedSendAnonymously
         {
@@ -15650,7 +15771,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 removed group location"
+        /// Localized resource similar to "un1 removed the group location"
         /// </summary>
         public static string EventLogRemovedLocation
         {
@@ -15828,7 +15949,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Selected actions"
+        /// Localized resource similar to "selected actions"
         /// </summary>
         public static string EventLogSelectedEvents
         {
@@ -15960,7 +16081,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 unpinned message"
+        /// Localized resource similar to "un1 unpinned a message"
         /// </summary>
         public static string EventLogUnpinnedMessages
         {
@@ -15971,7 +16092,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 allowed new participants to speak"
+        /// Localized resource similar to "un1 allowed new voice chat participants to speak"
         /// </summary>
         public static string EventLogVoiceChatAllowedToSpeak
         {
@@ -15982,7 +16103,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 muted un2"
+        /// Localized resource similar to "un1 muted un2 in a voice chat"
         /// </summary>
         public static string EventLogVoiceChatMuted
         {
@@ -15993,7 +16114,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 muted new participants"
+        /// Localized resource similar to "un1 muted new voice chat participants"
         /// </summary>
         public static string EventLogVoiceChatNotAllowedToSpeak
         {
@@ -16004,7 +16125,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 unmuted un2"
+        /// Localized resource similar to "un1 unmuted un2 in a voice chat"
         /// </summary>
         public static string EventLogVoiceChatUnmuted
         {
@@ -16972,7 +17093,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "No chats found"
+        /// Localized resource similar to "Folder is empty"
         /// </summary>
         public static string FilterNoChatsToDisplay
         {
@@ -17368,7 +17489,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Too many attempts, please try again later"
+        /// Localized resource similar to "Too many attempts, please try again later."
         /// </summary>
         public static string FloodWait
         {
@@ -19327,7 +19448,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, if a person is no longer part of a group, you need to be in their Telegram contacts in order to add them back.
+        /// Localized resource similar to "Sorry, if a person is no longer part of a group, you need to be in their Telegram contacts to add them back.
         ///
         ///Note that they can still join via the group's invite link as long as they are not in the Removed Users list."
         /// </summary>
@@ -19890,7 +20011,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Invalid code"
+        /// Localized resource similar to "Invalid code, please try again."
         /// </summary>
         public static string InvalidCode
         {
@@ -20018,6 +20139,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Invite");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "invited"
+        /// </summary>
+        public static string Invited
+        {
+            get
+            {
+                return resourceLoader.GetString("Invited");
             }
         }
         
@@ -20220,7 +20352,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} is sending file..."
+        /// Localized resource similar to "{0} is sending a file..."
         /// </summary>
         public static string IsSendingFile
         {
@@ -21309,17 +21441,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "listening"
-        /// </summary>
-        public static string Listening
-        {
-            get
-            {
-                return resourceLoader.GetString("Listening");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Shared Links"
         /// </summary>
         public static string LinksTitle
@@ -21327,6 +21448,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LinksTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "listening"
+        /// </summary>
+        public static string Listening
+        {
+            get
+            {
+                return resourceLoader.GetString("Listening");
             }
         }
         
@@ -21419,7 +21551,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice/Video messages"
+        /// Localized resource similar to "Voice & Video messages"
         /// </summary>
         public static string LocalAudioCache
         {
@@ -22757,18 +22889,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Nobody talking"
-        /// </summary>
-        public static string MembersTalkingNobody
-        {
-            get
-            {
-                return resourceLoader.GetString("MembersTalkingNobody");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} members talking"
+        /// Localized resource similar to ""
         /// </summary>
         public static string MembersTalking_few
         {
@@ -22779,7 +22900,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} members talking"
+        /// Localized resource similar to ""
         /// </summary>
         public static string MembersTalking_many
         {
@@ -22790,7 +22911,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} member talking"
+        /// Localized resource similar to "{0} member speaking"
         /// </summary>
         public static string MembersTalking_one
         {
@@ -22812,7 +22933,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} members talking"
+        /// Localized resource similar to ""
         /// </summary>
         public static string MembersTalking_two
         {
@@ -22823,13 +22944,24 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} members talking"
+        /// Localized resource similar to ""
         /// </summary>
         public static string MembersTalking_zero
         {
             get
             {
                 return resourceLoader.GetString("MembersTalking_zero");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Tap to join"
+        /// </summary>
+        public static string MembersTalkingNobody
+        {
+            get
+            {
+                return resourceLoader.GetString("MembersTalkingNobody");
             }
         }
         
@@ -23285,7 +23417,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "message unpinned"
+        /// Localized resource similar to "Message unpinned"
         /// </summary>
         public static string MessagesUnpinned_one
         {
@@ -23835,7 +23967,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Mute forever"
+        /// Localized resource similar to "Disable"
         /// </summary>
         public static string MuteDisable
         {
@@ -24154,7 +24286,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "The phone number **{0}** is not in your contact list. Do you want to add it?"
+        /// Localized resource similar to "The phone number **{0}** is not in your contacts. Do you want to add it?"
         /// </summary>
         public static string NewContactAlertMessage
         {
@@ -24594,7 +24726,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You haven't made any calls yet."
+        /// Localized resource similar to "No calls here yet..."
         /// </summary>
         public static string NoCallLog
         {
@@ -25817,7 +25949,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a voice message in the group {1}"
+        /// Localized resource similar to "{0} pinned a voice message in {1}"
         /// </summary>
         public static string NotificationActionPinnedVoice
         {
@@ -25949,13 +26081,24 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} started a voice chat in the group {1}"
+        /// Localized resource similar to "{0} started a voice chat in {1}"
         /// </summary>
         public static string NotificationGroupCreatedCall
         {
             get
             {
                 return resourceLoader.GetString("NotificationGroupCreatedCall");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} ended the voice chat in {1}"
+        /// </summary>
+        public static string NotificationGroupEndedCall
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationGroupEndedCall");
             }
         }
         
@@ -25982,7 +26125,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} invited {2} to a voice chat in the group {1}"
+        /// Localized resource similar to "{0} invited {2} to a voice chat in {1}"
         /// </summary>
         public static string NotificationGroupInvitedToCall
         {
@@ -25993,7 +26136,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} invited you to a voice chat in the group {1}"
+        /// Localized resource similar to "{0} invited you to a voice chat in {1}"
         /// </summary>
         public static string NotificationGroupInvitedYouToCall
         {
@@ -26213,7 +26356,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} sent a voice message to the group {1}"
+        /// Localized resource similar to "{0} sent a voice message to {1}"
         /// </summary>
         public static string NotificationMessageGroupAudio
         {
@@ -26708,6 +26851,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "{0} In-App"
+        /// </summary>
+        public static string NotificationsChatInApp
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsChatInApp");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Custom"
         /// </summary>
         public static string NotificationsCustom
@@ -26726,6 +26880,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationsCustomize");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Default"
+        /// </summary>
+        public static string NotificationsDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsDefault");
             }
         }
         
@@ -26891,6 +27056,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NotificationsImportance");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "In-App Default"
+        /// </summary>
+        public static string NotificationsInAppDefault
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsInAppDefault");
             }
         }
         
@@ -27159,6 +27335,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Silent"
+        /// </summary>
+        public static string NotificationsSilent
+        {
+            get
+            {
+                return resourceLoader.GetString("NotificationsSilent");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Turn Off"
         /// </summary>
         public static string NotificationsTurnOff
@@ -27204,14 +27391,14 @@ namespace Unigram.Strings
         
         /// <summary>
         /// Localized resource similar to "{0},
-        ///We detected a login into your account from a new device on {1}
+        ///We detected a login to your account from a new device on {1}
         ///
         ///Device: {2}
         ///Location: {3}
         ///
-        ///If this wasn't you, you can go to Settings - Privacy and Security - Sessions and terminate that session.
+        ///If this wasn't you, you can go to Settings > Devices and terminate that session.
         ///
-        ///If you think that somebody logged in to your account against your will, you can enable two-step verification in Privacy and Security settings.
+        ///If you think that somebody logged in to your account against your will, you can enable Two-Step Verification in Privacy and Security settings.
         ///
         ///Sincerely,
         ///The Telegram Team"
@@ -28146,7 +28333,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} participants"
+        /// Localized resource similar to ""
         /// </summary>
         public static string Participants_few
         {
@@ -28157,7 +28344,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} participants"
+        /// Localized resource similar to ""
         /// </summary>
         public static string Participants_many
         {
@@ -28190,7 +28377,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} participants"
+        /// Localized resource similar to ""
         /// </summary>
         public static string Participants_two
         {
@@ -28201,7 +28388,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} participants"
+        /// Localized resource similar to ""
         /// </summary>
         public static string Participants_zero
         {
@@ -29949,7 +30136,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please enter your Telegram Password to decrypt your data."
+        /// Localized resource similar to "Enter your Telegram Password to decrypt your data."
         /// </summary>
         public static string PassportRequestPasswordInfo
         {
@@ -31016,7 +31203,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You have just successfully transferred {0} to {1} for {2}"
+        /// Localized resource similar to "You successfully transferred {0} to {1} for {2}"
         /// </summary>
         public static string PaymentSuccessfullyPaid
         {
@@ -31027,7 +31214,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You have just successfully transferred {0} to {1}"
+        /// Localized resource similar to "You successfully transferred {0} to {1}"
         /// </summary>
         public static string PaymentSuccessfullyPaidNoItem
         {
@@ -31128,7 +31315,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Quickly add people nearby who are viewing this section and discover local group chats.  
+        /// Localized resource similar to "Quickly add people nearby who are viewing this section and discover local group chats.
         ///
         ///Please switch on location access to enable this feature."
         /// </summary>
@@ -31255,7 +31442,40 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Telegram needs access to your microphone so that you can send voice messages."
+        /// Localized resource similar to "Overlay mode lets you use push-to-talk and see who is talking even when you are outside of Telegram."
+        /// </summary>
+        public static string PermissionDrawAboveOtherAppsGroupCall
+        {
+            get
+            {
+                return resourceLoader.GetString("PermissionDrawAboveOtherAppsGroupCall");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Voice chat overlay"
+        /// </summary>
+        public static string PermissionDrawAboveOtherAppsGroupCallTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PermissionDrawAboveOtherAppsGroupCallTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Picture-in-Picture"
+        /// </summary>
+        public static string PermissionDrawAboveOtherAppsTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("PermissionDrawAboveOtherAppsTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram needs microphone access so that you can send voice messages."
         /// </summary>
         public static string PermissionNoAudio
         {
@@ -31816,7 +32036,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to pin this message for all members in the group?"
+        /// Localized resource similar to "Pin this message in the group?"
         /// </summary>
         public static string PinMessageAlert
         {
@@ -32872,7 +33092,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Profile Photo"
+        /// Localized resource similar to "Profile Photos"
         /// </summary>
         public static string PrivacyProfilePhoto
         {
@@ -32905,7 +33125,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Who can see my profile photo?"
+        /// Localized resource similar to "Who can see my profile photos & videos?"
         /// </summary>
         public static string PrivacyProfilePhotoTitle
         {
@@ -33000,6 +33220,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ProfilePopupNotificationInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proximity alert cancelled"
+        /// </summary>
+        public static string ProximityAlertCancelled
+        {
+            get
+            {
+                return resourceLoader.GetString("ProximityAlertCancelled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proximity alert set"
+        /// </summary>
+        public static string ProximityAlertSet
+        {
+            get
+            {
+                return resourceLoader.GetString("ProximityAlertSet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We will notify you once someone is within {0} from you."
+        /// </summary>
+        public static string ProximityAlertSetInfoGroup2
+        {
+            get
+            {
+                return resourceLoader.GetString("ProximityAlertSetInfoGroup2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "We will notify you once {0} is within {1} from you."
+        /// </summary>
+        public static string ProximityAlertSetInfoUser
+        {
+            get
+            {
+                return resourceLoader.GetString("ProximityAlertSetInfoUser");
             }
         }
         
@@ -33730,7 +33994,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "recording a voice message..."
+        /// Localized resource similar to "recording voice message..."
         /// </summary>
         public static string RecordingAudio
         {
@@ -33741,7 +34005,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "recording a video message..."
+        /// Localized resource similar to "recording video message..."
         /// </summary>
         public static string RecordingRound
         {
@@ -34027,13 +34291,24 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Repeat song"
+        /// Localized resource similar to "Repeat track"
         /// </summary>
         public static string RepeatSong
         {
             get
             {
                 return resourceLoader.GetString("RepeatSong");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Replace photo"
+        /// </summary>
+        public static string ReplacePhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("ReplacePhoto");
             }
         }
         
@@ -34447,9 +34722,9 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Since the account **{0}** is active and protected by a password, we will delete it in 1 week for security purposes.
+        /// Localized resource similar to "Since the account **{0}** is active and protected by a password, it will be deleted in 1 week. This delay is required for security purposes.
         ///
-        ///You can cancel this process at any time."
+        ///You can cancel this process anytime."
         /// </summary>
         public static string ResetAccountInfo
         {
@@ -34717,7 +34992,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Having trouble accessing your email {0}?"
+        /// Localized resource similar to "Unable to access {0}?"
         /// </summary>
         public static string RestoreEmailTrouble
         {
@@ -35713,7 +35988,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Please note that inline bots are provided by third-party developers. For the bot to work, the symbols you type after the bot's username are sent to the respective developer."
+        /// Localized resource similar to "Please note that inline bots are provided by third-party developers. For the bot to work, the symbols you type after the bot's username are sent to its respective developer."
         /// </summary>
         public static string SecretChatContextBotAlert
         {
@@ -35790,7 +36065,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Would you like to enable extended link previews in Secret Chats? Note that link previews are generated on Telegram servers."
+        /// Localized resource similar to "Enable extended link previews in Secret Chats? Note that link previews are generated on Telegram servers."
         /// </summary>
         public static string SecretLinkPreviewAlert
         {
@@ -35973,6 +36248,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SendAsFiles");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as a new photo"
+        /// </summary>
+        public static string SendAsNewPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("SendAsNewPhoto");
             }
         }
         
@@ -36285,7 +36571,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Send my current location"
+        /// Localized resource similar to "Send My Current Location"
         /// </summary>
         public static string SendLocation
         {
@@ -36628,7 +36914,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Set admins"
+        /// Localized resource similar to "Add admins"
         /// </summary>
         public static string SetAdmins
         {
@@ -38270,7 +38556,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Do you want to start a voice chat in this group?"
+        /// Localized resource similar to "Start a voice chat in this group?"
         /// </summary>
         public static string StartVoipChatAlertText
         {
@@ -38732,7 +39018,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to stop sharing live location with {0}?"
+        /// Localized resource similar to "Stop sharing your live location with {0}?"
         /// </summary>
         public static string StopLiveLocationAlertToUser
         {
@@ -40875,7 +41161,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Tap and hold on user to unban."
+        /// Localized resource similar to "Press and hold user to unban."
         /// </summary>
         public static string UnbanText
         {
@@ -41073,7 +41359,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "This message is not supported on your version of Telegram. Update the app to view: https://telegram.org/update"
+        /// Localized resource similar to "This message is not supported by your version of Telegram. Update the app to view: https://telegram.org/update"
         /// </summary>
         public static string UnsupportedMedia
         {
@@ -41656,7 +41942,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You can choose a username on **Telegram**. If you do, other people will be able to find you by this username and contact you without knowing your phone number.
+        /// Localized resource similar to "You can choose a username on **Telegram**. If you do, people will be able to find you by this username and contact you without needing your phone number.
         ///
         ///You can use **a–z**, **0–9** and underscores. Minimum length is **5** characters."
         /// </summary>
@@ -41725,7 +42011,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, a username can't start with a number."
+        /// Localized resource similar to "Usernames can't start with a number."
         /// </summary>
         public static string UsernameInvalidStartNumber
         {
@@ -41754,6 +42040,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UserRemovedBy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** removed from **{1}**"
+        /// </summary>
+        public static string UserRemovedFromChatHint
+        {
+            get
+            {
+                return resourceLoader.GetString("UserRemovedFromChatHint");
             }
         }
         
@@ -42055,7 +42352,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Send Stickers & GIFs"
+        /// Localized resource similar to "Send Stickers and GIFs"
         /// </summary>
         public static string UserRestrictionsSendStickers
         {
@@ -43419,7 +43716,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Voice chat has ended. Start a new one?"
+        /// Localized resource similar to "Voice chat ended. Start a new one?"
         /// </summary>
         public static string VoipGroupEndedStartNew
         {
@@ -43441,7 +43738,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Invite Member"
+        /// Localized resource similar to "un1 invited un2 to the voice chat"
+        /// </summary>
+        public static string VoipGroupInvitedToVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupInvitedToVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You invited **{0}** to the voice chat."
+        /// </summary>
+        public static string VoipGroupInvitedUser
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupInvitedUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite Members"
         /// </summary>
         public static string VoipGroupInviteMember
         {
@@ -43459,17 +43778,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipGroupInviteText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "un1 invited un2 to the voice chat"
-        /// </summary>
-        public static string VoipGroupInvitedToVoiceChat
-        {
-            get
-            {
-                return resourceLoader.GetString("VoipGroupInvitedToVoiceChat");
             }
         }
         
@@ -43573,7 +43881,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You're currently offline. Please connect to the Internet in order to join voice chats."
+        /// Localized resource similar to "You're currently offline. Please connect to the Internet to join voice chats."
         /// </summary>
         public static string VoipGroupOffline
         {
@@ -43584,7 +43892,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You currently have airplane mode enabled. Please turn it off or connect to Wi-Fi in order to join voice chats."
+        /// Localized resource similar to "You currently have airplane mode enabled. Please turn it off or connect to Wi-Fi to join voice chats."
         /// </summary>
         public static string VoipGroupOfflineAirplane
         {
@@ -43595,7 +43903,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "New paricipants are muted"
+        /// Localized resource similar to "New participants are muted"
         /// </summary>
         public static string VoipGroupOnlyAdminsCanSpeak
         {
@@ -43606,7 +43914,29 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Are you sure you want to remove **{0}** from the group chat?"
+        /// Localized resource similar to "Open voice chat"
+        /// </summary>
+        public static string VoipGroupOpenVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupOpenVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "**{0}** removed from the group."
+        /// </summary>
+        public static string VoipGroupRemovedFromGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupRemovedFromGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Do you want to remove {0} from the group chat?"
         /// </summary>
         public static string VoipGroupRemoveMemberAlertText
         {
@@ -43628,18 +43958,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**{0}** removed from the group."
-        /// </summary>
-        public static string VoipGroupRemovedFromGroup
-        {
-            get
-            {
-                return resourceLoader.GetString("VoipGroupRemovedFromGroup");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Search members..."
+        /// Localized resource similar to "Search members to invite..."
         /// </summary>
         public static string VoipGroupSearchMembers
         {
@@ -43837,6 +44156,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Muted"
+        /// </summary>
+        public static string VoipMutedByAdminShort
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipMutedByAdminShort");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Telegram needs access to your microphone and camera so that you can make video calls."
         /// </summary>
         public static string VoipNeedMicCameraPermission
@@ -43925,7 +44255,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You currently have an ongoing call with **{0}**. Would you like to hang up and start a new one with **{1}**?"
+        /// Localized resource similar to "End call with **{0}** and start a new one with **{1}**?"
         /// </summary>
         public static string VoipOngoingAlert
         {
@@ -43936,7 +44266,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You currently have an ongoing call with **{0}**. Would you like to hang up and start a new voice chat in **{1}**?"
+        /// Localized resource similar to "End call with **{0}** and start voice chat in **{1}**?"
         /// </summary>
         public static string VoipOngoingAlert2
         {
@@ -43958,7 +44288,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You currently have an ongoing voice chat in **{0}**. Would you like to hang up and start a new one in **{1}**?"
+        /// Localized resource similar to "Leave voice chat in **{0}** and start a new one in **{1}**?"
         /// </summary>
         public static string VoipOngoingChatAlert
         {
@@ -43969,7 +44299,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "You currently have an ongoing voice chat in **{0}**. Would you like to hang up and start a new call with **{1}**?"
+        /// Localized resource similar to "Leave voice chat in **{0}** and call **{1}**?"
         /// </summary>
         public static string VoipOngoingChatAlert2
         {
@@ -44222,7 +44552,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Use less data for calls"
+        /// Localized resource similar to "Less Data for Calls"
         /// </summary>
         public static string VoipUseLessData
         {
@@ -44387,7 +44717,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Logged in with Telegram"
+        /// Localized resource similar to "Logged In with Telegram"
         /// </summary>
         public static string WebSessionsTitle
         {
@@ -44961,7 +45291,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Your name"
+        /// Localized resource similar to "Your Name"
         /// </summary>
         public static string YourName
         {
