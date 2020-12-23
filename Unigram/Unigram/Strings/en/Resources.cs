@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 12/15/2020 10:23:07
+// 	Generated: 12/16/2020 17:50:44
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -28142,6 +28142,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("PaintRegular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} participants"
+        /// </summary>
+        public static string Participants_few
+        {
+            get
+            {
+                return resourceLoader.GetString("Participants_few");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} participants"
+        /// </summary>
+        public static string Participants_many
+        {
+            get
+            {
+                return resourceLoader.GetString("Participants_many");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} participant"
+        /// </summary>
+        public static string Participants_one
+        {
+            get
+            {
+                return resourceLoader.GetString("Participants_one");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} participants"
+        /// </summary>
+        public static string Participants_other
+        {
+            get
+            {
+                return resourceLoader.GetString("Participants_other");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} participants"
+        /// </summary>
+        public static string Participants_two
+        {
+            get
+            {
+                return resourceLoader.GetString("Participants_two");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} participants"
+        /// </summary>
+        public static string Participants_zero
+        {
+            get
+            {
+                return resourceLoader.GetString("Participants_zero");
             }
         }
         

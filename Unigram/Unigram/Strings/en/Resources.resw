@@ -7808,6 +7808,24 @@ from multiple devices.</value>
   <data name="PaintRegular" xml:space="preserve">
     <value>Regular</value>
   </data>
+  <data name="Participants_few" xml:space="preserve">
+    <value>{0} participants</value>
+  </data>
+  <data name="Participants_many" xml:space="preserve">
+    <value>{0} participants</value>
+  </data>
+  <data name="Participants_one" xml:space="preserve">
+    <value>{0} participant</value>
+  </data>
+  <data name="Participants_other" xml:space="preserve">
+    <value>{0} participants</value>
+  </data>
+  <data name="Participants_two" xml:space="preserve">
+    <value>{0} participants</value>
+  </data>
+  <data name="Participants_zero" xml:space="preserve">
+    <value>{0} participants</value>
+  </data>
   <data name="Passcode" xml:space="preserve">
     <value>Passcode Lock</value>
   </data>
