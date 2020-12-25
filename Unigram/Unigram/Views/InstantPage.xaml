@@ -9,7 +9,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Loaded="OnLoaded"
-    Unloaded="OnUnloaded">
+    Unloaded="OnUnloaded"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Page.Resources>
         <Style x:Key="EmptyButtonStyle" TargetType="Button">
@@ -208,7 +209,7 @@
         </controls:ContentPageHeader>
     </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" MaxWidth="800">
         <ListView x:Name="ScrollingHost"
                   Background="{ThemeResource PageHeaderBackgroundBrush}"
                   SelectionMode="None">
