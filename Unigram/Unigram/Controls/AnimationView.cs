@@ -249,7 +249,7 @@ namespace Unigram.Controls
                 _shouldPlay = false;
                 Subscribe(true);
             }
-            else
+            else if (!_unloaded)
             {
                 Subscribe(false);
 
@@ -262,7 +262,7 @@ namespace Unigram.Controls
 
                 // Invalidate to render the first frame
                 await Task.Run(Invalidate);
-                _canvas.Invalidate();
+                _canvas?.Invalidate();
             }
         }
 

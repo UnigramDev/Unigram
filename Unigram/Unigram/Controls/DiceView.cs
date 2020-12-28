@@ -374,7 +374,7 @@ namespace Unigram.Controls
                 Subscribe(true);
                 //canvas.Paused = false;
             }
-            else
+            else if (!_unloaded)
             {
                 Subscribe(false);
 

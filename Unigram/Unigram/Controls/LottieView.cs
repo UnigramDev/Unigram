@@ -32,6 +32,15 @@ namespace Unigram.Controls
         object Tag { get; set; }
     }
 
+    public class LottieView30Fps : LottieView
+    {
+        public LottieView30Fps()
+            : base(false)
+        {
+
+        }
+    }
+
     [TemplatePart(Name = "Canvas", Type = typeof(CanvasControl))]
     public class LottieView : Control, IPlayerView
     {
