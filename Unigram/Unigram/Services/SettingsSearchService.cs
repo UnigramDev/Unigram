@@ -309,6 +309,7 @@ namespace Unigram.Services
             : base(text, glyph)
         {
             Page = page;
+            Parameter = parameter;
             Items = items;
 
             if (items != null)
@@ -326,7 +327,7 @@ namespace Unigram.Services
         }
 
         public SettingsSearchPage(Type page, string text)
-            : this(page, null, text)
+            : base(text, null)
         {
             Page = page;
         }
@@ -344,7 +345,7 @@ namespace Unigram.Services
 
         public override SettingsSearchEntry Clone()
         {
-            return new SettingsSearchPage(Page, Text, Glyph) { Parent = Parent };
+            return new SettingsSearchPage(Page, Parameter, Text, Glyph) { Parent = Parent };
         }
 
         public override bool IsValid => Page != null;
