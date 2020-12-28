@@ -21,12 +21,12 @@
       An Assembly element with Name="*Application*" applies to all assemblies in
       the application package. The asterisks are not wildcards.
     -->
-    <Assembly Name="*Application*" Dynamic="Required All" />
-    
-    
-    <!-- Add your application specific runtime directives here. -->
-    <Type Name="System.Collections.Generic.KeyValuePair{System.UInt32, System.UInt32}" MarshalObject="Required All" />
-    <Type Name="System.Collections.Generic.IReadOnlyDictionary{System.UInt32, System.UInt32}" MarshalObject="Required All" />
+    <!--<Assembly Name="*Application*" Dynamic="Required All" />-->
+    <Type Name="Unigram.Services.IHandle`1" Dynamic="Required All">
+      <Method Name="Handle">
+        <TypeParameter Name="update" Dynamic="Required All"/>
+      </Method>
+    </Type>
 
   </Application>
 </Directives>
