@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Td.Api;
 using Unigram.Converters;
@@ -474,7 +475,7 @@ namespace Unigram.Common
             return bitmap;
         }
 
-        public static ImageSource GetWebPFrame(string path, double maxWidth = 256)
+        public static ImageSource GetWebPFrame(string path, double maxWidth = 512)
         {
             //return null;
             //return new BitmapImage(new Uri("file:///" + path));
@@ -489,6 +490,33 @@ namespace Unigram.Common
                 {
                     PlaceholderImageHelper.Current.DrawWebP(path, side, stream);
                     bitmap.SetSource(stream);
+                }
+                catch { }
+            }
+
+            if (bitmap.PixelWidth == 0 && bitmap.PixelHeight == 0)
+            {
+                bitmap.UriSource = new Uri("file:///" + path);
+            }
+
+            return bitmap;
+        }
+
+        public static async Task<ImageSource> GetWebPFrameAsync(string path, double maxWidth = 512)
+        {
+            //return null;
+            //return new BitmapImage(new Uri("file:///" + path));
+            //return WebPImage.DecodeFromPath(path);
+
+            var side = (int)maxWidth;
+
+            var bitmap = new BitmapImage();
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                try
+                {
+                    await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, side, stream));
+                    await bitmap.SetSourceAsync(stream);
                 }
                 catch { }
             }

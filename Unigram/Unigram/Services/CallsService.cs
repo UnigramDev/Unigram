@@ -330,6 +330,8 @@ namespace Unigram.Services
                         break;
                 }
             }
+
+            Aggregator.Publish(new UpdateCallDialog(_call));
         }
 
         private void OnStateUpdated(VoipManager sender, VoipState args)
@@ -413,7 +415,7 @@ namespace Unigram.Services
             }
             else
             {
-                Aggregator.Publish(new UpdateCallDialog(null, false));
+                Aggregator.Publish(new UpdateCallDialog());
             }
         }
 
@@ -430,10 +432,8 @@ namespace Unigram.Services
                 };
 
                 _callLifetime = await _viewService.OpenAsync(parameters);
-                _callLifetime.Closed += ApplicationView_Closed;
+                _callLifetime.Closed += ApplicationView_Released;
                 _callLifetime.Released += ApplicationView_Released;
-
-                Aggregator.Publish(new UpdateCallDialog(call, true));
             }
 
             var callPage = _callPage;
@@ -456,8 +456,6 @@ namespace Unigram.Services
 
         private async Task HideAsync()
         {
-            Aggregator.Publish(new UpdateCallDialog(_call, true));
-
             _callPage = null;
 
             var lifetime = _callLifetime;
@@ -477,18 +475,10 @@ namespace Unigram.Services
             }
         }
 
-        private void ApplicationView_Closed(object sender, EventArgs e)
-        {
-            _callPage = null;
-            _callLifetime = null;
-            Aggregator.Publish(new UpdateCallDialog(_call, false));
-        }
-
         private void ApplicationView_Released(object sender, EventArgs e)
         {
             _callPage = null;
             _callLifetime = null;
-            Aggregator.Publish(new UpdateCallDialog(_call, false));
         }
     }
 }

@@ -37,6 +37,7 @@ namespace Unigram.ViewModels
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
         private readonly IVoipService _voipService;
+        private readonly IGroupCallService _groupCallService;
         private readonly IEmojiSetService _emojiSetService;
         private readonly ICloudUpdateService _cloudUpdateService;
         private readonly IPlaybackService _playbackService;
@@ -44,7 +45,7 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
+        public MainViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, IEmojiSetService emojiSetService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _pushService = pushService;
@@ -53,6 +54,7 @@ namespace Unigram.ViewModels
             _lifetimeService = lifecycle;
             _sessionService = session;
             _voipService = voipService;
+            _groupCallService = groupCallService;
             _emojiSetService = emojiSetService;
             _cloudUpdateService = cloudUpdateService;
             _playbackService = playbackService;
@@ -115,6 +117,7 @@ namespace Unigram.ViewModels
         public IShortcutsService ShortcutService => _shortcutService;
 
         public IVoipService VoipService => _voipService;
+        public IGroupCallService GroupCallService => _groupCallService;
 
         public RelayCommand ToggleArchiveCommand { get; }
         private void ToggleArchiveExecute()

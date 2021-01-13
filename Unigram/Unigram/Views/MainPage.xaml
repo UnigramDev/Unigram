@@ -253,6 +253,8 @@
                         </Button>
                         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                     </Grid>
+
+                    <controls:GroupCallActiveHeader x:Load="False" x:Name="GroupCallBanner"/>
                 </Grid>
             </controls:MasterDetailView.Banner>
             <controls:MasterDetailView.MasterHeader>

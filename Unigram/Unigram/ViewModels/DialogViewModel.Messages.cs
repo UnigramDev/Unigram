@@ -1488,6 +1488,10 @@ namespace Unigram.ViewModels
                     await StickerSetPopup.GetForCurrentView().ShowAsync(stickerSetChanged.NewStickerSetId);
                 }
             }
+            else if (message.Content is MessageVoiceChatStarted groupCall)
+            {
+                await _groupCallService.JoinAsync(message.ChatId);
+            }
         }
 
         #endregion

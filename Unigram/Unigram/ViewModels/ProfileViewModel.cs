@@ -44,16 +44,18 @@ namespace Unigram.ViewModels
         public IProfileDelegate Delegate { get; set; }
 
         private readonly IVoipService _voipService;
+        private readonly IGroupCallService _groupCallService;
         private readonly INotificationsService _notificationsService;
 
         private readonly ChatSharedMediaViewModel _chatSharedMediaViewModel;
         private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
         private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+        public ProfileViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _voipService = voipService;
+            _groupCallService = groupCallService;
             _notificationsService = notificationsService;
 
             _chatSharedMediaViewModel = chatSharedMediaViewModel;
@@ -794,7 +796,7 @@ namespace Unigram.ViewModels
         #region Call
 
         public RelayCommand<bool> CallCommand { get; }
-        private void CallExecute(bool video)
+        private async void CallExecute(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -802,7 +804,20 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            _voipService.Start(chat.Id, video);
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                _voipService.Start(chat.Id, video);
+            }
+            else
+            {
+                var dialog = new MessagePopup();
+                dialog.Title = Strings.Resources.StartVoipChatTitle;
+                dialog.Message = Strings.Resources.StartVoipChatAlertText;
+                dialog.PrimaryButtonText = Strings.Resources.Create;
+                dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+                await _groupCallService.CreateAsync(chat.Id);
+            }
         }
 
         #endregion

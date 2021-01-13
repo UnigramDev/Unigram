@@ -159,6 +159,7 @@ namespace Unigram.Views
             InitializeAutomation();
             InitializeStickers();
 
+            GroupCall.InitializeParent(ClipperOuter, ViewModel.ProtoService);
             PinnedMessage.InitializeParent(Clipper);
 
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
@@ -838,12 +839,12 @@ namespace Unigram.Views
                 ViewModel.MessagesCopyCommand.Execute();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.R && ctrl && !alt && !shift)
+            else if (args.VirtualKey == Windows.System.VirtualKey.R && args.KeyStatus.RepeatCount == 1 && ctrl && !alt && !shift)
             {
                 btnVoiceMessage.ToggleRecording();
                 args.Handled = true;
             }
-            else if (args.VirtualKey == Windows.System.VirtualKey.D && ctrl && !alt && !shift)
+            else if (args.VirtualKey == Windows.System.VirtualKey.D && args.KeyStatus.RepeatCount == 1 && ctrl && !alt && !shift)
             {
                 btnVoiceMessage.StopRecording(true);
                 args.Handled = true;
@@ -1715,12 +1716,12 @@ namespace Unigram.Views
                 {
                     if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("Settings")))
                     {
-                        flyout.CreateFlyoutItem(null, Strings.Resources.BotSettings);
+                        flyout.CreateFlyoutItem(() => { }, Strings.Resources.BotSettings);
                     }
 
                     if (fullInfo.BotInfo.Commands.Any(x => x.Command.Equals("help")))
                     {
-                        flyout.CreateFlyoutItem(null, Strings.Resources.BotHelp);
+                        flyout.CreateFlyoutItem(() => { }, Strings.Resources.BotHelp);
                     }
                 }
             }
@@ -2704,7 +2705,7 @@ namespace Unigram.Views
             else if (e.ClickedItem is Sticker sticker)
             {
                 TextField.SetText(null, null);
-                ViewModel.StickerSendCommand.Execute(sticker);
+                ViewModel.StickerSendExecute(sticker, null, null, text);
 
                 if (_stickersMode == StickersPanelMode.Overlay)
                 {
@@ -2907,7 +2908,7 @@ namespace Unigram.Views
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new GridViewItem();
+                args.ItemContainer = new TextGridViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
 
                 _autocompleteZoomer.ElementPrepared(args.ItemContainer);
@@ -3012,7 +3013,7 @@ namespace Unigram.Views
 
                     if (ApiInfo.CanUseDirectComposition)
                     {
-                        CompositionPathParser.ParseThumbnail(sticker.Contours, 60, out ShapeVisual visual, false);
+                        CompositionPathParser.ParseThumbnail(sticker.Outline, 60, out ShapeVisual visual, false);
                         ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
                     }
 
@@ -3069,6 +3070,8 @@ namespace Unigram.Views
 
             Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
+
+            GroupCall.ShowHide(chat.VoiceChatGroupCallId != 0);
 
             UpdateChatPermissions(chat);
         }
@@ -4105,6 +4108,11 @@ namespace Unigram.Views
             {
                 _slowModeTimer.Stop();
             }
+        }
+
+        public void UpdateGroupCall(Chat chat, GroupCall groupCall)
+        {
+            GroupCall.UpdateGroupCall(groupCall);
         }
 
 

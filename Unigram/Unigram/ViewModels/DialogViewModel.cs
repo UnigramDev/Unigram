@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
+using Unigram.Native.Calls;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -88,6 +89,7 @@ namespace Unigram.ViewModels
         protected readonly INotificationsService _pushService;
         protected readonly IPlaybackService _playbackService;
         protected readonly IVoipService _voipService;
+        protected readonly IGroupCallService _groupCallService;
         protected readonly INetworkService _networkService;
         protected readonly IMessageFactory _messageFactory;
 
@@ -97,13 +99,14 @@ namespace Unigram.ViewModels
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, INetworkService networkService, IMessageFactory messageFactory)
+        public DialogViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INetworkService networkService, IMessageFactory messageFactory)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             _locationService = locationService;
             _pushService = pushService;
             _playbackService = playbackService;
             _voipService = voipService;
+            _groupCallService = groupCallService;
             _networkService = networkService;
             _messageFactory = messageFactory;
 
@@ -200,6 +203,8 @@ namespace Unigram.ViewModels
             EditMediaCommand = new RelayCommand(EditMediaExecute);
             EditCurrentCommand = new RelayCommand(EditCurrentExecute);
 
+            GroupCallJoinCommand = new RelayCommand(GroupCallJoinExecute);
+
             //Items = new LegacyMessageCollection();
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
 
@@ -281,12 +286,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        //private bool _isSchedule;
-        //public bool IsSchedule
-        //{
-        //    get => _isSchedule;
-        //    set => Set(ref _isSchedule, value);
-        //}
         private DialogType _type => Type;
         public virtual DialogType Type => DialogType.History;
 
@@ -694,7 +693,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendAsync(func);
                 if (response is Messages messages)
                 {
-                    if (_chat?.Id != chat.Id)
+                    if (_chat?.Id != chat.Id && _migratedChat?.Id != chat.Id)
                     {
                         _isLoadingNextSlice = false;
                         IsLoading = false;
@@ -1629,11 +1628,6 @@ namespace Unigram.ViewModels
                 {
                     if (diceMessage.InitialState is DiceStickersRegular initialRegular)
                     {
-                        if (initialRegular.Sticker.Thumbnail != null)
-                        {
-                            _filesMap[initialRegular.Sticker.Thumbnail.File.Id].Add(target);
-                        }
-
                         _filesMap[initialRegular.Sticker.StickerValue.Id].Add(target);
                     }
                     else if (diceMessage.InitialState is DiceStickersSlotMachine initialSlotMachine)
@@ -1647,11 +1641,6 @@ namespace Unigram.ViewModels
 
                     if (diceMessage.FinalState is DiceStickersRegular finalRegular)
                     {
-                        if (finalRegular.Sticker.Thumbnail != null)
-                        {
-                            _filesMap[finalRegular.Sticker.Thumbnail.File.Id].Add(target);
-                        }
-
                         _filesMap[finalRegular.Sticker.StickerValue.Id].Add(target);
                     }
                     else if (diceMessage.FinalState is DiceStickersSlotMachine finalSlotMachine)
@@ -1783,11 +1772,6 @@ namespace Unigram.ViewModels
                 }
                 else if (content is Sticker sticker)
                 {
-                    if (sticker.Thumbnail != null)
-                    {
-                        _filesMap[sticker.Thumbnail.File.Id].Add(target);
-                    }
-
                     _filesMap[sticker.StickerValue.Id].Add(target);
                 }
                 else if (content is Video video)
@@ -2241,6 +2225,8 @@ namespace Unigram.ViewModels
                     }
                 });
             }
+
+            UpdateGroupCall(chat, chat.VoiceChatGroupCallId);
 
             ShowReplyMarkup(chat);
             ShowDraftMessage(chat);
@@ -3604,6 +3590,22 @@ namespace Unigram.ViewModels
             {
                 NavigationService.NavigateToChat(message.ChatId, message: message.Id);
             }
+        }
+
+        #endregion
+
+        #region Group calls
+
+        public RelayCommand GroupCallJoinCommand { get; }
+        private async void GroupCallJoinExecute()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            await _groupCallService.JoinAsync(chat.Id);
         }
 
         #endregion

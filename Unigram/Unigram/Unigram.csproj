@@ -21,7 +21,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>602F1A7B283C48CF3345BD23DAEA58A1E444B2AD</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -150,6 +150,7 @@
     <Compile Include="Charts\StackBarChartView.cs" />
     <Compile Include="Charts\StackLinearChartView.cs" />
     <Compile Include="Charts\StepChartView.cs" />
+    <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\IncrementalCollectionWithDelegate.cs" />
     <Compile Include="Collections\KeyedList.cs" />
@@ -299,6 +300,12 @@
     <Compile Include="Controls\Gallery\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GroupCallActiveHeader.xaml.cs">
+      <DependentUpon>GroupCallActiveHeader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GroupCallHeader.xaml.cs">
+      <DependentUpon>GroupCallHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\HeaderedControl.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
     <Compile Include="Controls\InlineBotResultsView.xaml.cs">
@@ -427,6 +434,7 @@
     </Compile>
     <Compile Include="Controls\LottieView.cs" />
     <Compile Include="Controls\QrCode.cs" />
+    <Compile Include="Controls\RecentUserHeads.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -461,10 +469,12 @@
     <Compile Include="Navigation\Services\NavigationServiceList.cs" />
     <Compile Include="Selectors\ChatStatisticsOverviewTemplateSelector.cs" />
     <Compile Include="Services\CallsService.cs" />
+    <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IGroupCallDelegate.cs" />
     <Compile Include="ViewModels\DialogEventLogViewModel.cs" />
     <Compile Include="ViewModels\DialogPinnedViewModel.cs" />
     <Compile Include="ViewModels\DialogThreadViewModel.cs" />
@@ -491,6 +501,9 @@
     </Compile>
     <Compile Include="Views\Chats\MessageStatisticsPage.xaml.cs">
       <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GroupCallPage.xaml.cs">
+      <DependentUpon>GroupCallPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
@@ -1044,6 +1057,8 @@
       <DependentUpon>VoIPPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Audio\sent.mp3" />
+    <Content Include="Assets\Audio\voicechat_join.mp3" />
+    <Content Include="Assets\Audio\voicechat_leave.mp3" />
     <Content Include="Assets\Audio\voip_busy.mp3" />
     <Content Include="Assets\Audio\voip_connecting.mp3" />
     <Content Include="Assets\Audio\voip_end.mp3" />
@@ -1483,6 +1498,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\GroupCallActiveHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\GroupCallHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\InlineBotResultsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1656,6 +1679,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\MessageStatisticsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\GroupCallPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2205,7 +2232,7 @@
       <Version>6.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.4.3</Version>
+      <Version>2.5.0</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>

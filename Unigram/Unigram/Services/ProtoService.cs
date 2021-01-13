@@ -108,6 +108,8 @@ namespace Unigram.Services
 
         SupergroupFullInfo GetSupergroupFull(int id);
         SupergroupFullInfo GetSupergroupFull(Chat chat);
+        bool TryGetSupergroupFull(int id, out SupergroupFullInfo value);
+        bool TryGetSupergroupFull(Chat chat, out SupergroupFullInfo value);
 
         bool TryGetChatForFileId(int fileId, out Chat chat);
         bool TryGetUserForFileId(int fileId, out User user);
@@ -326,14 +328,10 @@ namespace Unigram.Services
             _chats[10] = new Chat(10, new ChatTypeSecret(1, 7), "Eileen Lockhard \uD83D\uDC99", ChatPhoto("a5.png"),    permissions, null,             new [] { new ChatPosition(new ChatListMain(), 0, false, null) },                    false, false, false, false, false, false, 0, 0, long.MaxValue, 0, new ChatNotificationSettings(false, 0, false, string.Empty, false, true, true, true, true, true), null, 0, 0, null, string.Empty);
 #endif
 
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
                 {
-#if DEBUG
-                    await Task.Delay(5000);
-#endif
-
                     var folder = await GetFilesFolderAsync(false);
                     if (folder != null)
                     {
@@ -353,7 +351,7 @@ namespace Unigram.Services
                 _client.Send(new CheckDatabaseEncryptionKey(new byte[0]));
                 _client.Send(new GetApplicationConfig(), UpdateConfig);
                 _client.Run();
-            });
+            }, TaskCreationOptions.LongRunning);
         }
 
         private void InitializeDiagnostics()
@@ -1301,6 +1299,22 @@ namespace Unigram.Services
             return null;
         }
 
+        public bool TryGetSupergroupFull(int id, out SupergroupFullInfo value)
+        {
+            return _supergroupsFull.TryGetValue(id, out value);
+        }
+
+        public bool TryGetSupergroupFull(Chat chat, out SupergroupFullInfo value)
+        {
+            if (chat?.Type is ChatTypeSupergroup supergroup)
+            {
+                return TryGetSupergroupFull(supergroup.SupergroupId, out value);
+            }
+
+            value = null;
+            return false;
+        }
+
 
 
         public int GetNotificationSettingsMuteFor(Chat chat)
@@ -1657,6 +1671,14 @@ namespace Unigram.Services
                 if (_chats.TryGetValue(updateChatUnreadMentionCount.ChatId, out Chat value))
                 {
                     value.UnreadMentionCount = updateChatUnreadMentionCount.UnreadMentionCount;
+                }
+            }
+            else if (update is UpdateChatVoiceChat updateChatVoiceChat)
+            {
+                if (_chats.TryGetValue(updateChatVoiceChat.ChatId, out Chat value))
+                {
+                    value.IsVoiceChatEmpty = updateChatVoiceChat.IsVoiceChatEmpty;
+                    value.VoiceChatGroupCallId = updateChatVoiceChat.VoiceChatGroupCallId;
                 }
             }
             else if (update is UpdateConnectionState updateConnectionState)

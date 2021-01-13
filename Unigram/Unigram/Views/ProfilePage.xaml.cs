@@ -521,7 +521,7 @@ namespace Unigram.Views
                                 flyout.CreateFlyoutItem(ViewModel.InviteCommand, Strings.Resources.BotInvite, new FontIcon { Glyph = Icons.PersonAdd });
                             }
 
-                            flyout.CreateFlyoutItem(null, Strings.Resources.BotShare, new FontIcon { Glyph = Icons.Share });
+                            flyout.CreateFlyoutItem(() => { }, Strings.Resources.BotShare, new FontIcon { Glyph = Icons.Share });
                         }
                         else
                         {
@@ -573,6 +573,8 @@ namespace Unigram.Views
                     return;
                 }
 
+                var fullInfo = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
+
                 if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator)
                 {
                     if (supergroup.IsChannel)
@@ -581,11 +583,14 @@ namespace Unigram.Views
                     }
                     else
                     {
+                        if (chat.VoiceChatGroupCallId == 0 && supergroup.CanManageVoiceChats())
+                        {
+                            flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.Phone });
+                        }
+
                         flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageGroupMenu, new FontIcon { Glyph = Icons.Edit });
                     }
                 }
-
-                var fullInfo = ViewModel.ProtoService.GetSupergroupFull(super.SupergroupId);
 
                 if (fullInfo != null && fullInfo.CanGetStatistics)
                 {
@@ -612,6 +617,11 @@ namespace Unigram.Views
                 if (basicGroup == null)
                 {
                     return;
+                }
+
+                if (chat.VoiceChatGroupCallId == 0 && basicGroup.CanManageVoiceChats())
+                {
+                    flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.Phone });
                 }
 
                 if (chat.Permissions.CanChangeInfo || basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator)

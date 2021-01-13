@@ -467,9 +467,9 @@ namespace Unigram.Views
             {
                 switch (connectionState)
                 {
-                    case ConnectionStateWaitingForNetwork waitingForNetwork:
-                    case ConnectionStateConnecting connecting:
-                    case ConnectionStateConnectingToProxy connectingToProxy:
+                    case ConnectionStateWaitingForNetwork _:
+                    case ConnectionStateConnecting _:
+                    case ConnectionStateConnectingToProxy _:
                         Proxy.Visibility = Visibility.Visible;
                         break;
                     default:
@@ -519,13 +519,27 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                if (update.IsOpen && update.Call.IsValidState())
+                if (update.Call != null && update.Call.IsValidState())
                 {
                     FindName(nameof(CallBanner));
                 }
-                else if (CallBanner != null)
+                else if (update.GroupCall != null && update.GroupCall.IsJoined)
                 {
-                    UnloadObject(CallBanner);
+                    FindName(nameof(GroupCallBanner));
+                    GroupCallBanner.Update(ViewModel.GroupCallService.Manager);
+                }
+                else
+                {
+                    if (CallBanner != null)
+                    {
+                        UnloadObject(CallBanner);
+                    }
+
+                    if (GroupCallBanner != null)
+                    {
+                        GroupCallBanner.Update(null);
+                        UnloadObject(GroupCallBanner);
+                    }
                 }
             });
         }
@@ -757,18 +771,24 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
-            else if (ViewModel.Chats.Items.ChatList is ChatListFilter || ViewModel.Chats.Items.ChatList is ChatListArchive)
-            {
-                ViewModel.SelectedFilter = ChatFilterViewModel.Main;
-                ConvertFilter(ChatFilterViewModel.Main);
-                args.Handled = true;
-            }
+            //else if (ViewModel.Chats.Items.ChatList is ChatListFilter || ViewModel.Chats.Items.ChatList is ChatListArchive)
+            //{
+            //    ViewModel.SelectedFilter = ChatFilterViewModel.Main;
+            //    ConvertFilter(ChatFilterViewModel.Main);
+            //    args.Handled = true;
+            //}
             else
             {
                 var scrollViewer = ChatsList.GetScrollViewer();
-                if (scrollViewer != null)
+                if (scrollViewer != null && scrollViewer.VerticalOffset > 50)
                 {
                     scrollViewer.ChangeView(null, 0, null);
+                    args.Handled = true;
+                }
+                else if (ViewModel.Chats.Items.ChatList is ChatListFilter || ViewModel.Chats.Items.ChatList is ChatListArchive)
+                {
+                    ViewModel.SelectedFilter = ChatFilterViewModel.Main;
+                    ConvertFilter(ChatFilterViewModel.Main);
                     args.Handled = true;
                 }
             }

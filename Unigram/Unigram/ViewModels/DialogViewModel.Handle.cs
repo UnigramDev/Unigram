@@ -23,6 +23,7 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatDefaultDisableNotification>,
         IHandle<UpdateChatActionBar>,
         IHandle<UpdateChatHasScheduledMessages>,
+        IHandle<UpdateChatVoiceChat>,
 
         IHandle<UpdateUserChatAction>,
 
@@ -51,6 +52,8 @@ namespace Unigram.ViewModels
         IHandle<UpdateChatPhoto>,
         IHandle<UpdateChatNotificationSettings>,
         IHandle<UpdateChatOnlineMemberCount>,
+
+        IHandle<UpdateGroupCall>,
 
         IHandle<UpdateFile>
     {
@@ -173,6 +176,36 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(() => Delegate?.UpdateSupergroupFullInfo(chat, ProtoService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
                 //BeginOnUIThread(() => Stickers?.UpdateSupergroupFullInfo(chat, ProtoService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
+            }
+        }
+
+        public void Handle(UpdateChatVoiceChat update)
+        {
+            if (_chat?.Id == update.ChatId)
+            {
+                //BeginOnUIThread(() => Delegate?.UpdateGroupCall(_chat, update.GroupCall));
+            }
+        }
+
+        public void Handle(UpdateGroupCall update)
+        {
+            if (_chat?.VoiceChatGroupCallId == update.GroupCall.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateGroupCall(_chat, update.GroupCall));
+            }
+        }
+
+        private async void UpdateGroupCall(Chat chat, int groupCallId)
+        {
+            if (groupCallId == 0)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new GetGroupCall(groupCallId));
+            if (response is GroupCall groupCall)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateGroupCall(chat, groupCall));
             }
         }
 

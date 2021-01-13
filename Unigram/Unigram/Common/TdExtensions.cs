@@ -1487,6 +1487,16 @@ namespace Unigram.Common
             return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVoiceChats;
         }
 
+        public static bool CanManageVoiceChats(this BasicGroup basicGroup)
+        {
+            if (basicGroup.Status == null)
+            {
+                return false;
+            }
+
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.CanManageVoiceChats;
+        }
+
         public static bool CanPostMessages(this Supergroup supergroup)
         {
             if (supergroup.Status == null)

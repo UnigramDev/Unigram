@@ -59,6 +59,7 @@ namespace Unigram.Controls.Messages
         public void InitializeParent(UIElement parent)
         {
             _parent = parent;
+            ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
         }
 
         public void UpdateIndex(int value, int maximum, bool intermediate)
@@ -242,7 +243,8 @@ namespace Unigram.Controls.Messages
             batch.Completed += (s, args) =>
             {
                 visual.Clip = null;
-                visual.Offset = new Vector3();
+                //visual.Offset = new Vector3();
+                visual.Properties.InsertVector3("Translation", Vector3.Zero);
 
                 if (show)
                 {
@@ -265,7 +267,7 @@ namespace Unigram.Controls.Messages
             offset.Duration = TimeSpan.FromMilliseconds(150);
 
             visual.Clip.StartAnimation("TopInset", clip);
-            visual.StartAnimation("Offset", offset);
+            visual.StartAnimation("Translation", offset);
 
             batch.End();
         }
@@ -429,9 +431,6 @@ namespace Unigram.Controls.Messages
 
             return Window.Current.Compositor.CreateColorBrush(Colors.White);
         }
-
-        private readonly int _oldMaximum = 4;
-        private readonly float _oldHeight = 12;
 
         private int _prevValue;
         private int _nextValue;

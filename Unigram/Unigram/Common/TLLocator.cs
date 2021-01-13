@@ -56,7 +56,10 @@ namespace Unigram.Views
                 _settingsService,
                 _localeService,
                 _eventAggregator);
-            _networkService = new Unigram.Services.NetworkService(_protoService);
+            _networkService = new Unigram.Services.NetworkService(
+                _protoService,
+                _settingsService,
+                _eventAggregator);
             _generationService = new Unigram.Services.GenerationService(
                 _protoService,
                 _eventAggregator);
@@ -145,6 +148,12 @@ namespace Unigram.Views
                         _settingsService,
                         _eventAggregator,
                         _viewService ??= new Unigram.Services.ViewService.ViewService()),
+                    _groupCallService ??= new Unigram.Services.GroupCallService(
+                        _protoService,
+                        _cacheService,
+                        _settingsService,
+                        _eventAggregator,
+                        _viewService ??= new Unigram.Services.ViewService.ViewService()),
                     _settingsSearchService ??= new Unigram.Services.SettingsSearchService(_protoService),
                     _emojiSetService ??= new Unigram.Services.EmojiSetService(
                         _protoService,
@@ -152,6 +161,7 @@ namespace Unigram.Views
                         _eventAggregator),
                     _cloudUpdateService ??= new Unigram.Services.CloudUpdateService(
                         _protoService,
+                        _networkService,
                         _eventAggregator),
                     _playbackService ??= new Unigram.Services.PlaybackService(
                         _protoService,
@@ -659,6 +669,7 @@ namespace Unigram.Views
                     _eventAggregator,
                     _cloudUpdateService ??= new Unigram.Services.CloudUpdateService(
                         _protoService,
+                        _networkService,
                         _eventAggregator));
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPhoneIntroViewModel))
@@ -771,7 +782,8 @@ namespace Unigram.Views
                     _protoService,
                     _cacheService,
                     _settingsService,
-                    _eventAggregator);
+                    _eventAggregator,
+                    _networkService);
             }
             else if (type == typeof(Unigram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel))
             {
@@ -1177,6 +1189,7 @@ namespace Unigram.Views
             {
                 return (T)(_cloudUpdateService ??= new Unigram.Services.CloudUpdateService(
                     _protoService,
+                    _networkService,
                     _eventAggregator));
             }
             else if (type == typeof(Unigram.Services.IShortcutsService))

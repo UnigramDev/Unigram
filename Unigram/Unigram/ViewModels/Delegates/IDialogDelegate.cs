@@ -26,6 +26,8 @@ namespace Unigram.ViewModels.Delegates
 
         void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection);
 
+        void UpdateGroupCall(Chat chat, GroupCall groupCall);
+
 
 
         void PlayMessage(MessageViewModel message, FrameworkElement target);

@@ -226,7 +226,7 @@ namespace Unigram.Services.Factories
                     {
                         InputFile = generated,
                         Type = new FileTypeSticker(),
-                        Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height)
+                        Delegate = (inputFile, caption) => new InputMessageSticker(inputFile, null, width, height, string.Empty)
                     };
                 }
                 catch
