@@ -11,13 +11,14 @@ namespace Unigram.Native.Calls
 
         void EmitJoinPayload(EmitJsonPayloadDelegate completion);
         void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponse payload);
-        void RemoveSsrcs(Windows.Foundation.Collections.IVector<UInt32> ssrcs);
+        void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
-        void SetIsMuted(Boolean isMuted);
+        Boolean IsMuted;
+
         void SetAudioOutputDevice(String id);
         void SetAudioInputDevice(String id);
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Boolean> NetworkStateUpdated;
-        event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<UInt32, Windows.Foundation.Collections.IKeyValuePair<Single, Boolean> > > AudioLevelsUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<Int32, Windows.Foundation.Collections.IKeyValuePair<Single, Boolean> > > AudioLevelsUpdated;
     }
 }

@@ -16,9 +16,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		void EmitJoinPayload(EmitJsonPayloadDelegate completion);
 		void SetJoinResponsePayload(GroupCallJoinResponse payload);
-		void RemoveSsrcs(IVector<uint32_t> ssrcs);
+		void RemoveSsrcs(IVector<int32_t> ssrcs);
 
-		void SetIsMuted(bool isMuted);
+		bool IsMuted();
+		void IsMuted(bool value);
+
 		void SetAudioOutputDevice(hstring id);
 		void SetAudioInputDevice(hstring id);
 
@@ -29,18 +31,20 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		winrt::event_token AudioLevelsUpdated(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			IMapView<uint32_t, IKeyValuePair<float, bool>>> const& value);
+			IMapView<int32_t, IKeyValuePair<float, bool>>> const& value);
 		void AudioLevelsUpdated(winrt::event_token const& token);
 
 	private:
 		std::unique_ptr<tgcalls::GroupInstanceImpl> m_impl = nullptr;
+
+		bool m_isMuted = true;
 
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
 			bool>> m_networkStateUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			IMapView<uint32_t, IKeyValuePair<float, bool>>>> m_audioLevelsUpdated;
+			IMapView<int32_t, IKeyValuePair<float, bool>>>> m_audioLevelsUpdated;
     };
 }
 

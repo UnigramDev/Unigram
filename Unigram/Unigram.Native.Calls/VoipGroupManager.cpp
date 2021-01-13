@@ -21,11 +21,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 			[this](bool state) {
 				m_networkStateUpdated(*this, state);
 			},
-			[this](std::vector<std::pair<uint32_t, std::pair<float, bool>>> const& levels) {
-				auto args = winrt::single_threaded_map<uint32_t, IKeyValuePair<float, bool>>(/*std::move(levels)*/);
+			[this](tgcalls::GroupLevelsUpdate const& levels) {
+				auto args = winrt::single_threaded_map<int32_t, IKeyValuePair<float, bool>>(/*std::move(levels)*/);
 
-				for (const std::pair<uint32_t, std::pair<float, bool>>& x : levels) {
-					args.Insert(x.first, winrt::make<winrt::impl::key_value_pair<IKeyValuePair<float, bool>>>(x.second.first, x.second.second));
+				for (const tgcalls::GroupLevelUpdate& x : levels.updates) {
+					args.Insert(x.ssrc, winrt::make<winrt::impl::key_value_pair<IKeyValuePair<float, bool>>>(x.value.level, x.value.voice));
 				}
 
 				m_audioLevelsUpdated(*this, args.GetView());
@@ -106,7 +106,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_impl->setJoinResponsePayload(std::move(impl));
 	}
 
-	void VoipGroupManager::RemoveSsrcs(IVector<uint32_t> ssrcs) {
+	void VoipGroupManager::RemoveSsrcs(IVector<int32_t> ssrcs) {
 		auto impl = std::vector<uint32_t>();
 
 		for (const uint32_t& x : ssrcs) {
@@ -118,8 +118,12 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 
-	void VoipGroupManager::SetIsMuted(bool isMuted) {
-		m_impl->setIsMuted(isMuted);
+	bool VoipGroupManager::IsMuted() {
+		return m_isMuted;
+	}
+
+	void VoipGroupManager::IsMuted(bool value) {
+		m_impl->setIsMuted(m_isMuted = value);
 	}
 
 	void VoipGroupManager::SetAudioOutputDevice(hstring id) {
@@ -147,7 +151,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	winrt::event_token VoipGroupManager::AudioLevelsUpdated(Windows::Foundation::TypedEventHandler<
 		winrt::Unigram::Native::Calls::VoipGroupManager,
-		IMapView<uint32_t, IKeyValuePair<float, bool>>> const& value)
+		IMapView<int32_t, IKeyValuePair<float, bool>>> const& value)
 	{
 		return m_audioLevelsUpdated.add(value);
 	}
