@@ -27,8 +27,8 @@ namespace Unigram.Common.Chats
                         case ChatActionRecordingVoiceNote recordAudio:
                             commonAction = recordAudio;
                             return Strings.Resources.RecordingAudio;
-                        case ChatActionRecordingVideoNote recordRound:
-                        case ChatActionUploadingVideoNote uploadRound:
+                        case ChatActionRecordingVideoNote _:
+                        case ChatActionUploadingVideoNote _:
                             commonAction = new ChatActionRecordingVideoNote();
                             return Strings.Resources.RecordingRound;
                         //case TLSendMessageTypingAction typing:
@@ -42,8 +42,8 @@ namespace Unigram.Common.Chats
                         case ChatActionUploadingPhoto uploadPhoto:
                             commonAction = uploadPhoto;
                             return Strings.Resources.SendingPhoto;
-                        case ChatActionRecordingVideo recordVideo:
-                        case ChatActionUploadingVideo uploadVideo:
+                        case ChatActionRecordingVideo _:
+                        case ChatActionUploadingVideo _:
                             commonAction = new ChatActionUploadingVideo();
                             return Strings.Resources.SendingVideoStatus;
                     }
