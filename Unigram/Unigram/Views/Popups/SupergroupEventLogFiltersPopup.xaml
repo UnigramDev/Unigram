@@ -413,6 +413,7 @@
                         <CheckBox x:Name="MemberPromotions" Click="Event_Toggled" Content="{CustomResource EventLogFilterNewAdmins}"/>
                         <CheckBox x:Name="MemberJoins" Click="Event_Toggled" Content="{CustomResource EventLogFilterNewMembers}"/>
                         <CheckBox x:Name="InfoChanges" Click="Event_Toggled" Content="{CustomResource EventLogFilterGroupInfo}"/>
+                        <CheckBox x:Name="InviteLinkChanges" Click="Event_Toggled" Content="{CustomResource EventLogFilterInvites}"/>
                         <CheckBox x:Name="MessageDeletions" Click="Event_Toggled" Content="{CustomResource EventLogFilterDeletedMessages}"/>
                         <CheckBox x:Name="MessageEdits" Click="Event_Toggled" Content="{CustomResource EventLogFilterEditedMessages}"/>
                         <CheckBox x:Name="MessagePins" Click="Event_Toggled" Content="{CustomResource EventLogFilterPinnedMessages}"/>

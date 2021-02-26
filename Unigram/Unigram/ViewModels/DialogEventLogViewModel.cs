@@ -282,6 +282,10 @@ namespace Unigram.ViewModels
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatAddMembers(new[] { memberInvited.UserId });
                         break;
+                    case ChatEventMemberJoinedByInviteLink:
+                        message = GetMessage(_chat.Id, channel, item);
+                        message.Content = new MessageChatAddMembers(new[] { item.UserId });
+                        break;
                     case ChatEventSlowModeDelayChanged:
                     case ChatEventPermissionsChanged:
                     case ChatEventMemberRestricted:
@@ -295,12 +299,17 @@ namespace Unigram.ViewModels
                     case ChatEventInvitesToggled:
                     case ChatEventIsAllHistoryAvailableToggled:
                     case ChatEventMessageUnpinned:
+                    case ChatEventMessageTtlSettingChanged:
                     case ChatEventLinkedChatChanged:
                     case ChatEventLocationChanged:
                     case ChatEventVoiceChatCreated:
                     case ChatEventVoiceChatDiscarded:
                     case ChatEventVoiceChatMuteNewParticipantsToggled:
                     case ChatEventVoiceChatParticipantIsMutedToggled:
+                    case ChatEventVoiceChatParticipantVolumeLevelChanged:
+                    case ChatEventInviteLinkDeleted:
+                    case ChatEventInviteLinkEdited:
+                    case ChatEventInviteLinkRevoked:
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatEvent(item);
                         break;

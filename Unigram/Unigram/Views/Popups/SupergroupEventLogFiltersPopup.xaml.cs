@@ -41,6 +41,7 @@ namespace Unigram.Views.Popups
             MemberPromotions.IsChecked = filters.MemberPromotions;
             MemberJoins.IsChecked = filters.MemberJoins || filters.MemberInvites;
             InfoChanges.IsChecked = filters.InfoChanges || filters.SettingChanges;
+            InviteLinkChanges.IsChecked = filters.InviteLinkChanges;
             MessageDeletions.IsChecked = filters.MessageDeletions;
             MessageEdits.IsChecked = filters.MessageEdits;
             MessagePins.IsChecked = filters.MessagePins;
@@ -152,6 +153,7 @@ namespace Unigram.Views.Popups
                 MemberJoins = MemberJoins.IsChecked == true,
                 MemberInvites = MemberJoins.IsChecked == true,
                 InfoChanges = InfoChanges.IsChecked == true,
+                InviteLinkChanges = InviteLinkChanges.IsChecked == true,
                 SettingChanges = InfoChanges.IsChecked == true,
                 MessageDeletions = MessageDeletions.IsChecked == true,
                 MessageEdits = MessageEdits.IsChecked == true,
