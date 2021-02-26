@@ -1673,7 +1673,7 @@ namespace Unigram.Views
                     }
                 }
             }
-            if (secret)
+            //if (secret)
             {
                 flyout.CreateFlyoutItem(ViewModel.SetTimerCommand, Strings.Resources.SetTimer, new FontIcon { Glyph = Icons.Timer });
             }
@@ -3071,7 +3071,7 @@ namespace Unigram.Views
             Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
-            GroupCall.ShowHide(chat.VoiceChatGroupCallId != 0);
+            GroupCall.ShowHide(chat.VoiceChatGroupCallId != 0 && !chat.IsVoiceChatEmpty);
 
             UpdateChatPermissions(chat);
         }
@@ -4112,7 +4112,14 @@ namespace Unigram.Views
 
         public void UpdateGroupCall(Chat chat, GroupCall groupCall)
         {
-            GroupCall.UpdateGroupCall(groupCall);
+            if (GroupCall.UpdateGroupCall(chat, groupCall))
+            {
+                Call.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Call.Visibility = Visibility.Visible;
+            }
         }
 
 

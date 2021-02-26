@@ -31,11 +31,14 @@ namespace Unigram.Controls
             RecentUsers.GetPicture = userId => PlaceholderHelper.GetUser(protoService, protoService.GetUser(userId), 32);
         }
 
-        public void UpdateGroupCall(GroupCall call)
+        public bool UpdateGroupCall(Chat chat, GroupCall call)
         {
-            if (call == null || call.IsJoined)
+            var visible = true;
+
+            if (chat.IsVoiceChatEmpty || call == null || call.IsJoined)
             {
                 ShowHide(false);
+                visible = false;
             }
             else
             {
@@ -101,6 +104,7 @@ namespace Unigram.Controls
             }
 
             _prevId = call?.Id ?? 0;
+            return visible;
         }
 
         public void UpdateChatActions(IDictionary<int, ChatAction> actions)
