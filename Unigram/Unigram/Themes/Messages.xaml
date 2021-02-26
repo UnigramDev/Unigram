@@ -113,7 +113,7 @@
         <selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>
             <DataTemplate>
                 <Grid Padding="4,8" Width="68" Height="76">
-                    <controls:LottieView x:Name="Player" AutoPlay="False"/>
+                    <controls:LottieView30Fps x:Name="Player" AutoPlay="False"/>
                 </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>

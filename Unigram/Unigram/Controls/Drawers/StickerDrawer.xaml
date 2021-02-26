@@ -19,7 +19,7 @@
 
         <DataTemplate x:Key="AnimatedItemTemplate">
             <Grid Margin="2">
-                <controls:LottieView
+                <controls:LottieView30Fps
                     x:Name="Player"
                     AutoPlay="False"/>
                 <TextBlock

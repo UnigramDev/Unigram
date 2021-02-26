@@ -106,14 +106,15 @@
                 </ListView.ItemContainerTransitions>
             </ListView>
 
-            <ListView x:Name="DialogsSearchListView"
-                      Background="{ThemeResource ContentDialogBackground}"
-                      ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
-                      IsItemClickEnabled="True"
-                      SelectionMode="None"
-                      ItemClick="ListView_ItemClick"
-                      ContainerContentChanging="DialogsSearchListView_ContainerContentChanging"
-                      Visibility="Collapsed">
+            <controls:TextListView
+                x:Name="DialogsSearchListView"
+                Background="{ThemeResource ContentDialogBackground}"
+                ItemsSource="{x:Bind ChatsResults.View, Mode=OneWay}"
+                IsItemClickEnabled="True"
+                SelectionMode="None"
+                ItemClick="ListView_ItemClick"
+                ContainerContentChanging="DialogsSearchListView_ContainerContentChanging"
+                Visibility="Collapsed">
                 <ListView.Header>
                     <StackPanel Visibility="{x:Bind ViewModel.TopChats, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                         <Border Background="{ThemeResource PageBackgroundDarkBrush}">
@@ -122,12 +123,13 @@
                                 Style="{StaticResource SettingsGroupTextBlockStyle}"
                                 Margin="12,16,12,6" />
                         </Border>
-                        <ListView SelectionMode="None"
-                                  IsItemClickEnabled="True"
-                                  ItemClick="ListView_ItemClick"
-                                  ContainerContentChanging="TopChats_ContainerContentChanging"
-                                  ItemsSource="{x:Bind ViewModel.TopChats, Mode=OneWay}"
-                                  Style="{StaticResource HorizontalListViewStyle}">
+                        <controls:TextListView
+                            SelectionMode="None"
+                            IsItemClickEnabled="True"
+                            ItemClick="ListView_ItemClick"
+                            ContainerContentChanging="TopChats_ContainerContentChanging"
+                            ItemsSource="{x:Bind ViewModel.TopChats, Mode=OneWay}"
+                            Style="{StaticResource HorizontalListViewStyle}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Width="72" Margin="0,12">
@@ -158,7 +160,7 @@
                                     <Setter Property="Padding" Value="0"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
-                        </ListView>
+                        </controls:TextListView>
 
                         <Border Background="{ThemeResource PageBackgroundDarkBrush}">
                             <TextBlock
@@ -258,7 +260,7 @@
                         </GroupStyle.HeaderContainerStyle>
                     </GroupStyle>
                 </ListView.GroupStyle>
-            </ListView>
+            </controls:TextListView>
         </Grid>
 
         <Grid Grid.Row="1">

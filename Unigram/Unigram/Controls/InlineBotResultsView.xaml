@@ -48,7 +48,7 @@
                 <DataTemplate>
                     <Button Click="Result_Click" Margin="0,0,2,2" Style="{StaticResource GridViewButtonStyle}">
                         <Grid>
-                            <controls:LottieView
+                            <controls:LottieView30Fps
                                 x:Name="Player"
                                 AutoPlay="False"/>
                         </Grid>
