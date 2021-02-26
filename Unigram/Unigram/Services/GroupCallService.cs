@@ -310,6 +310,8 @@ namespace Unigram.Services
 
         public void Handle(UpdateGroupCallParticipant update)
         {
+            return;
+
             if (_call?.Id == update.GroupCallId && update.Participant.UserId == CacheService.Options.MyId)
             {
                 if (_source != update.Participant.Source)
