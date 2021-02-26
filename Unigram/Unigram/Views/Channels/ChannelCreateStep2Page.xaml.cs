@@ -99,11 +99,11 @@ namespace Unigram.Views.Channels
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            ViewModel.InviteLink = fullInfo.InviteLink;
+            ViewModel.InviteLink = fullInfo.InviteLink?.InviteLink;
 
-            if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))
+            if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
             {
-                ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
             }
         }
 
@@ -127,11 +127,11 @@ namespace Unigram.Views.Channels
 
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
-            ViewModel.InviteLink = fullInfo.InviteLink;
+            ViewModel.InviteLink = fullInfo.InviteLink?.InviteLink;
 
-            if (string.IsNullOrEmpty(fullInfo.InviteLink))
+            if (fullInfo.InviteLink == null)
             {
-                ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+                ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
             }
         }
 

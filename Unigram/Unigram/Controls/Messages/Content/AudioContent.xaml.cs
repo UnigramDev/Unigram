@@ -380,7 +380,7 @@ namespace Unigram.Controls.Messages.Content
             }
             else
             {
-                _message.PlaybackService.Enqueue(_message.Get());
+                _message.Delegate.PlayMessage(_message);
             }
         }
 
@@ -420,7 +420,7 @@ namespace Unigram.Controls.Messages.Content
                 }
                 else
                 {
-                    _message.PlaybackService.Enqueue(_message.Get());
+                    _message.Delegate.PlayMessage(_message);
                 }
             }
         }

@@ -128,15 +128,15 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        private void UpdateInviteLink(Chat chat, string inviteLink)
+        private void UpdateInviteLink(Chat chat, ChatInviteLink inviteLink)
         {
-            if (string.IsNullOrEmpty(inviteLink))
+            if (inviteLink == null)
             {
-                ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+                ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
             }
             else
             {
-                InviteLink = inviteLink;
+                InviteLink = inviteLink.InviteLink;
             }
         }
 
@@ -165,7 +165,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+            //ProtoService.Send(new ReplacePermanentChatInviteLink(chat.Id));
         }
     }
 }

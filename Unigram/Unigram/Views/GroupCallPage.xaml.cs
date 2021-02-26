@@ -297,7 +297,7 @@ namespace Unigram.Views
                 return condition ? new FontIcon { Glyph = Icons.Checkmark } : null;
             }
 
-            if (call.AllowedChangeMuteNewParticipants && supergroup != null && supergroup.CanManageVoiceChats())
+            if (call.CanChangeMuteNewParticipants && supergroup != null && supergroup.CanManageVoiceChats())
             {
                 flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, false)), Strings.Resources.VoipGroupAllCanSpeak, GetCheckmark(!call.MuteNewParticipants));
                 flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, true)), Strings.Resources.VoipGroupOnlyAdminsCanSpeak, GetCheckmark(call.MuteNewParticipants));
@@ -418,7 +418,7 @@ namespace Unigram.Views
 
             title.Text = user.GetFullName();
 
-            if (participant.IsMuted)
+            if (participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser)
             {
                 speaking.Text = Strings.Resources.Listening;
                 speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
@@ -456,7 +456,7 @@ namespace Unigram.Views
 
             if (supergroup != null && supergroup.CanManageVoiceChats() && participant.UserId != _cacheService.Options.MyId)
             {
-                if (participant.IsMuted && !participant.CanUnmuteSelf)
+                if ((participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser) && !participant.CanUnmuteSelf)
                 {
                     flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.UserId, participant.CanUnmuteSelf)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
                 }

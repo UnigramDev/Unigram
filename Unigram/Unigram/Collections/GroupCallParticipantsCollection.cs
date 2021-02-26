@@ -96,8 +96,14 @@ namespace Unigram.Collections
             if (update != null)
             {
                 update.CanUnmuteSelf = participant.CanUnmuteSelf;
-                update.IsMuted = participant.IsMuted;
+                update.CanBeMutedForAllUsers = participant.CanBeMutedForAllUsers;
+                update.CanBeMutedForCurrentUser = participant.CanBeMutedForCurrentUser;
+                update.CanBeUnmutedForAllUsers = participant.CanBeUnmutedForAllUsers;
+                update.CanBeUnmutedForCurrentUser = participant.CanBeUnmutedForCurrentUser;
+                update.IsMutedForAllUsers = participant.IsMutedForAllUsers;
+                update.IsMutedForCurrentUser = participant.IsMutedForCurrentUser;
                 update.IsSpeaking = participant.IsSpeaking;
+                update.VolumeLevel = participant.VolumeLevel;
                 update.Order = participant.Order;
                 update.Source = participant.Source;
                 update.UserId = participant.UserId;

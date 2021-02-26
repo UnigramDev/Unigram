@@ -53,6 +53,14 @@ namespace Unigram.Controls.Messages
             {
                 DateLabel.Text = string.Empty;
             }
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport)
+            {
+                var original = Utils.UnixTimestampToDateTime(message.ForwardInfo.Date);
+                var date = BindConvert.Current.ShortDate.Format(original);
+                var time = BindConvert.Current.ShortTime.Format(original);
+
+                DateLabel.Text = string.Format("{0}, {1} {2} {3}", date, time, "Imported", BindConvert.Current.Date(message.Date));
+            }
             else
             {
                 DateLabel.Text = BindConvert.Current.Date(message.Date);

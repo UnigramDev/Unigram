@@ -1207,6 +1207,10 @@ namespace Unigram.Common
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
+            {
+                return true;
+            }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
             {
                 return message.ChatId == savedMessagesId;

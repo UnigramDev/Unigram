@@ -291,6 +291,11 @@ namespace Unigram.ViewModels
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.Resources.From} {from.GetFullName()}]");
                     }
+                    else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport forwardedFromImport)
+                    {
+                        builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
+                        builder.AppendLine($"[{Strings.Resources.From} {forwardedFromImport.SenderName}]");
+                    }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser forwardedFromHiddenUser)
                     {
                         builder.AppendLine($"[{Strings.Resources.ForwardedMessage}]");
@@ -471,28 +476,27 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (reason is ChatReportReasonCustom other)
-            {
-                var input = new InputDialog();
-                input.Title = Strings.Resources.ReportChat;
-                input.PlaceholderText = Strings.Resources.ReportChatDescription;
-                input.IsPrimaryButtonEnabled = true;
-                input.IsSecondaryButtonEnabled = true;
-                input.PrimaryButtonText = Strings.Resources.OK;
-                input.SecondaryButtonText = Strings.Resources.Cancel;
+            var text = string.Empty;
 
-                var inputResult = await input.ShowQueuedAsync();
-                if (inputResult == ContentDialogResult.Primary)
-                {
-                    other.Text = input.Text;
-                }
-                else
-                {
-                    return;
-                }
+            var input = new InputDialog();
+            input.Title = Strings.Resources.ReportChat;
+            input.PlaceholderText = Strings.Resources.ReportChatDescription;
+            input.IsPrimaryButtonEnabled = true;
+            input.IsSecondaryButtonEnabled = true;
+            input.PrimaryButtonText = Strings.Resources.OK;
+            input.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var inputResult = await input.ShowQueuedAsync();
+            if (inputResult == ContentDialogResult.Primary)
+            {
+                text = input.Text;
+            }
+            else
+            {
+                return;
             }
 
-            ProtoService.Send(new ReportChat(chat.Id, reason, messages));
+            ProtoService.Send(new ReportChat(chat.Id, messages, reason, text));
         }
 
         private bool MessagesReportCanExecute()
@@ -898,28 +902,27 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (reason is ChatReportReasonCustom other)
-            {
-                var input = new InputDialog();
-                input.Title = Strings.Resources.ReportChat;
-                input.PlaceholderText = Strings.Resources.ReportChatDescription;
-                input.IsPrimaryButtonEnabled = true;
-                input.IsSecondaryButtonEnabled = true;
-                input.PrimaryButtonText = Strings.Resources.OK;
-                input.SecondaryButtonText = Strings.Resources.Cancel;
+            var text = string.Empty;
 
-                var inputResult = await input.ShowQueuedAsync();
-                if (inputResult == ContentDialogResult.Primary)
-                {
-                    other.Text = input.Text;
-                }
-                else
-                {
-                    return;
-                }
+            var input = new InputDialog();
+            input.Title = Strings.Resources.ReportChat;
+            input.PlaceholderText = Strings.Resources.ReportChatDescription;
+            input.IsPrimaryButtonEnabled = true;
+            input.IsSecondaryButtonEnabled = true;
+            input.PrimaryButtonText = Strings.Resources.OK;
+            input.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var inputResult = await input.ShowQueuedAsync();
+            if (inputResult == ContentDialogResult.Primary)
+            {
+                text = input.Text;
+            }
+            else
+            {
+                return;
             }
 
-            ProtoService.Send(new ReportChat(chat.Id, reason, new[] { message.Id }));
+            ProtoService.Send(new ReportChat(chat.Id, new[] { message.Id }, reason, text));
         }
 
         #endregion
@@ -1211,7 +1214,7 @@ namespace Unigram.ViewModels
                         var location = await _locationService.GetPositionAsync();
                         if (location != null)
                         {
-                            var chat = CacheService.GetChat(message.ChatId);
+                            var chat = _chat; // CacheService.GetChat(message.ChatId);
                             if (chat == null)
                             {
                                 return;

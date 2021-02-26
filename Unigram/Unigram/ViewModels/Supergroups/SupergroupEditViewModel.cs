@@ -469,7 +469,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+            //ProtoService.Send(new RevokeChatInviteLink(chat.Id));
         }
 
         public RelayCommand DeleteCommand { get; }
@@ -491,9 +491,9 @@ namespace Unigram.ViewModels.Supergroups
             }
 
             Function function;
-            if (chat.Type is ChatTypeSupergroup super)
+            if (chat.Type is ChatTypeSupergroup)
             {
-                function = new DeleteSupergroup(super.SupergroupId);
+                function = new DeleteChat(chat.Id);
             }
             else
             {

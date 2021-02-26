@@ -35,7 +35,7 @@ namespace Unigram.ViewModels
             StickerSendExecute(sticker, null, null);
         }
 
-        public async void StickerSendExecute(Sticker sticker, bool? schedule, bool? silent)
+        public async void StickerSendExecute(Sticker sticker, bool? schedule, bool? silent, string emoji = null)
         {
             Delegate?.HideStickers();
 
@@ -58,7 +58,7 @@ namespace Unigram.ViewModels
             }
 
             var reply = GetReply(true);
-            var input = new InputMessageSticker(new InputFileId(sticker.StickerValue.Id), sticker.Thumbnail?.ToInput(), sticker.Width, sticker.Height);
+            var input = new InputMessageSticker(new InputFileId(sticker.StickerValue.Id), sticker.Thumbnail?.ToInput(), sticker.Width, sticker.Height, emoji ?? string.Empty);
 
             await SendMessageAsync(chat, reply, input, options);
         }

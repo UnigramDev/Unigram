@@ -3,6 +3,8 @@ param (
   [string]$config = "DEBUG"
 )
 
+#exit
+
 Write-Output "Config: $config"
 Write-Output "Path: $path"
 
@@ -47,7 +49,7 @@ if ($original1 -eq $identity.Attributes["Name"].Value -and $original2 -eq $ident
 
 $h = @{}
 $h["DEBUG"] = "Unigram Experimental"
-$h["RELEASE"] = "Unigram - A Telegram universal experience"
+$h["RELEASE"] = "Unigram - Telegram for Windows 10"
 
 $properties = $document.GetElementsByTagName("Properties")[0]
 $displayName = $properties.GetElementsByTagName("DisplayName")[0]
@@ -60,4 +62,11 @@ $h["RELEASE"] = "Unigram"
 $visualElements = $document.GetElementsByTagName("uap:VisualElements")[0]
 $visualElements.Attributes["DisplayName"].Value = $h[$config]
 
-$document.Save($path_manifest)
+$document.Save("$path_manifest.tmp")
+
+if(Compare-Object -ReferenceObject $(Get-Content $path_manifest) -DifferenceObject $(Get-Content "$path_manifest.tmp")) {
+    $document.Save($path_manifest)
+    Write-Output "Changes applied"
+}
+
+Remove-Item "$path_manifest.tmp"

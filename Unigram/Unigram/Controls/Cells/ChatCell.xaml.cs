@@ -818,7 +818,11 @@ namespace Unigram.Controls.Cells
 
             if (ShowFrom(_protoService, chat, message, out User from))
             {
-                if (message.IsOutgoing)
+                if (message.IsSaved(_protoService.Options.MyId))
+                {
+                    result = string.Format(format, _protoService.GetTitle(message.ForwardInfo));
+                }
+                else if (message.IsOutgoing)
                 {
                     if (!(chat.Type is ChatTypePrivate priv && priv.UserId == from.Id) && !message.IsChannelPost)
                     {

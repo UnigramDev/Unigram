@@ -944,6 +944,10 @@ namespace Unigram.Services
             {
                 return GetTitle(GetChat(fromChannel.ChatId));
             }
+            else if (info?.Origin is MessageForwardOriginMessageImport fromImport)
+            {
+                return fromImport.SenderName;
+            }
             else if (info?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
             {
                 return fromHiddenUser.SenderName;

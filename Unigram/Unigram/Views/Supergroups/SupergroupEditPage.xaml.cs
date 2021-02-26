@@ -148,14 +148,14 @@ namespace Unigram.Views.Supergroups
 
             if (group.CanInviteUsers())
             {
-                if (string.IsNullOrEmpty(fullInfo.InviteLink) && string.IsNullOrEmpty(group.Username))
+                if (fullInfo.InviteLink == null && string.IsNullOrEmpty(group.Username))
                 {
                     InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+                    ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
                 }
                 else if (string.IsNullOrEmpty(group.Username))
                 {
-                    InviteLink.Text = fullInfo.InviteLink;
+                    InviteLink.Text = fullInfo.InviteLink?.InviteLink;
                     RevokeLink.Visibility = Visibility.Visible;
                     InviteLinkPanel.Visibility = Visibility.Visible;
                 }
@@ -249,14 +249,14 @@ namespace Unigram.Views.Supergroups
 
             if (group.CanInviteUsers())
             {
-                if (string.IsNullOrEmpty(fullInfo.InviteLink))
+                if (fullInfo.InviteLink == null)
                 {
                     InviteLinkPanel.Visibility = Visibility.Collapsed;
-                    ViewModel.ProtoService.Send(new GenerateChatInviteLink(chat.Id));
+                    ViewModel.ProtoService.Send(new CreateChatInviteLink(chat.Id, 0, 0));
                 }
                 else
                 {
-                    InviteLink.Text = fullInfo.InviteLink;
+                    InviteLink.Text = fullInfo.InviteLink?.InviteLink;
                     RevokeLink.Visibility = Visibility.Visible;
                     InviteLinkPanel.Visibility = Visibility.Visible;
                 }

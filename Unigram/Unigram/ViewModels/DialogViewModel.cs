@@ -2914,7 +2914,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new ReportChat(chat.Id, reason, new long[0]));
+            ProtoService.Send(new ReportChat(chat.Id, new long[0], reason, string.Empty));
 
             if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)
             {
@@ -3387,28 +3387,27 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (reason is ChatReportReasonCustom other)
-            {
-                var input = new InputDialog();
-                input.Title = Strings.Resources.ReportChat;
-                input.PlaceholderText = Strings.Resources.ReportChatDescription;
-                input.IsPrimaryButtonEnabled = true;
-                input.IsSecondaryButtonEnabled = true;
-                input.PrimaryButtonText = Strings.Resources.OK;
-                input.SecondaryButtonText = Strings.Resources.Cancel;
+            var text = string.Empty;
 
-                var inputResult = await input.ShowQueuedAsync();
-                if (inputResult == ContentDialogResult.Primary)
-                {
-                    other.Text = input.Text;
-                }
-                else
-                {
-                    return;
-                }
+            var input = new InputDialog();
+            input.Title = Strings.Resources.ReportChat;
+            input.PlaceholderText = Strings.Resources.ReportChatDescription;
+            input.IsPrimaryButtonEnabled = true;
+            input.IsSecondaryButtonEnabled = true;
+            input.PrimaryButtonText = Strings.Resources.OK;
+            input.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var inputResult = await input.ShowQueuedAsync();
+            if (inputResult == ContentDialogResult.Primary)
+            {
+                text = input.Text;
+            }
+            else
+            {
+                return;
             }
 
-            var response = await ProtoService.SendAsync(new ReportChat(chat.Id, reason, new long[0]));
+            var response = await ProtoService.SendAsync(new ReportChat(chat.Id, new long[0], reason, text));
         }
 
         #endregion
@@ -3424,14 +3423,8 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var secretChat = CacheService.GetSecretChat(chat);
-            if (secretChat == null)
-            {
-                return;
-            }
-
-            var dialog = new ChatTtlPopup();
-            dialog.Value = secretChat.Ttl;
+            var dialog = new ChatTtlPopup(chat.Type is ChatTypeSecret);
+            dialog.Value = chat.MessageTtlSetting;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
@@ -3439,7 +3432,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProtoService.Send(new SendChatSetTtlMessage(chat.Id, dialog.Value));
+            ProtoService.Send(new SetChatMessageTtlSetting(chat.Id, dialog.Value));
         }
 
         #endregion
@@ -3864,6 +3857,10 @@ namespace Unigram.ViewModels
                 else if (message1.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel1 && message2.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel2)
                 {
                     return fromChannel1.ChatId == fromChannel2.ChatId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
+                }
+                else if (message1.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport1 && message2.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport2)
+                {
+                    return fromImport1.SenderName == fromImport2.SenderName;
                 }
                 else if (message1.ForwardInfo?.Origin is MessageForwardOriginHiddenUser hiddenUser1 && message2.ForwardInfo?.Origin is MessageForwardOriginHiddenUser hiddenUser2)
                 {

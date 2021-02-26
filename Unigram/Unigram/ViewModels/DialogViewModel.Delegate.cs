@@ -607,12 +607,7 @@ namespace Unigram.ViewModels
 
         public void PlayMessage(MessageViewModel message)
         {
-            if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
-            {
-                ProtoService.Send(new OpenMessageContent(message.ChatId, message.Id));
-            }
-
-            _playbackService.Enqueue(message.Get());
+            _playbackService.Enqueue(message, _threadId);
         }
 
 
