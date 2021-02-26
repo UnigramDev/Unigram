@@ -53,7 +53,7 @@ namespace Unigram.Navigation
                 throw new Exception("Windows already has a wrapper; use Current(window) to fetch.");
             }
             Window = window;
-            Dispatcher = new DispatcherContext(window.Dispatcher);
+            Dispatcher = new DispatcherContext(window.CoreWindow.DispatcherQueue);
             IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
             ActiveWrappers.Add(this);
             window.CoreWindow.Closed += (s, e) =>

@@ -44,7 +44,7 @@ namespace Unigram.Services.ViewService
 
         #region CoreDispatcher
         // Dispatcher for this view. Kept here for sending messages between this view and the main view.
-        public CoreDispatcher CoreDispatcher { get; }
+        public DispatcherContext Dispatcher { get; }
         #endregion
 
         #region Internal tracking fields
@@ -80,6 +80,7 @@ namespace Unigram.Services.ViewService
 
         #region WindowWrapper
         public WindowContext WindowWrapper { get; }
+        public Window Window { get; }
         #endregion
 
         #region NavigationService
@@ -88,8 +89,9 @@ namespace Unigram.Services.ViewService
 
         private ViewLifetimeControl(CoreWindow newWindow)
         {
-            CoreDispatcher = newWindow.Dispatcher;
             WindowWrapper = WindowContext.Current(Window.Current);
+            Dispatcher = WindowWrapper.Dispatcher;
+            Window = Window.Current;
             Id = ApplicationView.GetApplicationViewIdForWindow(newWindow);
 
             // This class will automatically tell the view when its time to close
@@ -99,6 +101,7 @@ namespace Unigram.Services.ViewService
 
         private void RegisterForEvents()
         {
+            Window.Current.Closed += OnClosed;
             ApplicationView.GetForCurrentView().Consolidated += ViewConsolidated;
         }
 
@@ -106,9 +109,15 @@ namespace Unigram.Services.ViewService
         {
             try
             {
+                Window.Current.Closed -= OnClosed;
                 ApplicationView.GetForCurrentView().Consolidated -= ViewConsolidated;
             }
             catch { }
+        }
+
+        private void OnClosed(object sender, CoreWindowEventArgs e)
+        {
+            Closed?.Invoke(this, EventArgs.Empty);
         }
 
         // A view is consolidated with other views hen there's no way for the user to get to it (it's not in the list of recently used apps, cannot be
@@ -217,7 +226,7 @@ namespace Unigram.Services.ViewService
                         // other important events waiting in the queue (this low-priority item
                         // will run after other events
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                        CoreDispatcher.RunAsync(CoreDispatcherPriority.Low, FinalizeRelease);
+                        Window.Dispatcher.RunAsync(CoreDispatcherPriority.Low, FinalizeRelease);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         isDisposing = true;
                     }
@@ -231,6 +240,8 @@ namespace Unigram.Services.ViewService
 
             return refCountCopy;
         }
+
+        public event EventHandler Closed;
 
         // Signals to consumers that its time to close the view so that
         // they can clean up (including calling Window.Close() when finished)

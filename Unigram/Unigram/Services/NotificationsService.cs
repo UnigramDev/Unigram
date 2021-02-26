@@ -1426,7 +1426,7 @@ namespace Unigram.Services
             return false;
         }
 
-        private void BeginOnUIThread(Windows.UI.Core.DispatchedHandler action, Action fallback = null)
+        private void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
         {
             var dispatcher = WindowContext.Default()?.Dispatcher;
             if (dispatcher != null)

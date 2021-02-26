@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Unigram.Common;
 using Unigram.Logs;
-using Windows.UI.Core;
+using Windows.System;
 
 namespace Unigram.Navigation
 {
     public interface IDispatcherContext
     {
-        void Dispatch(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
-        Task DispatchAsync(Func<Task> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
-        Task DispatchAsync(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
-        Task<T> DispatchAsync<T>(Func<T> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
-        Task<T> DispatchAsync<T>(Func<Task<T>> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal);
-
-        void DispatchIdle(Action action);
-        Task DispatchIdleAsync(Func<Task> func);
-        Task DispatchIdleAsync(Action action);
-        Task<T> DispatchIdleAsync<T>(Func<Task<T>> func);
+        void Dispatch(DispatcherQueueHandler action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal);
+        Task DispatchAsync(Func<Task> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal);
+        Task DispatchAsync(Action action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal);
+        Task<T> DispatchAsync<T>(Func<T> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal);
+        Task<T> DispatchAsync<T>(Func<Task<T>> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal);
 
         bool HasThreadAccess { get; }
     }
@@ -27,27 +23,28 @@ namespace Unigram.Navigation
     {
         public static IDispatcherContext Current() => WindowContext.GetForCurrentView().Dispatcher;
 
-        public DispatcherContext(CoreDispatcher dispatcher)
+        public DispatcherContext(DispatcherQueue dispatcher)
         {
             Logger.Info("Constructor");
             _dispatcher = dispatcher;
         }
 
-        public bool HasThreadAccess => _dispatcher.HasThreadAccess;
+        public bool HasThreadAccess => ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess;
 
-        private readonly CoreDispatcher _dispatcher;
+        private readonly DispatcherQueue _dispatcher;
 
         [DebuggerNonUserCode]
-        public async Task DispatchAsync(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public Task DispatchAsync(Action action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
                 action();
+                return Task.CompletedTask;
             }
             else
             {
                 var tcs = new TaskCompletionSource<object>();
-                await _dispatcher.RunAsync(priority, () =>
+                var result = _dispatcher.TryEnqueue(priority, () =>
                 {
                     try
                     {
@@ -58,22 +55,28 @@ namespace Unigram.Navigation
                     {
                         tcs.TrySetException(ex);
                     }
-                }).AsTask();
-                await tcs.Task;
+                });
+
+                if (result)
+                {
+                    return tcs.Task;
+                }
+
+                return Task.CompletedTask;
             }
         }
 
         [DebuggerNonUserCode]
-        public async Task DispatchAsync(Func<Task> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public Task DispatchAsync(Func<Task> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
-                await func().ConfigureAwait(false);
+                return func();
             }
             else
             {
                 var tcs = new TaskCompletionSource<object>();
-                await _dispatcher.RunAsync(priority, async () =>
+                var result = _dispatcher.TryEnqueue(priority, async () =>
                 {
                     try
                     {
@@ -85,21 +88,27 @@ namespace Unigram.Navigation
                         tcs.TrySetException(ex);
                     }
                 });
-                await tcs.Task;
+
+                if (result)
+                {
+                    return tcs.Task;
+                }
+
+                return Task.CompletedTask;
             }
         }
 
         [DebuggerNonUserCode]
-        public async Task<T> DispatchAsync<T>(Func<T> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public Task<T> DispatchAsync<T>(Func<T> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
-                return func();
+                return Task.FromResult(func());
             }
             else
             {
                 var tcs = new TaskCompletionSource<T>();
-                await _dispatcher.RunAsync(priority, () =>
+                var result = _dispatcher.TryEnqueue(priority, () =>
                 {
                     try
                     {
@@ -110,21 +119,29 @@ namespace Unigram.Navigation
                         tcs.TrySetException(ex);
                     }
                 });
-                return await tcs.Task;
+
+                if (result)
+                {
+                    return tcs.Task;
+                }
+                else
+                {
+                    return Task.FromResult<T>(default);
+                }
             }
         }
 
         [DebuggerNonUserCode]
-        public async Task<T> DispatchAsync<T>(Func<Task<T>> func, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public Task<T> DispatchAsync<T>(Func<Task<T>> func, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
-                return await func();
+                return func();
             }
             else
             {
                 var tcs = new TaskCompletionSource<T>();
-                await _dispatcher.RunAsync(priority, async () =>
+                var result = _dispatcher.TryEnqueue(priority, async () =>
                 {
                     try
                     {
@@ -135,14 +152,21 @@ namespace Unigram.Navigation
                         tcs.TrySetException(ex);
                     }
                 });
-                return await tcs.Task;
+                if (result)
+                {
+                    return tcs.Task;
+                }
+                else
+                {
+                    return Task.FromResult<T>(default);
+                }
             }
         }
 
         [DebuggerNonUserCode]
-        public void Dispatch(Action action, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+        public void Dispatch(DispatcherQueueHandler action, DispatcherQueuePriority priority = DispatcherQueuePriority.Normal)
         {
-            if (_dispatcher.HasThreadAccess && priority == CoreDispatcherPriority.Normal)
+            if (ApiInfo.CanCheckThreadAccess && _dispatcher.HasThreadAccess && priority == DispatcherQueuePriority.Normal)
             {
                 action();
             }
@@ -151,93 +175,13 @@ namespace Unigram.Navigation
                 //dispatcher.RunAsync(priority, () => action()).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
                 try
                 {
-                    _ = _dispatcher.RunAsync(priority, () => action());
+                    _dispatcher.TryEnqueue(priority, action);
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
             }
-        }
-
-        [DebuggerNonUserCode]
-        public async Task DispatchIdleAsync(Action action)
-        {
-            var tcs = new TaskCompletionSource<object>();
-            await _dispatcher.RunIdleAsync(delegate
-            {
-                try
-                {
-                    action();
-                    tcs.TrySetResult(null);
-                }
-                catch (Exception ex)
-                {
-                    tcs.TrySetException(ex);
-                }
-            }).AsTask().ConfigureAwait(false);
-            await tcs.Task.ConfigureAwait(false);
-        }
-
-        [DebuggerNonUserCode]
-        public async Task DispatchIdleAsync(Func<Task> func)
-        {
-            var tcs = new TaskCompletionSource<object>();
-            await _dispatcher.RunIdleAsync(async delegate
-            {
-                try
-                {
-                    await func().ConfigureAwait(false);
-                    tcs.TrySetResult(null);
-                }
-                catch (Exception ex)
-                {
-                    tcs.TrySetException(ex);
-                }
-            }).AsTask().ConfigureAwait(false);
-            await tcs.Task.ConfigureAwait(false);
-        }
-
-        [DebuggerNonUserCode]
-        public async Task<T> DispatchIdleAsync<T>(Func<T> func)
-        {
-            var tcs = new TaskCompletionSource<T>();
-            await _dispatcher.RunIdleAsync(delegate
-            {
-                try
-                {
-                    tcs.TrySetResult(func());
-                }
-                catch (Exception ex)
-                {
-                    tcs.TrySetException(ex);
-                }
-            }).AsTask().ConfigureAwait(false);
-            return await tcs.Task.ConfigureAwait(false);
-        }
-
-        [DebuggerNonUserCode]
-        public async Task<T> DispatchIdleAsync<T>(Func<Task<T>> func)
-        {
-            var tcs = new TaskCompletionSource<T>();
-            await _dispatcher.RunIdleAsync(async delegate
-            {
-                try
-                {
-                    tcs.TrySetResult(await func());
-                }
-                catch (Exception ex)
-                {
-                    tcs.TrySetException(ex);
-                }
-            }).AsTask().ConfigureAwait(false);
-            return await tcs.Task.ConfigureAwait(false);
-        }
-
-        [DebuggerNonUserCode]
-        public void DispatchIdle(Action action)
-        {
-            _ = _dispatcher.RunIdleAsync(args => action());
         }
     }
 }
