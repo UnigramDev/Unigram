@@ -27,13 +27,22 @@ namespace Unigram.Common
             _class = deviceClass;
             _setDevice = setDevice;
 
-            _watcher = DeviceInformation.CreateWatcher(deviceClass);
-            _watcher.Added += OnAdded;
-            _watcher.Removed += OnRemoved;
+            try
+            {
+                _watcher = DeviceInformation.CreateWatcher(deviceClass);
+                _watcher.Added += OnAdded;
+                _watcher.Removed += OnRemoved;
+            }
+            catch { }
         }
 
         public void Start()
         {
+            if (_watcher == null)
+            {
+                return;
+            }
+
             if (_watcher.Status == DeviceWatcherStatus.Created)
             {
                 _watcher.Start();
