@@ -250,6 +250,9 @@
   <data name="AccDescrOpenChat" xml:space="preserve">
     <value>باز کردن گفتگو</value>
   </data>
+  <data name="AccDescrOpenInPhotoViewer" xml:space="preserve">
+    <value>باز کردن در نمایشگر عکس</value>
+  </data>
   <data name="AccDescrOpenMenu" xml:space="preserve">
     <value>باز کردن فهرست مسیریابی</value>
   </data>
@@ -291,6 +294,9 @@
   </data>
   <data name="AccDescrQuizCorrectAnswer" xml:space="preserve">
     <value>پاسخ درست</value>
+  </data>
+  <data name="AccDescrQuizExplanation" xml:space="preserve">
+    <value>توضیحات</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>⁨{0}⁩ دریافت شد</value>
@@ -421,6 +427,12 @@
   <data name="AccDescrSwitchCamera" xml:space="preserve">
     <value>تغییر دوربین</value>
   </data>
+  <data name="AccDescrSwitchToDayTheme" xml:space="preserve">
+    <value>تغییر به پوسته روز</value>
+  </data>
+  <data name="AccDescrSwitchToNightTheme" xml:space="preserve">
+    <value>تغییر به پوسته شب</value>
+  </data>
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>یک عکس دیگر نیز بگیرید</value>
   </data>
@@ -472,6 +484,9 @@
   <data name="AccessError" xml:space="preserve">
     <value>خطای دسترسی</value>
   </data>
+  <data name="AccExitFullscreen" xml:space="preserve">
+    <value>خروج از حالت تمام‌صفحه</value>
+  </data>
   <data name="Account" xml:space="preserve">
     <value>حساب کاربری</value>
   </data>
@@ -492,6 +507,9 @@
   </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>برای بایگانی صفحه را به سمت پایین بکشید</value>
+  </data>
+  <data name="AccSwitchToFullscreen" xml:space="preserve">
+    <value>تغییر به حالت تمام‌صفحه</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>با دقت ⁨{0}⁩</value>
@@ -597,7 +615,7 @@
     <value>⁨un1⁩ شما را به گفتگوی صوتی دعوت کرد</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
-    <value>⁨un1⁩ یک گفتگوی صوتی شروع کرد</value>
+    <value>⁨un1⁩ یک گفتگوی صوتی را شروع کرد</value>
   </data>
   <data name="ActionGroupCallStartedByYou" xml:space="preserve">
     <value>شما یک گفتگوی صوتی را شروع کردید</value>
@@ -1216,6 +1234,9 @@
   <data name="AreYouSureDeleteAndExit" xml:space="preserve">
     <value>آیا شما از حذف و ترک گروه اطمینان دارید؟</value>
   </data>
+  <data name="AreYouSureDeleteAndExitChannel" xml:space="preserve">
+    <value>آیا از حذف و ترک کانال اطمینان دارید؟</value>
+  </data>
   <data name="AreYouSureDeleteAndExitName" xml:space="preserve">
     <value>آیا از حذف و ترک گروه **⁨{0}⁩** اطمینان دارید؟</value>
   </data>
@@ -1431,6 +1452,12 @@
   </data>
   <data name="AudioSavedHint" xml:space="preserve">
     <value>فایل در موسیقی ذخیره شد</value>
+  </data>
+  <data name="AudioSpeedFast" xml:space="preserve">
+    <value>صدا با سرعت دو برابر پخش خواهد شد.</value>
+  </data>
+  <data name="AudioSpeedNormal" xml:space="preserve">
+    <value>صدا با سرعت معمولی پخش خواهد شد.</value>
   </data>
   <data name="AudiosSavedHint_few" xml:space="preserve">
     <value/>
@@ -2206,7 +2233,7 @@
     <value>ایجاد کانال</value>
   </data>
   <data name="ChannelAlertText" xml:space="preserve">
-    <value>کانال‌ها روشی برای انتشار پیام‌های شما برای تعداد نامحدودی مخاطب هستند.</value>
+    <value>کانال‌ها روشی یک به چند برای انتشار پیام‌های شما به تعداد نامحدودی مخاطب هستند.</value>
   </data>
   <data name="ChannelAlertTitle" xml:space="preserve">
     <value>کانال چيست؟ </value>
@@ -2296,7 +2323,7 @@
     <value>آیا از ترک **⁨{0}⁩** اطمینان دارید؟</value>
   </data>
   <data name="ChannelLinkInfo" xml:space="preserve">
-    <value>هر کسی که تلگرام را نصب کرده باشد می‌تواند با استفاده از این لینک به کانال شما بپیوندد.</value>
+    <value>هر کسی که تلگرام را نصب کرده باشد، می‌تواند با استفاده از این لینک به کانال شما بپیوندد.</value>
   </data>
   <data name="ChannelLinkTitle" xml:space="preserve">
     <value>لینک دائم</value>
@@ -2479,7 +2506,7 @@
 لطفاً پیش از عضویت در گروه یا کانال جدید برخی از آن‌ها را ترک کنید.</value>
   </data>
   <data name="ChannelTooMuchTitle" xml:space="preserve">
-    <value>در کانال‌ها و گروه‌های بسیار زیادی عضو هستید</value>
+    <value>کانال‌ها و گروه‌های بیش از حد</value>
   </data>
   <data name="ChannelType" xml:space="preserve">
     <value>نوع کانال</value>
@@ -2571,7 +2598,7 @@
     <value>فایل</value>
   </data>
   <data name="chatFullDate" xml:space="preserve">
-    <value>MMMM d, yyyy</value>
+    <value>d MMMM، yyyy</value>
   </data>
   <data name="ChatGallery" xml:space="preserve">
     <value>گالری</value>
@@ -2763,7 +2790,7 @@
     <value>شما</value>
   </data>
   <data name="ChatYourSelfTitle" xml:space="preserve">
-    <value>فضای ذخیره‌سازی اَبری شما</value>
+    <value>فضای ذخیره‌سازی ابری شما</value>
   </data>
   <data name="Checking" xml:space="preserve">
     <value>در حال بررسی...</value>
@@ -3213,6 +3240,9 @@
   <data name="CreateGroupError" xml:space="preserve">
     <value>متأسفانه به دلیل تنظیمات حریم خصوصی این کاربران شما نمی‌توانید با آن‌ها گروهی ایجاد کنید.</value>
   </data>
+  <data name="CreateGroupForImport" xml:space="preserve">
+    <value>ایجاد گروه جدید برای انتقال</value>
+  </data>
   <data name="CreateLink" xml:space="preserve">
     <value>ایجاد لینک</value>
   </data>
@@ -3440,6 +3470,12 @@
   <data name="DeleteAll" xml:space="preserve">
     <value>حذف همه</value>
   </data>
+  <data name="DeleteAllCalls" xml:space="preserve">
+    <value>حذف تمامی تماس‌ها</value>
+  </data>
+  <data name="DeleteAllCallsText" xml:space="preserve">
+    <value>آیا می‌خواهید تمامی تماس‌های اخیر را حذف کنید؟</value>
+  </data>
   <data name="DeleteAllFrom" xml:space="preserve">
     <value>حذف همه پیام‌های ⁨{0}⁩</value>
   </data>
@@ -3479,6 +3515,15 @@
   <data name="DeleteBanUser" xml:space="preserve">
     <value>محروم کردن کاربر</value>
   </data>
+  <data name="DeleteCalls" xml:space="preserve">
+    <value>حذف تماس‌ها</value>
+  </data>
+  <data name="DeleteCallsForEveryone" xml:space="preserve">
+    <value>حذف برای همه</value>
+  </data>
+  <data name="DeleteChannelForAll" xml:space="preserve">
+    <value>حذف برای تمامی مشترکان</value>
+  </data>
   <data name="DeleteChat" xml:space="preserve">
     <value>حذف و خروج</value>
   </data>
@@ -3508,6 +3553,9 @@
   </data>
   <data name="DeleteGif" xml:space="preserve">
     <value>گیف از این قسمت حذف شود؟</value>
+  </data>
+  <data name="DeleteGroupForAll" xml:space="preserve">
+    <value>حذف گروه برای تمامی اعضا</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>فایل زبان حذف شود؟</value>
@@ -3553,6 +3601,9 @@
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>گزارش هرزنامه</value>
+  </data>
+  <data name="DeleteSelectedCallsText" xml:space="preserve">
+    <value>آیا می‌خواهید تماس‌های انتخاب شده را از تماس‌های اخیر حذف کنید؟</value>
   </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>حذف پیام</value>
@@ -3675,7 +3726,7 @@
     <value>حذف پیام</value>
   </data>
   <data name="DiscardVoiceMessageDescription" xml:space="preserve">
-    <value>آیا از متوقف کردن ضبط صدا و حذف پیام صوتی خود اطمینان دارید؟</value>
+    <value>آیا از متوقف کردن ضبط و حذف پیام صوتی خود اطمینان دارید؟</value>
   </data>
   <data name="DiscardVoiceMessageTitle" xml:space="preserve">
     <value>حذف پیام صوتی</value>
@@ -4389,7 +4440,7 @@
     <value>خواندن پیام‌ها</value>
   </data>
   <data name="EventLogRestrictedSendEmbed" xml:space="preserve">
-    <value>قرار دادن لینک</value>
+    <value>پیش‌نمایش لینک‌ها</value>
   </data>
   <data name="EventLogRestrictedSendMedia" xml:space="preserve">
     <value>ارسال رسانه</value>
@@ -4495,6 +4546,9 @@
   <data name="Fade" xml:space="preserve">
     <value>محو کردن</value>
   </data>
+  <data name="FakeMessage" xml:space="preserve">
+    <value>جعلی</value>
+  </data>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>علاقه‌مندی‌ها</value>
   </data>
@@ -4574,7 +4628,7 @@
     <value>متأسفانه نمی‌توانید بیش از 100 گفتگو را در یک پوشه شامل نکنید.</value>
   </data>
   <data name="FilterAddToAlertFullTitle" xml:space="preserve">
-    <value>به سقف  مجاز رسیدید</value>
+    <value>به سقف مجاز رسیدید</value>
   </data>
   <data name="FilterAllChats" xml:space="preserve">
     <value>تمامی گفتگوها</value>
@@ -4868,16 +4922,16 @@
     <value>MMM d yyyy</value>
   </data>
   <data name="formatterBannedUntil12H" xml:space="preserve">
-    <value>MMM dd yyyy, h:mm a</value>
+    <value>dd MMM yyyy، h:mm a</value>
   </data>
   <data name="formatterBannedUntil24H" xml:space="preserve">
-    <value>MMM dd yyyy, HH:mm</value>
+    <value>dd MMM yyyy، HH:mm</value>
   </data>
   <data name="formatterBannedUntilThisYear12H" xml:space="preserve">
-    <value>MMM dd, h:mm a</value>
+    <value>dd MMM، h:mm a</value>
   </data>
   <data name="formatterBannedUntilThisYear24H" xml:space="preserve">
-    <value>MMM dd, HH:mm</value>
+    <value>dd MMMM، HH:mm</value>
   </data>
   <data name="formatterDay12H" xml:space="preserve">
     <value>h:mm a</value>
@@ -4898,10 +4952,10 @@
     <value>LLLL yyyy</value>
   </data>
   <data name="formatterStats12H" xml:space="preserve">
-    <value>MMM dd yyyy, h:mm a</value>
+    <value>dd MMM yyyy، h:mm a</value>
   </data>
   <data name="formatterStats24H" xml:space="preserve">
-    <value>MMM dd yyyy, HH:mm</value>
+    <value>dd MMM yyyy، HH:mm</value>
   </data>
   <data name="formatterWeek" xml:space="preserve">
     <value>EEE</value>
@@ -5158,6 +5212,30 @@
   <data name="FromYou" xml:space="preserve">
     <value>شما</value>
   </data>
+  <data name="FwdMessagesToChats" xml:space="preserve">
+    <value>پیام‌ها به **⁨{0}⁩** هدایت شدند.</value>
+  </data>
+  <data name="FwdMessagesToGroup" xml:space="preserve">
+    <value>پیام‌ها به **⁨{0}⁩** هدایت شدند.</value>
+  </data>
+  <data name="FwdMessagesToSavedMessages" xml:space="preserve">
+    <value>پیام‌ها به **پیام‌های ذخیره شده** هدایت شدند.</value>
+  </data>
+  <data name="FwdMessagesToUser" xml:space="preserve">
+    <value>پیام‌ها به **⁨{0}⁩** هدایت شدند.</value>
+  </data>
+  <data name="FwdMessageToChats" xml:space="preserve">
+    <value>پیام به **⁨{0}⁩** هدایت شد.</value>
+  </data>
+  <data name="FwdMessageToGroup" xml:space="preserve">
+    <value>پیام به **⁨{0}⁩** هدایت شد.</value>
+  </data>
+  <data name="FwdMessageToSavedMessages" xml:space="preserve">
+    <value>پیام به **پیام‌های ذخیره شده** هدایت شد.</value>
+  </data>
+  <data name="FwdMessageToUser" xml:space="preserve">
+    <value>پیام به **⁨{0}⁩** هدایت شد.</value>
+  </data>
   <data name="Gallery" xml:space="preserve">
     <value>گالری</value>
   </data>
@@ -5383,6 +5461,12 @@
   <data name="Highlights" xml:space="preserve">
     <value>هایلایت‌ها</value>
   </data>
+  <data name="HintRead" xml:space="preserve">
+    <value>خوانده شد</value>
+  </data>
+  <data name="HintSent" xml:space="preserve">
+    <value>دریافت شد</value>
+  </data>
   <data name="HistoryCleared" xml:space="preserve">
     <value>تاریخچه پاک شد</value>
   </data>
@@ -5443,8 +5527,104 @@
   <data name="ImagesTab2" xml:space="preserve">
     <value>تصاویر</value>
   </data>
+  <data name="ImporImportingService" xml:space="preserve">
+    <value>در حال انتقال پیام‌ها و رسانه‌ها...</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>انتقال</value>
+  </data>
   <data name="ImportContacts" xml:space="preserve">
     <value>وارد کردن مخاطبین</value>
+  </data>
+  <data name="ImportCount" xml:space="preserve">
+    <value>⁨{0}⁩ از ⁨{1}⁩</value>
+  </data>
+  <data name="ImportDone" xml:space="preserve">
+    <value>انجام شد</value>
+  </data>
+  <data name="ImportDoneInfo" xml:space="preserve">
+    <value>با انتقال گفتگوهای بیشتر به تلگرام، فضای ذخیره‌سازی دستگاه خود را آزاد کنید.</value>
+  </data>
+  <data name="ImportDoneTitle" xml:space="preserve">
+    <value>گفتگو با موفقیت انتقال یافت!</value>
+  </data>
+  <data name="ImportedInfo" xml:space="preserve">
+    <value>این پیام از برنامه دیگری انتقال یافته است. نمی‌توانیم تضمین کنیم که واقعی باشد.</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>انتقال انجام شد</value>
+  </data>
+  <data name="ImportErrorChatInvalidGroup" xml:space="preserve">
+    <value>این نوع فایل مربوط به یک کاربر است، اما شما یک گروه را انتخاب کرده‌اید.</value>
+  </data>
+  <data name="ImportErrorChatInvalidUser" xml:space="preserve">
+    <value>این نوع فایل مربوط به یک گروه است، اما شما یک کاربر را انتخاب کرده‌اید.</value>
+  </data>
+  <data name="ImportErrorFileFormatInvalid" xml:space="preserve">
+    <value>نوع فایل نامعتبر است.</value>
+  </data>
+  <data name="ImportErrorFileLang" xml:space="preserve">
+    <value>زبان فایل ناشناخته است.</value>
+  </data>
+  <data name="ImportErrorNotAdmin" xml:space="preserve">
+    <value>برای انتقال پیام‌ها در گروه، شما باید در آن مدیر باشید.</value>
+  </data>
+  <data name="ImportErrorTitle" xml:space="preserve">
+    <value>خطا در انتقال</value>
+  </data>
+  <data name="ImportErrorUserBlocked" xml:space="preserve">
+    <value>به دلیل تنظیمات حریم خصوصی، انتقال پیام‌ها امکان‌پذیر نبود.</value>
+  </data>
+  <data name="ImportFailedToUpload" xml:space="preserve">
+    <value>آپلود فایل انجام نشد.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>فایل برای انتقال بیش از حد بزرگ است.</value>
+  </data>
+  <data name="ImportHeader" xml:space="preserve">
+    <value>انتقال پیام‌ها و رسانه‌ها به...</value>
+  </data>
+  <data name="ImportHeaderContacts" xml:space="preserve">
+    <value>یا انتخاب یکی از مخاطبین خود</value>
+  </data>
+  <data name="ImportImportingInfo" xml:space="preserve">
+    <value>لطفاً تا پایان انتقال،
+تلگرام را باز نگه دارید.</value>
+  </data>
+  <data name="ImportImportingTitle" xml:space="preserve">
+    <value>در حال انتقال گفتگو</value>
+  </data>
+  <data name="ImportMessages" xml:space="preserve">
+    <value>انتقال پیام‌ها</value>
+  </data>
+  <data name="ImportMutualError" xml:space="preserve">
+    <value>شما فقط می‌توانید پیام‌ها را به گفتگوهای خصوصی با کاربرانی که هر دو یکدیگر را در فهرست مخاطبین خود ذخیره کرده باشید، انتقال دهید.</value>
+  </data>
+  <data name="ImportNotAdmin" xml:space="preserve">
+    <value>برای انتقال پیام‌ها در گروه، شما باید در آن مدیر باشید.</value>
+  </data>
+  <data name="ImportToChat" xml:space="preserve">
+    <value>آیا می‌خواهید پیام‌ها از طرف **⁨{0}⁩** را به گروه **⁨{1}⁩** انتقال دهید؟
+
+پیام‌ها با تاریخ امروز انتقال داده می‌شوند، ولی شامل برچسب زمانی اصلی خود نیز خواهند بود. تمامی اعضا پیام‌ها را خواهند دید.</value>
+  </data>
+  <data name="ImportToChatNoTitle" xml:space="preserve">
+    <value>آیا می‌خواهید پیام‌ها را به گروه **⁨{0}⁩** انتقال دهید؟
+
+پیام‌ها با تاریخ امروز انتقال داده می‌شوند، ولی شامل برچسب زمانی اصلی خود نیز خواهند بود. تمامی اعضا پیام‌ها را خواهند دید.</value>
+  </data>
+  <data name="ImportToUser" xml:space="preserve">
+    <value>آیا می‌خواهید پیام‌ها از طرف **⁨{0}⁩** را به گفتگو با **⁨{1}⁩** انتقال دهید؟
+
+پیام‌ها با تاریخ امروز انتقال داده می‌شوند، ولی شامل برچسب زمانی اصلی خود نیز خواهند بود. هر دو طرف گفتگو پیام‌ها را خواهند دید.</value>
+  </data>
+  <data name="ImportToUserNoTitle" xml:space="preserve">
+    <value>آیا می‌خواهید پیام‌ها را به گفتگو با **⁨{0}⁩** انتقال دهید؟
+
+پیام‌ها با تاریخ امروز انتقال داده می‌شوند، ولی شامل برچسب زمانی اصلی خود نیز خواهند بود. هر دو طرف گفتگو پیام‌ها را خواهند دید.</value>
+  </data>
+  <data name="ImportUploading" xml:space="preserve">
+    <value>در حال انتقال پیام‌ها و رسانه‌ها... **%⁨%d⁩**</value>
   </data>
   <data name="InactiveChannelSignature" xml:space="preserve">
     <value>کانال، غیرفعال به مدت ⁨{0}⁩</value>
@@ -5550,6 +5730,9 @@
   </data>
   <data name="InviteLink" xml:space="preserve">
     <value>لینک دعوت</value>
+  </data>
+  <data name="InviteLinks" xml:space="preserve">
+    <value>لینک‌های دعوت</value>
   </data>
   <data name="InviteText2" xml:space="preserve">
     <value>سلام، من از تلگرام برای گفتگو استفاده می‌کنم. به من بپیوند! تلگرام را از اینجا دانلود کن: ⁨{0}⁩</value>
@@ -5681,9 +5864,9 @@
     <value>همیشه</value>
   </data>
   <data name="KeepMediaInfo" xml:space="preserve">
-    <value>عکس‌ها، ویدیوها و سایر فایل‌های گفتگوهای اَبری که شما در این بازه آن‌ها را ** مشاهده نکرده‌اید** جهت ذخیره‌سازی فضای دیسک از این دستگاه حذف می‌شوند.
+    <value>عکس‌ها، ویدیوها و سایر فایل‌های گفتگوهای ابری که شما در این بازه آن‌ها را ** مشاهده نکرده‌اید** جهت ذخیره‌سازی فضای دیسک از این دستگاه حذف می‌شوند.
 
-تمامی رسانه‌ها در اَبر تلگرام باقی مانده و در صورت نیاز شما می‌توانید آن‌ها را دوباره دانلود کنید.</value>
+تمامی رسانه‌ها در ابر تلگرام باقی مانده و در صورت نیاز شما می‌توانید آن‌ها را دوباره دانلود کنید.</value>
   </data>
   <data name="KickFromBroadcast" xml:space="preserve">
     <value>حذف از فهرست انتشار</value>
@@ -5847,11 +6030,14 @@
     <value>لینک در حافظه کپی شد.
 این لینک فقط برای اعضای این گفتگو کار می‌کند.</value>
   </data>
+  <data name="LinkCopiedPrivateInfo" xml:space="preserve">
+    <value>این لینک فقط برای اعضای این گفتگو کار می‌کند.</value>
+  </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>کانال متصل</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
-    <value>هر کسی که تلگرام را نصب کرده باشد می‌تواند با استفاده از این لینک به گروه شما بپیوندد.</value>
+    <value>هر کسی که تلگرام را نصب کرده باشد، می‌تواند با استفاده از این لینک به گروه شما بپیوندد.</value>
   </data>
   <data name="LinkInUse" xml:space="preserve">
     <value>متأسفانه این نام قبلاً انتخاب شده است.</value>
@@ -6325,6 +6511,9 @@
   </data>
   <data name="Message" xml:space="preserve">
     <value>پیام</value>
+  </data>
+  <data name="MessageCopied" xml:space="preserve">
+    <value>پیام در حافظه کپی شد.</value>
   </data>
   <data name="MessageLifetime" xml:space="preserve">
     <value>زمان‌سنج نابود کننده</value>
@@ -6807,7 +6996,7 @@
     <value>به تلگرام خوش آمدید</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>با زدن دکمه مداد در گوشه پایین سمت چپ پیام‌رسانی را شروع کنید.</value>
+    <value>با زدن بر روی یکی از مخاطبین خود در پایین، پیام‌رسانی را شروع کنید.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
     <value>با زدن دکمه مداد در گوشه پایین سمت چپ پیام‌رسانی را شروع کنید.</value>
@@ -6876,6 +7065,9 @@
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>هنوز پیامی در اینجا موجود نیست...</value>
+  </data>
+  <data name="NoMessagesGreetingsDescription" xml:space="preserve">
+    <value>پیامی ارسال کنید یا بر روی خوش‌آمدگویی زیر بزنید.</value>
   </data>
   <data name="NoOtherSessions" xml:space="preserve">
     <value>نشست فعال دیگری موجود نیست</value>
@@ -7768,7 +7960,7 @@
 به پیام‌های خود دسترسی داشته باشید.</value>
   </data>
   <data name="Page6Title" xml:space="preserve">
-    <value>بر پایه رایانش اَبری</value>
+    <value>بر پایه رایانش ابری</value>
   </data>
   <data name="PaintArrow" xml:space="preserve">
     <value>فلش</value>
@@ -8500,7 +8692,7 @@
     <value>آدرس ایمیل به عنوان اطلاعات صدور قبض به ⁨{0}⁩ ارسال خواهد شد.</value>
   </data>
   <data name="PaymentFailed" xml:space="preserve">
-    <value>متأسفانه پرداخت پذیرفته نشد.</value>
+    <value>متأسفانه پرداخت رد شد.</value>
   </data>
   <data name="PaymentInvoice" xml:space="preserve">
     <value>صورت‌حساب</value>
@@ -8618,6 +8810,24 @@
   <data name="PendingEmailText" xml:space="preserve">
     <value>ایمیل بازیابی شما ⁨{0}⁩ هنوز فعال نشده و در انتظار تأیید است.</value>
   </data>
+  <data name="PeopleJoined_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleJoined_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleJoined_one" xml:space="preserve">
+    <value>⁨{0}⁩ نفر پیوست</value>
+  </data>
+  <data name="PeopleJoined_other" xml:space="preserve">
+    <value>⁨{0}⁩ نفر پیوستند</value>
+  </data>
+  <data name="PeopleJoined_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleJoined_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="PeopleNearby" xml:space="preserve">
     <value>افراد نزدیک</value>
   </data>
@@ -8655,7 +8865,7 @@
 ما فقط در مدت زمانی که شما انتخاب می‌کنید به موقعیت مکانی شما دسترسی خواهیم داشت، و شما می‌توانید هر زمان که بخواهید به اشتراک گذاری آن را متوقف کنید. ما از موقعیت مکانی شما برای هیچ هدفی جز به اشتراک گذاری آن در این گفتگو استفاده نمی‌کنیم.</value>
   </data>
   <data name="PermissionContacts" xml:space="preserve">
-    <value>برای اینکه شما بتوانید در تمامی دستگاه‌های خود با دوستانتان ارتباط برقرار کنید، مخاطبین شما به طور مداوم با سرورهای اَبری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
+    <value>برای اینکه شما بتوانید در تمامی دستگاه‌های خود با دوستانتان ارتباط برقرار کنید، مخاطبین شما به طور مداوم با سرورهای ابری و رمزگذاری شده تلگرام همگام‌سازی خواهند شد.</value>
   </data>
   <data name="PermissionDrawAboveOtherApps" xml:space="preserve">
     <value>تلگرام جهت پخش ویدیوها در حالت تصویر در تصویر باید به گزینه فعال بودن بر روی سایر برنامه‌ها دسترسی داشته باشد.</value>
@@ -8727,7 +8937,7 @@
     <value>متأسفانه شما اخیراً دفعات زیادی حساب کاربری خود را حذف و مجدداً ایجاد کرده‌اید. لطفاً چند روز صبر کنید تا بتوانید مجدداً ثبت نام کنید.</value>
   </data>
   <data name="PhoneNumberHelp" xml:space="preserve">
-    <value>شما می‌توانید شماره تلفن خود را در اینجا تغییر دهید. حساب کاربری شما و تمامی داده‌های اَبری از جمله پیام‌ها، رسانه‌ها، مخاطبین و... به شماره جدید انتقال خواهند یافت.</value>
+    <value>شما می‌توانید شماره تلفن خود را در اینجا تغییر دهید. حساب کاربری شما و تمامی داده‌های ابری از جمله پیام‌ها، رسانه‌ها، مخاطبین و... به شماره جدید انتقال خواهند یافت.</value>
   </data>
   <data name="PhoneNumberSearch" xml:space="preserve">
     <value>شماره تلفن</value>
@@ -9114,7 +9324,7 @@
     <value>عکس‌های پروفایل</value>
   </data>
   <data name="PrivacyProfilePhotoInfo" xml:space="preserve">
-    <value>شما می‌توانید کسانی که قادرند عکس پروفایل شما را ببینند را محدود کنید.</value>
+    <value>شما می‌توانید کسانی که قادرند عکس پروفایل شما را ببینند را به صورت جداگانه محدود کنید.</value>
   </data>
   <data name="PrivacyProfilePhotoInfo2" xml:space="preserve">
     <value>شما می‌توانید کاربران یا کل یک گروه را به عنوان استثناهایی اضافه کنید که جایگزین تنظیمات بالا خواهند شد.</value>
@@ -9487,11 +9697,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ReportChatDescription" xml:space="preserve">
     <value>توضیحات</value>
   </data>
+  <data name="ReportChatFakeAccount" xml:space="preserve">
+    <value>حساب کاربری جعلی</value>
+  </data>
   <data name="ReportChatOther" xml:space="preserve">
     <value>سایر</value>
   </data>
   <data name="ReportChatPornography" xml:space="preserve">
-    <value>مستهجن</value>
+    <value>پورنوگرافی</value>
   </data>
   <data name="ReportChatSent" xml:space="preserve">
     <value>گزارش ارسال شد</value>
@@ -9949,6 +10162,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="SelectChat" xml:space="preserve">
     <value>انتخاب گفتگو</value>
+  </data>
+  <data name="SelectChats" xml:space="preserve">
+    <value>انتخاب گفتگوها</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>انتخاب رنگ</value>
@@ -10769,7 +10985,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>آزمون متوقف شود؟</value>
   </data>
   <data name="StopShowingMe" xml:space="preserve">
-    <value>به من نشان نده</value>
+    <value>مرا نشان نده</value>
   </data>
   <data name="StopVerification" xml:space="preserve">
     <value>آیا می‌خواهید فرآیند تأیید را متوقف کنید؟</value>
@@ -10874,6 +11090,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TapHereGifs" xml:space="preserve">
     <value>جهت دسترسی به گیف‌های ذخیره شده اینجا را بزنید</value>
+  </data>
+  <data name="TapOnThePencil" xml:space="preserve">
+    <value>برای شروع یک گفتگوی جدید، بر روی مداد بزنید</value>
   </data>
   <data name="TapToChange" xml:space="preserve">
     <value>برای تغییر ضربه بزنید</value>
@@ -11209,7 +11428,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>امروز در ⁨{0}⁩</value>
   </data>
   <data name="TooManyCommunities" xml:space="preserve">
-    <value>در کانال‌ها و گروه‌های بسیار زیادی عضو هستید</value>
+    <value>کانال‌ها و گروه‌های بیش از حد</value>
   </data>
   <data name="TooManyCommunitiesHintCreate" xml:space="preserve">
     <value>متأسفانه شما عضو گروه‌ها و کانال‌های زیادی هستید. لطفاً پیش از ایجاد گروه یا کانال جدید برخی از آن‌ها را ترک کنید.</value>
@@ -11218,7 +11437,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>متأسفانه شما عضو گروه‌ها و کانال‌های زیادی هستید. به دلایل فنی، شما باید پیش از تغییر این تنظیمات در گروه‌های خود ابتدا برخی از آن‌ها را ترک کنید.</value>
   </data>
   <data name="TooManyCommunitiesHintJoin" xml:space="preserve">
-    <value>متأسفانه شما عضو گروه‌ها و کانال‌های زیادی هستید. لطفاً پیش از عضویت در گروه یا کانال جدید برخی از آن‌ها را ترک کنید.</value>
+    <value>شما عضو گروه‌ها و کانال‌های زیادی هستید. پیش از عضویت در گروه یا کانال جدید، برخی از آن‌ها را ترک کنید.</value>
   </data>
   <data name="TooManyTries" xml:space="preserve">
     <value>بیش از حد مجاز امتحان کردید.
@@ -11300,6 +11519,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="TwoStepVerificationSetPassword" xml:space="preserve">
     <value>تنظیم گذرواژه</value>
+  </data>
+  <data name="TwoStepVerificationShowPassword" xml:space="preserve">
+    <value>نمایش گذرواژه</value>
   </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>تأیید دو مرحله‌ای</value>
@@ -11620,7 +11842,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>مدت زمان</value>
   </data>
   <data name="UserRestrictionsEmbedLinks" xml:space="preserve">
-    <value>قرار دادن لینک</value>
+    <value>پیش‌نمایش لینک‌ها</value>
   </data>
   <data name="UserRestrictionsInviteUsers" xml:space="preserve">
     <value>افزودن کاربران</value>
@@ -11629,7 +11851,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>نمی‌تواند اطلاعات را تغییر دهد</value>
   </data>
   <data name="UserRestrictionsNoEmbedLinks" xml:space="preserve">
-    <value>بدون قرار دادن لینک</value>
+    <value>بدون پیش‌نمایش لینک‌ها</value>
   </data>
   <data name="UserRestrictionsNoInviteUsers" xml:space="preserve">
     <value>نمی‌تواند کاربرانی اضافه کند</value>
@@ -11995,7 +12217,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>افزودن عضو</value>
   </data>
   <data name="VoipGroupAllCanSpeak" xml:space="preserve">
-    <value>اعضای جدید می‌توانند صحبت کنند</value>
+    <value>شرکت کنندگان جدید می‌توانند صحبت کنند</value>
   </data>
   <data name="VoipGroupAllowToSpeak" xml:space="preserve">
     <value>اجازه صحبت</value>
@@ -12022,7 +12244,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>پایان دادن به گفتگوی صوتی</value>
   </data>
   <data name="VoipGroupEndedStartNew" xml:space="preserve">
-    <value>گفتگوی صوتی به پایان رسید. گفتگوی جدیدی را شروع می‌کنید؟</value>
+    <value>گفتگوی صوتی به پایان رسید. گفتگوی صوتی جدیدی را شروع می‌کنید؟</value>
   </data>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>کاربر انتخاب شده در حال حاضر عضو این گفتگوی صوتی است.</value>
@@ -12061,6 +12283,12 @@ https://telegram.org/blog/coronavirus</value>
     <value>بی‌صدا کردن
 </value>
   </data>
+  <data name="VoipGroupMutedForMe" xml:space="preserve">
+    <value>برای من بی‌صدا شد</value>
+  </data>
+  <data name="VoipGroupMuteForMe" xml:space="preserve">
+    <value>بی‌صدا کردن برای من</value>
+  </data>
   <data name="VoipGroupMuteMemberAlertText" xml:space="preserve">
     <value>آیا از بی‌صدا کردن **⁨{0}⁩** در این گفتگوی صوتی اطمینان دارید؟</value>
   </data>
@@ -12076,8 +12304,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>اعضای جدید بی‌صدا می‌شوند</value>
   </data>
+  <data name="VoipGroupOpenProfile" xml:space="preserve">
+    <value>باز کردن پروفایل</value>
+  </data>
   <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
     <value>باز کردن گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupRecordCall" xml:space="preserve">
+    <value>شروع ضبط</value>
   </data>
   <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
     <value>**⁨{0}⁩** از گروه حذف شد.</value>
@@ -12094,14 +12328,26 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>به اشتراک گذاشتن لینک دعوت</value>
   </data>
+  <data name="VoipGroupStopRecordCall" xml:space="preserve">
+    <value>متوقف کردن ضبط</value>
+  </data>
   <data name="VoipGroupUnmute" xml:space="preserve">
     <value>صدادار کردن</value>
+  </data>
+  <data name="VoipGroupUnmuteForMe" xml:space="preserve">
+    <value>صدادار کردن برای من</value>
   </data>
   <data name="VoipGroupUserCanNowSpeak" xml:space="preserve">
     <value>**⁨{0}⁩** اکنون می تواند صحبت کند.</value>
   </data>
+  <data name="VoipGroupUserCanNowSpeakForYou" xml:space="preserve">
+    <value>**⁨{0}⁩** اکنون برای شما بی‌صدا شده است.</value>
+  </data>
   <data name="VoipGroupUserCantNowSpeak" xml:space="preserve">
     <value>**⁨{0}⁩** اکنون در این گفتگو بی‌صدا است.</value>
+  </data>
+  <data name="VoipGroupUserCantNowSpeakForYou" xml:space="preserve">
+    <value>**⁨{0}⁩** اکنون در این گفتگو برای شما بی‌صدا شده است.</value>
   </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>حذف</value>
@@ -12111,6 +12357,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipGroupVoiceChat" xml:space="preserve">
     <value>گفتگوی صوتی</value>
+  </data>
+  <data name="VoipGroupVolume" xml:space="preserve">
+    <value>میزان صدا</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>در حال قطع کردن</value>
@@ -12174,7 +12423,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>تماس با **⁨{0}⁩** پایان یافته و تماس جدیدی با **⁨{1}⁩** شروع شود؟</value>
   </data>
   <data name="VoipOngoingAlert2" xml:space="preserve">
-    <value>تماس با **⁨{0}⁩** پایان یافته و گفتگوی صوتی جدیدی در **⁨{1}⁩** شروع شود؟</value>
+    <value>به تماس با «⁨{0}⁩» پایان داده و یک گفتگوی صوتی را در «⁨{1}⁩» شروع می‌کنید؟</value>
   </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
     <value>تماس دیگری در حال انجام است</value>
@@ -12333,7 +12582,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>چه کسی می‌تواند مرا به گفتگوهای گروهی اضافه کند؟</value>
   </data>
   <data name="WhoCanAddMeInfo" xml:space="preserve">
-    <value>شما می‌توانید کسانی که قادرند شما را به گروه‌ها و کانال‌ها اضافه کنند را محدود کنید.</value>
+    <value>شما می‌توانید کسانی که قادرند شما را به گروه‌ها و کانال‌ها اضافه کنند را به صورت جداگانه محدود کنید.</value>
   </data>
   <data name="WhoCanAddMembers" xml:space="preserve">
     <value>چه کسانی می‌توانند اعضا اضافه کنند؟</value>

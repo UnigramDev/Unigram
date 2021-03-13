@@ -97,6 +97,9 @@
   <data name="AccActionTakePicture" xml:space="preserve">
     <value>Сделать снимок</value>
   </data>
+  <data name="AccAutoDeleteTimer" xml:space="preserve">
+    <value>Таймер для удаления</value>
+  </data>
   <data name="AccDescrAspectRatio" xml:space="preserve">
     <value>Соотношение сторон</value>
   </data>
@@ -250,6 +253,9 @@
   <data name="AccDescrOpenChat" xml:space="preserve">
     <value>Открыть чат</value>
   </data>
+  <data name="AccDescrOpenInPhotoViewer" xml:space="preserve">
+    <value>Открыть просмотр фотографии</value>
+  </data>
   <data name="AccDescrOpenMenu" xml:space="preserve">
     <value>Открыть меню навигации</value>
   </data>
@@ -291,6 +297,9 @@
   </data>
   <data name="AccDescrQuizCorrectAnswer" xml:space="preserve">
     <value>Правильный ответ</value>
+  </data>
+  <data name="AccDescrQuizExplanation" xml:space="preserve">
+    <value>Объяснение</value>
   </data>
   <data name="AccDescrReceivedDate" xml:space="preserve">
     <value>Получено {0}</value>
@@ -421,6 +430,12 @@
   <data name="AccDescrSwitchCamera" xml:space="preserve">
     <value>Переключить камеру</value>
   </data>
+  <data name="AccDescrSwitchToDayTheme" xml:space="preserve">
+    <value>Переключиться на дневную тему</value>
+  </data>
+  <data name="AccDescrSwitchToNightTheme" xml:space="preserve">
+    <value>Переключиться на ночную тему</value>
+  </data>
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Сделать ещё один снимок</value>
   </data>
@@ -472,6 +487,9 @@
   <data name="AccessError" xml:space="preserve">
     <value>Ошибка доступа</value>
   </data>
+  <data name="AccExitFullscreen" xml:space="preserve">
+    <value>Выйти из полноэкраннного режима</value>
+  </data>
   <data name="Account" xml:space="preserve">
     <value>Аккаунт</value>
   </data>
@@ -492,6 +510,9 @@
   </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
     <value>Потяните вниз для вывода архива</value>
+  </data>
+  <data name="AccSwitchToFullscreen" xml:space="preserve">
+    <value>Перейти в полноэкранный режим</value>
   </data>
   <data name="AccurateTo" xml:space="preserve">
     <value>С точностью до {0}</value>
@@ -580,11 +601,23 @@
   <data name="ActionCreateChannel" xml:space="preserve">
     <value>Канал создан</value>
   </data>
+  <data name="ActionCreatedInviteLink" xml:space="preserve">
+    <value>un1 создал(а) ссылку-приглашение {0}</value>
+  </data>
   <data name="ActionCreateGroup" xml:space="preserve">
     <value>un1 создал(а) группу</value>
   </data>
   <data name="ActionCreateMega" xml:space="preserve">
     <value>Группа создана</value>
+  </data>
+  <data name="ActionDeletedInviteLink" xml:space="preserve">
+    <value>un1 удалил(а) ссылку-приглашение {0}</value>
+  </data>
+  <data name="ActionEditedInviteLink" xml:space="preserve">
+    <value>un1 изменил(а) ссылку-приглашение {0} на {1}</value>
+  </data>
+  <data name="ActionEditedInviteLinkToSame" xml:space="preserve">
+    <value>un1 изменил(а) ссылку-приглашение {0}</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Голосовой чат завершен ({0})</value>
@@ -676,6 +709,9 @@
   <data name="ActionRemovedPhoto" xml:space="preserve">
     <value>un1 удалил(а) фото группы</value>
   </data>
+  <data name="ActionRevokedInviteLink" xml:space="preserve">
+    <value>un1 сбросил(а) ссылку-приглашение {0}</value>
+  </data>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Действия</value>
   </data>
@@ -684,6 +720,24 @@
   </data>
   <data name="ActionTakeScreenshootYou" xml:space="preserve">
     <value>Вы сделали скриншот!</value>
+  </data>
+  <data name="ActionTTLChanged" xml:space="preserve">
+    <value>un1 включил(а) автоудаление сообщений через {0}</value>
+  </data>
+  <data name="ActionTTLChannelChanged" xml:space="preserve">
+    <value>Сообщения в этом канале будут автоматически удаляться через {0}</value>
+  </data>
+  <data name="ActionTTLChannelDisabled" xml:space="preserve">
+    <value>Сообщения в этом канале больше не будут автоматически удаляться</value>
+  </data>
+  <data name="ActionTTLDisabled" xml:space="preserve">
+    <value>un1 отключил(а) удаление по таймеру</value>
+  </data>
+  <data name="ActionTTLYouChanged" xml:space="preserve">
+    <value>Вы включили автоудаление сообщений через {0}</value>
+  </data>
+  <data name="ActionTTLYouDisabled" xml:space="preserve">
+    <value>Вы отключили удаление по таймеру</value>
   </data>
   <data name="ActionUserInvitedToChannel" xml:space="preserve">
     <value>un1 пригласил(а) Вас в этот канал</value>
@@ -705,6 +759,9 @@
   </data>
   <data name="ActionUserWithinYouRadius" xml:space="preserve">
     <value>Вы находитесь в {0} от un1</value>
+  </data>
+  <data name="ActionVolumeChanged" xml:space="preserve">
+    <value>un1 изменил(а) громкость un2 до {0}%</value>
   </data>
   <data name="ActionYouAddUser" xml:space="preserve">
     <value>Вы добавили un2</value>
@@ -912,6 +969,9 @@
   </data>
   <data name="Alert" xml:space="preserve">
     <value>Показывать уведомления</value>
+  </data>
+  <data name="AlertClearHistory" xml:space="preserve">
+    <value>Очистить историю</value>
   </data>
   <data name="AllAccounts" xml:space="preserve">
     <value>Всех аккаунтов</value>
@@ -1139,7 +1199,7 @@
     <value>Чаты без уведомлений</value>
   </data>
   <data name="ArchiveHintHeader3" xml:space="preserve">
-    <value>Закрепленные чаты</value>
+    <value>Закреплённые чаты</value>
   </data>
   <data name="ArchiveHintText1" xml:space="preserve">
     <value>Чаты со включенными уведомлениями покидают архив, когда приходят новые сообщения.</value>
@@ -1214,10 +1274,13 @@
     <value>Вы точно хотите очистить историю переписки с **{0}**?</value>
   </data>
   <data name="AreYouSureDeleteAndExit" xml:space="preserve">
-    <value>Вы точно хотите удалить и покинуть группу?</value>
+    <value>Вы точно хотите покинуть группу и удалить её?</value>
+  </data>
+  <data name="AreYouSureDeleteAndExitChannel" xml:space="preserve">
+    <value>Вы точно хотите покинуть канал и удалить его?</value>
   </data>
   <data name="AreYouSureDeleteAndExitName" xml:space="preserve">
-    <value>Вы точно хотите удалить и покинуть группу **{0}**?</value>
+    <value>Вы точно хотите группу **{0}** и удалить её?</value>
   </data>
   <data name="AreYouSureDeleteContact" xml:space="preserve">
     <value>Вы точно хотите удалить этот контакт?</value>
@@ -1432,6 +1495,12 @@
   <data name="AudioSavedHint" xml:space="preserve">
     <value>Файл сохранён в музыку</value>
   </data>
+  <data name="AudioSpeedFast" xml:space="preserve">
+    <value>Аудио будет играть в два раза быстрее.</value>
+  </data>
+  <data name="AudioSpeedNormal" xml:space="preserve">
+    <value>Аудио будет играть с обычной скоростью.</value>
+  </data>
   <data name="AudiosSavedHint_few" xml:space="preserve">
     <value>{0} файла сохранено в музыку</value>
   </data>
@@ -1493,6 +1562,55 @@
     <value>Этот код можно использовать для входа в Ваш аккаунт в Telegram.
 
 Для подтверждения входа перейдите в Настройки > Устройства > Сканировать QR и отсканируйте этот код.</value>
+  </data>
+  <data name="AutoDelete24Hours" xml:space="preserve">
+    <value>24 часа</value>
+  </data>
+  <data name="AutoDelete7Days" xml:space="preserve">
+    <value>7 дней</value>
+  </data>
+  <data name="AutoDeleteAlertChannelInfo" xml:space="preserve">
+    <value>Новые сообщения в канале будут автоматически удалены для всех подписчиков через выбранное Вами время.</value>
+  </data>
+  <data name="AutoDeleteAlertGroupInfo" xml:space="preserve">
+    <value>Новые сообщения в группе будут автоматически удалены для всех участников через выбранное Вами время.</value>
+  </data>
+  <data name="AutoDeleteAlertTitle" xml:space="preserve">
+    <value>Автоудаление сообщений</value>
+  </data>
+  <data name="AutoDeleteAlertUserInfo" xml:space="preserve">
+    <value>Новые сообщения будут автоматически удалены для Вас и {0} через выбранное время.</value>
+  </data>
+  <data name="AutoDeleteConfirm" xml:space="preserve">
+    <value>Подтвердить</value>
+  </data>
+  <data name="AutoDeleteHeader" xml:space="preserve">
+    <value>Автоудаление сообщений в этом чате</value>
+  </data>
+  <data name="AutoDeleteHintOffText" xml:space="preserve">
+    <value>Автоудаление выключено.</value>
+  </data>
+  <data name="AutoDeleteHintOnText" xml:space="preserve">
+    <value>Новые сообщения в чате будут автоматически удаляться через {0}.</value>
+  </data>
+  <data name="AutoDeleteIn" xml:space="preserve">
+    <value>Автоудаление через {0}</value>
+  </data>
+  <data name="AutoDeleteInfo" xml:space="preserve">
+    <value>Новые сообщения в чате будут автоматически удалены через выбранное время.</value>
+  </data>
+  <data name="AutoDeleteNever" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="AutoDeleteSet" xml:space="preserve">
+    <value>Применить в этом чате</value>
+  </data>
+  <data name="AutoDeleteSetInfo" xml:space="preserve">
+    <value>Сообщения в этом чате автоматически
+удаляются через {0} после отправки.</value>
+  </data>
+  <data name="AutoDeleteSetTimer" xml:space="preserve">
+    <value>Удаление по таймеру</value>
   </data>
   <data name="AutoDownloadAudioInfo" xml:space="preserve">
     <value>Голосовые сообщения имеют небольшой размер и всегда загружаются автоматически.</value>
@@ -1803,6 +1921,9 @@
   <data name="Bans_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="BioCopied" xml:space="preserve">
+    <value>Текст скопирован в буфер обмена.</value>
+  </data>
   <data name="Black" xml:space="preserve">
     <value>Чёрный</value>
   </data>
@@ -1940,6 +2061,21 @@
   </data>
   <data name="BotUnblock" xml:space="preserve">
     <value>ПЕРЕЗАПУСТИТЬ</value>
+  </data>
+  <data name="BroadcastGroup" xml:space="preserve">
+    <value>Группа для трансляций</value>
+  </data>
+  <data name="BroadcastGroupConvert" xml:space="preserve">
+    <value>Сделать группой для трансляций</value>
+  </data>
+  <data name="BroadcastGroupConvertInfo" xml:space="preserve">
+    <value>В группе для трансляций могут состоять больше 200,000 участников, но писать сообщения смогут только администраторы.</value>
+  </data>
+  <data name="BroadcastGroupConvertSuccess" xml:space="preserve">
+    <value>Теперь в Вашей группе может быть больше 200,000 участников.</value>
+  </data>
+  <data name="BroadcastGroupInfo" xml:space="preserve">
+    <value>Только администраторы могут писать в этой группе.</value>
   </data>
   <data name="Brown" xml:space="preserve">
     <value>Коричневый</value>
@@ -2100,6 +2236,24 @@
   </data>
   <data name="CancelSending" xml:space="preserve">
     <value>Отменить отправку</value>
+  </data>
+  <data name="CanJoin_few" xml:space="preserve">
+    <value>ещё {0} вступления</value>
+  </data>
+  <data name="CanJoin_many" xml:space="preserve">
+    <value>ещё {0} вступлений</value>
+  </data>
+  <data name="CanJoin_one" xml:space="preserve">
+    <value>ещё {0} вступление</value>
+  </data>
+  <data name="CanJoin_other" xml:space="preserve">
+    <value>ещё {0} вступлений</value>
+  </data>
+  <data name="CanJoin_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="CanJoin_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="CantAddBotAsAdmin" xml:space="preserve">
     <value>Ботов можно добавлять в каналы только как администраторов.</value>
@@ -2299,7 +2453,7 @@
     <value>Любой пользователь Telegram сможет подписаться на Ваш канал, перейдя по этой ссылке.</value>
   </data>
   <data name="ChannelLinkTitle" xml:space="preserve">
-    <value>Постоянная ссылка</value>
+    <value>Публичная ссылка</value>
   </data>
   <data name="ChannelMegaJoined" xml:space="preserve">
     <value>Вы вступили в эту группу</value>
@@ -3093,7 +3247,7 @@
     <value>Контакт присоединился к Telegram</value>
   </data>
   <data name="ContactNotRegistered" xml:space="preserve">
-    <value>{0} пока нет в Telegram, хотите пригласить присоединиться?</value>
+    <value>{0} пока не использует Telegram. Пригласить?</value>
   </data>
   <data name="ContactNotRegisteredTitle" xml:space="preserve">
     <value>Пригласить в Telegram</value>
@@ -3213,6 +3367,9 @@
   <data name="CreateGroupError" xml:space="preserve">
     <value>Вы не можете создать группу с этими пользователями из-за их настроек приватности.</value>
   </data>
+  <data name="CreateGroupForImport" xml:space="preserve">
+    <value>Создать группу для импорта</value>
+  </data>
   <data name="CreateLink" xml:space="preserve">
     <value>Добавить ссылку</value>
   </data>
@@ -3224,6 +3381,12 @@
   </data>
   <data name="CreateNewFilterInfo" xml:space="preserve">
     <value>Вы можете создать папки с нужными чатами и переключаться между ними.</value>
+  </data>
+  <data name="CreateNewLink" xml:space="preserve">
+    <value>Создать ссылку</value>
+  </data>
+  <data name="CreateNewLinkHelp" xml:space="preserve">
+    <value>Вы можете ограничить срок действия ссылки или число вступлений.</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
     <value>Создать новую тему</value>
@@ -3344,6 +3507,24 @@
   <data name="DaysBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="DaysLeft_few" xml:space="preserve">
+    <value>осталось {0} дня</value>
+  </data>
+  <data name="DaysLeft_many" xml:space="preserve">
+    <value>осталось {0} дней</value>
+  </data>
+  <data name="DaysLeft_one" xml:space="preserve">
+    <value>остался {0} день</value>
+  </data>
+  <data name="DaysLeft_other" xml:space="preserve">
+    <value>осталось {0} дня</value>
+  </data>
+  <data name="DaysLeft_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysLeft_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Deactivate" xml:space="preserve">
     <value>Удалить сейчас</value>
   </data>
@@ -3440,6 +3621,12 @@
   <data name="DeleteAll" xml:space="preserve">
     <value>Удалить все</value>
   </data>
+  <data name="DeleteAllCalls" xml:space="preserve">
+    <value>Удалить все звонки</value>
+  </data>
+  <data name="DeleteAllCallsText" xml:space="preserve">
+    <value>Удалить все недавние звонки?</value>
+  </data>
   <data name="DeleteAllFrom" xml:space="preserve">
     <value>Удалить всё от {0}</value>
   </data>
@@ -3448,6 +3635,12 @@
   </data>
   <data name="DeleteAllMessagesSavedAlert" xml:space="preserve">
     <value>Важно: это **удалит все сообщения** в чате.</value>
+  </data>
+  <data name="DeleteAllRevokedLinkHelp" xml:space="preserve">
+    <value>Это удалит все неактивные ссылки.</value>
+  </data>
+  <data name="DeleteAllRevokedLinks" xml:space="preserve">
+    <value>Удалить все неактивные ссылки</value>
   </data>
   <data name="DeleteAndExit" xml:space="preserve">
     <value>Удалить и покинуть группу</value>
@@ -3479,6 +3672,15 @@
   <data name="DeleteBanUser" xml:space="preserve">
     <value>Заблокировать пользователя</value>
   </data>
+  <data name="DeleteCalls" xml:space="preserve">
+    <value>Удалить звонки</value>
+  </data>
+  <data name="DeleteCallsForEveryone" xml:space="preserve">
+    <value>Удалить для всех</value>
+  </data>
+  <data name="DeleteChannelForAll" xml:space="preserve">
+    <value>Удалить для всех подписчиков</value>
+  </data>
   <data name="DeleteChat" xml:space="preserve">
     <value>Удалить и выйти</value>
   </data>
@@ -3490,6 +3692,9 @@
   </data>
   <data name="DeleteContact" xml:space="preserve">
     <value>Удалить контакт</value>
+  </data>
+  <data name="DeletedFromYourContacts" xml:space="preserve">
+    <value>{0} удален(а) из Ваших контактов</value>
   </data>
   <data name="DeleteFewChatsTitle" xml:space="preserve">
     <value>Удалить {0}</value>
@@ -3508,6 +3713,15 @@
   </data>
   <data name="DeleteGif" xml:space="preserve">
     <value>Удалить GIF из этого раздела?</value>
+  </data>
+  <data name="DeleteGroupForAll" xml:space="preserve">
+    <value>Удалить группу для всех участников</value>
+  </data>
+  <data name="DeleteLink" xml:space="preserve">
+    <value>Удалить ссылку</value>
+  </data>
+  <data name="DeleteLinkHelp" xml:space="preserve">
+    <value>Это удалит ссылку.</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>Удалить локализацию?</value>
@@ -3553,6 +3767,9 @@
   </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Сообщить о спаме</value>
+  </data>
+  <data name="DeleteSelectedCallsText" xml:space="preserve">
+    <value>Удалить выбранные звонки из списка недавних?</value>
   </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Удалить сообщение</value>
@@ -3894,6 +4111,9 @@
   <data name="EditedMessage" xml:space="preserve">
     <value>изменено</value>
   </data>
+  <data name="EditLink" xml:space="preserve">
+    <value>Изменить</value>
+  </data>
   <data name="EditMessage" xml:space="preserve">
     <value>Редактирование</value>
   </data>
@@ -3935,6 +4155,19 @@
   </data>
   <data name="EditThemeTitle" xml:space="preserve">
     <value>Изменить тему</value>
+  </data>
+  <data name="EditWidget" xml:space="preserve">
+    <value>Редактировать виджет</value>
+  </data>
+  <data name="EditWidgetChatsInfo" xml:space="preserve">
+    <value>Виджет будет показывать последнее сообщение в выбранных Вами чатах.
+
+Если ничего не выбрано, показываться будут последние активные чаты.</value>
+  </data>
+  <data name="EditWidgetContactsInfo" xml:space="preserve">
+    <value>Виджет будет показывать ярлыки для быстрого доступа к выбранным Вами чатам.
+
+Если ничего не выбрано, показываться будут последние активные чаты.</value>
   </data>
   <data name="EmailCopied" xml:space="preserve">
     <value>Email скопирован в буфер обмена</value>
@@ -4009,6 +4242,9 @@
   </data>
   <data name="EnableAnimations" xml:space="preserve">
     <value>Анимация</value>
+  </data>
+  <data name="EnableAutoDelete" xml:space="preserve">
+    <value>Настроить автоудаление</value>
   </data>
   <data name="EnabledNotifications" xml:space="preserve">
     <value>Уведомления включены</value>
@@ -4273,6 +4509,9 @@
   <data name="EventLogFilterGroupInfo" xml:space="preserve">
     <value>Информация о группе</value>
   </data>
+  <data name="EventLogFilterInvites" xml:space="preserve">
+    <value>Пригласительные ссылки</value>
+  </data>
   <data name="EventLogFilterLeavingMembers" xml:space="preserve">
     <value>Выход участников</value>
   </data>
@@ -4362,6 +4601,9 @@
   </data>
   <data name="EventLogPromotedManageCall" xml:space="preserve">
     <value>Управление голосовыми чатами</value>
+  </data>
+  <data name="EventLogPromotedNoRights" xml:space="preserve">
+    <value>назначил(а) {0}</value>
   </data>
   <data name="EventLogPromotedPinMessages" xml:space="preserve">
     <value>Закрепление сообщений</value>
@@ -4533,6 +4775,15 @@
   <data name="Exception_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="ExpireAfter" xml:space="preserve">
+    <value>Действует до</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>Истекла</value>
+  </data>
+  <data name="ExpiredLink" xml:space="preserve">
+    <value>Истекшая ссылка</value>
+  </data>
   <data name="ExportTheme" xml:space="preserve">
     <value>Экспортировать</value>
   </data>
@@ -4547,6 +4798,9 @@
   </data>
   <data name="Fade" xml:space="preserve">
     <value>Затемнение</value>
+  </data>
+  <data name="FakeMessage" xml:space="preserve">
+    <value>FAKE</value>
   </data>
   <data name="FavoriteStickers" xml:space="preserve">
     <value>Избранные</value>
@@ -5211,6 +5465,30 @@
   <data name="FromYou" xml:space="preserve">
     <value>Вы</value>
   </data>
+  <data name="FwdMessagesToChats" xml:space="preserve">
+    <value>Сообщения пересланы в **{0}**.</value>
+  </data>
+  <data name="FwdMessagesToGroup" xml:space="preserve">
+    <value>Сообщения пересланы в **{0}**.</value>
+  </data>
+  <data name="FwdMessagesToSavedMessages" xml:space="preserve">
+    <value>Сообщения пересланы в **Избранное**.</value>
+  </data>
+  <data name="FwdMessagesToUser" xml:space="preserve">
+    <value>Сообщения пересланы в **{0}**.</value>
+  </data>
+  <data name="FwdMessageToChats" xml:space="preserve">
+    <value>Сообщение переслано в **{0}**.</value>
+  </data>
+  <data name="FwdMessageToGroup" xml:space="preserve">
+    <value>Сообщение переслано в **{0}**.</value>
+  </data>
+  <data name="FwdMessageToSavedMessages" xml:space="preserve">
+    <value>Сообщение переслано в **Избранное**.</value>
+  </data>
+  <data name="FwdMessageToUser" xml:space="preserve">
+    <value>Сообщение переслано в **{0}**.</value>
+  </data>
   <data name="Gallery" xml:space="preserve">
     <value>Галерея</value>
   </data>
@@ -5222,6 +5500,9 @@
   </data>
   <data name="General" xml:space="preserve">
     <value>Основные</value>
+  </data>
+  <data name="GetQRCode" xml:space="preserve">
+    <value>Получить QR-код</value>
   </data>
   <data name="GettingLinkInfo" xml:space="preserve">
     <value>Загрузка предпросмотра для ссылки...</value>
@@ -5257,6 +5538,49 @@
   </data>
   <data name="GifsTab2" xml:space="preserve">
     <value>GIF</value>
+  </data>
+  <data name="GigagroupAlertLearnMore" xml:space="preserve">
+    <value>ПОДРОБНЕЕ</value>
+  </data>
+  <data name="GigagroupAlertText" xml:space="preserve">
+    <value>Ваша группа достигла лимита в **200,000** участников.
+
+Вы можете повысить лимит, сделав её **группой для трансляций**, в которой только администраторы могут отправлять сообщения. Продолжить?</value>
+  </data>
+  <data name="GigagroupAlertTitle" xml:space="preserve">
+    <value>Достигнут лимит</value>
+  </data>
+  <data name="GigagroupConvertAlertConver" xml:space="preserve">
+    <value>ДА</value>
+  </data>
+  <data name="GigagroupConvertAlertText" xml:space="preserve">
+    <value>Обычные участники (не администраторы) **навсегда** потеряют возможность писать сообщения в группе.
+
+Это **нельзя** будет отменить.</value>
+  </data>
+  <data name="GigagroupConvertAlertTitle" xml:space="preserve">
+    <value>Вы уверены?</value>
+  </data>
+  <data name="GigagroupConvertCancelButton" xml:space="preserve">
+    <value>Оставить обычной группой</value>
+  </data>
+  <data name="GigagroupConvertCancelHint" xml:space="preserve">
+    <value>Если Вы передумаете, перейдите в настройки группы > Разрешения.</value>
+  </data>
+  <data name="GigagroupConvertInfo1" xml:space="preserve">
+    <value>Сколько угодно участников.</value>
+  </data>
+  <data name="GigagroupConvertInfo2" xml:space="preserve">
+    <value>Пишут только администраторы.</value>
+  </data>
+  <data name="GigagroupConvertInfo3" xml:space="preserve">
+    <value>Нельзя сделать обычной группой.</value>
+  </data>
+  <data name="GigagroupConvertProcessButton" xml:space="preserve">
+    <value>Сделать группой для трансляций</value>
+  </data>
+  <data name="GigagroupConvertTitle" xml:space="preserve">
+    <value>Группы для трансляций</value>
   </data>
   <data name="GlobalAttachGifRestricted" xml:space="preserve">
     <value>В этой группе запрещено отправлять GIF.</value>
@@ -5410,6 +5734,9 @@
   <data name="GrowthChartTitle" xml:space="preserve">
     <value>Рост</value>
   </data>
+  <data name="HashtagCopied" xml:space="preserve">
+    <value>Хештег скопирован в буфер обмена.</value>
+  </data>
   <data name="Hashtags" xml:space="preserve">
     <value>ХЕШТЕГИ</value>
   </data>
@@ -5436,6 +5763,12 @@
   </data>
   <data name="Highlights" xml:space="preserve">
     <value>Свет</value>
+  </data>
+  <data name="HintRead" xml:space="preserve">
+    <value>Прочитано</value>
+  </data>
+  <data name="HintSent" xml:space="preserve">
+    <value>Доставлено</value>
   </data>
   <data name="HistoryCleared" xml:space="preserve">
     <value>История очищена</value>
@@ -5497,8 +5830,106 @@
   <data name="ImagesTab2" xml:space="preserve">
     <value>Изображения</value>
   </data>
+  <data name="ImporImportingService" xml:space="preserve">
+    <value>Импорт сообщений и медиа...</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>ИМПОРТ</value>
+  </data>
   <data name="ImportContacts" xml:space="preserve">
     <value>Импорт контактов</value>
+  </data>
+  <data name="ImportCount" xml:space="preserve">
+    <value>{0} из {1}</value>
+  </data>
+  <data name="ImportDone" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="ImportDoneInfo" xml:space="preserve">
+    <value>Чтобы освободить место на устройстве, импортируйте больше чатов в Telegram.</value>
+  </data>
+  <data name="ImportDoneTitle" xml:space="preserve">
+    <value>Чат успешно импортирован!</value>
+  </data>
+  <data name="ImportedInfo" xml:space="preserve">
+    <value>Это сообщение было импортировано из другого приложения. Мы не можем гарантировать, что оно настоящее.</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>импортировано в</value>
+  </data>
+  <data name="ImportErrorChatInvalidGroup" xml:space="preserve">
+    <value>Формат файла предназначен для личного чата, но Вы выбрали группу.</value>
+  </data>
+  <data name="ImportErrorChatInvalidUser" xml:space="preserve">
+    <value>Формат файла предназначен для группы, но Вы выбрали пользователя.</value>
+  </data>
+  <data name="ImportErrorFileFormatInvalid" xml:space="preserve">
+    <value>Неверный формат файла.</value>
+  </data>
+  <data name="ImportErrorFileLang" xml:space="preserve">
+    <value>Неизвестный язык файла.</value>
+  </data>
+  <data name="ImportErrorNotAdmin" xml:space="preserve">
+    <value>Для импорта сообщений необходимо быть админом группы.</value>
+  </data>
+  <data name="ImportErrorPeerInvalid" xml:space="preserve">
+    <value>Невозможно импортировать историю в этот чат.</value>
+  </data>
+  <data name="ImportErrorTitle" xml:space="preserve">
+    <value>Ошибка импорта</value>
+  </data>
+  <data name="ImportErrorUserBlocked" xml:space="preserve">
+    <value>Невозможно импортировать сообщения из-за настроек конфиденциальности.</value>
+  </data>
+  <data name="ImportFailedToUpload" xml:space="preserve">
+    <value>Не удалось загрузить файл.</value>
+  </data>
+  <data name="ImportFileTooLarge" xml:space="preserve">
+    <value>Файл для импорта слишком велик.</value>
+  </data>
+  <data name="ImportHeader" xml:space="preserve">
+    <value>Импорт сообщений и медиа...</value>
+  </data>
+  <data name="ImportHeaderContacts" xml:space="preserve">
+    <value>Или выберите один из своих контактов</value>
+  </data>
+  <data name="ImportImportingInfo" xml:space="preserve">
+    <value>Пожалуйста, не закрывайте Telegram до завершения импорта.</value>
+  </data>
+  <data name="ImportImportingTitle" xml:space="preserve">
+    <value>Импорт чата</value>
+  </data>
+  <data name="ImportMessages" xml:space="preserve">
+    <value>Импорт сообщений</value>
+  </data>
+  <data name="ImportMutualError" xml:space="preserve">
+    <value>Чтобы импортировать сообщения в личный чат, необходимо, чтобы Вы и собеседник были в списке контактов друг у друга.</value>
+  </data>
+  <data name="ImportNotAdmin" xml:space="preserve">
+    <value>Для импорта сообщений необходимо быть админом группы.</value>
+  </data>
+  <data name="ImportToChat" xml:space="preserve">
+    <value>Импортировать сообщения из **{0}** в группу **{1}**?
+
+Импортированные сообщения попадут в конец переписки, но для них будет указано настоящее время отправки. Их увидят все участники группы.</value>
+  </data>
+  <data name="ImportToChatNoTitle" xml:space="preserve">
+    <value>Импортировать сообщения в группу **{0}**?
+
+Импортированные сообщения попадут в конец переписки, но для них будет указано настоящее время отправки. Их увидят все участники группы.</value>
+  </data>
+  <data name="ImportToUser" xml:space="preserve">
+    <value>Импортировать сообщения от **{0}** в чат с **{1}**?
+
+Импортированные сообщения попадут в конец переписки, но для них будет указано настоящее время отправки. Их увидите и Вы, и собеседник.</value>
+  </data>
+  <data name="ImportToUserNoTitle" xml:space="preserve">
+    <value>Импортировать сообщения в чат с **{0}**?
+
+Импортированные сообщения попадут в конец переписки, но для них будет указано настоящее время отправки. Их увидите и Вы, и собеседник.</value>
+  </data>
+  <data name="ImportUploading" xml:space="preserve">
+    <value>Импорт сообщений и медиа... **%d%**</value>
   </data>
   <data name="InactiveChannelSignature" xml:space="preserve">
     <value>канал, неактивен {0}</value>
@@ -5593,8 +6024,14 @@
   <data name="Invite" xml:space="preserve">
     <value>Пригласить</value>
   </data>
+  <data name="InviteByQRCode" xml:space="preserve">
+    <value>QR-код</value>
+  </data>
   <data name="Invited" xml:space="preserve">
     <value>приглашен(а)</value>
+  </data>
+  <data name="InviteExpired" xml:space="preserve">
+    <value>Срок действия ссылки истёк.</value>
   </data>
   <data name="InviteFriends" xml:space="preserve">
     <value>Пригласить друзей</value>
@@ -5604,6 +6041,30 @@
   </data>
   <data name="InviteLink" xml:space="preserve">
     <value>Ссылка-приглашение</value>
+  </data>
+  <data name="InviteLinkCount_few" xml:space="preserve">
+    <value>{0} пригласительные ссылки</value>
+  </data>
+  <data name="InviteLinkCount_many" xml:space="preserve">
+    <value>{0} пригласительных ссылок</value>
+  </data>
+  <data name="InviteLinkCount_one" xml:space="preserve">
+    <value>{0} пригласительная ссылка</value>
+  </data>
+  <data name="InviteLinkCount_other" xml:space="preserve">
+    <value>{0} пригласительные ссылки</value>
+  </data>
+  <data name="InviteLinkCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="InviteLinkCount_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="InviteLinks" xml:space="preserve">
+    <value>Пригласительные ссылки</value>
+  </data>
+  <data name="InviteRevokedHint" xml:space="preserve">
+    <value>Эта ссылка была сброшена.</value>
   </data>
   <data name="InviteText2" xml:space="preserve">
     <value>Привет, я использую Telegram для переписки. Присоединяйся! Скачать его можно здесь: {0}</value>
@@ -5888,8 +6349,20 @@
   <data name="LedDisabled" xml:space="preserve">
     <value>Откл.</value>
   </data>
+  <data name="LimitByPeriod" xml:space="preserve">
+    <value>Ограничение по времени</value>
+  </data>
+  <data name="LimitNumberOfUses" xml:space="preserve">
+    <value>Число вступлений</value>
+  </data>
   <data name="LimitReached" xml:space="preserve">
     <value>Достигнут лимит</value>
+  </data>
+  <data name="LinkActionCopy" xml:space="preserve">
+    <value>Скопировать</value>
+  </data>
+  <data name="LinkActionShare" xml:space="preserve">
+    <value>Поделиться</value>
   </data>
   <data name="LinkAvailable" xml:space="preserve">
     <value>{0} доступно.</value>
@@ -5904,11 +6377,26 @@
     <value>Ссылка скопирована.
 Она будет работать только для участников чата.</value>
   </data>
+  <data name="LinkCopiedPrivateInfo" xml:space="preserve">
+    <value>Ссылка будет работать только для участников этого чата.</value>
+  </data>
+  <data name="LinkCreatedeBy" xml:space="preserve">
+    <value>Ссылка создана</value>
+  </data>
   <data name="LinkedChannel" xml:space="preserve">
     <value>Привязанный канал</value>
   </data>
+  <data name="LinkExpiresIn" xml:space="preserve">
+    <value>Ссылка истекает {0}</value>
+  </data>
+  <data name="LinkExpiresInTime" xml:space="preserve">
+    <value>Ссылка истекает через {0}</value>
+  </data>
   <data name="LinkInfo" xml:space="preserve">
     <value>Любой пользователь Telegram сможет вступить в Вашу группу, перейдя по этой ссылке.</value>
+  </data>
+  <data name="LinkInfoChannel" xml:space="preserve">
+    <value>Любой пользователь Telegram сможет подписаться на канал при помощи этой ссылки.</value>
   </data>
   <data name="LinkInUse" xml:space="preserve">
     <value>Имя уже занято.</value>
@@ -5930,6 +6418,18 @@
   </data>
   <data name="LinkInvalidStartNumberMega" xml:space="preserve">
     <value>Имена групп не могут начинаться с цифры.</value>
+  </data>
+  <data name="LinkIsExpired" xml:space="preserve">
+    <value>Срок действия этой ссылки истёк.</value>
+  </data>
+  <data name="LinkIsExpiredLimitReached" xml:space="preserve">
+    <value>Ссылка достигла лимита на использование.</value>
+  </data>
+  <data name="LinkIsNoActive" xml:space="preserve">
+    <value>Ссылка больше не активна</value>
+  </data>
+  <data name="LinkLimitReached" xml:space="preserve">
+    <value>Достигнут лимит</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
     <value>К сожалению, Вы не состоите в чате, где было опубликовано это сообщение.</value>
@@ -5954,6 +6454,12 @@
   </data>
   <data name="Links_zero" xml:space="preserve">
     <value/>
+  </data>
+  <data name="LinksCreatedByOtherAdmins" xml:space="preserve">
+    <value>Ссылки других администраторов</value>
+  </data>
+  <data name="LinksCreatedByThisAdmin" xml:space="preserve">
+    <value>Ссылки, созданные администратором</value>
   </data>
   <data name="LinksTitle" xml:space="preserve">
     <value>Общие ссылки</value>
@@ -6139,6 +6645,12 @@
   <data name="ManageGroupMenu" xml:space="preserve">
     <value>Управление группой</value>
   </data>
+  <data name="ManageInviteLinks" xml:space="preserve">
+    <value>Управление приглашениями</value>
+  </data>
+  <data name="ManageLinksInfoHelp" xml:space="preserve">
+    <value>Вы можете создать дополнительные ссылки и задать для них срок действия или ограничение на число использований.</value>
+  </data>
   <data name="Map" xml:space="preserve">
     <value>Карта</value>
   </data>
@@ -6302,7 +6814,7 @@
     <value>Публичные группы можно найти через поиск, история чата доступна всем, и присоединиться может любой пользователь.</value>
   </data>
   <data name="MegaUsernameHelp" xml:space="preserve">
-    <value>Если у группы будет постоянная публичная ссылка, другие пользователи смогут найти её и присоединиться.
+    <value>Если у группы будет публичная ссылка, другие пользователи смогут найти её и присоединиться.
 
 Можно использовать латиницу (a-z), цифры (0-9) и подчёркивание. Минимальная длина — 5 символов.</value>
   </data>
@@ -6380,6 +6892,9 @@
   </data>
   <data name="Message" xml:space="preserve">
     <value>Сообщение</value>
+  </data>
+  <data name="MessageCopied" xml:space="preserve">
+    <value>Сообщение скопировано в буфер обмена.</value>
   </data>
   <data name="MessageLifetime" xml:space="preserve">
     <value>Удаление по таймеру</value>
@@ -6750,6 +7265,9 @@
   <data name="NewGroup" xml:space="preserve">
     <value>Создать группу</value>
   </data>
+  <data name="NewLink" xml:space="preserve">
+    <value>Новая ссылка</value>
+  </data>
   <data name="NewMembersBySourceChartTitle" xml:space="preserve">
     <value>Источники участников</value>
   </data>
@@ -6862,7 +7380,7 @@
     <value>Добро пожаловать</value>
   </data>
   <data name="NoChatsContactsHelp" xml:space="preserve">
-    <value>Чтобы написать сообщение, нажмите на значок карандаша в правом нижнем углу.</value>
+    <value>Чтобы начать переписку, нажмите на один из контактов ниже.</value>
   </data>
   <data name="NoChatsHelp" xml:space="preserve">
     <value>Чтобы написать сообщение, нажмите на значок карандаша в правом нижнем углу.</value>
@@ -6914,6 +7432,9 @@
   <data name="NoHandleAppInstalled" xml:space="preserve">
     <value>У вас нет приложения для работы с файлами типа «{0}», пожалуйста, установите его, чтобы продолжить</value>
   </data>
+  <data name="NoLimit" xml:space="preserve">
+    <value>∞</value>
+  </data>
   <data name="NoMailInstalled" xml:space="preserve">
     <value>Пожалуйста, отправьте нам письмо с описанием Вашей проблемы на sms@stel.com.</value>
   </data>
@@ -6931,6 +7452,15 @@
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>Здесь пока ничего нет…</value>
+  </data>
+  <data name="NoMessagesGreetingsDescription" xml:space="preserve">
+    <value>Отправьте сообщение или нажмите на приветствие ниже.</value>
+  </data>
+  <data name="NoOneJoined" xml:space="preserve">
+    <value>Нет вступлений</value>
+  </data>
+  <data name="NoOneJoinedYet" xml:space="preserve">
+    <value>Вступлений пока нет</value>
   </data>
   <data name="NoOtherSessions" xml:space="preserve">
     <value>Нет других активных сеансов</value>
@@ -7623,6 +8153,9 @@
   <data name="Of" xml:space="preserve">
     <value>{0} из {1}</value>
   </data>
+  <data name="OfCounted" xml:space="preserve">
+    <value>**{0}** из {1}</value>
+  </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
@@ -7828,7 +8361,7 @@
     <value>Удалить</value>
   </data>
   <data name="PaintDuplicate" xml:space="preserve">
-    <value>Дублировать</value>
+    <value>Копировать</value>
   </data>
   <data name="PaintEdit" xml:space="preserve">
     <value>Изменить</value>
@@ -8670,6 +9203,45 @@
   <data name="PendingEmailText" xml:space="preserve">
     <value>Ваш адрес электронной почты для восстановления {0} ещё не активирован и ожидает подтверждения.</value>
   </data>
+  <data name="PeopleCanJoinViaLink" xml:space="preserve">
+    <value>Ссылку могут использовать {0} человек</value>
+  </data>
+  <data name="PeopleJoined_few" xml:space="preserve">
+    <value>{0} человека присоединились</value>
+  </data>
+  <data name="PeopleJoined_many" xml:space="preserve">
+    <value>{0} человек присоединились</value>
+  </data>
+  <data name="PeopleJoined_one" xml:space="preserve">
+    <value>{0} человек присоединился</value>
+  </data>
+  <data name="PeopleJoined_other" xml:space="preserve">
+    <value>{0} человек присоединились</value>
+  </data>
+  <data name="PeopleJoined_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleJoined_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleJoinedRemaining_few" xml:space="preserve">
+    <value>осталось {0}</value>
+  </data>
+  <data name="PeopleJoinedRemaining_many" xml:space="preserve">
+    <value>осталось {0}</value>
+  </data>
+  <data name="PeopleJoinedRemaining_one" xml:space="preserve">
+    <value>осталось {0}</value>
+  </data>
+  <data name="PeopleJoinedRemaining_other" xml:space="preserve">
+    <value>осталось {0}</value>
+  </data>
+  <data name="PeopleJoinedRemaining_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleJoinedRemaining_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="PeopleNearby" xml:space="preserve">
     <value>Люди рядом</value>
   </data>
@@ -8700,6 +9272,12 @@
   </data>
   <data name="PeopleNearbyInfo2" xml:space="preserve">
     <value>Вы можете быстро обменяться контактами с пользователями поблизости или найти новых друзей.</value>
+  </data>
+  <data name="Permanent" xml:space="preserve">
+    <value>Основная</value>
+  </data>
+  <data name="PermanentLinkForThisAdmin" xml:space="preserve">
+    <value>Ссылка для этого администратора</value>
   </data>
   <data name="PermissionBackgroundLocation" xml:space="preserve">
     <value>Telegram требуется доступ к геопозиции в фоновом режиме, чтобы Вы могли транслировать её в этот чат в реальном времени.
@@ -9045,6 +9623,12 @@
   <data name="PreviousPinnedMessage" xml:space="preserve">
     <value>Предыдущее сообщение</value>
   </data>
+  <data name="PrimaryLinkHelp" xml:space="preserve">
+    <value>Пользователи Telegram смогут присоединиться к Вашей группе, перейдя по ссылке.</value>
+  </data>
+  <data name="PrimaryLinkHelpChannel" xml:space="preserve">
+    <value>Пользователи Telegram смогут присоединиться к Вашему каналу, перейдя по ссылке.</value>
+  </data>
   <data name="PriorityInfo" xml:space="preserve">
     <value>Уведомления с максимальным приоритетом будут срабатывать, даже когда устройство в режиме «Не беспокоить»</value>
   </data>
@@ -9264,6 +9848,9 @@
   <data name="PublicChannelsTooMuch" xml:space="preserve">
     <value>У этого пользователя максимальное число публичных групп и каналов. Пожалуйста, предложите ему сперва удалить одну из публичных ссылок на его группу или канал.</value>
   </data>
+  <data name="PublicLink" xml:space="preserve">
+    <value>Публичная ссылка</value>
+  </data>
   <data name="PublicPoll" xml:space="preserve">
     <value>Опрос</value>
   </data>
@@ -9293,6 +9880,12 @@
   </data>
   <data name="Purple" xml:space="preserve">
     <value>Фиолетовый</value>
+  </data>
+  <data name="QRCodeLinkHelpChannel" xml:space="preserve">
+    <value>Пользователи смогут подписаться на канал, считав этот код камерой телефона.</value>
+  </data>
+  <data name="QRCodeLinkHelpGroup" xml:space="preserve">
+    <value>Пользователи смогут присоединиться к группе, считав этот код камерой телефона.</value>
   </data>
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>Чтобы Вы могли сканировать QR-коды, Telegram нужен доступ к камере.</value>
@@ -9537,6 +10130,9 @@
   <data name="ReportChatDescription" xml:space="preserve">
     <value>Описание</value>
   </data>
+  <data name="ReportChatFakeAccount" xml:space="preserve">
+    <value>Ненастоящий аккаунт</value>
+  </data>
   <data name="ReportChatOther" xml:space="preserve">
     <value>Другое</value>
   </data>
@@ -9551,6 +10147,28 @@
   </data>
   <data name="ReportChatViolence" xml:space="preserve">
     <value>Насилие</value>
+  </data>
+  <data name="ReportHint" xml:space="preserve">
+    <value>Комментарий...</value>
+  </data>
+  <data name="ReportInfo" xml:space="preserve">
+    <value>Вы можете указать дополнительную информацию в комментарии.</value>
+  </data>
+  <data name="ReportMessages" xml:space="preserve">
+    <value>ПОЖАЛОВАТЬСЯ НА СООБЩЕНИЯ</value>
+  </data>
+  <data name="ReportMessagesCount" xml:space="preserve">
+    <value>ПОЖАЛОВАТЬСЯ НА {0}</value>
+  </data>
+  <data name="ReportSelectMessages" xml:space="preserve">
+    <value>Выберите сообщения</value>
+  </data>
+  <data name="ReportSend" xml:space="preserve">
+    <value>Отправить жалобу</value>
+  </data>
+  <data name="ReportSentInfo" xml:space="preserve">
+    <value>Вашу жалобу проверят модераторы.
+Спасибо!</value>
   </data>
   <data name="ReportSpam" xml:space="preserve">
     <value>СООБЩИТЬ О СПАМЕ</value>
@@ -9575,6 +10193,21 @@
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>ЗАБЛОКИРОВАТЬ</value>
+  </data>
+  <data name="ReportTitleChild" xml:space="preserve">
+    <value>Детская порнография</value>
+  </data>
+  <data name="ReportTitleFake" xml:space="preserve">
+    <value>Ненастоящий аккаунт</value>
+  </data>
+  <data name="ReportTitlePornography" xml:space="preserve">
+    <value>Жалоба на порнографию</value>
+  </data>
+  <data name="ReportTitleSpam" xml:space="preserve">
+    <value>Жалоба на спам</value>
+  </data>
+  <data name="ReportTitleViolence" xml:space="preserve">
+    <value>Жалоба на насилие</value>
   </data>
   <data name="ReportUnrelatedGroup" xml:space="preserve">
     <value>Жалоба на группу</value>
@@ -9743,6 +10376,15 @@
   <data name="RevokeButton" xml:space="preserve">
     <value>Сбросить</value>
   </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>Сброшена</value>
+  </data>
+  <data name="RevokedLink" xml:space="preserve">
+    <value>Неактивная ссылка</value>
+  </data>
+  <data name="RevokedLinks" xml:space="preserve">
+    <value>Неактивные ссылки</value>
+  </data>
   <data name="RevokeLink" xml:space="preserve">
     <value>Сбросить ссылку</value>
   </data>
@@ -9779,6 +10421,9 @@
   </data>
   <data name="SavedMessagesInfo" xml:space="preserve">
     <value>Сохранить на память</value>
+  </data>
+  <data name="SaveLink" xml:space="preserve">
+    <value>Сохранить</value>
   </data>
   <data name="SaveTheme" xml:space="preserve">
     <value>СОХРАНИТЬ ТЕМУ</value>
@@ -9868,6 +10513,9 @@
   </data>
   <data name="SearchEmptyViewTitle2" xml:space="preserve">
     <value>Нет результатов</value>
+  </data>
+  <data name="SearchForChats" xml:space="preserve">
+    <value>Поиск чатов...</value>
   </data>
   <data name="SearchForPeople" xml:space="preserve">
     <value>Поиск людей...</value>
@@ -10000,6 +10648,9 @@
   </data>
   <data name="SelectChat" xml:space="preserve">
     <value>Выберите чат</value>
+  </data>
+  <data name="SelectChats" xml:space="preserve">
+    <value>Выберите чаты</value>
   </data>
   <data name="SelectColor" xml:space="preserve">
     <value>Выберите цвет</value>
@@ -10258,6 +10909,9 @@
   <data name="SetReminder" xml:space="preserve">
     <value>Задать напоминание</value>
   </data>
+  <data name="SetTimeLimit" xml:space="preserve">
+    <value>Выбрать срок действия</value>
+  </data>
   <data name="SetTimer" xml:space="preserve">
     <value>Включить удаление по таймеру</value>
   </data>
@@ -10431,6 +11085,9 @@
   </data>
   <data name="SharePhoneNumberWith" xml:space="preserve">
     <value>Показать {0} мой номер телефона</value>
+  </data>
+  <data name="ShareQrCode" xml:space="preserve">
+    <value>Поделиться</value>
   </data>
   <data name="Shares_few" xml:space="preserve">
     <value>{0} поделились</value>
@@ -10926,6 +11583,9 @@
   <data name="TapHereGifs" xml:space="preserve">
     <value>Нажмите для доступа к сохранённым GIF</value>
   </data>
+  <data name="TapOnThePencil" xml:space="preserve">
+    <value>Нажмите на карандаш для начала общения</value>
+  </data>
   <data name="TapToChange" xml:space="preserve">
     <value>Нажмите для изменения</value>
   </data>
@@ -10934,6 +11594,12 @@
   </data>
   <data name="TapToDownload" xml:space="preserve">
     <value>Нажмите для загрузки</value>
+  </data>
+  <data name="TapToEditWidget" xml:space="preserve">
+    <value>нажмите для изменения</value>
+  </data>
+  <data name="TapToEditWidgetShort" xml:space="preserve">
+    <value>нажмите для изменения</value>
   </data>
   <data name="TapToSendLocation" xml:space="preserve">
     <value>Нажмите для отправки геопозиции</value>
@@ -11222,6 +11888,12 @@
   <data name="ThemeUrl" xml:space="preserve">
     <value>Ссылка на тему</value>
   </data>
+  <data name="TimeLimitHelp" xml:space="preserve">
+    <value>Вы можете выбрать срок действия для этой ссылки.</value>
+  </data>
+  <data name="TimeLimitHint" xml:space="preserve">
+    <value>Выбрать другой срок</value>
+  </data>
   <data name="Times_few" xml:space="preserve">
     <value>{0} раза</value>
   </data>
@@ -11356,6 +12028,9 @@
   </data>
   <data name="TwoStepVerificationSetPassword" xml:space="preserve">
     <value>Задать пароль</value>
+  </data>
+  <data name="TwoStepVerificationShowPassword" xml:space="preserve">
+    <value>Показать пароль</value>
   </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Двухэтапная аутентификация</value>
@@ -11606,6 +12281,9 @@
   <data name="UsernameChecking" xml:space="preserve">
     <value>Проверка имени пользователя...</value>
   </data>
+  <data name="UsernameCopied" xml:space="preserve">
+    <value>Текст скопирован в буфер обмена.</value>
+  </data>
   <data name="UsernameEmpty" xml:space="preserve">
     <value>Не задано</value>
   </data>
@@ -11809,6 +12487,12 @@
   </data>
   <data name="UserUnblocked" xml:space="preserve">
     <value>Пользователь разблокирован</value>
+  </data>
+  <data name="UsesLimitHelp" xml:space="preserve">
+    <value>Вы можете выбрать, сколько пользователей смогут присоединиться к группе по этой ссылке.</value>
+  </data>
+  <data name="UsesLimitHint" xml:space="preserve">
+    <value>Выбрать другое число</value>
   </data>
   <data name="VerificationCode" xml:space="preserve">
     <value>Код подтверждения</value>
@@ -12134,6 +12818,12 @@
   <data name="VoipGroupMute" xml:space="preserve">
     <value>Выключить микрофон</value>
   </data>
+  <data name="VoipGroupMutedForMe" xml:space="preserve">
+    <value>Без звука для Вас</value>
+  </data>
+  <data name="VoipGroupMuteForMe" xml:space="preserve">
+    <value>Выкл. звук для меня</value>
+  </data>
   <data name="VoipGroupMuteMemberAlertText" xml:space="preserve">
     <value>Выключить микрофон **{0}** в этом голосовом чате?</value>
   </data>
@@ -12149,8 +12839,14 @@
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>Новые участники не говорят</value>
   </data>
+  <data name="VoipGroupOpenProfile" xml:space="preserve">
+    <value>Открыть профиль</value>
+  </data>
   <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
     <value>Открыть голосовой чат</value>
+  </data>
+  <data name="VoipGroupRecordCall" xml:space="preserve">
+    <value>Начать запись</value>
   </data>
   <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
     <value>**{0}** исключен(а) из группы.</value>
@@ -12167,14 +12863,29 @@
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Ссылка-приглашение</value>
   </data>
+  <data name="VoipGroupStopRecordCall" xml:space="preserve">
+    <value>Остановить запись</value>
+  </data>
+  <data name="VoipGroupTooMuch" xml:space="preserve">
+    <value>В голосовом чате максимальное число участников.</value>
+  </data>
   <data name="VoipGroupUnmute" xml:space="preserve">
     <value>Включить микрофон</value>
+  </data>
+  <data name="VoipGroupUnmuteForMe" xml:space="preserve">
+    <value>Вкл. звук для меня</value>
   </data>
   <data name="VoipGroupUserCanNowSpeak" xml:space="preserve">
     <value>Теперь **{0}** может говорить.</value>
   </data>
+  <data name="VoipGroupUserCanNowSpeakForYou" xml:space="preserve">
+    <value>Теперь Вы слышите **{0}**.</value>
+  </data>
   <data name="VoipGroupUserCantNowSpeak" xml:space="preserve">
     <value>**{0}** не сможет использовать здесь микрофон.</value>
+  </data>
+  <data name="VoipGroupUserCantNowSpeakForYou" xml:space="preserve">
+    <value>Вы больше не слышите **{0}** в чате.</value>
   </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>Исключить</value>
@@ -12184,6 +12895,9 @@
   </data>
   <data name="VoipGroupVoiceChat" xml:space="preserve">
     <value>Голосовой чат</value>
+  </data>
+  <data name="VoipGroupVolume" xml:space="preserve">
+    <value>Громкость</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Завершение</value>
@@ -12324,7 +13038,7 @@
     <value>Вкл. звук</value>
   </data>
   <data name="VoipUseLessData" xml:space="preserve">
-    <value>Сократить трафик звонков</value>
+    <value>Экономия трафика</value>
   </data>
   <data name="VoipUserCameraIsOff" xml:space="preserve">
     <value>Камера {0} отключена</value>
@@ -12421,6 +13135,28 @@
   </data>
   <data name="WhoCanCallMeInfo" xml:space="preserve">
     <value>Вы можете выбрать, кто сможет Вам звонить.</value>
+  </data>
+  <data name="WidgetChats" xml:space="preserve">
+    <value>Чаты</value>
+  </data>
+  <data name="WidgetLoggedOff" xml:space="preserve">
+    <value>Аккаунт не авторизован.</value>
+  </data>
+  <data name="WidgetPasscode" xml:space="preserve">
+    <value>
+
+Обратите внимание: код-пароль приложения **не влияет** на виджеты.</value>
+  </data>
+  <data name="WidgetPasscodeEnable" xml:space="preserve">
+    <value>
+
+Код-пароль приложения **не будет влиять** на виджеты, добавленные на главный экран.</value>
+  </data>
+  <data name="WidgetPreview" xml:space="preserve">
+    <value>Предпросмотр виджета</value>
+  </data>
+  <data name="WidgetShortcuts" xml:space="preserve">
+    <value>Ярлыки</value>
   </data>
   <data name="WiFiUsage" xml:space="preserve">
     <value>Использование Wi-Fi</value>
