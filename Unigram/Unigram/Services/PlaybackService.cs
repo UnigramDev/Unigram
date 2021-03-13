@@ -622,8 +622,20 @@ namespace Unigram.Services
         {
             var token = $"{message.ChatId}_{message.Id}";
             var file = GetFile(message);
+            var mime = GetMimeType(message);
+            var duration = GetDuration(message);
 
-            var item = new PlaybackItem(token);
+            var stream = new RemoteFileStream(_protoService, file, TimeSpan.FromSeconds(duration));
+            var source = MediaSource.CreateFromStream(stream, mime);
+            var item = new PlaybackItem(source);
+
+            _streams[file.Id].Add(stream);
+
+            source.CustomProperties["file"] = file.Id;
+            source.CustomProperties["message"] = message.Id;
+            source.CustomProperties["chat"] = message.ChatId;
+            source.CustomProperties["token"] = token;
+
             item.File = file;
             item.Message = message;
             item.Token = token;
@@ -836,9 +848,9 @@ namespace Unigram.Services
         public string Title { get; set; }
         public string Artist { get; set; }
 
-        public PlaybackItem(string token)
+        public PlaybackItem(MediaSource source)
         {
-            Token = token;
+            Source = source;
         }
 
         public bool UpdateFile(File file)
