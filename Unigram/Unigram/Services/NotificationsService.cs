@@ -755,7 +755,7 @@ namespace Unigram.Services
             {
                 var displayName = user.GetFullName();
                 var launchArg = $"session={_sessionService.Id}&user_id={user.Id}";
-                var icon = new Uri("ms-appx:///Assets/Logos/Square44x44Logo/Square44x44Logo.png");
+                var icon = new Uri("ms-appx:///Assets/Logos/Square44x44Logo.png");
 
 #if DEBUG
                 displayName += " BETA";
