@@ -240,8 +240,6 @@ namespace Unigram.Controls
 
                 ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
             }
-
-            UpdatePosition();
         }
 
         private void UpdateText(long chatId, long messageId, string title, string subtitle)

@@ -14,10 +14,10 @@ using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Media;
-using Windows.Media.Audio;
 using Windows.Media.Core;
 using Windows.Media.Effects;
 using Windows.Media.Playback;
+using Windows.Storage;
 using Windows.Media.Render;
 
 namespace Unigram.Services
@@ -35,10 +35,10 @@ namespace Unigram.Services
         void Pause();
         void Play();
 
-        void Seek(TimeSpan span);
-
         void MoveNext();
         void MovePrevious();
+
+        void Seek(TimeSpan span);
 
         void Clear();
 
@@ -64,7 +64,6 @@ namespace Unigram.Services
         event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
         event TypedEventHandler<IPlaybackService, object> PlaybackStateChanged;
         event TypedEventHandler<IPlaybackService, object> PositionChanged;
-        event TypedEventHandler<IPlaybackService, float> QuantumProcessed;
         event EventHandler PlaylistChanged;
     }
 
@@ -75,12 +74,7 @@ namespace Unigram.Services
         private readonly ISettingsService _settingsService;
         private readonly IEventAggregator _aggregator;
 
-        private readonly DisposableMutex _loadItemLock = new DisposableMutex();
-        private CancellationTokenSource _loadItemCancellation;
-
-        private AudioGraph _audioGraph;
-        private MediaSourceAudioInputNode _inputNode;
-        private AudioFrameOutputNode _outputNode;
+        private readonly MediaPlayer _mediaPlayer;
 
         private readonly SystemMediaTransportControls _transport;
 
@@ -95,7 +89,6 @@ namespace Unigram.Services
         public event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
         public event TypedEventHandler<IPlaybackService, object> PlaybackStateChanged;
         public event TypedEventHandler<IPlaybackService, object> PositionChanged;
-        public event TypedEventHandler<IPlaybackService, float> QuantumProcessed;
         public event EventHandler PlaylistChanged;
 
         public PlaybackService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -110,14 +103,19 @@ namespace Unigram.Services
             _settingsService = settingsService;
             _aggregator = aggregator;
 
-            try
-            {
-                _transport = SystemMediaTransportControls.GetForCurrentView();
-                _transport.ButtonPressed += Transport_ButtonPressed;
-                _transport.AutoRepeatMode = _settingsService.Playback.RepeatMode;
-            }
-            catch { }
+            _mediaPlayer = new MediaPlayer();
+            _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+            _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
+            _mediaPlayer.MediaFailed += OnMediaFailed;
+            _mediaPlayer.MediaEnded += OnMediaEnded;
+            _mediaPlayer.SourceChanged += OnSourceChanged;
+            _mediaPlayer.CommandManager.IsEnabled = false;
+            _mediaPlayer.Volume = _settingsService.VolumeLevel;
 
+            _transport = _mediaPlayer.SystemMediaTransportControls;
+            _transport.ButtonPressed += Transport_ButtonPressed;
+
+            _transport.AutoRepeatMode = _settingsService.Playback.RepeatMode;
             _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
                 ? null
                 : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List
@@ -142,25 +140,19 @@ namespace Unigram.Services
 
         private void Transport_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
         {
-            var audioGraph = _audioGraph;
-            if (audioGraph == null)
-            {
-                return;
-            }
-
             switch (args.Button)
             {
                 case SystemMediaTransportControlsButton.Play:
-                    audioGraph.Start();
+                    _mediaPlayer.Play();
                     break;
                 case SystemMediaTransportControlsButton.Pause:
-                    audioGraph.Stop();
+                    _mediaPlayer.Pause();
                     break;
                 case SystemMediaTransportControlsButton.Rewind:
-                    //_mediaPlayer.StepBackwardOneFrame();
+                    _mediaPlayer.StepBackwardOneFrame();
                     break;
                 case SystemMediaTransportControlsButton.FastForward:
-                    //_mediaPlayer.StepForwardOneFrame();
+                    _mediaPlayer.StepForwardOneFrame();
                     break;
                 case SystemMediaTransportControlsButton.Previous:
                     if (Position.TotalSeconds > 5)
@@ -180,15 +172,27 @@ namespace Unigram.Services
 
         #endregion
 
-        private void OnMediaEnded(MediaSourceAudioInputNode sender, object args)
+        private void OnSourceChanged(MediaPlayer sender, object args)
         {
-            if (sender.MediaSource is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
+            if (sender.Source is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
+            {
+                CurrentPlayback = item;
+
+                var message = item.Message;
+                if ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing))
+                {
+                    _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+                }
+            }
+        }
+
+        private void OnMediaEnded(MediaPlayer sender, object args)
+        {
+            if (sender.Source is MediaSource source && source.CustomProperties.TryGet("token", out string token) && _mapping.TryGetValue(token, out PlaybackItem item))
             {
                 if (item.Message.Content is MessageAudio && _isRepeatEnabled == null)
                 {
-                    _audioGraph.ResetAllNodes();
-                    _audioGraph.Start();
-                    //_mediaPlayer.Play();
+                    _mediaPlayer.Play();
                 }
                 else
                 {
@@ -197,9 +201,8 @@ namespace Unigram.Services
                     {
                         if (item.Message.Content is MessageAudio && _isRepeatEnabled == true)
                         {
-                            CurrentPlayback = _items[_isReversed ? _items.Count - 1 : 0];
-                            //_mediaPlayer.Source = _items[_isReversed ? _items.Count - 1 : 0].Source;
-                            //_mediaPlayer.Play();
+                            _mediaPlayer.Source = _items[_isReversed ? _items.Count - 1 : 0].Source;
+                            _mediaPlayer.Play();
                         }
                         else
                         {
@@ -208,9 +211,8 @@ namespace Unigram.Services
                     }
                     else
                     {
-                        CurrentPlayback = _items[_isReversed ? index - 1 : index + 1];
-                        //_mediaPlayer.Source = _items[_isReversed ? index - 1 : index + 1].Source;
-                        //_mediaPlayer.Play();
+                        _mediaPlayer.Source = _items[_isReversed ? index - 1 : index + 1].Source;
+                        _mediaPlayer.Play();
                     }
                 }
             }
@@ -321,232 +323,27 @@ namespace Unigram.Services
         private PlaybackItem _currentPlayback;
         public PlaybackItem CurrentPlayback
         {
-            get => _currentPlayback;
-            private set => Set(value);
+            get
+            {
+                return _currentPlayback;
+            }
+            private set
+            {
+                _currentItem = value?.Message;
+                _currentPlayback = value;
+                _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
+                RaisePropertyChanged(nameof(CurrentItem));
+                UpdateTransport();
+            }
         }
-
-        private async void Set(PlaybackItem value)
+        private Message _currentItem;
+        public Message CurrentItem
         {
-            if (_loadItemCancellation != null)
+            get
             {
-                _loadItemCancellation.Cancel();
-            }
-
-            _loadItemCancellation = new CancellationTokenSource();
-
-            try
-            {
-                using (await _loadItemLock.WaitAsync(_loadItemCancellation.Token))
-                {
-                    await SetAsync(value);
-                }
-            }
-            catch
-            {
-                Logger.Info("Cancellation token canceled");
+                return _currentItem;
             }
         }
-
-        private async Task SetAsync(PlaybackItem value)
-        {
-            if (_inputNode != null)
-            {
-                _inputNode.MediaSourceCompleted -= OnMediaEnded;
-                _inputNode = null;
-            }
-
-            if (_audioGraph != null)
-            {
-                _audioGraph.QuantumProcessed -= OnQuantumProcessed;
-                _audioGraph.Stop();
-                _audioGraph = null;
-            }
-
-            _currentPlayback = value;
-            _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
-            RaisePropertyChanged(nameof(CurrentItem));
-            UpdateTransport();
-
-            if (value == null)
-            {
-                PlaybackState = MediaPlaybackState.None;
-                return;
-            }
-
-            PlaybackState = MediaPlaybackState.Playing;
-
-            var result = await CreateAudioGraphAsync(value);
-            if (result == null)
-            {
-                PlaybackState = MediaPlaybackState.None;
-                return;
-            }
-
-            PlaybackState = MediaPlaybackState.Playing;
-
-            var message = value.Message;
-            if (message != null && ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing)))
-            {
-                _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
-            }
-        }
-
-        //private const int BUFFER_SIZE = 1024;
-        //private readonly FastFourierTransform _fft = new FastFourierTransform(BUFFER_SIZE, 48000);
-        //private int _lastUpdateTime;
-
-        private float _micLevelPeak = 0;
-        private int _micLevelPeakCount = 0;
-
-        private int _lastUpdateTime;
-
-        [ComImport]
-        [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        unsafe interface IMemoryBufferByteAccess
-        {
-            void GetBuffer(out byte* buffer, out uint capacity);
-        }
-
-        private unsafe void OnQuantumProcessed(AudioGraph sender, object args)
-        {
-            var outputNode = _outputNode;
-            if (outputNode == null)
-            {
-                return;
-            }
-
-            var position = PositionChanged;
-            var quantum = QuantumProcessed;
-
-            if (position != null || quantum != null)
-            {
-                if (Environment.TickCount - _lastUpdateTime < 64)
-                {
-                    return;
-                }
-
-                _lastUpdateTime = Environment.TickCount;
-                position?.Invoke(this, null);
-
-                if (quantum == null)
-                {
-                    return;
-                }
-
-                try
-                {
-                    var frame = outputNode.GetFrame();
-
-                    using var audioBuffer = frame.LockBuffer(AudioBufferAccessMode.Read);
-                    using var bufferReference = audioBuffer.CreateReference();
-
-                    // Get the buffer from the AudioFrame
-                    ((IMemoryBufferByteAccess)bufferReference).GetBuffer(out byte* buffer, out uint capacity);
-
-
-                    var samples = (float*)buffer;
-                    var count = capacity / 4;
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        var sample = samples[i];
-                        if (sample < 0)
-                        {
-                            sample = Math.Abs(sample);
-                        }
-
-                        if (_micLevelPeak < sample)
-                        {
-                            _micLevelPeak = sample;
-                        }
-
-                        _micLevelPeakCount += 1;
-
-                        if (_micLevelPeakCount >= 1200)
-                        {
-                            quantum?.Invoke(this, _micLevelPeak);
-
-                            _micLevelPeak = 0;
-                            _micLevelPeakCount = 0;
-                        }
-                    }
-
-                    //if (capacity < BUFFER_SIZE /*> MAX_BUFFER_SIZE || len == 0*/)
-                    //{
-                    //    //audioUpdateHandler.removeCallbacksAndMessages(null);
-                    //    //audioVisualizerDelegate.onVisualizerUpdate(false, true, null);
-                    //    return;
-                    //    //                len = MAX_BUFFER_SIZE;
-                    //    //                byte[] bytes = new byte[BUFFER_SIZE];
-                    //    //                buffer.get(bytes);
-                    //    //                byteBuffer.put(bytes, 0, BUFFER_SIZE);
-                    //}
-                    //else
-                    //{
-                    //    //byteBuffer.put(buffer);
-                    //}
-
-                    //capacity = BUFFER_SIZE;
-
-                    //_fft.Forward((short*)buffer, BUFFER_SIZE);
-
-                    //float sum = 0;
-                    //for (int i = 0; i < capacity; i++)
-                    //{
-                    //    float r = _fft.SpectrumReal[i];
-                    //    float img = _fft.SpectrumImaginary[i];
-                    //    float peak = (float)MathF.Sqrt(r * r + img * img) / 30f;
-                    //    if (peak > 1f)
-                    //    {
-                    //        peak = 1f;
-                    //    }
-                    //    else if (peak < 0)
-                    //    {
-                    //        peak = 0;
-                    //    }
-                    //    sum += peak * peak;
-                    //}
-                    //float amplitude = MathF.Sqrt(sum / capacity);
-
-                    //float[] partsAmplitude = new float[7];
-                    //partsAmplitude[6] = amplitude;
-                    //if (amplitude < 0.4f)
-                    //{
-                    //    for (int k = 0; k < 7; k++)
-                    //    {
-                    //        partsAmplitude[k] = 0;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    int part = (int)capacity / 6;
-
-                    //    for (int k = 0; k < 6; k++)
-                    //    {
-                    //        int start = part * k;
-                    //        float r = _fft.SpectrumReal[start];
-                    //        float img = _fft.SpectrumImaginary[start];
-                    //        partsAmplitude[k] = MathF.Sqrt(r * r + img * img) / 30f;
-
-                    //        if (partsAmplitude[k] > 1f)
-                    //        {
-                    //            partsAmplitude[k] = 1f;
-                    //        }
-                    //        else if (partsAmplitude[k] < 0)
-                    //        {
-                    //            partsAmplitude[k] = 0;
-                    //        }
-                    //    }
-                    //}
-
-                    //quantum?.Invoke(this, partsAmplitude);
-                }
-                catch { }
-            }
-        }
-
-        public Message CurrentItem => _currentPlayback?.Message;
 
         public TimeSpan Position
         {
@@ -554,7 +351,7 @@ namespace Unigram.Services
             {
                 try
                 {
-                    return _inputNode?.Position ?? TimeSpan.Zero;
+                    return _mediaPlayer?.PlaybackSession?.Position ?? TimeSpan.Zero;
                 }
                 catch
                 {
@@ -569,7 +366,7 @@ namespace Unigram.Services
             {
                 try
                 {
-                    return _inputNode?.Duration ?? TimeSpan.Zero;
+                    return _mediaPlayer?.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero;
                 }
                 catch
                 {
@@ -578,26 +375,25 @@ namespace Unigram.Services
             }
         }
 
-        private MediaPlaybackState _playbackState;
         public MediaPlaybackState PlaybackState
         {
-            get => _playbackState;
-            private set => Set(value);
-        }
-
-        private void Set(MediaPlaybackState value)
-        {
-            if (_playbackState != value)
+            get
             {
-                _playbackState = value;
-                PlaybackStateChanged?.Invoke(this, null);
+                try
+                {
+                    return _mediaPlayer?.PlaybackSession?.PlaybackState ?? MediaPlaybackState.None;
+                }
+                catch
+                {
+                    return MediaPlaybackState.None;
+                }
             }
         }
 
         private bool? _isRepeatEnabled = false;
         public bool? IsRepeatEnabled
         {
-            get => _isRepeatEnabled;
+            get { return _isRepeatEnabled; }
             set
             {
                 _isRepeatEnabled = value;
@@ -607,25 +403,20 @@ namespace Unigram.Services
                         : value == null
                         ? MediaPlaybackAutoRepeatMode.Track
                         : MediaPlaybackAutoRepeatMode.None;
-
-                if (_inputNode != null)
-                {
-                    _inputNode.LoopCount = value == null ? null : 0;
-                }
             }
         }
 
         private bool _isReversed = false;
         public bool IsReversed
         {
-            get => _isReversed;
-            set => _isReversed = value;
+            get { return _isReversed; }
+            set { _isReversed = value; }
         }
 
         private bool _isShuffleEnabled;
         public bool IsShuffleEnabled
         {
-            get => _isShuffleEnabled;
+            get { return _isShuffleEnabled; }
             set
             {
                 _isShuffleEnabled = value;
@@ -636,76 +427,60 @@ namespace Unigram.Services
         private double _playbackRate = 1.0;
         public double PlaybackRate
         {
-            get => _playbackRate;
+            get
+            {
+                return _playbackRate;
+            }
             set
             {
                 _playbackRate = value;
                 _transport.PlaybackRate = value;
 
-                if (_inputNode != null)
+                try
                 {
-                    _inputNode.PlaybackSpeedFactor = value;
-
-                    if (value > 1)
-                    {
-                        if (_inputNode.EffectDefinitions.Count > 0)
-                        {
-                            _inputNode.EnableEffectsByDefinition(_inputNode.EffectDefinitions[0]);
-                        }
-                        else
-                        {
-                            _inputNode.EffectDefinitions.Add(new AudioEffectDefinition(typeof(AudioPitchEffect).FullName));
-                        }
-                    }
-                    else if (_inputNode.EffectDefinitions.Count > 0)
-                    {
-                        _inputNode.DisableEffectsByDefinition(_inputNode.EffectDefinitions[0]);
-                    }
+                    _mediaPlayer.PlaybackSession.PlaybackRate = value;
                 }
+                catch { }
             }
         }
 
         public double Volume
         {
-            get => _inputNode?.OutgoingGain ?? _settingsService.VolumeLevel;
+            get => _mediaPlayer.Volume;
             set
             {
                 _settingsService.VolumeLevel = value;
-
-                if (_inputNode != null)
-                {
-                    _inputNode.OutgoingGain = value;
-                }
+                _mediaPlayer.Volume = value;
             }
         }
 
         public void Pause()
         {
-            try
+            if (_mediaPlayer.PlaybackSession.CanPause)
             {
-                _audioGraph?.Stop();
-                PlaybackState = MediaPlaybackState.Paused;
+                _mediaPlayer.Pause();
             }
-            catch { }
         }
 
         public void Play()
         {
-            try
-            {
-                _audioGraph?.Start();
-                PlaybackState = MediaPlaybackState.Playing;
-            }
-            catch { }
+            _mediaPlayer.Play();
         }
 
         public void Seek(TimeSpan span)
         {
-            try
-            {
-                _inputNode?.Seek(span);
-            }
-            catch { }
+            _mediaPlayer.PlaybackSession.Position = span;
+            //var index = _playlist.CurrentItemIndex;
+            //var playing = _mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
+
+            //_mediaPlayer.Pause();
+            //_playlist.MoveTo(index);
+            //_mediaPlayer.PlaybackSession.Position = span;
+
+            //if (playing)
+            //{
+            //    _mediaPlayer.Play();
+            //}
         }
 
         public void MoveNext()
@@ -725,6 +500,8 @@ namespace Unigram.Services
             {
                 SetSource(items, _isReversed ? index - 1 : index + 1);
             }
+
+            _mediaPlayer.Play();
         }
 
         public void MovePrevious()
@@ -744,13 +521,15 @@ namespace Unigram.Services
             {
                 SetSource(items, _isReversed ? index + 1 : index - 1);
             }
+
+            _mediaPlayer.Play();
         }
 
         private void SetSource(List<PlaybackItem> items, int index)
         {
             if (index >= 0 && index <= items.Count - 1)
             {
-                CurrentPlayback = items[index];
+                _mediaPlayer.Source = items[index].Source;
             }
         }
 
@@ -779,7 +558,9 @@ namespace Unigram.Services
                 var already = previous.FirstOrDefault(x => x.Message.Id == message.Id && x.Message.ChatId == message.ChatId);
                 if (already != null)
                 {
-                    CurrentPlayback = already;
+                    _mediaPlayer.Source = already.Source;
+                    _mediaPlayer.Play();
+
                     return;
                 }
             }
@@ -792,7 +573,8 @@ namespace Unigram.Services
             _items.Add(item);
             _threadId = threadId;
 
-            CurrentPlayback = item;
+            _mediaPlayer.Source = item.Source;
+            _mediaPlayer.Play();
 
             if (message.Content is MessageText)
             {
@@ -834,68 +616,6 @@ namespace Unigram.Services
                     PlaylistChanged?.Invoke(this, EventArgs.Empty);
                 }
             });
-        }
-
-        private async Task<PlaybackItem> CreateAudioGraphAsync(PlaybackItem item)
-        {
-            try
-            {
-                AudioGraphSettings settings = new AudioGraphSettings(AudioRenderCategory.Media);
-                CreateAudioGraphResult result = await AudioGraph.CreateAsync(settings);
-
-                if (result.Status != AudioGraphCreationStatus.Success)
-                {
-                    return null;
-                }
-
-                AudioGraph graph = result.Graph;
-
-                CreateAudioDeviceOutputNodeResult deviceOutputNodeResult = await graph.CreateDeviceOutputNodeAsync();
-
-                if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
-                {
-                    return null;
-                }
-
-                AudioDeviceOutputNode deviceOutput = deviceOutputNodeResult.DeviceOutputNode;
-
-                AudioFrameOutputNode frameOutput = graph.CreateFrameOutputNode();
-
-                MediaSource source = CreateMediaSource(item);
-                CreateMediaSourceAudioInputNodeResult fileInputResult = await graph.CreateMediaSourceAudioInputNodeAsync(source);
-                if (MediaSourceAudioInputNodeCreationStatus.Success != fileInputResult.Status)
-                {
-                    return null;
-                }
-
-                MediaSourceAudioInputNode fileInput = fileInputResult.Node;
-
-                fileInput.AddOutgoingConnection(deviceOutput);
-                fileInput.AddOutgoingConnection(frameOutput);
-
-                fileInput.OutgoingGain = _settingsService.VolumeLevel;
-                fileInput.PlaybackSpeedFactor = _playbackRate;
-
-                if (_playbackRate > 1)
-                {
-                    fileInput.EffectDefinitions.Add(new AudioEffectDefinition(typeof(AudioPitchEffect).FullName));
-                }
-
-                fileInput.MediaSourceCompleted += OnMediaEnded;
-
-                graph.QuantumProcessed += OnQuantumProcessed;
-                graph.Start();
-
-                _inputNode = fileInput;
-                _outputNode = frameOutput;
-                _audioGraph = graph;
-
-                return item;
-            }
-            catch
-            {
-                return null;
-            }
         }
 
         private PlaybackItem GetPlaybackItem(Message message)
@@ -1062,10 +782,11 @@ namespace Unigram.Services
 
         private void Dispose()
         {
-            _inputNode = null;
-
-            _audioGraph?.Stop();
-            _audioGraph = null;
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.Source = null;
+                _mediaPlayer.CommandManager.IsEnabled = false;
+            }
 
             //if (_playlist != null)
             //{
@@ -1094,12 +815,18 @@ namespace Unigram.Services
 
         public bool IsSupportedPlaybackRateRange(double min, double max)
         {
-            return true;
+            if (_mediaPlayer != null)
+            {
+                return _mediaPlayer.PlaybackSession.IsSupportedPlaybackRateRange(min, max);
+            }
+
+            return false;
         }
     }
 
     public class PlaybackItem
     {
+        public MediaSource Source { get; set; }
         public string Token { get; set; }
 
         public Message Message { get; set; }

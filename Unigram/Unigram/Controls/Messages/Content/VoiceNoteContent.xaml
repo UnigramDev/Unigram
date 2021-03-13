@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Messages.Content"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -52,18 +51,7 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition/>
     </Grid.ColumnDefinitions>
-
-    <xaml:CanvasControl
-        x:Name="Canvas"
-        x:Load="False"
-        Width="72"
-        Height="72"
-        Margin="-12"
-        VerticalAlignment="Top"
-        HorizontalAlignment="Left"
-        Draw="OnDraw"/>
-
-    <Border x:Name="Border" Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+    <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
         <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource InlineFileButtonStyle}"/>
     </Border>
     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
