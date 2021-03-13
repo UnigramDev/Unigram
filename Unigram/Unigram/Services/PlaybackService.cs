@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Logs;
 using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Services.Updates;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Media;
 using Windows.Media.Audio;
@@ -39,7 +42,8 @@ namespace Unigram.Services
 
         void Clear();
 
-        void Enqueue(Message message);
+        void Enqueue(MessageViewModel message, long threadId = 0);
+        void Enqueue(Message message, long threadId = 0);
 
         TimeSpan Position { get; }
         TimeSpan Duration { get; }
@@ -72,6 +76,7 @@ namespace Unigram.Services
         private readonly IEventAggregator _aggregator;
 
         private readonly DisposableMutex _loadItemLock = new DisposableMutex();
+        private CancellationTokenSource _loadItemCancellation;
 
         private AudioGraph _audioGraph;
         private MediaSourceAudioInputNode _inputNode;
@@ -81,6 +86,8 @@ namespace Unigram.Services
 
         private readonly Dictionary<string, PlaybackItem> _mapping;
         private readonly FileContext<RemoteFileStream> _streams = new FileContext<RemoteFileStream>();
+
+        private long _threadId;
 
         private List<PlaybackItem> _items;
         private Queue<Message> _queue;
@@ -320,49 +327,68 @@ namespace Unigram.Services
 
         private async void Set(PlaybackItem value)
         {
-            using (await _loadItemLock.WaitAsync())
+            if (_loadItemCancellation != null)
             {
-                if (_inputNode != null)
+                _loadItemCancellation.Cancel();
+            }
+
+            _loadItemCancellation = new CancellationTokenSource();
+
+            try
+            {
+                using (await _loadItemLock.WaitAsync(_loadItemCancellation.Token))
                 {
-                    _inputNode.MediaSourceCompleted -= OnMediaEnded;
-                    _inputNode = null;
+                    await SetAsync(value);
                 }
+            }
+            catch
+            {
+                Logger.Info("Cancellation token canceled");
+            }
+        }
 
-                if (_audioGraph != null)
-                {
-                    _audioGraph.QuantumProcessed -= OnQuantumProcessed;
-                    _audioGraph.Stop();
-                    _audioGraph = null;
-                }
+        private async Task SetAsync(PlaybackItem value)
+        {
+            if (_inputNode != null)
+            {
+                _inputNode.MediaSourceCompleted -= OnMediaEnded;
+                _inputNode = null;
+            }
 
-                _currentPlayback = value;
-                _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
-                RaisePropertyChanged(nameof(CurrentItem));
-                UpdateTransport();
+            if (_audioGraph != null)
+            {
+                _audioGraph.QuantumProcessed -= OnQuantumProcessed;
+                _audioGraph.Stop();
+                _audioGraph = null;
+            }
 
-                if (value == null)
-                {
-                    PlaybackState = MediaPlaybackState.None;
-                    return;
-                }
+            _currentPlayback = value;
+            _aggregator.Publish(new UpdatePlaybackItem(value?.Message));
+            RaisePropertyChanged(nameof(CurrentItem));
+            UpdateTransport();
 
-                PlaybackState = MediaPlaybackState.Playing;
+            if (value == null)
+            {
+                PlaybackState = MediaPlaybackState.None;
+                return;
+            }
 
-                var result = await CreateAudioGraphAsync(value);
-                if (result == null)
-                {
-                    PlaybackState = MediaPlaybackState.None;
-                    return;
-                }
+            PlaybackState = MediaPlaybackState.Playing;
 
-                PlaybackState = MediaPlaybackState.Playing;
+            var result = await CreateAudioGraphAsync(value);
+            if (result == null)
+            {
+                PlaybackState = MediaPlaybackState.None;
+                return;
+            }
 
-                var message = value.Message;
-                if (message != null && ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing)))
-                {
-                    _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
-                }
-            };
+            PlaybackState = MediaPlaybackState.Playing;
+
+            var message = value.Message;
+            if (message != null && ((message.Content is MessageVideoNote videoNote && !videoNote.IsViewed && !message.IsOutgoing) || (message.Content is MessageVoiceNote voiceNote && !voiceNote.IsListened && !message.IsOutgoing)))
+            {
+                _protoService.Send(new OpenMessageContent(message.ChatId, message.Id));
+            }
         }
 
         //private const int BUFFER_SIZE = 1024;
@@ -655,19 +681,31 @@ namespace Unigram.Services
 
         public void Pause()
         {
-            _audioGraph?.Stop();
-            PlaybackState = MediaPlaybackState.Paused;
+            try
+            {
+                _audioGraph?.Stop();
+                PlaybackState = MediaPlaybackState.Paused;
+            }
+            catch { }
         }
 
         public void Play()
         {
-            _audioGraph?.Start();
-            PlaybackState = MediaPlaybackState.Playing;
+            try
+            {
+                _audioGraph?.Start();
+                PlaybackState = MediaPlaybackState.Playing;
+            }
+            catch { }
         }
 
         public void Seek(TimeSpan span)
         {
-            _inputNode?.Seek(span);
+            try
+            {
+                _inputNode?.Seek(span);
+            }
+            catch { }
         }
 
         public void MoveNext()
@@ -723,7 +761,12 @@ namespace Unigram.Services
             Dispose();
         }
 
-        public void Enqueue(Message message)
+        public void Enqueue(MessageViewModel message, long threadId)
+        {
+            Enqueue(message.Get(), threadId);
+        }
+
+        public void Enqueue(Message message, long threadId)
         {
             if (message == null)
             {
@@ -731,7 +774,7 @@ namespace Unigram.Services
             }
 
             var previous = _items;
-            if (previous != null)
+            if (previous != null && _threadId == threadId)
             {
                 var already = previous.FirstOrDefault(x => x.Message.Id == message.Id && x.Message.ChatId == message.ChatId);
                 if (already != null)
@@ -747,6 +790,7 @@ namespace Unigram.Services
 
             var items = _items = new List<PlaybackItem>();
             _items.Add(item);
+            _threadId = threadId;
 
             CurrentPlayback = item;
 
@@ -758,7 +802,7 @@ namespace Unigram.Services
             var offset = -49;
             var filter = message.Content is MessageAudio ? new SearchMessagesFilterAudio() : (SearchMessagesFilter)new SearchMessagesFilterVoiceAndVideoNote();
 
-            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, 0), result =>
+            _protoService.Send(new SearchChatMessages(message.ChatId, string.Empty, null, message.Id, offset, 100, filter, _threadId), result =>
             {
                 if (result is Messages messages)
                 {
