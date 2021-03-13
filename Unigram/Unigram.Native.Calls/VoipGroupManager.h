@@ -24,6 +24,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SetAudioOutputDevice(hstring id);
 		void SetAudioInputDevice(hstring id);
 
+		void SetVolume(int32_t ssrc, double volume);
+
 		winrt::event_token NetworkStateUpdated(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
 			bool> const& value);

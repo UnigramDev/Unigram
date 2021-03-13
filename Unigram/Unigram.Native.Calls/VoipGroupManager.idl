@@ -18,6 +18,8 @@ namespace Unigram.Native.Calls
         void SetAudioOutputDevice(String id);
         void SetAudioInputDevice(String id);
 
+        void SetVolume(Int32 ssrc, Double volume);
+
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Boolean> NetworkStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<Int32, Windows.Foundation.Collections.IKeyValuePair<Single, Boolean> > > AudioLevelsUpdated;
     }

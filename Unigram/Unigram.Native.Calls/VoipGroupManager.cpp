@@ -32,7 +32,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 			},
 			string_to_unmanaged(descriptor.AudioInputId()),
 			string_to_unmanaged(descriptor.AudioOutputId()),
-			false
+			false,
 		};
 
 		m_impl = std::make_unique<tgcalls::GroupInstanceImpl>(std::move(impl));
@@ -131,6 +131,10 @@ namespace winrt::Unigram::Native::Calls::implementation
 	}
 	void VoipGroupManager::SetAudioInputDevice(hstring id) {
 		m_impl->setAudioInputDevice(string_to_unmanaged(id));
+	}
+
+	void VoipGroupManager::SetVolume(int32_t ssrc, double volume) {
+		m_impl->setVolume(ssrc, volume);
 	}
 
 

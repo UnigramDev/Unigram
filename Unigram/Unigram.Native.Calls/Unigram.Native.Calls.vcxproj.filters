@@ -65,6 +65,7 @@
     <ClCompile Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\AudioDeviceHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\AudioDeviceHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
