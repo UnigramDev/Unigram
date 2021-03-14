@@ -431,10 +431,10 @@
     <value>Kamera wechseln</value>
   </data>
   <data name="AccDescrSwitchToDayTheme" xml:space="preserve">
-    <value>Zum Tagfarbthema wechseln</value>
+    <value>Zum Tag-Modus wechseln</value>
   </data>
   <data name="AccDescrSwitchToNightTheme" xml:space="preserve">
-    <value>Zum Nachtfarbthema wechseln</value>
+    <value>Zum Nacht-Modus wechseln</value>
   </data>
   <data name="AccDescrTakeMorePics" xml:space="preserve">
     <value>Nimm ein weiteres Bild auf</value>
@@ -1133,7 +1133,7 @@
     <value>ANWENDEN</value>
   </data>
   <data name="ApplyThemeFile" xml:space="preserve">
-    <value>Thema anwenden</value>
+    <value>Farbschema anwenden</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Telegram</value>
@@ -1770,7 +1770,7 @@ Versand gelöscht.</value>
     <value>Helligkeitsgrenze</value>
   </data>
   <data name="AutoNightBrightnessInfo" xml:space="preserve">
-    <value>Zum Nachtthema wechseln, wenn die Umgebungshelligkeit weniger als {0}% beträgt.</value>
+    <value>Zum Nacht-Modus wechseln, wenn die Umgebungshelligkeit weniger als {0}% beträgt.</value>
   </data>
   <data name="AutoNightDisabled" xml:space="preserve">
     <value>Aus</value>
@@ -1785,7 +1785,7 @@ Versand gelöscht.</value>
     <value>Auto-Nachtmodus ist aus</value>
   </data>
   <data name="AutoNightPreferred" xml:space="preserve">
-    <value>Bevorzugtes Farbthema</value>
+    <value>Bevorzugtes Farbschema</value>
   </data>
   <data name="AutoNightSchedule" xml:space="preserve">
     <value>Zeitplan</value>
@@ -2092,7 +2092,7 @@ um Ton einzuschalten.</value>
     <value>Nachrichtenecken</value>
   </data>
   <data name="BuiltInThemes" xml:space="preserve">
-    <value>Eingebaute Themen</value>
+    <value>Eingebaute Farbschemata</value>
   </data>
   <data name="BytesReceived" xml:space="preserve">
     <value>Bytes empfangen</value>
@@ -2979,7 +2979,7 @@ um es zu verstecken.</value>
     <value>Foto aufnehmen</value>
   </data>
   <data name="ChooseTheme" xml:space="preserve">
-    <value>Thema wählen</value>
+    <value>Farbschema wählen</value>
   </data>
   <data name="ChooseYourLanguage" xml:space="preserve">
     <value>Wähle deine Sprache</value>
@@ -3111,16 +3111,16 @@ um es zu verstecken.</value>
     <value>Sepia</value>
   </data>
   <data name="ColorTheme" xml:space="preserve">
-    <value>Farbthema</value>
+    <value>Farbschema</value>
   </data>
   <data name="ColorThemeChanged" xml:space="preserve">
-    <value>Farbthema geändert.</value>
+    <value>Farbschema geändert.</value>
   </data>
   <data name="ColorThemeChangedInfo" xml:space="preserve">
     <value>Du kannst es wieder in den *Chat-Einstellungen* ändern.</value>
   </data>
   <data name="ColorThemes" xml:space="preserve">
-    <value>Farbthemen</value>
+    <value>Farbschemata</value>
   </data>
   <data name="ColorViolet" xml:space="preserve">
     <value>Violett</value>
@@ -3396,24 +3396,24 @@ Für weitere Funktionen und um das Limit aufzuheben in Supergruppe ändern:
     <value>Erstelle Einladungslinks, die ablaufen, nachdem sie benutzt worden sind.</value>
   </data>
   <data name="CreateNewTheme" xml:space="preserve">
-    <value>Neues Thema erstellen</value>
+    <value>Neues Farbschema erstellen</value>
   </data>
   <data name="CreateNewThemeAlert" xml:space="preserve">
-    <value>Du kannst dein eigenes Farbthema erstellen, indem du die Farben innerhalb der App änderst.
+    <value>Du kannst dein eigenes Farbschema erstellen, indem du die Farben innerhalb der App änderst.
 
-Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</value>
+Jederzeit kannst du hier zum Standard-Farbschema von Telegram zurückkehren.</value>
   </data>
   <data name="CreateNewThemeHelp" xml:space="preserve">
     <value>Tippe auf das kleine Palettensymbol um eine Auswahl des jeweiligen Bildschirms anzuzeigen und wähle deine Wunschfarben.</value>
   </data>
   <data name="CreateNewThemeInfo" xml:space="preserve">
-    <value>Erstelle dein eigenes Thema, indem du die Farben innerhalb der App änderst. Hier kannst du jederzeit zum vorgegebenen Telegram Thema zurückwechseln.</value>
+    <value>Erstelle dein eigenes Farbschema, indem du die Farben innerhalb der App änderst. Hier kannst du jederzeit zum vorgegebenen Telegram-Farbschema zurückwechseln.</value>
   </data>
   <data name="CreateNewThemeMenu" xml:space="preserve">
-    <value>Neues Thema erstellen</value>
+    <value>Neues Farbschema erstellen</value>
   </data>
   <data name="CreateTheme" xml:space="preserve">
-    <value>THEMA ERSTELLEN</value>
+    <value>FARBSCHEMA ERSTELLEN</value>
   </data>
   <data name="Crop" xml:space="preserve">
     <value>SCHNEIDEN</value>
@@ -3468,7 +3468,7 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
     <value>Hier kannst du Kontakte oder ganze Gruppen hinzufügen, für die eine Ausnahme gemacht werden soll.</value>
   </data>
   <data name="CustomThemes" xml:space="preserve">
-    <value>Eigene Themen</value>
+    <value>Eigene Farbschemata</value>
   </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Sende einen **:dart:** Emoji, um dein Glück zu versuchen.</value>
@@ -3789,13 +3789,13 @@ Jederzeit kannst du hier zum Standard-Farbthema von Telegram zurückkehren.</val
     <value>{0} löschen</value>
   </data>
   <data name="DeleteTheme" xml:space="preserve">
-    <value>Thema löschen</value>
+    <value>Farbschema löschen</value>
   </data>
   <data name="DeleteThemeAlert" xml:space="preserve">
-    <value>Möchtest du wirklich dieses Thema löschen?</value>
+    <value>Möchtest du wirklich dieses Farbschema löschen?</value>
   </data>
   <data name="DeleteThemeTitle" xml:space="preserve">
-    <value>Thema löschen</value>
+    <value>Farbschema löschen</value>
   </data>
   <data name="DeleteTheseChats" xml:space="preserve">
     <value>Chats löschen</value>
@@ -4163,7 +4163,7 @@ Jeder aus dem Kanal wird Nachrichten in dieser Gruppe sehen.</value>
     <value>Farben ändern</value>
   </data>
   <data name="EditThemeTitle" xml:space="preserve">
-    <value>Thema bearbeiten</value>
+    <value>Farbschema bearbeiten</value>
   </data>
   <data name="EditWidget" xml:space="preserve">
     <value>Widget bearbeiten</value>
@@ -4352,9 +4352,9 @@ Erfahre mehr unter telegram.org</value>
     <value>Einen Namen festlegen</value>
   </data>
   <data name="EnterThemeNameEdit" xml:space="preserve">
-    <value>Wenn du dein Thema mit anderen teilen oder Farben einzeln anpassen möchtest, tippe auf **Erstellen**.
+    <value>Wenn du dein Farbschema mit anderen teilen oder Farben einzeln anpassen möchtest, tippe auf **Erstellen**.
 
-Wähle den Namen für dein Thema:</value>
+Wähle den Namen für dein Farbschema:</value>
   </data>
   <data name="EnterYourPasscode" xml:space="preserve">
     <value>Deinen Pincode eingeben</value>
@@ -5989,7 +5989,7 @@ Nachrichten werden in den aktuellen Tag importiert, enthalten aber auch ihre urs
     <value>SCHNELLANSICHT</value>
   </data>
   <data name="InstantViewNightMode" xml:space="preserve">
-    <value>Das dunkle Farbthema wird Nachts automatisch aktiviert</value>
+    <value>Das dunkle Farbschema wird Nachts automatisch aktiviert</value>
   </data>
   <data name="InstantViewReference" xml:space="preserve">
     <value>Einzelnachweis</value>
@@ -7318,7 +7318,7 @@ Die Mindestlänge beträgt 5 Zeichen.</value>
     <value>Neuer Geheimer Chat</value>
   </data>
   <data name="NewTheme" xml:space="preserve">
-    <value>Neues Farbthema</value>
+    <value>Neues Farbschema</value>
   </data>
   <data name="NewThemePreviewLine1" xml:space="preserve">
     <value>Wie spät ist es gerade?</value>
@@ -7339,7 +7339,7 @@ Die Mindestlänge beträgt 5 Zeichen.</value>
     <value>Guten Morgen</value>
   </data>
   <data name="NewThemeTitle" xml:space="preserve">
-    <value>Neues Thema</value>
+    <value>Neues Farbschema</value>
   </data>
   <data name="Next" xml:space="preserve">
     <value>Weiter</value>
@@ -8248,7 +8248,7 @@ Dein Telegram Team</value>
     <value>Profil öffnen</value>
   </data>
   <data name="OpenTheme" xml:space="preserve">
-    <value>THEMA ANSEHEN</value>
+    <value>FARBSCHEMA ANSEHEN</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
     <value>URL {0} öffnen?</value>
@@ -10458,7 +10458,7 @@ Der Kanal "**{1}**" wird dann privat.</value>
     <value>Link speichern</value>
   </data>
   <data name="SaveTheme" xml:space="preserve">
-    <value>THEMA SPEICHERN</value>
+    <value>FARBSCHEMA SPEICHERN</value>
   </data>
   <data name="SaveToDownloads" xml:space="preserve">
     <value>In Downloads speichern</value>
@@ -11151,7 +11151,7 @@ noch nichts gesucht</value>
     <value>Telegram teilen...</value>
   </data>
   <data name="ShareTheme" xml:space="preserve">
-    <value>Thema teilen</value>
+    <value>Farbschema teilen</value>
   </data>
   <data name="ShareYouLocationInfo" xml:space="preserve">
     <value>Teilt deinen aktuellen Standort mit dem Bot.</value>
@@ -11753,7 +11753,7 @@ stimmst du den *Nutzungsbedingungen* zu.</value>
     <value>Textgröße für Nachrichten</value>
   </data>
   <data name="Theme" xml:space="preserve">
-    <value>Thema</value>
+    <value>Farbschema</value>
   </data>
   <data name="ThemeArcticBlue" xml:space="preserve">
     <value>Arktis</value>
@@ -11765,12 +11765,12 @@ stimmst du den *Nutzungsbedingungen* zu.</value>
     <value>Klassisch</value>
   </data>
   <data name="ThemeCreateHelp" xml:space="preserve">
-    <value>Jeder kann dein Thema über diesen Link installieren. Wenn du das Thema änderst, wird es für alle Nutzer aktualisiert, die es installiert haben.
+    <value>Jeder kann dein Farbschema über diesen Link installieren. Wenn du das Farbschema änderst, wird es für alle Nutzer aktualisiert, die es installiert haben.
 
-Das Farbthema wird auf dem aktuell ausgewählten Thema und dem Hintergrundbild basieren.</value>
+Das Farbschema wird auf dem aktuell ausgewählten Farbschema und dem Hintergrundbild basieren.</value>
   </data>
   <data name="ThemeCreateHelp2" xml:space="preserve">
-    <value>Du kannst den Link deines Themas ändern.
+    <value>Du kannst den Link deines Farbschemas ändern.
 
 Links müssen länger als 5 Zeichen sein und dürfen a-z, 0-9 und Unterstriche enthalten.</value>
   </data>
@@ -11787,7 +11787,7 @@ Links müssen länger als 5 Zeichen sein und dürfen a-z, 0-9 und Unterstriche e
     <value>Graphit</value>
   </data>
   <data name="ThemeHelpLink" xml:space="preserve">
-    <value>Sobald du dein Thema anpasst, aktualisiert es sich bei allen Nutzern, die es ebenfalls benutzen.
+    <value>Sobald du dein Farbschema anpasst, aktualisiert es sich bei allen Nutzern, die es ebenfalls benutzen.
 
 Jeder kann es über diesen Link installieren:
 {0}</value>
@@ -11802,10 +11802,10 @@ Jeder kann es über diesen Link installieren:
     <value/>
   </data>
   <data name="ThemeInstallCount_one" xml:space="preserve">
-    <value>{0} Person benutzt dieses Thema</value>
+    <value>{0} Person benutzt dieses Farbschema</value>
   </data>
   <data name="ThemeInstallCount_other" xml:space="preserve">
-    <value>{0} Leute benutzen dieses Thema</value>
+    <value>{0} Leute benutzen dieses Farbschema</value>
   </data>
   <data name="ThemeInstallCount_two" xml:space="preserve">
     <value/>
@@ -11823,7 +11823,7 @@ Jeder kann es über diesen Link installieren:
     <value>Nacht</value>
   </data>
   <data name="ThemeNotFound" xml:space="preserve">
-    <value>Thema nicht gefunden</value>
+    <value>Farbschema nicht gefunden</value>
   </data>
   <data name="ThemeNotSupported" xml:space="preserve">
     <value>Dieses Farbschema unterstützt dein Gerät leider noch nicht.</value>
@@ -11920,7 +11920,7 @@ Jeder kann es über diesen Link installieren:
 Die Mindestlänge beträgt 5 Zeichen.</value>
   </data>
   <data name="ThemeUrl" xml:space="preserve">
-    <value>Link zum Thema</value>
+    <value>Link zum Farbschema</value>
   </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Du kannst den Link nach einiger Zeit ablaufen lassen.</value>
@@ -12220,10 +12220,10 @@ Wenn du dennoch mit unseren bescheidenen Anforderungen nicht einverstanden bist,
     <value>USB-Transfer aktiv</value>
   </data>
   <data name="UseDifferentTheme" xml:space="preserve">
-    <value>Ein anderes Thema wählen</value>
+    <value>Ein anderes Farbschema wählen</value>
   </data>
   <data name="UseDifferentThemeInfo" xml:space="preserve">
-    <value>Du kannst auch ein bestehendes eigenes Thema als Grundlage für dein Thema verwenden.</value>
+    <value>Du kannst auch ein bestehendes eigenes Farbschema als Grundlage für dein Farbschema verwenden.</value>
   </data>
   <data name="UseLessDataAlways" xml:space="preserve">
     <value>Immer</value>
