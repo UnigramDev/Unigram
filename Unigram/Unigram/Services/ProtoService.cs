@@ -76,6 +76,8 @@ namespace Unigram.Services
 
         bool CanPostMessages(Chat chat);
 
+        BaseObject GetMessageSender(MessageSender sender);
+
         bool TryGetChat(long chatId, out Chat chat);
         bool TryGetChat(MessageSender sender, out Chat value);
 
@@ -1024,6 +1026,20 @@ namespace Unigram.Services
             return true;
         }
 
+        public BaseObject GetMessageSender(MessageSender sender)
+        {
+            if (sender is MessageSenderUser user)
+            {
+                return GetUser(user.UserId);
+            }
+            else if (sender is MessageSenderChat chat)
+            {
+                return GetChat(chat.ChatId);
+            }
+
+            return null;
+        }
+
         public bool TryGetChat(long chatId, out Chat chat)
         {
             chat = GetChat(chatId);
@@ -1681,8 +1697,7 @@ namespace Unigram.Services
             {
                 if (_chats.TryGetValue(updateChatVoiceChat.ChatId, out Chat value))
                 {
-                    value.IsVoiceChatEmpty = updateChatVoiceChat.IsVoiceChatEmpty;
-                    value.VoiceChatGroupCallId = updateChatVoiceChat.VoiceChatGroupCallId;
+                    value.VoiceChat = updateChatVoiceChat.VoiceChat;
                 }
             }
             else if (update is UpdateConnectionState updateConnectionState)

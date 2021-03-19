@@ -861,7 +861,7 @@ namespace Unigram.Views
             }
 
             var chat = message.GetChat();
-            if (chat != null && chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup)
+            if (chat != null && (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup))
             {
                 return "ChatFriendMessageTemplate";
             }

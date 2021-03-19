@@ -3071,7 +3071,7 @@ namespace Unigram.Views
             Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
-            GroupCall.ShowHide(chat.VoiceChatGroupCallId != 0 && !chat.IsVoiceChatEmpty);
+            GroupCall.ShowHide(chat.VoiceChat?.HasParticipants ?? false);
 
             UpdateChatPermissions(chat);
         }
@@ -4448,8 +4448,8 @@ namespace Unigram.Views
             this.blobDrawable2.GenerateBlob();
             //this.blobDrawable.paint.setColor(ColorUtils.setAlphaComponent(Theme.getColor("voipgroup_speakingText"), 38));
             //this.blobDrawable2.paint.setColor(ColorUtils.setAlphaComponent(Theme.getColor("voipgroup_speakingText"), 38));
-            blobDrawable.paint.A = large ? 38 : 61;
-            blobDrawable2.paint.A = large ? 38 : 61;
+            blobDrawable.paint.A = large ? (byte)38 : (byte)61;
+            blobDrawable2.paint.A = large ? (byte)38 : (byte)61;
         }
 
         public void Update(Color color, bool large)
@@ -4462,8 +4462,8 @@ namespace Unigram.Views
             blobDrawable.paint = color;
             blobDrawable2.paint = color;
 
-            blobDrawable.paint.A = large ? 38 : 61;
-            blobDrawable2.paint.A = large ? 38 : 61;
+            blobDrawable.paint.A = large ? (byte)38 : (byte)61;
+            blobDrawable2.paint.A = large ? (byte)38 : (byte)61;
         }
 
         public void Draw(CanvasDrawingSession canvas, float x, float y, CanvasControl view)

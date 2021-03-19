@@ -2226,7 +2226,7 @@ namespace Unigram.ViewModels
                 });
             }
 
-            UpdateGroupCall(chat, chat.VoiceChatGroupCallId);
+            UpdateGroupCall(chat, chat.VoiceChat?.GroupCallId ?? 0);
 
             ShowReplyMarkup(chat);
             ShowDraftMessage(chat);
@@ -3018,7 +3018,7 @@ namespace Unigram.ViewModels
         #region Call
 
         public RelayCommand<bool> CallCommand { get; }
-        private void CallExecute(bool video)
+        private async void CallExecute(bool video)
         {
             var chat = _chat;
             if (chat == null)
@@ -3026,7 +3026,14 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            _voipService.Start(chat.Id, video);
+            if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeSecret)
+            {
+                _voipService.Start(chat.Id, video);
+            }
+            else
+            {
+                await _groupCallService.JoinAsync(chat.Id);
+            }
         }
 
         #endregion

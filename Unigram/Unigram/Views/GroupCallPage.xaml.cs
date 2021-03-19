@@ -146,9 +146,9 @@ namespace Unigram.Views
             });
         }
 
-        private void OnNetworkStateUpdated(VoipGroupManager sender, bool newState)
+        private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() => UpdateNetworkState(newState));
+            this.BeginOnUIThread(() => UpdateNetworkState(args.IsConnected));
         }
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
@@ -231,7 +231,7 @@ namespace Unigram.Views
             if (_service.Manager != null)
             {
                 _service.Manager.IsMuted = Audio.IsChecked == false;
-                _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, _cacheService.Options.MyId, Audio.IsChecked == false));
+                _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, new MessageSenderUser(_cacheService.Options.MyId), Audio.IsChecked == false));
             }
 
             UpdateNetworkState(_service.IsConnected);
@@ -403,20 +403,21 @@ namespace Unigram.Views
 
         private void UpdateGroupCallParticipant(Grid content, GroupCallParticipant participant)
         {
-            var user = _cacheService.GetUser(participant.UserId);
-            if (user == null)
-            {
-                return;
-            }
-
             var photo = content.Children[0] as ProfilePicture;
             var title = content.Children[1] as TextBlock;
             var speaking = content.Children[2] as TextBlock;
             var glyph = content.Children[3] as TextBlock;
 
-            photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
-
-            title.Text = user.GetFullName();
+            if (_cacheService.TryGetUser(participant.Participant, out User user))
+            {
+                photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
+                title.Text = user.GetFullName();
+            }
+            else if (_cacheService.TryGetChat(participant.Participant, out Chat chat))
+            {
+                photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 36);
+                title.Text = _protoService.GetTitle(chat);
+            }
 
             if (participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser)
             {
@@ -454,15 +455,15 @@ namespace Unigram.Views
                 return;
             }
 
-            if (supergroup != null && supergroup.CanManageVoiceChats() && participant.UserId != _cacheService.Options.MyId)
+            if (supergroup != null && supergroup.CanManageVoiceChats() && (participant.Participant is MessageSenderChat || !participant.Participant.IsUser(_cacheService.Options.MyId)))
             {
                 if ((participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser) && !participant.CanUnmuteSelf)
                 {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.UserId, participant.CanUnmuteSelf)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
+                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.Participant, participant.CanUnmuteSelf)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.UserId, participant.CanUnmuteSelf)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
+                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.Participant, participant.CanUnmuteSelf)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
                 }
             }
 

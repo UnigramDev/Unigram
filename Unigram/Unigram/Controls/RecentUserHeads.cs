@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Numerics;
+using Telegram.Td.Api;
 using Unigram.Collections;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -29,7 +30,7 @@ namespace Unigram.Controls
 
         public RecentUserCollection Items => _items;
 
-        public Func<int, ImageSource> GetPicture { get; set; }
+        public Func<MessageSender, ImageSource> GetPicture { get; set; }
 
         protected override void OnApplyTemplate()
         {
@@ -180,9 +181,9 @@ namespace Unigram.Controls
             picture.Height = 32;
             picture.Stretch = Stretch.UniformToFill;
 
-            if (item is int userId && GetPicture != null)
+            if (item is MessageSender sender && GetPicture != null)
             {
-                picture.Source = GetPicture(userId);
+                picture.Source = GetPicture(sender);
             }
 
             var rounder = new Border();
@@ -306,7 +307,7 @@ namespace Unigram.Controls
 
     }
 
-    public class RecentUserCollection  : MvxObservableCollection<int>
+    public class RecentUserCollection  : MvxObservableCollection<MessageSender>
     {
 
     }

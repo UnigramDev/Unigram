@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
-    public interface IGroupCallService : IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
+    public interface IGroupCallService : IHandle<UpdateGroupCall>
     {
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
@@ -78,7 +78,7 @@ namespace Unigram.Services
             }
 
             var chat = CacheService.GetChat(chatId);
-            if (chat == null || chat.VoiceChatGroupCallId == 0)
+            if (chat == null || chat.VoiceChat == null)
             {
                 return;
             }
@@ -103,7 +103,7 @@ namespace Unigram.Services
             //    return;
             //}
 
-            await JoinAsyncInternal(chat, chat.VoiceChatGroupCallId);
+            await JoinAsyncInternal(chat, chat.VoiceChat.GroupCallId);
         }
 
         public void Leave()
@@ -137,7 +137,7 @@ namespace Unigram.Services
             }
 
             var chat = CacheService.GetChat(chatId);
-            if (chat == null || chat.VoiceChatGroupCallId != 0)
+            if (chat == null || chat.VoiceChat != null)
             {
                 return;
             }
@@ -200,16 +200,25 @@ namespace Unigram.Services
                 _manager = new VoipGroupManager(descriptor);
                 _manager.NetworkStateUpdated += OnNetworkStateUpdated;
                 _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
+                _manager.FrameRequested += OnFrameRequested;
 
                 await ShowAsync(groupCall, _manager);
 
                 _manager.EmitJoinPayload(async (ssrc, payload) =>
                 {
-                    var response = await ProtoService.SendAsync(new JoinGroupCall(groupCallId, payload, ssrc, true));
-                    if (response is GroupCallJoinResponse data)
+                    var response = await ProtoService.SendAsync(new JoinGroupCall(groupCallId, null, payload, ssrc, true, string.Empty));
+                    if (response is GroupCallJoinResponseWebrtc data)
                     {
                         _source = ssrc;
-                        _manager.SetJoinResponsePayload(data);
+                        _manager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
+                        _manager.SetJoinResponsePayload(data, null);
+
+                        ProtoService.Send(new LoadGroupCallParticipants(groupCallId, 100));
+                    }
+                    else if (response is GroupCallJoinResponseStream)
+                    {
+                        _source = ssrc;
+                        _manager.SetConnectionMode(VoipGroupConnectionMode.Broadcast, true);
 
                         ProtoService.Send(new LoadGroupCallParticipants(groupCallId, 100));
                     }
@@ -217,7 +226,36 @@ namespace Unigram.Services
             }
         }
 
-        private void OnNetworkStateUpdated(VoipGroupManager sender, bool connected)
+        private async void OnFrameRequested(VoipGroupManager sender, FrameRequestedEventArgs args)
+        {
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SendAsync(new GetOption("unix_time")) as OptionValueInteger;
+            if (response == null)
+            {
+                return;
+            }
+
+            var time = args.Time;
+            if (time == 0)
+            {
+                time = response.Value * 1000;
+            }
+
+            var stamp = DateTime.Now.ToTimestamp();
+
+            ProtoService.Send(new GetGroupCallStreamSegment(call.Id, time, args.Scale), result =>
+            {
+                stamp = DateTime.Now.ToTimestamp() - stamp;
+                args.Ready(time, response.Value + stamp, result as FilePart);
+            });
+        }
+
+        private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
             //if (_isConnected && !connected)
             //{
@@ -228,7 +266,7 @@ namespace Unigram.Services
             //    _connectingTimer.Change(Timeout.Infinite, Timeout.Infinite);
             //}
 
-            _isConnected = connected;
+            _isConnected = args.IsConnected;
         }
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
@@ -294,11 +332,11 @@ namespace Unigram.Services
                     {
                         _manager.EmitJoinPayload(async (ssrc, payload) =>
                         {
-                            var response = await ProtoService.SendAsync(new JoinGroupCall(update.GroupCall.Id, payload, ssrc, true));
-                            if (response is GroupCallJoinResponse data)
+                            var response = await ProtoService.SendAsync(new JoinGroupCall(update.GroupCall.Id, null, payload, ssrc, true, string.Empty));
+                            if (response is GroupCallJoinResponseWebrtc data)
                             {
                                 _source = ssrc;
-                                _manager.SetJoinResponsePayload(data);
+                                _manager.SetJoinResponsePayload(data, null);
                             }
                         });
                     }
@@ -306,31 +344,6 @@ namespace Unigram.Services
             }
 
             Aggregator.Publish(new UpdateCallDialog(update.GroupCall));
-        }
-
-        public void Handle(UpdateGroupCallParticipant update)
-        {
-            return;
-
-            if (_call?.Id == update.GroupCallId && update.Participant.UserId == CacheService.Options.MyId)
-            {
-                if (_source != update.Participant.Source)
-                {
-                    Hide();
-
-                    if (_manager != null)
-                    {
-                        _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                        _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
-
-                        _manager.Dispose();
-                        _manager = null;
-                    }
-
-                    _call = null;
-                    _chat = null;
-                }
-            }
         }
 
         public Chat Chat => _chat;

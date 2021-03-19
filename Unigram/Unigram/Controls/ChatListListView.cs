@@ -68,8 +68,13 @@ namespace Unigram.Controls
                 var content = container.ContentTemplateRoot as ChatCell;
                 if (content != null)
                 {
-                    var item = ItemFromContainer(container);
-                    content.UpdateViewState(item as Chat, SelectedItem == item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
+                    var item = ItemFromContainer(container) as Chat;
+                    if (item == null)
+                    {
+                        continue;
+                    }
+
+                    content.UpdateViewState(item, SelectedItem == item && SelectionMode == ListViewSelectionMode.Single, _viewState == MasterDetailState.Compact);
                 }
             }
         }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.props')" />
   <PropertyGroup Label="Globals">
@@ -123,7 +123,7 @@
       <AdditionalOptions Condition="'$(CppWinRTHeapEnforcement)'==''">/DWINRT_NO_MAKE_DETECTION %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <PreprocessorDefinitions>_WINRT_DLL;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</GenerateXMLDocumentationFiles>
       <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateXMLDocumentationFiles>
@@ -180,6 +180,11 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="C:\tgcalls\tgcalls\FakeAudioDeviceModule.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\StaticThreads.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupNetworkManager.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\StreamingPart.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\AudioDeviceHelper.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\CodecSelectHelper.h" />
@@ -204,6 +209,14 @@
     <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterface.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterfaceImpl.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\VideoCapturerInterface.h" />
+    <ClInclude Include="FrameRequestedEventArgs.h">
+      <DependentUpon>FrameRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="GroupNetworkStateChangedEventArgs.h">
+      <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
     </ClInclude>
@@ -219,6 +232,10 @@
       <DependentUpon>VoipGroupManager.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="VoipGroupParticipantDescription.h">
+      <DependentUpon>VoipGroupParticipantDescription.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="VoipManager.h">
       <DependentUpon>VoipManager.idl</DependentUpon>
     </ClInclude>
@@ -232,10 +249,22 @@
     <ClInclude Include="VoipVideoRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\tgcalls\tgcalls\AudioDeviceHelper.cpp">
+    <ClCompile Include="C:\tgcalls\tgcalls\FakeAudioDeviceModule.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.cpp">
+    <ClCompile Include="C:\tgcalls\tgcalls\StaticThreads.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupNetworkManager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\StreamingPart.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\AudioDeviceHelper.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\CodecSelectHelper.cpp">
@@ -292,6 +321,14 @@
     <ClCompile Include="C:\tgcalls\tgcalls\VideoCaptureInterfaceImpl.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FrameRequestedEventArgs.cpp">
+      <DependentUpon>FrameRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="GroupNetworkStateChangedEventArgs.cpp">
+      <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
     </ClCompile>
@@ -312,6 +349,10 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="VoipGroupParticipantDescription.cpp">
+      <DependentUpon>VoipGroupParticipantDescription.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="VoipManager.cpp">
       <DependentUpon>VoipManager.idl</DependentUpon>
     </ClCompile>
@@ -321,6 +362,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Midl Include="FrameRequestedEventArgs.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="GroupNetworkStateChangedEventArgs.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />
     <Midl Include="SignalingDataEmittedEventArgs.idl" />
     <Midl Include="Unigram.Native.Calls.idl" />
@@ -329,6 +376,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="VoipGroupManager.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="VoipGroupParticipantDescription.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="VoipManager.idl" />
@@ -349,6 +399,7 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets')" />
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\FFmpeg.UWP.4.1.5\build\native\FFmpeg.UWP.targets" Condition="Exists('..\packages\FFmpeg.UWP.4.1.5\build\native\FFmpeg.UWP.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -357,5 +408,6 @@
     <Error Condition="!Exists('..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.25.0\build\native\Win2D.uwp.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.210312.4\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\FFmpeg.UWP.4.1.5\build\native\FFmpeg.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\FFmpeg.UWP.4.1.5\build\native\FFmpeg.UWP.targets'))" />
   </Target>
 </Project>

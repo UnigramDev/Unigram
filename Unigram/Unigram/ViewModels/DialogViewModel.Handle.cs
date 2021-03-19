@@ -189,7 +189,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateGroupCall update)
         {
-            if (_chat?.VoiceChatGroupCallId == update.GroupCall.Id)
+            if (_chat?.VoiceChat?.GroupCallId == update.GroupCall.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateGroupCall(_chat, update.GroupCall));
             }

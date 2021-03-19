@@ -577,17 +577,17 @@ namespace Unigram.Views
 
                 if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator)
                 {
+                    if (chat.VoiceChat == null && supergroup.CanManageVoiceChats())
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.Phone });
+                    }
+
                     if (supergroup.IsChannel)
                     {
                         //flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
                     }
                     else
                     {
-                        if (chat.VoiceChatGroupCallId == 0 && supergroup.CanManageVoiceChats())
-                        {
-                            flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.Phone });
-                        }
-
                         flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.Resources.ManageGroupMenu, new FontIcon { Glyph = Icons.Edit });
                     }
                 }
@@ -619,7 +619,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                if (chat.VoiceChatGroupCallId == 0 && basicGroup.CanManageVoiceChats())
+                if (chat.VoiceChat == null && basicGroup.CanManageVoiceChats())
                 {
                     flyout.CreateFlyoutItem(ViewModel.CallCommand, false, Strings.Resources.StartVoipChat, new FontIcon { Glyph = Icons.Phone });
                 }

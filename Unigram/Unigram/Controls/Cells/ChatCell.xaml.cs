@@ -403,7 +403,7 @@ namespace Unigram.Controls.Cells
 
         public void UpdateChatVoiceChat(Chat chat)
         {
-            UpdateOnlineBadge(chat.VoiceChatGroupCallId != 0 && !chat.IsVoiceChatEmpty, true);
+            UpdateOnlineBadge(chat.VoiceChat?.HasParticipants ?? false, true);
         }
 
         public void UpdateUserStatus(Chat chat, UserStatus status)
@@ -622,9 +622,9 @@ namespace Unigram.Controls.Cells
             {
                 UpdateUserStatus(chat, user.Status);
             }
-            else if (chat.VoiceChatGroupCallId != 0)
+            else if (chat.VoiceChat != null)
             {
-                UpdateOnlineBadge(!chat.IsVoiceChatEmpty, true);
+                UpdateOnlineBadge(chat.VoiceChat.HasParticipants, true);
             }
             else if (OnlineBadge != null)
             {

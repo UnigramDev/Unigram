@@ -62,10 +62,24 @@
       <Filter>tgcalls\platform\tdesktop</Filter>
     </ClCompile>
     <ClCompile Include="VoipVideoCapture.cpp" />
-    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.cpp">
+    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupNetworkManager.cpp">
       <Filter>tgcalls\group</Filter>
     </ClCompile>
-    <ClCompile Include="C:\tgcalls\tgcalls\AudioDeviceHelper.cpp" />
+    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\StreamingPart.cpp">
+      <Filter>tgcalls\group</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\AudioDeviceHelper.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\FakeAudioDeviceModule.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\StaticThreads.cpp">
+      <Filter>tgcalls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -145,7 +159,24 @@
     <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceImpl.h">
       <Filter>tgcalls\group</Filter>
     </ClInclude>
-    <ClInclude Include="C:\tgcalls\tgcalls\AudioDeviceHelper.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupNetworkManager.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\group\StreamingPart.h">
+      <Filter>tgcalls\group</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\AudioDeviceHelper.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\FakeAudioDeviceModule.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\StaticThreads.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -159,6 +190,9 @@
     <Midl Include="VoipManager.idl" />
     <Midl Include="VoipGroupManager.idl" />
     <Midl Include="VoipGroupDescriptor.idl" />
+    <Midl Include="GroupNetworkStateChangedEventArgs.idl" />
+    <Midl Include="VoipGroupParticipantDescription.idl" />
+    <Midl Include="FrameRequestedEventArgs.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

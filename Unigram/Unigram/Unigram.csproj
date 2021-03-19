@@ -177,7 +177,6 @@
     <Compile Include="Common\DisposableMutex.cs" />
     <Compile Include="Common\DropShadowEx.cs" />
     <Compile Include="Common\EventDebouncer.cs" />
-    <Compile Include="Common\FastFourierTransform.cs" />
     <Compile Include="Common\ImageHelper.cs" />
     <Compile Include="Common\LoopThread.cs" />
     <Compile Include="Common\LoopThreadPool.cs" />
@@ -2217,16 +2216,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FFmpeg.UWP">
-      <Version>4.1.3</Version>
+      <Version>4.1.5</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>4.0.0</Version>
+      <Version>4.1.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>4.0.0</Version>
+      <Version>4.1.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.11</Version>
+      <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.HighPerformance">
       <Version>6.1.1</Version>

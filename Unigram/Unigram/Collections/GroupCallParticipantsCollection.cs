@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.System;
@@ -39,7 +40,7 @@ namespace Unigram.Collections
         {
             if (_groupCallId == update.GroupCallId)
             {
-                if (update.Participant.Order > 0)
+                if (update.Participant.Order.Length > 0)
                 {
                     var nextIndex = NextIndexOf(update.Participant, out var updated, out int prevIndex);
                     if (nextIndex >= 0)
@@ -58,7 +59,7 @@ namespace Unigram.Collections
                 }
                 else
                 {
-                    var already = this.FirstOrDefault(x => x.UserId == update.Participant.UserId);
+                    var already = this.FirstOrDefault(x => x.Participant.IsEqual(update.Participant.Participant));
                     if (already != null)
                     {
                         Remove(already);
@@ -78,14 +79,17 @@ namespace Unigram.Collections
             for (int i = 0; i < Count; i++)
             {
                 var item = this[i];
-                if (item.UserId == participant.UserId)
+                if (item.Participant.IsEqual(participant.Participant))
                 {
                     prev = i;
                     update = item;
                     //continue;
                 }
 
-                if (index == int.MaxValue && (participant.Order > item.Order || participant.Order == item.Order && participant.UserId >= item.UserId))
+                var order = participant.Order.CompareTo(item.Order);
+                var compare = participant.Participant.ComparaTo(item.Participant);
+
+                if (index == int.MaxValue && (order > 0 || participant.Order == item.Order && compare >= 0))
                 {
                     index = next == prev ? -1 : next;
                 }
@@ -106,7 +110,7 @@ namespace Unigram.Collections
                 update.VolumeLevel = participant.VolumeLevel;
                 update.Order = participant.Order;
                 update.Source = participant.Source;
-                update.UserId = participant.UserId;
+                update.Participant = participant.Participant;
             }
 
             return index < int.MaxValue ? index : Count;

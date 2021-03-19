@@ -28,14 +28,26 @@ namespace Unigram.Controls
             _parent = parent;
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
 
-            RecentUsers.GetPicture = userId => PlaceholderHelper.GetUser(protoService, protoService.GetUser(userId), 32);
+            RecentUsers.GetPicture = sender =>
+            {
+                if (protoService.TryGetUser(sender, out User user))
+                {
+                    return PlaceholderHelper.GetUser(protoService, user, 32);
+                }
+                else if (protoService.TryGetChat(sender, out Chat chat))
+                {
+                    return PlaceholderHelper.GetChat(protoService, chat, 32);
+                }
+
+                return null;
+            };
         }
 
         public bool UpdateGroupCall(Chat chat, GroupCall call)
         {
             var visible = true;
 
-            if (chat.IsVoiceChatEmpty || call == null || call.IsJoined)
+            if (chat.VoiceChat == null || !chat.VoiceChat.HasParticipants || call == null || call.IsJoined)
             {
                 ShowHide(false);
                 visible = false;
@@ -47,11 +59,11 @@ namespace Unigram.Controls
                 TitleLabel.Text = Strings.Resources.VoipGroupVoiceChat;
                 ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension("Participants", call.ParticipantCount) : Strings.Resources.MembersTalkingNobody;
 
+                var destination = RecentUsers.Items;
+                var origin = call.RecentSpeakers;
+
                 if (_prevId == call.Id)
                 {
-                    var destination = RecentUsers.Items;
-                    var origin = call.RecentSpeakers;
-
                     for (int i = 0; i < origin.Count; i++)
                     {
                         var item = origin[i];
@@ -59,7 +71,7 @@ namespace Unigram.Controls
 
                         for (int j = 0; j < destination.Count; j++)
                         {
-                            if (destination[j] == item.UserId)
+                            if (destination[j].IsEqual(item.Speaker))
                             {
                                 index = j;
                                 break;
@@ -72,7 +84,7 @@ namespace Unigram.Controls
                         }
                         else if (index == -1)
                         {
-                            destination.Insert(Math.Min(i, destination.Count), item.UserId);
+                            destination.Insert(Math.Min(i, destination.Count), item.Speaker);
                         }
                     }
 
@@ -83,7 +95,7 @@ namespace Unigram.Controls
 
                         for (int j = 0; j < origin.Count; j++)
                         {
-                            if (origin[j].UserId == item)
+                            if (origin[j].Speaker.IsEqual(item))
                             {
                                 index = j;
                                 break;
@@ -99,7 +111,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    RecentUsers.Items.ReplaceWith(call.RecentSpeakers.Select(x => x.UserId));
+                    RecentUsers.Items.ReplaceWith(origin.Select(x => x.Speaker));
                 }
             }
 

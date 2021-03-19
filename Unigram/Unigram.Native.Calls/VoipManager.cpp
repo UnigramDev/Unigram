@@ -25,7 +25,6 @@
 #include "api/video/video_source_interface.h"
 #include "media/base/video_adapter.h"
 #include "media/base/video_broadcaster.h"
-#include "rtc_base/critical_section.h"
 
 #include <winrt/Telegram.Td.Api.h>
 
