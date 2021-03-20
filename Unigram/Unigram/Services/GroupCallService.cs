@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -9,6 +10,7 @@ using Unigram.Services.Updates;
 using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views;
+using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
@@ -29,7 +31,7 @@ namespace Unigram.Services
 
         void Show();
 
-        Task JoinAsync(long chatId);
+        Task JoinAsync(long chatId, bool pickAlias = false);
         void Leave();
 
         Task CreateAsync(long chatId);
@@ -69,7 +71,7 @@ namespace Unigram.Services
 
         public VoipGroupManager Manager => _manager;
 
-        public async Task JoinAsync(long chatId)
+        public async Task JoinAsync(long chatId, bool pickAlias)
         {
             var permissions = await MediaDeviceWatcher.CheckAccessAsync(false);
             if (permissions == false)
@@ -103,7 +105,7 @@ namespace Unigram.Services
             //    return;
             //}
 
-            await JoinAsyncInternal(chat, chat.VoiceChat.GroupCallId);
+            await JoinAsyncInternal(chat, chat.VoiceChat.GroupCallId, pickAlias);
         }
 
         public void Leave()
@@ -145,11 +147,11 @@ namespace Unigram.Services
             var response = await ProtoService.SendAsync(new CreateVoiceChat(chat.Id));
             if (response is GroupCallId groupCallId)
             {
-                await JoinAsyncInternal(chat, groupCallId.Id);
+                await JoinAsyncInternal(chat, groupCallId.Id, false);
             }
         }
 
-        private async Task JoinAsyncInternal(Chat chat, int groupCallId)
+        private async Task JoinAsyncInternal(Chat chat, int groupCallId, bool pickAlias)
         {
             var activeCall = _call;
             if (activeCall != null)
@@ -179,6 +181,32 @@ namespace Unigram.Services
                     await ProtoService.SendAsync(new LeaveGroupCall(_call.Id));
                     _call = null;
                     _chat = null;
+                }
+            }
+
+            var alias = chat.VoiceChat?.DefaultParticipantAlias;
+            if (alias == null || pickAlias)
+            {
+                var aliases = await ProtoService.SendAsync(new GetAvailableVoiceChatAliases(chat.Id));
+                if (aliases is MessageSenders senders)
+                {
+                    if (senders.Senders.Count > 0)
+                    {
+                        var dialog = new VoiceChatAliasesPopup(ProtoService, chat, senders.Senders.ToArray());
+                        var confirm = await dialog.ShowQueuedAsync();
+                        if (confirm == ContentDialogResult.Primary)
+                        {
+                            aliases = dialog.SelectedSender;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    // TODO
                 }
             }
 

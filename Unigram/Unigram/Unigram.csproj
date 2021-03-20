@@ -507,6 +507,9 @@
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\VoiceChatAliasesPopup.xaml.cs">
+      <DependentUpon>VoiceChatAliasesPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\ZoomableMediaPopup.xaml.cs">
       <DependentUpon>ZoomableMediaPopup.xaml</DependentUpon>
     </Compile>
@@ -1686,6 +1689,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\SelectColorPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\VoiceChatAliasesPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
