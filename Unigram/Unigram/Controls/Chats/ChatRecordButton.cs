@@ -564,18 +564,18 @@ namespace Unigram.Controls.Chats
                         return;
                     }
 
-                    // Create a new temporary file for the recording
-                    var fileName = string.Format(mode == ChatRecordMode.Video
-                        ? "video_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.mp4"
-                        : "voice_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.ogg", DateTime.Now);
-                    var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
-
                     try
                     {
+                        // Create a new temporary file for the recording
+                        var fileName = string.Format(mode == ChatRecordMode.Video
+                            ? "video_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.mp4"
+                            : "voice_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.oga", DateTime.Now);
+                        var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName);
+
                         _mode = mode;
-                        _file = cache;
+                        _file = file;
                         _chat = chat;
-                        _recorder = new OpusRecorder(cache, mode == ChatRecordMode.Video);
+                        _recorder = new OpusRecorder(file, mode == ChatRecordMode.Video);
 
                         _recorder.m_mediaCapture = new MediaCapture();
 
@@ -672,7 +672,7 @@ namespace Unigram.Controls.Chats
                 _reader = mediaFrameReader;
             }
 
-            private float[] _compressedWaveformSamples = new float[200];
+            private readonly float[] _compressedWaveformSamples = new float[200];
             private int _compressedWaveformPosition = 0;
 
             private float _currentPeak;
@@ -792,7 +792,7 @@ namespace Unigram.Controls.Chats
                     sumSamples += sample;
                 }
 
-                var calculatedPeak = (ushort)((double)sumSamples * 1.8 / 100.0);
+                var calculatedPeak = (ushort)(sumSamples * 1.8 / 100.0);
                 if (calculatedPeak < 2500)
                 {
                     calculatedPeak = 2500;
@@ -820,7 +820,7 @@ namespace Unigram.Controls.Chats
 
                     for (int i = 0; i < scaledSamples.Length; i++)
                     {
-                        set_bits(data, i * 5, (short)scaledSamples[i] & 31);
+                        set_bits(data, i * 5, scaledSamples[i] & 31);
                     }
                 }
 
