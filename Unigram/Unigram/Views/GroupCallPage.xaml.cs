@@ -13,7 +13,6 @@ using Unigram.Native.Calls;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.Devices.Enumeration;
-using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -477,9 +476,9 @@ namespace Unigram.Views
         //private BlobDrawable tinyWaveDrawable = new BlobDrawable(9);
         //private BlobDrawable bigWaveDrawable = new BlobDrawable(12);
 
-        private BlobDrawable _buttonWaveDrawable = new BlobDrawable(3);
-        private BlobDrawable _tinyWaveDrawable = new BlobDrawable(6);
-        private BlobDrawable _bigWaveDrawable = new BlobDrawable(9);
+        private readonly BlobDrawable _buttonWaveDrawable = new BlobDrawable(3);
+        private readonly BlobDrawable _tinyWaveDrawable = new BlobDrawable(6);
+        private readonly BlobDrawable _bigWaveDrawable = new BlobDrawable(9);
 
         private float _amplitude;
         private float _animateAmplitudeDiff;
@@ -564,7 +563,7 @@ namespace Unigram.Views
 
             if (_animateToAmplitude != _amplitude)
             {
-                _amplitude = _amplitude + (_animateAmplitudeDiff * ((float)j));
+                _amplitude = _amplitude + (_animateAmplitudeDiff * j);
 
                 if (_animateAmplitudeDiff > 0.0f)
                 {
