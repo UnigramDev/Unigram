@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "SignalingDataEmittedEventArgs.h"
+#if __has_include("SignalingDataEmittedEventArgs.g.cpp")
 #include "SignalingDataEmittedEventArgs.g.cpp"
+#endif
 
 using namespace winrt::Windows::Foundation::Collections;
 

@@ -19,3 +19,10 @@ namespace winrt::Unigram::Native::Calls::implementation
 		VoipVideoState m_video;
 	};
 } // namespace winrt::Unigram::Native::Calls::implementation
+
+//namespace winrt::Unigram::Native::Calls::factory_implementation
+//{
+//	struct RemoteMediaStateUpdatedEventArgs : RemoteMediaStateUpdatedEventArgsT<RemoteMediaStateUpdatedEventArgs, implementation::RemoteMediaStateUpdatedEventArgs>
+//	{
+//	};
+//}

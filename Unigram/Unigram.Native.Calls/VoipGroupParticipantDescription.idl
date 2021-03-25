@@ -1,0 +1,14 @@
+namespace Unigram.Native.Calls
+{
+	[default_interface]
+	runtimeclass VoipGroupParticipantDescription
+	{
+		VoipGroupParticipantDescription();
+		String EndpointId;
+		Int32 AudioSsrc;
+		/*Windows.Foundation.Collections.IVector<GroupJoinPayloadVideoPayloadType> VideoPayloadTypes{ get; };
+		Windows.Foundation.Collections.IMapView<Int32, String> VideoExtensionMap{ get; };
+		Windows.Foundation.Collections.IVector<GroupJoinPayloadVideoSourceGroup> VideoSourceGroups{ get; };*/
+		Boolean IsRemoved;
+	}
+}

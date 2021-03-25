@@ -1,4 +1,8 @@
+import "Unigram.Native.Calls.idl";
 import "VoipGroupDescriptor.idl";
+import "VoipGroupParticipantDescription.idl";
+import "GroupNetworkStateChangedEventArgs.idl";
+import "FrameRequestedEventArgs.idl";
 
 namespace Unigram.Native.Calls
 {
@@ -9,8 +13,11 @@ namespace Unigram.Native.Calls
     {
         VoipGroupManager(VoipGroupDescriptor descriptor);
 
+        void SetConnectionMode(VoipGroupConnectionMode connectionMode, Boolean keepBroadcastIfWasEnabled);
+
         void EmitJoinPayload(EmitJsonPayloadDelegate completion);
-        void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponse payload);
+        void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponseWebrtc payload, Windows.Foundation.Collections.IVector<VoipGroupParticipantDescription> participants);
+        void AddParticipants(Windows.Foundation.Collections.IVector<VoipGroupParticipantDescription> participants);
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
         Boolean IsMuted;
@@ -20,7 +27,9 @@ namespace Unigram.Native.Calls
 
         void SetVolume(Int32 ssrc, Double volume);
 
-        event Windows.Foundation.TypedEventHandler<VoipGroupManager, Boolean> NetworkStateUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, GroupNetworkStateChangedEventArgs> NetworkStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<Int32, Windows.Foundation.Collections.IKeyValuePair<Single, Boolean> > > AudioLevelsUpdated;
+
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, FrameRequestedEventArgs> FrameRequested;
     }
 }
