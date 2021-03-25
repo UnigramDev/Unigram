@@ -2,23 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Logs;
-using Unigram.Native;
 using Unigram.Navigation;
 using Unigram.Services.Updates;
 using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Media;
 using Windows.Media.Core;
-using Windows.Media.Effects;
 using Windows.Media.Playback;
-using Windows.Storage;
-using Windows.Media.Render;
 
 namespace Unigram.Services
 {
@@ -120,7 +112,7 @@ namespace Unigram.Services
                 ? null
                 : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List
                 ? true
-                : (bool?)false;
+                : false;
 
             _mapping = new Dictionary<string, PlaybackItem>();
 
@@ -135,7 +127,7 @@ namespace Unigram.Services
                 ? true
                 : args.RequestedAutoRepeatMode == MediaPlaybackAutoRepeatMode.Track
                 ? null
-                : (bool?)false;
+                : false;
         }
 
         private void Transport_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)

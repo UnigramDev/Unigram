@@ -59,9 +59,9 @@ namespace Unigram
 
             try
             {
-                _mediaExtensionManager = new MediaExtensionManager();
-                _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".ogg", "audio/ogg");
-                _mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".oga", "audio/ogg");
+                //_mediaExtensionManager = new MediaExtensionManager();
+                //_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".ogg", "audio/ogg");
+                //_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.Media.OpusByteStreamHandler", ".oga", "audio/ogg");
             }
             catch
             {
@@ -363,7 +363,6 @@ namespace Unigram
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
-            var dispatcher = Window.Current.Dispatcher;
             Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
         }
