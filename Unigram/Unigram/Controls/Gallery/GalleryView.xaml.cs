@@ -320,9 +320,9 @@ namespace Unigram.Controls.Gallery
                 if (_compactLifetime != null)
                 {
                     var compact = _compactLifetime;
-                    await compact.CoreDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    await compact.Dispatcher.DispatchAsync(() =>
                     {
-                        compact.WindowWrapper.Close();
+                        compact.Window.Close();
                     });
 
                     _compactLifetime = null;
@@ -401,6 +401,12 @@ namespace Unigram.Controls.Gallery
                 Bindings.StopTracking();
             }
 
+            var batch = _layer.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                Hide();
+            };
+
             //var container = GetContainer(0);
             //var root = container.Presenter;
             if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
@@ -419,16 +425,9 @@ namespace Unigram.Controls.Gallery
                     }
 
                     var element = _closing();
-                    if (element.ActualWidth > 0 && animation.TryStart(element))
+                    if (element.ActualWidth > 0)
                     {
-                        TypedEventHandler<ConnectedAnimation, object> handler = null;
-                        handler = (s, args) =>
-                        {
-                            animation.Completed -= handler;
-                            Hide();
-                        };
-
-                        animation.Completed += handler;
+                        animation.TryStart(element);
                     }
                     else
                     {
@@ -442,22 +441,12 @@ namespace Unigram.Controls.Gallery
             }
             else
             {
-                var batch = _layout.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-
                 _layout.StartAnimation("Offset.Y", CreateScalarAnimation(_layout.Offset.Y, (float)ActualHeight));
-
-                batch.End();
-                batch.Completed += (s, args) =>
-                {
-                    ScrollingHost.Opacity = 0;
-                    Preview.Opacity = 1;
-
-                    Hide();
-                };
             }
 
             _layer.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
             _bottom.StartAnimation("Opacity", CreateScalarAnimation(1, 0));
+            batch.End();
 
             Unload();
             Dispose();
@@ -479,7 +468,7 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            var item = image.Item as GalleryContent;
+            var item = image.Item;
             if (item == null)
             {
                 return;
@@ -541,7 +530,7 @@ namespace Unigram.Controls.Gallery
             var scalar = _layer.Compositor.CreateScalarKeyFrameAnimation();
             scalar.InsertKeyFrame(0, from);
             scalar.InsertKeyFrame(1, to, ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction);
-            scalar.Duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+            scalar.Duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration - TimeSpan.FromMilliseconds(50);
 
             return scalar;
         }
@@ -1054,7 +1043,7 @@ namespace Unigram.Controls.Gallery
                 return;
             }
 
-            var item = viewModel.SelectedItem as GalleryContent;
+            var item = viewModel.SelectedItem;
             if (item == null)
             {
                 return;

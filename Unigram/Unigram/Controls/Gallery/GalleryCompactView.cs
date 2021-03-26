@@ -49,7 +49,7 @@ namespace Unigram.Controls.Gallery
 
             SetMediaPlayer(player);
 
-            lifetime.Released += OnReleased;
+            lifetime.Closed += OnReleased;
         }
 
         public void Handle(UpdateFile update)
