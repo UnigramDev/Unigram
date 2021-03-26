@@ -137,6 +137,8 @@ namespace Unigram.Converters
         public const string SpeakerNone = "\uE74F";
         public const string SendFilled = "\uE919";
 
+        public const string VoiceChat = "\uE900";
+
         public const string AppFolder = "\uF122";
 
         public const string ChatBubblesQuestion = "\uE783";
