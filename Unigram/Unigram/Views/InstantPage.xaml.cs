@@ -1306,7 +1306,7 @@ namespace Unigram.Views
                         highlight.Background = new SolidColorBrush(Colors.PaleGoldenrod);
                         highlight.Ranges.Add(new TextRange { StartIndex = offset, Length = plainText.Text.Length });
 
-                        textBlock.TextHighlighters.Add(highlight);
+                        //textBlock.TextHighlighters.Add(highlight);
                     }
 
                     offset += plainText.Text.Length;
