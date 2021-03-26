@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
-    public interface IGroupCallService : IHandle<UpdateGroupCall>
+    public interface IGroupCallService
     {
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
@@ -38,7 +38,7 @@ namespace Unigram.Services
         void Discard();
     }
 
-    public class GroupCallService : TLViewModelBase, IGroupCallService
+    public class GroupCallService : TLViewModelBase, IGroupCallService, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IViewService _viewService;
 
@@ -80,7 +80,7 @@ namespace Unigram.Services
             }
 
             var chat = CacheService.GetChat(chatId);
-            if (chat == null || chat.VoiceChat == null)
+            if (chat == null || chat.VoiceChat.GroupCallId == 0)
             {
                 return;
             }
@@ -372,6 +372,17 @@ namespace Unigram.Services
             }
 
             Aggregator.Publish(new UpdateCallDialog(update.GroupCall));
+        }
+
+        public void Handle(UpdateGroupCallParticipant update)
+        {
+            var manager = _manager;
+            if (manager == null)
+            {
+                return;
+            }
+
+            manager.SetVolume(update.Participant.Source, update.Participant.VolumeLevel / 10000d);
         }
 
         public Chat Chat => _chat;

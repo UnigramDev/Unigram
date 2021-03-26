@@ -221,7 +221,7 @@ namespace Unigram.ViewModels
                     if (chat != null && chat.Type is ChatTypeSupergroup super && !super.IsChannel)
                     {
                         var supergroup = message.ProtoService.GetSupergroup(super.SupergroupId);
-                        return supergroup != null && supergroup.Username.Length > 0 && !(message.Content is MessageContact) && !(message.Content is MessageLocation);
+                        return supergroup != null && supergroup.Username.Length > 0 && message.Content is not MessageContact && message.Content is not MessageLocation;
                     }
                 }
             }
@@ -234,7 +234,7 @@ namespace Unigram.ViewModels
             //}
             else if (message.IsChannelPost)
             {
-                if (message.ViaBotUserId == 0 && message.ReplyToMessageId == 0 || !(message.Content is MessageSticker))
+                if (message.ViaBotUserId == 0 && message.ReplyToMessageId == 0 || message.Content is not MessageSticker)
                 {
                     return true;
                 }
