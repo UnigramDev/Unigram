@@ -293,14 +293,20 @@ namespace Unigram.Common
         public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
+            var path = file.Path;
 
             if (conversion == ConversionType.Copy && arguments == null && NativeUtils.IsFileReadable(file.Path))
             {
-                return new InputFileLocal(file.Path);
+                return new InputFileLocal(path);
+            }
+
+            if (conversion == ConversionType.Compress)
+            {
+                path = Path.GetFileNameWithoutExtension(path) + ".jpg";
             }
 
             var props = await file.GetBasicPropertiesAsync();
-            return new InputFileGenerated(file.Path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (int)props.Size);
+            return new InputFileGenerated(path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (int)props.Size);
         }
 
         public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
@@ -316,8 +322,8 @@ namespace Unigram.Common
                 originalHeight = video.CropRectangle.Height;
             }
 
-            double ratioX = (double)90 / originalWidth;
-            double ratioY = (double)90 / originalHeight;
+            double ratioX = 90 / originalWidth;
+            double ratioY = 90 / originalHeight;
             double ratio = Math.Min(ratioX, ratioY);
 
             int width = (int)(originalWidth * ratio);
@@ -467,7 +473,7 @@ namespace Unigram.Common
             return defaultValue;
         }
 
-        public static Dictionary<string, string> ParseQueryString(this string query)
+        public static Dictionary<string, string> ParseQueryString(this string query, char separator = '&')
         {
             var first = query.Split('?');
             if (first.Length > 1)
@@ -476,7 +482,7 @@ namespace Unigram.Common
             }
 
             var queryDict = new Dictionary<string, string>();
-            foreach (var token in query.TrimStart(new char[] { '?' }).Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var token in query.TrimStart(new char[] { '?' }).Split(new char[] { separator }, StringSplitOptions.RemoveEmptyEntries))
             {
                 string[] parts = token.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 2)
