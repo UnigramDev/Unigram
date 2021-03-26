@@ -81,8 +81,8 @@ namespace Unigram.Common.Chats
                         case ChatActionRecordingVoiceNote recordAudio:
                             commonAction = recordAudio;
                             return string.Format(Strings.Resources.IsRecordingAudio, userName);
-                        case ChatActionRecordingVideoNote recordRound:
-                        case ChatActionUploadingVideoNote uploadRound:
+                        case ChatActionRecordingVideoNote:
+                        case ChatActionUploadingVideoNote:
                             commonAction = new ChatActionRecordingVideoNote();
                             return string.Format(Strings.Resources.IsSendingVideo, userName);
                         //case TLSendMessageTypingAction typing:
@@ -96,8 +96,8 @@ namespace Unigram.Common.Chats
                         case ChatActionUploadingPhoto uploadPhoto:
                             commonAction = uploadPhoto;
                             return string.Format(Strings.Resources.IsSendingPhoto, userName);
-                        case ChatActionRecordingVideo recordVideo:
-                        case ChatActionUploadingVideo uploadVideo:
+                        case ChatActionRecordingVideo:
+                        case ChatActionUploadingVideo:
                             commonAction = new ChatActionUploadingVideo();
                             return string.Format(Strings.Resources.IsSendingVideo, userName);
                     }

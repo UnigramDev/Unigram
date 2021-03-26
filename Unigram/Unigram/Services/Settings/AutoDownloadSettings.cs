@@ -177,7 +177,7 @@ namespace Unigram.Services.Settings
         public bool ShouldDownload(AutoDownloadMode mode, AutoDownloadChat chat, NetworkType networkType = null)
         {
             bool isWiFi = networkType is NetworkTypeWiFi || networkType == null;
-            bool isCellular = !isWiFi && !(networkType is NetworkTypeNone);
+            bool isCellular = !isWiFi && networkType is not NetworkTypeNone;
 
             bool shouldDownload = false;
             switch (chat)

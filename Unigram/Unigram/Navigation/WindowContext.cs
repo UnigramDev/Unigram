@@ -82,7 +82,8 @@ namespace Unigram.Navigation
                 var list = multicast.GetInvocationList();
                 for (int i = list.Length - 1; i >= 0; i--)
                 {
-                    var result = list[i].DynamicInvoke(sender, args);
+                    list[i].DynamicInvoke(sender, args);
+                    
                     if (args.Handled)
                     {
                         return;

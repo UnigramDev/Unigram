@@ -178,15 +178,15 @@ namespace Unigram.Controls.Messages.Content
 
         private static int CountBlock(WebPageInstantView webPage, PageBlock pageBlock, int count)
         {
-            if (pageBlock is PageBlockPhoto photoBlock)
+            if (pageBlock is PageBlockPhoto)
             {
                 return count + 1;
             }
-            else if (pageBlock is PageBlockVideo videoBlock)
+            else if (pageBlock is PageBlockVideo)
             {
                 return count + 1;
             }
-            else if (pageBlock is PageBlockAnimation animationBlock)
+            else if (pageBlock is PageBlockAnimation)
             {
                 return count + 1;
             }

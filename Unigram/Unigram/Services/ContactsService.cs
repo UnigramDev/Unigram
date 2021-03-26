@@ -364,7 +364,7 @@ namespace Unigram.Services
                     annotation.ProviderProperties.Add("ContactShareAppID", Package.Current.Id.FamilyName + "!App");
                 }
 
-                var added = await annotationList.TrySaveAnnotationAsync(annotation);
+                await annotationList.TrySaveAnnotationAsync(annotation);
             }
         }
 

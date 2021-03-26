@@ -13,7 +13,7 @@ namespace Unigram.ViewModels.BasicGroups
     public class BasicGroupCreateStep1ViewModel : TLViewModelBase
     {
         private bool _uploadingPhoto;
-        private Action _uploadingCallback;
+        private readonly Action _uploadingCallback;
 
         public BasicGroupCreateStep1ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

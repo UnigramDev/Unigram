@@ -143,7 +143,7 @@ namespace Unigram.ViewModels
 
                 return Settings.AutoDownload.ShouldDownloadPhoto(GetChatType(chat));
             }
-            else if (content is Sticker sticker)
+            else if (content is Sticker)
             {
                 // Stickers aren't part of the deal
                 return true;
@@ -156,7 +156,7 @@ namespace Unigram.ViewModels
             {
                 return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), videoNote.Video.Size);
             }
-            else if (content is VoiceNote voiceNote)
+            else if (content is VoiceNote)
             {
                 // Voice notes aren't part of the deal
                 return true;

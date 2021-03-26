@@ -56,7 +56,7 @@ namespace Unigram.Views.Supergroups
 
         public void UpdateMember(Chat chat, User user, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusRestricted restricted)
+            if (member.Status is ChatMemberStatusRestricted)
             {
                 DismissPanel.Visibility = Visibility.Visible;
             }

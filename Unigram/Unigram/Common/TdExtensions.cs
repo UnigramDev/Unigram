@@ -359,13 +359,13 @@ namespace Unigram.Common
         {
             switch (entity.Type)
             {
-                case TextEntityTypeBold bold:
-                case TextEntityTypeItalic italic:
-                case TextEntityTypeCode code:
-                case TextEntityTypePre pre:
-                case TextEntityTypePreCode preCode:
-                case TextEntityTypeTextUrl textUrl:
-                case TextEntityTypeMentionName mentionName:
+                case TextEntityTypeBold:
+                case TextEntityTypeItalic:
+                case TextEntityTypeCode:
+                case TextEntityTypePre:
+                case TextEntityTypePreCode:
+                case TextEntityTypeTextUrl:
+                case TextEntityTypeMentionName:
                     return true;
                 default:
                     return false;
@@ -1162,15 +1162,15 @@ namespace Unigram.Common
             {
                 switch (call.NetworkType)
                 {
-                    case NetworkTypeMobile mobile:
+                    case NetworkTypeMobile:
                         return TdNetworkType.Mobile;
-                    case NetworkTypeMobileRoaming mobileRoaming:
+                    case NetworkTypeMobileRoaming:
                         return TdNetworkType.MobileRoaming;
-                    case NetworkTypeNone none:
+                    case NetworkTypeNone:
                         return TdNetworkType.None;
-                    case NetworkTypeOther other:
+                    case NetworkTypeOther:
                     //return TdNetworkType.Other;
-                    case NetworkTypeWiFi wifi:
+                    case NetworkTypeWiFi:
                         return TdNetworkType.WiFi;
                 }
             }
@@ -1178,15 +1178,15 @@ namespace Unigram.Common
             {
                 switch (file.NetworkType)
                 {
-                    case NetworkTypeMobile mobile:
+                    case NetworkTypeMobile:
                         return TdNetworkType.Mobile;
-                    case NetworkTypeMobileRoaming mobileRoaming:
+                    case NetworkTypeMobileRoaming:
                         return TdNetworkType.MobileRoaming;
-                    case NetworkTypeNone none:
+                    case NetworkTypeNone:
                         return TdNetworkType.None;
-                    case NetworkTypeOther other:
+                    case NetworkTypeOther:
                     //return TdNetworkType.Other;
-                    case NetworkTypeWiFi wifi:
+                    case NetworkTypeWiFi:
                         return TdNetworkType.WiFi;
                 }
             }
@@ -1234,23 +1234,23 @@ namespace Unigram.Common
 
         public static bool IsSaved(this Message message, int savedMessagesId)
         {
-            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+            if (message.ForwardInfo?.Origin is MessageForwardOriginUser)
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat)
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel)
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport)
             {
                 return true;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
             {
                 return message.ChatId == savedMessagesId;
             }
@@ -1553,7 +1553,7 @@ namespace Unigram.Common
             }
             else
             {
-                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator administrator || supergroup.Status is ChatMemberStatusMember;
+                return supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator || supergroup.Status is ChatMemberStatusMember;
             }
         }
 
@@ -1629,7 +1629,7 @@ namespace Unigram.Common
                 return false;
             }
 
-            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator || basicGroup.Status is ChatMemberStatusMember;
+            return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator || basicGroup.Status is ChatMemberStatusMember;
         }
 
 

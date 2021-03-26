@@ -82,7 +82,7 @@ namespace Unigram.Views.Popups
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (List.SelectedItem is MessageSender messageSender)
+            if (List.SelectedItem is MessageSender)
             {
                 //if (_protoService.TryGetUser(messageSender, out User user))
                 //{

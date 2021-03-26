@@ -370,7 +370,7 @@ namespace Unigram.Views.Settings
         private void Boolean_Click(object sender, RoutedEventArgs e)
         {
             var check = sender as CheckBox;
-            if (check != null && check.Tag is ThemeBooleanPart boolean)
+            if (check != null && check.Tag is ThemeBooleanPart)
             {
                 Update();
             }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
@@ -179,15 +178,15 @@ namespace Unigram.ViewModels.Settings
 
                 switch (state)
                 {
-                    case ConnectionStateWaitingForNetwork waitingForNetwork:
+                    case ConnectionStateWaitingForNetwork:
                         //ShowStatus(Strings.Resources.WaitingForNetwork);
                         break;
-                    case ConnectionStateConnecting connecting:
-                    case ConnectionStateConnectingToProxy connectingToProxy:
+                    case ConnectionStateConnecting:
+                    case ConnectionStateConnectingToProxy:
                         item.Status = new ConnectionStatusConnecting();
                         break;
-                    case ConnectionStateUpdating updating:
-                    case ConnectionStateReady ready:
+                    case ConnectionStateUpdating:
+                    case ConnectionStateReady:
                         item.Status = new ConnectionStatusReady(true, item.Seconds);
                         break;
                 }

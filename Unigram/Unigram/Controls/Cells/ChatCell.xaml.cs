@@ -774,7 +774,7 @@ namespace Unigram.Controls.Cells
             {
                 switch (chat.DraftMessage.InputMessageText)
                 {
-                    case InputMessageText text:
+                    case InputMessageText:
                         return string.Format("{0}: ", Strings.Resources.Draft);
                 }
             }
@@ -792,7 +792,7 @@ namespace Unigram.Controls.Cells
             {
                 switch (chat.DraftMessage.InputMessageText)
                 {
-                    case InputMessageText text:
+                    case InputMessageText:
                         return string.Empty;
                 }
             }
@@ -932,7 +932,7 @@ namespace Unigram.Controls.Cells
             {
                 return result + (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
             }
-            else if (message.Content is MessageVenue vanue)
+            else if (message.Content is MessageVenue)
             {
                 return result + Strings.Resources.AttachLocation;
             }

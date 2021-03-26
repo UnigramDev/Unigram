@@ -13,9 +13,9 @@ namespace Unigram.Selectors
         {
             switch (item)
             {
-                case NetworkStatisticsEntryCall call:
+                case NetworkStatisticsEntryCall:
                     return CallTemplate;
-                case NetworkStatisticsEntryFile data:
+                case NetworkStatisticsEntryFile:
                     return FileTemplate;
             }
 

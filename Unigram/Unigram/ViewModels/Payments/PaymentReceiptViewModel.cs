@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Navigation.Services;
 using Unigram.Services;

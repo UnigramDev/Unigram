@@ -268,15 +268,15 @@ namespace Unigram.ViewModels.Settings
 
             switch (_inputKey)
             {
-                case UserPrivacySettingAllowCalls allowCalls:
-                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
-                case UserPrivacySettingAllowChatInvites allowChatInvites:
-                case UserPrivacySettingShowProfilePhoto showProfilePhoto:
-                case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
+                case UserPrivacySettingAllowCalls:
+                case UserPrivacySettingAllowPeerToPeerCalls:
+                case UserPrivacySettingAllowChatInvites:
+                case UserPrivacySettingShowProfilePhoto:
+                case UserPrivacySettingShowLinkInForwardedMessages:
                 default:
                     dialog.ViewModel.Title = Strings.Resources.AlwaysAllow;
                     break;
-                case UserPrivacySettingShowStatus showStatus:
+                case UserPrivacySettingShowStatus:
                     dialog.ViewModel.Title = Strings.Resources.AlwaysShareWithTitle;
                     break;
             }
@@ -340,15 +340,15 @@ namespace Unigram.ViewModels.Settings
 
             switch (_inputKey)
             {
-                case UserPrivacySettingAllowCalls allowCalls:
-                case UserPrivacySettingAllowPeerToPeerCalls allowP2PCalls:
-                case UserPrivacySettingAllowChatInvites allowChatInvites:
-                case UserPrivacySettingShowProfilePhoto showProfilePhoto:
-                case UserPrivacySettingShowLinkInForwardedMessages showLinkInForwardedMessages:
+                case UserPrivacySettingAllowCalls:
+                case UserPrivacySettingAllowPeerToPeerCalls:
+                case UserPrivacySettingAllowChatInvites:
+                case UserPrivacySettingShowProfilePhoto:
+                case UserPrivacySettingShowLinkInForwardedMessages:
                 default:
                     dialog.ViewModel.Title = Strings.Resources.NeverAllow;
                     break;
-                case UserPrivacySettingShowStatus showStatus:
+                case UserPrivacySettingShowStatus:
                     dialog.ViewModel.Title = Strings.Resources.NeverShareWithTitle;
                     break;
             }

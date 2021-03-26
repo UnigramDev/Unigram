@@ -69,20 +69,6 @@ namespace Unigram.Views.Popups
             return this.ShowQueuedAsync();
         }
 
-        // SystemControlBackgroundChromeMediumLowBrush
-
-        private void SetupTitleAndStatusBar()
-        {
-            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-            var backgroundBrush = Application.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
-            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
-
-            //titlebar.BackgroundColor = backgroundBrush.Color;
-            titlebar.ForegroundColor = foregroundBrush.Color;
-            //titlebar.ButtonBackgroundColor = backgroundBrush.Color;
-            titlebar.ButtonForegroundColor = foregroundBrush.Color;
-        }
-
         private async void List_ItemClick(object sender, ItemClickEventArgs e)
         {
             Hide();

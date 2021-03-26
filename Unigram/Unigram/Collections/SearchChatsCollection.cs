@@ -321,15 +321,15 @@ namespace Unigram.Collections
             {
                 switch (_filter)
                 {
-                    case SearchMessagesFilterPhotoAndVideo photoAndVideo:
+                    case SearchMessagesFilterPhotoAndVideo:
                         return Strings.Resources.SharedMediaTab2;
-                    case SearchMessagesFilterDocument document:
+                    case SearchMessagesFilterDocument:
                         return Strings.Resources.SharedFilesTab2;
-                    case SearchMessagesFilterUrl url:
+                    case SearchMessagesFilterUrl:
                         return Strings.Resources.SharedLinksTab2;
-                    case SearchMessagesFilterAudio audio:
+                    case SearchMessagesFilterAudio:
                         return Strings.Resources.SharedMusicTab2;
-                    case SearchMessagesFilterVoiceNote voiceNote:
+                    case SearchMessagesFilterVoiceNote:
                         return Strings.Resources.SharedVoiceTab2;
                     default:
                         return null;
@@ -343,15 +343,15 @@ namespace Unigram.Collections
             {
                 switch (_filter)
                 {
-                    case SearchMessagesFilterPhotoAndVideo photoAndVideo:
+                    case SearchMessagesFilterPhotoAndVideo:
                         return Icons.Image;
-                    case SearchMessagesFilterDocument document:
+                    case SearchMessagesFilterDocument:
                         return Icons.Document;
-                    case SearchMessagesFilterUrl url:
+                    case SearchMessagesFilterUrl:
                         return Icons.Link;
-                    case SearchMessagesFilterAudio audio:
+                    case SearchMessagesFilterAudio:
                         return Icons.MusicNote;
-                    case SearchMessagesFilterVoiceNote voiceNote:
+                    case SearchMessagesFilterVoiceNote:
                         return Icons.MicOn;
                     default:
                         return null;

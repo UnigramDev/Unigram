@@ -106,7 +106,7 @@ namespace Unigram.Controls
         {
             if (e.Key == VirtualKey.Back && IsReplaceEmojiEnabled)
             {
-                Document.GetText(TextGetOptions.None, out string text);
+                Document.GetText(TextGetOptions.None, out _);
 
                 var range = Document.Selection.GetClone();
                 if (range.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.TryGetValue(range.Text, out string emoji))

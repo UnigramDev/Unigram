@@ -242,28 +242,28 @@ namespace Unigram.Controls
 
             switch (statistics.FileType)
             {
-                case FileTypePhoto fileTypePhoto:
+                case FileTypePhoto:
                     Name = Strings.Resources.LocalPhotoCache;
                     Stroke = Color.FromArgb(0xFF, 0x32, 0x7F, 0xE5);
                     break;
-                case FileTypeVideo fileTypeVideo:
+                case FileTypeVideo:
                     Name = Strings.Resources.LocalVideoCache;
                     Stroke = Color.FromArgb(0xFF, 0xDE, 0xBA, 0x08);
                     break;
-                case FileTypeDocument fileTypeDocument:
+                case FileTypeDocument:
                     Name = Strings.Resources.LocalDocumentCache;
                     Stroke = Color.FromArgb(0xFF, 0x61, 0xC7, 0x52);
                     break;
-                case FileTypeAudio fileTypeAudio:
+                case FileTypeAudio:
                     Name = Strings.Resources.LocalMusicCache;
                     Stroke = Color.FromArgb(0xFF, 0x7F, 0x79, 0xF3);
                     break;
-                case FileTypeVideoNote videoNote:
-                case FileTypeVoiceNote voiceNote:
+                case FileTypeVideoNote:
+                case FileTypeVoiceNote:
                     Name = Strings.Resources.LocalAudioCache;
                     Stroke = Color.FromArgb(0xFF, 0xE0, 0x53, 0x56);
                     break;
-                case FileTypeSticker fileTypeSticker:
+                case FileTypeSticker:
                     Name = Strings.Resources.AccDescrStickers;
                     Stroke = Color.FromArgb(0xFF, 0x8F, 0xCF, 0x39);
                     break;

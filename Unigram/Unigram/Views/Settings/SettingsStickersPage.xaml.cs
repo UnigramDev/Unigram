@@ -161,8 +161,8 @@ namespace Unigram.Views.Settings
 
             var subtitle = content.Children[2] as TextBlock;
             subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
-
-            var file = stickerSet.GetThumbnail(out var outline, out bool animated);
+            
+            var file = stickerSet.GetThumbnail(out var outline, out _);
             if (file == null)
             {
                 return;

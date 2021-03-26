@@ -193,7 +193,7 @@ namespace Unigram.Controls.Messages.Content
                 rich.Blocks.Add(paragraph);
                 rich.Margin = new Thickness(0, 0, 0, 8);
 
-                ReplaceEntities(message, rich, span, caption, out bool adjust);
+                ReplaceEntities(message, rich, span, caption, out _);
                 Children.Add(rich);
             }
         }
@@ -465,7 +465,7 @@ namespace Unigram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageAlbum album)
+            if (content is MessageAlbum)
             {
                 return true;
             }

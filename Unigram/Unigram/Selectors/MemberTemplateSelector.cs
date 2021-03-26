@@ -26,9 +26,9 @@ namespace Unigram.Selectors
 
             switch (member.Status)
             {
-                case ChatMemberStatusCreator creator:
+                case ChatMemberStatusCreator:
                     return CreatorTemplate ?? AdminTemplate ?? ItemTemplate;
-                case ChatMemberStatusAdministrator administrator:
+                case ChatMemberStatusAdministrator:
                     return AdminTemplate ?? ItemTemplate;
                 default:
                     return ItemTemplate;

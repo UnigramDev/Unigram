@@ -118,15 +118,15 @@ namespace Unigram.Views.Chats
                 if (string.IsNullOrEmpty(caption?.Text))
                 {
                     var message = counters.Message;
-                    if (message.Content is MessageVoiceNote voiceNote)
+                    if (message.Content is MessageVoiceNote)
                     {
                         title.Text = Strings.Resources.AttachAudio;
                     }
-                    else if (message.Content is MessageVideo video)
+                    else if (message.Content is MessageVideo)
                     {
                         title.Text = Strings.Resources.AttachVideo;
                     }
-                    else if (message.Content is MessageAnimation animation)
+                    else if (message.Content is MessageAnimation)
                     {
                         title.Text = Strings.Resources.AttachGif;
                     }
@@ -167,7 +167,7 @@ namespace Unigram.Views.Chats
                     {
                         title.Text = location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation;
                     }
-                    else if (message.Content is MessageVenue vanue)
+                    else if (message.Content is MessageVenue)
                     {
                         title.Text = Strings.Resources.AttachLocation;
                     }

@@ -58,7 +58,7 @@ namespace Unigram.Controls.Messages.Content
                     Background = pattern.ToBrush();
                     Texture.Opacity = pattern.Intensity / 100d;
                 }
-                else if (background is BackgroundTypeWallpaper wallpaper)
+                else if (background is BackgroundTypeWallpaper)
                 {
                     Background = null;
                     Texture.Opacity = 1;

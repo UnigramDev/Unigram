@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Unigram.Common;
+﻿using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;

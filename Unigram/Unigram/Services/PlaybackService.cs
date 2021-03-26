@@ -717,7 +717,7 @@ namespace Unigram.Services
             {
                 return voiceNote.VoiceNote.MimeType;
             }
-            else if (message.Content is MessageVideoNote videoNote)
+            else if (message.Content is MessageVideoNote)
             {
                 return "video/mp4";
             }

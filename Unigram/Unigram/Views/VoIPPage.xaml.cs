@@ -454,7 +454,7 @@ namespace Unigram.Views
 
             switch (call.State)
             {
-                case CallStatePending pending:
+                case CallStatePending:
                     if (call.IsOutgoing)
                     {
                         ResetUI();
@@ -508,10 +508,10 @@ namespace Unigram.Views
                         : Strings.Resources.VoipRequesting
                         : Strings.Resources.VoipIncoming;
                     break;
-                case CallStateExchangingKeys exchangingKeys:
+                case CallStateExchangingKeys:
                     StateLabel.Content = Strings.Resources.VoipConnecting;
                     break;
-                case CallStateHangingUp hangingUp:
+                case CallStateHangingUp:
                     StateLabel.Content = Strings.Resources.VoipHangingUp;
                     break;
                 case CallStateDiscarded discarded:

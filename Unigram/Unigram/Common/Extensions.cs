@@ -459,7 +459,7 @@ namespace Unigram.Common
                     val = int.Parse(num);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //FileLog.e(e);
             }

@@ -81,7 +81,7 @@ namespace Unigram.Common
                     builder.Append($". {audio.Caption.Text}");
                 }
             }
-            else if (message.Content is MessageLocation location)
+            else if (message.Content is MessageLocation)
             {
                 builder.Append($"{Strings.Resources.AttachLocation}");
             }
@@ -227,8 +227,11 @@ namespace Unigram.Common
                 {
                     result = Strings.Resources.AttachDocument + GetCaption(document.Caption.Text) + ", ";
                 }
+                else
+                {
+                    result = document.Document.FileName + GetCaption(document.Caption.Text) + ", ";
+                }
 
-                result = document.Document.FileName + GetCaption(document.Caption.Text) + ", ";
                 if (details)
                 {
                     result += FileSizeConverter.Convert(document.Document.DocumentValue.Size) + ", ";
@@ -248,7 +251,7 @@ namespace Unigram.Common
             {
                 return (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation) + ", ";
             }
-            else if (message.Content is MessageVenue vanue)
+            else if (message.Content is MessageVenue)
             {
                 return Strings.Resources.AttachLocation + ", ";
             }

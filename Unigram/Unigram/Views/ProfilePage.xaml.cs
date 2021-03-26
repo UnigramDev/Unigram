@@ -245,7 +245,7 @@ namespace Unigram.Views
 
         public void UpdateSecretChat(Chat chat, SecretChat secretChat)
         {
-            if (secretChat.State is SecretChatStateReady ready)
+            if (secretChat.State is SecretChatStateReady)
             {
                 SecretLifetime.Badge = chat.MessageTtlSetting > 0 ? Locale.FormatTtl(chat.MessageTtlSetting) : Strings.Resources.ShortMessageLifetimeForever;
                 //SecretIdenticon.Source = PlaceholderHelper.GetIdenticon(secretChat.KeyHash, 24);

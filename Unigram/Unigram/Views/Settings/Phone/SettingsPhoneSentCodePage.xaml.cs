@@ -53,9 +53,9 @@ namespace Unigram.Views.Settings
 
             switch (codeInfo.Type)
             {
-                case AuthenticationCodeTypeTelegramMessage appType:
+                case AuthenticationCodeTypeTelegramMessage:
                     return Strings.Resources.SentAppCode;
-                case AuthenticationCodeTypeSms smsType:
+                case AuthenticationCodeTypeSms:
                     return string.Format(Strings.Resources.SentSmsCode, PhoneNumber.Format(number));
             }
 

@@ -151,14 +151,13 @@ namespace Unigram.Views
 
                 var content = sender as Border;
                 var rectangle = content.Child as Rectangle;
-
                 if (wallpaper.Type is BackgroundTypeWallpaper)
                 {
                     content.Background = null;
                     rectangle.Opacity = 1;
                     rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
-                else if (wallpaper.Type is BackgroundTypePattern pattern)
+                else if (wallpaper.Type is BackgroundTypePattern)
                 {
                     //content.Background = pattern.Fill.ToBrush();
                     //rectangle.Opacity = pattern.Intensity / 100d

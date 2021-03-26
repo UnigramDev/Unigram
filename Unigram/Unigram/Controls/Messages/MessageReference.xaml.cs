@@ -139,7 +139,7 @@ namespace Unigram.Controls.Messages
             {
                 return (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
             }
-            else if (message.Content is MessageVenue vanue)
+            else if (message.Content is MessageVenue)
             {
                 return Strings.Resources.AttachLocation;
             }

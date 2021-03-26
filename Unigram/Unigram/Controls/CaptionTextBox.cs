@@ -116,8 +116,8 @@ namespace Unigram.Controls
             }
 
             Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            if (ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out int index))
+            
+            if (ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username, out _))
             {
                 var chat = viewModel.Chat;
                 if (chat == null)

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation.Services;
@@ -10,7 +9,7 @@ namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep2ViewModel : PaymentFormViewModelBase
     {
-        private OrderInfo _info;
+        private readonly OrderInfo _info;
 
         public PaymentFormStep2ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

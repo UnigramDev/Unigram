@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Navigation.Services;
@@ -78,22 +77,22 @@ namespace Unigram.ViewModels.Supergroups
                 var filter = default(ChatMembersFilter);
                 switch (_filter)
                 {
-                    case SupergroupMembersFilterAdministrators administrators:
+                    case SupergroupMembersFilterAdministrators:
                         filter = new ChatMembersFilterAdministrators();
                         break;
-                    case SupergroupMembersFilterBanned banned:
+                    case SupergroupMembersFilterBanned:
                         filter = new ChatMembersFilterBanned();
                         break;
-                    case SupergroupMembersFilterBots bots:
+                    case SupergroupMembersFilterBots:
                         filter = new ChatMembersFilterBots();
                         break;
-                    case SupergroupMembersFilterRecent recent:
+                    case SupergroupMembersFilterRecent:
                         filter = null;
                         break;
-                    case SupergroupMembersFilterRestricted restricted:
+                    case SupergroupMembersFilterRestricted:
                         filter = new ChatMembersFilterRestricted();
                         break;
-                    case SupergroupMembersFilterSearch search:
+                    case SupergroupMembersFilterSearch:
                         filter = null;
                         break;
                 }
@@ -116,27 +115,27 @@ namespace Unigram.ViewModels.Supergroups
             {
                 Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, _find(query));
             }
-            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            else if (chat.Type is ChatTypeBasicGroup)
             {
                 var filter = default(ChatMembersFilter);
                 switch (_filter)
                 {
-                    case SupergroupMembersFilterAdministrators administrators:
+                    case SupergroupMembersFilterAdministrators:
                         filter = new ChatMembersFilterAdministrators();
                         break;
-                    case SupergroupMembersFilterBanned banned:
+                    case SupergroupMembersFilterBanned:
                         filter = new ChatMembersFilterBanned();
                         break;
-                    case SupergroupMembersFilterBots bots:
+                    case SupergroupMembersFilterBots:
                         filter = new ChatMembersFilterBots();
                         break;
-                    case SupergroupMembersFilterRecent recent:
+                    case SupergroupMembersFilterRecent:
                         filter = null;
                         break;
-                    case SupergroupMembersFilterRestricted restricted:
+                    case SupergroupMembersFilterRestricted:
                         filter = new ChatMembersFilterRestricted();
                         break;
-                    case SupergroupMembersFilterSearch search:
+                    case SupergroupMembersFilterSearch:
                         filter = null;
                         break;
                 }

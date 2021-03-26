@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -347,11 +346,11 @@ namespace Unigram.ViewModels
             }
 
             var response = await task;
-            if (response is Background result)
+            if (response is Background)
             {
                 NavigationService.GoBack();
             }
-            else if (response is Error error)
+            if (response is Error error)
             {
 
             }

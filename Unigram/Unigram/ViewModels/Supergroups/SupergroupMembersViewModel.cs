@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -100,7 +99,7 @@ namespace Unigram.ViewModels.Supergroups
             {
                 Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, new SupergroupMembersFilterSearch(query));
             }
-            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            else if (chat.Type is ChatTypeBasicGroup)
             {
                 Search = new ChatMemberCollection(ProtoService, chat.Id, query, null);
             }

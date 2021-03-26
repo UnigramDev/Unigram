@@ -131,7 +131,7 @@ namespace Unigram.Controls.Chats
             dot1.Radius = new Vector2(radius, radius);
 
             var spriteDot1 = compositor.CreateSpriteShape(dot1);
-            var brushDot1 = spriteDot1.FillBrush = compositor.CreateColorBrush(color);
+            spriteDot1.FillBrush = compositor.CreateColorBrush(color);
             spriteDot1.Offset = new Vector2(3, 3.5f);
 
             // Begin dot2
@@ -139,7 +139,7 @@ namespace Unigram.Controls.Chats
             dot2.Radius = new Vector2(radius, radius);
 
             var spriteDot2 = compositor.CreateSpriteShape(dot2);
-            var brushDot2 = spriteDot2.FillBrush = compositor.CreateColorBrush(color);
+            spriteDot2.FillBrush = compositor.CreateColorBrush(color);
             spriteDot2.Offset = new Vector2(8, 3.5f);
 
             // Begin dot2
@@ -147,7 +147,7 @@ namespace Unigram.Controls.Chats
             dot3.Radius = new Vector2(radius, radius);
 
             var spriteDot3 = compositor.CreateSpriteShape(dot3);
-            var brushDot3 = spriteDot3.FillBrush = compositor.CreateColorBrush(color);
+            spriteDot3.FillBrush = compositor.CreateColorBrush(color);
             spriteDot3.Offset = new Vector2(13, 3.5f);
 
             // Begin shape

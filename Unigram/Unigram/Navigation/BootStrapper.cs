@@ -95,7 +95,7 @@ namespace Unigram.Navigation
             //should be called to initialize and set new SynchronizationContext
             //if (!WindowWrapper.ActiveWrappers.Any())
             // handle window
-            var window = CreateWindowWrapper(args.Window);
+            CreateWindowWrapper(args.Window);
             Loaded();
             ViewService.OnWindowCreated();
             base.OnWindowCreated(args);

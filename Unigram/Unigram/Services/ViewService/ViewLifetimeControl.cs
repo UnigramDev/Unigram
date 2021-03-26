@@ -149,8 +149,7 @@ namespace Unigram.Services.ViewService
             {
                 UnregisterForEvents();
                 InternalReleased?.Invoke(this, new EventArgs());
-                ViewLifetimeControl removed;
-                WindowControlsMap.TryRemove(Id, out removed);
+                WindowControlsMap.TryRemove(Id, out _);
             }
         }
 

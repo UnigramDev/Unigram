@@ -1071,7 +1071,7 @@ namespace Unigram.ViewModels
             {
                 Search = new ChatMemberCollection(ProtoService, supergroup.SupergroupId, new SupergroupMembersFilterSearch(query));
             }
-            else if (chat.Type is ChatTypeBasicGroup basicGroup)
+            else if (chat.Type is ChatTypeBasicGroup)
             {
                 Search = new ChatMemberCollection(ProtoService, chat.Id, query, new ChatMembersFilterMembers());
             }

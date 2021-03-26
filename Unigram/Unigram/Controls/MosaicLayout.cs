@@ -16,7 +16,7 @@ namespace Unigram.Controls
         {
             base.InitializeForContextCore(context);
 
-            if (!(context.LayoutState is MosaicLayoutState state))
+            if (context.LayoutState is not MosaicLayoutState)
             {
                 // Store any state we might need since (in theory) the layout could be in use by multiple 
                 // elements simultaneously

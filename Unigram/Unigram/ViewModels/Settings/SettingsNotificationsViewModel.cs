@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -298,13 +297,13 @@ namespace Unigram.ViewModels.Settings
         {
             switch (GetScope())
             {
-                case NotificationSettingsScopePrivateChats privateChats:
+                case NotificationSettingsScopePrivateChats:
                     NavigationService.Navigate(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.PrivateChats);
                     break;
-                case NotificationSettingsScopeGroupChats groupChats:
+                case NotificationSettingsScopeGroupChats:
                     NavigationService.Navigate(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.GroupChats);
                     break;
-                case NotificationSettingsScopeChannelChats channelChats:
+                case NotificationSettingsScopeChannelChats:
                     NavigationService.Navigate(typeof(SettingsNotificationsExceptionsPage), SettingsNotificationsExceptionsScope.ChannelChats);
                     break;
             }

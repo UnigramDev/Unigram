@@ -657,7 +657,7 @@ namespace Unigram.Views.Host
 
         private void OnDragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            if (e.Items[0] is ISessionService session)
+            if (e.Items[0] is ISessionService)
             {
                 NavigationViewList.CanReorderItems = true;
             }

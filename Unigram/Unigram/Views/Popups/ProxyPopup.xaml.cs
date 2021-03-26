@@ -92,7 +92,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            if (string.IsNullOrEmpty(FieldPort.Text) || !int.TryParse(FieldPort.Text, out int port))
+            if (string.IsNullOrEmpty(FieldPort.Text) || !int.TryParse(FieldPort.Text, out _))
             {
                 VisualUtilities.ShakeView(FieldPort);
                 args.Cancel = true;

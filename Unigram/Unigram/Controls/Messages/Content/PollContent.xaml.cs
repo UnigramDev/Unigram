@@ -264,7 +264,7 @@ namespace Unigram.Controls.Messages.Content
 
             foreach (PollOptionControl button in Options.Children)
             {
-                if (button.IsChecked == true && button.Tag is PollOption option)
+                if (button.IsChecked == true && button.Tag is PollOption)
                 {
                     Submit.IsEnabled = true;
                 }

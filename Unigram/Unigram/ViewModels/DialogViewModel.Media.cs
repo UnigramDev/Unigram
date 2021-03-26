@@ -339,7 +339,7 @@ namespace Unigram.ViewModels
             {
                 await SendDocumentAsync(chat, storage.File, caption, options);
             }
-            else if (storage is StoragePhoto photo)
+            else if (storage is StoragePhoto)
             {
                 await SendPhotoAsync(chat, storage.File, caption, asFile, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
             }
@@ -1041,7 +1041,7 @@ namespace Unigram.ViewModels
             TextField?.SetText(dialog.Caption);
 
             Task<InputMessageFactory> request = null;
-            if (storage is StoragePhoto photo)
+            if (storage is StoragePhoto)
             {
                 request = _messageFactory.CreatePhotoAsync(storage.File, dialog.IsFilesSelected, storage.Ttl, storage.IsEdited ? storage.EditState : null);
             }

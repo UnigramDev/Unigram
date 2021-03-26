@@ -110,11 +110,11 @@ namespace Unigram.ViewModels.Settings
         {
             switch (type)
             {
-                case FileTypePhoto photo:
-                case FileTypeVideo video:
-                case FileTypeVideoNote videoNote:
-                case FileTypeVoiceNote voiceNote:
-                case FileTypeDocument document:
+                case FileTypePhoto:
+                case FileTypeVideo:
+                case FileTypeVideoNote:
+                case FileTypeVoiceNote:
+                case FileTypeDocument:
                     return false;
                 default:
                     return true;
@@ -125,8 +125,8 @@ namespace Unigram.ViewModels.Settings
         {
             switch (type)
             {
-                case FileTypeVideoNote videoNote:
-                case FileTypeVoiceNote voiceNote:
+                case FileTypeVideoNote:
+                case FileTypeVoiceNote:
                     return true;
                 default:
                     return false;
@@ -198,22 +198,22 @@ namespace Unigram.ViewModels.Settings
         {
             switch (x)
             {
-                case NetworkStatisticsEntryCall call:
+                case NetworkStatisticsEntryCall:
                     return 4;
                 case NetworkStatisticsEntryFile file:
                     switch (file.FileType)
                     {
-                        case FileTypePhoto photo:
+                        case FileTypePhoto:
                             return 0;
-                        case FileTypeVideo video:
+                        case FileTypeVideo:
                             return 1;
-                        case FileTypeNotes notes:
+                        case FileTypeNotes:
                             return 2;
-                        case FileTypeDocument document:
+                        case FileTypeDocument:
                             return 3;
-                        case FileTypeOther other:
+                        case FileTypeOther:
                             return 5;
-                        case FileTypeTotal total:
+                        case FileTypeTotal:
                             return 6;
                     }
                     break;

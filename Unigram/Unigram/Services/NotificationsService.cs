@@ -399,7 +399,7 @@ namespace Unigram.Services
         {
             switch (notification.Type)
             {
-                case NotificationTypeNewCall newCall:
+                case NotificationTypeNewCall:
                     break;
                 case NotificationTypeNewMessage newMessage:
                     ProcessNewMessage(group, notification.Id, newMessage.Message, notification.Date, notification.IsSilent);
@@ -407,7 +407,7 @@ namespace Unigram.Services
                 case NotificationTypeNewPushMessage newPushMessage:
                     ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, notification.Date, notification.IsSilent);
                     break;
-                case NotificationTypeNewSecretChat newSecretChat:
+                case NotificationTypeNewSecretChat:
                     break;
             }
         }
@@ -787,7 +787,7 @@ namespace Unigram.Services
 
         public async Task UnregisterAsync()
         {
-            var channel = _settings.PushToken;
+            _ = _settings.PushToken;
             //var response = await _protoService.UnregisterDeviceAsync(8, channel);
             //if (response.IsSucceeded)
             //{
@@ -803,7 +803,7 @@ namespace Unigram.Services
                 var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
                 channel.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Debugger.Break();
             }
@@ -815,8 +815,8 @@ namespace Unigram.Services
         {
             switch (update.AuthorizationState)
             {
-                case AuthorizationStateWaitTdlibParameters waitTdlibParameters:
-                case AuthorizationStateWaitEncryptionKey waitEncryptionKey:
+                case AuthorizationStateWaitTdlibParameters:
+                case AuthorizationStateWaitEncryptionKey:
                     break;
                 default:
                     _authorizationStateTask.TrySetResult(update.AuthorizationState);
@@ -1097,7 +1097,7 @@ namespace Unigram.Services
             {
                 return result + (location.LivePeriod > 0 ? Strings.Resources.AttachLiveLocation : Strings.Resources.AttachLocation);
             }
-            else if (message.Content is MessageVenue vanue)
+            else if (message.Content is MessageVenue)
             {
                 return result + Strings.Resources.AttachLocation;
             }
@@ -1371,7 +1371,7 @@ namespace Unigram.Services
             {
                 return Strings.Resources.NotificationMessageAlbum;
             }
-            else if (message.Content is PushMessageContentMessageForwards forwards)
+            else if (message.Content is PushMessageContentMessageForwards)
             {
                 //return string.Format(Strings.Resources.NotificationMessageForwardFew, Locale.Declension("messages", forwards.TotalCount));
             }

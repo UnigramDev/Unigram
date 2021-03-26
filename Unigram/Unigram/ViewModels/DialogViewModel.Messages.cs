@@ -775,7 +775,7 @@ namespace Unigram.ViewModels
         private async void MessageThreadExecute(MessageViewModel message)
         {
             var response = await ProtoService.SendAsync(new GetMessageThread(message.ChatId, message.Id));
-            if (response is MessageThreadInfo info)
+            if (response is MessageThreadInfo)
             {
                 NavigationService.NavigateToThread(message.ChatId, message.Id, message.Id);
             }
@@ -971,7 +971,7 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                if (inline.Type is InlineKeyboardButtonTypeBuy buy)
+                if (inline.Type is InlineKeyboardButtonTypeBuy)
                 {
                     if (message.Content is MessageInvoice invoice && invoice.ReceiptMessageId != 0)
                     {
@@ -1148,7 +1148,7 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-                else if (inline.Type is InlineKeyboardButtonTypeCallbackGame callbackGame)
+                else if (inline.Type is InlineKeyboardButtonTypeCallbackGame)
                 {
                     var game = message.Content as MessageGame;
                     if (game == null)
@@ -1178,7 +1178,7 @@ namespace Unigram.ViewModels
             }
             else if (button is KeyboardButton keyboardButton)
             {
-                if (keyboardButton.Type is KeyboardButtonTypeRequestPhoneNumber requestPhoneNumber)
+                if (keyboardButton.Type is KeyboardButtonTypeRequestPhoneNumber)
                 {
                     var response = await ProtoService.SendAsync(new GetMe());
                     if (response is Telegram.Td.Api.User cached)
@@ -1206,7 +1206,7 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-                else if (keyboardButton.Type is KeyboardButtonTypeRequestLocation requestLocation)
+                else if (keyboardButton.Type is KeyboardButtonTypeRequestLocation)
                 {
                     var confirm = await MessagePopup.ShowAsync(Strings.Resources.ShareYouLocationInfo, Strings.Resources.ShareYouLocationTitle, Strings.Resources.OK, Strings.Resources.Cancel);
                     if (confirm == ContentDialogResult.Primary)
@@ -1228,7 +1228,7 @@ namespace Unigram.ViewModels
                 {
                     await SendPollAsync(requestPoll.ForceQuiz, requestPoll.ForceRegular, _chat?.Type is ChatTypeSupergroup super && super.IsChannel);
                 }
-                else if (keyboardButton.Type is KeyboardButtonTypeText textButton)
+                else if (keyboardButton.Type is KeyboardButtonTypeText)
                 {
                     await SendMessageAsync(keyboardButton.Text);
                 }
@@ -1491,7 +1491,7 @@ namespace Unigram.ViewModels
                     await StickerSetPopup.GetForCurrentView().ShowAsync(stickerSetChanged.NewStickerSetId);
                 }
             }
-            else if (message.Content is MessageVoiceChatStarted groupCall)
+            else if (message.Content is MessageVoiceChatStarted)
             {
                 await _groupCallService.JoinAsync(message.ChatId);
             }

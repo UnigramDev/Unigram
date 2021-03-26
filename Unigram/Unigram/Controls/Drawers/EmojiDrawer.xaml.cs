@@ -124,7 +124,7 @@ namespace Unigram.Controls.Drawers
 
         private void Toolbar_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is EmojiGroup group)
+            if (e.ClickedItem is EmojiGroup)
             {
                 List.ScrollIntoView(e.ClickedItem, ScrollIntoViewAlignment.Leading);
             }

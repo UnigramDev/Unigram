@@ -11,38 +11,38 @@ namespace Unigram.Converters
         {
             switch (value)
             {
-                case FileTypeNotes notes:
+                case FileTypeNotes:
                     return Strings.Resources.LocalAudioCache;
-                case FileTypeOther other:
+                case FileTypeOther:
                     return Strings.Resources.MessagesDataUsage;
-                case FileTypeTotal total:
+                case FileTypeTotal:
                     return Strings.Resources.TotalDataUsage;
-                case FileTypeAnimation animation:
+                case FileTypeAnimation:
                     return Strings.Resources.LocalGifCache;
-                case FileTypeAudio audio:
+                case FileTypeAudio:
                     return Strings.Resources.LocalMusicCache;
-                case FileTypeDocument document:
+                case FileTypeDocument:
                     return Strings.Resources.FilesDataUsage;
-                case FileTypePhoto photo:
+                case FileTypePhoto:
                     return Strings.Resources.LocalPhotoCache;
-                case FileTypeVideo video:
+                case FileTypeVideo:
                     return Strings.Resources.LocalVideoCache;
-                case FileTypeVideoNote videoNote:
+                case FileTypeVideoNote:
                     return Strings.Resources.VideoMessagesAutodownload;
-                case FileTypeVoiceNote voiceNote:
+                case FileTypeVoiceNote:
                     return Strings.Resources.AudioAutodownload;
-                case FileTypeNone none:
+                case FileTypeNone:
                     return "Other";
-                case FileTypeProfilePhoto profilePhoto:
+                case FileTypeProfilePhoto:
                     return "Profile photos";
-                case FileTypeSticker sticker:
+                case FileTypeSticker:
                     return "Stickers";
-                case FileTypeThumbnail thumbnail:
+                case FileTypeThumbnail:
                     return "Thumbnails";
-                case FileTypeSecret secret:
-                case FileTypeSecretThumbnail secretThumbnail:
-                case FileTypeUnknown unknown:
-                case FileTypeWallpaper wallpaper:
+                case FileTypeSecret:
+                case FileTypeSecretThumbnail:
+                case FileTypeUnknown:
+                case FileTypeWallpaper:
                 default:
                     return value?.ToString();
             }

@@ -301,7 +301,7 @@ namespace Unigram.Common
                     return string.Format(Strings.Resources.LocationUpdatedFormatted, format);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //FileLog.e(e);
             }
@@ -336,7 +336,7 @@ namespace Unigram.Common
                     return string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(online), BindConvert.Current.ShortTime.Format(online));
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //FileLog.m27e(e);
             }

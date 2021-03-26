@@ -19,13 +19,13 @@ namespace Unigram.Selectors
             {
                 switch (message.Content)
                 {
-                    case MessagePhoto photo:
+                    case MessagePhoto:
                         return MessageTemplate ?? PhotoTemplate;
-                    case MessageVideo video:
+                    case MessageVideo:
                         return MessageTemplate ?? VideoTemplate;
-                    case MessageText text:
+                    case MessageText:
                         return MessageTemplate ?? TextTemplate;
-                    case MessageHeaderDate headerDate:
+                    case MessageHeaderDate:
                         return HeaderDateTemplate;
                     default:
                         return MessageTemplate;
@@ -35,13 +35,13 @@ namespace Unigram.Selectors
             {
                 switch (viewModel.Content)
                 {
-                    case MessagePhoto photo:
+                    case MessagePhoto:
                         return MessageTemplate ?? PhotoTemplate;
-                    case MessageVideo video:
+                    case MessageVideo:
                         return MessageTemplate ?? VideoTemplate;
-                    case MessageText text:
+                    case MessageText:
                         return MessageTemplate ?? TextTemplate;
-                    case MessageHeaderDate headerDate:
+                    case MessageHeaderDate:
                         return HeaderDateTemplate;
                     default:
                         return MessageTemplate;

@@ -268,13 +268,13 @@ namespace Unigram.Views
                     return ProcessCover(cover);
                 case PageBlockAuthorDate authorDate:
                     return ProcessAuthorDate(authorDate);
-                case PageBlockHeader header:
-                case PageBlockSubheader subheader:
-                case PageBlockTitle title:
-                case PageBlockSubtitle subtitle:
-                case PageBlockFooter footer:
-                case PageBlockParagraph paragraph:
-                case PageBlockKicker kicker:
+                case PageBlockHeader:
+                case PageBlockSubheader:
+                case PageBlockTitle:
+                case PageBlockSubtitle:
+                case PageBlockFooter:
+                case PageBlockParagraph:
+                case PageBlockKicker:
                     return ProcessText(block, false);
                 case PageBlockBlockQuote blockquote:
                     return ProcessBlockquote(blockquote);
@@ -1597,7 +1597,7 @@ namespace Unigram.Views
             ViewModel.IsLoading = true;
 
             var response = await ViewModel.ProtoService.SendAsync(new GetWebPageInstantView(urlText.Url, false));
-            if (response is WebPageInstantView instantView)
+            if (response is WebPageInstantView)
             {
                 ViewModel.IsLoading = false;
                 ViewModel.NavigationService.NavigateToInstant(urlText.Url);

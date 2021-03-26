@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -12,9 +11,9 @@ namespace Unigram.ViewModels.Payments
 {
     public class PaymentFormStep5ViewModel : PaymentFormViewModelBase
     {
-        private ValidatedOrderInfo _requestedInfo;
-        private string _credentials;
-        private bool _save;
+        private readonly ValidatedOrderInfo _requestedInfo;
+        private readonly string _credentials;
+        private readonly bool _save;
 
         public PaymentFormStep5ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)

@@ -273,7 +273,7 @@ namespace Unigram.ViewModels.Chats
                         viewData.activeZoom = x;
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     //e.printStackTrace();
                     return null;
@@ -337,7 +337,7 @@ namespace Unigram.ViewModels.Chats
 
                     return true;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     //e.printStackTrace();
                 }

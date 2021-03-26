@@ -120,7 +120,7 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            if (message.Content is MessageAudio audioMessage)
+            if (message.Content is MessageAudio)
             {
                 Subtitle.Text = audio.GetDuration();
             }

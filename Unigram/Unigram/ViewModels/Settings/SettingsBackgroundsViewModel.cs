@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {

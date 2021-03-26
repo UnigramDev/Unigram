@@ -140,8 +140,6 @@ namespace Unigram.Views.Popups
             if (Cropper.IsCropEnabled)
             {
                 var rect = Cropper.CropRectangle;
-                var w = Cropper.PixelWidth;
-                var h = Cropper.PixelHeight;
 
                 TimeSpan trimStartTime;
                 TimeSpan trimStopTime;

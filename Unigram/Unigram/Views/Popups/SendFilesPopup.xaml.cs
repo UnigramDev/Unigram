@@ -174,10 +174,9 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            CaptionInput.Document.GetText(TextGetOptions.None, out string hidden);
             CaptionInput.Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out int index))
+            if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length)), out string username, out _))
             {
                 var insert = string.Empty;
                 var adjust = 0;

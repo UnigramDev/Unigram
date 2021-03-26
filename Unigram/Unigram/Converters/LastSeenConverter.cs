@@ -34,21 +34,21 @@ namespace Unigram.Converters
             {
                 case UserStatusOffline offline:
                     return offline.WasOnline;
-                case UserStatusOnline online:
+                case UserStatusOnline:
                     return int.MaxValue;
-                case UserStatusRecently recently:
+                case UserStatusRecently:
                     // recently
                     // Before within a week
                     return 5;
-                case UserStatusLastWeek lastWeek:
+                case UserStatusLastWeek:
                     // within a week
                     // Before within a month
                     return 4;
-                case UserStatusLastMonth lastMonth:
+                case UserStatusLastMonth:
                     // within a month
                     // Before long time ago
                     return 3;
-                case UserStatusEmpty empty:
+                case UserStatusEmpty:
                 default:
                     // long time ago
                     // Before bots
@@ -104,15 +104,15 @@ namespace Unigram.Converters
                     return FormatDateOnline(online.Expires);
                 }
             }
-            else if (user.Status is UserStatusRecently recently)
+            else if (user.Status is UserStatusRecently)
             {
                 return Strings.Resources.Lately;
             }
-            else if (user.Status is UserStatusLastWeek lastWeek)
+            else if (user.Status is UserStatusLastWeek)
             {
                 return Strings.Resources.WithinAWeek;
             }
-            else if (user.Status is UserStatusLastMonth lastMonth)
+            else if (user.Status is UserStatusLastMonth)
             {
                 return Strings.Resources.WithinAMonth;
             }
@@ -153,7 +153,7 @@ namespace Unigram.Converters
                     return string.Format("{0} {1}", Strings.Resources.LastSeenDate, format);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //FileLog.e(e);
             }

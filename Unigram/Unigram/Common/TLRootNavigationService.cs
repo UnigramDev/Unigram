@@ -26,11 +26,11 @@ namespace Unigram.Common
         {
             switch (update.AuthorizationState)
             {
-                case AuthorizationStateReady ready:
+                case AuthorizationStateReady:
                     Navigate(typeof(MainPage));
                     break;
-                case AuthorizationStateWaitPhoneNumber waitPhoneNumber:
-                case AuthorizationStateWaitOtherDeviceConfirmation waitOtherDeviceConfirmation:
+                case AuthorizationStateWaitPhoneNumber:
+                case AuthorizationStateWaitOtherDeviceConfirmation:
                     if (_lifetimeService.Items.Count > 1)
                     {
                         if (Frame.Content is SignInPage page && page.DataContext is SignInViewModel viewModel)
@@ -57,10 +57,10 @@ namespace Unigram.Common
                         }
                     }
                     break;
-                case AuthorizationStateWaitCode waitCode:
+                case AuthorizationStateWaitCode:
                     Navigate(typeof(SignInSentCodePage));
                     break;
-                case AuthorizationStateWaitRegistration waitRegistration:
+                case AuthorizationStateWaitRegistration:
                     Navigate(typeof(SignUpPage));
                     break;
                 case AuthorizationStateWaitPassword waitPassword:

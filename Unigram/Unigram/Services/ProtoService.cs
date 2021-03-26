@@ -527,7 +527,7 @@ namespace Unigram.Services
 
                     foreach (var entity in formattedText.Entities)
                     {
-                        if (entity.Type is TextEntityTypeTextUrl textUrl || entity.Type is TextEntityTypeUrl)
+                        if (entity.Type is TextEntityTypeTextUrl || entity.Type is TextEntityTypeUrl)
                         {
                             await SendAsync(new GetWebPagePreview(formattedText));
                             break;
@@ -1344,11 +1344,11 @@ namespace Unigram.Services
                 Type scope = null;
                 switch (chat.Type)
                 {
-                    case ChatTypePrivate privata:
-                    case ChatTypeSecret secret:
+                    case ChatTypePrivate:
+                    case ChatTypeSecret:
                         scope = typeof(NotificationSettingsScopePrivateChats);
                         break;
-                    case ChatTypeBasicGroup basicGroup:
+                    case ChatTypeBasicGroup:
                         scope = typeof(NotificationSettingsScopeGroupChats);
                         break;
                     case ChatTypeSupergroup supergroup:
@@ -1370,11 +1370,11 @@ namespace Unigram.Services
             Type scope = null;
             switch (chat.Type)
             {
-                case ChatTypePrivate privata:
-                case ChatTypeSecret secret:
+                case ChatTypePrivate:
+                case ChatTypeSecret:
                     scope = typeof(NotificationSettingsScopePrivateChats);
                     break;
-                case ChatTypeBasicGroup basicGroup:
+                case ChatTypeBasicGroup:
                     scope = typeof(NotificationSettingsScopeGroupChats);
                     break;
                 case ChatTypeSupergroup supergroup:
