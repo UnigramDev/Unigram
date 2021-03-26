@@ -4,7 +4,6 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Settings;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;

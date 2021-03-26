@@ -2,9 +2,9 @@
 using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views
 {

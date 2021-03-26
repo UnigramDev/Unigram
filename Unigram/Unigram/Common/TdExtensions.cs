@@ -12,6 +12,7 @@ using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Common
 {

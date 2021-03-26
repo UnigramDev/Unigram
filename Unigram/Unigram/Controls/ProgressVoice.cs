@@ -4,6 +4,7 @@ using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls
 {
@@ -67,7 +68,7 @@ namespace Unigram.Controls
             var lineWidth = 2.0;
             var lines = waveform.Count * 8 / 5;
             var maxLines = (imageWidth - space) / (lineWidth + space);
-            var maxWidth = (double)lines / maxLines;
+            var maxWidth = lines / maxLines;
 
             var geometry1 = new GeometryGroup();
             var geometry2 = new GeometryGroup();

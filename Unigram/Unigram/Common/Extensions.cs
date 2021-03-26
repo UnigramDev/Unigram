@@ -29,6 +29,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using static Unigram.Services.GenerationService;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Common
 {

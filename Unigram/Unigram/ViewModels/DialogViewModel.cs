@@ -21,11 +21,11 @@ using Unigram.ViewModels.Drawers;
 using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.ViewModels
 {

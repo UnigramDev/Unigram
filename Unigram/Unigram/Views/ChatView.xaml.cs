@@ -49,6 +49,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views
 {

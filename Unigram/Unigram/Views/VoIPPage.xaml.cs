@@ -8,7 +8,6 @@ using Unigram.Converters;
 using Unigram.Native.Calls;
 using Unigram.Services;
 using Windows.Devices.Enumeration;
-using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -20,6 +19,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views
 {
