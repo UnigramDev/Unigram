@@ -604,6 +604,9 @@
   <data name="ActionCreatedInviteLink" xml:space="preserve">
     <value>أنشأ ⁨un1⁩ رابط الدعوة ⁨{0}⁩</value>
   </data>
+  <data name="ActionCreatedInviteLinkClickable" xml:space="preserve">
+    <value>أنشئ ⁨un1⁩ رابط الدعوة ⁨un2⁩</value>
+  </data>
   <data name="ActionCreateGroup" xml:space="preserve">
     <value>انشأ ⁨un1⁩ المجموعة</value>
   </data>
@@ -613,11 +616,20 @@
   <data name="ActionDeletedInviteLink" xml:space="preserve">
     <value>حذف ⁨un1⁩ رابط الدعوة ⁨{0}⁩</value>
   </data>
+  <data name="ActionDeletedInviteLinkClickable" xml:space="preserve">
+    <value>حذف ⁨un1⁩ رابط الدعوة ⁨un2⁩</value>
+  </data>
   <data name="ActionEditedInviteLink" xml:space="preserve">
     <value>غيّر ⁨un1⁩ رابط الدعوة ⁨{0}⁩ إلى ⁨{1}⁩</value>
   </data>
+  <data name="ActionEditedInviteLinkClickable" xml:space="preserve">
+    <value>عدّل ⁨un1⁩ رابط الدعوة ⁨un2⁩ إلى ⁨un3⁩</value>
+  </data>
   <data name="ActionEditedInviteLinkToSame" xml:space="preserve">
     <value>عدّل ⁨un1⁩ رابط الدعوة ⁨{0}⁩</value>
+  </data>
+  <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
+    <value>عدّل ⁨un1⁩ رابط الدعوة ⁨un2⁩</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>انتهت المحادثة الصوتية (⁨{0}⁩)</value>
@@ -627,6 +639,9 @@
   </data>
   <data name="ActionGroupCallInvitedYou" xml:space="preserve">
     <value>دعاك ⁨un1⁩ إلى المحادثة الصوتية</value>
+  </data>
+  <data name="ActionGroupCallJustStarted" xml:space="preserve">
+    <value>المحادثة الصوتية بدأت</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>بدأ ⁨un1⁩ محادثة صوتية</value>
@@ -711,6 +726,9 @@
   </data>
   <data name="ActionRevokedInviteLink" xml:space="preserve">
     <value>عطّل ⁨un1⁩ رابط الدعوة ⁨{0}⁩</value>
+  </data>
+  <data name="ActionRevokedInviteLinkClickable" xml:space="preserve">
+    <value>عطّل ⁨un1⁩ رابط الدعوة ⁨un2⁩</value>
   </data>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>الأحداث</value>
@@ -2190,7 +2208,7 @@
     <value>الوقت الإجمالي</value>
   </data>
   <data name="CallText" xml:space="preserve">
-    <value>سيتصل بك تيليجرام خلال ⁨%2$02d⁩:⁨{0}⁩</value>
+    <value>سيتصل بك تيليجرام بعد ⁨%2$02d⁩:⁨{0}⁩</value>
   </data>
   <data name="CallViaTelegram" xml:space="preserve">
     <value>مكالمة تيليجرام</value>
@@ -2214,6 +2232,15 @@
   </data>
   <data name="CancelEmailQuestionTitle" xml:space="preserve">
     <value>إلغاء عملية الإعداد</value>
+  </data>
+  <data name="CancelForward" xml:space="preserve">
+    <value>إلغاء التحويل</value>
+  </data>
+  <data name="CancelForwarding" xml:space="preserve">
+    <value>إلغاء التحويل</value>
+  </data>
+  <data name="CancelForwardMessage" xml:space="preserve">
+    <value>هل تريد إلغاء التحويل أم تحويل الرسائل إلى محادثة أخرى؟</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>رابط غير صحيح أو منتهي الصلاحية.</value>
@@ -2768,6 +2795,9 @@
   </data>
   <data name="ChatListExpanded" xml:space="preserve">
     <value>ثلاثة خطوط</value>
+  </data>
+  <data name="ChatListSwipeGesture" xml:space="preserve">
+    <value>إجراءات السحْب لقائمة المحادثات</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value> موقع</value>
@@ -5564,7 +5594,7 @@
     <value>تركها كمجموعة عادية</value>
   </data>
   <data name="GigagroupConvertCancelHint" xml:space="preserve">
-    <value>إذا غيرت رأيك؛ اذهب إلى إعدادات مجموعتك -> الصلاحيات.</value>
+    <value>إذا غيرت رأيك؛ اذهب إلى إعدادات مجموعتك > الصلاحيات.</value>
   </data>
   <data name="GigagroupConvertInfo1" xml:space="preserve">
     <value>لا حد لعدد الأعضاء.</value>
@@ -6101,7 +6131,19 @@
     <value>دعوة إلى تيليجرام</value>
   </data>
   <data name="InviteUser" xml:space="preserve">
-    <value>هذا المستخدم ليس لديه تيليجرام بعد ، هل ترغب في دعوته الآن؟</value>
+    <value>هذا المستخدم ليس لديه تيليجرام بعد، هل تريد دعوته؟</value>
+  </data>
+  <data name="InvLinkToChats" xml:space="preserve">
+    <value>تم إرسال رابط الدعوة إلى **⁨{0}⁩**.</value>
+  </data>
+  <data name="InvLinkToGroup" xml:space="preserve">
+    <value>تم إرسال الرابط إلى **⁨{0}⁩**.</value>
+  </data>
+  <data name="InvLinkToSavedMessages" xml:space="preserve">
+    <value>تم إرسال الرابط إلى **الرسائل المحفوظة**.</value>
+  </data>
+  <data name="InvLinkToUser" xml:space="preserve">
+    <value>تم إرسال الرابط إلى **⁨{0}⁩**.</value>
   </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>يسجل ⁨{0}⁩ رسالةً صوتية...</value>
@@ -6385,13 +6427,16 @@
     <value>أُنشئ الرابط بواسطة</value>
   </data>
   <data name="LinkedChannel" xml:space="preserve">
-    <value>القناة المربوطة</value>
+    <value>القناة المرتبطة</value>
   </data>
   <data name="LinkExpiresIn" xml:space="preserve">
     <value>ينتهي الرابط في ⁨{0}⁩</value>
   </data>
   <data name="LinkExpiresInTime" xml:space="preserve">
     <value>ينتهي الرابط بعد ⁨{0}⁩</value>
+  </data>
+  <data name="LinkHashExpired" xml:space="preserve">
+    <value>لم يعد الرابط نشطًا</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
     <value>يمكن لمستخدمي تيليجرام الانضمام إلى مجموعتك عبر هذا الرابط.</value>
@@ -6683,7 +6728,7 @@
     <value>تعليم كمقروءة</value>
   </data>
   <data name="MarkAsUnread" xml:space="preserve">
-    <value>تعليم كغير مقروءة</value>
+    <value>اعتبارها غير مقروءة</value>
   </data>
   <data name="Masks" xml:space="preserve">
     <value>الأقنعة</value>
@@ -8236,7 +8281,7 @@
     <value>عرض النمط</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
-    <value>هل ترغب في فتح الرابط ⁨{0}⁩؟</value>
+    <value>فتح هذا الرابط: ⁨{0}⁩؟</value>
   </data>
   <data name="OpenUrlAlert2" xml:space="preserve">
     <value>هل ترغب في فتح ⁨{0}⁩؟</value>
@@ -9211,6 +9256,24 @@
   </data>
   <data name="PeopleCanJoinViaLink" xml:space="preserve">
     <value>يمكن لـ ⁨{0}⁩ شخص الانضمام بهذا الرابط</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_few" xml:space="preserve">
+    <value>⁨{0}⁩ أشخاص يمكنهم الانضمام بهذا الرابط</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_many" xml:space="preserve">
+    <value>⁨{0}⁩ شخصًا يمكنهم الانضمام بهذا الرابط</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_one" xml:space="preserve">
+    <value>شخص واحد يمكنه الانضمام بهذا الرابط</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_other" xml:space="preserve">
+    <value>⁨{0}⁩ شخص يمكنه الانضمام بهذا الرابط</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_two" xml:space="preserve">
+    <value>شخصان يمكنهما الانضمام بهذا الرابط</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_zero" xml:space="preserve">
+    <value>⁨{0}⁩ أشخاص يمكنهم الانضمام بهذا الرابط</value>
   </data>
   <data name="PeopleJoined_few" xml:space="preserve">
     <value>انضم ⁨{0}⁩ أشخاص</value>
@@ -10678,6 +10741,9 @@
   <data name="SelectImage" xml:space="preserve">
     <value>تحديد صورة</value>
   </data>
+  <data name="SelectOtherChat" xml:space="preserve">
+    <value>اختيار محادثة أخرى</value>
+  </data>
   <data name="Send" xml:space="preserve">
     <value>إرسال</value>
   </data>
@@ -11278,7 +11344,7 @@
     <value>⁨{0}⁩ / ⁨{1}⁩</value>
   </data>
   <data name="SmsText" xml:space="preserve">
-    <value>سنرسل لك رسالة SMS قصيرة خلال ⁨{0}⁩:⁨%2$02d⁩</value>
+    <value>سنرسل لك رسالة نصيّة SMS بعد ⁨{0}⁩:⁨%2$02d⁩</value>
   </data>
   <data name="SoftenSkin" xml:space="preserve">
     <value>مظهر أنعم</value>
@@ -11324,6 +11390,9 @@
   </data>
   <data name="StartText" xml:space="preserve">
     <value>يرجى تأكيد رمز بلدك وإدخال رقم هاتفك.</value>
+  </data>
+  <data name="StartVoipChannelAlertText" xml:space="preserve">
+    <value>هل تريد بدء محادثة صوتية في هذه القناة؟</value>
   </data>
   <data name="StartVoipChat" xml:space="preserve">
     <value>بدء محادثة صوتية</value>
@@ -11546,6 +11615,45 @@
   </data>
   <data name="SupportStatus" xml:space="preserve">
     <value>الدعم</value>
+  </data>
+  <data name="SwipeDeleteChat" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="SwipeMarkAsRead" xml:space="preserve">
+    <value>مقروءة</value>
+  </data>
+  <data name="SwipeMarkAsUnread" xml:space="preserve">
+    <value>غير مقروءة</value>
+  </data>
+  <data name="SwipeMute" xml:space="preserve">
+    <value>كتم</value>
+  </data>
+  <data name="SwipePin" xml:space="preserve">
+    <value>تثبيت</value>
+  </data>
+  <data name="SwipeSettingsArchive" xml:space="preserve">
+    <value>أرشفة</value>
+  </data>
+  <data name="SwipeSettingsDelete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="SwipeSettingsFolders" xml:space="preserve">
+    <value>تغيير الملف</value>
+  </data>
+  <data name="SwipeSettingsMute" xml:space="preserve">
+    <value>كتم</value>
+  </data>
+  <data name="SwipeSettingsPin" xml:space="preserve">
+    <value>تثبيت</value>
+  </data>
+  <data name="SwipeSettingsRead" xml:space="preserve">
+    <value>مقروءة</value>
+  </data>
+  <data name="SwipeUnmute" xml:space="preserve">
+    <value>إزالة الكتم</value>
+  </data>
+  <data name="SwipeUnpin" xml:space="preserve">
+    <value>إزالة التثبيت</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
     <value>مزامنة جهات الاتصال</value>
@@ -12692,7 +12800,7 @@
     <value>سماعة الرأس</value>
   </data>
   <data name="VoipAudioRoutingSpeaker" xml:space="preserve">
-    <value>مكبر الصوت</value>
+    <value>مكبّر الصوت</value>
   </data>
   <data name="VoipBusy" xml:space="preserve">
     <value>الخط مشغول</value>
@@ -12742,14 +12850,41 @@
   <data name="VoipGroupAllowToSpeak" xml:space="preserve">
     <value>السماح بالتحدّث</value>
   </data>
+  <data name="VoipGroupAudioRecordSaved" xml:space="preserve">
+    <value>تم حفظ التسجيل في **الرسائل المحفوظة**.</value>
+  </data>
+  <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
+    <value>بدأ تسجيل المحادثة.</value>
+  </data>
+  <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
+    <value>إلغاء طلب التحدّث</value>
+  </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>يتم الاتصال...</value>
+  </data>
+  <data name="VoipGroupContinueAs" xml:space="preserve">
+    <value>المتابعة بـ ⁨{0}⁩</value>
   </data>
   <data name="VoipGroupCopyInviteLink" xml:space="preserve">
     <value>نسخ رابط الدعوة</value>
   </data>
   <data name="VoipGroupCopyInviteLinkCopied" xml:space="preserve">
     <value>تم نسخ رابط الدعوة إلى الحافظة</value>
+  </data>
+  <data name="VoipGroupCopyListenLink" xml:space="preserve">
+    <value>نسخ رابط المستمع</value>
+  </data>
+  <data name="VoipGroupCopySpeakerLink" xml:space="preserve">
+    <value>نسخ رابط المتحدّث</value>
+  </data>
+  <data name="VoipGroupDisplayAs" xml:space="preserve">
+    <value>إظهاري بـ...</value>
+  </data>
+  <data name="VoipGroupEditPermissions" xml:space="preserve">
+    <value>تعديل الصلاحيات</value>
+  </data>
+  <data name="VoipGroupEditTitle" xml:space="preserve">
+    <value>تعديل العنوان</value>
   </data>
   <data name="VoipGroupEnd" xml:space="preserve">
     <value>إنهاء</value>
@@ -12769,11 +12904,17 @@
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>المستخدم المحدد موجود في هذه المحادثة الصوتية. </value>
   </data>
+  <data name="VoipGroupInviteCanSpeak" xml:space="preserve">
+    <value>يمكنه التحدّث</value>
+  </data>
   <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
     <value>قام ⁨un1⁩ بدعوة ⁨un2⁩ إلى المحادثة الصوتية</value>
   </data>
   <data name="VoipGroupInvitedUser" xml:space="preserve">
     <value>أنت دعوت **⁨{0}⁩** إلى المحادثة الصوتية.</value>
+  </data>
+  <data name="VoipGroupInviteListenOnly" xml:space="preserve">
+    <value>استماع فقط</value>
   </data>
   <data name="VoipGroupInviteMember" xml:space="preserve">
     <value>دعوة أعضاء</value>
@@ -12784,7 +12925,22 @@
   <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
     <value>عذرًا، لايمكنك الانضمام إلى المحادثات الصوتية كمشرف مجهول.</value>
   </data>
+  <data name="VoipGroupJoinAnonymouseAlert" xml:space="preserve">
+    <value>هل تريد حقًا الظهور في هذه المحادثة الصوتية بحسابك الشخصيّ؟</value>
+  </data>
+  <data name="VoipGroupJoinAs" xml:space="preserve">
+    <value>الانضمام إلى المحادثة الصوتية بـ...</value>
+  </data>
+  <data name="VoipGroupJoinAsLinstener" xml:space="preserve">
+    <value>الانضمام كـ مستمع</value>
+  </data>
+  <data name="VoipGroupJoinAsSpeaker" xml:space="preserve">
+    <value>الانضمام كـ متحدّث</value>
+  </data>
   <data name="VoipGroupJoinCall" xml:space="preserve">
+    <value>الانضمام للمحادثة الصوتية</value>
+  </data>
+  <data name="VoipGroupJoinVoiceChatUrl" xml:space="preserve">
     <value>الانضمام للمحادثة الصوتية</value>
   </data>
   <data name="VoipGroupLeave" xml:space="preserve">
@@ -12803,10 +12959,10 @@
     <value>كتم</value>
   </data>
   <data name="VoipGroupMutedForMe" xml:space="preserve">
-    <value>تم الكتم عندي</value>
+    <value>مكتوم عندي</value>
   </data>
   <data name="VoipGroupMuteForMe" xml:space="preserve">
-    <value>الكتم عندي</value>
+    <value>كتمه عندي</value>
   </data>
   <data name="VoipGroupMuteMemberAlertText" xml:space="preserve">
     <value>هل ترغب حقًا في منع **⁨{0}⁩** من التحدث في المحادثة الصوتية؟</value>
@@ -12823,14 +12979,26 @@
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>كتم المشاركين الجدد</value>
   </data>
+  <data name="VoipGroupOpenChannel" xml:space="preserve">
+    <value>فتح القناة</value>
+  </data>
+  <data name="VoipGroupOpenGroup" xml:space="preserve">
+    <value>فتح المجموعة</value>
+  </data>
   <data name="VoipGroupOpenProfile" xml:space="preserve">
     <value>عرض الملف الشخصي</value>
   </data>
   <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
     <value>فتح المحادثة الصوتية</value>
   </data>
+  <data name="VoipGroupPersonalAccount" xml:space="preserve">
+    <value>الحساب الشخصيّ</value>
+  </data>
   <data name="VoipGroupRecordCall" xml:space="preserve">
     <value>بدء التسجيل</value>
+  </data>
+  <data name="VoipGroupRecording" xml:space="preserve">
+    <value>يتم تسجيل المحادثة الصوتيّة</value>
   </data>
   <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
     <value>تمت إزالة **⁨{0}⁩** من المجموعة.</value>
@@ -12838,17 +13006,49 @@
   <data name="VoipGroupRemoveMemberAlertText" xml:space="preserve">
     <value>هل تريد إزالة ⁨{0}⁩ من المجموعة؟</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertText2" xml:space="preserve">
+    <value>هل تريد إزالة ⁨{0}⁩ من المحادثة الصوتية وحظرهم في ⁨{1}⁩؟</value>
+  </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>إزالة عضو</value>
   </data>
+  <data name="VoipGroupSaveFileHint" xml:space="preserve">
+    <value>عنوان التسجيل</value>
+  </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
-    <value>البحث عن أعضاء لدعوتهم...</value>
+    <value>البحث عن أشخاص لدعوتهم...</value>
   </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>مشاركة رابط الدعوة</value>
   </data>
+  <data name="VoipGroupStartAs" xml:space="preserve">
+    <value>بدء المحادثة الصوتية بـ...</value>
+  </data>
+  <data name="VoipGroupStartAsInfo" xml:space="preserve">
+    <value>يمكنك اختيار ما إذا كنت تريد الظهور بحسابك الشخصي أو بقناتك.</value>
+  </data>
+  <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
+    <value>يمكنك اختيار ما إذا كنت تريد الظهور بحسابك الشخصي أو بهذه المجموعة أو الظهور بإحدى قنواتك.</value>
+  </data>
+  <data name="VoipGroupStartRecordingText" xml:space="preserve">
+    <value>هل تريد تسجيل هذه المحادثة الصوتية وحفظ التسجيل كملف صوتيّ؟
+
+سيرى المشاركون أن هذه المحادثة يتم تسجيلها.</value>
+  </data>
+  <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
+    <value>بدء التسجيل</value>
+  </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>إيقاف التسجيل</value>
+  </data>
+  <data name="VoipGroupStopRecordingText" xml:space="preserve">
+    <value>هل تريد إيقاف تسجيل هذه المحادثة الصوتية؟</value>
+  </data>
+  <data name="VoipGroupStopRecordingTitle" xml:space="preserve">
+    <value>إيقاف التسجيل</value>
+  </data>
+  <data name="VoipGroupTitle" xml:space="preserve">
+    <value>عنوان المحادثة الصوتية</value>
   </data>
   <data name="VoipGroupTooMuch" xml:space="preserve">
     <value>عذرًا، المحادثة الصوتية ممتلئة.</value>
@@ -12857,7 +13057,7 @@
     <value>إلغاء الكتم</value>
   </data>
   <data name="VoipGroupUnmuteForMe" xml:space="preserve">
-    <value>إلغاء الكتم عندي</value>
+    <value>إزالة كتمه عندي</value>
   </data>
   <data name="VoipGroupUserCanNowSpeak" xml:space="preserve">
     <value>الآن يمكن لـ «**⁨{0}⁩**» التحدّث.</value>
@@ -12871,6 +13071,9 @@
   <data name="VoipGroupUserCantNowSpeakForYou" xml:space="preserve">
     <value>تم كتم **⁨{0}⁩** عندك في هذه المحادثة. </value>
   </data>
+  <data name="VoipGroupUserChanged" xml:space="preserve">
+    <value>ستظهر للمشاركين في هذه المحادثة الصوتية بـ «**⁨{0}⁩**».</value>
+  </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>إزالة</value>
   </data>
@@ -12882,6 +13085,12 @@
   </data>
   <data name="VoipGroupVolume" xml:space="preserve">
     <value>الصوت</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeak" xml:space="preserve">
+    <value>يمكنك التحدّث الآن.</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeakIn" xml:space="preserve">
+    <value>يمكنك التحدّث الآن في «**⁨{0}⁩**».</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>يتم إنهاء المكالمة</value>
@@ -12908,13 +13117,22 @@
     <value>كتم</value>
   </data>
   <data name="VoipMutedByAdmin" xml:space="preserve">
-    <value>تم منعك من التحدّث</value>
+    <value>التحدّث ممنوع</value>
   </data>
   <data name="VoipMutedByAdminInfo" xml:space="preserve">
     <value>أنت في وضع الاستماع فقط</value>
   </data>
   <data name="VoipMutedByAdminShort" xml:space="preserve">
     <value>تم كتمه</value>
+  </data>
+  <data name="VoipMutedTapedForSpeak" xml:space="preserve">
+    <value>لقد طلبت التحدّث</value>
+  </data>
+  <data name="VoipMutedTapedForSpeakInfo" xml:space="preserve">
+    <value>سيتم إعلام المتحدّثين</value>
+  </data>
+  <data name="VoipMutedTapForSpeak" xml:space="preserve">
+    <value>اضغط إذا كنت تريد التحدّث</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>يحتاج تيليجرام الوصول إلى المايكروفون والكاميرا لتتمكن من إجراء المكالمات المرئية. </value>
@@ -13001,7 +13219,7 @@
     <value>نغمة الرنين </value>
   </data>
   <data name="VoipSpeaker" xml:space="preserve">
-    <value>مكبر الصوت</value>
+    <value>مكبّر الصوت</value>
   </data>
   <data name="VoipStartVideo" xml:space="preserve">
     <value>تشغيل الكاميرا</value>
@@ -13062,6 +13280,9 @@
   </data>
   <data name="WaitMore" xml:space="preserve">
     <value>الانتظار أكثر</value>
+  </data>
+  <data name="WantsToSpeak" xml:space="preserve">
+    <value>يطلب التحدّث</value>
   </data>
   <data name="Warmth" xml:space="preserve">
     <value>الدفء</value>
@@ -13131,10 +13352,16 @@
 
 تنبيه: سيتم **تجاهل** رمز القفل في الأداة.</value>
   </data>
+  <data name="WidgetPasscode2" xml:space="preserve">
+    <value>تحذير: سيتم **تجاهل** رمز القفل للتطبيقات المصغّرة. </value>
+  </data>
   <data name="WidgetPasscodeEnable" xml:space="preserve">
     <value>
 
 **لن يعمل** رمز القفل في الأداة المضافة على الشاشة الرئيسية.</value>
+  </data>
+  <data name="WidgetPasscodeEnable2" xml:space="preserve">
+    <value>**لن يعمل** رمز القفل في الأدوات المضافة على الشاشة الرئيسية.</value>
   </data>
   <data name="WidgetPreview" xml:space="preserve">
     <value>معاينة الأداة</value>
@@ -13207,6 +13434,9 @@
   </data>
   <data name="YourContacts" xml:space="preserve">
     <value>جهات اتصالك في تيليجرام</value>
+  </data>
+  <data name="YourContactsToInvite" xml:space="preserve">
+    <value>جهات اتصالك</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
     <value>بريدك الإلكتروني</value>

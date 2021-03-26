@@ -509,7 +509,7 @@
     <value>Отпустите для вывода архива</value>
   </data>
   <data name="AccSwipeForArchive" xml:space="preserve">
-    <value>Потяните вниз для вывода архива</value>
+    <value>Тяните для вывода архива</value>
   </data>
   <data name="AccSwitchToFullscreen" xml:space="preserve">
     <value>Перейти в полноэкранный режим</value>
@@ -604,6 +604,9 @@
   <data name="ActionCreatedInviteLink" xml:space="preserve">
     <value>un1 создал(а) ссылку-приглашение {0}</value>
   </data>
+  <data name="ActionCreatedInviteLinkClickable" xml:space="preserve">
+    <value>un1 создал(а) ссылку-приглашение un2</value>
+  </data>
   <data name="ActionCreateGroup" xml:space="preserve">
     <value>un1 создал(а) группу</value>
   </data>
@@ -613,11 +616,20 @@
   <data name="ActionDeletedInviteLink" xml:space="preserve">
     <value>un1 удалил(а) ссылку-приглашение {0}</value>
   </data>
+  <data name="ActionDeletedInviteLinkClickable" xml:space="preserve">
+    <value>un1 удалил(а) ссылку-приглашение un2</value>
+  </data>
   <data name="ActionEditedInviteLink" xml:space="preserve">
     <value>un1 изменил(а) ссылку-приглашение {0} на {1}</value>
   </data>
+  <data name="ActionEditedInviteLinkClickable" xml:space="preserve">
+    <value>un1 изменил(а) ссылку-приглашение un2 на un3</value>
+  </data>
   <data name="ActionEditedInviteLinkToSame" xml:space="preserve">
     <value>un1 изменил(а) ссылку-приглашение {0}</value>
+  </data>
+  <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
+    <value>un1 изменил(а) ссылку-приглашение un2</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Голосовой чат завершен ({0})</value>
@@ -627,6 +639,9 @@
   </data>
   <data name="ActionGroupCallInvitedYou" xml:space="preserve">
     <value>un1 пригласил(а) Вас в голосовой чат</value>
+  </data>
+  <data name="ActionGroupCallJustStarted" xml:space="preserve">
+    <value>Начался голосовой чат</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>un1 начал(а) голосовой чат</value>
@@ -711,6 +726,9 @@
   </data>
   <data name="ActionRevokedInviteLink" xml:space="preserve">
     <value>un1 сбросил(а) ссылку-приглашение {0}</value>
+  </data>
+  <data name="ActionRevokedInviteLinkClickable" xml:space="preserve">
+    <value>un1 сбросил(а) ссылку-приглашение un2</value>
   </data>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Действия</value>
@@ -1787,7 +1805,7 @@
     <value>По расписанию</value>
   </data>
   <data name="AutoNightSystemDefault" xml:space="preserve">
-    <value>Использовать настройки системы</value>
+    <value>По умолчанию</value>
   </data>
   <data name="AutoNightTheme" xml:space="preserve">
     <value>Настроить ночную тему</value>
@@ -2215,6 +2233,15 @@
   </data>
   <data name="CancelEmailQuestionTitle" xml:space="preserve">
     <value>Прервать установку</value>
+  </data>
+  <data name="CancelForward" xml:space="preserve">
+    <value>Отменить пересылку</value>
+  </data>
+  <data name="CancelForwarding" xml:space="preserve">
+    <value>Отменить пересылку</value>
+  </data>
+  <data name="CancelForwardMessage" xml:space="preserve">
+    <value>Вы хотите отменить отправку или отправить сообщения в другой чат?</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Ссылка неверна или устарела.</value>
@@ -2769,6 +2796,9 @@
   </data>
   <data name="ChatListExpanded" xml:space="preserve">
     <value>Трехстрочный</value>
+  </data>
+  <data name="ChatListSwipeGesture" xml:space="preserve">
+    <value>Смахивание влево в списке чатов</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Геопозиция</value>
@@ -6102,6 +6132,18 @@
   <data name="InviteUser" xml:space="preserve">
     <value>У этого пользователя пока нет Telegram, отправить приглашение?</value>
   </data>
+  <data name="InvLinkToChats" xml:space="preserve">
+    <value>Ссылка отправлена в **{0}**.</value>
+  </data>
+  <data name="InvLinkToGroup" xml:space="preserve">
+    <value>Ссылка отправлена в **{0}**.</value>
+  </data>
+  <data name="InvLinkToSavedMessages" xml:space="preserve">
+    <value>Ссылка отправлена в **Избранное**.</value>
+  </data>
+  <data name="InvLinkToUser" xml:space="preserve">
+    <value>Ссылка отправлена **{0}**.</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} записывает голосовое сообщение...</value>
   </data>
@@ -6391,6 +6433,9 @@
   </data>
   <data name="LinkExpiresInTime" xml:space="preserve">
     <value>Ссылка истекает через {0}</value>
+  </data>
+  <data name="LinkHashExpired" xml:space="preserve">
+    <value>Ссылка больше не активна</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
     <value>Любой пользователь Telegram сможет вступить в Вашу группу, перейдя по этой ссылке.</value>
@@ -9206,6 +9251,24 @@
   <data name="PeopleCanJoinViaLink" xml:space="preserve">
     <value>Ссылку могут использовать {0} человек</value>
   </data>
+  <data name="PeopleCanJoinViaLinkCount_few" xml:space="preserve">
+    <value>Ссылку могут использовать {0} человека.</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_many" xml:space="preserve">
+    <value>Ссылку могут использовать {0} человек.</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_one" xml:space="preserve">
+    <value>Ссылку может использовать {0} человек.</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_other" xml:space="preserve">
+    <value>Ссылку могут использовать {0} человека.</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="PeopleJoined_few" xml:space="preserve">
     <value>{0} человека присоединились</value>
   </data>
@@ -10673,6 +10736,9 @@
   <data name="SelectImage" xml:space="preserve">
     <value>Выбрать изображение</value>
   </data>
+  <data name="SelectOtherChat" xml:space="preserve">
+    <value>Выбрать другой чат</value>
+  </data>
   <data name="Send" xml:space="preserve">
     <value>Отправить</value>
   </data>
@@ -11320,6 +11386,9 @@
   <data name="StartText" xml:space="preserve">
     <value>Пожалуйста, укажите код страны и свой номер телефона.</value>
   </data>
+  <data name="StartVoipChannelAlertText" xml:space="preserve">
+    <value>Начать голосовой чат в этом канале?</value>
+  </data>
   <data name="StartVoipChat" xml:space="preserve">
     <value>Начать голосовой чат</value>
   </data>
@@ -11541,6 +11610,45 @@
   </data>
   <data name="SupportStatus" xml:space="preserve">
     <value>поддержка</value>
+  </data>
+  <data name="SwipeDeleteChat" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="SwipeMarkAsRead" xml:space="preserve">
+    <value>Прочитано</value>
+  </data>
+  <data name="SwipeMarkAsUnread" xml:space="preserve">
+    <value>Не прочитано</value>
+  </data>
+  <data name="SwipeMute" xml:space="preserve">
+    <value>Выкл. звук</value>
+  </data>
+  <data name="SwipePin" xml:space="preserve">
+    <value>Закрепить</value>
+  </data>
+  <data name="SwipeSettingsArchive" xml:space="preserve">
+    <value>Архивировать</value>
+  </data>
+  <data name="SwipeSettingsDelete" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="SwipeSettingsFolders" xml:space="preserve">
+    <value>Изменить папку</value>
+  </data>
+  <data name="SwipeSettingsMute" xml:space="preserve">
+    <value>Выкл. звук</value>
+  </data>
+  <data name="SwipeSettingsPin" xml:space="preserve">
+    <value>Закрепить</value>
+  </data>
+  <data name="SwipeSettingsRead" xml:space="preserve">
+    <value>Прочитать</value>
+  </data>
+  <data name="SwipeUnmute" xml:space="preserve">
+    <value>Вкл. звук</value>
+  </data>
+  <data name="SwipeUnpin" xml:space="preserve">
+    <value>Открепить</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
     <value>Синхронизировать контакты</value>
@@ -12758,14 +12866,41 @@
   <data name="VoipGroupAllowToSpeak" xml:space="preserve">
     <value>Разрешить говорить</value>
   </data>
+  <data name="VoipGroupAudioRecordSaved" xml:space="preserve">
+    <value>Аудиофайл сохранен в чат **Избранное**.</value>
+  </data>
+  <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
+    <value>Включена запись голосового чата.</value>
+  </data>
+  <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
+    <value>Опустить руку</value>
+  </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Соединение...</value>
+  </data>
+  <data name="VoipGroupContinueAs" xml:space="preserve">
+    <value>Продолжить как {0}</value>
   </data>
   <data name="VoipGroupCopyInviteLink" xml:space="preserve">
     <value>Копировать ссылку</value>
   </data>
   <data name="VoipGroupCopyInviteLinkCopied" xml:space="preserve">
     <value>Ссылка скопирована в буфер обмена.</value>
+  </data>
+  <data name="VoipGroupCopyListenLink" xml:space="preserve">
+    <value>Копировать ссылку для слушателей</value>
+  </data>
+  <data name="VoipGroupCopySpeakerLink" xml:space="preserve">
+    <value>Копировать ссылку для спикеров</value>
+  </data>
+  <data name="VoipGroupDisplayAs" xml:space="preserve">
+    <value>Показывать меня как...</value>
+  </data>
+  <data name="VoipGroupEditPermissions" xml:space="preserve">
+    <value>Изменить разрешения</value>
+  </data>
+  <data name="VoipGroupEditTitle" xml:space="preserve">
+    <value>Изменить название чата</value>
   </data>
   <data name="VoipGroupEnd" xml:space="preserve">
     <value>Завершить</value>
@@ -12785,11 +12920,17 @@
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>Этот пользователь уже есть в голосовом чате.</value>
   </data>
+  <data name="VoipGroupInviteCanSpeak" xml:space="preserve">
+    <value>Спикер</value>
+  </data>
   <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
     <value>un1 пригласил(а) un2 в голосовой чат</value>
   </data>
   <data name="VoipGroupInvitedUser" xml:space="preserve">
     <value>Вы пригласили **{0}** в голосовой чат.</value>
+  </data>
+  <data name="VoipGroupInviteListenOnly" xml:space="preserve">
+    <value>Слушатель</value>
   </data>
   <data name="VoipGroupInviteMember" xml:space="preserve">
     <value>Пригласить участников</value>
@@ -12800,7 +12941,22 @@
   <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
     <value>Анонимные администраторы не могут участвовать в голосовых чатах.</value>
   </data>
+  <data name="VoipGroupJoinAnonymouseAlert" xml:space="preserve">
+    <value>Войти в голосовой чат от своего имени?</value>
+  </data>
+  <data name="VoipGroupJoinAs" xml:space="preserve">
+    <value>Войти в голосовой чат как...</value>
+  </data>
+  <data name="VoipGroupJoinAsLinstener" xml:space="preserve">
+    <value>ЗАЙТИ КАК СЛУШАТЕЛЬ</value>
+  </data>
+  <data name="VoipGroupJoinAsSpeaker" xml:space="preserve">
+    <value>ПОДКЛЮЧИТЬСЯ КАК СПИКЕР</value>
+  </data>
   <data name="VoipGroupJoinCall" xml:space="preserve">
+    <value>Войти в голосовой чат</value>
+  </data>
+  <data name="VoipGroupJoinVoiceChatUrl" xml:space="preserve">
     <value>Войти в голосовой чат</value>
   </data>
   <data name="VoipGroupLeave" xml:space="preserve">
@@ -12839,14 +12995,26 @@
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>Новые участники не говорят</value>
   </data>
+  <data name="VoipGroupOpenChannel" xml:space="preserve">
+    <value>Перейти в канал</value>
+  </data>
+  <data name="VoipGroupOpenGroup" xml:space="preserve">
+    <value>Перейти в группу</value>
+  </data>
   <data name="VoipGroupOpenProfile" xml:space="preserve">
     <value>Открыть профиль</value>
   </data>
   <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
     <value>Открыть голосовой чат</value>
   </data>
+  <data name="VoipGroupPersonalAccount" xml:space="preserve">
+    <value>личный аккаунт</value>
+  </data>
   <data name="VoipGroupRecordCall" xml:space="preserve">
-    <value>Начать запись</value>
+    <value>Записать аудио</value>
+  </data>
+  <data name="VoipGroupRecording" xml:space="preserve">
+    <value>Голосовой чат записывается</value>
   </data>
   <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
     <value>**{0}** исключен(а) из группы.</value>
@@ -12854,17 +13022,49 @@
   <data name="VoipGroupRemoveMemberAlertText" xml:space="preserve">
     <value>Исключить {0} из группового чата?</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertText2" xml:space="preserve">
+    <value>Исключить {0} из голосового чата и заблокировать в {1}?</value>
+  </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Исключить участника</value>
+  </data>
+  <data name="VoipGroupSaveFileHint" xml:space="preserve">
+    <value>Название аудиофайла</value>
   </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Поиск участников...</value>
   </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
-    <value>Ссылка-приглашение</value>
+    <value>Пригласить по ссылке</value>
+  </data>
+  <data name="VoipGroupStartAs" xml:space="preserve">
+    <value>Начать голосовой чат как...</value>
+  </data>
+  <data name="VoipGroupStartAsInfo" xml:space="preserve">
+    <value>Выберите, хотите ли Вы участвовать от своего имени или от имени канала.</value>
+  </data>
+  <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
+    <value>Выберите, хотите ли Вы участвовать от своего имени, от имени группы или от имени одного из своих каналов.</value>
+  </data>
+  <data name="VoipGroupStartRecordingText" xml:space="preserve">
+    <value>Начать запись этого голосового чата и сохранить результат как аудиофайл?
+
+Другие участники увидят, что чат записывается.</value>
+  </data>
+  <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
+    <value>Начать запись</value>
   </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Остановить запись</value>
+  </data>
+  <data name="VoipGroupStopRecordingText" xml:space="preserve">
+    <value>Вы точно хотите остановить запись голосового чата?</value>
+  </data>
+  <data name="VoipGroupStopRecordingTitle" xml:space="preserve">
+    <value>Остановить запись</value>
+  </data>
+  <data name="VoipGroupTitle" xml:space="preserve">
+    <value>Название голосового чата</value>
   </data>
   <data name="VoipGroupTooMuch" xml:space="preserve">
     <value>В голосовом чате максимальное число участников.</value>
@@ -12887,6 +13087,9 @@
   <data name="VoipGroupUserCantNowSpeakForYou" xml:space="preserve">
     <value>Вы больше не слышите **{0}** в чате.</value>
   </data>
+  <data name="VoipGroupUserChanged" xml:space="preserve">
+    <value>Теперь участники голосового чата видят Вас как **{0}**</value>
+  </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>Исключить</value>
   </data>
@@ -12898,6 +13101,12 @@
   </data>
   <data name="VoipGroupVolume" xml:space="preserve">
     <value>Громкость</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeak" xml:space="preserve">
+    <value>Теперь Вы можете говорить.</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeakIn" xml:space="preserve">
+    <value>Теперь Вы можете говорить в **{0}**.</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Завершение</value>
@@ -12924,13 +13133,22 @@
     <value>Выкл. звук</value>
   </data>
   <data name="VoipMutedByAdmin" xml:space="preserve">
-    <value>Без микрофона</value>
+    <value>Вы — слушатель</value>
   </data>
   <data name="VoipMutedByAdminInfo" xml:space="preserve">
     <value>Вам не разрешено использовать микрофон</value>
   </data>
   <data name="VoipMutedByAdminShort" xml:space="preserve">
     <value>Выкл.</value>
+  </data>
+  <data name="VoipMutedTapedForSpeak" xml:space="preserve">
+    <value>Вы подняли руку</value>
+  </data>
+  <data name="VoipMutedTapedForSpeakInfo" xml:space="preserve">
+    <value>Мы оповестили спикеров</value>
+  </data>
+  <data name="VoipMutedTapForSpeak" xml:space="preserve">
+    <value>нажмите, чтобы запросить слово</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Чтобы Вы могли совершать видеозвонки, Telegram требуется доступ к камере и микрофону.</value>
@@ -13079,6 +13297,9 @@
   <data name="WaitMore" xml:space="preserve">
     <value>Подождать ещё</value>
   </data>
+  <data name="WantsToSpeak" xml:space="preserve">
+    <value>поднимает руку</value>
+  </data>
   <data name="Warmth" xml:space="preserve">
     <value>Теплота</value>
   </data>
@@ -13147,10 +13368,16 @@
 
 Обратите внимание: код-пароль приложения **не влияет** на виджеты.</value>
   </data>
+  <data name="WidgetPasscode2" xml:space="preserve">
+    <value>Обратите внимание: код-пароль приложения **не влияет** на виджеты.</value>
+  </data>
   <data name="WidgetPasscodeEnable" xml:space="preserve">
     <value>
 
 Код-пароль приложения **не будет влиять** на виджеты, добавленные на главный экран.</value>
+  </data>
+  <data name="WidgetPasscodeEnable2" xml:space="preserve">
+    <value>Код-пароль приложения **не будет влиять** на виджеты, добавленные на главный экран.</value>
   </data>
   <data name="WidgetPreview" xml:space="preserve">
     <value>Предпросмотр виджета</value>
@@ -13223,6 +13450,9 @@
   </data>
   <data name="YourContacts" xml:space="preserve">
     <value>Ваши контакты в Telegram</value>
+  </data>
+  <data name="YourContactsToInvite" xml:space="preserve">
+    <value>Ваши контакты</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
     <value>Адрес электронной почты</value>

@@ -604,6 +604,9 @@
   <data name="ActionCreatedInviteLink" xml:space="preserve">
     <value>un1 cipta link jemputan {0}</value>
   </data>
+  <data name="ActionCreatedInviteLinkClickable" xml:space="preserve">
+    <value>un1 cipta link jemputan un2</value>
+  </data>
   <data name="ActionCreateGroup" xml:space="preserve">
     <value>un1 mencipta grup</value>
   </data>
@@ -613,11 +616,20 @@
   <data name="ActionDeletedInviteLink" xml:space="preserve">
     <value>un1 hapus link jemputan {0}</value>
   </data>
+  <data name="ActionDeletedInviteLinkClickable" xml:space="preserve">
+    <value>un1 hapus link jemputan un2</value>
+  </data>
   <data name="ActionEditedInviteLink" xml:space="preserve">
     <value>un1 sunting link jemputan {0} ke {1}</value>
   </data>
+  <data name="ActionEditedInviteLinkClickable" xml:space="preserve">
+    <value>un1 sunting link jemputan un2 ke un3</value>
+  </data>
   <data name="ActionEditedInviteLinkToSame" xml:space="preserve">
     <value>un1 sunting link jemputan {0}</value>
+  </data>
+  <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
+    <value>un1 sunting link jemputan un2</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Bual suara tamat ({0})</value>
@@ -627,6 +639,9 @@
   </data>
   <data name="ActionGroupCallInvitedYou" xml:space="preserve">
     <value>un1 jemput anda ke bual suara</value>
+  </data>
+  <data name="ActionGroupCallJustStarted" xml:space="preserve">
+    <value>Bual suara dimula</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>un1 mula bual suara</value>
@@ -711,6 +726,9 @@
   </data>
   <data name="ActionRevokedInviteLink" xml:space="preserve">
     <value>un1 batal link jemputan {0}</value>
+  </data>
+  <data name="ActionRevokedInviteLinkClickable" xml:space="preserve">
+    <value>un1 batal link jemputan un2</value>
   </data>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Aksi</value>
@@ -1579,7 +1597,7 @@ Untuk pastikan log masuk Telegram, sila ke Aturan > Peranti > Imbas QR dan imbas
     <value>Hapus mesej baru untuk anda selepas tempoh tertentu secara automatik {0}.</value>
   </data>
   <data name="AutoDeleteConfirm" xml:space="preserve">
-    <value>Pastikan</value>
+    <value>Sahkan</value>
   </data>
   <data name="AutoDeleteHeader" xml:space="preserve">
     <value>Hapus mesej di bual ini secara automatik</value>
@@ -2212,6 +2230,15 @@ Jika ini bukan anda, sila masukkan kod yang kami kirim melalui SMS. Anda boleh j
   <data name="CancelEmailQuestionTitle" xml:space="preserve">
     <value>Batal aturan</value>
   </data>
+  <data name="CancelForward" xml:space="preserve">
+    <value>Batal Dimajukan</value>
+  </data>
+  <data name="CancelForwarding" xml:space="preserve">
+    <value>Batal Dimajukan</value>
+  </data>
+  <data name="CancelForwardMessage" xml:space="preserve">
+    <value>Anda ingin batal dimajukan atau kirim mesej ke bual lain?</value>
+  </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Link tidak sah atau sudah lupus.</value>
   </data>
@@ -2763,6 +2790,9 @@ Panjang minima adalah 5 abjad.</value>
   </data>
   <data name="ChatListExpanded" xml:space="preserve">
     <value>Tiga baris</value>
+  </data>
+  <data name="ChatListSwipeGesture" xml:space="preserve">
+    <value>Isyarat senarai bual leret </value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Lokasi</value>
@@ -5505,7 +5535,7 @@ Aksi ini **tak boleh** ditukar balik.</value>
     <value>Kekal sebagai grup biasa</value>
   </data>
   <data name="GigagroupConvertCancelHint" xml:space="preserve">
-    <value>Jika anda tukar fikiran, pergi ke Aturan -> Permisi grup anda.</value>
+    <value>Jika anda tukar fikiran, pergi ke Aturan > Permisi grup anda.</value>
   </data>
   <data name="GigagroupConvertInfo1" xml:space="preserve">
     <value>Tiada had ahli.</value>
@@ -6044,6 +6074,18 @@ Mesej akan diimport ke hari semasa tetapi juga akan memaparkan cap waktu asal. K
   <data name="InviteUser" xml:space="preserve">
     <value>Pengguna ini belum ada Telegram, kirim jemputan?</value>
   </data>
+  <data name="InvLinkToChats" xml:space="preserve">
+    <value>Link jemputan dikirim ke **{0}**.</value>
+  </data>
+  <data name="InvLinkToGroup" xml:space="preserve">
+    <value>Link jemputan dikirim ke **{0}**.</value>
+  </data>
+  <data name="InvLinkToSavedMessages" xml:space="preserve">
+    <value>Link jemputan dikirim ke **Mesej Disimpan**.</value>
+  </data>
+  <data name="InvLinkToUser" xml:space="preserve">
+    <value>Link jemputan dikirim ke **{0}**.</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} merakam mesej suara...</value>
   </data>
@@ -6330,6 +6372,9 @@ Link ini hanya akan berfungsi untuk ahli bual ini.</value>
   </data>
   <data name="LinkExpiresInTime" xml:space="preserve">
     <value>Link tamat dalam {0}</value>
+  </data>
+  <data name="LinkHashExpired" xml:space="preserve">
+    <value>Link tidak lagi aktif</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
     <value>Sesiapa yang telah pasang Telegram boleh menjadi ahli grup dengan menggunakan link ini.</value>
@@ -8173,7 +8218,7 @@ Pasukan Telegram </value>
     <value>LIHAT TEMA</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
-    <value>Buka URL {0}? </value>
+    <value>Buka link ini: {0}? </value>
   </data>
   <data name="OpenUrlAlert2" xml:space="preserve">
     <value>Anda ingin buka {0}?</value>
@@ -8988,7 +9033,7 @@ Anda boleh melawat *FAQ* kami untuk maklumat lanjut.</value>
     <value>Sila "buka Verifikasi Dua-Langkah" untuk dayakan.</value>
   </data>
   <data name="PaymentCardTitle" xml:space="preserve">
-    <value>Kad pembayaran</value>
+    <value>Kad bayaran</value>
   </data>
   <data name="PaymentCheckout" xml:space="preserve">
     <value>Daftar keluar</value>
@@ -9147,6 +9192,24 @@ Pembayaran akan dibuat terus kepada pemaju {0}. Telegram tidak memberikan sebara
   </data>
   <data name="PeopleCanJoinViaLink" xml:space="preserve">
     <value>{0} orang boleh sertai melalui link ini</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_other" xml:space="preserve">
+    <value>{0} orang boleh sertai melalui link ini</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PeopleJoined_few" xml:space="preserve">
     <value/>
@@ -10617,6 +10680,9 @@ Anda mungkin perlu mula semula aplikasi sebelum ianya berkuatkuasa.</value>
   <data name="SelectImage" xml:space="preserve">
     <value>Pilih imej</value>
   </data>
+  <data name="SelectOtherChat" xml:space="preserve">
+    <value>Pilih bual lain</value>
+  </data>
   <data name="Send" xml:space="preserve">
     <value>Kirim</value>
   </data>
@@ -11263,6 +11329,9 @@ Mod Perlahan didayakan. Anda tak boleh kirim lebih dari satu mesej dalam masa ya
   <data name="StartText" xml:space="preserve">
     <value>Sila sahkan kod negara dan masukkan nombor fon anda.</value>
   </data>
+  <data name="StartVoipChannelAlertText" xml:space="preserve">
+    <value>Anda ingin mula bual suara di saluran ini?</value>
+  </data>
   <data name="StartVoipChat" xml:space="preserve">
     <value>Mula Bual Suara</value>
   </data>
@@ -11484,6 +11553,45 @@ Mod Perlahan didayakan. Anda tak boleh kirim lebih dari satu mesej dalam masa ya
   </data>
   <data name="SupportStatus" xml:space="preserve">
     <value>bantuan</value>
+  </data>
+  <data name="SwipeDeleteChat" xml:space="preserve">
+    <value>Hapus</value>
+  </data>
+  <data name="SwipeMarkAsRead" xml:space="preserve">
+    <value>Sudah baca</value>
+  </data>
+  <data name="SwipeMarkAsUnread" xml:space="preserve">
+    <value>Belum baca</value>
+  </data>
+  <data name="SwipeMute" xml:space="preserve">
+    <value>Senyap</value>
+  </data>
+  <data name="SwipePin" xml:space="preserve">
+    <value>Semat</value>
+  </data>
+  <data name="SwipeSettingsArchive" xml:space="preserve">
+    <value>Arkib</value>
+  </data>
+  <data name="SwipeSettingsDelete" xml:space="preserve">
+    <value>Hapus</value>
+  </data>
+  <data name="SwipeSettingsFolders" xml:space="preserve">
+    <value>Tukar Folder</value>
+  </data>
+  <data name="SwipeSettingsMute" xml:space="preserve">
+    <value>Senyap</value>
+  </data>
+  <data name="SwipeSettingsPin" xml:space="preserve">
+    <value>Semat</value>
+  </data>
+  <data name="SwipeSettingsRead" xml:space="preserve">
+    <value>Dibaca</value>
+  </data>
+  <data name="SwipeUnmute" xml:space="preserve">
+    <value>Bunyi</value>
+  </data>
+  <data name="SwipeUnpin" xml:space="preserve">
+    <value>Turun</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
     <value>Segerak Kenalan</value>
@@ -12677,14 +12785,41 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupAllowToSpeak" xml:space="preserve">
     <value>Dibenar bercakap</value>
   </data>
+  <data name="VoipGroupAudioRecordSaved" xml:space="preserve">
+    <value>Audio disimpan ke **Mesej Disimpan**.</value>
+  </data>
+  <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
+    <value>Rakaman bual suara dimula.</value>
+  </data>
+  <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
+    <value>Batal pemintaan untuk cakap</value>
+  </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Menghubungi...</value>
+  </data>
+  <data name="VoipGroupContinueAs" xml:space="preserve">
+    <value>Teruskan sebagai {0}</value>
   </data>
   <data name="VoipGroupCopyInviteLink" xml:space="preserve">
     <value>Salin Link Jemputan</value>
   </data>
   <data name="VoipGroupCopyInviteLinkCopied" xml:space="preserve">
     <value>Link jemputan disalin ke papan klip.</value>
+  </data>
+  <data name="VoipGroupCopyListenLink" xml:space="preserve">
+    <value>SALIN LINK PENDENGAR</value>
+  </data>
+  <data name="VoipGroupCopySpeakerLink" xml:space="preserve">
+    <value>SALIN LINK PENCERAMAH</value>
+  </data>
+  <data name="VoipGroupDisplayAs" xml:space="preserve">
+    <value>Paparkan saya sebagai...</value>
+  </data>
+  <data name="VoipGroupEditPermissions" xml:space="preserve">
+    <value>Sunting permisi</value>
+  </data>
+  <data name="VoipGroupEditTitle" xml:space="preserve">
+    <value>Sunting tajuk bual suara</value>
   </data>
   <data name="VoipGroupEnd" xml:space="preserve">
     <value>Tamat</value>
@@ -12704,11 +12839,17 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>Pengguna dipilih sudah berada di bual suara ini.</value>
   </data>
+  <data name="VoipGroupInviteCanSpeak" xml:space="preserve">
+    <value>Boleh cakap</value>
+  </data>
   <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
     <value>un1 jemput un2 ke bual suara</value>
   </data>
   <data name="VoipGroupInvitedUser" xml:space="preserve">
     <value>Anda jemput **{0}** ke bual suara.</value>
+  </data>
+  <data name="VoipGroupInviteListenOnly" xml:space="preserve">
+    <value>Hanya dengar</value>
   </data>
   <data name="VoipGroupInviteMember" xml:space="preserve">
     <value>Jemput Ahli</value>
@@ -12719,8 +12860,23 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
     <value>Maaf, anda tak boleh sertai bual suara sebagai pentadbir tanpa nama.</value>
   </data>
+  <data name="VoipGroupJoinAnonymouseAlert" xml:space="preserve">
+    <value>Anda pasti ingin dilpaparkan di bual suara ini sebagai akaun peribadi anda?</value>
+  </data>
+  <data name="VoipGroupJoinAs" xml:space="preserve">
+    <value>Sertai Bual Suara sebagai...</value>
+  </data>
+  <data name="VoipGroupJoinAsLinstener" xml:space="preserve">
+    <value>SERTAI SEBAGAI PENDENGAR</value>
+  </data>
+  <data name="VoipGroupJoinAsSpeaker" xml:space="preserve">
+    <value>SERTAI SEBAGAI PENCERAMAH</value>
+  </data>
   <data name="VoipGroupJoinCall" xml:space="preserve">
     <value>Sertai bual suara</value>
+  </data>
+  <data name="VoipGroupJoinVoiceChatUrl" xml:space="preserve">
+    <value>Sertai Bual Suara</value>
   </data>
   <data name="VoipGroupLeave" xml:space="preserve">
     <value>Tinggal</value>
@@ -12758,14 +12914,26 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>Peserta baru disenyapkan</value>
   </data>
+  <data name="VoipGroupOpenChannel" xml:space="preserve">
+    <value>Buka Saluran</value>
+  </data>
+  <data name="VoipGroupOpenGroup" xml:space="preserve">
+    <value>Buka Grup</value>
+  </data>
   <data name="VoipGroupOpenProfile" xml:space="preserve">
     <value>Buka Profil</value>
   </data>
   <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
     <value>Buka bual suara</value>
   </data>
+  <data name="VoipGroupPersonalAccount" xml:space="preserve">
+    <value>akaun peribadi</value>
+  </data>
   <data name="VoipGroupRecordCall" xml:space="preserve">
     <value>Mula merakam</value>
+  </data>
+  <data name="VoipGroupRecording" xml:space="preserve">
+    <value>Bual suara sedang dirakam</value>
   </data>
   <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
     <value>**{0}** dikeluarkan dari grup.</value>
@@ -12773,8 +12941,14 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupRemoveMemberAlertText" xml:space="preserve">
     <value>Anda ingin keluarkan {0} dari grup bual?</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertText2" xml:space="preserve">
+    <value>Anda ingin keluarkan {0} dari bual suara dan sekat dia di {1}?</value>
+  </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Keluarkan ahli</value>
+  </data>
+  <data name="VoipGroupSaveFileHint" xml:space="preserve">
+    <value>Tajuk Rakaman</value>
   </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Cari ahli untuk jemput...</value>
@@ -12782,8 +12956,34 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Kongsi link jemputan</value>
   </data>
+  <data name="VoipGroupStartAs" xml:space="preserve">
+    <value>Mula Bual Suara sebagai...</value>
+  </data>
+  <data name="VoipGroupStartAsInfo" xml:space="preserve">
+    <value>Pilih sama ada anda ingin dipaparkan sebagai akaun peribadi anda atau sebagai saluran anda.</value>
+  </data>
+  <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
+    <value>Pilih samada anda ingin dipaparkan sebagai akaun peribadi anda, grup ini, atau salah satu dari saluran anda.</value>
+  </data>
+  <data name="VoipGroupStartRecordingText" xml:space="preserve">
+    <value>Rakam bual ini dan simpannya sebagai fail audio?
+
+Peserta lain akan dapat melihat bual sedang dirakam.</value>
+  </data>
+  <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
+    <value>Mula rakaman</value>
+  </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
+    <value>Henti rakaman</value>
+  </data>
+  <data name="VoipGroupStopRecordingText" xml:space="preserve">
+    <value>Anda ingin hentikan rakaman bual suara ini?</value>
+  </data>
+  <data name="VoipGroupStopRecordingTitle" xml:space="preserve">
     <value>Henti merakam</value>
+  </data>
+  <data name="VoipGroupTitle" xml:space="preserve">
+    <value>Tajuk bual suara</value>
   </data>
   <data name="VoipGroupTooMuch" xml:space="preserve">
     <value>Maaf, bual suara ini sudah penuh.</value>
@@ -12806,6 +13006,9 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupUserCantNowSpeakForYou" xml:space="preserve">
     <value>**{0}** kini disenyap di bual ini untuk anda.</value>
   </data>
+  <data name="VoipGroupUserChanged" xml:space="preserve">
+    <value>Peserta bual suara ini akan lihat anda sebagai **{0}**.</value>
+  </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>Keluarkan</value>
   </data>
@@ -12817,6 +13020,12 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   </data>
   <data name="VoipGroupVolume" xml:space="preserve">
     <value>Kelantangan</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeak" xml:space="preserve">
+    <value>Anda boleh cakap.</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeakIn" xml:space="preserve">
+    <value>Anda kini boleh cakap di **{0}**.</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Menamat panggilan</value>
@@ -12850,6 +13059,15 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   </data>
   <data name="VoipMutedByAdminShort" xml:space="preserve">
     <value>Senyap</value>
+  </data>
+  <data name="VoipMutedTapedForSpeak" xml:space="preserve">
+    <value>Anda minta untuk cakap</value>
+  </data>
+  <data name="VoipMutedTapedForSpeakInfo" xml:space="preserve">
+    <value>Yang bercakap akan diberitahu</value>
+  </data>
+  <data name="VoipMutedTapForSpeak" xml:space="preserve">
+    <value>tekan kalau anda ingin cakap</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Telegram perlu akses ke mikrofon dan kamera anda agar anda dapat lakukan panggilan video.</value>
@@ -12998,6 +13216,9 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="WaitMore" xml:space="preserve">
     <value>Tunggu lagi</value>
   </data>
+  <data name="WantsToSpeak" xml:space="preserve">
+    <value>ingin cakap</value>
+  </data>
   <data name="Warmth" xml:space="preserve">
     <value>Kehangatan</value>
   </data>
@@ -13066,10 +13287,16 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
 
 Nota: Kod laluan anda  akan **diabaikan** untuk wijet.</value>
   </data>
+  <data name="WidgetPasscode2" xml:space="preserve">
+    <value>Amaran: Kod laluan anda akan **diabaikan** untuk wijet.</value>
+  </data>
   <data name="WidgetPasscodeEnable" xml:space="preserve">
     <value>
 
 Kod laluan anda **tidak akan pengaruhi** wijet yang ditambah ke laman utama.</value>
+  </data>
+  <data name="WidgetPasscodeEnable2" xml:space="preserve">
+    <value>Kata laluan anda  **tidak akan** pengaruhi wijet yang ditambah ke laman utama.</value>
   </data>
   <data name="WidgetPreview" xml:space="preserve">
     <value>Pratonton wijet</value>
@@ -13142,6 +13369,9 @@ Kod laluan anda **tidak akan pengaruhi** wijet yang ditambah ke laman utama.</va
   </data>
   <data name="YourContacts" xml:space="preserve">
     <value>Kenalan anda di Telegram</value>
+  </data>
+  <data name="YourContactsToInvite" xml:space="preserve">
+    <value>Kenalan anda</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
     <value>Emel anda</value>

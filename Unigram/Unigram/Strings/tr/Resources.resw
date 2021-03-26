@@ -604,6 +604,9 @@
   <data name="ActionCreatedInviteLink" xml:space="preserve">
     <value>un1, {0} davet bağlantısını oluşturdu</value>
   </data>
+  <data name="ActionCreatedInviteLinkClickable" xml:space="preserve">
+    <value>un1, un2 davet bağlantısını oluşturdu</value>
+  </data>
   <data name="ActionCreateGroup" xml:space="preserve">
     <value>un1 grubu oluşturdu</value>
   </data>
@@ -613,11 +616,20 @@
   <data name="ActionDeletedInviteLink" xml:space="preserve">
     <value>un1, {0} davet bağlantısını sildi</value>
   </data>
+  <data name="ActionDeletedInviteLinkClickable" xml:space="preserve">
+    <value>un1, un2 davet bağlantısını sildi</value>
+  </data>
   <data name="ActionEditedInviteLink" xml:space="preserve">
     <value>un1, {0} davet bağlantısını {1} olarak düzenledi</value>
   </data>
+  <data name="ActionEditedInviteLinkClickable" xml:space="preserve">
+    <value>un1, un2 davet bağlantısını un3 olarak düzenledi</value>
+  </data>
   <data name="ActionEditedInviteLinkToSame" xml:space="preserve">
     <value>un1, {0} davet bağlantısını düzenledi</value>
+  </data>
+  <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
+    <value>un1, un2 davet bağlantısını düzenledi</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Sesli sohbet sona erdi ({0})</value>
@@ -627,6 +639,9 @@
   </data>
   <data name="ActionGroupCallInvitedYou" xml:space="preserve">
     <value>un1 sizi sesli sohbete davet etti</value>
+  </data>
+  <data name="ActionGroupCallJustStarted" xml:space="preserve">
+    <value>Sesli sohbet başladı</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>un1 sesli sohbet başlattı</value>
@@ -711,6 +726,9 @@
   </data>
   <data name="ActionRevokedInviteLink" xml:space="preserve">
     <value>un1, {0} davet bağlantısını iptal etti</value>
+  </data>
+  <data name="ActionRevokedInviteLinkClickable" xml:space="preserve">
+    <value>un1, un2 davet bağlantısını iptal etti</value>
   </data>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Eylemler</value>
@@ -2214,6 +2232,15 @@ Bu siz değilseniz, lütfen size az önce kısa mesaj ile gönderdiğimiz kodu g
   <data name="CancelEmailQuestionTitle" xml:space="preserve">
     <value>Kurulumu iptal et</value>
   </data>
+  <data name="CancelForward" xml:space="preserve">
+    <value>İletmeyi İptal Et</value>
+  </data>
+  <data name="CancelForwarding" xml:space="preserve">
+    <value>İletmeyi İptal Et</value>
+  </data>
+  <data name="CancelForwardMessage" xml:space="preserve">
+    <value>İletmeyi iptal etmek mi yoksa farklı bir sohbete mesaj göndermek mi istiyorsunuz?</value>
+  </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>Bağlantı geçersiz ya da süresi dolmuş.</value>
   </data>
@@ -2765,6 +2792,9 @@ Uzunluk en az 5 karakterdir.</value>
   </data>
   <data name="ChatListExpanded" xml:space="preserve">
     <value>Üç satır</value>
+  </data>
+  <data name="ChatListSwipeGesture" xml:space="preserve">
+    <value>Sohbet listesi kaydırma hareketi</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Konum</value>
@@ -5504,7 +5534,7 @@ Bu işlem **geri alınamaz**.</value>
     <value>Normal grup olarak bırak</value>
   </data>
   <data name="GigagroupConvertCancelHint" xml:space="preserve">
-    <value>Fikrinizi değiştirirseniz, grubunuzun Ayarlar -> İzinler bölümüne gidebilirsiniz.</value>
+    <value>Fikrinizi değiştirirseniz, grubunuzun Ayarlar > İzinler bölümüne gidin.</value>
   </data>
   <data name="GigagroupConvertInfo1" xml:space="preserve">
     <value>Üye sayısında sınır yok.</value>
@@ -5717,13 +5747,15 @@ bir sorunuz mu var?</value>
     <value>Geçmiş siliniyor</value>
   </data>
   <data name="HoldToAudio" xml:space="preserve">
-    <value>Ses kaydetmek için basılı tutun. Videoya geçmek için dokunun.</value>
+    <value>Ses kaydı için basılı tutun. 
+Videoya geçmek için dokunun.</value>
   </data>
   <data name="HoldToAudioOnly" xml:space="preserve">
     <value>Ses kaydetmek için basılı tutun.</value>
   </data>
   <data name="HoldToVideo" xml:space="preserve">
-    <value>Video kaydetmek için basılı tutun. Sese geçmek için dokunun.</value>
+    <value>Video kaydı için basılı tutun. 
+Sese geçmek için dokunun.</value>
   </data>
   <data name="Hours_few" xml:space="preserve">
     <value/>
@@ -6043,6 +6075,18 @@ Mesajlar geçerli güne aktarılır, ancak orijinal zaman damgalarını da içer
   <data name="InviteUser" xml:space="preserve">
     <value>Bu kullanıcı henüz Telegram kullanmıyor, davet etmek ister misiniz?</value>
   </data>
+  <data name="InvLinkToChats" xml:space="preserve">
+    <value>Davet bağlantısı **{0}** sohbetine gönderildi.</value>
+  </data>
+  <data name="InvLinkToGroup" xml:space="preserve">
+    <value>Davet bağlantısı **{0}** grubuna gönderildi.</value>
+  </data>
+  <data name="InvLinkToSavedMessages" xml:space="preserve">
+    <value>Davet bağlantısı **Kayıtlı Mesajlar** bölümüne gönderildi.</value>
+  </data>
+  <data name="InvLinkToUser" xml:space="preserve">
+    <value>Davet bağlantısı **{0}** kişisine gönderildi.</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} sesli mesaj kaydediyor…</value>
   </data>
@@ -6330,6 +6374,9 @@ Bu bağlantı yalnızca bu sohbetin üyeleri için çalışacak.</value>
   <data name="LinkExpiresInTime" xml:space="preserve">
     <value>Bağlantı {0} içinde sona erecek</value>
   </data>
+  <data name="LinkHashExpired" xml:space="preserve">
+    <value>Bağlantı artık aktif değil</value>
+  </data>
   <data name="LinkInfo" xml:space="preserve">
     <value>Telegram yükleyen herkes bu bağlantıyı izleyerek grubunuza katılabilir.</value>
   </data>
@@ -6587,7 +6634,7 @@ Telefon numaranız gizli kalacaktır.</value>
     <value>Davet Bağlantılarını Yönet</value>
   </data>
   <data name="ManageLinksInfoHelp" xml:space="preserve">
-    <value>Sınırlı süreye veya kullanım sayısına sahip ek davet bağlantıları oluşturabilirsiniz</value>
+    <value>Sınırlı süreye veya kullanım sayısına sahip ek davet bağlantıları oluşturabilirsiniz.</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Harita</value>
@@ -7106,7 +7153,7 @@ Uzunluk en az 5 karakterdir.</value>
     <value>Kapat</value>
   </data>
   <data name="MuteFor" xml:space="preserve">
-    <value>{0} için sessize al</value>
+    <value>{0} için sessiz</value>
   </data>
   <data name="MuteNotifications" xml:space="preserve">
     <value>Bildirimleri kapat</value>
@@ -7966,13 +8013,13 @@ Bir sohbete ait bildirimleri, profilini açıp 'Bildirimler' seçeneğinden öze
     <value>Uygulama İçi Varsayılan</value>
   </data>
   <data name="NotificationsLed" xml:space="preserve">
-    <value>Işık</value>
+    <value>LED</value>
   </data>
   <data name="NotificationsLedColor" xml:space="preserve">
     <value>Renk</value>
   </data>
   <data name="NotificationsLedInfo" xml:space="preserve">
-    <value>Işık, yeni mesajları göstermek için kullanılan bazı cihazlardaki küçük yanıp sönen bir ışıktır.</value>
+    <value>LED, bazı cihazlarda yeni mesajları bildirmek için kullanılan, yanıp sönen küçük bir ışıktır.</value>
   </data>
   <data name="NotificationsMuted" xml:space="preserve">
     <value>Sessiz</value>
@@ -8982,7 +9029,7 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Ödeme Bilgisini Kaydet</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine1" xml:space="preserve">
-    <value>Ödeme bilginizi ileride kullanmak üzere kaydedebilirsiniz.</value>
+    <value>Daha sonra kullanmak için ödeme bilgilerinizi kaydedebilirsiniz.</value>
   </data>
   <data name="PaymentCardSavePaymentInformationInfoLine2" xml:space="preserve">
     <value>Bunu etkinleştirmek için *İki Adımlı Doğrulama* özelliğini açın.</value>
@@ -9147,6 +9194,24 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
   </data>
   <data name="PeopleCanJoinViaLink" xml:space="preserve">
     <value>{0} kişi bu bağlantı üzerinden katılabilir</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_one" xml:space="preserve">
+    <value>{0} kişi bu bağlantıyla katılabilir.</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_other" xml:space="preserve">
+    <value>{0} kişi bu bağlantıyla katılabilir.</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PeopleJoined_few" xml:space="preserve">
     <value/>
@@ -9587,7 +9652,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Oturum açmak için Telegram'ı kullandığınız web siteleri.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
-    <value>Eşler arası seçeneğinin devre dışı bırakılması, IP adresinizi açığa çıkarmamak için tüm aramaları Telegram sunucuları aracılığıyla aktarır. Ancak ses ve video kalitesini düşürebilir.</value>
+    <value>Eşler arası bağlantının devre dışı bırakılması, IP adresinizi açığa çıkarmamak için tüm aramaları Telegram sunucuları üzerinden aktarır, ancak ses ve video kalitesini düşürebilir.</value>
   </data>
   <data name="PrivacyCallsP2PTitle" xml:space="preserve">
     <value>Eşler Arası</value>
@@ -9827,7 +9892,7 @@ Konumunuza yalnızca seçtiğiniz süre boyunca erişeceğiz ve istediğiniz zam
     <value>Telegram'daki herkes kanalınıza katılmak için bu kodu taratabilir.</value>
   </data>
   <data name="QRCodeLinkHelpGroup" xml:space="preserve">
-    <value>Telegram'daki herkes grubunuza katılmak için bu kodu taratabilir</value>
+    <value>Telegram'daki herkes grubunuza katılmak için bu kodu tarayabilir.</value>
   </data>
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>QR kodlarını tarayabilmeniz için Telegram'ın kameranıza erişmesi gerekiyor.</value>
@@ -10457,7 +10522,7 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
     <value>Sonuç Yok</value>
   </data>
   <data name="SearchForChats" xml:space="preserve">
-    <value>Sohberlerde ara...</value>
+    <value>Sohbetlerde ara...</value>
   </data>
   <data name="SearchForPeople" xml:space="preserve">
     <value>İnsanları bul…</value>
@@ -10614,6 +10679,9 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
   </data>
   <data name="SelectImage" xml:space="preserve">
     <value>Resim seç</value>
+  </data>
+  <data name="SelectOtherChat" xml:space="preserve">
+    <value>Başka sohbet seçin</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Gönder</value>
@@ -11261,6 +11329,9 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   <data name="StartText" xml:space="preserve">
     <value>Lütfen ülke kodunuzu onaylayın ve telefon numaranızı girin.</value>
   </data>
+  <data name="StartVoipChannelAlertText" xml:space="preserve">
+    <value>Bu kanalda sesli sohbet başlatmak ister misiniz?</value>
+  </data>
   <data name="StartVoipChat" xml:space="preserve">
     <value>Sesli sohbet başlat</value>
   </data>
@@ -11482,6 +11553,45 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="SupportStatus" xml:space="preserve">
     <value>destek</value>
+  </data>
+  <data name="SwipeDeleteChat" xml:space="preserve">
+    <value>Sil</value>
+  </data>
+  <data name="SwipeMarkAsRead" xml:space="preserve">
+    <value>Okundu</value>
+  </data>
+  <data name="SwipeMarkAsUnread" xml:space="preserve">
+    <value>Okunmamış</value>
+  </data>
+  <data name="SwipeMute" xml:space="preserve">
+    <value>Sessiz</value>
+  </data>
+  <data name="SwipePin" xml:space="preserve">
+    <value>Sabitle</value>
+  </data>
+  <data name="SwipeSettingsArchive" xml:space="preserve">
+    <value>Arşivle</value>
+  </data>
+  <data name="SwipeSettingsDelete" xml:space="preserve">
+    <value>Sil</value>
+  </data>
+  <data name="SwipeSettingsFolders" xml:space="preserve">
+    <value>Klasörü Değiştir</value>
+  </data>
+  <data name="SwipeSettingsMute" xml:space="preserve">
+    <value>Sessize Al</value>
+  </data>
+  <data name="SwipeSettingsPin" xml:space="preserve">
+    <value>Sabitle</value>
+  </data>
+  <data name="SwipeSettingsRead" xml:space="preserve">
+    <value>Okundu</value>
+  </data>
+  <data name="SwipeUnmute" xml:space="preserve">
+    <value>Sesi Aç</value>
+  </data>
+  <data name="SwipeUnpin" xml:space="preserve">
+    <value>Sabitlemeyi Kaldır</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
     <value>Kişileri Eşitle</value>
@@ -12679,14 +12789,41 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupAllowToSpeak" xml:space="preserve">
     <value>Konuşmaya izin ver</value>
   </data>
+  <data name="VoipGroupAudioRecordSaved" xml:space="preserve">
+    <value>Ses, **Kayıtlı Mesajlar** bölümüne kaydedildi.</value>
+  </data>
+  <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
+    <value>Sesli sohbet kaydı başladı.</value>
+  </data>
+  <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
+    <value>Konuşma isteğini iptal et</value>
+  </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Bağlanıyor…</value>
+  </data>
+  <data name="VoipGroupContinueAs" xml:space="preserve">
+    <value>{0} olarak devam et</value>
   </data>
   <data name="VoipGroupCopyInviteLink" xml:space="preserve">
     <value>Davet Bağlantısını Kopyala</value>
   </data>
   <data name="VoipGroupCopyInviteLinkCopied" xml:space="preserve">
     <value>Davet bağlantısı panoya kopyalandı.</value>
+  </data>
+  <data name="VoipGroupCopyListenLink" xml:space="preserve">
+    <value>DİNLEYİCİ BAĞLANTISINI KOPYALA</value>
+  </data>
+  <data name="VoipGroupCopySpeakerLink" xml:space="preserve">
+    <value>KONUŞMACI BAĞLANTISINI KOPYALA</value>
+  </data>
+  <data name="VoipGroupDisplayAs" xml:space="preserve">
+    <value>Beni şöyle göster...</value>
+  </data>
+  <data name="VoipGroupEditPermissions" xml:space="preserve">
+    <value>İzinleri düzenle</value>
+  </data>
+  <data name="VoipGroupEditTitle" xml:space="preserve">
+    <value>Başlığı düzenle</value>
   </data>
   <data name="VoipGroupEnd" xml:space="preserve">
     <value>Sonlandır</value>
@@ -12706,11 +12843,17 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>Seçili kullanıcı zaten bu sesli sohbette.</value>
   </data>
+  <data name="VoipGroupInviteCanSpeak" xml:space="preserve">
+    <value>Konuşabilir</value>
+  </data>
   <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
     <value>un1, un2 kişisini sesli sohbete davet etti</value>
   </data>
   <data name="VoipGroupInvitedUser" xml:space="preserve">
     <value>**{0}** kişisini sesli sohbete davet ettiniz.</value>
+  </data>
+  <data name="VoipGroupInviteListenOnly" xml:space="preserve">
+    <value>Sadece dinler</value>
   </data>
   <data name="VoipGroupInviteMember" xml:space="preserve">
     <value>Üyeleri Davet Et</value>
@@ -12721,8 +12864,23 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
     <value>Üzgünüz, anonim yönetici olarak sesli sohbetlere katılamazsınız.</value>
   </data>
+  <data name="VoipGroupJoinAnonymouseAlert" xml:space="preserve">
+    <value>Bu sesli sohbette kişisel hesabınızla görünmek istediğinizden emin misiniz?</value>
+  </data>
+  <data name="VoipGroupJoinAs" xml:space="preserve">
+    <value>Sesli Sohbete Katıl...</value>
+  </data>
+  <data name="VoipGroupJoinAsLinstener" xml:space="preserve">
+    <value>DİNLEYİCİ OLARAK KATIL</value>
+  </data>
+  <data name="VoipGroupJoinAsSpeaker" xml:space="preserve">
+    <value>KONUŞMACI OLARAK KATIL</value>
+  </data>
   <data name="VoipGroupJoinCall" xml:space="preserve">
     <value>Sesli sohbete katıl</value>
+  </data>
+  <data name="VoipGroupJoinVoiceChatUrl" xml:space="preserve">
+    <value>Sesli Sohbete Katıl</value>
   </data>
   <data name="VoipGroupLeave" xml:space="preserve">
     <value>Ayrıl</value>
@@ -12760,14 +12918,26 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>Yeni katılımcılar sessiz</value>
   </data>
+  <data name="VoipGroupOpenChannel" xml:space="preserve">
+    <value>Kanalı Aç</value>
+  </data>
+  <data name="VoipGroupOpenGroup" xml:space="preserve">
+    <value>Grubu Aç</value>
+  </data>
   <data name="VoipGroupOpenProfile" xml:space="preserve">
     <value>Profili Aç</value>
   </data>
   <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
     <value>Sesli sohbeti aç</value>
   </data>
+  <data name="VoipGroupPersonalAccount" xml:space="preserve">
+    <value>kişisel hesap</value>
+  </data>
   <data name="VoipGroupRecordCall" xml:space="preserve">
     <value>Kaydı başlat</value>
+  </data>
+  <data name="VoipGroupRecording" xml:space="preserve">
+    <value>Sesli sohbet kaydediliyor</value>
   </data>
   <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
     <value>**{0}** bu gruptan çıkarıldı.</value>
@@ -12775,17 +12945,49 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupRemoveMemberAlertText" xml:space="preserve">
     <value>{0} kişisini grup sohbetinden çıkarmak ister misiniz?</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertText2" xml:space="preserve">
+    <value>{0} kişisini sesli sohbetten çıkartıp {1} sohbetinden atmak istediğinizden emin misiniz?</value>
+  </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Üyeyi çıkar</value>
+  </data>
+  <data name="VoipGroupSaveFileHint" xml:space="preserve">
+    <value>Kayıt Başlığı</value>
   </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Davet etmek için üye arayın…</value>
   </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
-    <value>Davet bağlantısını paylaş</value>
+    <value>Bağlantıyı paylaş</value>
+  </data>
+  <data name="VoipGroupStartAs" xml:space="preserve">
+    <value>Sesli Sohbete Başla...</value>
+  </data>
+  <data name="VoipGroupStartAsInfo" xml:space="preserve">
+    <value>Kişisel hesabınızla mı yoksa kanalınızla mı görünmek istediğinizi seçin.</value>
+  </data>
+  <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
+    <value>Kişisel hesabınızın bu grup veya kanallarınızdan biri olarak gösterilmesini isteyip istemediğinizi seçin.</value>
+  </data>
+  <data name="VoipGroupStartRecordingText" xml:space="preserve">
+    <value>Bu sohbet kaydedilsin ve sonuç bir ses dosyasına kaydedilsin mi?
+
+Katılımcılar sohbetin kaydedildiğini görecek.</value>
+  </data>
+  <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
+    <value>Kaydı başlat</value>
   </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Kaydı durdur</value>
+  </data>
+  <data name="VoipGroupStopRecordingText" xml:space="preserve">
+    <value>Bu sesli sohbeti kaydetmeyi durdurmak istiyor musunuz?</value>
+  </data>
+  <data name="VoipGroupStopRecordingTitle" xml:space="preserve">
+    <value>Kaydı durdur</value>
+  </data>
+  <data name="VoipGroupTitle" xml:space="preserve">
+    <value>Sesli sohbet başlığı</value>
   </data>
   <data name="VoipGroupTooMuch" xml:space="preserve">
     <value>Üzgünüz, bu sesli sohbet dolu.</value>
@@ -12808,6 +13010,9 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupUserCantNowSpeakForYou" xml:space="preserve">
     <value>**{0}** artık bu sohbette sizin için sessize alındı.</value>
   </data>
+  <data name="VoipGroupUserChanged" xml:space="preserve">
+    <value>Bu sesli sohbetin katılımcıları artık sizi **{0}** olarak görecek.</value>
+  </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>Kaldır</value>
   </data>
@@ -12819,6 +13024,12 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   </data>
   <data name="VoipGroupVolume" xml:space="preserve">
     <value>Ses</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeak" xml:space="preserve">
+    <value>Artık konuşabilirsin.</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeakIn" xml:space="preserve">
+    <value>Artık **{0}** grubunda konuşabilirsiniz.</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Kapatılıyor</value>
@@ -12845,13 +13056,22 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
     <value>Sessize Al</value>
   </data>
   <data name="VoipMutedByAdmin" xml:space="preserve">
-    <value>Yönetici tarafından sesi kapatıldı</value>
+    <value>Yönetici sesi kapattı</value>
   </data>
   <data name="VoipMutedByAdminInfo" xml:space="preserve">
     <value>Sadece dinleme modundasınız</value>
   </data>
   <data name="VoipMutedByAdminShort" xml:space="preserve">
     <value>Sessiz</value>
+  </data>
+  <data name="VoipMutedTapedForSpeak" xml:space="preserve">
+    <value>Konuşmak istedin</value>
+  </data>
+  <data name="VoipMutedTapedForSpeakInfo" xml:space="preserve">
+    <value>Konuşmacılara haber veriyoruz</value>
+  </data>
+  <data name="VoipMutedTapForSpeak" xml:space="preserve">
+    <value>konuşmak istiyorsanız dokunun</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Görüntülü arama yapabilmeniz için Telegram'ın mikrofonunuza ve kameranıza erişmesi gerekiyor.</value>
@@ -13000,11 +13220,14 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="WaitMore" xml:space="preserve">
     <value>Biraz daha bekle</value>
   </data>
+  <data name="WantsToSpeak" xml:space="preserve">
+    <value>konuşmak istiyor</value>
+  </data>
   <data name="Warmth" xml:space="preserve">
     <value>Sıcaklık</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
-    <value>Telegram ile Oturum Açıldı</value>
+    <value>Telegram ile Yapılan Girişler</value>
   </data>
   <data name="Weeks_few" xml:space="preserve">
     <value/>
@@ -13068,10 +13291,16 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
 
 Not: Parolanız, widget'lar için **yok sayılacaktır**.</value>
   </data>
+  <data name="WidgetPasscode2" xml:space="preserve">
+    <value>Uyarı: Widget'lar için parolanız **yok sayılacaktır**.</value>
+  </data>
   <data name="WidgetPasscodeEnable" xml:space="preserve">
     <value>
 
 Parolanız, ana ekrana eklenen widget'ları **etkilemeyecektir**.</value>
+  </data>
+  <data name="WidgetPasscodeEnable2" xml:space="preserve">
+    <value>Parolanız ana ekrana eklenen widget'ları **etkilemez**.</value>
   </data>
   <data name="WidgetPreview" xml:space="preserve">
     <value>Widget'ın önizlemesi</value>
@@ -13144,6 +13373,9 @@ Parolanız, ana ekrana eklenen widget'ları **etkilemeyecektir**.</value>
   </data>
   <data name="YourContacts" xml:space="preserve">
     <value>Telegram'daki kişileriniz</value>
+  </data>
+  <data name="YourContactsToInvite" xml:space="preserve">
+    <value>Kişileriniz</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
     <value>E-posta adresiniz</value>

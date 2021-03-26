@@ -604,6 +604,9 @@
   <data name="ActionCreatedInviteLink" xml:space="preserve">
     <value>un1 criou o link de convite {0}</value>
   </data>
+  <data name="ActionCreatedInviteLinkClickable" xml:space="preserve">
+    <value>un1 criou o link de convite un2</value>
+  </data>
   <data name="ActionCreateGroup" xml:space="preserve">
     <value>un1 criou o grupo</value>
   </data>
@@ -613,11 +616,20 @@
   <data name="ActionDeletedInviteLink" xml:space="preserve">
     <value>un1 apagou o link de convite {0}</value>
   </data>
+  <data name="ActionDeletedInviteLinkClickable" xml:space="preserve">
+    <value>un1 apagou o link de convite un2</value>
+  </data>
   <data name="ActionEditedInviteLink" xml:space="preserve">
     <value>un1 editou o link de convite {0} para {1}</value>
   </data>
+  <data name="ActionEditedInviteLinkClickable" xml:space="preserve">
+    <value>un1 editou o link de convite un2 para un3</value>
+  </data>
   <data name="ActionEditedInviteLinkToSame" xml:space="preserve">
     <value>un1 editou o link de convite {0}</value>
+  </data>
+  <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
+    <value>un1 editou o link de convite un2</value>
   </data>
   <data name="ActionGroupCallEnded" xml:space="preserve">
     <value>Chat de voz encerrado ({0})</value>
@@ -627,6 +639,9 @@
   </data>
   <data name="ActionGroupCallInvitedYou" xml:space="preserve">
     <value>un1 convidou você para o chat de voz</value>
+  </data>
+  <data name="ActionGroupCallJustStarted" xml:space="preserve">
+    <value>Chat de voz iniciado</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>un1 iniciou um chat de voz</value>
@@ -712,6 +727,9 @@
   <data name="ActionRevokedInviteLink" xml:space="preserve">
     <value>un1 revogou o link de convite {0}</value>
   </data>
+  <data name="ActionRevokedInviteLinkClickable" xml:space="preserve">
+    <value>un1 revogou o link de convite un2</value>
+  </data>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Ações</value>
   </data>
@@ -725,10 +743,10 @@
     <value>un1 definiu que as mensagens se excluam automaticamente após {0}</value>
   </data>
   <data name="ActionTTLChannelChanged" xml:space="preserve">
-    <value>Mensagens neste canal serão apagadas automaticamente após {0}</value>
+    <value>As mensagens neste canal serão apagadas automaticamente após {0}</value>
   </data>
   <data name="ActionTTLChannelDisabled" xml:space="preserve">
-    <value>Mensagens neste canal não serão mais apagadas automaticamente</value>
+    <value>As mensagens neste canal não serão mais apagadas automaticamente</value>
   </data>
   <data name="ActionTTLDisabled" xml:space="preserve">
     <value>un1 desativou o timer de exclusão automática</value>
@@ -2216,6 +2234,15 @@ Se não foi você, digite o código que acabamos de enviar via SMS. Você també
   <data name="CancelEmailQuestionTitle" xml:space="preserve">
     <value>Cancelar configuração</value>
   </data>
+  <data name="CancelForward" xml:space="preserve">
+    <value>Cancelar Encaminhamento</value>
+  </data>
+  <data name="CancelForwarding" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="CancelForwardMessage" xml:space="preserve">
+    <value>Deseja cancelar o encaminhamento ou enviar as mensagens para um chat diferente?</value>
+  </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>O link expirou ou está inválido.</value>
   </data>
@@ -2767,6 +2794,9 @@ O tamanho mínimo é de 5 caracteres.</value>
   </data>
   <data name="ChatListExpanded" xml:space="preserve">
     <value>Três linhas</value>
+  </data>
+  <data name="ChatListSwipeGesture" xml:space="preserve">
+    <value>Ação ao deslizar na lista de chats</value>
   </data>
   <data name="ChatLocation" xml:space="preserve">
     <value>Localização</value>
@@ -6100,6 +6130,18 @@ As mensagens serão importadas para o dia de hoje mas também incluirão os cari
   <data name="InviteUser" xml:space="preserve">
     <value>Esse usuário ainda não tem o Telegram, deseja enviar um convite?</value>
   </data>
+  <data name="InvLinkToChats" xml:space="preserve">
+    <value>Link de convite enviado para **{0}**.</value>
+  </data>
+  <data name="InvLinkToGroup" xml:space="preserve">
+    <value>Link de convite enviado para **{0}**.</value>
+  </data>
+  <data name="InvLinkToSavedMessages" xml:space="preserve">
+    <value>Link de convite enviado para **Mensagens Salvas**.</value>
+  </data>
+  <data name="InvLinkToUser" xml:space="preserve">
+    <value>Link de convite enviado para **{0}**.</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} está gravando voz...</value>
   </data>
@@ -6389,6 +6431,9 @@ Ele só funciona para membros deste chat.</value>
   </data>
   <data name="LinkExpiresInTime" xml:space="preserve">
     <value>O link expira em {0}</value>
+  </data>
+  <data name="LinkHashExpired" xml:space="preserve">
+    <value>O link não está mais ativo</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
     <value>Qualquer pessoa que tiver o Telegram instalado poderá participar do seu grupo usando esse link.</value>
@@ -8233,7 +8278,7 @@ Equipe do Telegram.</value>
     <value>VER TEMA</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
-    <value>Abrir URL {0}?</value>
+    <value>Abrir este link: {0}?</value>
   </data>
   <data name="OpenUrlAlert2" xml:space="preserve">
     <value>Deseja abrir {0}?</value>
@@ -9206,6 +9251,24 @@ Pagamentos irão diretamente para o desenvolvedor de {0}. O Telegram não pode p
   </data>
   <data name="PeopleCanJoinViaLink" xml:space="preserve">
     <value>{0} pessoas podem entrar com este link</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_one" xml:space="preserve">
+    <value>{0} pessoa pode entrar usando este link</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_other" xml:space="preserve">
+    <value>{0} pessoas podem entrar usando este link</value>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="PeopleCanJoinViaLinkCount_zero" xml:space="preserve">
+    <value/>
   </data>
   <data name="PeopleJoined_few" xml:space="preserve">
     <value/>
@@ -10674,6 +10737,9 @@ Pode ser necessário reiniciar o aplicativo para que isso entre em vigor.</value
   <data name="SelectImage" xml:space="preserve">
     <value>Selecionar imagem</value>
   </data>
+  <data name="SelectOtherChat" xml:space="preserve">
+    <value>Selecionar outro chat</value>
+  </data>
   <data name="Send" xml:space="preserve">
     <value>Enviar</value>
   </data>
@@ -11321,6 +11387,9 @@ O Modo Lento está ativado. Você não pode enviar mais de uma mensagem por vez.
   <data name="StartText" xml:space="preserve">
     <value>Por favor, confirme o código do seu país e digite o seu número de telefone.</value>
   </data>
+  <data name="StartVoipChannelAlertText" xml:space="preserve">
+    <value>Deseja iniciar um Chat de Voz neste canal?</value>
+  </data>
   <data name="StartVoipChat" xml:space="preserve">
     <value>Iniciar Chat de Voz</value>
   </data>
@@ -11542,6 +11611,45 @@ O Modo Lento está ativado. Você não pode enviar mais de uma mensagem por vez.
   </data>
   <data name="SupportStatus" xml:space="preserve">
     <value>suporte</value>
+  </data>
+  <data name="SwipeDeleteChat" xml:space="preserve">
+    <value>Apagar</value>
+  </data>
+  <data name="SwipeMarkAsRead" xml:space="preserve">
+    <value>Lido</value>
+  </data>
+  <data name="SwipeMarkAsUnread" xml:space="preserve">
+    <value>Não lido</value>
+  </data>
+  <data name="SwipeMute" xml:space="preserve">
+    <value>Silenciar</value>
+  </data>
+  <data name="SwipePin" xml:space="preserve">
+    <value>Fixar</value>
+  </data>
+  <data name="SwipeSettingsArchive" xml:space="preserve">
+    <value>Arquivar</value>
+  </data>
+  <data name="SwipeSettingsDelete" xml:space="preserve">
+    <value>Apagar</value>
+  </data>
+  <data name="SwipeSettingsFolders" xml:space="preserve">
+    <value>Mudar Pasta</value>
+  </data>
+  <data name="SwipeSettingsMute" xml:space="preserve">
+    <value>Silenciar</value>
+  </data>
+  <data name="SwipeSettingsPin" xml:space="preserve">
+    <value>Fixar</value>
+  </data>
+  <data name="SwipeSettingsRead" xml:space="preserve">
+    <value>Lido</value>
+  </data>
+  <data name="SwipeUnmute" xml:space="preserve">
+    <value>Ativar som</value>
+  </data>
+  <data name="SwipeUnpin" xml:space="preserve">
+    <value>Desafixar</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
     <value>Sincronizar Contatos</value>
@@ -12741,14 +12849,41 @@ O tamanho mínimo é de **5** caracteres.</value>
   <data name="VoipGroupAllowToSpeak" xml:space="preserve">
     <value>Permitir falar</value>
   </data>
+  <data name="VoipGroupAudioRecordSaved" xml:space="preserve">
+    <value>Áudio salvo nas **Mensagens Salvas**.</value>
+  </data>
+  <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
+    <value>Gravação do chat de voz iniciada.</value>
+  </data>
+  <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
+    <value>Cancelar pedido para falar</value>
+  </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Conectando...</value>
+  </data>
+  <data name="VoipGroupContinueAs" xml:space="preserve">
+    <value>Continuar como {0}</value>
   </data>
   <data name="VoipGroupCopyInviteLink" xml:space="preserve">
     <value>Copiar Link de Convite</value>
   </data>
   <data name="VoipGroupCopyInviteLinkCopied" xml:space="preserve">
     <value>O link de convite foi copiado.</value>
+  </data>
+  <data name="VoipGroupCopyListenLink" xml:space="preserve">
+    <value>COPIAR LINK DE OUVINTE</value>
+  </data>
+  <data name="VoipGroupCopySpeakerLink" xml:space="preserve">
+    <value>COPIAR LINK DE LOCUTOR</value>
+  </data>
+  <data name="VoipGroupDisplayAs" xml:space="preserve">
+    <value>Aparecer como...</value>
+  </data>
+  <data name="VoipGroupEditPermissions" xml:space="preserve">
+    <value>Editar permissões</value>
+  </data>
+  <data name="VoipGroupEditTitle" xml:space="preserve">
+    <value>Editar título do chat de voz</value>
   </data>
   <data name="VoipGroupEnd" xml:space="preserve">
     <value>Encerrar</value>
@@ -12768,11 +12903,17 @@ O tamanho mínimo é de **5** caracteres.</value>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>O usuário selecionado já está no chat de voz.</value>
   </data>
+  <data name="VoipGroupInviteCanSpeak" xml:space="preserve">
+    <value>Pode falar</value>
+  </data>
   <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
     <value>un1 convidou un2 para o chat de voz</value>
   </data>
   <data name="VoipGroupInvitedUser" xml:space="preserve">
     <value>Você convidou **{0}** para o chat de voz.</value>
+  </data>
+  <data name="VoipGroupInviteListenOnly" xml:space="preserve">
+    <value>Apenas ouvir</value>
   </data>
   <data name="VoipGroupInviteMember" xml:space="preserve">
     <value>Convidar Membros</value>
@@ -12783,8 +12924,23 @@ O tamanho mínimo é de **5** caracteres.</value>
   <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
     <value>Desculpe, admins anônimos não podem participar de chats de voz.</value>
   </data>
+  <data name="VoipGroupJoinAnonymouseAlert" xml:space="preserve">
+    <value>Deseja mesmo aparecer neste Chat de Voz como sua conta pessoal?</value>
+  </data>
+  <data name="VoipGroupJoinAs" xml:space="preserve">
+    <value>Entrar no Chat de Voz como...</value>
+  </data>
+  <data name="VoipGroupJoinAsLinstener" xml:space="preserve">
+    <value>ENTRAR COMO OUVINTE</value>
+  </data>
+  <data name="VoipGroupJoinAsSpeaker" xml:space="preserve">
+    <value>ENTRAR COMO LOCUTOR</value>
+  </data>
   <data name="VoipGroupJoinCall" xml:space="preserve">
     <value>Entrar no chat de voz</value>
+  </data>
+  <data name="VoipGroupJoinVoiceChatUrl" xml:space="preserve">
+    <value>Entrar no Chat de Voz</value>
   </data>
   <data name="VoipGroupLeave" xml:space="preserve">
     <value>Sair</value>
@@ -12822,14 +12978,26 @@ O tamanho mínimo é de **5** caracteres.</value>
   <data name="VoipGroupOnlyAdminsCanSpeak" xml:space="preserve">
     <value>Silenciar novos membros</value>
   </data>
+  <data name="VoipGroupOpenChannel" xml:space="preserve">
+    <value>Abrir Canal</value>
+  </data>
+  <data name="VoipGroupOpenGroup" xml:space="preserve">
+    <value>Abrir Grupo</value>
+  </data>
   <data name="VoipGroupOpenProfile" xml:space="preserve">
     <value>Abrir Perfil</value>
   </data>
   <data name="VoipGroupOpenVoiceChat" xml:space="preserve">
     <value>Abrir chat de voz</value>
   </data>
+  <data name="VoipGroupPersonalAccount" xml:space="preserve">
+    <value>conta pessoal</value>
+  </data>
   <data name="VoipGroupRecordCall" xml:space="preserve">
     <value>Iniciar gravação</value>
+  </data>
+  <data name="VoipGroupRecording" xml:space="preserve">
+    <value>O Chat de Voz está sendo gravado</value>
   </data>
   <data name="VoipGroupRemovedFromGroup" xml:space="preserve">
     <value>**{0}** foi removido do grupo.</value>
@@ -12837,8 +13005,14 @@ O tamanho mínimo é de **5** caracteres.</value>
   <data name="VoipGroupRemoveMemberAlertText" xml:space="preserve">
     <value>Deseja remover {0} do grupo?</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertText2" xml:space="preserve">
+    <value>Deseja remover {0} do Chat de Voz e banir de {1}?</value>
+  </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Remover membro</value>
+  </data>
+  <data name="VoipGroupSaveFileHint" xml:space="preserve">
+    <value>Título da Gravação</value>
   </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Buscar membros para convidar...</value>
@@ -12846,8 +13020,34 @@ O tamanho mínimo é de **5** caracteres.</value>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Convidar via link</value>
   </data>
+  <data name="VoipGroupStartAs" xml:space="preserve">
+    <value>Iniciar Chat de Voz como...</value>
+  </data>
+  <data name="VoipGroupStartAsInfo" xml:space="preserve">
+    <value>Escolha se deseja aparecer como a sua conta pessoal ou o seu canal.</value>
+  </data>
+  <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
+    <value>Escolha se deseja aparecer como sua conta pessoal, este grupo ou um dos seus canais.</value>
+  </data>
+  <data name="VoipGroupStartRecordingText" xml:space="preserve">
+    <value>Iniciar a gravação do chat e salvar em um arquivo de áudio?
+
+Os participantes irão ver que o chat está sendo gravado.</value>
+  </data>
+  <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
+    <value>Iniciar gravação</value>
+  </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Parar gravação</value>
+  </data>
+  <data name="VoipGroupStopRecordingText" xml:space="preserve">
+    <value>Deseja parar de gravar este Chat de Voz?</value>
+  </data>
+  <data name="VoipGroupStopRecordingTitle" xml:space="preserve">
+    <value>Parar gravação</value>
+  </data>
+  <data name="VoipGroupTitle" xml:space="preserve">
+    <value>Título do chat de voz</value>
   </data>
   <data name="VoipGroupTooMuch" xml:space="preserve">
     <value>Desculpe, este chat de voz está cheio.</value>
@@ -12870,6 +13070,9 @@ O tamanho mínimo é de **5** caracteres.</value>
   <data name="VoipGroupUserCantNowSpeakForYou" xml:space="preserve">
     <value>**{0}** agora está silenciado neste chat para você.</value>
   </data>
+  <data name="VoipGroupUserChanged" xml:space="preserve">
+    <value>Participantes deste chat de voz agora irão te ver como **{0}**</value>
+  </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>Remover</value>
   </data>
@@ -12881,6 +13084,12 @@ O tamanho mínimo é de **5** caracteres.</value>
   </data>
   <data name="VoipGroupVolume" xml:space="preserve">
     <value>Volume</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeak" xml:space="preserve">
+    <value>Agora você pode falar.</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeakIn" xml:space="preserve">
+    <value>Agora você pode falar em **{0}**.</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Desligando</value>
@@ -12907,13 +13116,22 @@ O tamanho mínimo é de **5** caracteres.</value>
     <value>Silenciar</value>
   </data>
   <data name="VoipMutedByAdmin" xml:space="preserve">
-    <value>Silenciado por admin</value>
+    <value>Silenciado pelo admin</value>
   </data>
   <data name="VoipMutedByAdminInfo" xml:space="preserve">
     <value>Você está no Modo Ouvinte</value>
   </data>
   <data name="VoipMutedByAdminShort" xml:space="preserve">
     <value>Silenciado</value>
+  </data>
+  <data name="VoipMutedTapedForSpeak" xml:space="preserve">
+    <value>Você pediu para falar</value>
+  </data>
+  <data name="VoipMutedTapedForSpeakInfo" xml:space="preserve">
+    <value>Avisamos aos locutores</value>
+  </data>
+  <data name="VoipMutedTapForSpeak" xml:space="preserve">
+    <value>toque se deseja falar</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>O Telegram precisa de acesso ao seu microfone e à câmera para que você possa fazer videochamadas.</value>
@@ -13062,6 +13280,9 @@ O tamanho mínimo é de **5** caracteres.</value>
   <data name="WaitMore" xml:space="preserve">
     <value>Aguardar mais</value>
   </data>
+  <data name="WantsToSpeak" xml:space="preserve">
+    <value>quer falar</value>
+  </data>
   <data name="Warmth" xml:space="preserve">
     <value>Calor</value>
   </data>
@@ -13130,10 +13351,16 @@ O tamanho mínimo é de **5** caracteres.</value>
 
 Nota: sua senha será **ignorada** para os widgets.</value>
   </data>
+  <data name="WidgetPasscode2" xml:space="preserve">
+    <value>Aviso: a sua senha será **ignorada** para widgets.</value>
+  </data>
   <data name="WidgetPasscodeEnable" xml:space="preserve">
     <value>
 
 Sua senha **não afetará** widgets adicionados na tela inicial.</value>
+  </data>
+  <data name="WidgetPasscodeEnable2" xml:space="preserve">
+    <value>Sua senha **não afetará** widgets adicionados à tela inicial.</value>
   </data>
   <data name="WidgetPreview" xml:space="preserve">
     <value>Prévia do widget</value>
@@ -13206,6 +13433,9 @@ Sua senha **não afetará** widgets adicionados na tela inicial.</value>
   </data>
   <data name="YourContacts" xml:space="preserve">
     <value>Seus contatos no Telegram</value>
+  </data>
+  <data name="YourContactsToInvite" xml:space="preserve">
+    <value>Seus contatos</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
     <value>Seu email</value>
