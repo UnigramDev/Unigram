@@ -132,7 +132,7 @@ namespace Unigram.Common
             {
                 case "CLF":
                     customFormat = " {0:N4}";
-                    doubleAmount = ((double)amount) / 10000.0d;
+                    doubleAmount = amount / 10000.0d;
                     break;
                 case "BHD":
                 case "IQD":
@@ -142,7 +142,7 @@ namespace Unigram.Common
                 case "OMR":
                 case "TND":
                     customFormat = " {0:N3}";
-                    doubleAmount = ((double)amount) / 1000.0d;
+                    doubleAmount = amount / 1000.0d;
                     break;
                 case "BIF":
                 case "BYR":
@@ -165,15 +165,15 @@ namespace Unigram.Common
                 case "XOF":
                 case "XPF":
                     customFormat = " {0:N0}";
-                    doubleAmount = (double)amount;
+                    doubleAmount = amount;
                     break;
                 case "MRO":
                     customFormat = " {0:N1}";
-                    doubleAmount = ((double)amount) / 10.0d;
+                    doubleAmount = amount / 10.0d;
                     break;
                 default:
                     customFormat = " {0:N2}";
-                    doubleAmount = ((double)amount) / 100.0d;
+                    doubleAmount = amount / 100.0d;
                     break;
             }
 

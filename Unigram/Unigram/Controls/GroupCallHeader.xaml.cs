@@ -20,7 +20,7 @@ namespace Unigram.Controls
 
         public GroupCallHeader()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public void InitializeParent(UIElement parent, IProtoService protoService)

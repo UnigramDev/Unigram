@@ -237,7 +237,7 @@ namespace Unigram.Controls
             _pointerPressed = true;
             _pointerDelta = e.GetCurrentPoint(this).Position.X - master.ActualWidth;
 
-            VisualStateManager.GoToState(grip as UserControl, "Pressed", false);
+            VisualStateManager.GoToState(grip, "Pressed", false);
 
             grip.CapturePointer(e.Pointer);
             e.Handled = true;

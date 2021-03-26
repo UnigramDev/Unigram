@@ -46,7 +46,7 @@ namespace Unigram.Views.Settings
             var wallpaper = args.Item as Background;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
 
-            var check = root.Children[1] as UIElement;
+            var check = root.Children[1];
             check.Visibility = wallpaper.Id == ViewModel.SelectedItem?.Id ? Visibility.Visible : Visibility.Collapsed;
 
             if (wallpaper.Id == 1000001)

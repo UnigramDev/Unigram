@@ -480,7 +480,7 @@ namespace Unigram.Charts
                     rectF.centerY() + r * Math.Sin(MathEx.ToRadians(((selectionEndA * 360f) - 90f)))
                 );
 
-                yl = (int)Math.Min(rectF.centerY(), yl);
+                yl = Math.Min(rectF.centerY(), yl);
 
                 yl -= 50;
                 // if (yl < 0) yl = 0;

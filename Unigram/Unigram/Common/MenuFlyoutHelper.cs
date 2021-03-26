@@ -77,7 +77,7 @@ namespace Unigram.Common
 
         public static void CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Func<T, bool> visibility, ICommand command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
         {
-            var value = visibility(parameter as T);
+            var value = visibility(parameter);
             if (value)
             {
                 var flyoutItem = new MenuFlyoutItem();
@@ -108,7 +108,7 @@ namespace Unigram.Common
         // Probably used only for members context menu
         public static void CreateFlyoutItem<T1, T2, T3>(this MenuFlyout flyout, Func<T1, T2, T3, bool> visibility, ICommand command, T1 chatType, T2 status, T3 parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T3 : class
         {
-            var value = visibility(chatType, status, parameter as T3);
+            var value = visibility(chatType, status, parameter);
             if (value)
             {
                 var flyoutItem = new MenuFlyoutItem();

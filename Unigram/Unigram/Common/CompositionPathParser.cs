@@ -181,7 +181,7 @@ namespace Unigram.Common
             {
                 if (obj is PathSegment rhs)
                 {
-                    return this.type == rhs.type && this.data.SequenceEqual(rhs.data);
+                    return type == rhs.type && data.SequenceEqual(rhs.data);
                 }
 
                 return base.Equals(obj);
@@ -475,17 +475,17 @@ namespace Unigram.Common
 
         private class PathDataReader
         {
-            private string input;
+            private readonly string input;
             private char? current;
             private char? previous;
-            private CharEnumerator iterator;
+            private readonly CharEnumerator iterator;
 
-            private static char[] spaces = new[] { '\n', '\r', '\t', ' ', ',' };
+            private static readonly char[] spaces = new[] { '\n', '\r', '\t', ' ', ',' };
 
             public PathDataReader(string input)
             {
                 this.input = input;
-                this.iterator = input.GetEnumerator();
+                iterator = input.GetEnumerator();
             }
 
             public IList<PathSegment> read()

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Common
@@ -49,11 +48,6 @@ namespace Unigram.Common
         /// <exception cref="System.InvalidOperationException">This method can only be invoked from UI thread.</exception>
         public static async Task<ContentDialogResult> ShowIfPossibleAsync(this ContentDialog dialog)
         {
-            if (!Window.Current.Dispatcher.HasThreadAccess)
-            {
-                throw new InvalidOperationException("This method can only be invoked from UI thread.");
-            }
-
             while (_currentDialogShowRequest != null)
             {
                 return ContentDialogResult.None;

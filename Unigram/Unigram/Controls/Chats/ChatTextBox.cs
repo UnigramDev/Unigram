@@ -1068,7 +1068,7 @@ namespace Unigram.Controls.Chats
 
         public object Reply
         {
-            get { return (object)GetValue(ReplyProperty); }
+            get { return GetValue(ReplyProperty); }
             set { SetValue(ReplyProperty, value); }
         }
 
@@ -1078,7 +1078,7 @@ namespace Unigram.Controls.Chats
 
         private static void OnReplyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ChatTextBox)d).OnReplyChanged((object)e.NewValue, (object)e.OldValue);
+            ((ChatTextBox)d).OnReplyChanged(e.NewValue, e.OldValue);
         }
 
         private async void OnReplyChanged(object newValue, object oldValue)

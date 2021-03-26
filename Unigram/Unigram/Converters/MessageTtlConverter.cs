@@ -15,11 +15,11 @@ namespace Unigram.Converters
             }
             else if (seconds >= 1 && seconds < 21)
             {
-                return parameter == null ? (object)seconds : GetString(seconds, parameter);
+                return parameter == null ? seconds : GetString(seconds, parameter);
             }
             else
             {
-                return parameter == null ? (object)((seconds / 5) + 16) : GetString(seconds, parameter);
+                return parameter == null ? (seconds / 5) + 16 : GetString(seconds, parameter);
             }
         }
 

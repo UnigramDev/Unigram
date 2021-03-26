@@ -105,7 +105,7 @@ namespace Unigram.Charts
 
 
                     float xPoint = p / 2 + chartData.xPercentage[i] * (fullWidth - p) - offset;
-                    float yPercentage = (float)y[i] / currentMaxHeight;
+                    float yPercentage = y[i] / currentMaxHeight;
 
                     float height = (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
                     float yPoint = MeasuredHeight - chartBottom - height;
@@ -156,7 +156,7 @@ namespace Unigram.Charts
 
 
                     float xPoint = p / 2 + chartData.xPercentage[selectedIndex] * (fullWidth - p) - offset;
-                    float yPercentage = (float)y[selectedIndex] / currentMaxHeight;
+                    float yPercentage = y[selectedIndex] / currentMaxHeight;
 
                     float height = (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT) * line.alpha;
                     float yPoint = MeasuredHeight - chartBottom - height;
@@ -277,7 +277,7 @@ namespace Unigram.Charts
                             }
 
                             float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
-                            float yPercentage = (float)yMaxPoints[k] / h * line.alpha;
+                            float yPercentage = yMaxPoints[k] / h * line.alpha;
                             float yPoint = (yPercentage) * (pickerHeight);
 
 

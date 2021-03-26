@@ -726,7 +726,7 @@ namespace Unigram.Views.Settings
     {
         public object PageHeaderDisabledBrush
         {
-            get { return (object)GetValue(PageHeaderDisabledBrushProperty); }
+            get { return GetValue(PageHeaderDisabledBrushProperty); }
             set { SetValue(PageHeaderDisabledBrushProperty, value); }
         }
 
@@ -734,7 +734,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PageHeaderDisabledBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PageHeaderBackgroundBrush
         {
-            get { return (object)GetValue(PageHeaderBackgroundBrushProperty); }
+            get { return GetValue(PageHeaderBackgroundBrushProperty); }
             set { SetValue(PageHeaderBackgroundBrushProperty, value); }
         }
 
@@ -742,7 +742,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PageHeaderBackgroundBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PageSubHeaderBackgroundBrush
         {
-            get { return (object)GetValue(PageSubHeaderBackgroundBrushProperty); }
+            get { return GetValue(PageSubHeaderBackgroundBrushProperty); }
             set { SetValue(PageSubHeaderBackgroundBrushProperty, value); }
         }
 
@@ -750,7 +750,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PageSubHeaderBackgroundBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TelegramSeparatorMediumBrush
         {
-            get { return (object)GetValue(TelegramSeparatorMediumBrushProperty); }
+            get { return GetValue(TelegramSeparatorMediumBrushProperty); }
             set { SetValue(TelegramSeparatorMediumBrushProperty, value); }
         }
 
@@ -758,7 +758,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TelegramSeparatorMediumBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageBackgroundOutColor
         {
-            get { return (object)GetValue(MessageBackgroundOutColorProperty); }
+            get { return GetValue(MessageBackgroundOutColorProperty); }
             set { SetValue(MessageBackgroundOutColorProperty, value); }
         }
 
@@ -766,7 +766,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageBackgroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageSubtleLabelOutColor
         {
-            get { return (object)GetValue(MessageSubtleLabelOutColorProperty); }
+            get { return GetValue(MessageSubtleLabelOutColorProperty); }
             set { SetValue(MessageSubtleLabelOutColorProperty, value); }
         }
 
@@ -774,7 +774,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageSubtleLabelOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageSubtleGlyphOutColor
         {
-            get { return (object)GetValue(MessageSubtleGlyphOutColorProperty); }
+            get { return GetValue(MessageSubtleGlyphOutColorProperty); }
             set { SetValue(MessageSubtleGlyphOutColorProperty, value); }
         }
 
@@ -782,7 +782,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageSubtleGlyphOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageSubtleForegroundColor
         {
-            get { return (object)GetValue(MessageSubtleForegroundColorProperty); }
+            get { return GetValue(MessageSubtleForegroundColorProperty); }
             set { SetValue(MessageSubtleForegroundColorProperty, value); }
         }
 
@@ -790,7 +790,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageSubtleForegroundColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageSubtleForegroundOutColor
         {
-            get { return (object)GetValue(MessageSubtleForegroundOutColorProperty); }
+            get { return GetValue(MessageSubtleForegroundOutColorProperty); }
             set { SetValue(MessageSubtleForegroundOutColorProperty, value); }
         }
 
@@ -798,7 +798,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageSubtleForegroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageHeaderForegroundOutColor
         {
-            get { return (object)GetValue(MessageHeaderForegroundOutColorProperty); }
+            get { return GetValue(MessageHeaderForegroundOutColorProperty); }
             set { SetValue(MessageHeaderForegroundOutColorProperty, value); }
         }
 
@@ -806,7 +806,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageHeaderForegroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageHeaderBorderOutColor
         {
-            get { return (object)GetValue(MessageHeaderBorderOutColorProperty); }
+            get { return GetValue(MessageHeaderBorderOutColorProperty); }
             set { SetValue(MessageHeaderBorderOutColorProperty, value); }
         }
 
@@ -814,7 +814,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageHeaderBorderOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageMediaForegroundOutColor
         {
-            get { return (object)GetValue(MessageMediaForegroundOutColorProperty); }
+            get { return GetValue(MessageMediaForegroundOutColorProperty); }
             set { SetValue(MessageMediaForegroundOutColorProperty, value); }
         }
 
@@ -822,7 +822,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageMediaForegroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MessageMediaBackgroundOutColor
         {
-            get { return (object)GetValue(MessageMediaBackgroundOutColorProperty); }
+            get { return GetValue(MessageMediaBackgroundOutColorProperty); }
             set { SetValue(MessageMediaBackgroundOutColorProperty, value); }
         }
 
@@ -830,7 +830,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MessageMediaBackgroundOutColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SystemControlDescriptionTextForegroundBrush
         {
-            get { return (object)GetValue(SystemControlDescriptionTextForegroundBrushProperty); }
+            get { return GetValue(SystemControlDescriptionTextForegroundBrushProperty); }
             set { SetValue(SystemControlDescriptionTextForegroundBrushProperty, value); }
         }
 
@@ -838,7 +838,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SystemControlDescriptionTextForegroundBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderThumbBackground
         {
-            get { return (object)GetValue(SliderThumbBackgroundProperty); }
+            get { return GetValue(SliderThumbBackgroundProperty); }
             set { SetValue(SliderThumbBackgroundProperty, value); }
         }
 
@@ -846,7 +846,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderThumbBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderThumbBackgroundPointerOver
         {
-            get { return (object)GetValue(SliderThumbBackgroundPointerOverProperty); }
+            get { return GetValue(SliderThumbBackgroundPointerOverProperty); }
             set { SetValue(SliderThumbBackgroundPointerOverProperty, value); }
         }
 
@@ -854,7 +854,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderThumbBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderThumbBackgroundPressed
         {
-            get { return (object)GetValue(SliderThumbBackgroundPressedProperty); }
+            get { return GetValue(SliderThumbBackgroundPressedProperty); }
             set { SetValue(SliderThumbBackgroundPressedProperty, value); }
         }
 
@@ -862,7 +862,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderThumbBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderThumbBackgroundDisabled
         {
-            get { return (object)GetValue(SliderThumbBackgroundDisabledProperty); }
+            get { return GetValue(SliderThumbBackgroundDisabledProperty); }
             set { SetValue(SliderThumbBackgroundDisabledProperty, value); }
         }
 
@@ -870,7 +870,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderThumbBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTrackFill
         {
-            get { return (object)GetValue(SliderTrackFillProperty); }
+            get { return GetValue(SliderTrackFillProperty); }
             set { SetValue(SliderTrackFillProperty, value); }
         }
 
@@ -878,7 +878,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTrackFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTrackFillPointerOver
         {
-            get { return (object)GetValue(SliderTrackFillPointerOverProperty); }
+            get { return GetValue(SliderTrackFillPointerOverProperty); }
             set { SetValue(SliderTrackFillPointerOverProperty, value); }
         }
 
@@ -886,7 +886,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTrackFillPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTrackFillPressed
         {
-            get { return (object)GetValue(SliderTrackFillPressedProperty); }
+            get { return GetValue(SliderTrackFillPressedProperty); }
             set { SetValue(SliderTrackFillPressedProperty, value); }
         }
 
@@ -894,7 +894,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTrackFillPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTrackFillDisabled
         {
-            get { return (object)GetValue(SliderTrackFillDisabledProperty); }
+            get { return GetValue(SliderTrackFillDisabledProperty); }
             set { SetValue(SliderTrackFillDisabledProperty, value); }
         }
 
@@ -902,7 +902,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTrackFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTrackValueFill
         {
-            get { return (object)GetValue(SliderTrackValueFillProperty); }
+            get { return GetValue(SliderTrackValueFillProperty); }
             set { SetValue(SliderTrackValueFillProperty, value); }
         }
 
@@ -910,7 +910,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTrackValueFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTrackValueFillPointerOver
         {
-            get { return (object)GetValue(SliderTrackValueFillPointerOverProperty); }
+            get { return GetValue(SliderTrackValueFillPointerOverProperty); }
             set { SetValue(SliderTrackValueFillPointerOverProperty, value); }
         }
 
@@ -918,7 +918,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTrackValueFillPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTrackValueFillPressed
         {
-            get { return (object)GetValue(SliderTrackValueFillPressedProperty); }
+            get { return GetValue(SliderTrackValueFillPressedProperty); }
             set { SetValue(SliderTrackValueFillPressedProperty, value); }
         }
 
@@ -926,7 +926,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTrackValueFillPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTrackValueFillDisabled
         {
-            get { return (object)GetValue(SliderTrackValueFillDisabledProperty); }
+            get { return GetValue(SliderTrackValueFillDisabledProperty); }
             set { SetValue(SliderTrackValueFillDisabledProperty, value); }
         }
 
@@ -934,7 +934,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTrackValueFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderHeaderForeground
         {
-            get { return (object)GetValue(SliderHeaderForegroundProperty); }
+            get { return GetValue(SliderHeaderForegroundProperty); }
             set { SetValue(SliderHeaderForegroundProperty, value); }
         }
 
@@ -942,7 +942,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderHeaderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderHeaderForegroundDisabled
         {
-            get { return (object)GetValue(SliderHeaderForegroundDisabledProperty); }
+            get { return GetValue(SliderHeaderForegroundDisabledProperty); }
             set { SetValue(SliderHeaderForegroundDisabledProperty, value); }
         }
 
@@ -950,7 +950,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderHeaderForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTickBarFill
         {
-            get { return (object)GetValue(SliderTickBarFillProperty); }
+            get { return GetValue(SliderTickBarFillProperty); }
             set { SetValue(SliderTickBarFillProperty, value); }
         }
 
@@ -958,7 +958,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTickBarFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderTickBarFillDisabled
         {
-            get { return (object)GetValue(SliderTickBarFillDisabledProperty); }
+            get { return GetValue(SliderTickBarFillDisabledProperty); }
             set { SetValue(SliderTickBarFillDisabledProperty, value); }
         }
 
@@ -966,7 +966,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderTickBarFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SliderInlineTickBarFill
         {
-            get { return (object)GetValue(SliderInlineTickBarFillProperty); }
+            get { return GetValue(SliderInlineTickBarFillProperty); }
             set { SetValue(SliderInlineTickBarFillProperty, value); }
         }
 
@@ -974,7 +974,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SliderInlineTickBarFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonBackground
         {
-            get { return (object)GetValue(ButtonBackgroundProperty); }
+            get { return GetValue(ButtonBackgroundProperty); }
             set { SetValue(ButtonBackgroundProperty, value); }
         }
 
@@ -982,7 +982,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(ButtonBackgroundPointerOverProperty); }
+            get { return GetValue(ButtonBackgroundPointerOverProperty); }
             set { SetValue(ButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -990,7 +990,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonBackgroundPressed
         {
-            get { return (object)GetValue(ButtonBackgroundPressedProperty); }
+            get { return GetValue(ButtonBackgroundPressedProperty); }
             set { SetValue(ButtonBackgroundPressedProperty, value); }
         }
 
@@ -998,7 +998,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonBackgroundDisabled
         {
-            get { return (object)GetValue(ButtonBackgroundDisabledProperty); }
+            get { return GetValue(ButtonBackgroundDisabledProperty); }
             set { SetValue(ButtonBackgroundDisabledProperty, value); }
         }
 
@@ -1006,7 +1006,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonForeground
         {
-            get { return (object)GetValue(ButtonForegroundProperty); }
+            get { return GetValue(ButtonForegroundProperty); }
             set { SetValue(ButtonForegroundProperty, value); }
         }
 
@@ -1014,7 +1014,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonForegroundPointerOver
         {
-            get { return (object)GetValue(ButtonForegroundPointerOverProperty); }
+            get { return GetValue(ButtonForegroundPointerOverProperty); }
             set { SetValue(ButtonForegroundPointerOverProperty, value); }
         }
 
@@ -1022,7 +1022,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonForegroundPressed
         {
-            get { return (object)GetValue(ButtonForegroundPressedProperty); }
+            get { return GetValue(ButtonForegroundPressedProperty); }
             set { SetValue(ButtonForegroundPressedProperty, value); }
         }
 
@@ -1030,7 +1030,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonForegroundDisabled
         {
-            get { return (object)GetValue(ButtonForegroundDisabledProperty); }
+            get { return GetValue(ButtonForegroundDisabledProperty); }
             set { SetValue(ButtonForegroundDisabledProperty, value); }
         }
 
@@ -1038,7 +1038,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonBorderBrush
         {
-            get { return (object)GetValue(ButtonBorderBrushProperty); }
+            get { return GetValue(ButtonBorderBrushProperty); }
             set { SetValue(ButtonBorderBrushProperty, value); }
         }
 
@@ -1046,7 +1046,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(ButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(ButtonBorderBrushPointerOverProperty); }
             set { SetValue(ButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -1054,7 +1054,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonBorderBrushPressed
         {
-            get { return (object)GetValue(ButtonBorderBrushPressedProperty); }
+            get { return GetValue(ButtonBorderBrushPressedProperty); }
             set { SetValue(ButtonBorderBrushPressedProperty, value); }
         }
 
@@ -1062,7 +1062,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ButtonBorderBrushDisabled
         {
-            get { return (object)GetValue(ButtonBorderBrushDisabledProperty); }
+            get { return GetValue(ButtonBorderBrushDisabledProperty); }
             set { SetValue(ButtonBorderBrushDisabledProperty, value); }
         }
 
@@ -1070,7 +1070,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonForeground
         {
-            get { return (object)GetValue(RadioButtonForegroundProperty); }
+            get { return GetValue(RadioButtonForegroundProperty); }
             set { SetValue(RadioButtonForegroundProperty, value); }
         }
 
@@ -1078,7 +1078,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonForegroundPointerOver
         {
-            get { return (object)GetValue(RadioButtonForegroundPointerOverProperty); }
+            get { return GetValue(RadioButtonForegroundPointerOverProperty); }
             set { SetValue(RadioButtonForegroundPointerOverProperty, value); }
         }
 
@@ -1086,7 +1086,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonForegroundPressed
         {
-            get { return (object)GetValue(RadioButtonForegroundPressedProperty); }
+            get { return GetValue(RadioButtonForegroundPressedProperty); }
             set { SetValue(RadioButtonForegroundPressedProperty, value); }
         }
 
@@ -1094,7 +1094,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonForegroundDisabled
         {
-            get { return (object)GetValue(RadioButtonForegroundDisabledProperty); }
+            get { return GetValue(RadioButtonForegroundDisabledProperty); }
             set { SetValue(RadioButtonForegroundDisabledProperty, value); }
         }
 
@@ -1102,7 +1102,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseStroke
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseStrokeProperty); }
+            get { return GetValue(RadioButtonOuterEllipseStrokeProperty); }
             set { SetValue(RadioButtonOuterEllipseStrokeProperty, value); }
         }
 
@@ -1110,7 +1110,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseStroke", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseStrokePointerOver
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseStrokePointerOverProperty); }
+            get { return GetValue(RadioButtonOuterEllipseStrokePointerOverProperty); }
             set { SetValue(RadioButtonOuterEllipseStrokePointerOverProperty, value); }
         }
 
@@ -1118,7 +1118,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseStrokePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseStrokePressed
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseStrokePressedProperty); }
+            get { return GetValue(RadioButtonOuterEllipseStrokePressedProperty); }
             set { SetValue(RadioButtonOuterEllipseStrokePressedProperty, value); }
         }
 
@@ -1126,7 +1126,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseStrokePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseStrokeDisabled
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseStrokeDisabledProperty); }
+            get { return GetValue(RadioButtonOuterEllipseStrokeDisabledProperty); }
             set { SetValue(RadioButtonOuterEllipseStrokeDisabledProperty, value); }
         }
 
@@ -1134,7 +1134,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseStrokeDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseCheckedStroke
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseCheckedStrokeProperty); }
+            get { return GetValue(RadioButtonOuterEllipseCheckedStrokeProperty); }
             set { SetValue(RadioButtonOuterEllipseCheckedStrokeProperty, value); }
         }
 
@@ -1142,7 +1142,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseCheckedStroke", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseCheckedStrokePointerOver
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseCheckedStrokePointerOverProperty); }
+            get { return GetValue(RadioButtonOuterEllipseCheckedStrokePointerOverProperty); }
             set { SetValue(RadioButtonOuterEllipseCheckedStrokePointerOverProperty, value); }
         }
 
@@ -1150,7 +1150,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseCheckedStrokePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseCheckedStrokePressed
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseCheckedStrokePressedProperty); }
+            get { return GetValue(RadioButtonOuterEllipseCheckedStrokePressedProperty); }
             set { SetValue(RadioButtonOuterEllipseCheckedStrokePressedProperty, value); }
         }
 
@@ -1158,7 +1158,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseCheckedStrokePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseCheckedStrokeDisabled
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseCheckedStrokeDisabledProperty); }
+            get { return GetValue(RadioButtonOuterEllipseCheckedStrokeDisabledProperty); }
             set { SetValue(RadioButtonOuterEllipseCheckedStrokeDisabledProperty, value); }
         }
 
@@ -1166,7 +1166,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseCheckedStrokeDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseCheckedFill
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseCheckedFillProperty); }
+            get { return GetValue(RadioButtonOuterEllipseCheckedFillProperty); }
             set { SetValue(RadioButtonOuterEllipseCheckedFillProperty, value); }
         }
 
@@ -1174,7 +1174,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseCheckedFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseCheckedFillPointerOver
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseCheckedFillPointerOverProperty); }
+            get { return GetValue(RadioButtonOuterEllipseCheckedFillPointerOverProperty); }
             set { SetValue(RadioButtonOuterEllipseCheckedFillPointerOverProperty, value); }
         }
 
@@ -1182,7 +1182,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseCheckedFillPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonOuterEllipseCheckedFillPressed
         {
-            get { return (object)GetValue(RadioButtonOuterEllipseCheckedFillPressedProperty); }
+            get { return GetValue(RadioButtonOuterEllipseCheckedFillPressedProperty); }
             set { SetValue(RadioButtonOuterEllipseCheckedFillPressedProperty, value); }
         }
 
@@ -1190,7 +1190,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonOuterEllipseCheckedFillPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonCheckGlyphFill
         {
-            get { return (object)GetValue(RadioButtonCheckGlyphFillProperty); }
+            get { return GetValue(RadioButtonCheckGlyphFillProperty); }
             set { SetValue(RadioButtonCheckGlyphFillProperty, value); }
         }
 
@@ -1198,7 +1198,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonCheckGlyphFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonCheckGlyphFillPointerOver
         {
-            get { return (object)GetValue(RadioButtonCheckGlyphFillPointerOverProperty); }
+            get { return GetValue(RadioButtonCheckGlyphFillPointerOverProperty); }
             set { SetValue(RadioButtonCheckGlyphFillPointerOverProperty, value); }
         }
 
@@ -1206,7 +1206,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonCheckGlyphFillPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonCheckGlyphFillPressed
         {
-            get { return (object)GetValue(RadioButtonCheckGlyphFillPressedProperty); }
+            get { return GetValue(RadioButtonCheckGlyphFillPressedProperty); }
             set { SetValue(RadioButtonCheckGlyphFillPressedProperty, value); }
         }
 
@@ -1214,7 +1214,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonCheckGlyphFillPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RadioButtonCheckGlyphFillDisabled
         {
-            get { return (object)GetValue(RadioButtonCheckGlyphFillDisabledProperty); }
+            get { return GetValue(RadioButtonCheckGlyphFillDisabledProperty); }
             set { SetValue(RadioButtonCheckGlyphFillDisabledProperty, value); }
         }
 
@@ -1222,7 +1222,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RadioButtonCheckGlyphFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundUnchecked
         {
-            get { return (object)GetValue(CheckBoxForegroundUncheckedProperty); }
+            get { return GetValue(CheckBoxForegroundUncheckedProperty); }
             set { SetValue(CheckBoxForegroundUncheckedProperty, value); }
         }
 
@@ -1230,7 +1230,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundUnchecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundUncheckedPointerOver
         {
-            get { return (object)GetValue(CheckBoxForegroundUncheckedPointerOverProperty); }
+            get { return GetValue(CheckBoxForegroundUncheckedPointerOverProperty); }
             set { SetValue(CheckBoxForegroundUncheckedPointerOverProperty, value); }
         }
 
@@ -1238,7 +1238,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundUncheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundUncheckedPressed
         {
-            get { return (object)GetValue(CheckBoxForegroundUncheckedPressedProperty); }
+            get { return GetValue(CheckBoxForegroundUncheckedPressedProperty); }
             set { SetValue(CheckBoxForegroundUncheckedPressedProperty, value); }
         }
 
@@ -1246,7 +1246,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundUncheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundUncheckedDisabled
         {
-            get { return (object)GetValue(CheckBoxForegroundUncheckedDisabledProperty); }
+            get { return GetValue(CheckBoxForegroundUncheckedDisabledProperty); }
             set { SetValue(CheckBoxForegroundUncheckedDisabledProperty, value); }
         }
 
@@ -1254,7 +1254,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundUncheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundChecked
         {
-            get { return (object)GetValue(CheckBoxForegroundCheckedProperty); }
+            get { return GetValue(CheckBoxForegroundCheckedProperty); }
             set { SetValue(CheckBoxForegroundCheckedProperty, value); }
         }
 
@@ -1262,7 +1262,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(CheckBoxForegroundCheckedPointerOverProperty); }
+            get { return GetValue(CheckBoxForegroundCheckedPointerOverProperty); }
             set { SetValue(CheckBoxForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -1270,7 +1270,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundCheckedPressed
         {
-            get { return (object)GetValue(CheckBoxForegroundCheckedPressedProperty); }
+            get { return GetValue(CheckBoxForegroundCheckedPressedProperty); }
             set { SetValue(CheckBoxForegroundCheckedPressedProperty, value); }
         }
 
@@ -1278,7 +1278,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundCheckedDisabled
         {
-            get { return (object)GetValue(CheckBoxForegroundCheckedDisabledProperty); }
+            get { return GetValue(CheckBoxForegroundCheckedDisabledProperty); }
             set { SetValue(CheckBoxForegroundCheckedDisabledProperty, value); }
         }
 
@@ -1286,7 +1286,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundIndeterminate
         {
-            get { return (object)GetValue(CheckBoxForegroundIndeterminateProperty); }
+            get { return GetValue(CheckBoxForegroundIndeterminateProperty); }
             set { SetValue(CheckBoxForegroundIndeterminateProperty, value); }
         }
 
@@ -1294,7 +1294,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundIndeterminatePointerOver
         {
-            get { return (object)GetValue(CheckBoxForegroundIndeterminatePointerOverProperty); }
+            get { return GetValue(CheckBoxForegroundIndeterminatePointerOverProperty); }
             set { SetValue(CheckBoxForegroundIndeterminatePointerOverProperty, value); }
         }
 
@@ -1302,7 +1302,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundIndeterminatePressed
         {
-            get { return (object)GetValue(CheckBoxForegroundIndeterminatePressedProperty); }
+            get { return GetValue(CheckBoxForegroundIndeterminatePressedProperty); }
             set { SetValue(CheckBoxForegroundIndeterminatePressedProperty, value); }
         }
 
@@ -1310,7 +1310,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxForegroundIndeterminateDisabled
         {
-            get { return (object)GetValue(CheckBoxForegroundIndeterminateDisabledProperty); }
+            get { return GetValue(CheckBoxForegroundIndeterminateDisabledProperty); }
             set { SetValue(CheckBoxForegroundIndeterminateDisabledProperty, value); }
         }
 
@@ -1318,7 +1318,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxForegroundIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeUnchecked
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeUncheckedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeUncheckedProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeUncheckedProperty, value); }
         }
 
@@ -1326,7 +1326,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeUnchecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeUncheckedPointerOver
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeUncheckedPointerOverProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeUncheckedPointerOverProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeUncheckedPointerOverProperty, value); }
         }
 
@@ -1334,7 +1334,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeUncheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeUncheckedPressed
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeUncheckedPressedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeUncheckedPressedProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeUncheckedPressedProperty, value); }
         }
 
@@ -1342,7 +1342,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeUncheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeUncheckedDisabled
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeUncheckedDisabledProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeUncheckedDisabledProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeUncheckedDisabledProperty, value); }
         }
 
@@ -1350,7 +1350,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeUncheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeChecked
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeCheckedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeCheckedProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeCheckedProperty, value); }
         }
 
@@ -1358,7 +1358,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeCheckedPointerOver
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeCheckedPointerOverProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeCheckedPointerOverProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeCheckedPointerOverProperty, value); }
         }
 
@@ -1366,7 +1366,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeCheckedPressed
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeCheckedPressedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeCheckedPressedProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeCheckedPressedProperty, value); }
         }
 
@@ -1374,7 +1374,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeCheckedDisabled
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeCheckedDisabledProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeCheckedDisabledProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeCheckedDisabledProperty, value); }
         }
 
@@ -1382,7 +1382,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeIndeterminate
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeIndeterminateProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeIndeterminateProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeIndeterminateProperty, value); }
         }
 
@@ -1390,7 +1390,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeIndeterminatePointerOver
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeIndeterminatePointerOverProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeIndeterminatePointerOverProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeIndeterminatePointerOverProperty, value); }
         }
 
@@ -1398,7 +1398,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeIndeterminatePressed
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeIndeterminatePressedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeIndeterminatePressedProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeIndeterminatePressedProperty, value); }
         }
 
@@ -1406,7 +1406,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundStrokeIndeterminateDisabled
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundStrokeIndeterminateDisabledProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundStrokeIndeterminateDisabledProperty); }
             set { SetValue(CheckBoxCheckBackgroundStrokeIndeterminateDisabledProperty, value); }
         }
 
@@ -1414,7 +1414,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundStrokeIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillUncheckedPressed
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillUncheckedPressedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundFillUncheckedPressedProperty); }
             set { SetValue(CheckBoxCheckBackgroundFillUncheckedPressedProperty, value); }
         }
 
@@ -1422,7 +1422,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundFillUncheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillChecked
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillCheckedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundFillCheckedProperty); }
             set { SetValue(CheckBoxCheckBackgroundFillCheckedProperty, value); }
         }
 
@@ -1430,7 +1430,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundFillChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillCheckedPointerOver
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillCheckedPointerOverProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundFillCheckedPointerOverProperty); }
             set { SetValue(CheckBoxCheckBackgroundFillCheckedPointerOverProperty, value); }
         }
 
@@ -1438,7 +1438,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundFillCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillCheckedPressed
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillCheckedPressedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundFillCheckedPressedProperty); }
             set { SetValue(CheckBoxCheckBackgroundFillCheckedPressedProperty, value); }
         }
 
@@ -1446,7 +1446,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundFillCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillIndeterminate
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillIndeterminateProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundFillIndeterminateProperty); }
             set { SetValue(CheckBoxCheckBackgroundFillIndeterminateProperty, value); }
         }
 
@@ -1454,7 +1454,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundFillIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillIndeterminatePointerOver
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillIndeterminatePointerOverProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundFillIndeterminatePointerOverProperty); }
             set { SetValue(CheckBoxCheckBackgroundFillIndeterminatePointerOverProperty, value); }
         }
 
@@ -1462,7 +1462,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundFillIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckBackgroundFillIndeterminatePressed
         {
-            get { return (object)GetValue(CheckBoxCheckBackgroundFillIndeterminatePressedProperty); }
+            get { return GetValue(CheckBoxCheckBackgroundFillIndeterminatePressedProperty); }
             set { SetValue(CheckBoxCheckBackgroundFillIndeterminatePressedProperty, value); }
         }
 
@@ -1470,7 +1470,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckBackgroundFillIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundUnchecked
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundUncheckedProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundUncheckedProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundUncheckedProperty, value); }
         }
 
@@ -1478,7 +1478,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundUnchecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundUncheckedPointerOver
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundUncheckedPointerOverProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundUncheckedPointerOverProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundUncheckedPointerOverProperty, value); }
         }
 
@@ -1486,7 +1486,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundUncheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundUncheckedPressed
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundUncheckedPressedProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundUncheckedPressedProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundUncheckedPressedProperty, value); }
         }
 
@@ -1494,7 +1494,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundUncheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundUncheckedDisabled
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundUncheckedDisabledProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundUncheckedDisabledProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundUncheckedDisabledProperty, value); }
         }
 
@@ -1502,7 +1502,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundUncheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundChecked
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundCheckedProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundCheckedProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundCheckedProperty, value); }
         }
 
@@ -1510,7 +1510,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundCheckedPointerOverProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundCheckedPointerOverProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -1518,7 +1518,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundCheckedPressed
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundCheckedPressedProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundCheckedPressedProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundCheckedPressedProperty, value); }
         }
 
@@ -1526,7 +1526,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundCheckedDisabled
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundCheckedDisabledProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundCheckedDisabledProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundCheckedDisabledProperty, value); }
         }
 
@@ -1534,7 +1534,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundIndeterminate
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundIndeterminateProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundIndeterminateProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundIndeterminateProperty, value); }
         }
 
@@ -1542,7 +1542,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundIndeterminatePointerOver
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundIndeterminatePointerOverProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundIndeterminatePointerOverProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundIndeterminatePointerOverProperty, value); }
         }
 
@@ -1550,7 +1550,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundIndeterminatePressed
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundIndeterminatePressedProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundIndeterminatePressedProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundIndeterminatePressedProperty, value); }
         }
 
@@ -1558,7 +1558,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CheckBoxCheckGlyphForegroundIndeterminateDisabled
         {
-            get { return (object)GetValue(CheckBoxCheckGlyphForegroundIndeterminateDisabledProperty); }
+            get { return GetValue(CheckBoxCheckGlyphForegroundIndeterminateDisabledProperty); }
             set { SetValue(CheckBoxCheckGlyphForegroundIndeterminateDisabledProperty, value); }
         }
 
@@ -1566,7 +1566,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CheckBoxCheckGlyphForegroundIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HyperlinkButtonForeground
         {
-            get { return (object)GetValue(HyperlinkButtonForegroundProperty); }
+            get { return GetValue(HyperlinkButtonForegroundProperty); }
             set { SetValue(HyperlinkButtonForegroundProperty, value); }
         }
 
@@ -1574,7 +1574,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HyperlinkButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HyperlinkButtonForegroundPointerOver
         {
-            get { return (object)GetValue(HyperlinkButtonForegroundPointerOverProperty); }
+            get { return GetValue(HyperlinkButtonForegroundPointerOverProperty); }
             set { SetValue(HyperlinkButtonForegroundPointerOverProperty, value); }
         }
 
@@ -1582,7 +1582,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HyperlinkButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HyperlinkButtonForegroundPressed
         {
-            get { return (object)GetValue(HyperlinkButtonForegroundPressedProperty); }
+            get { return GetValue(HyperlinkButtonForegroundPressedProperty); }
             set { SetValue(HyperlinkButtonForegroundPressedProperty, value); }
         }
 
@@ -1590,7 +1590,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HyperlinkButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HyperlinkButtonForegroundDisabled
         {
-            get { return (object)GetValue(HyperlinkButtonForegroundDisabledProperty); }
+            get { return GetValue(HyperlinkButtonForegroundDisabledProperty); }
             set { SetValue(HyperlinkButtonForegroundDisabledProperty, value); }
         }
 
@@ -1598,7 +1598,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HyperlinkButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HyperlinkButtonBackground
         {
-            get { return (object)GetValue(HyperlinkButtonBackgroundProperty); }
+            get { return GetValue(HyperlinkButtonBackgroundProperty); }
             set { SetValue(HyperlinkButtonBackgroundProperty, value); }
         }
 
@@ -1606,7 +1606,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HyperlinkButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HyperlinkButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(HyperlinkButtonBackgroundPointerOverProperty); }
+            get { return GetValue(HyperlinkButtonBackgroundPointerOverProperty); }
             set { SetValue(HyperlinkButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -1614,7 +1614,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HyperlinkButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HyperlinkButtonBackgroundPressed
         {
-            get { return (object)GetValue(HyperlinkButtonBackgroundPressedProperty); }
+            get { return GetValue(HyperlinkButtonBackgroundPressedProperty); }
             set { SetValue(HyperlinkButtonBackgroundPressedProperty, value); }
         }
 
@@ -1622,7 +1622,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HyperlinkButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HyperlinkButtonBackgroundDisabled
         {
-            get { return (object)GetValue(HyperlinkButtonBackgroundDisabledProperty); }
+            get { return GetValue(HyperlinkButtonBackgroundDisabledProperty); }
             set { SetValue(HyperlinkButtonBackgroundDisabledProperty, value); }
         }
 
@@ -1630,7 +1630,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HyperlinkButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBackground
         {
-            get { return (object)GetValue(RepeatButtonBackgroundProperty); }
+            get { return GetValue(RepeatButtonBackgroundProperty); }
             set { SetValue(RepeatButtonBackgroundProperty, value); }
         }
 
@@ -1638,7 +1638,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(RepeatButtonBackgroundPointerOverProperty); }
+            get { return GetValue(RepeatButtonBackgroundPointerOverProperty); }
             set { SetValue(RepeatButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -1646,7 +1646,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBackgroundPressed
         {
-            get { return (object)GetValue(RepeatButtonBackgroundPressedProperty); }
+            get { return GetValue(RepeatButtonBackgroundPressedProperty); }
             set { SetValue(RepeatButtonBackgroundPressedProperty, value); }
         }
 
@@ -1654,7 +1654,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBackgroundDisabled
         {
-            get { return (object)GetValue(RepeatButtonBackgroundDisabledProperty); }
+            get { return GetValue(RepeatButtonBackgroundDisabledProperty); }
             set { SetValue(RepeatButtonBackgroundDisabledProperty, value); }
         }
 
@@ -1662,7 +1662,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonForeground
         {
-            get { return (object)GetValue(RepeatButtonForegroundProperty); }
+            get { return GetValue(RepeatButtonForegroundProperty); }
             set { SetValue(RepeatButtonForegroundProperty, value); }
         }
 
@@ -1670,7 +1670,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonForegroundPointerOver
         {
-            get { return (object)GetValue(RepeatButtonForegroundPointerOverProperty); }
+            get { return GetValue(RepeatButtonForegroundPointerOverProperty); }
             set { SetValue(RepeatButtonForegroundPointerOverProperty, value); }
         }
 
@@ -1678,7 +1678,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonForegroundPressed
         {
-            get { return (object)GetValue(RepeatButtonForegroundPressedProperty); }
+            get { return GetValue(RepeatButtonForegroundPressedProperty); }
             set { SetValue(RepeatButtonForegroundPressedProperty, value); }
         }
 
@@ -1686,7 +1686,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonForegroundDisabled
         {
-            get { return (object)GetValue(RepeatButtonForegroundDisabledProperty); }
+            get { return GetValue(RepeatButtonForegroundDisabledProperty); }
             set { SetValue(RepeatButtonForegroundDisabledProperty, value); }
         }
 
@@ -1694,7 +1694,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBorderBrush
         {
-            get { return (object)GetValue(RepeatButtonBorderBrushProperty); }
+            get { return GetValue(RepeatButtonBorderBrushProperty); }
             set { SetValue(RepeatButtonBorderBrushProperty, value); }
         }
 
@@ -1702,7 +1702,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(RepeatButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(RepeatButtonBorderBrushPointerOverProperty); }
             set { SetValue(RepeatButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -1710,7 +1710,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBorderBrushPressed
         {
-            get { return (object)GetValue(RepeatButtonBorderBrushPressedProperty); }
+            get { return GetValue(RepeatButtonBorderBrushPressedProperty); }
             set { SetValue(RepeatButtonBorderBrushPressedProperty, value); }
         }
 
@@ -1718,7 +1718,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RepeatButtonBorderBrushDisabled
         {
-            get { return (object)GetValue(RepeatButtonBorderBrushDisabledProperty); }
+            get { return GetValue(RepeatButtonBorderBrushDisabledProperty); }
             set { SetValue(RepeatButtonBorderBrushDisabledProperty, value); }
         }
 
@@ -1726,7 +1726,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RepeatButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchContentForeground
         {
-            get { return (object)GetValue(ToggleSwitchContentForegroundProperty); }
+            get { return GetValue(ToggleSwitchContentForegroundProperty); }
             set { SetValue(ToggleSwitchContentForegroundProperty, value); }
         }
 
@@ -1734,7 +1734,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchContentForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchContentForegroundDisabled
         {
-            get { return (object)GetValue(ToggleSwitchContentForegroundDisabledProperty); }
+            get { return GetValue(ToggleSwitchContentForegroundDisabledProperty); }
             set { SetValue(ToggleSwitchContentForegroundDisabledProperty, value); }
         }
 
@@ -1742,7 +1742,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchContentForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchHeaderForeground
         {
-            get { return (object)GetValue(ToggleSwitchHeaderForegroundProperty); }
+            get { return GetValue(ToggleSwitchHeaderForegroundProperty); }
             set { SetValue(ToggleSwitchHeaderForegroundProperty, value); }
         }
 
@@ -1750,7 +1750,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchHeaderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchHeaderForegroundDisabled
         {
-            get { return (object)GetValue(ToggleSwitchHeaderForegroundDisabledProperty); }
+            get { return GetValue(ToggleSwitchHeaderForegroundDisabledProperty); }
             set { SetValue(ToggleSwitchHeaderForegroundDisabledProperty, value); }
         }
 
@@ -1758,7 +1758,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchHeaderForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchFillOffPressed
         {
-            get { return (object)GetValue(ToggleSwitchFillOffPressedProperty); }
+            get { return GetValue(ToggleSwitchFillOffPressedProperty); }
             set { SetValue(ToggleSwitchFillOffPressedProperty, value); }
         }
 
@@ -1766,7 +1766,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchFillOffPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOff
         {
-            get { return (object)GetValue(ToggleSwitchStrokeOffProperty); }
+            get { return GetValue(ToggleSwitchStrokeOffProperty); }
             set { SetValue(ToggleSwitchStrokeOffProperty, value); }
         }
 
@@ -1774,7 +1774,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchStrokeOff", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOffPointerOver
         {
-            get { return (object)GetValue(ToggleSwitchStrokeOffPointerOverProperty); }
+            get { return GetValue(ToggleSwitchStrokeOffPointerOverProperty); }
             set { SetValue(ToggleSwitchStrokeOffPointerOverProperty, value); }
         }
 
@@ -1782,7 +1782,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchStrokeOffPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOffPressed
         {
-            get { return (object)GetValue(ToggleSwitchStrokeOffPressedProperty); }
+            get { return GetValue(ToggleSwitchStrokeOffPressedProperty); }
             set { SetValue(ToggleSwitchStrokeOffPressedProperty, value); }
         }
 
@@ -1790,7 +1790,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchStrokeOffPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOffDisabled
         {
-            get { return (object)GetValue(ToggleSwitchStrokeOffDisabledProperty); }
+            get { return GetValue(ToggleSwitchStrokeOffDisabledProperty); }
             set { SetValue(ToggleSwitchStrokeOffDisabledProperty, value); }
         }
 
@@ -1798,7 +1798,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchStrokeOffDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchFillOn
         {
-            get { return (object)GetValue(ToggleSwitchFillOnProperty); }
+            get { return GetValue(ToggleSwitchFillOnProperty); }
             set { SetValue(ToggleSwitchFillOnProperty, value); }
         }
 
@@ -1806,7 +1806,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchFillOn", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchFillOnPointerOver
         {
-            get { return (object)GetValue(ToggleSwitchFillOnPointerOverProperty); }
+            get { return GetValue(ToggleSwitchFillOnPointerOverProperty); }
             set { SetValue(ToggleSwitchFillOnPointerOverProperty, value); }
         }
 
@@ -1814,7 +1814,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchFillOnPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchFillOnPressed
         {
-            get { return (object)GetValue(ToggleSwitchFillOnPressedProperty); }
+            get { return GetValue(ToggleSwitchFillOnPressedProperty); }
             set { SetValue(ToggleSwitchFillOnPressedProperty, value); }
         }
 
@@ -1822,7 +1822,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchFillOnPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchFillOnDisabled
         {
-            get { return (object)GetValue(ToggleSwitchFillOnDisabledProperty); }
+            get { return GetValue(ToggleSwitchFillOnDisabledProperty); }
             set { SetValue(ToggleSwitchFillOnDisabledProperty, value); }
         }
 
@@ -1830,7 +1830,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchFillOnDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOn
         {
-            get { return (object)GetValue(ToggleSwitchStrokeOnProperty); }
+            get { return GetValue(ToggleSwitchStrokeOnProperty); }
             set { SetValue(ToggleSwitchStrokeOnProperty, value); }
         }
 
@@ -1838,7 +1838,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchStrokeOn", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOnPointerOver
         {
-            get { return (object)GetValue(ToggleSwitchStrokeOnPointerOverProperty); }
+            get { return GetValue(ToggleSwitchStrokeOnPointerOverProperty); }
             set { SetValue(ToggleSwitchStrokeOnPointerOverProperty, value); }
         }
 
@@ -1846,7 +1846,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchStrokeOnPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOnPressed
         {
-            get { return (object)GetValue(ToggleSwitchStrokeOnPressedProperty); }
+            get { return GetValue(ToggleSwitchStrokeOnPressedProperty); }
             set { SetValue(ToggleSwitchStrokeOnPressedProperty, value); }
         }
 
@@ -1854,7 +1854,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchStrokeOnPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchStrokeOnDisabled
         {
-            get { return (object)GetValue(ToggleSwitchStrokeOnDisabledProperty); }
+            get { return GetValue(ToggleSwitchStrokeOnDisabledProperty); }
             set { SetValue(ToggleSwitchStrokeOnDisabledProperty, value); }
         }
 
@@ -1862,7 +1862,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchStrokeOnDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchKnobFillOff
         {
-            get { return (object)GetValue(ToggleSwitchKnobFillOffProperty); }
+            get { return GetValue(ToggleSwitchKnobFillOffProperty); }
             set { SetValue(ToggleSwitchKnobFillOffProperty, value); }
         }
 
@@ -1870,7 +1870,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchKnobFillOff", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchKnobFillOffPointerOver
         {
-            get { return (object)GetValue(ToggleSwitchKnobFillOffPointerOverProperty); }
+            get { return GetValue(ToggleSwitchKnobFillOffPointerOverProperty); }
             set { SetValue(ToggleSwitchKnobFillOffPointerOverProperty, value); }
         }
 
@@ -1878,7 +1878,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchKnobFillOffPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchKnobFillOffPressed
         {
-            get { return (object)GetValue(ToggleSwitchKnobFillOffPressedProperty); }
+            get { return GetValue(ToggleSwitchKnobFillOffPressedProperty); }
             set { SetValue(ToggleSwitchKnobFillOffPressedProperty, value); }
         }
 
@@ -1886,7 +1886,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchKnobFillOffPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchKnobFillOffDisabled
         {
-            get { return (object)GetValue(ToggleSwitchKnobFillOffDisabledProperty); }
+            get { return GetValue(ToggleSwitchKnobFillOffDisabledProperty); }
             set { SetValue(ToggleSwitchKnobFillOffDisabledProperty, value); }
         }
 
@@ -1894,7 +1894,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchKnobFillOffDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchKnobFillOn
         {
-            get { return (object)GetValue(ToggleSwitchKnobFillOnProperty); }
+            get { return GetValue(ToggleSwitchKnobFillOnProperty); }
             set { SetValue(ToggleSwitchKnobFillOnProperty, value); }
         }
 
@@ -1902,7 +1902,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchKnobFillOn", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchKnobFillOnPointerOver
         {
-            get { return (object)GetValue(ToggleSwitchKnobFillOnPointerOverProperty); }
+            get { return GetValue(ToggleSwitchKnobFillOnPointerOverProperty); }
             set { SetValue(ToggleSwitchKnobFillOnPointerOverProperty, value); }
         }
 
@@ -1910,7 +1910,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchKnobFillOnPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchKnobFillOnPressed
         {
-            get { return (object)GetValue(ToggleSwitchKnobFillOnPressedProperty); }
+            get { return GetValue(ToggleSwitchKnobFillOnPressedProperty); }
             set { SetValue(ToggleSwitchKnobFillOnPressedProperty, value); }
         }
 
@@ -1918,7 +1918,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchKnobFillOnPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleSwitchKnobFillOnDisabled
         {
-            get { return (object)GetValue(ToggleSwitchKnobFillOnDisabledProperty); }
+            get { return GetValue(ToggleSwitchKnobFillOnDisabledProperty); }
             set { SetValue(ToggleSwitchKnobFillOnDisabledProperty, value); }
         }
 
@@ -1926,7 +1926,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleSwitchKnobFillOnDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ThumbBackground
         {
-            get { return (object)GetValue(ThumbBackgroundProperty); }
+            get { return GetValue(ThumbBackgroundProperty); }
             set { SetValue(ThumbBackgroundProperty, value); }
         }
 
@@ -1934,7 +1934,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ThumbBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ThumbBackgroundPointerOver
         {
-            get { return (object)GetValue(ThumbBackgroundPointerOverProperty); }
+            get { return GetValue(ThumbBackgroundPointerOverProperty); }
             set { SetValue(ThumbBackgroundPointerOverProperty, value); }
         }
 
@@ -1942,7 +1942,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ThumbBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ThumbBackgroundPressed
         {
-            get { return (object)GetValue(ThumbBackgroundPressedProperty); }
+            get { return GetValue(ThumbBackgroundPressedProperty); }
             set { SetValue(ThumbBackgroundPressedProperty, value); }
         }
 
@@ -1950,7 +1950,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ThumbBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ThumbBorderBrush
         {
-            get { return (object)GetValue(ThumbBorderBrushProperty); }
+            get { return GetValue(ThumbBorderBrushProperty); }
             set { SetValue(ThumbBorderBrushProperty, value); }
         }
 
@@ -1958,7 +1958,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ThumbBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ThumbBorderBrushPointerOver
         {
-            get { return (object)GetValue(ThumbBorderBrushPointerOverProperty); }
+            get { return GetValue(ThumbBorderBrushPointerOverProperty); }
             set { SetValue(ThumbBorderBrushPointerOverProperty, value); }
         }
 
@@ -1966,7 +1966,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ThumbBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ThumbBorderBrushPressed
         {
-            get { return (object)GetValue(ThumbBorderBrushPressedProperty); }
+            get { return GetValue(ThumbBorderBrushPressedProperty); }
             set { SetValue(ThumbBorderBrushPressedProperty, value); }
         }
 
@@ -1974,7 +1974,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ThumbBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackground
         {
-            get { return (object)GetValue(ToggleButtonBackgroundProperty); }
+            get { return GetValue(ToggleButtonBackgroundProperty); }
             set { SetValue(ToggleButtonBackgroundProperty, value); }
         }
 
@@ -1982,7 +1982,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(ToggleButtonBackgroundPointerOverProperty); }
+            get { return GetValue(ToggleButtonBackgroundPointerOverProperty); }
             set { SetValue(ToggleButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -1990,7 +1990,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundPressed
         {
-            get { return (object)GetValue(ToggleButtonBackgroundPressedProperty); }
+            get { return GetValue(ToggleButtonBackgroundPressedProperty); }
             set { SetValue(ToggleButtonBackgroundPressedProperty, value); }
         }
 
@@ -1998,7 +1998,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundDisabled
         {
-            get { return (object)GetValue(ToggleButtonBackgroundDisabledProperty); }
+            get { return GetValue(ToggleButtonBackgroundDisabledProperty); }
             set { SetValue(ToggleButtonBackgroundDisabledProperty, value); }
         }
 
@@ -2006,7 +2006,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundChecked
         {
-            get { return (object)GetValue(ToggleButtonBackgroundCheckedProperty); }
+            get { return GetValue(ToggleButtonBackgroundCheckedProperty); }
             set { SetValue(ToggleButtonBackgroundCheckedProperty, value); }
         }
 
@@ -2014,7 +2014,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundCheckedPointerOver
         {
-            get { return (object)GetValue(ToggleButtonBackgroundCheckedPointerOverProperty); }
+            get { return GetValue(ToggleButtonBackgroundCheckedPointerOverProperty); }
             set { SetValue(ToggleButtonBackgroundCheckedPointerOverProperty, value); }
         }
 
@@ -2022,7 +2022,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundCheckedPressed
         {
-            get { return (object)GetValue(ToggleButtonBackgroundCheckedPressedProperty); }
+            get { return GetValue(ToggleButtonBackgroundCheckedPressedProperty); }
             set { SetValue(ToggleButtonBackgroundCheckedPressedProperty, value); }
         }
 
@@ -2030,7 +2030,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundCheckedDisabled
         {
-            get { return (object)GetValue(ToggleButtonBackgroundCheckedDisabledProperty); }
+            get { return GetValue(ToggleButtonBackgroundCheckedDisabledProperty); }
             set { SetValue(ToggleButtonBackgroundCheckedDisabledProperty, value); }
         }
 
@@ -2038,7 +2038,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundIndeterminate
         {
-            get { return (object)GetValue(ToggleButtonBackgroundIndeterminateProperty); }
+            get { return GetValue(ToggleButtonBackgroundIndeterminateProperty); }
             set { SetValue(ToggleButtonBackgroundIndeterminateProperty, value); }
         }
 
@@ -2046,7 +2046,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundIndeterminatePointerOver
         {
-            get { return (object)GetValue(ToggleButtonBackgroundIndeterminatePointerOverProperty); }
+            get { return GetValue(ToggleButtonBackgroundIndeterminatePointerOverProperty); }
             set { SetValue(ToggleButtonBackgroundIndeterminatePointerOverProperty, value); }
         }
 
@@ -2054,7 +2054,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundIndeterminatePressed
         {
-            get { return (object)GetValue(ToggleButtonBackgroundIndeterminatePressedProperty); }
+            get { return GetValue(ToggleButtonBackgroundIndeterminatePressedProperty); }
             set { SetValue(ToggleButtonBackgroundIndeterminatePressedProperty, value); }
         }
 
@@ -2062,7 +2062,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBackgroundIndeterminateDisabled
         {
-            get { return (object)GetValue(ToggleButtonBackgroundIndeterminateDisabledProperty); }
+            get { return GetValue(ToggleButtonBackgroundIndeterminateDisabledProperty); }
             set { SetValue(ToggleButtonBackgroundIndeterminateDisabledProperty, value); }
         }
 
@@ -2070,7 +2070,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBackgroundIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForeground
         {
-            get { return (object)GetValue(ToggleButtonForegroundProperty); }
+            get { return GetValue(ToggleButtonForegroundProperty); }
             set { SetValue(ToggleButtonForegroundProperty, value); }
         }
 
@@ -2078,7 +2078,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundPointerOver
         {
-            get { return (object)GetValue(ToggleButtonForegroundPointerOverProperty); }
+            get { return GetValue(ToggleButtonForegroundPointerOverProperty); }
             set { SetValue(ToggleButtonForegroundPointerOverProperty, value); }
         }
 
@@ -2086,7 +2086,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundPressed
         {
-            get { return (object)GetValue(ToggleButtonForegroundPressedProperty); }
+            get { return GetValue(ToggleButtonForegroundPressedProperty); }
             set { SetValue(ToggleButtonForegroundPressedProperty, value); }
         }
 
@@ -2094,7 +2094,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundDisabled
         {
-            get { return (object)GetValue(ToggleButtonForegroundDisabledProperty); }
+            get { return GetValue(ToggleButtonForegroundDisabledProperty); }
             set { SetValue(ToggleButtonForegroundDisabledProperty, value); }
         }
 
@@ -2102,7 +2102,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundChecked
         {
-            get { return (object)GetValue(ToggleButtonForegroundCheckedProperty); }
+            get { return GetValue(ToggleButtonForegroundCheckedProperty); }
             set { SetValue(ToggleButtonForegroundCheckedProperty, value); }
         }
 
@@ -2110,7 +2110,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(ToggleButtonForegroundCheckedPointerOverProperty); }
+            get { return GetValue(ToggleButtonForegroundCheckedPointerOverProperty); }
             set { SetValue(ToggleButtonForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -2118,7 +2118,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundCheckedPressed
         {
-            get { return (object)GetValue(ToggleButtonForegroundCheckedPressedProperty); }
+            get { return GetValue(ToggleButtonForegroundCheckedPressedProperty); }
             set { SetValue(ToggleButtonForegroundCheckedPressedProperty, value); }
         }
 
@@ -2126,7 +2126,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundCheckedDisabled
         {
-            get { return (object)GetValue(ToggleButtonForegroundCheckedDisabledProperty); }
+            get { return GetValue(ToggleButtonForegroundCheckedDisabledProperty); }
             set { SetValue(ToggleButtonForegroundCheckedDisabledProperty, value); }
         }
 
@@ -2134,7 +2134,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundIndeterminate
         {
-            get { return (object)GetValue(ToggleButtonForegroundIndeterminateProperty); }
+            get { return GetValue(ToggleButtonForegroundIndeterminateProperty); }
             set { SetValue(ToggleButtonForegroundIndeterminateProperty, value); }
         }
 
@@ -2142,7 +2142,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundIndeterminatePointerOver
         {
-            get { return (object)GetValue(ToggleButtonForegroundIndeterminatePointerOverProperty); }
+            get { return GetValue(ToggleButtonForegroundIndeterminatePointerOverProperty); }
             set { SetValue(ToggleButtonForegroundIndeterminatePointerOverProperty, value); }
         }
 
@@ -2150,7 +2150,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundIndeterminatePressed
         {
-            get { return (object)GetValue(ToggleButtonForegroundIndeterminatePressedProperty); }
+            get { return GetValue(ToggleButtonForegroundIndeterminatePressedProperty); }
             set { SetValue(ToggleButtonForegroundIndeterminatePressedProperty, value); }
         }
 
@@ -2158,7 +2158,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonForegroundIndeterminateDisabled
         {
-            get { return (object)GetValue(ToggleButtonForegroundIndeterminateDisabledProperty); }
+            get { return GetValue(ToggleButtonForegroundIndeterminateDisabledProperty); }
             set { SetValue(ToggleButtonForegroundIndeterminateDisabledProperty, value); }
         }
 
@@ -2166,7 +2166,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonForegroundIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrush
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushProperty); }
+            get { return GetValue(ToggleButtonBorderBrushProperty); }
             set { SetValue(ToggleButtonBorderBrushProperty, value); }
         }
 
@@ -2174,7 +2174,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(ToggleButtonBorderBrushPointerOverProperty); }
             set { SetValue(ToggleButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -2182,7 +2182,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushPressed
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushPressedProperty); }
+            get { return GetValue(ToggleButtonBorderBrushPressedProperty); }
             set { SetValue(ToggleButtonBorderBrushPressedProperty, value); }
         }
 
@@ -2190,7 +2190,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushDisabled
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushDisabledProperty); }
+            get { return GetValue(ToggleButtonBorderBrushDisabledProperty); }
             set { SetValue(ToggleButtonBorderBrushDisabledProperty, value); }
         }
 
@@ -2198,7 +2198,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushChecked
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushCheckedProperty); }
+            get { return GetValue(ToggleButtonBorderBrushCheckedProperty); }
             set { SetValue(ToggleButtonBorderBrushCheckedProperty, value); }
         }
 
@@ -2206,7 +2206,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushCheckedPointerOver
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushCheckedPointerOverProperty); }
+            get { return GetValue(ToggleButtonBorderBrushCheckedPointerOverProperty); }
             set { SetValue(ToggleButtonBorderBrushCheckedPointerOverProperty, value); }
         }
 
@@ -2214,7 +2214,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushCheckedDisabled
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushCheckedDisabledProperty); }
+            get { return GetValue(ToggleButtonBorderBrushCheckedDisabledProperty); }
             set { SetValue(ToggleButtonBorderBrushCheckedDisabledProperty, value); }
         }
 
@@ -2222,7 +2222,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushIndeterminate
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushIndeterminateProperty); }
+            get { return GetValue(ToggleButtonBorderBrushIndeterminateProperty); }
             set { SetValue(ToggleButtonBorderBrushIndeterminateProperty, value); }
         }
 
@@ -2230,7 +2230,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushIndeterminate", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushIndeterminatePointerOver
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushIndeterminatePointerOverProperty); }
+            get { return GetValue(ToggleButtonBorderBrushIndeterminatePointerOverProperty); }
             set { SetValue(ToggleButtonBorderBrushIndeterminatePointerOverProperty, value); }
         }
 
@@ -2238,7 +2238,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushIndeterminatePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushIndeterminatePressed
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushIndeterminatePressedProperty); }
+            get { return GetValue(ToggleButtonBorderBrushIndeterminatePressedProperty); }
             set { SetValue(ToggleButtonBorderBrushIndeterminatePressedProperty, value); }
         }
 
@@ -2246,7 +2246,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushIndeterminatePressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleButtonBorderBrushIndeterminateDisabled
         {
-            get { return (object)GetValue(ToggleButtonBorderBrushIndeterminateDisabledProperty); }
+            get { return GetValue(ToggleButtonBorderBrushIndeterminateDisabledProperty); }
             set { SetValue(ToggleButtonBorderBrushIndeterminateDisabledProperty, value); }
         }
 
@@ -2254,7 +2254,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleButtonBorderBrushIndeterminateDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(ScrollBarButtonBackgroundPointerOverProperty); }
+            get { return GetValue(ScrollBarButtonBackgroundPointerOverProperty); }
             set { SetValue(ScrollBarButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -2262,7 +2262,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarButtonBackgroundPressed
         {
-            get { return (object)GetValue(ScrollBarButtonBackgroundPressedProperty); }
+            get { return GetValue(ScrollBarButtonBackgroundPressedProperty); }
             set { SetValue(ScrollBarButtonBackgroundPressedProperty, value); }
         }
 
@@ -2270,7 +2270,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarButtonArrowForeground
         {
-            get { return (object)GetValue(ScrollBarButtonArrowForegroundProperty); }
+            get { return GetValue(ScrollBarButtonArrowForegroundProperty); }
             set { SetValue(ScrollBarButtonArrowForegroundProperty, value); }
         }
 
@@ -2278,7 +2278,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarButtonArrowForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarButtonArrowForegroundPointerOver
         {
-            get { return (object)GetValue(ScrollBarButtonArrowForegroundPointerOverProperty); }
+            get { return GetValue(ScrollBarButtonArrowForegroundPointerOverProperty); }
             set { SetValue(ScrollBarButtonArrowForegroundPointerOverProperty, value); }
         }
 
@@ -2286,7 +2286,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarButtonArrowForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarButtonArrowForegroundPressed
         {
-            get { return (object)GetValue(ScrollBarButtonArrowForegroundPressedProperty); }
+            get { return GetValue(ScrollBarButtonArrowForegroundPressedProperty); }
             set { SetValue(ScrollBarButtonArrowForegroundPressedProperty, value); }
         }
 
@@ -2294,7 +2294,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarButtonArrowForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarButtonArrowForegroundDisabled
         {
-            get { return (object)GetValue(ScrollBarButtonArrowForegroundDisabledProperty); }
+            get { return GetValue(ScrollBarButtonArrowForegroundDisabledProperty); }
             set { SetValue(ScrollBarButtonArrowForegroundDisabledProperty, value); }
         }
 
@@ -2302,7 +2302,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarButtonArrowForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarThumbFill
         {
-            get { return (object)GetValue(ScrollBarThumbFillProperty); }
+            get { return GetValue(ScrollBarThumbFillProperty); }
             set { SetValue(ScrollBarThumbFillProperty, value); }
         }
 
@@ -2310,7 +2310,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarThumbFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarThumbFillPointerOver
         {
-            get { return (object)GetValue(ScrollBarThumbFillPointerOverProperty); }
+            get { return GetValue(ScrollBarThumbFillPointerOverProperty); }
             set { SetValue(ScrollBarThumbFillPointerOverProperty, value); }
         }
 
@@ -2318,7 +2318,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarThumbFillPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarThumbFillPressed
         {
-            get { return (object)GetValue(ScrollBarThumbFillPressedProperty); }
+            get { return GetValue(ScrollBarThumbFillPressedProperty); }
             set { SetValue(ScrollBarThumbFillPressedProperty, value); }
         }
 
@@ -2326,7 +2326,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarThumbFillPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarThumbFillDisabled
         {
-            get { return (object)GetValue(ScrollBarThumbFillDisabledProperty); }
+            get { return GetValue(ScrollBarThumbFillDisabledProperty); }
             set { SetValue(ScrollBarThumbFillDisabledProperty, value); }
         }
 
@@ -2334,7 +2334,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarThumbFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarTrackFillDisabled
         {
-            get { return (object)GetValue(ScrollBarTrackFillDisabledProperty); }
+            get { return GetValue(ScrollBarTrackFillDisabledProperty); }
             set { SetValue(ScrollBarTrackFillDisabledProperty, value); }
         }
 
@@ -2342,7 +2342,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarTrackFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarTrackStroke
         {
-            get { return (object)GetValue(ScrollBarTrackStrokeProperty); }
+            get { return GetValue(ScrollBarTrackStrokeProperty); }
             set { SetValue(ScrollBarTrackStrokeProperty, value); }
         }
 
@@ -2350,7 +2350,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarTrackStroke", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarTrackStrokePointerOver
         {
-            get { return (object)GetValue(ScrollBarTrackStrokePointerOverProperty); }
+            get { return GetValue(ScrollBarTrackStrokePointerOverProperty); }
             set { SetValue(ScrollBarTrackStrokePointerOverProperty, value); }
         }
 
@@ -2358,7 +2358,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarTrackStrokePointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarTrackStrokeDisabled
         {
-            get { return (object)GetValue(ScrollBarTrackStrokeDisabledProperty); }
+            get { return GetValue(ScrollBarTrackStrokeDisabledProperty); }
             set { SetValue(ScrollBarTrackStrokeDisabledProperty, value); }
         }
 
@@ -2366,7 +2366,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarTrackStrokeDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarPanningThumbBackgroundDisabled
         {
-            get { return (object)GetValue(ScrollBarPanningThumbBackgroundDisabledProperty); }
+            get { return GetValue(ScrollBarPanningThumbBackgroundDisabledProperty); }
             set { SetValue(ScrollBarPanningThumbBackgroundDisabledProperty, value); }
         }
 
@@ -2374,7 +2374,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarPanningThumbBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarThumbBackgroundColor
         {
-            get { return (object)GetValue(ScrollBarThumbBackgroundColorProperty); }
+            get { return GetValue(ScrollBarThumbBackgroundColorProperty); }
             set { SetValue(ScrollBarThumbBackgroundColorProperty, value); }
         }
 
@@ -2382,7 +2382,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarThumbBackgroundColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ScrollBarPanningThumbBackgroundColor
         {
-            get { return (object)GetValue(ScrollBarPanningThumbBackgroundColorProperty); }
+            get { return GetValue(ScrollBarPanningThumbBackgroundColorProperty); }
             set { SetValue(ScrollBarPanningThumbBackgroundColorProperty, value); }
         }
 
@@ -2390,7 +2390,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ScrollBarPanningThumbBackgroundColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewHeaderItemDividerStroke
         {
-            get { return (object)GetValue(ListViewHeaderItemDividerStrokeProperty); }
+            get { return GetValue(ListViewHeaderItemDividerStrokeProperty); }
             set { SetValue(ListViewHeaderItemDividerStrokeProperty, value); }
         }
 
@@ -2398,7 +2398,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewHeaderItemDividerStroke", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForeground
         {
-            get { return (object)GetValue(ComboBoxItemForegroundProperty); }
+            get { return GetValue(ComboBoxItemForegroundProperty); }
             set { SetValue(ComboBoxItemForegroundProperty, value); }
         }
 
@@ -2406,7 +2406,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForegroundPressed
         {
-            get { return (object)GetValue(ComboBoxItemForegroundPressedProperty); }
+            get { return GetValue(ComboBoxItemForegroundPressedProperty); }
             set { SetValue(ComboBoxItemForegroundPressedProperty, value); }
         }
 
@@ -2414,7 +2414,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForegroundPointerOver
         {
-            get { return (object)GetValue(ComboBoxItemForegroundPointerOverProperty); }
+            get { return GetValue(ComboBoxItemForegroundPointerOverProperty); }
             set { SetValue(ComboBoxItemForegroundPointerOverProperty, value); }
         }
 
@@ -2422,7 +2422,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForegroundDisabled
         {
-            get { return (object)GetValue(ComboBoxItemForegroundDisabledProperty); }
+            get { return GetValue(ComboBoxItemForegroundDisabledProperty); }
             set { SetValue(ComboBoxItemForegroundDisabledProperty, value); }
         }
 
@@ -2430,7 +2430,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForegroundSelected
         {
-            get { return (object)GetValue(ComboBoxItemForegroundSelectedProperty); }
+            get { return GetValue(ComboBoxItemForegroundSelectedProperty); }
             set { SetValue(ComboBoxItemForegroundSelectedProperty, value); }
         }
 
@@ -2438,7 +2438,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForegroundSelectedUnfocused
         {
-            get { return (object)GetValue(ComboBoxItemForegroundSelectedUnfocusedProperty); }
+            get { return GetValue(ComboBoxItemForegroundSelectedUnfocusedProperty); }
             set { SetValue(ComboBoxItemForegroundSelectedUnfocusedProperty, value); }
         }
 
@@ -2446,7 +2446,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForegroundSelectedUnfocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForegroundSelectedPressed
         {
-            get { return (object)GetValue(ComboBoxItemForegroundSelectedPressedProperty); }
+            get { return GetValue(ComboBoxItemForegroundSelectedPressedProperty); }
             set { SetValue(ComboBoxItemForegroundSelectedPressedProperty, value); }
         }
 
@@ -2454,7 +2454,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForegroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForegroundSelectedPointerOver
         {
-            get { return (object)GetValue(ComboBoxItemForegroundSelectedPointerOverProperty); }
+            get { return GetValue(ComboBoxItemForegroundSelectedPointerOverProperty); }
             set { SetValue(ComboBoxItemForegroundSelectedPointerOverProperty, value); }
         }
 
@@ -2462,7 +2462,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForegroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemForegroundSelectedDisabled
         {
-            get { return (object)GetValue(ComboBoxItemForegroundSelectedDisabledProperty); }
+            get { return GetValue(ComboBoxItemForegroundSelectedDisabledProperty); }
             set { SetValue(ComboBoxItemForegroundSelectedDisabledProperty, value); }
         }
 
@@ -2470,7 +2470,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemForegroundSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemBackgroundPressed
         {
-            get { return (object)GetValue(ComboBoxItemBackgroundPressedProperty); }
+            get { return GetValue(ComboBoxItemBackgroundPressedProperty); }
             set { SetValue(ComboBoxItemBackgroundPressedProperty, value); }
         }
 
@@ -2478,7 +2478,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemBackgroundPointerOver
         {
-            get { return (object)GetValue(ComboBoxItemBackgroundPointerOverProperty); }
+            get { return GetValue(ComboBoxItemBackgroundPointerOverProperty); }
             set { SetValue(ComboBoxItemBackgroundPointerOverProperty, value); }
         }
 
@@ -2486,7 +2486,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemBackgroundSelected
         {
-            get { return (object)GetValue(ComboBoxItemBackgroundSelectedProperty); }
+            get { return GetValue(ComboBoxItemBackgroundSelectedProperty); }
             set { SetValue(ComboBoxItemBackgroundSelectedProperty, value); }
         }
 
@@ -2494,7 +2494,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemBackgroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemBackgroundSelectedUnfocused
         {
-            get { return (object)GetValue(ComboBoxItemBackgroundSelectedUnfocusedProperty); }
+            get { return GetValue(ComboBoxItemBackgroundSelectedUnfocusedProperty); }
             set { SetValue(ComboBoxItemBackgroundSelectedUnfocusedProperty, value); }
         }
 
@@ -2502,7 +2502,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemBackgroundSelectedUnfocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemBackgroundSelectedPressed
         {
-            get { return (object)GetValue(ComboBoxItemBackgroundSelectedPressedProperty); }
+            get { return GetValue(ComboBoxItemBackgroundSelectedPressedProperty); }
             set { SetValue(ComboBoxItemBackgroundSelectedPressedProperty, value); }
         }
 
@@ -2510,7 +2510,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemBackgroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxItemBackgroundSelectedPointerOver
         {
-            get { return (object)GetValue(ComboBoxItemBackgroundSelectedPointerOverProperty); }
+            get { return GetValue(ComboBoxItemBackgroundSelectedPointerOverProperty); }
             set { SetValue(ComboBoxItemBackgroundSelectedPointerOverProperty, value); }
         }
 
@@ -2518,7 +2518,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxItemBackgroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBackground
         {
-            get { return (object)GetValue(ComboBoxBackgroundProperty); }
+            get { return GetValue(ComboBoxBackgroundProperty); }
             set { SetValue(ComboBoxBackgroundProperty, value); }
         }
 
@@ -2526,7 +2526,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBackgroundPointerOver
         {
-            get { return (object)GetValue(ComboBoxBackgroundPointerOverProperty); }
+            get { return GetValue(ComboBoxBackgroundPointerOverProperty); }
             set { SetValue(ComboBoxBackgroundPointerOverProperty, value); }
         }
 
@@ -2534,7 +2534,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBackgroundPressed
         {
-            get { return (object)GetValue(ComboBoxBackgroundPressedProperty); }
+            get { return GetValue(ComboBoxBackgroundPressedProperty); }
             set { SetValue(ComboBoxBackgroundPressedProperty, value); }
         }
 
@@ -2542,7 +2542,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBackgroundDisabled
         {
-            get { return (object)GetValue(ComboBoxBackgroundDisabledProperty); }
+            get { return GetValue(ComboBoxBackgroundDisabledProperty); }
             set { SetValue(ComboBoxBackgroundDisabledProperty, value); }
         }
 
@@ -2550,7 +2550,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBackgroundUnfocused
         {
-            get { return (object)GetValue(ComboBoxBackgroundUnfocusedProperty); }
+            get { return GetValue(ComboBoxBackgroundUnfocusedProperty); }
             set { SetValue(ComboBoxBackgroundUnfocusedProperty, value); }
         }
 
@@ -2558,7 +2558,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBackgroundUnfocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBackgroundBorderBrushFocused
         {
-            get { return (object)GetValue(ComboBoxBackgroundBorderBrushFocusedProperty); }
+            get { return GetValue(ComboBoxBackgroundBorderBrushFocusedProperty); }
             set { SetValue(ComboBoxBackgroundBorderBrushFocusedProperty, value); }
         }
 
@@ -2566,7 +2566,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBackgroundBorderBrushFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBackgroundBorderBrushUnfocused
         {
-            get { return (object)GetValue(ComboBoxBackgroundBorderBrushUnfocusedProperty); }
+            get { return GetValue(ComboBoxBackgroundBorderBrushUnfocusedProperty); }
             set { SetValue(ComboBoxBackgroundBorderBrushUnfocusedProperty, value); }
         }
 
@@ -2574,7 +2574,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBackgroundBorderBrushUnfocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxForeground
         {
-            get { return (object)GetValue(ComboBoxForegroundProperty); }
+            get { return GetValue(ComboBoxForegroundProperty); }
             set { SetValue(ComboBoxForegroundProperty, value); }
         }
 
@@ -2582,7 +2582,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxForegroundDisabled
         {
-            get { return (object)GetValue(ComboBoxForegroundDisabledProperty); }
+            get { return GetValue(ComboBoxForegroundDisabledProperty); }
             set { SetValue(ComboBoxForegroundDisabledProperty, value); }
         }
 
@@ -2590,7 +2590,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxForegroundFocused
         {
-            get { return (object)GetValue(ComboBoxForegroundFocusedProperty); }
+            get { return GetValue(ComboBoxForegroundFocusedProperty); }
             set { SetValue(ComboBoxForegroundFocusedProperty, value); }
         }
 
@@ -2598,7 +2598,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxForegroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxForegroundFocusedPressed
         {
-            get { return (object)GetValue(ComboBoxForegroundFocusedPressedProperty); }
+            get { return GetValue(ComboBoxForegroundFocusedPressedProperty); }
             set { SetValue(ComboBoxForegroundFocusedPressedProperty, value); }
         }
 
@@ -2606,7 +2606,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxForegroundFocusedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxPlaceHolderForeground
         {
-            get { return (object)GetValue(ComboBoxPlaceHolderForegroundProperty); }
+            get { return GetValue(ComboBoxPlaceHolderForegroundProperty); }
             set { SetValue(ComboBoxPlaceHolderForegroundProperty, value); }
         }
 
@@ -2614,7 +2614,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxPlaceHolderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxPlaceHolderForegroundFocusedPressed
         {
-            get { return (object)GetValue(ComboBoxPlaceHolderForegroundFocusedPressedProperty); }
+            get { return GetValue(ComboBoxPlaceHolderForegroundFocusedPressedProperty); }
             set { SetValue(ComboBoxPlaceHolderForegroundFocusedPressedProperty, value); }
         }
 
@@ -2622,7 +2622,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxPlaceHolderForegroundFocusedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBorderBrush
         {
-            get { return (object)GetValue(ComboBoxBorderBrushProperty); }
+            get { return GetValue(ComboBoxBorderBrushProperty); }
             set { SetValue(ComboBoxBorderBrushProperty, value); }
         }
 
@@ -2630,7 +2630,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBorderBrushPointerOver
         {
-            get { return (object)GetValue(ComboBoxBorderBrushPointerOverProperty); }
+            get { return GetValue(ComboBoxBorderBrushPointerOverProperty); }
             set { SetValue(ComboBoxBorderBrushPointerOverProperty, value); }
         }
 
@@ -2638,7 +2638,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBorderBrushPressed
         {
-            get { return (object)GetValue(ComboBoxBorderBrushPressedProperty); }
+            get { return GetValue(ComboBoxBorderBrushPressedProperty); }
             set { SetValue(ComboBoxBorderBrushPressedProperty, value); }
         }
 
@@ -2646,7 +2646,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxBorderBrushDisabled
         {
-            get { return (object)GetValue(ComboBoxBorderBrushDisabledProperty); }
+            get { return GetValue(ComboBoxBorderBrushDisabledProperty); }
             set { SetValue(ComboBoxBorderBrushDisabledProperty, value); }
         }
 
@@ -2654,7 +2654,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownBackgroundPointerOver
         {
-            get { return (object)GetValue(ComboBoxDropDownBackgroundPointerOverProperty); }
+            get { return GetValue(ComboBoxDropDownBackgroundPointerOverProperty); }
             set { SetValue(ComboBoxDropDownBackgroundPointerOverProperty, value); }
         }
 
@@ -2662,7 +2662,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownBackgroundPointerPressed
         {
-            get { return (object)GetValue(ComboBoxDropDownBackgroundPointerPressedProperty); }
+            get { return GetValue(ComboBoxDropDownBackgroundPointerPressedProperty); }
             set { SetValue(ComboBoxDropDownBackgroundPointerPressedProperty, value); }
         }
 
@@ -2670,7 +2670,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownBackgroundPointerPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxFocusedDropDownBackgroundPointerOver
         {
-            get { return (object)GetValue(ComboBoxFocusedDropDownBackgroundPointerOverProperty); }
+            get { return GetValue(ComboBoxFocusedDropDownBackgroundPointerOverProperty); }
             set { SetValue(ComboBoxFocusedDropDownBackgroundPointerOverProperty, value); }
         }
 
@@ -2678,7 +2678,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxFocusedDropDownBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxFocusedDropDownBackgroundPointerPressed
         {
-            get { return (object)GetValue(ComboBoxFocusedDropDownBackgroundPointerPressedProperty); }
+            get { return GetValue(ComboBoxFocusedDropDownBackgroundPointerPressedProperty); }
             set { SetValue(ComboBoxFocusedDropDownBackgroundPointerPressedProperty, value); }
         }
 
@@ -2686,7 +2686,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxFocusedDropDownBackgroundPointerPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownGlyphForeground
         {
-            get { return (object)GetValue(ComboBoxDropDownGlyphForegroundProperty); }
+            get { return GetValue(ComboBoxDropDownGlyphForegroundProperty); }
             set { SetValue(ComboBoxDropDownGlyphForegroundProperty, value); }
         }
 
@@ -2694,7 +2694,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownGlyphForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxEditableDropDownGlyphForeground
         {
-            get { return (object)GetValue(ComboBoxEditableDropDownGlyphForegroundProperty); }
+            get { return GetValue(ComboBoxEditableDropDownGlyphForegroundProperty); }
             set { SetValue(ComboBoxEditableDropDownGlyphForegroundProperty, value); }
         }
 
@@ -2702,7 +2702,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxEditableDropDownGlyphForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownGlyphForegroundDisabled
         {
-            get { return (object)GetValue(ComboBoxDropDownGlyphForegroundDisabledProperty); }
+            get { return GetValue(ComboBoxDropDownGlyphForegroundDisabledProperty); }
             set { SetValue(ComboBoxDropDownGlyphForegroundDisabledProperty, value); }
         }
 
@@ -2710,7 +2710,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownGlyphForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownGlyphForegroundFocused
         {
-            get { return (object)GetValue(ComboBoxDropDownGlyphForegroundFocusedProperty); }
+            get { return GetValue(ComboBoxDropDownGlyphForegroundFocusedProperty); }
             set { SetValue(ComboBoxDropDownGlyphForegroundFocusedProperty, value); }
         }
 
@@ -2718,7 +2718,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownGlyphForegroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownGlyphForegroundFocusedPressed
         {
-            get { return (object)GetValue(ComboBoxDropDownGlyphForegroundFocusedPressedProperty); }
+            get { return GetValue(ComboBoxDropDownGlyphForegroundFocusedPressedProperty); }
             set { SetValue(ComboBoxDropDownGlyphForegroundFocusedPressedProperty, value); }
         }
 
@@ -2726,7 +2726,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownGlyphForegroundFocusedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownBackground
         {
-            get { return (object)GetValue(ComboBoxDropDownBackgroundProperty); }
+            get { return GetValue(ComboBoxDropDownBackgroundProperty); }
             set { SetValue(ComboBoxDropDownBackgroundProperty, value); }
         }
 
@@ -2734,7 +2734,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownForeground
         {
-            get { return (object)GetValue(ComboBoxDropDownForegroundProperty); }
+            get { return GetValue(ComboBoxDropDownForegroundProperty); }
             set { SetValue(ComboBoxDropDownForegroundProperty, value); }
         }
 
@@ -2742,7 +2742,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxDropDownBorderBrush
         {
-            get { return (object)GetValue(ComboBoxDropDownBorderBrushProperty); }
+            get { return GetValue(ComboBoxDropDownBorderBrushProperty); }
             set { SetValue(ComboBoxDropDownBorderBrushProperty, value); }
         }
 
@@ -2750,7 +2750,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxDropDownBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarSeparatorForeground
         {
-            get { return (object)GetValue(AppBarSeparatorForegroundProperty); }
+            get { return GetValue(AppBarSeparatorForegroundProperty); }
             set { SetValue(AppBarSeparatorForegroundProperty, value); }
         }
 
@@ -2758,7 +2758,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarSeparatorForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarEllipsisButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(AppBarEllipsisButtonBackgroundPointerOverProperty); }
+            get { return GetValue(AppBarEllipsisButtonBackgroundPointerOverProperty); }
             set { SetValue(AppBarEllipsisButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -2766,7 +2766,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarEllipsisButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarEllipsisButtonBackgroundPressed
         {
-            get { return (object)GetValue(AppBarEllipsisButtonBackgroundPressedProperty); }
+            get { return GetValue(AppBarEllipsisButtonBackgroundPressedProperty); }
             set { SetValue(AppBarEllipsisButtonBackgroundPressedProperty, value); }
         }
 
@@ -2774,7 +2774,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarEllipsisButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarEllipsisButtonForeground
         {
-            get { return (object)GetValue(AppBarEllipsisButtonForegroundProperty); }
+            get { return GetValue(AppBarEllipsisButtonForegroundProperty); }
             set { SetValue(AppBarEllipsisButtonForegroundProperty, value); }
         }
 
@@ -2782,7 +2782,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarEllipsisButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarEllipsisButtonForegroundPointerOver
         {
-            get { return (object)GetValue(AppBarEllipsisButtonForegroundPointerOverProperty); }
+            get { return GetValue(AppBarEllipsisButtonForegroundPointerOverProperty); }
             set { SetValue(AppBarEllipsisButtonForegroundPointerOverProperty, value); }
         }
 
@@ -2790,7 +2790,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarEllipsisButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarEllipsisButtonForegroundPressed
         {
-            get { return (object)GetValue(AppBarEllipsisButtonForegroundPressedProperty); }
+            get { return GetValue(AppBarEllipsisButtonForegroundPressedProperty); }
             set { SetValue(AppBarEllipsisButtonForegroundPressedProperty, value); }
         }
 
@@ -2798,7 +2798,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarEllipsisButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarEllipsisButtonForegroundDisabled
         {
-            get { return (object)GetValue(AppBarEllipsisButtonForegroundDisabledProperty); }
+            get { return GetValue(AppBarEllipsisButtonForegroundDisabledProperty); }
             set { SetValue(AppBarEllipsisButtonForegroundDisabledProperty, value); }
         }
 
@@ -2806,7 +2806,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarEllipsisButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarBackground
         {
-            get { return (object)GetValue(AppBarBackgroundProperty); }
+            get { return GetValue(AppBarBackgroundProperty); }
             set { SetValue(AppBarBackgroundProperty, value); }
         }
 
@@ -2814,7 +2814,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarForeground
         {
-            get { return (object)GetValue(AppBarForegroundProperty); }
+            get { return GetValue(AppBarForegroundProperty); }
             set { SetValue(AppBarForegroundProperty, value); }
         }
 
@@ -2822,7 +2822,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarHighContrastBorder
         {
-            get { return (object)GetValue(AppBarHighContrastBorderProperty); }
+            get { return GetValue(AppBarHighContrastBorderProperty); }
             set { SetValue(AppBarHighContrastBorderProperty, value); }
         }
 
@@ -2830,7 +2830,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarHighContrastBorder", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ContentDialogForeground
         {
-            get { return (object)GetValue(ContentDialogForegroundProperty); }
+            get { return GetValue(ContentDialogForegroundProperty); }
             set { SetValue(ContentDialogForegroundProperty, value); }
         }
 
@@ -2838,7 +2838,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ContentDialogForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ContentDialogBackground
         {
-            get { return (object)GetValue(ContentDialogBackgroundProperty); }
+            get { return GetValue(ContentDialogBackgroundProperty); }
             set { SetValue(ContentDialogBackgroundProperty, value); }
         }
 
@@ -2846,7 +2846,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ContentDialogBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ContentDialogBorderBrush
         {
-            get { return (object)GetValue(ContentDialogBorderBrushProperty); }
+            get { return GetValue(ContentDialogBorderBrushProperty); }
             set { SetValue(ContentDialogBorderBrushProperty, value); }
         }
 
@@ -2854,7 +2854,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ContentDialogBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonBackground
         {
-            get { return (object)GetValue(AccentButtonBackgroundProperty); }
+            get { return GetValue(AccentButtonBackgroundProperty); }
             set { SetValue(AccentButtonBackgroundProperty, value); }
         }
 
@@ -2862,7 +2862,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(AccentButtonBackgroundPointerOverProperty); }
+            get { return GetValue(AccentButtonBackgroundPointerOverProperty); }
             set { SetValue(AccentButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -2870,7 +2870,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonBackgroundPressed
         {
-            get { return (object)GetValue(AccentButtonBackgroundPressedProperty); }
+            get { return GetValue(AccentButtonBackgroundPressedProperty); }
             set { SetValue(AccentButtonBackgroundPressedProperty, value); }
         }
 
@@ -2878,7 +2878,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonBackgroundDisabled
         {
-            get { return (object)GetValue(AccentButtonBackgroundDisabledProperty); }
+            get { return GetValue(AccentButtonBackgroundDisabledProperty); }
             set { SetValue(AccentButtonBackgroundDisabledProperty, value); }
         }
 
@@ -2886,7 +2886,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonForeground
         {
-            get { return (object)GetValue(AccentButtonForegroundProperty); }
+            get { return GetValue(AccentButtonForegroundProperty); }
             set { SetValue(AccentButtonForegroundProperty, value); }
         }
 
@@ -2894,7 +2894,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonForegroundPointerOver
         {
-            get { return (object)GetValue(AccentButtonForegroundPointerOverProperty); }
+            get { return GetValue(AccentButtonForegroundPointerOverProperty); }
             set { SetValue(AccentButtonForegroundPointerOverProperty, value); }
         }
 
@@ -2902,7 +2902,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonForegroundPressed
         {
-            get { return (object)GetValue(AccentButtonForegroundPressedProperty); }
+            get { return GetValue(AccentButtonForegroundPressedProperty); }
             set { SetValue(AccentButtonForegroundPressedProperty, value); }
         }
 
@@ -2910,7 +2910,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonForegroundDisabled
         {
-            get { return (object)GetValue(AccentButtonForegroundDisabledProperty); }
+            get { return GetValue(AccentButtonForegroundDisabledProperty); }
             set { SetValue(AccentButtonForegroundDisabledProperty, value); }
         }
 
@@ -2918,7 +2918,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonBorderBrush
         {
-            get { return (object)GetValue(AccentButtonBorderBrushProperty); }
+            get { return GetValue(AccentButtonBorderBrushProperty); }
             set { SetValue(AccentButtonBorderBrushProperty, value); }
         }
 
@@ -2926,7 +2926,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(AccentButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(AccentButtonBorderBrushPointerOverProperty); }
             set { SetValue(AccentButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -2934,7 +2934,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonBorderBrushPressed
         {
-            get { return (object)GetValue(AccentButtonBorderBrushPressedProperty); }
+            get { return GetValue(AccentButtonBorderBrushPressedProperty); }
             set { SetValue(AccentButtonBorderBrushPressedProperty, value); }
         }
 
@@ -2942,7 +2942,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AccentButtonBorderBrushDisabled
         {
-            get { return (object)GetValue(AccentButtonBorderBrushDisabledProperty); }
+            get { return GetValue(AccentButtonBorderBrushDisabledProperty); }
             set { SetValue(AccentButtonBorderBrushDisabledProperty, value); }
         }
 
@@ -2950,7 +2950,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AccentButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToolTipForeground
         {
-            get { return (object)GetValue(ToolTipForegroundProperty); }
+            get { return GetValue(ToolTipForegroundProperty); }
             set { SetValue(ToolTipForegroundProperty, value); }
         }
 
@@ -2958,7 +2958,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToolTipForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToolTipBackground
         {
-            get { return (object)GetValue(ToolTipBackgroundProperty); }
+            get { return GetValue(ToolTipBackgroundProperty); }
             set { SetValue(ToolTipBackgroundProperty, value); }
         }
 
@@ -2966,7 +2966,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToolTipBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToolTipBorderBrush
         {
-            get { return (object)GetValue(ToolTipBorderBrushProperty); }
+            get { return GetValue(ToolTipBorderBrushProperty); }
             set { SetValue(ToolTipBorderBrushProperty, value); }
         }
 
@@ -2974,7 +2974,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToolTipBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerForeground
         {
-            get { return (object)GetValue(CalendarDatePickerForegroundProperty); }
+            get { return GetValue(CalendarDatePickerForegroundProperty); }
             set { SetValue(CalendarDatePickerForegroundProperty, value); }
         }
 
@@ -2982,7 +2982,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerForegroundDisabled
         {
-            get { return (object)GetValue(CalendarDatePickerForegroundDisabledProperty); }
+            get { return GetValue(CalendarDatePickerForegroundDisabledProperty); }
             set { SetValue(CalendarDatePickerForegroundDisabledProperty, value); }
         }
 
@@ -2990,7 +2990,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerCalendarGlyphForeground
         {
-            get { return (object)GetValue(CalendarDatePickerCalendarGlyphForegroundProperty); }
+            get { return GetValue(CalendarDatePickerCalendarGlyphForegroundProperty); }
             set { SetValue(CalendarDatePickerCalendarGlyphForegroundProperty, value); }
         }
 
@@ -2998,7 +2998,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerCalendarGlyphForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerCalendarGlyphForegroundDisabled
         {
-            get { return (object)GetValue(CalendarDatePickerCalendarGlyphForegroundDisabledProperty); }
+            get { return GetValue(CalendarDatePickerCalendarGlyphForegroundDisabledProperty); }
             set { SetValue(CalendarDatePickerCalendarGlyphForegroundDisabledProperty, value); }
         }
 
@@ -3006,7 +3006,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerCalendarGlyphForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerTextForeground
         {
-            get { return (object)GetValue(CalendarDatePickerTextForegroundProperty); }
+            get { return GetValue(CalendarDatePickerTextForegroundProperty); }
             set { SetValue(CalendarDatePickerTextForegroundProperty, value); }
         }
 
@@ -3014,7 +3014,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerTextForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerTextForegroundDisabled
         {
-            get { return (object)GetValue(CalendarDatePickerTextForegroundDisabledProperty); }
+            get { return GetValue(CalendarDatePickerTextForegroundDisabledProperty); }
             set { SetValue(CalendarDatePickerTextForegroundDisabledProperty, value); }
         }
 
@@ -3022,7 +3022,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerTextForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerTextForegroundSelected
         {
-            get { return (object)GetValue(CalendarDatePickerTextForegroundSelectedProperty); }
+            get { return GetValue(CalendarDatePickerTextForegroundSelectedProperty); }
             set { SetValue(CalendarDatePickerTextForegroundSelectedProperty, value); }
         }
 
@@ -3030,7 +3030,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerTextForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerHeaderForegroundDisabled
         {
-            get { return (object)GetValue(CalendarDatePickerHeaderForegroundDisabledProperty); }
+            get { return GetValue(CalendarDatePickerHeaderForegroundDisabledProperty); }
             set { SetValue(CalendarDatePickerHeaderForegroundDisabledProperty, value); }
         }
 
@@ -3038,7 +3038,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerHeaderForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBackground
         {
-            get { return (object)GetValue(CalendarDatePickerBackgroundProperty); }
+            get { return GetValue(CalendarDatePickerBackgroundProperty); }
             set { SetValue(CalendarDatePickerBackgroundProperty, value); }
         }
 
@@ -3046,7 +3046,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBackgroundPointerOver
         {
-            get { return (object)GetValue(CalendarDatePickerBackgroundPointerOverProperty); }
+            get { return GetValue(CalendarDatePickerBackgroundPointerOverProperty); }
             set { SetValue(CalendarDatePickerBackgroundPointerOverProperty, value); }
         }
 
@@ -3054,7 +3054,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBackgroundPressed
         {
-            get { return (object)GetValue(CalendarDatePickerBackgroundPressedProperty); }
+            get { return GetValue(CalendarDatePickerBackgroundPressedProperty); }
             set { SetValue(CalendarDatePickerBackgroundPressedProperty, value); }
         }
 
@@ -3062,7 +3062,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBackgroundDisabled
         {
-            get { return (object)GetValue(CalendarDatePickerBackgroundDisabledProperty); }
+            get { return GetValue(CalendarDatePickerBackgroundDisabledProperty); }
             set { SetValue(CalendarDatePickerBackgroundDisabledProperty, value); }
         }
 
@@ -3070,7 +3070,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBackgroundFocused
         {
-            get { return (object)GetValue(CalendarDatePickerBackgroundFocusedProperty); }
+            get { return GetValue(CalendarDatePickerBackgroundFocusedProperty); }
             set { SetValue(CalendarDatePickerBackgroundFocusedProperty, value); }
         }
 
@@ -3078,7 +3078,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBackgroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBorderBrush
         {
-            get { return (object)GetValue(CalendarDatePickerBorderBrushProperty); }
+            get { return GetValue(CalendarDatePickerBorderBrushProperty); }
             set { SetValue(CalendarDatePickerBorderBrushProperty, value); }
         }
 
@@ -3086,7 +3086,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBorderBrushPointerOver
         {
-            get { return (object)GetValue(CalendarDatePickerBorderBrushPointerOverProperty); }
+            get { return GetValue(CalendarDatePickerBorderBrushPointerOverProperty); }
             set { SetValue(CalendarDatePickerBorderBrushPointerOverProperty, value); }
         }
 
@@ -3094,7 +3094,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBorderBrushPressed
         {
-            get { return (object)GetValue(CalendarDatePickerBorderBrushPressedProperty); }
+            get { return GetValue(CalendarDatePickerBorderBrushPressedProperty); }
             set { SetValue(CalendarDatePickerBorderBrushPressedProperty, value); }
         }
 
@@ -3102,7 +3102,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerBorderBrushDisabled
         {
-            get { return (object)GetValue(CalendarDatePickerBorderBrushDisabledProperty); }
+            get { return GetValue(CalendarDatePickerBorderBrushDisabledProperty); }
             set { SetValue(CalendarDatePickerBorderBrushDisabledProperty, value); }
         }
 
@@ -3110,7 +3110,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewFocusBorderBrush
         {
-            get { return (object)GetValue(CalendarViewFocusBorderBrushProperty); }
+            get { return GetValue(CalendarViewFocusBorderBrushProperty); }
             set { SetValue(CalendarViewFocusBorderBrushProperty, value); }
         }
 
@@ -3118,7 +3118,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewFocusBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewSelectedHoverBorderBrush
         {
-            get { return (object)GetValue(CalendarViewSelectedHoverBorderBrushProperty); }
+            get { return GetValue(CalendarViewSelectedHoverBorderBrushProperty); }
             set { SetValue(CalendarViewSelectedHoverBorderBrushProperty, value); }
         }
 
@@ -3126,7 +3126,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewSelectedHoverBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewSelectedPressedBorderBrush
         {
-            get { return (object)GetValue(CalendarViewSelectedPressedBorderBrushProperty); }
+            get { return GetValue(CalendarViewSelectedPressedBorderBrushProperty); }
             set { SetValue(CalendarViewSelectedPressedBorderBrushProperty, value); }
         }
 
@@ -3134,7 +3134,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewSelectedPressedBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewSelectedBorderBrush
         {
-            get { return (object)GetValue(CalendarViewSelectedBorderBrushProperty); }
+            get { return GetValue(CalendarViewSelectedBorderBrushProperty); }
             set { SetValue(CalendarViewSelectedBorderBrushProperty, value); }
         }
 
@@ -3142,7 +3142,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewSelectedBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewHoverBorderBrush
         {
-            get { return (object)GetValue(CalendarViewHoverBorderBrushProperty); }
+            get { return GetValue(CalendarViewHoverBorderBrushProperty); }
             set { SetValue(CalendarViewHoverBorderBrushProperty, value); }
         }
 
@@ -3150,7 +3150,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewHoverBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewPressedBorderBrush
         {
-            get { return (object)GetValue(CalendarViewPressedBorderBrushProperty); }
+            get { return GetValue(CalendarViewPressedBorderBrushProperty); }
             set { SetValue(CalendarViewPressedBorderBrushProperty, value); }
         }
 
@@ -3158,7 +3158,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewPressedBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewTodayForeground
         {
-            get { return (object)GetValue(CalendarViewTodayForegroundProperty); }
+            get { return GetValue(CalendarViewTodayForegroundProperty); }
             set { SetValue(CalendarViewTodayForegroundProperty, value); }
         }
 
@@ -3166,7 +3166,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewTodayForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewBlackoutForeground
         {
-            get { return (object)GetValue(CalendarViewBlackoutForegroundProperty); }
+            get { return GetValue(CalendarViewBlackoutForegroundProperty); }
             set { SetValue(CalendarViewBlackoutForegroundProperty, value); }
         }
 
@@ -3174,7 +3174,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewBlackoutForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewSelectedForeground
         {
-            get { return (object)GetValue(CalendarViewSelectedForegroundProperty); }
+            get { return GetValue(CalendarViewSelectedForegroundProperty); }
             set { SetValue(CalendarViewSelectedForegroundProperty, value); }
         }
 
@@ -3182,7 +3182,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewSelectedForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewPressedForeground
         {
-            get { return (object)GetValue(CalendarViewPressedForegroundProperty); }
+            get { return GetValue(CalendarViewPressedForegroundProperty); }
             set { SetValue(CalendarViewPressedForegroundProperty, value); }
         }
 
@@ -3190,7 +3190,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewPressedForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewOutOfScopeForeground
         {
-            get { return (object)GetValue(CalendarViewOutOfScopeForegroundProperty); }
+            get { return GetValue(CalendarViewOutOfScopeForegroundProperty); }
             set { SetValue(CalendarViewOutOfScopeForegroundProperty, value); }
         }
 
@@ -3198,7 +3198,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewOutOfScopeForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewCalendarItemForeground
         {
-            get { return (object)GetValue(CalendarViewCalendarItemForegroundProperty); }
+            get { return GetValue(CalendarViewCalendarItemForegroundProperty); }
             set { SetValue(CalendarViewCalendarItemForegroundProperty, value); }
         }
 
@@ -3206,7 +3206,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewCalendarItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewOutOfScopeBackground
         {
-            get { return (object)GetValue(CalendarViewOutOfScopeBackgroundProperty); }
+            get { return GetValue(CalendarViewOutOfScopeBackgroundProperty); }
             set { SetValue(CalendarViewOutOfScopeBackgroundProperty, value); }
         }
 
@@ -3214,7 +3214,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewOutOfScopeBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewCalendarItemBackground
         {
-            get { return (object)GetValue(CalendarViewCalendarItemBackgroundProperty); }
+            get { return GetValue(CalendarViewCalendarItemBackgroundProperty); }
             set { SetValue(CalendarViewCalendarItemBackgroundProperty, value); }
         }
 
@@ -3222,7 +3222,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewCalendarItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewForeground
         {
-            get { return (object)GetValue(CalendarViewForegroundProperty); }
+            get { return GetValue(CalendarViewForegroundProperty); }
             set { SetValue(CalendarViewForegroundProperty, value); }
         }
 
@@ -3230,7 +3230,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewBackground
         {
-            get { return (object)GetValue(CalendarViewBackgroundProperty); }
+            get { return GetValue(CalendarViewBackgroundProperty); }
             set { SetValue(CalendarViewBackgroundProperty, value); }
         }
 
@@ -3238,7 +3238,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewBorderBrush
         {
-            get { return (object)GetValue(CalendarViewBorderBrushProperty); }
+            get { return GetValue(CalendarViewBorderBrushProperty); }
             set { SetValue(CalendarViewBorderBrushProperty, value); }
         }
 
@@ -3246,7 +3246,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewWeekDayForegroundDisabled
         {
-            get { return (object)GetValue(CalendarViewWeekDayForegroundDisabledProperty); }
+            get { return GetValue(CalendarViewWeekDayForegroundDisabledProperty); }
             set { SetValue(CalendarViewWeekDayForegroundDisabledProperty, value); }
         }
 
@@ -3254,7 +3254,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewWeekDayForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewNavigationButtonForegroundPointerOver
         {
-            get { return (object)GetValue(CalendarViewNavigationButtonForegroundPointerOverProperty); }
+            get { return GetValue(CalendarViewNavigationButtonForegroundPointerOverProperty); }
             set { SetValue(CalendarViewNavigationButtonForegroundPointerOverProperty, value); }
         }
 
@@ -3262,7 +3262,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewNavigationButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewNavigationButtonForegroundPressed
         {
-            get { return (object)GetValue(CalendarViewNavigationButtonForegroundPressedProperty); }
+            get { return GetValue(CalendarViewNavigationButtonForegroundPressedProperty); }
             set { SetValue(CalendarViewNavigationButtonForegroundPressedProperty, value); }
         }
 
@@ -3270,7 +3270,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewNavigationButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewNavigationButtonForegroundDisabled
         {
-            get { return (object)GetValue(CalendarViewNavigationButtonForegroundDisabledProperty); }
+            get { return GetValue(CalendarViewNavigationButtonForegroundDisabledProperty); }
             set { SetValue(CalendarViewNavigationButtonForegroundDisabledProperty, value); }
         }
 
@@ -3278,7 +3278,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewNavigationButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarViewNavigationButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(CalendarViewNavigationButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(CalendarViewNavigationButtonBorderBrushPointerOverProperty); }
             set { SetValue(CalendarViewNavigationButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -3286,7 +3286,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarViewNavigationButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HubForeground
         {
-            get { return (object)GetValue(HubForegroundProperty); }
+            get { return GetValue(HubForegroundProperty); }
             set { SetValue(HubForegroundProperty, value); }
         }
 
@@ -3294,7 +3294,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HubForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HubSectionHeaderButtonForeground
         {
-            get { return (object)GetValue(HubSectionHeaderButtonForegroundProperty); }
+            get { return GetValue(HubSectionHeaderButtonForegroundProperty); }
             set { SetValue(HubSectionHeaderButtonForegroundProperty, value); }
         }
 
@@ -3302,7 +3302,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HubSectionHeaderButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HubSectionHeaderButtonForegroundPointerOver
         {
-            get { return (object)GetValue(HubSectionHeaderButtonForegroundPointerOverProperty); }
+            get { return GetValue(HubSectionHeaderButtonForegroundPointerOverProperty); }
             set { SetValue(HubSectionHeaderButtonForegroundPointerOverProperty, value); }
         }
 
@@ -3310,7 +3310,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HubSectionHeaderButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HubSectionHeaderButtonForegroundPressed
         {
-            get { return (object)GetValue(HubSectionHeaderButtonForegroundPressedProperty); }
+            get { return GetValue(HubSectionHeaderButtonForegroundPressedProperty); }
             set { SetValue(HubSectionHeaderButtonForegroundPressedProperty, value); }
         }
 
@@ -3318,7 +3318,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HubSectionHeaderButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HubSectionHeaderButtonForegroundDisabled
         {
-            get { return (object)GetValue(HubSectionHeaderButtonForegroundDisabledProperty); }
+            get { return GetValue(HubSectionHeaderButtonForegroundDisabledProperty); }
             set { SetValue(HubSectionHeaderButtonForegroundDisabledProperty, value); }
         }
 
@@ -3326,7 +3326,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HubSectionHeaderButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object HubSectionHeaderForeground
         {
-            get { return (object)GetValue(HubSectionHeaderForegroundProperty); }
+            get { return GetValue(HubSectionHeaderForegroundProperty); }
             set { SetValue(HubSectionHeaderForegroundProperty, value); }
         }
 
@@ -3334,7 +3334,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("HubSectionHeaderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewBackground
         {
-            get { return (object)GetValue(FlipViewBackgroundProperty); }
+            get { return GetValue(FlipViewBackgroundProperty); }
             set { SetValue(FlipViewBackgroundProperty, value); }
         }
 
@@ -3342,7 +3342,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousButtonBackground
         {
-            get { return (object)GetValue(FlipViewNextPreviousButtonBackgroundProperty); }
+            get { return GetValue(FlipViewNextPreviousButtonBackgroundProperty); }
             set { SetValue(FlipViewNextPreviousButtonBackgroundProperty, value); }
         }
 
@@ -3350,7 +3350,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(FlipViewNextPreviousButtonBackgroundPointerOverProperty); }
+            get { return GetValue(FlipViewNextPreviousButtonBackgroundPointerOverProperty); }
             set { SetValue(FlipViewNextPreviousButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -3358,7 +3358,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousButtonBackgroundPressed
         {
-            get { return (object)GetValue(FlipViewNextPreviousButtonBackgroundPressedProperty); }
+            get { return GetValue(FlipViewNextPreviousButtonBackgroundPressedProperty); }
             set { SetValue(FlipViewNextPreviousButtonBackgroundPressedProperty, value); }
         }
 
@@ -3366,7 +3366,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousArrowForeground
         {
-            get { return (object)GetValue(FlipViewNextPreviousArrowForegroundProperty); }
+            get { return GetValue(FlipViewNextPreviousArrowForegroundProperty); }
             set { SetValue(FlipViewNextPreviousArrowForegroundProperty, value); }
         }
 
@@ -3374,7 +3374,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousArrowForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousArrowForegroundPointerOver
         {
-            get { return (object)GetValue(FlipViewNextPreviousArrowForegroundPointerOverProperty); }
+            get { return GetValue(FlipViewNextPreviousArrowForegroundPointerOverProperty); }
             set { SetValue(FlipViewNextPreviousArrowForegroundPointerOverProperty, value); }
         }
 
@@ -3382,7 +3382,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousArrowForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousArrowForegroundPressed
         {
-            get { return (object)GetValue(FlipViewNextPreviousArrowForegroundPressedProperty); }
+            get { return GetValue(FlipViewNextPreviousArrowForegroundPressedProperty); }
             set { SetValue(FlipViewNextPreviousArrowForegroundPressedProperty, value); }
         }
 
@@ -3390,7 +3390,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousArrowForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousButtonBorderBrush
         {
-            get { return (object)GetValue(FlipViewNextPreviousButtonBorderBrushProperty); }
+            get { return GetValue(FlipViewNextPreviousButtonBorderBrushProperty); }
             set { SetValue(FlipViewNextPreviousButtonBorderBrushProperty, value); }
         }
 
@@ -3398,7 +3398,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(FlipViewNextPreviousButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(FlipViewNextPreviousButtonBorderBrushPointerOverProperty); }
             set { SetValue(FlipViewNextPreviousButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -3406,7 +3406,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlipViewNextPreviousButtonBorderBrushPressed
         {
-            get { return (object)GetValue(FlipViewNextPreviousButtonBorderBrushPressedProperty); }
+            get { return GetValue(FlipViewNextPreviousButtonBorderBrushPressedProperty); }
             set { SetValue(FlipViewNextPreviousButtonBorderBrushPressedProperty, value); }
         }
 
@@ -3414,7 +3414,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlipViewNextPreviousButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DateTimePickerFlyoutButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(DateTimePickerFlyoutButtonBackgroundPointerOverProperty); }
+            get { return GetValue(DateTimePickerFlyoutButtonBackgroundPointerOverProperty); }
             set { SetValue(DateTimePickerFlyoutButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -3422,7 +3422,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DateTimePickerFlyoutButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DateTimePickerFlyoutButtonBackgroundPressed
         {
-            get { return (object)GetValue(DateTimePickerFlyoutButtonBackgroundPressedProperty); }
+            get { return GetValue(DateTimePickerFlyoutButtonBackgroundPressedProperty); }
             set { SetValue(DateTimePickerFlyoutButtonBackgroundPressedProperty, value); }
         }
 
@@ -3430,7 +3430,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DateTimePickerFlyoutButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DateTimePickerFlyoutButtonBorderBrush
         {
-            get { return (object)GetValue(DateTimePickerFlyoutButtonBorderBrushProperty); }
+            get { return GetValue(DateTimePickerFlyoutButtonBorderBrushProperty); }
             set { SetValue(DateTimePickerFlyoutButtonBorderBrushProperty, value); }
         }
 
@@ -3438,7 +3438,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DateTimePickerFlyoutButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DateTimePickerFlyoutButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(DateTimePickerFlyoutButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(DateTimePickerFlyoutButtonBorderBrushPointerOverProperty); }
             set { SetValue(DateTimePickerFlyoutButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -3446,7 +3446,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DateTimePickerFlyoutButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DateTimePickerFlyoutButtonBorderBrushPressed
         {
-            get { return (object)GetValue(DateTimePickerFlyoutButtonBorderBrushPressedProperty); }
+            get { return GetValue(DateTimePickerFlyoutButtonBorderBrushPressedProperty); }
             set { SetValue(DateTimePickerFlyoutButtonBorderBrushPressedProperty, value); }
         }
 
@@ -3454,7 +3454,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DateTimePickerFlyoutButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DateTimePickerFlyoutButtonForegroundPointerOver
         {
-            get { return (object)GetValue(DateTimePickerFlyoutButtonForegroundPointerOverProperty); }
+            get { return GetValue(DateTimePickerFlyoutButtonForegroundPointerOverProperty); }
             set { SetValue(DateTimePickerFlyoutButtonForegroundPointerOverProperty, value); }
         }
 
@@ -3462,7 +3462,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DateTimePickerFlyoutButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DateTimePickerFlyoutButtonForegroundPressed
         {
-            get { return (object)GetValue(DateTimePickerFlyoutButtonForegroundPressedProperty); }
+            get { return GetValue(DateTimePickerFlyoutButtonForegroundPressedProperty); }
             set { SetValue(DateTimePickerFlyoutButtonForegroundPressedProperty, value); }
         }
 
@@ -3470,7 +3470,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DateTimePickerFlyoutButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerSpacerFill
         {
-            get { return (object)GetValue(DatePickerSpacerFillProperty); }
+            get { return GetValue(DatePickerSpacerFillProperty); }
             set { SetValue(DatePickerSpacerFillProperty, value); }
         }
 
@@ -3478,7 +3478,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerSpacerFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerSpacerFillDisabled
         {
-            get { return (object)GetValue(DatePickerSpacerFillDisabledProperty); }
+            get { return GetValue(DatePickerSpacerFillDisabledProperty); }
             set { SetValue(DatePickerSpacerFillDisabledProperty, value); }
         }
 
@@ -3486,7 +3486,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerSpacerFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerHeaderForeground
         {
-            get { return (object)GetValue(DatePickerHeaderForegroundProperty); }
+            get { return GetValue(DatePickerHeaderForegroundProperty); }
             set { SetValue(DatePickerHeaderForegroundProperty, value); }
         }
 
@@ -3494,7 +3494,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerHeaderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerHeaderForegroundDisabled
         {
-            get { return (object)GetValue(DatePickerHeaderForegroundDisabledProperty); }
+            get { return GetValue(DatePickerHeaderForegroundDisabledProperty); }
             set { SetValue(DatePickerHeaderForegroundDisabledProperty, value); }
         }
 
@@ -3502,7 +3502,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerHeaderForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBorderBrush
         {
-            get { return (object)GetValue(DatePickerButtonBorderBrushProperty); }
+            get { return GetValue(DatePickerButtonBorderBrushProperty); }
             set { SetValue(DatePickerButtonBorderBrushProperty, value); }
         }
 
@@ -3510,7 +3510,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(DatePickerButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(DatePickerButtonBorderBrushPointerOverProperty); }
             set { SetValue(DatePickerButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -3518,7 +3518,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBorderBrushPressed
         {
-            get { return (object)GetValue(DatePickerButtonBorderBrushPressedProperty); }
+            get { return GetValue(DatePickerButtonBorderBrushPressedProperty); }
             set { SetValue(DatePickerButtonBorderBrushPressedProperty, value); }
         }
 
@@ -3526,7 +3526,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBorderBrushDisabled
         {
-            get { return (object)GetValue(DatePickerButtonBorderBrushDisabledProperty); }
+            get { return GetValue(DatePickerButtonBorderBrushDisabledProperty); }
             set { SetValue(DatePickerButtonBorderBrushDisabledProperty, value); }
         }
 
@@ -3534,7 +3534,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBackground
         {
-            get { return (object)GetValue(DatePickerButtonBackgroundProperty); }
+            get { return GetValue(DatePickerButtonBackgroundProperty); }
             set { SetValue(DatePickerButtonBackgroundProperty, value); }
         }
 
@@ -3542,7 +3542,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(DatePickerButtonBackgroundPointerOverProperty); }
+            get { return GetValue(DatePickerButtonBackgroundPointerOverProperty); }
             set { SetValue(DatePickerButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -3550,7 +3550,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBackgroundPressed
         {
-            get { return (object)GetValue(DatePickerButtonBackgroundPressedProperty); }
+            get { return GetValue(DatePickerButtonBackgroundPressedProperty); }
             set { SetValue(DatePickerButtonBackgroundPressedProperty, value); }
         }
 
@@ -3558,7 +3558,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBackgroundDisabled
         {
-            get { return (object)GetValue(DatePickerButtonBackgroundDisabledProperty); }
+            get { return GetValue(DatePickerButtonBackgroundDisabledProperty); }
             set { SetValue(DatePickerButtonBackgroundDisabledProperty, value); }
         }
 
@@ -3566,7 +3566,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonBackgroundFocused
         {
-            get { return (object)GetValue(DatePickerButtonBackgroundFocusedProperty); }
+            get { return GetValue(DatePickerButtonBackgroundFocusedProperty); }
             set { SetValue(DatePickerButtonBackgroundFocusedProperty, value); }
         }
 
@@ -3574,7 +3574,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonBackgroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonForeground
         {
-            get { return (object)GetValue(DatePickerButtonForegroundProperty); }
+            get { return GetValue(DatePickerButtonForegroundProperty); }
             set { SetValue(DatePickerButtonForegroundProperty, value); }
         }
 
@@ -3582,7 +3582,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonForegroundPointerOver
         {
-            get { return (object)GetValue(DatePickerButtonForegroundPointerOverProperty); }
+            get { return GetValue(DatePickerButtonForegroundPointerOverProperty); }
             set { SetValue(DatePickerButtonForegroundPointerOverProperty, value); }
         }
 
@@ -3590,7 +3590,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonForegroundPressed
         {
-            get { return (object)GetValue(DatePickerButtonForegroundPressedProperty); }
+            get { return GetValue(DatePickerButtonForegroundPressedProperty); }
             set { SetValue(DatePickerButtonForegroundPressedProperty, value); }
         }
 
@@ -3598,7 +3598,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonForegroundDisabled
         {
-            get { return (object)GetValue(DatePickerButtonForegroundDisabledProperty); }
+            get { return GetValue(DatePickerButtonForegroundDisabledProperty); }
             set { SetValue(DatePickerButtonForegroundDisabledProperty, value); }
         }
 
@@ -3606,7 +3606,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerButtonForegroundFocused
         {
-            get { return (object)GetValue(DatePickerButtonForegroundFocusedProperty); }
+            get { return GetValue(DatePickerButtonForegroundFocusedProperty); }
             set { SetValue(DatePickerButtonForegroundFocusedProperty, value); }
         }
 
@@ -3614,7 +3614,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerButtonForegroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerFlyoutPresenterBackground
         {
-            get { return (object)GetValue(DatePickerFlyoutPresenterBackgroundProperty); }
+            get { return GetValue(DatePickerFlyoutPresenterBackgroundProperty); }
             set { SetValue(DatePickerFlyoutPresenterBackgroundProperty, value); }
         }
 
@@ -3622,7 +3622,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerFlyoutPresenterBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerFlyoutPresenterBorderBrush
         {
-            get { return (object)GetValue(DatePickerFlyoutPresenterBorderBrushProperty); }
+            get { return GetValue(DatePickerFlyoutPresenterBorderBrushProperty); }
             set { SetValue(DatePickerFlyoutPresenterBorderBrushProperty, value); }
         }
 
@@ -3630,7 +3630,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerFlyoutPresenterBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerFlyoutPresenterSpacerFill
         {
-            get { return (object)GetValue(DatePickerFlyoutPresenterSpacerFillProperty); }
+            get { return GetValue(DatePickerFlyoutPresenterSpacerFillProperty); }
             set { SetValue(DatePickerFlyoutPresenterSpacerFillProperty, value); }
         }
 
@@ -3638,7 +3638,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerFlyoutPresenterSpacerFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerFlyoutPresenterHighlightFill
         {
-            get { return (object)GetValue(DatePickerFlyoutPresenterHighlightFillProperty); }
+            get { return GetValue(DatePickerFlyoutPresenterHighlightFillProperty); }
             set { SetValue(DatePickerFlyoutPresenterHighlightFillProperty, value); }
         }
 
@@ -3646,7 +3646,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerFlyoutPresenterHighlightFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerSpacerFill
         {
-            get { return (object)GetValue(TimePickerSpacerFillProperty); }
+            get { return GetValue(TimePickerSpacerFillProperty); }
             set { SetValue(TimePickerSpacerFillProperty, value); }
         }
 
@@ -3654,7 +3654,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerSpacerFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerSpacerFillDisabled
         {
-            get { return (object)GetValue(TimePickerSpacerFillDisabledProperty); }
+            get { return GetValue(TimePickerSpacerFillDisabledProperty); }
             set { SetValue(TimePickerSpacerFillDisabledProperty, value); }
         }
 
@@ -3662,7 +3662,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerSpacerFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerHeaderForeground
         {
-            get { return (object)GetValue(TimePickerHeaderForegroundProperty); }
+            get { return GetValue(TimePickerHeaderForegroundProperty); }
             set { SetValue(TimePickerHeaderForegroundProperty, value); }
         }
 
@@ -3670,7 +3670,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerHeaderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerHeaderForegroundDisabled
         {
-            get { return (object)GetValue(TimePickerHeaderForegroundDisabledProperty); }
+            get { return GetValue(TimePickerHeaderForegroundDisabledProperty); }
             set { SetValue(TimePickerHeaderForegroundDisabledProperty, value); }
         }
 
@@ -3678,7 +3678,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerHeaderForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBorderBrush
         {
-            get { return (object)GetValue(TimePickerButtonBorderBrushProperty); }
+            get { return GetValue(TimePickerButtonBorderBrushProperty); }
             set { SetValue(TimePickerButtonBorderBrushProperty, value); }
         }
 
@@ -3686,7 +3686,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(TimePickerButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(TimePickerButtonBorderBrushPointerOverProperty); }
             set { SetValue(TimePickerButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -3694,7 +3694,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBorderBrushPressed
         {
-            get { return (object)GetValue(TimePickerButtonBorderBrushPressedProperty); }
+            get { return GetValue(TimePickerButtonBorderBrushPressedProperty); }
             set { SetValue(TimePickerButtonBorderBrushPressedProperty, value); }
         }
 
@@ -3702,7 +3702,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBorderBrushDisabled
         {
-            get { return (object)GetValue(TimePickerButtonBorderBrushDisabledProperty); }
+            get { return GetValue(TimePickerButtonBorderBrushDisabledProperty); }
             set { SetValue(TimePickerButtonBorderBrushDisabledProperty, value); }
         }
 
@@ -3710,7 +3710,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBackground
         {
-            get { return (object)GetValue(TimePickerButtonBackgroundProperty); }
+            get { return GetValue(TimePickerButtonBackgroundProperty); }
             set { SetValue(TimePickerButtonBackgroundProperty, value); }
         }
 
@@ -3718,7 +3718,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(TimePickerButtonBackgroundPointerOverProperty); }
+            get { return GetValue(TimePickerButtonBackgroundPointerOverProperty); }
             set { SetValue(TimePickerButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -3726,7 +3726,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBackgroundPressed
         {
-            get { return (object)GetValue(TimePickerButtonBackgroundPressedProperty); }
+            get { return GetValue(TimePickerButtonBackgroundPressedProperty); }
             set { SetValue(TimePickerButtonBackgroundPressedProperty, value); }
         }
 
@@ -3734,7 +3734,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBackgroundDisabled
         {
-            get { return (object)GetValue(TimePickerButtonBackgroundDisabledProperty); }
+            get { return GetValue(TimePickerButtonBackgroundDisabledProperty); }
             set { SetValue(TimePickerButtonBackgroundDisabledProperty, value); }
         }
 
@@ -3742,7 +3742,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonBackgroundFocused
         {
-            get { return (object)GetValue(TimePickerButtonBackgroundFocusedProperty); }
+            get { return GetValue(TimePickerButtonBackgroundFocusedProperty); }
             set { SetValue(TimePickerButtonBackgroundFocusedProperty, value); }
         }
 
@@ -3750,7 +3750,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonBackgroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonForeground
         {
-            get { return (object)GetValue(TimePickerButtonForegroundProperty); }
+            get { return GetValue(TimePickerButtonForegroundProperty); }
             set { SetValue(TimePickerButtonForegroundProperty, value); }
         }
 
@@ -3758,7 +3758,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonForegroundPointerOver
         {
-            get { return (object)GetValue(TimePickerButtonForegroundPointerOverProperty); }
+            get { return GetValue(TimePickerButtonForegroundPointerOverProperty); }
             set { SetValue(TimePickerButtonForegroundPointerOverProperty, value); }
         }
 
@@ -3766,7 +3766,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonForegroundPressed
         {
-            get { return (object)GetValue(TimePickerButtonForegroundPressedProperty); }
+            get { return GetValue(TimePickerButtonForegroundPressedProperty); }
             set { SetValue(TimePickerButtonForegroundPressedProperty, value); }
         }
 
@@ -3774,7 +3774,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonForegroundDisabled
         {
-            get { return (object)GetValue(TimePickerButtonForegroundDisabledProperty); }
+            get { return GetValue(TimePickerButtonForegroundDisabledProperty); }
             set { SetValue(TimePickerButtonForegroundDisabledProperty, value); }
         }
 
@@ -3782,7 +3782,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerButtonForegroundFocused
         {
-            get { return (object)GetValue(TimePickerButtonForegroundFocusedProperty); }
+            get { return GetValue(TimePickerButtonForegroundFocusedProperty); }
             set { SetValue(TimePickerButtonForegroundFocusedProperty, value); }
         }
 
@@ -3790,7 +3790,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerButtonForegroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerFlyoutPresenterBackground
         {
-            get { return (object)GetValue(TimePickerFlyoutPresenterBackgroundProperty); }
+            get { return GetValue(TimePickerFlyoutPresenterBackgroundProperty); }
             set { SetValue(TimePickerFlyoutPresenterBackgroundProperty, value); }
         }
 
@@ -3798,7 +3798,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerFlyoutPresenterBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerFlyoutPresenterBorderBrush
         {
-            get { return (object)GetValue(TimePickerFlyoutPresenterBorderBrushProperty); }
+            get { return GetValue(TimePickerFlyoutPresenterBorderBrushProperty); }
             set { SetValue(TimePickerFlyoutPresenterBorderBrushProperty, value); }
         }
 
@@ -3806,7 +3806,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerFlyoutPresenterBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerFlyoutPresenterSpacerFill
         {
-            get { return (object)GetValue(TimePickerFlyoutPresenterSpacerFillProperty); }
+            get { return GetValue(TimePickerFlyoutPresenterSpacerFillProperty); }
             set { SetValue(TimePickerFlyoutPresenterSpacerFillProperty, value); }
         }
 
@@ -3814,7 +3814,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerFlyoutPresenterSpacerFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerFlyoutPresenterHighlightFill
         {
-            get { return (object)GetValue(TimePickerFlyoutPresenterHighlightFillProperty); }
+            get { return GetValue(TimePickerFlyoutPresenterHighlightFillProperty); }
             set { SetValue(TimePickerFlyoutPresenterHighlightFillProperty, value); }
         }
 
@@ -3822,7 +3822,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerFlyoutPresenterHighlightFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object LoopingSelectorButtonBackground
         {
-            get { return (object)GetValue(LoopingSelectorButtonBackgroundProperty); }
+            get { return GetValue(LoopingSelectorButtonBackgroundProperty); }
             set { SetValue(LoopingSelectorButtonBackgroundProperty, value); }
         }
 
@@ -3830,7 +3830,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("LoopingSelectorButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object LoopingSelectorItemForeground
         {
-            get { return (object)GetValue(LoopingSelectorItemForegroundProperty); }
+            get { return GetValue(LoopingSelectorItemForegroundProperty); }
             set { SetValue(LoopingSelectorItemForegroundProperty, value); }
         }
 
@@ -3838,7 +3838,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("LoopingSelectorItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object LoopingSelectorItemForegroundSelected
         {
-            get { return (object)GetValue(LoopingSelectorItemForegroundSelectedProperty); }
+            get { return GetValue(LoopingSelectorItemForegroundSelectedProperty); }
             set { SetValue(LoopingSelectorItemForegroundSelectedProperty, value); }
         }
 
@@ -3846,7 +3846,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("LoopingSelectorItemForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object LoopingSelectorItemForegroundPointerOver
         {
-            get { return (object)GetValue(LoopingSelectorItemForegroundPointerOverProperty); }
+            get { return GetValue(LoopingSelectorItemForegroundPointerOverProperty); }
             set { SetValue(LoopingSelectorItemForegroundPointerOverProperty, value); }
         }
 
@@ -3854,7 +3854,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("LoopingSelectorItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object LoopingSelectorItemForegroundPressed
         {
-            get { return (object)GetValue(LoopingSelectorItemForegroundPressedProperty); }
+            get { return GetValue(LoopingSelectorItemForegroundPressedProperty); }
             set { SetValue(LoopingSelectorItemForegroundPressedProperty, value); }
         }
 
@@ -3862,7 +3862,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("LoopingSelectorItemForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object LoopingSelectorItemBackgroundPointerOver
         {
-            get { return (object)GetValue(LoopingSelectorItemBackgroundPointerOverProperty); }
+            get { return GetValue(LoopingSelectorItemBackgroundPointerOverProperty); }
             set { SetValue(LoopingSelectorItemBackgroundPointerOverProperty, value); }
         }
 
@@ -3870,7 +3870,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("LoopingSelectorItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object LoopingSelectorItemBackgroundPressed
         {
-            get { return (object)GetValue(LoopingSelectorItemBackgroundPressedProperty); }
+            get { return GetValue(LoopingSelectorItemBackgroundPressedProperty); }
             set { SetValue(LoopingSelectorItemBackgroundPressedProperty, value); }
         }
 
@@ -3878,7 +3878,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("LoopingSelectorItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlForeground
         {
-            get { return (object)GetValue(TextControlForegroundProperty); }
+            get { return GetValue(TextControlForegroundProperty); }
             set { SetValue(TextControlForegroundProperty, value); }
         }
 
@@ -3886,7 +3886,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlForegroundPointerOver
         {
-            get { return (object)GetValue(TextControlForegroundPointerOverProperty); }
+            get { return GetValue(TextControlForegroundPointerOverProperty); }
             set { SetValue(TextControlForegroundPointerOverProperty, value); }
         }
 
@@ -3894,7 +3894,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlForegroundFocused
         {
-            get { return (object)GetValue(TextControlForegroundFocusedProperty); }
+            get { return GetValue(TextControlForegroundFocusedProperty); }
             set { SetValue(TextControlForegroundFocusedProperty, value); }
         }
 
@@ -3902,7 +3902,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlForegroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlForegroundDisabled
         {
-            get { return (object)GetValue(TextControlForegroundDisabledProperty); }
+            get { return GetValue(TextControlForegroundDisabledProperty); }
             set { SetValue(TextControlForegroundDisabledProperty, value); }
         }
 
@@ -3910,7 +3910,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlBackground
         {
-            get { return (object)GetValue(TextControlBackgroundProperty); }
+            get { return GetValue(TextControlBackgroundProperty); }
             set { SetValue(TextControlBackgroundProperty, value); }
         }
 
@@ -3918,7 +3918,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlBackgroundPointerOver
         {
-            get { return (object)GetValue(TextControlBackgroundPointerOverProperty); }
+            get { return GetValue(TextControlBackgroundPointerOverProperty); }
             set { SetValue(TextControlBackgroundPointerOverProperty, value); }
         }
 
@@ -3926,7 +3926,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlBackgroundFocused
         {
-            get { return (object)GetValue(TextControlBackgroundFocusedProperty); }
+            get { return GetValue(TextControlBackgroundFocusedProperty); }
             set { SetValue(TextControlBackgroundFocusedProperty, value); }
         }
 
@@ -3934,7 +3934,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlBackgroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlBackgroundDisabled
         {
-            get { return (object)GetValue(TextControlBackgroundDisabledProperty); }
+            get { return GetValue(TextControlBackgroundDisabledProperty); }
             set { SetValue(TextControlBackgroundDisabledProperty, value); }
         }
 
@@ -3942,7 +3942,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlBorderBrush
         {
-            get { return (object)GetValue(TextControlBorderBrushProperty); }
+            get { return GetValue(TextControlBorderBrushProperty); }
             set { SetValue(TextControlBorderBrushProperty, value); }
         }
 
@@ -3950,7 +3950,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlBorderBrushPointerOver
         {
-            get { return (object)GetValue(TextControlBorderBrushPointerOverProperty); }
+            get { return GetValue(TextControlBorderBrushPointerOverProperty); }
             set { SetValue(TextControlBorderBrushPointerOverProperty, value); }
         }
 
@@ -3958,7 +3958,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlBorderBrushFocused
         {
-            get { return (object)GetValue(TextControlBorderBrushFocusedProperty); }
+            get { return GetValue(TextControlBorderBrushFocusedProperty); }
             set { SetValue(TextControlBorderBrushFocusedProperty, value); }
         }
 
@@ -3966,7 +3966,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlBorderBrushFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlBorderBrushDisabled
         {
-            get { return (object)GetValue(TextControlBorderBrushDisabledProperty); }
+            get { return GetValue(TextControlBorderBrushDisabledProperty); }
             set { SetValue(TextControlBorderBrushDisabledProperty, value); }
         }
 
@@ -3974,7 +3974,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlPlaceholderForeground
         {
-            get { return (object)GetValue(TextControlPlaceholderForegroundProperty); }
+            get { return GetValue(TextControlPlaceholderForegroundProperty); }
             set { SetValue(TextControlPlaceholderForegroundProperty, value); }
         }
 
@@ -3982,7 +3982,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlPlaceholderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlPlaceholderForegroundPointerOver
         {
-            get { return (object)GetValue(TextControlPlaceholderForegroundPointerOverProperty); }
+            get { return GetValue(TextControlPlaceholderForegroundPointerOverProperty); }
             set { SetValue(TextControlPlaceholderForegroundPointerOverProperty, value); }
         }
 
@@ -3990,7 +3990,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlPlaceholderForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlPlaceholderForegroundFocused
         {
-            get { return (object)GetValue(TextControlPlaceholderForegroundFocusedProperty); }
+            get { return GetValue(TextControlPlaceholderForegroundFocusedProperty); }
             set { SetValue(TextControlPlaceholderForegroundFocusedProperty, value); }
         }
 
@@ -3998,7 +3998,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlPlaceholderForegroundFocused", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlPlaceholderForegroundDisabled
         {
-            get { return (object)GetValue(TextControlPlaceholderForegroundDisabledProperty); }
+            get { return GetValue(TextControlPlaceholderForegroundDisabledProperty); }
             set { SetValue(TextControlPlaceholderForegroundDisabledProperty, value); }
         }
 
@@ -4006,7 +4006,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlPlaceholderForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlHeaderForeground
         {
-            get { return (object)GetValue(TextControlHeaderForegroundProperty); }
+            get { return GetValue(TextControlHeaderForegroundProperty); }
             set { SetValue(TextControlHeaderForegroundProperty, value); }
         }
 
@@ -4014,7 +4014,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlHeaderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlHeaderForegroundDisabled
         {
-            get { return (object)GetValue(TextControlHeaderForegroundDisabledProperty); }
+            get { return GetValue(TextControlHeaderForegroundDisabledProperty); }
             set { SetValue(TextControlHeaderForegroundDisabledProperty, value); }
         }
 
@@ -4022,7 +4022,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlHeaderForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlSelectionHighlightColor
         {
-            get { return (object)GetValue(TextControlSelectionHighlightColorProperty); }
+            get { return GetValue(TextControlSelectionHighlightColorProperty); }
             set { SetValue(TextControlSelectionHighlightColorProperty, value); }
         }
 
@@ -4030,7 +4030,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlSelectionHighlightColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlButtonBackgroundPressed
         {
-            get { return (object)GetValue(TextControlButtonBackgroundPressedProperty); }
+            get { return GetValue(TextControlButtonBackgroundPressedProperty); }
             set { SetValue(TextControlButtonBackgroundPressedProperty, value); }
         }
 
@@ -4038,7 +4038,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlButtonForeground
         {
-            get { return (object)GetValue(TextControlButtonForegroundProperty); }
+            get { return GetValue(TextControlButtonForegroundProperty); }
             set { SetValue(TextControlButtonForegroundProperty, value); }
         }
 
@@ -4046,7 +4046,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlButtonForegroundPointerOver
         {
-            get { return (object)GetValue(TextControlButtonForegroundPointerOverProperty); }
+            get { return GetValue(TextControlButtonForegroundPointerOverProperty); }
             set { SetValue(TextControlButtonForegroundPointerOverProperty, value); }
         }
 
@@ -4054,7 +4054,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlButtonForegroundPressed
         {
-            get { return (object)GetValue(TextControlButtonForegroundPressedProperty); }
+            get { return GetValue(TextControlButtonForegroundPressedProperty); }
             set { SetValue(TextControlButtonForegroundPressedProperty, value); }
         }
 
@@ -4062,7 +4062,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ContentLinkForegroundColor
         {
-            get { return (object)GetValue(ContentLinkForegroundColorProperty); }
+            get { return GetValue(ContentLinkForegroundColorProperty); }
             set { SetValue(ContentLinkForegroundColorProperty, value); }
         }
 
@@ -4070,7 +4070,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ContentLinkForegroundColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ContentLinkBackgroundColor
         {
-            get { return (object)GetValue(ContentLinkBackgroundColorProperty); }
+            get { return GetValue(ContentLinkBackgroundColorProperty); }
             set { SetValue(ContentLinkBackgroundColorProperty, value); }
         }
 
@@ -4078,7 +4078,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ContentLinkBackgroundColor", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TextControlHighlighterForeground
         {
-            get { return (object)GetValue(TextControlHighlighterForegroundProperty); }
+            get { return GetValue(TextControlHighlighterForegroundProperty); }
             set { SetValue(TextControlHighlighterForegroundProperty, value); }
         }
 
@@ -4086,7 +4086,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TextControlHighlighterForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlyoutPresenterBackground
         {
-            get { return (object)GetValue(FlyoutPresenterBackgroundProperty); }
+            get { return GetValue(FlyoutPresenterBackgroundProperty); }
             set { SetValue(FlyoutPresenterBackgroundProperty, value); }
         }
 
@@ -4094,7 +4094,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlyoutPresenterBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlyoutBorderThemeBrush
         {
-            get { return (object)GetValue(FlyoutBorderThemeBrushProperty); }
+            get { return GetValue(FlyoutBorderThemeBrushProperty); }
             set { SetValue(FlyoutBorderThemeBrushProperty, value); }
         }
 
@@ -4102,7 +4102,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlyoutBorderThemeBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemBackgroundPointerOver
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemBackgroundPointerOverProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemBackgroundPointerOverProperty); }
             set { SetValue(ToggleMenuFlyoutItemBackgroundPointerOverProperty, value); }
         }
 
@@ -4110,7 +4110,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemBackgroundPressed
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemBackgroundPressedProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemBackgroundPressedProperty); }
             set { SetValue(ToggleMenuFlyoutItemBackgroundPressedProperty, value); }
         }
 
@@ -4118,7 +4118,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemForeground
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemForegroundProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemForegroundProperty); }
             set { SetValue(ToggleMenuFlyoutItemForegroundProperty, value); }
         }
 
@@ -4126,7 +4126,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemForegroundPointerOver
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemForegroundPointerOverProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemForegroundPointerOverProperty); }
             set { SetValue(ToggleMenuFlyoutItemForegroundPointerOverProperty, value); }
         }
 
@@ -4134,7 +4134,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemForegroundPressed
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemForegroundPressedProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemForegroundPressedProperty); }
             set { SetValue(ToggleMenuFlyoutItemForegroundPressedProperty, value); }
         }
 
@@ -4142,7 +4142,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemForegroundDisabled
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemForegroundDisabledProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemForegroundDisabledProperty); }
             set { SetValue(ToggleMenuFlyoutItemForegroundDisabledProperty, value); }
         }
 
@@ -4150,7 +4150,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundProperty); }
             set { SetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundProperty, value); }
         }
 
@@ -4158,7 +4158,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOverProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOverProperty); }
             set { SetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOverProperty, value); }
         }
 
@@ -4166,7 +4166,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressedProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressedProperty); }
             set { SetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressedProperty, value); }
         }
 
@@ -4174,7 +4174,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabledProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabledProperty); }
             set { SetValue(ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabledProperty, value); }
         }
 
@@ -4182,7 +4182,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemCheckGlyphForeground
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemCheckGlyphForegroundProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemCheckGlyphForegroundProperty); }
             set { SetValue(ToggleMenuFlyoutItemCheckGlyphForegroundProperty, value); }
         }
 
@@ -4190,7 +4190,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemCheckGlyphForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemCheckGlyphForegroundPointerOverProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemCheckGlyphForegroundPointerOverProperty); }
             set { SetValue(ToggleMenuFlyoutItemCheckGlyphForegroundPointerOverProperty, value); }
         }
 
@@ -4198,7 +4198,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemCheckGlyphForegroundPressed
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemCheckGlyphForegroundPressedProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemCheckGlyphForegroundPressedProperty); }
             set { SetValue(ToggleMenuFlyoutItemCheckGlyphForegroundPressedProperty, value); }
         }
 
@@ -4206,7 +4206,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemCheckGlyphForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ToggleMenuFlyoutItemCheckGlyphForegroundDisabled
         {
-            get { return (object)GetValue(ToggleMenuFlyoutItemCheckGlyphForegroundDisabledProperty); }
+            get { return GetValue(ToggleMenuFlyoutItemCheckGlyphForegroundDisabledProperty); }
             set { SetValue(ToggleMenuFlyoutItemCheckGlyphForegroundDisabledProperty, value); }
         }
 
@@ -4214,7 +4214,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ToggleMenuFlyoutItemCheckGlyphForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonBackground
         {
-            get { return (object)GetValue(PivotNextButtonBackgroundProperty); }
+            get { return GetValue(PivotNextButtonBackgroundProperty); }
             set { SetValue(PivotNextButtonBackgroundProperty, value); }
         }
 
@@ -4222,7 +4222,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(PivotNextButtonBackgroundPointerOverProperty); }
+            get { return GetValue(PivotNextButtonBackgroundPointerOverProperty); }
             set { SetValue(PivotNextButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -4230,7 +4230,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonBackgroundPressed
         {
-            get { return (object)GetValue(PivotNextButtonBackgroundPressedProperty); }
+            get { return GetValue(PivotNextButtonBackgroundPressedProperty); }
             set { SetValue(PivotNextButtonBackgroundPressedProperty, value); }
         }
 
@@ -4238,7 +4238,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonBorderBrush
         {
-            get { return (object)GetValue(PivotNextButtonBorderBrushProperty); }
+            get { return GetValue(PivotNextButtonBorderBrushProperty); }
             set { SetValue(PivotNextButtonBorderBrushProperty, value); }
         }
 
@@ -4246,7 +4246,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(PivotNextButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(PivotNextButtonBorderBrushPointerOverProperty); }
             set { SetValue(PivotNextButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -4254,7 +4254,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonBorderBrushPressed
         {
-            get { return (object)GetValue(PivotNextButtonBorderBrushPressedProperty); }
+            get { return GetValue(PivotNextButtonBorderBrushPressedProperty); }
             set { SetValue(PivotNextButtonBorderBrushPressedProperty, value); }
         }
 
@@ -4262,7 +4262,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonForeground
         {
-            get { return (object)GetValue(PivotNextButtonForegroundProperty); }
+            get { return GetValue(PivotNextButtonForegroundProperty); }
             set { SetValue(PivotNextButtonForegroundProperty, value); }
         }
 
@@ -4270,7 +4270,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonForegroundPointerOver
         {
-            get { return (object)GetValue(PivotNextButtonForegroundPointerOverProperty); }
+            get { return GetValue(PivotNextButtonForegroundPointerOverProperty); }
             set { SetValue(PivotNextButtonForegroundPointerOverProperty, value); }
         }
 
@@ -4278,7 +4278,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotNextButtonForegroundPressed
         {
-            get { return (object)GetValue(PivotNextButtonForegroundPressedProperty); }
+            get { return GetValue(PivotNextButtonForegroundPressedProperty); }
             set { SetValue(PivotNextButtonForegroundPressedProperty, value); }
         }
 
@@ -4286,7 +4286,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotNextButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonBackground
         {
-            get { return (object)GetValue(PivotPreviousButtonBackgroundProperty); }
+            get { return GetValue(PivotPreviousButtonBackgroundProperty); }
             set { SetValue(PivotPreviousButtonBackgroundProperty, value); }
         }
 
@@ -4294,7 +4294,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(PivotPreviousButtonBackgroundPointerOverProperty); }
+            get { return GetValue(PivotPreviousButtonBackgroundPointerOverProperty); }
             set { SetValue(PivotPreviousButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -4302,7 +4302,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonBackgroundPressed
         {
-            get { return (object)GetValue(PivotPreviousButtonBackgroundPressedProperty); }
+            get { return GetValue(PivotPreviousButtonBackgroundPressedProperty); }
             set { SetValue(PivotPreviousButtonBackgroundPressedProperty, value); }
         }
 
@@ -4310,7 +4310,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonBorderBrush
         {
-            get { return (object)GetValue(PivotPreviousButtonBorderBrushProperty); }
+            get { return GetValue(PivotPreviousButtonBorderBrushProperty); }
             set { SetValue(PivotPreviousButtonBorderBrushProperty, value); }
         }
 
@@ -4318,7 +4318,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(PivotPreviousButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(PivotPreviousButtonBorderBrushPointerOverProperty); }
             set { SetValue(PivotPreviousButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -4326,7 +4326,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonBorderBrushPressed
         {
-            get { return (object)GetValue(PivotPreviousButtonBorderBrushPressedProperty); }
+            get { return GetValue(PivotPreviousButtonBorderBrushPressedProperty); }
             set { SetValue(PivotPreviousButtonBorderBrushPressedProperty, value); }
         }
 
@@ -4334,7 +4334,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonForeground
         {
-            get { return (object)GetValue(PivotPreviousButtonForegroundProperty); }
+            get { return GetValue(PivotPreviousButtonForegroundProperty); }
             set { SetValue(PivotPreviousButtonForegroundProperty, value); }
         }
 
@@ -4342,7 +4342,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonForegroundPointerOver
         {
-            get { return (object)GetValue(PivotPreviousButtonForegroundPointerOverProperty); }
+            get { return GetValue(PivotPreviousButtonForegroundPointerOverProperty); }
             set { SetValue(PivotPreviousButtonForegroundPointerOverProperty, value); }
         }
 
@@ -4350,7 +4350,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotPreviousButtonForegroundPressed
         {
-            get { return (object)GetValue(PivotPreviousButtonForegroundPressedProperty); }
+            get { return GetValue(PivotPreviousButtonForegroundPressedProperty); }
             set { SetValue(PivotPreviousButtonForegroundPressedProperty, value); }
         }
 
@@ -4358,7 +4358,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotPreviousButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemBackgroundUnselectedPointerOver
         {
-            get { return (object)GetValue(PivotHeaderItemBackgroundUnselectedPointerOverProperty); }
+            get { return GetValue(PivotHeaderItemBackgroundUnselectedPointerOverProperty); }
             set { SetValue(PivotHeaderItemBackgroundUnselectedPointerOverProperty, value); }
         }
 
@@ -4366,7 +4366,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemBackgroundUnselectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemBackgroundUnselectedPressed
         {
-            get { return (object)GetValue(PivotHeaderItemBackgroundUnselectedPressedProperty); }
+            get { return GetValue(PivotHeaderItemBackgroundUnselectedPressedProperty); }
             set { SetValue(PivotHeaderItemBackgroundUnselectedPressedProperty, value); }
         }
 
@@ -4374,7 +4374,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemBackgroundUnselectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemBackgroundSelected
         {
-            get { return (object)GetValue(PivotHeaderItemBackgroundSelectedProperty); }
+            get { return GetValue(PivotHeaderItemBackgroundSelectedProperty); }
             set { SetValue(PivotHeaderItemBackgroundSelectedProperty, value); }
         }
 
@@ -4382,7 +4382,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemBackgroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemBackgroundSelectedPointerOver
         {
-            get { return (object)GetValue(PivotHeaderItemBackgroundSelectedPointerOverProperty); }
+            get { return GetValue(PivotHeaderItemBackgroundSelectedPointerOverProperty); }
             set { SetValue(PivotHeaderItemBackgroundSelectedPointerOverProperty, value); }
         }
 
@@ -4390,7 +4390,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemBackgroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemBackgroundSelectedPressed
         {
-            get { return (object)GetValue(PivotHeaderItemBackgroundSelectedPressedProperty); }
+            get { return GetValue(PivotHeaderItemBackgroundSelectedPressedProperty); }
             set { SetValue(PivotHeaderItemBackgroundSelectedPressedProperty, value); }
         }
 
@@ -4398,7 +4398,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemBackgroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemForegroundUnselected
         {
-            get { return (object)GetValue(PivotHeaderItemForegroundUnselectedProperty); }
+            get { return GetValue(PivotHeaderItemForegroundUnselectedProperty); }
             set { SetValue(PivotHeaderItemForegroundUnselectedProperty, value); }
         }
 
@@ -4406,7 +4406,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemForegroundUnselected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemForegroundUnselectedPointerOver
         {
-            get { return (object)GetValue(PivotHeaderItemForegroundUnselectedPointerOverProperty); }
+            get { return GetValue(PivotHeaderItemForegroundUnselectedPointerOverProperty); }
             set { SetValue(PivotHeaderItemForegroundUnselectedPointerOverProperty, value); }
         }
 
@@ -4414,7 +4414,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemForegroundUnselectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemForegroundUnselectedPressed
         {
-            get { return (object)GetValue(PivotHeaderItemForegroundUnselectedPressedProperty); }
+            get { return GetValue(PivotHeaderItemForegroundUnselectedPressedProperty); }
             set { SetValue(PivotHeaderItemForegroundUnselectedPressedProperty, value); }
         }
 
@@ -4422,7 +4422,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemForegroundUnselectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemForegroundSelected
         {
-            get { return (object)GetValue(PivotHeaderItemForegroundSelectedProperty); }
+            get { return GetValue(PivotHeaderItemForegroundSelectedProperty); }
             set { SetValue(PivotHeaderItemForegroundSelectedProperty, value); }
         }
 
@@ -4430,7 +4430,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemForegroundSelectedPointerOver
         {
-            get { return (object)GetValue(PivotHeaderItemForegroundSelectedPointerOverProperty); }
+            get { return GetValue(PivotHeaderItemForegroundSelectedPointerOverProperty); }
             set { SetValue(PivotHeaderItemForegroundSelectedPointerOverProperty, value); }
         }
 
@@ -4438,7 +4438,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemForegroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemForegroundSelectedPressed
         {
-            get { return (object)GetValue(PivotHeaderItemForegroundSelectedPressedProperty); }
+            get { return GetValue(PivotHeaderItemForegroundSelectedPressedProperty); }
             set { SetValue(PivotHeaderItemForegroundSelectedPressedProperty, value); }
         }
 
@@ -4446,7 +4446,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemForegroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemForegroundDisabled
         {
-            get { return (object)GetValue(PivotHeaderItemForegroundDisabledProperty); }
+            get { return GetValue(PivotHeaderItemForegroundDisabledProperty); }
             set { SetValue(PivotHeaderItemForegroundDisabledProperty, value); }
         }
 
@@ -4454,7 +4454,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemFocusPipeFill
         {
-            get { return (object)GetValue(PivotHeaderItemFocusPipeFillProperty); }
+            get { return GetValue(PivotHeaderItemFocusPipeFillProperty); }
             set { SetValue(PivotHeaderItemFocusPipeFillProperty, value); }
         }
 
@@ -4462,7 +4462,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemFocusPipeFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PivotHeaderItemSelectedPipeFill
         {
-            get { return (object)GetValue(PivotHeaderItemSelectedPipeFillProperty); }
+            get { return GetValue(PivotHeaderItemSelectedPipeFillProperty); }
             set { SetValue(PivotHeaderItemSelectedPipeFillProperty, value); }
         }
 
@@ -4470,7 +4470,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PivotHeaderItemSelectedPipeFill", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewHeaderItemDividerStroke
         {
-            get { return (object)GetValue(GridViewHeaderItemDividerStrokeProperty); }
+            get { return GetValue(GridViewHeaderItemDividerStrokeProperty); }
             set { SetValue(GridViewHeaderItemDividerStrokeProperty, value); }
         }
 
@@ -4478,7 +4478,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewHeaderItemDividerStroke", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemBackgroundPointerOver
         {
-            get { return (object)GetValue(GridViewItemBackgroundPointerOverProperty); }
+            get { return GetValue(GridViewItemBackgroundPointerOverProperty); }
             set { SetValue(GridViewItemBackgroundPointerOverProperty, value); }
         }
 
@@ -4486,7 +4486,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemBackgroundPressed
         {
-            get { return (object)GetValue(GridViewItemBackgroundPressedProperty); }
+            get { return GetValue(GridViewItemBackgroundPressedProperty); }
             set { SetValue(GridViewItemBackgroundPressedProperty, value); }
         }
 
@@ -4494,7 +4494,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemBackgroundSelected
         {
-            get { return (object)GetValue(GridViewItemBackgroundSelectedProperty); }
+            get { return GetValue(GridViewItemBackgroundSelectedProperty); }
             set { SetValue(GridViewItemBackgroundSelectedProperty, value); }
         }
 
@@ -4502,7 +4502,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemBackgroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemBackgroundSelectedPointerOver
         {
-            get { return (object)GetValue(GridViewItemBackgroundSelectedPointerOverProperty); }
+            get { return GetValue(GridViewItemBackgroundSelectedPointerOverProperty); }
             set { SetValue(GridViewItemBackgroundSelectedPointerOverProperty, value); }
         }
 
@@ -4510,7 +4510,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemBackgroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemBackgroundSelectedPressed
         {
-            get { return (object)GetValue(GridViewItemBackgroundSelectedPressedProperty); }
+            get { return GetValue(GridViewItemBackgroundSelectedPressedProperty); }
             set { SetValue(GridViewItemBackgroundSelectedPressedProperty, value); }
         }
 
@@ -4518,7 +4518,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemBackgroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemForeground
         {
-            get { return (object)GetValue(GridViewItemForegroundProperty); }
+            get { return GetValue(GridViewItemForegroundProperty); }
             set { SetValue(GridViewItemForegroundProperty, value); }
         }
 
@@ -4526,7 +4526,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemForegroundPointerOver
         {
-            get { return (object)GetValue(GridViewItemForegroundPointerOverProperty); }
+            get { return GetValue(GridViewItemForegroundPointerOverProperty); }
             set { SetValue(GridViewItemForegroundPointerOverProperty, value); }
         }
 
@@ -4534,7 +4534,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemForegroundSelected
         {
-            get { return (object)GetValue(GridViewItemForegroundSelectedProperty); }
+            get { return GetValue(GridViewItemForegroundSelectedProperty); }
             set { SetValue(GridViewItemForegroundSelectedProperty, value); }
         }
 
@@ -4542,7 +4542,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemFocusVisualPrimaryBrush
         {
-            get { return (object)GetValue(GridViewItemFocusVisualPrimaryBrushProperty); }
+            get { return GetValue(GridViewItemFocusVisualPrimaryBrushProperty); }
             set { SetValue(GridViewItemFocusVisualPrimaryBrushProperty, value); }
         }
 
@@ -4550,7 +4550,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemFocusVisualPrimaryBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemFocusVisualSecondaryBrush
         {
-            get { return (object)GetValue(GridViewItemFocusVisualSecondaryBrushProperty); }
+            get { return GetValue(GridViewItemFocusVisualSecondaryBrushProperty); }
             set { SetValue(GridViewItemFocusVisualSecondaryBrushProperty, value); }
         }
 
@@ -4558,7 +4558,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemFocusVisualSecondaryBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemFocusBorderBrush
         {
-            get { return (object)GetValue(GridViewItemFocusBorderBrushProperty); }
+            get { return GetValue(GridViewItemFocusBorderBrushProperty); }
             set { SetValue(GridViewItemFocusBorderBrushProperty, value); }
         }
 
@@ -4566,7 +4566,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemFocusBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemFocusSecondaryBorderBrush
         {
-            get { return (object)GetValue(GridViewItemFocusSecondaryBorderBrushProperty); }
+            get { return GetValue(GridViewItemFocusSecondaryBorderBrushProperty); }
             set { SetValue(GridViewItemFocusSecondaryBorderBrushProperty, value); }
         }
 
@@ -4574,7 +4574,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemFocusSecondaryBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemCheckBrush
         {
-            get { return (object)GetValue(GridViewItemCheckBrushProperty); }
+            get { return GetValue(GridViewItemCheckBrushProperty); }
             set { SetValue(GridViewItemCheckBrushProperty, value); }
         }
 
@@ -4582,7 +4582,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemCheckBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemCheckBoxBrush
         {
-            get { return (object)GetValue(GridViewItemCheckBoxBrushProperty); }
+            get { return GetValue(GridViewItemCheckBoxBrushProperty); }
             set { SetValue(GridViewItemCheckBoxBrushProperty, value); }
         }
 
@@ -4590,7 +4590,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemCheckBoxBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemDragForeground
         {
-            get { return (object)GetValue(GridViewItemDragForegroundProperty); }
+            get { return GetValue(GridViewItemDragForegroundProperty); }
             set { SetValue(GridViewItemDragForegroundProperty, value); }
         }
 
@@ -4598,7 +4598,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemDragForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object GridViewItemPlaceholderBackground
         {
-            get { return (object)GetValue(GridViewItemPlaceholderBackgroundProperty); }
+            get { return GetValue(GridViewItemPlaceholderBackgroundProperty); }
             set { SetValue(GridViewItemPlaceholderBackgroundProperty, value); }
         }
 
@@ -4606,7 +4606,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("GridViewItemPlaceholderBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MediaTransportControlsPanelBackground
         {
-            get { return (object)GetValue(MediaTransportControlsPanelBackgroundProperty); }
+            get { return GetValue(MediaTransportControlsPanelBackgroundProperty); }
             set { SetValue(MediaTransportControlsPanelBackgroundProperty, value); }
         }
 
@@ -4614,7 +4614,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MediaTransportControlsPanelBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MediaTransportControlsFlyoutBackground
         {
-            get { return (object)GetValue(MediaTransportControlsFlyoutBackgroundProperty); }
+            get { return GetValue(MediaTransportControlsFlyoutBackgroundProperty); }
             set { SetValue(MediaTransportControlsFlyoutBackgroundProperty, value); }
         }
 
@@ -4622,7 +4622,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MediaTransportControlsFlyoutBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarLightDismissOverlayBackground
         {
-            get { return (object)GetValue(AppBarLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(AppBarLightDismissOverlayBackgroundProperty); }
             set { SetValue(AppBarLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4630,7 +4630,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CalendarDatePickerLightDismissOverlayBackground
         {
-            get { return (object)GetValue(CalendarDatePickerLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(CalendarDatePickerLightDismissOverlayBackgroundProperty); }
             set { SetValue(CalendarDatePickerLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4638,7 +4638,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CalendarDatePickerLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ComboBoxLightDismissOverlayBackground
         {
-            get { return (object)GetValue(ComboBoxLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(ComboBoxLightDismissOverlayBackgroundProperty); }
             set { SetValue(ComboBoxLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4646,7 +4646,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ComboBoxLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object DatePickerLightDismissOverlayBackground
         {
-            get { return (object)GetValue(DatePickerLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(DatePickerLightDismissOverlayBackgroundProperty); }
             set { SetValue(DatePickerLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4654,7 +4654,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("DatePickerLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object FlyoutLightDismissOverlayBackground
         {
-            get { return (object)GetValue(FlyoutLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(FlyoutLightDismissOverlayBackgroundProperty); }
             set { SetValue(FlyoutLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4662,7 +4662,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("FlyoutLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object PopupLightDismissOverlayBackground
         {
-            get { return (object)GetValue(PopupLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(PopupLightDismissOverlayBackgroundProperty); }
             set { SetValue(PopupLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4670,7 +4670,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("PopupLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitViewLightDismissOverlayBackground
         {
-            get { return (object)GetValue(SplitViewLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(SplitViewLightDismissOverlayBackgroundProperty); }
             set { SetValue(SplitViewLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4678,7 +4678,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitViewLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TimePickerLightDismissOverlayBackground
         {
-            get { return (object)GetValue(TimePickerLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(TimePickerLightDismissOverlayBackgroundProperty); }
             set { SetValue(TimePickerLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4686,7 +4686,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TimePickerLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object JumpListDefaultEnabledBackground
         {
-            get { return (object)GetValue(JumpListDefaultEnabledBackgroundProperty); }
+            get { return GetValue(JumpListDefaultEnabledBackgroundProperty); }
             set { SetValue(JumpListDefaultEnabledBackgroundProperty, value); }
         }
 
@@ -4694,7 +4694,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("JumpListDefaultEnabledBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object JumpListDefaultEnabledForeground
         {
-            get { return (object)GetValue(JumpListDefaultEnabledForegroundProperty); }
+            get { return GetValue(JumpListDefaultEnabledForegroundProperty); }
             set { SetValue(JumpListDefaultEnabledForegroundProperty, value); }
         }
 
@@ -4702,7 +4702,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("JumpListDefaultEnabledForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object JumpListDefaultDisabledBackground
         {
-            get { return (object)GetValue(JumpListDefaultDisabledBackgroundProperty); }
+            get { return GetValue(JumpListDefaultDisabledBackgroundProperty); }
             set { SetValue(JumpListDefaultDisabledBackgroundProperty, value); }
         }
 
@@ -4710,7 +4710,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("JumpListDefaultDisabledBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object JumpListDefaultDisabledForeground
         {
-            get { return (object)GetValue(JumpListDefaultDisabledForegroundProperty); }
+            get { return GetValue(JumpListDefaultDisabledForegroundProperty); }
             set { SetValue(JumpListDefaultDisabledForegroundProperty, value); }
         }
 
@@ -4718,7 +4718,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("JumpListDefaultDisabledForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object KeyTipForeground
         {
-            get { return (object)GetValue(KeyTipForegroundProperty); }
+            get { return GetValue(KeyTipForegroundProperty); }
             set { SetValue(KeyTipForegroundProperty, value); }
         }
 
@@ -4726,7 +4726,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("KeyTipForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object KeyTipBackground
         {
-            get { return (object)GetValue(KeyTipBackgroundProperty); }
+            get { return GetValue(KeyTipBackgroundProperty); }
             set { SetValue(KeyTipBackgroundProperty, value); }
         }
 
@@ -4734,7 +4734,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("KeyTipBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object KeyTipBorderBrush
         {
-            get { return (object)GetValue(KeyTipBorderBrushProperty); }
+            get { return GetValue(KeyTipBorderBrushProperty); }
             set { SetValue(KeyTipBorderBrushProperty, value); }
         }
 
@@ -4742,7 +4742,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("KeyTipBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutPresenterBackground
         {
-            get { return (object)GetValue(MenuFlyoutPresenterBackgroundProperty); }
+            get { return GetValue(MenuFlyoutPresenterBackgroundProperty); }
             set { SetValue(MenuFlyoutPresenterBackgroundProperty, value); }
         }
 
@@ -4750,7 +4750,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutPresenterBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutPresenterBorderBrush
         {
-            get { return (object)GetValue(MenuFlyoutPresenterBorderBrushProperty); }
+            get { return GetValue(MenuFlyoutPresenterBorderBrushProperty); }
             set { SetValue(MenuFlyoutPresenterBorderBrushProperty, value); }
         }
 
@@ -4758,7 +4758,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutPresenterBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemBackgroundPointerOver
         {
-            get { return (object)GetValue(MenuFlyoutItemBackgroundPointerOverProperty); }
+            get { return GetValue(MenuFlyoutItemBackgroundPointerOverProperty); }
             set { SetValue(MenuFlyoutItemBackgroundPointerOverProperty, value); }
         }
 
@@ -4766,7 +4766,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemBackgroundPressed
         {
-            get { return (object)GetValue(MenuFlyoutItemBackgroundPressedProperty); }
+            get { return GetValue(MenuFlyoutItemBackgroundPressedProperty); }
             set { SetValue(MenuFlyoutItemBackgroundPressedProperty, value); }
         }
 
@@ -4774,7 +4774,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemForeground
         {
-            get { return (object)GetValue(MenuFlyoutItemForegroundProperty); }
+            get { return GetValue(MenuFlyoutItemForegroundProperty); }
             set { SetValue(MenuFlyoutItemForegroundProperty, value); }
         }
 
@@ -4782,7 +4782,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemForegroundPointerOver
         {
-            get { return (object)GetValue(MenuFlyoutItemForegroundPointerOverProperty); }
+            get { return GetValue(MenuFlyoutItemForegroundPointerOverProperty); }
             set { SetValue(MenuFlyoutItemForegroundPointerOverProperty, value); }
         }
 
@@ -4790,7 +4790,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemForegroundPressed
         {
-            get { return (object)GetValue(MenuFlyoutItemForegroundPressedProperty); }
+            get { return GetValue(MenuFlyoutItemForegroundPressedProperty); }
             set { SetValue(MenuFlyoutItemForegroundPressedProperty, value); }
         }
 
@@ -4798,7 +4798,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemForegroundDisabled
         {
-            get { return (object)GetValue(MenuFlyoutItemForegroundDisabledProperty); }
+            get { return GetValue(MenuFlyoutItemForegroundDisabledProperty); }
             set { SetValue(MenuFlyoutItemForegroundDisabledProperty, value); }
         }
 
@@ -4806,7 +4806,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemBackgroundPointerOver
         {
-            get { return (object)GetValue(MenuFlyoutSubItemBackgroundPointerOverProperty); }
+            get { return GetValue(MenuFlyoutSubItemBackgroundPointerOverProperty); }
             set { SetValue(MenuFlyoutSubItemBackgroundPointerOverProperty, value); }
         }
 
@@ -4814,7 +4814,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemBackgroundPressed
         {
-            get { return (object)GetValue(MenuFlyoutSubItemBackgroundPressedProperty); }
+            get { return GetValue(MenuFlyoutSubItemBackgroundPressedProperty); }
             set { SetValue(MenuFlyoutSubItemBackgroundPressedProperty, value); }
         }
 
@@ -4822,7 +4822,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemBackgroundSubMenuOpened
         {
-            get { return (object)GetValue(MenuFlyoutSubItemBackgroundSubMenuOpenedProperty); }
+            get { return GetValue(MenuFlyoutSubItemBackgroundSubMenuOpenedProperty); }
             set { SetValue(MenuFlyoutSubItemBackgroundSubMenuOpenedProperty, value); }
         }
 
@@ -4830,7 +4830,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemBackgroundSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemForeground
         {
-            get { return (object)GetValue(MenuFlyoutSubItemForegroundProperty); }
+            get { return GetValue(MenuFlyoutSubItemForegroundProperty); }
             set { SetValue(MenuFlyoutSubItemForegroundProperty, value); }
         }
 
@@ -4838,7 +4838,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemForegroundPointerOver
         {
-            get { return (object)GetValue(MenuFlyoutSubItemForegroundPointerOverProperty); }
+            get { return GetValue(MenuFlyoutSubItemForegroundPointerOverProperty); }
             set { SetValue(MenuFlyoutSubItemForegroundPointerOverProperty, value); }
         }
 
@@ -4846,7 +4846,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemForegroundPressed
         {
-            get { return (object)GetValue(MenuFlyoutSubItemForegroundPressedProperty); }
+            get { return GetValue(MenuFlyoutSubItemForegroundPressedProperty); }
             set { SetValue(MenuFlyoutSubItemForegroundPressedProperty, value); }
         }
 
@@ -4854,7 +4854,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemForegroundSubMenuOpened
         {
-            get { return (object)GetValue(MenuFlyoutSubItemForegroundSubMenuOpenedProperty); }
+            get { return GetValue(MenuFlyoutSubItemForegroundSubMenuOpenedProperty); }
             set { SetValue(MenuFlyoutSubItemForegroundSubMenuOpenedProperty, value); }
         }
 
@@ -4862,7 +4862,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemForegroundSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemForegroundDisabled
         {
-            get { return (object)GetValue(MenuFlyoutSubItemForegroundDisabledProperty); }
+            get { return GetValue(MenuFlyoutSubItemForegroundDisabledProperty); }
             set { SetValue(MenuFlyoutSubItemForegroundDisabledProperty, value); }
         }
 
@@ -4870,7 +4870,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemChevron
         {
-            get { return (object)GetValue(MenuFlyoutSubItemChevronProperty); }
+            get { return GetValue(MenuFlyoutSubItemChevronProperty); }
             set { SetValue(MenuFlyoutSubItemChevronProperty, value); }
         }
 
@@ -4878,7 +4878,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemChevron", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemChevronPointerOver
         {
-            get { return (object)GetValue(MenuFlyoutSubItemChevronPointerOverProperty); }
+            get { return GetValue(MenuFlyoutSubItemChevronPointerOverProperty); }
             set { SetValue(MenuFlyoutSubItemChevronPointerOverProperty, value); }
         }
 
@@ -4886,7 +4886,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemChevronPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemChevronPressed
         {
-            get { return (object)GetValue(MenuFlyoutSubItemChevronPressedProperty); }
+            get { return GetValue(MenuFlyoutSubItemChevronPressedProperty); }
             set { SetValue(MenuFlyoutSubItemChevronPressedProperty, value); }
         }
 
@@ -4894,7 +4894,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemChevronPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemChevronSubMenuOpened
         {
-            get { return (object)GetValue(MenuFlyoutSubItemChevronSubMenuOpenedProperty); }
+            get { return GetValue(MenuFlyoutSubItemChevronSubMenuOpenedProperty); }
             set { SetValue(MenuFlyoutSubItemChevronSubMenuOpenedProperty, value); }
         }
 
@@ -4902,7 +4902,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemChevronSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutSubItemChevronDisabled
         {
-            get { return (object)GetValue(MenuFlyoutSubItemChevronDisabledProperty); }
+            get { return GetValue(MenuFlyoutSubItemChevronDisabledProperty); }
             set { SetValue(MenuFlyoutSubItemChevronDisabledProperty, value); }
         }
 
@@ -4910,7 +4910,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutSubItemChevronDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutLightDismissOverlayBackground
         {
-            get { return (object)GetValue(MenuFlyoutLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(MenuFlyoutLightDismissOverlayBackgroundProperty); }
             set { SetValue(MenuFlyoutLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -4918,7 +4918,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RatingControlUnselectedForeground
         {
-            get { return (object)GetValue(RatingControlUnselectedForegroundProperty); }
+            get { return GetValue(RatingControlUnselectedForegroundProperty); }
             set { SetValue(RatingControlUnselectedForegroundProperty, value); }
         }
 
@@ -4926,7 +4926,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RatingControlUnselectedForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RatingControlSelectedForeground
         {
-            get { return (object)GetValue(RatingControlSelectedForegroundProperty); }
+            get { return GetValue(RatingControlSelectedForegroundProperty); }
             set { SetValue(RatingControlSelectedForegroundProperty, value); }
         }
 
@@ -4934,7 +4934,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RatingControlSelectedForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RatingControlPlaceholderForeground
         {
-            get { return (object)GetValue(RatingControlPlaceholderForegroundProperty); }
+            get { return GetValue(RatingControlPlaceholderForegroundProperty); }
             set { SetValue(RatingControlPlaceholderForegroundProperty, value); }
         }
 
@@ -4942,7 +4942,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RatingControlPlaceholderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RatingControlPointerOverPlaceholderForeground
         {
-            get { return (object)GetValue(RatingControlPointerOverPlaceholderForegroundProperty); }
+            get { return GetValue(RatingControlPointerOverPlaceholderForegroundProperty); }
             set { SetValue(RatingControlPointerOverPlaceholderForegroundProperty, value); }
         }
 
@@ -4950,7 +4950,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RatingControlPointerOverPlaceholderForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RatingControlPointerOverUnselectedForeground
         {
-            get { return (object)GetValue(RatingControlPointerOverUnselectedForegroundProperty); }
+            get { return GetValue(RatingControlPointerOverUnselectedForegroundProperty); }
             set { SetValue(RatingControlPointerOverUnselectedForegroundProperty, value); }
         }
 
@@ -4958,7 +4958,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RatingControlPointerOverUnselectedForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RatingControlPointerOverSelectedForeground
         {
-            get { return (object)GetValue(RatingControlPointerOverSelectedForegroundProperty); }
+            get { return GetValue(RatingControlPointerOverSelectedForegroundProperty); }
             set { SetValue(RatingControlPointerOverSelectedForegroundProperty, value); }
         }
 
@@ -4966,7 +4966,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RatingControlPointerOverSelectedForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RatingControlDisabledSelectedForeground
         {
-            get { return (object)GetValue(RatingControlDisabledSelectedForegroundProperty); }
+            get { return GetValue(RatingControlDisabledSelectedForegroundProperty); }
             set { SetValue(RatingControlDisabledSelectedForegroundProperty, value); }
         }
 
@@ -4974,7 +4974,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RatingControlDisabledSelectedForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object RatingControlCaptionForeground
         {
-            get { return (object)GetValue(RatingControlCaptionForegroundProperty); }
+            get { return GetValue(RatingControlCaptionForegroundProperty); }
             set { SetValue(RatingControlCaptionForegroundProperty, value); }
         }
 
@@ -4982,7 +4982,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("RatingControlCaptionForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForeground
         {
-            get { return (object)GetValue(NavigationViewItemForegroundProperty); }
+            get { return GetValue(NavigationViewItemForegroundProperty); }
             set { SetValue(NavigationViewItemForegroundProperty, value); }
         }
 
@@ -4990,7 +4990,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundPointerOver
         {
-            get { return (object)GetValue(NavigationViewItemForegroundPointerOverProperty); }
+            get { return GetValue(NavigationViewItemForegroundPointerOverProperty); }
             set { SetValue(NavigationViewItemForegroundPointerOverProperty, value); }
         }
 
@@ -4998,7 +4998,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundPressed
         {
-            get { return (object)GetValue(NavigationViewItemForegroundPressedProperty); }
+            get { return GetValue(NavigationViewItemForegroundPressedProperty); }
             set { SetValue(NavigationViewItemForegroundPressedProperty, value); }
         }
 
@@ -5006,7 +5006,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundDisabled
         {
-            get { return (object)GetValue(NavigationViewItemForegroundDisabledProperty); }
+            get { return GetValue(NavigationViewItemForegroundDisabledProperty); }
             set { SetValue(NavigationViewItemForegroundDisabledProperty, value); }
         }
 
@@ -5014,7 +5014,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundChecked
         {
-            get { return (object)GetValue(NavigationViewItemForegroundCheckedProperty); }
+            get { return GetValue(NavigationViewItemForegroundCheckedProperty); }
             set { SetValue(NavigationViewItemForegroundCheckedProperty, value); }
         }
 
@@ -5022,7 +5022,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(NavigationViewItemForegroundCheckedPointerOverProperty); }
+            get { return GetValue(NavigationViewItemForegroundCheckedPointerOverProperty); }
             set { SetValue(NavigationViewItemForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -5030,7 +5030,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundCheckedPressed
         {
-            get { return (object)GetValue(NavigationViewItemForegroundCheckedPressedProperty); }
+            get { return GetValue(NavigationViewItemForegroundCheckedPressedProperty); }
             set { SetValue(NavigationViewItemForegroundCheckedPressedProperty, value); }
         }
 
@@ -5038,7 +5038,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundCheckedDisabled
         {
-            get { return (object)GetValue(NavigationViewItemForegroundCheckedDisabledProperty); }
+            get { return GetValue(NavigationViewItemForegroundCheckedDisabledProperty); }
             set { SetValue(NavigationViewItemForegroundCheckedDisabledProperty, value); }
         }
 
@@ -5046,7 +5046,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundSelected
         {
-            get { return (object)GetValue(NavigationViewItemForegroundSelectedProperty); }
+            get { return GetValue(NavigationViewItemForegroundSelectedProperty); }
             set { SetValue(NavigationViewItemForegroundSelectedProperty, value); }
         }
 
@@ -5054,7 +5054,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundSelectedPointerOver
         {
-            get { return (object)GetValue(NavigationViewItemForegroundSelectedPointerOverProperty); }
+            get { return GetValue(NavigationViewItemForegroundSelectedPointerOverProperty); }
             set { SetValue(NavigationViewItemForegroundSelectedPointerOverProperty, value); }
         }
 
@@ -5062,7 +5062,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundSelectedPressed
         {
-            get { return (object)GetValue(NavigationViewItemForegroundSelectedPressedProperty); }
+            get { return GetValue(NavigationViewItemForegroundSelectedPressedProperty); }
             set { SetValue(NavigationViewItemForegroundSelectedPressedProperty, value); }
         }
 
@@ -5070,7 +5070,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewItemForegroundSelectedDisabled
         {
-            get { return (object)GetValue(NavigationViewItemForegroundSelectedDisabledProperty); }
+            get { return GetValue(NavigationViewItemForegroundSelectedDisabledProperty); }
             set { SetValue(NavigationViewItemForegroundSelectedDisabledProperty, value); }
         }
 
@@ -5078,7 +5078,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewItemForegroundSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object NavigationViewSelectionIndicatorForeground
         {
-            get { return (object)GetValue(NavigationViewSelectionIndicatorForegroundProperty); }
+            get { return GetValue(NavigationViewSelectionIndicatorForegroundProperty); }
             set { SetValue(NavigationViewSelectionIndicatorForegroundProperty, value); }
         }
 
@@ -5086,7 +5086,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("NavigationViewSelectionIndicatorForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TopNavigationViewItemForeground
         {
-            get { return (object)GetValue(TopNavigationViewItemForegroundProperty); }
+            get { return GetValue(TopNavigationViewItemForegroundProperty); }
             set { SetValue(TopNavigationViewItemForegroundProperty, value); }
         }
 
@@ -5094,7 +5094,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TopNavigationViewItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TopNavigationViewItemForegroundPointerOver
         {
-            get { return (object)GetValue(TopNavigationViewItemForegroundPointerOverProperty); }
+            get { return GetValue(TopNavigationViewItemForegroundPointerOverProperty); }
             set { SetValue(TopNavigationViewItemForegroundPointerOverProperty, value); }
         }
 
@@ -5102,7 +5102,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TopNavigationViewItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TopNavigationViewItemForegroundPressed
         {
-            get { return (object)GetValue(TopNavigationViewItemForegroundPressedProperty); }
+            get { return GetValue(TopNavigationViewItemForegroundPressedProperty); }
             set { SetValue(TopNavigationViewItemForegroundPressedProperty, value); }
         }
 
@@ -5110,7 +5110,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TopNavigationViewItemForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TopNavigationViewItemForegroundSelected
         {
-            get { return (object)GetValue(TopNavigationViewItemForegroundSelectedProperty); }
+            get { return GetValue(TopNavigationViewItemForegroundSelectedProperty); }
             set { SetValue(TopNavigationViewItemForegroundSelectedProperty, value); }
         }
 
@@ -5118,7 +5118,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TopNavigationViewItemForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TopNavigationViewItemForegroundDisabled
         {
-            get { return (object)GetValue(TopNavigationViewItemForegroundDisabledProperty); }
+            get { return GetValue(TopNavigationViewItemForegroundDisabledProperty); }
             set { SetValue(TopNavigationViewItemForegroundDisabledProperty, value); }
         }
 
@@ -5126,7 +5126,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TopNavigationViewItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ColorPickerSliderThumbBackground
         {
-            get { return (object)GetValue(ColorPickerSliderThumbBackgroundProperty); }
+            get { return GetValue(ColorPickerSliderThumbBackgroundProperty); }
             set { SetValue(ColorPickerSliderThumbBackgroundProperty, value); }
         }
 
@@ -5134,7 +5134,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ColorPickerSliderThumbBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ColorPickerSliderThumbBackgroundPointerOver
         {
-            get { return (object)GetValue(ColorPickerSliderThumbBackgroundPointerOverProperty); }
+            get { return GetValue(ColorPickerSliderThumbBackgroundPointerOverProperty); }
             set { SetValue(ColorPickerSliderThumbBackgroundPointerOverProperty, value); }
         }
 
@@ -5142,7 +5142,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ColorPickerSliderThumbBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ColorPickerSliderThumbBackgroundPressed
         {
-            get { return (object)GetValue(ColorPickerSliderThumbBackgroundPressedProperty); }
+            get { return GetValue(ColorPickerSliderThumbBackgroundPressedProperty); }
             set { SetValue(ColorPickerSliderThumbBackgroundPressedProperty, value); }
         }
 
@@ -5150,7 +5150,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ColorPickerSliderThumbBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ColorPickerSliderThumbBackgroundDisabled
         {
-            get { return (object)GetValue(ColorPickerSliderThumbBackgroundDisabledProperty); }
+            get { return GetValue(ColorPickerSliderThumbBackgroundDisabledProperty); }
             set { SetValue(ColorPickerSliderThumbBackgroundDisabledProperty, value); }
         }
 
@@ -5158,7 +5158,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ColorPickerSliderThumbBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ColorPickerSliderTrackFillDisabled
         {
-            get { return (object)GetValue(ColorPickerSliderTrackFillDisabledProperty); }
+            get { return GetValue(ColorPickerSliderTrackFillDisabledProperty); }
             set { SetValue(ColorPickerSliderTrackFillDisabledProperty, value); }
         }
 
@@ -5166,7 +5166,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ColorPickerSliderTrackFillDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuBarItemBackgroundPointerOver
         {
-            get { return (object)GetValue(MenuBarItemBackgroundPointerOverProperty); }
+            get { return GetValue(MenuBarItemBackgroundPointerOverProperty); }
             set { SetValue(MenuBarItemBackgroundPointerOverProperty, value); }
         }
 
@@ -5174,7 +5174,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuBarItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuBarItemBackgroundPressed
         {
-            get { return (object)GetValue(MenuBarItemBackgroundPressedProperty); }
+            get { return GetValue(MenuBarItemBackgroundPressedProperty); }
             set { SetValue(MenuBarItemBackgroundPressedProperty, value); }
         }
 
@@ -5182,7 +5182,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuBarItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuBarItemBackgroundSelected
         {
-            get { return (object)GetValue(MenuBarItemBackgroundSelectedProperty); }
+            get { return GetValue(MenuBarItemBackgroundSelectedProperty); }
             set { SetValue(MenuBarItemBackgroundSelectedProperty, value); }
         }
 
@@ -5190,7 +5190,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuBarItemBackgroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuBarItemBorderBrush
         {
-            get { return (object)GetValue(MenuBarItemBorderBrushProperty); }
+            get { return GetValue(MenuBarItemBorderBrushProperty); }
             set { SetValue(MenuBarItemBorderBrushProperty, value); }
         }
 
@@ -5198,7 +5198,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuBarItemBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuBarItemBorderBrushPointerOver
         {
-            get { return (object)GetValue(MenuBarItemBorderBrushPointerOverProperty); }
+            get { return GetValue(MenuBarItemBorderBrushPointerOverProperty); }
             set { SetValue(MenuBarItemBorderBrushPointerOverProperty, value); }
         }
 
@@ -5206,7 +5206,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuBarItemBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuBarItemBorderBrushPressed
         {
-            get { return (object)GetValue(MenuBarItemBorderBrushPressedProperty); }
+            get { return GetValue(MenuBarItemBorderBrushPressedProperty); }
             set { SetValue(MenuBarItemBorderBrushPressedProperty, value); }
         }
 
@@ -5214,7 +5214,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuBarItemBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuBarItemBorderBrushSelected
         {
-            get { return (object)GetValue(MenuBarItemBorderBrushSelectedProperty); }
+            get { return GetValue(MenuBarItemBorderBrushSelectedProperty); }
             set { SetValue(MenuBarItemBorderBrushSelectedProperty, value); }
         }
 
@@ -5222,7 +5222,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuBarItemBorderBrushSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(AppBarButtonBackgroundPointerOverProperty); }
+            get { return GetValue(AppBarButtonBackgroundPointerOverProperty); }
             set { SetValue(AppBarButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -5230,7 +5230,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonBackgroundPressed
         {
-            get { return (object)GetValue(AppBarButtonBackgroundPressedProperty); }
+            get { return GetValue(AppBarButtonBackgroundPressedProperty); }
             set { SetValue(AppBarButtonBackgroundPressedProperty, value); }
         }
 
@@ -5238,7 +5238,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonForeground
         {
-            get { return (object)GetValue(AppBarButtonForegroundProperty); }
+            get { return GetValue(AppBarButtonForegroundProperty); }
             set { SetValue(AppBarButtonForegroundProperty, value); }
         }
 
@@ -5246,7 +5246,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonForegroundPointerOver
         {
-            get { return (object)GetValue(AppBarButtonForegroundPointerOverProperty); }
+            get { return GetValue(AppBarButtonForegroundPointerOverProperty); }
             set { SetValue(AppBarButtonForegroundPointerOverProperty, value); }
         }
 
@@ -5254,7 +5254,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonForegroundPressed
         {
-            get { return (object)GetValue(AppBarButtonForegroundPressedProperty); }
+            get { return GetValue(AppBarButtonForegroundPressedProperty); }
             set { SetValue(AppBarButtonForegroundPressedProperty, value); }
         }
 
@@ -5262,7 +5262,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonForegroundDisabled
         {
-            get { return (object)GetValue(AppBarButtonForegroundDisabledProperty); }
+            get { return GetValue(AppBarButtonForegroundDisabledProperty); }
             set { SetValue(AppBarButtonForegroundDisabledProperty, value); }
         }
 
@@ -5270,7 +5270,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundChecked
         {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundCheckedProperty); }
+            get { return GetValue(AppBarToggleButtonBackgroundCheckedProperty); }
             set { SetValue(AppBarToggleButtonBackgroundCheckedProperty, value); }
         }
 
@@ -5278,7 +5278,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonBackgroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundCheckedPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundCheckedPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonBackgroundCheckedPointerOverProperty); }
             set { SetValue(AppBarToggleButtonBackgroundCheckedPointerOverProperty, value); }
         }
 
@@ -5286,7 +5286,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonBackgroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundCheckedPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundCheckedPressedProperty); }
+            get { return GetValue(AppBarToggleButtonBackgroundCheckedPressedProperty); }
             set { SetValue(AppBarToggleButtonBackgroundCheckedPressedProperty, value); }
         }
 
@@ -5294,7 +5294,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonBackgroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundCheckedDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundCheckedDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonBackgroundCheckedDisabledProperty); }
             set { SetValue(AppBarToggleButtonBackgroundCheckedDisabledProperty, value); }
         }
 
@@ -5302,7 +5302,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonBackgroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundHighLightOverlayPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundHighLightOverlayPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonBackgroundHighLightOverlayPointerOverProperty); }
             set { SetValue(AppBarToggleButtonBackgroundHighLightOverlayPointerOverProperty, value); }
         }
 
@@ -5310,7 +5310,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonBackgroundHighLightOverlayPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundHighLightOverlayPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundHighLightOverlayPressedProperty); }
+            get { return GetValue(AppBarToggleButtonBackgroundHighLightOverlayPressedProperty); }
             set { SetValue(AppBarToggleButtonBackgroundHighLightOverlayPressedProperty, value); }
         }
 
@@ -5318,7 +5318,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonBackgroundHighLightOverlayPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOverProperty); }
             set { SetValue(AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOverProperty, value); }
         }
 
@@ -5326,7 +5326,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonBackgroundHighLightOverlayCheckedPressedProperty); }
+            get { return GetValue(AppBarToggleButtonBackgroundHighLightOverlayCheckedPressedProperty); }
             set { SetValue(AppBarToggleButtonBackgroundHighLightOverlayCheckedPressedProperty, value); }
         }
 
@@ -5334,7 +5334,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonForeground
         {
-            get { return (object)GetValue(AppBarToggleButtonForegroundProperty); }
+            get { return GetValue(AppBarToggleButtonForegroundProperty); }
             set { SetValue(AppBarToggleButtonForegroundProperty, value); }
         }
 
@@ -5342,7 +5342,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonForegroundPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonForegroundPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonForegroundPointerOverProperty); }
             set { SetValue(AppBarToggleButtonForegroundPointerOverProperty, value); }
         }
 
@@ -5350,7 +5350,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonForegroundPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonForegroundPressedProperty); }
+            get { return GetValue(AppBarToggleButtonForegroundPressedProperty); }
             set { SetValue(AppBarToggleButtonForegroundPressedProperty, value); }
         }
 
@@ -5358,7 +5358,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonForegroundDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonForegroundDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonForegroundDisabledProperty); }
             set { SetValue(AppBarToggleButtonForegroundDisabledProperty, value); }
         }
 
@@ -5366,7 +5366,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonForegroundChecked
         {
-            get { return (object)GetValue(AppBarToggleButtonForegroundCheckedProperty); }
+            get { return GetValue(AppBarToggleButtonForegroundCheckedProperty); }
             set { SetValue(AppBarToggleButtonForegroundCheckedProperty, value); }
         }
 
@@ -5374,7 +5374,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonForegroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonForegroundCheckedPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonForegroundCheckedPointerOverProperty); }
             set { SetValue(AppBarToggleButtonForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -5382,7 +5382,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonForegroundCheckedPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonForegroundCheckedPressedProperty); }
+            get { return GetValue(AppBarToggleButtonForegroundCheckedPressedProperty); }
             set { SetValue(AppBarToggleButtonForegroundCheckedPressedProperty, value); }
         }
 
@@ -5390,7 +5390,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonForegroundCheckedDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonForegroundCheckedDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonForegroundCheckedDisabledProperty); }
             set { SetValue(AppBarToggleButtonForegroundCheckedDisabledProperty, value); }
         }
 
@@ -5398,7 +5398,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForeground
         {
-            get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundProperty); }
+            get { return GetValue(AppBarToggleButtonCheckGlyphForegroundProperty); }
             set { SetValue(AppBarToggleButtonCheckGlyphForegroundProperty, value); }
         }
 
@@ -5406,7 +5406,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonCheckGlyphForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForegroundPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonCheckGlyphForegroundPointerOverProperty); }
             set { SetValue(AppBarToggleButtonCheckGlyphForegroundPointerOverProperty, value); }
         }
 
@@ -5414,7 +5414,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonCheckGlyphForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForegroundPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundPressedProperty); }
+            get { return GetValue(AppBarToggleButtonCheckGlyphForegroundPressedProperty); }
             set { SetValue(AppBarToggleButtonCheckGlyphForegroundPressedProperty, value); }
         }
 
@@ -5422,7 +5422,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonCheckGlyphForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForegroundDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonCheckGlyphForegroundDisabledProperty); }
             set { SetValue(AppBarToggleButtonCheckGlyphForegroundDisabledProperty, value); }
         }
 
@@ -5430,7 +5430,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonCheckGlyphForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForegroundChecked
         {
-            get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundCheckedProperty); }
+            get { return GetValue(AppBarToggleButtonCheckGlyphForegroundCheckedProperty); }
             set { SetValue(AppBarToggleButtonCheckGlyphForegroundCheckedProperty, value); }
         }
 
@@ -5438,7 +5438,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonCheckGlyphForegroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundCheckedPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonCheckGlyphForegroundCheckedPointerOverProperty); }
             set { SetValue(AppBarToggleButtonCheckGlyphForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -5446,7 +5446,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForegroundCheckedPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundCheckedPressedProperty); }
+            get { return GetValue(AppBarToggleButtonCheckGlyphForegroundCheckedPressedProperty); }
             set { SetValue(AppBarToggleButtonCheckGlyphForegroundCheckedPressedProperty, value); }
         }
 
@@ -5454,7 +5454,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonCheckGlyphForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonCheckGlyphForegroundCheckedDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonCheckGlyphForegroundCheckedDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonCheckGlyphForegroundCheckedDisabledProperty); }
             set { SetValue(AppBarToggleButtonCheckGlyphForegroundCheckedDisabledProperty, value); }
         }
 
@@ -5462,7 +5462,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonCheckGlyphForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonOverflowLabelForegroundPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonOverflowLabelForegroundPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonOverflowLabelForegroundPointerOverProperty); }
             set { SetValue(AppBarToggleButtonOverflowLabelForegroundPointerOverProperty, value); }
         }
 
@@ -5470,7 +5470,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonOverflowLabelForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonOverflowLabelForegroundPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonOverflowLabelForegroundPressedProperty); }
+            get { return GetValue(AppBarToggleButtonOverflowLabelForegroundPressedProperty); }
             set { SetValue(AppBarToggleButtonOverflowLabelForegroundPressedProperty, value); }
         }
 
@@ -5478,7 +5478,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonOverflowLabelForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonOverflowLabelForegroundDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonOverflowLabelForegroundDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonOverflowLabelForegroundDisabledProperty); }
             set { SetValue(AppBarToggleButtonOverflowLabelForegroundDisabledProperty, value); }
         }
 
@@ -5486,7 +5486,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonOverflowLabelForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonOverflowLabelForegroundCheckedPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonOverflowLabelForegroundCheckedPointerOverProperty); }
             set { SetValue(AppBarToggleButtonOverflowLabelForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -5494,7 +5494,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonOverflowLabelForegroundCheckedPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonOverflowLabelForegroundCheckedPressedProperty); }
+            get { return GetValue(AppBarToggleButtonOverflowLabelForegroundCheckedPressedProperty); }
             set { SetValue(AppBarToggleButtonOverflowLabelForegroundCheckedPressedProperty, value); }
         }
 
@@ -5502,7 +5502,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonOverflowLabelForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonOverflowLabelForegroundCheckedDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonOverflowLabelForegroundCheckedDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonOverflowLabelForegroundCheckedDisabledProperty); }
             set { SetValue(AppBarToggleButtonOverflowLabelForegroundCheckedDisabledProperty, value); }
         }
 
@@ -5510,7 +5510,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonOverflowLabelForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CommandBarBackground
         {
-            get { return (object)GetValue(CommandBarBackgroundProperty); }
+            get { return GetValue(CommandBarBackgroundProperty); }
             set { SetValue(CommandBarBackgroundProperty, value); }
         }
 
@@ -5518,7 +5518,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CommandBarBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CommandBarForeground
         {
-            get { return (object)GetValue(CommandBarForegroundProperty); }
+            get { return GetValue(CommandBarForegroundProperty); }
             set { SetValue(CommandBarForegroundProperty, value); }
         }
 
@@ -5526,7 +5526,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CommandBarForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CommandBarHighContrastBorder
         {
-            get { return (object)GetValue(CommandBarHighContrastBorderProperty); }
+            get { return GetValue(CommandBarHighContrastBorderProperty); }
             set { SetValue(CommandBarHighContrastBorderProperty, value); }
         }
 
@@ -5534,7 +5534,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CommandBarHighContrastBorder", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CommandBarEllipsisIconForegroundDisabled
         {
-            get { return (object)GetValue(CommandBarEllipsisIconForegroundDisabledProperty); }
+            get { return GetValue(CommandBarEllipsisIconForegroundDisabledProperty); }
             set { SetValue(CommandBarEllipsisIconForegroundDisabledProperty, value); }
         }
 
@@ -5542,7 +5542,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CommandBarEllipsisIconForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CommandBarOverflowPresenterBackground
         {
-            get { return (object)GetValue(CommandBarOverflowPresenterBackgroundProperty); }
+            get { return GetValue(CommandBarOverflowPresenterBackgroundProperty); }
             set { SetValue(CommandBarOverflowPresenterBackgroundProperty, value); }
         }
 
@@ -5550,7 +5550,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CommandBarOverflowPresenterBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CommandBarOverflowPresenterBorderBrush
         {
-            get { return (object)GetValue(CommandBarOverflowPresenterBorderBrushProperty); }
+            get { return GetValue(CommandBarOverflowPresenterBorderBrushProperty); }
             set { SetValue(CommandBarOverflowPresenterBorderBrushProperty, value); }
         }
 
@@ -5558,7 +5558,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CommandBarOverflowPresenterBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object CommandBarLightDismissOverlayBackground
         {
-            get { return (object)GetValue(CommandBarLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(CommandBarLightDismissOverlayBackgroundProperty); }
             set { SetValue(CommandBarLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -5566,7 +5566,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("CommandBarLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemBackgroundPointerOver
         {
-            get { return (object)GetValue(ListViewItemBackgroundPointerOverProperty); }
+            get { return GetValue(ListViewItemBackgroundPointerOverProperty); }
             set { SetValue(ListViewItemBackgroundPointerOverProperty, value); }
         }
 
@@ -5574,7 +5574,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemBackgroundPressed
         {
-            get { return (object)GetValue(ListViewItemBackgroundPressedProperty); }
+            get { return GetValue(ListViewItemBackgroundPressedProperty); }
             set { SetValue(ListViewItemBackgroundPressedProperty, value); }
         }
 
@@ -5582,7 +5582,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemBackgroundSelected
         {
-            get { return (object)GetValue(ListViewItemBackgroundSelectedProperty); }
+            get { return GetValue(ListViewItemBackgroundSelectedProperty); }
             set { SetValue(ListViewItemBackgroundSelectedProperty, value); }
         }
 
@@ -5590,7 +5590,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemBackgroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemBackgroundSelectedPointerOver
         {
-            get { return (object)GetValue(ListViewItemBackgroundSelectedPointerOverProperty); }
+            get { return GetValue(ListViewItemBackgroundSelectedPointerOverProperty); }
             set { SetValue(ListViewItemBackgroundSelectedPointerOverProperty, value); }
         }
 
@@ -5598,7 +5598,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemBackgroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemBackgroundSelectedPressed
         {
-            get { return (object)GetValue(ListViewItemBackgroundSelectedPressedProperty); }
+            get { return GetValue(ListViewItemBackgroundSelectedPressedProperty); }
             set { SetValue(ListViewItemBackgroundSelectedPressedProperty, value); }
         }
 
@@ -5606,7 +5606,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemBackgroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemForeground
         {
-            get { return (object)GetValue(ListViewItemForegroundProperty); }
+            get { return GetValue(ListViewItemForegroundProperty); }
             set { SetValue(ListViewItemForegroundProperty, value); }
         }
 
@@ -5614,7 +5614,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemForegroundPointerOver
         {
-            get { return (object)GetValue(ListViewItemForegroundPointerOverProperty); }
+            get { return GetValue(ListViewItemForegroundPointerOverProperty); }
             set { SetValue(ListViewItemForegroundPointerOverProperty, value); }
         }
 
@@ -5622,7 +5622,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemForegroundSelected
         {
-            get { return (object)GetValue(ListViewItemForegroundSelectedProperty); }
+            get { return GetValue(ListViewItemForegroundSelectedProperty); }
             set { SetValue(ListViewItemForegroundSelectedProperty, value); }
         }
 
@@ -5630,7 +5630,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemFocusVisualPrimaryBrush
         {
-            get { return (object)GetValue(ListViewItemFocusVisualPrimaryBrushProperty); }
+            get { return GetValue(ListViewItemFocusVisualPrimaryBrushProperty); }
             set { SetValue(ListViewItemFocusVisualPrimaryBrushProperty, value); }
         }
 
@@ -5638,7 +5638,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemFocusVisualPrimaryBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemFocusVisualSecondaryBrush
         {
-            get { return (object)GetValue(ListViewItemFocusVisualSecondaryBrushProperty); }
+            get { return GetValue(ListViewItemFocusVisualSecondaryBrushProperty); }
             set { SetValue(ListViewItemFocusVisualSecondaryBrushProperty, value); }
         }
 
@@ -5646,7 +5646,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemFocusVisualSecondaryBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemFocusBorderBrush
         {
-            get { return (object)GetValue(ListViewItemFocusBorderBrushProperty); }
+            get { return GetValue(ListViewItemFocusBorderBrushProperty); }
             set { SetValue(ListViewItemFocusBorderBrushProperty, value); }
         }
 
@@ -5654,7 +5654,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemFocusBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemFocusSecondaryBorderBrush
         {
-            get { return (object)GetValue(ListViewItemFocusSecondaryBorderBrushProperty); }
+            get { return GetValue(ListViewItemFocusSecondaryBorderBrushProperty); }
             set { SetValue(ListViewItemFocusSecondaryBorderBrushProperty, value); }
         }
 
@@ -5662,7 +5662,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemFocusSecondaryBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemCheckBrush
         {
-            get { return (object)GetValue(ListViewItemCheckBrushProperty); }
+            get { return GetValue(ListViewItemCheckBrushProperty); }
             set { SetValue(ListViewItemCheckBrushProperty, value); }
         }
 
@@ -5670,7 +5670,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemCheckBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemCheckBoxBrush
         {
-            get { return (object)GetValue(ListViewItemCheckBoxBrushProperty); }
+            get { return GetValue(ListViewItemCheckBoxBrushProperty); }
             set { SetValue(ListViewItemCheckBoxBrushProperty, value); }
         }
 
@@ -5678,7 +5678,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemCheckBoxBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemDragForeground
         {
-            get { return (object)GetValue(ListViewItemDragForegroundProperty); }
+            get { return GetValue(ListViewItemDragForegroundProperty); }
             set { SetValue(ListViewItemDragForegroundProperty, value); }
         }
 
@@ -5686,7 +5686,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemDragForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object ListViewItemPlaceholderBackground
         {
-            get { return (object)GetValue(ListViewItemPlaceholderBackgroundProperty); }
+            get { return GetValue(ListViewItemPlaceholderBackgroundProperty); }
             set { SetValue(ListViewItemPlaceholderBackgroundProperty, value); }
         }
 
@@ -5694,7 +5694,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("ListViewItemPlaceholderBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AutoSuggestBoxSuggestionsListBackground
         {
-            get { return (object)GetValue(AutoSuggestBoxSuggestionsListBackgroundProperty); }
+            get { return GetValue(AutoSuggestBoxSuggestionsListBackgroundProperty); }
             set { SetValue(AutoSuggestBoxSuggestionsListBackgroundProperty, value); }
         }
 
@@ -5702,7 +5702,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AutoSuggestBoxSuggestionsListBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AutoSuggestBoxSuggestionsListBorderBrush
         {
-            get { return (object)GetValue(AutoSuggestBoxSuggestionsListBorderBrushProperty); }
+            get { return GetValue(AutoSuggestBoxSuggestionsListBorderBrushProperty); }
             set { SetValue(AutoSuggestBoxSuggestionsListBorderBrushProperty, value); }
         }
 
@@ -5710,7 +5710,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AutoSuggestBoxSuggestionsListBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AutoSuggestBoxLightDismissOverlayBackground
         {
-            get { return (object)GetValue(AutoSuggestBoxLightDismissOverlayBackgroundProperty); }
+            get { return GetValue(AutoSuggestBoxLightDismissOverlayBackgroundProperty); }
             set { SetValue(AutoSuggestBoxLightDismissOverlayBackgroundProperty, value); }
         }
 
@@ -5718,7 +5718,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AutoSuggestBoxLightDismissOverlayBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemBackgroundSelectedDisabled
         {
-            get { return (object)GetValue(TreeViewItemBackgroundSelectedDisabledProperty); }
+            get { return GetValue(TreeViewItemBackgroundSelectedDisabledProperty); }
             set { SetValue(TreeViewItemBackgroundSelectedDisabledProperty, value); }
         }
 
@@ -5726,7 +5726,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemBackgroundSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemForeground
         {
-            get { return (object)GetValue(TreeViewItemForegroundProperty); }
+            get { return GetValue(TreeViewItemForegroundProperty); }
             set { SetValue(TreeViewItemForegroundProperty, value); }
         }
 
@@ -5734,7 +5734,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemForegroundPointerOver
         {
-            get { return (object)GetValue(TreeViewItemForegroundPointerOverProperty); }
+            get { return GetValue(TreeViewItemForegroundPointerOverProperty); }
             set { SetValue(TreeViewItemForegroundPointerOverProperty, value); }
         }
 
@@ -5742,7 +5742,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemForegroundPressed
         {
-            get { return (object)GetValue(TreeViewItemForegroundPressedProperty); }
+            get { return GetValue(TreeViewItemForegroundPressedProperty); }
             set { SetValue(TreeViewItemForegroundPressedProperty, value); }
         }
 
@@ -5750,7 +5750,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemForegroundDisabled
         {
-            get { return (object)GetValue(TreeViewItemForegroundDisabledProperty); }
+            get { return GetValue(TreeViewItemForegroundDisabledProperty); }
             set { SetValue(TreeViewItemForegroundDisabledProperty, value); }
         }
 
@@ -5758,7 +5758,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemForegroundSelected
         {
-            get { return (object)GetValue(TreeViewItemForegroundSelectedProperty); }
+            get { return GetValue(TreeViewItemForegroundSelectedProperty); }
             set { SetValue(TreeViewItemForegroundSelectedProperty, value); }
         }
 
@@ -5766,7 +5766,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemForegroundSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemForegroundSelectedPointerOver
         {
-            get { return (object)GetValue(TreeViewItemForegroundSelectedPointerOverProperty); }
+            get { return GetValue(TreeViewItemForegroundSelectedPointerOverProperty); }
             set { SetValue(TreeViewItemForegroundSelectedPointerOverProperty, value); }
         }
 
@@ -5774,7 +5774,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemForegroundSelectedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemForegroundSelectedPressed
         {
-            get { return (object)GetValue(TreeViewItemForegroundSelectedPressedProperty); }
+            get { return GetValue(TreeViewItemForegroundSelectedPressedProperty); }
             set { SetValue(TreeViewItemForegroundSelectedPressedProperty, value); }
         }
 
@@ -5782,7 +5782,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemForegroundSelectedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemForegroundSelectedDisabled
         {
-            get { return (object)GetValue(TreeViewItemForegroundSelectedDisabledProperty); }
+            get { return GetValue(TreeViewItemForegroundSelectedDisabledProperty); }
             set { SetValue(TreeViewItemForegroundSelectedDisabledProperty, value); }
         }
 
@@ -5790,7 +5790,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemForegroundSelectedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemCheckBoxBorderSelected
         {
-            get { return (object)GetValue(TreeViewItemCheckBoxBorderSelectedProperty); }
+            get { return GetValue(TreeViewItemCheckBoxBorderSelectedProperty); }
             set { SetValue(TreeViewItemCheckBoxBorderSelectedProperty, value); }
         }
 
@@ -5798,7 +5798,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemCheckBoxBorderSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object TreeViewItemCheckGlyphSelected
         {
-            get { return (object)GetValue(TreeViewItemCheckGlyphSelectedProperty); }
+            get { return GetValue(TreeViewItemCheckGlyphSelectedProperty); }
             set { SetValue(TreeViewItemCheckGlyphSelectedProperty, value); }
         }
 
@@ -5806,7 +5806,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("TreeViewItemCheckGlyphSelected", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SwipeItemBackground
         {
-            get { return (object)GetValue(SwipeItemBackgroundProperty); }
+            get { return GetValue(SwipeItemBackgroundProperty); }
             set { SetValue(SwipeItemBackgroundProperty, value); }
         }
 
@@ -5814,7 +5814,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SwipeItemBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SwipeItemForeground
         {
-            get { return (object)GetValue(SwipeItemForegroundProperty); }
+            get { return GetValue(SwipeItemForegroundProperty); }
             set { SetValue(SwipeItemForegroundProperty, value); }
         }
 
@@ -5822,7 +5822,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SwipeItemForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SwipeItemBackgroundPressed
         {
-            get { return (object)GetValue(SwipeItemBackgroundPressedProperty); }
+            get { return GetValue(SwipeItemBackgroundPressedProperty); }
             set { SetValue(SwipeItemBackgroundPressedProperty, value); }
         }
 
@@ -5830,7 +5830,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SwipeItemBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SwipeItemPreThresholdExecuteForeground
         {
-            get { return (object)GetValue(SwipeItemPreThresholdExecuteForegroundProperty); }
+            get { return GetValue(SwipeItemPreThresholdExecuteForegroundProperty); }
             set { SetValue(SwipeItemPreThresholdExecuteForegroundProperty, value); }
         }
 
@@ -5838,7 +5838,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SwipeItemPreThresholdExecuteForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SwipeItemPreThresholdExecuteBackground
         {
-            get { return (object)GetValue(SwipeItemPreThresholdExecuteBackgroundProperty); }
+            get { return GetValue(SwipeItemPreThresholdExecuteBackgroundProperty); }
             set { SetValue(SwipeItemPreThresholdExecuteBackgroundProperty, value); }
         }
 
@@ -5846,7 +5846,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SwipeItemPreThresholdExecuteBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SwipeItemPostThresholdExecuteForeground
         {
-            get { return (object)GetValue(SwipeItemPostThresholdExecuteForegroundProperty); }
+            get { return GetValue(SwipeItemPostThresholdExecuteForegroundProperty); }
             set { SetValue(SwipeItemPostThresholdExecuteForegroundProperty, value); }
         }
 
@@ -5854,7 +5854,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SwipeItemPostThresholdExecuteForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SwipeItemPostThresholdExecuteBackground
         {
-            get { return (object)GetValue(SwipeItemPostThresholdExecuteBackgroundProperty); }
+            get { return GetValue(SwipeItemPostThresholdExecuteBackgroundProperty); }
             set { SetValue(SwipeItemPostThresholdExecuteBackgroundProperty, value); }
         }
 
@@ -5862,7 +5862,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SwipeItemPostThresholdExecuteBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBackground
         {
-            get { return (object)GetValue(SplitButtonBackgroundProperty); }
+            get { return GetValue(SplitButtonBackgroundProperty); }
             set { SetValue(SplitButtonBackgroundProperty, value); }
         }
 
@@ -5870,7 +5870,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBackground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBackgroundPointerOver
         {
-            get { return (object)GetValue(SplitButtonBackgroundPointerOverProperty); }
+            get { return GetValue(SplitButtonBackgroundPointerOverProperty); }
             set { SetValue(SplitButtonBackgroundPointerOverProperty, value); }
         }
 
@@ -5878,7 +5878,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBackgroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBackgroundPressed
         {
-            get { return (object)GetValue(SplitButtonBackgroundPressedProperty); }
+            get { return GetValue(SplitButtonBackgroundPressedProperty); }
             set { SetValue(SplitButtonBackgroundPressedProperty, value); }
         }
 
@@ -5886,7 +5886,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBackgroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBackgroundDisabled
         {
-            get { return (object)GetValue(SplitButtonBackgroundDisabledProperty); }
+            get { return GetValue(SplitButtonBackgroundDisabledProperty); }
             set { SetValue(SplitButtonBackgroundDisabledProperty, value); }
         }
 
@@ -5894,7 +5894,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBackgroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBackgroundChecked
         {
-            get { return (object)GetValue(SplitButtonBackgroundCheckedProperty); }
+            get { return GetValue(SplitButtonBackgroundCheckedProperty); }
             set { SetValue(SplitButtonBackgroundCheckedProperty, value); }
         }
 
@@ -5902,7 +5902,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBackgroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBackgroundCheckedPointerOver
         {
-            get { return (object)GetValue(SplitButtonBackgroundCheckedPointerOverProperty); }
+            get { return GetValue(SplitButtonBackgroundCheckedPointerOverProperty); }
             set { SetValue(SplitButtonBackgroundCheckedPointerOverProperty, value); }
         }
 
@@ -5910,7 +5910,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBackgroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBackgroundCheckedPressed
         {
-            get { return (object)GetValue(SplitButtonBackgroundCheckedPressedProperty); }
+            get { return GetValue(SplitButtonBackgroundCheckedPressedProperty); }
             set { SetValue(SplitButtonBackgroundCheckedPressedProperty, value); }
         }
 
@@ -5918,7 +5918,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBackgroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBackgroundCheckedDisabled
         {
-            get { return (object)GetValue(SplitButtonBackgroundCheckedDisabledProperty); }
+            get { return GetValue(SplitButtonBackgroundCheckedDisabledProperty); }
             set { SetValue(SplitButtonBackgroundCheckedDisabledProperty, value); }
         }
 
@@ -5926,7 +5926,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBackgroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonForeground
         {
-            get { return (object)GetValue(SplitButtonForegroundProperty); }
+            get { return GetValue(SplitButtonForegroundProperty); }
             set { SetValue(SplitButtonForegroundProperty, value); }
         }
 
@@ -5934,7 +5934,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonForegroundPointerOver
         {
-            get { return (object)GetValue(SplitButtonForegroundPointerOverProperty); }
+            get { return GetValue(SplitButtonForegroundPointerOverProperty); }
             set { SetValue(SplitButtonForegroundPointerOverProperty, value); }
         }
 
@@ -5942,7 +5942,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonForegroundPressed
         {
-            get { return (object)GetValue(SplitButtonForegroundPressedProperty); }
+            get { return GetValue(SplitButtonForegroundPressedProperty); }
             set { SetValue(SplitButtonForegroundPressedProperty, value); }
         }
 
@@ -5950,7 +5950,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonForegroundDisabled
         {
-            get { return (object)GetValue(SplitButtonForegroundDisabledProperty); }
+            get { return GetValue(SplitButtonForegroundDisabledProperty); }
             set { SetValue(SplitButtonForegroundDisabledProperty, value); }
         }
 
@@ -5958,7 +5958,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonForegroundChecked
         {
-            get { return (object)GetValue(SplitButtonForegroundCheckedProperty); }
+            get { return GetValue(SplitButtonForegroundCheckedProperty); }
             set { SetValue(SplitButtonForegroundCheckedProperty, value); }
         }
 
@@ -5966,7 +5966,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonForegroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(SplitButtonForegroundCheckedPointerOverProperty); }
+            get { return GetValue(SplitButtonForegroundCheckedPointerOverProperty); }
             set { SetValue(SplitButtonForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -5974,7 +5974,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonForegroundCheckedPressed
         {
-            get { return (object)GetValue(SplitButtonForegroundCheckedPressedProperty); }
+            get { return GetValue(SplitButtonForegroundCheckedPressedProperty); }
             set { SetValue(SplitButtonForegroundCheckedPressedProperty, value); }
         }
 
@@ -5982,7 +5982,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonForegroundCheckedDisabled
         {
-            get { return (object)GetValue(SplitButtonForegroundCheckedDisabledProperty); }
+            get { return GetValue(SplitButtonForegroundCheckedDisabledProperty); }
             set { SetValue(SplitButtonForegroundCheckedDisabledProperty, value); }
         }
 
@@ -5990,7 +5990,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBorderBrush
         {
-            get { return (object)GetValue(SplitButtonBorderBrushProperty); }
+            get { return GetValue(SplitButtonBorderBrushProperty); }
             set { SetValue(SplitButtonBorderBrushProperty, value); }
         }
 
@@ -5998,7 +5998,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBorderBrush", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBorderBrushPointerOver
         {
-            get { return (object)GetValue(SplitButtonBorderBrushPointerOverProperty); }
+            get { return GetValue(SplitButtonBorderBrushPointerOverProperty); }
             set { SetValue(SplitButtonBorderBrushPointerOverProperty, value); }
         }
 
@@ -6006,7 +6006,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBorderBrushPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBorderBrushPressed
         {
-            get { return (object)GetValue(SplitButtonBorderBrushPressedProperty); }
+            get { return GetValue(SplitButtonBorderBrushPressedProperty); }
             set { SetValue(SplitButtonBorderBrushPressedProperty, value); }
         }
 
@@ -6014,7 +6014,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBorderBrushPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBorderBrushDisabled
         {
-            get { return (object)GetValue(SplitButtonBorderBrushDisabledProperty); }
+            get { return GetValue(SplitButtonBorderBrushDisabledProperty); }
             set { SetValue(SplitButtonBorderBrushDisabledProperty, value); }
         }
 
@@ -6022,7 +6022,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBorderBrushDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBorderBrushChecked
         {
-            get { return (object)GetValue(SplitButtonBorderBrushCheckedProperty); }
+            get { return GetValue(SplitButtonBorderBrushCheckedProperty); }
             set { SetValue(SplitButtonBorderBrushCheckedProperty, value); }
         }
 
@@ -6030,7 +6030,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBorderBrushChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBorderBrushCheckedPointerOver
         {
-            get { return (object)GetValue(SplitButtonBorderBrushCheckedPointerOverProperty); }
+            get { return GetValue(SplitButtonBorderBrushCheckedPointerOverProperty); }
             set { SetValue(SplitButtonBorderBrushCheckedPointerOverProperty, value); }
         }
 
@@ -6038,7 +6038,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBorderBrushCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBorderBrushCheckedPressed
         {
-            get { return (object)GetValue(SplitButtonBorderBrushCheckedPressedProperty); }
+            get { return GetValue(SplitButtonBorderBrushCheckedPressedProperty); }
             set { SetValue(SplitButtonBorderBrushCheckedPressedProperty, value); }
         }
 
@@ -6046,7 +6046,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBorderBrushCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object SplitButtonBorderBrushCheckedDisabled
         {
-            get { return (object)GetValue(SplitButtonBorderBrushCheckedDisabledProperty); }
+            get { return GetValue(SplitButtonBorderBrushCheckedDisabledProperty); }
             set { SetValue(SplitButtonBorderBrushCheckedDisabledProperty, value); }
         }
 
@@ -6054,7 +6054,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("SplitButtonBorderBrushCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemKeyboardAcceleratorTextForeground
         {
-            get { return (object)GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundProperty); }
+            get { return GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundProperty); }
             set { SetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundProperty, value); }
         }
 
@@ -6062,7 +6062,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemKeyboardAcceleratorTextForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver
         {
-            get { return (object)GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOverProperty); }
+            get { return GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOverProperty); }
             set { SetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOverProperty, value); }
         }
 
@@ -6070,7 +6070,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed
         {
-            get { return (object)GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundPressedProperty); }
+            get { return GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundPressedProperty); }
             set { SetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundPressedProperty, value); }
         }
 
@@ -6078,7 +6078,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled
         {
-            get { return (object)GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabledProperty); }
+            get { return GetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabledProperty); }
             set { SetValue(MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabledProperty, value); }
         }
 
@@ -6086,7 +6086,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonKeyboardAcceleratorTextForeground
         {
-            get { return (object)GetValue(AppBarButtonKeyboardAcceleratorTextForegroundProperty); }
+            get { return GetValue(AppBarButtonKeyboardAcceleratorTextForegroundProperty); }
             set { SetValue(AppBarButtonKeyboardAcceleratorTextForegroundProperty, value); }
         }
 
@@ -6094,7 +6094,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonKeyboardAcceleratorTextForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonKeyboardAcceleratorTextForegroundPointerOver
         {
-            get { return (object)GetValue(AppBarButtonKeyboardAcceleratorTextForegroundPointerOverProperty); }
+            get { return GetValue(AppBarButtonKeyboardAcceleratorTextForegroundPointerOverProperty); }
             set { SetValue(AppBarButtonKeyboardAcceleratorTextForegroundPointerOverProperty, value); }
         }
 
@@ -6102,7 +6102,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonKeyboardAcceleratorTextForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonKeyboardAcceleratorTextForegroundPressed
         {
-            get { return (object)GetValue(AppBarButtonKeyboardAcceleratorTextForegroundPressedProperty); }
+            get { return GetValue(AppBarButtonKeyboardAcceleratorTextForegroundPressedProperty); }
             set { SetValue(AppBarButtonKeyboardAcceleratorTextForegroundPressedProperty, value); }
         }
 
@@ -6110,7 +6110,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonKeyboardAcceleratorTextForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonKeyboardAcceleratorTextForegroundDisabled
         {
-            get { return (object)GetValue(AppBarButtonKeyboardAcceleratorTextForegroundDisabledProperty); }
+            get { return GetValue(AppBarButtonKeyboardAcceleratorTextForegroundDisabledProperty); }
             set { SetValue(AppBarButtonKeyboardAcceleratorTextForegroundDisabledProperty, value); }
         }
 
@@ -6118,7 +6118,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonKeyboardAcceleratorTextForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonKeyboardAcceleratorTextForeground
         {
-            get { return (object)GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundProperty); }
+            get { return GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundProperty); }
             set { SetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundProperty, value); }
         }
 
@@ -6126,7 +6126,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonKeyboardAcceleratorTextForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOverProperty); }
             set { SetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOverProperty, value); }
         }
 
@@ -6134,7 +6134,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundPressedProperty); }
+            get { return GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundPressedProperty); }
             set { SetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundPressedProperty, value); }
         }
 
@@ -6142,7 +6142,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabledProperty); }
             set { SetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabledProperty, value); }
         }
 
@@ -6150,7 +6150,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked
         {
-            get { return (object)GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedProperty); }
+            get { return GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedProperty); }
             set { SetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedProperty, value); }
         }
 
@@ -6158,7 +6158,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver
         {
-            get { return (object)GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOverProperty); }
+            get { return GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOverProperty); }
             set { SetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOverProperty, value); }
         }
 
@@ -6166,7 +6166,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed
         {
-            get { return (object)GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressedProperty); }
+            get { return GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressedProperty); }
             set { SetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressedProperty, value); }
         }
 
@@ -6174,7 +6174,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled
         {
-            get { return (object)GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabledProperty); }
+            get { return GetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabledProperty); }
             set { SetValue(AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabledProperty, value); }
         }
 
@@ -6182,7 +6182,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonBackgroundSubMenuOpened
         {
-            get { return (object)GetValue(AppBarButtonBackgroundSubMenuOpenedProperty); }
+            get { return GetValue(AppBarButtonBackgroundSubMenuOpenedProperty); }
             set { SetValue(AppBarButtonBackgroundSubMenuOpenedProperty, value); }
         }
 
@@ -6190,7 +6190,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonBackgroundSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonForegroundSubMenuOpened
         {
-            get { return (object)GetValue(AppBarButtonForegroundSubMenuOpenedProperty); }
+            get { return GetValue(AppBarButtonForegroundSubMenuOpenedProperty); }
             set { SetValue(AppBarButtonForegroundSubMenuOpenedProperty, value); }
         }
 
@@ -6198,7 +6198,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonForegroundSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened
         {
-            get { return (object)GetValue(AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpenedProperty); }
+            get { return GetValue(AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpenedProperty); }
             set { SetValue(AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpenedProperty, value); }
         }
 
@@ -6206,7 +6206,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonSubItemChevronForeground
         {
-            get { return (object)GetValue(AppBarButtonSubItemChevronForegroundProperty); }
+            get { return GetValue(AppBarButtonSubItemChevronForegroundProperty); }
             set { SetValue(AppBarButtonSubItemChevronForegroundProperty, value); }
         }
 
@@ -6214,7 +6214,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonSubItemChevronForeground", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonSubItemChevronForegroundPointerOver
         {
-            get { return (object)GetValue(AppBarButtonSubItemChevronForegroundPointerOverProperty); }
+            get { return GetValue(AppBarButtonSubItemChevronForegroundPointerOverProperty); }
             set { SetValue(AppBarButtonSubItemChevronForegroundPointerOverProperty, value); }
         }
 
@@ -6222,7 +6222,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonSubItemChevronForegroundPointerOver", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonSubItemChevronForegroundPressed
         {
-            get { return (object)GetValue(AppBarButtonSubItemChevronForegroundPressedProperty); }
+            get { return GetValue(AppBarButtonSubItemChevronForegroundPressedProperty); }
             set { SetValue(AppBarButtonSubItemChevronForegroundPressedProperty, value); }
         }
 
@@ -6230,7 +6230,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonSubItemChevronForegroundPressed", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonSubItemChevronForegroundSubMenuOpened
         {
-            get { return (object)GetValue(AppBarButtonSubItemChevronForegroundSubMenuOpenedProperty); }
+            get { return GetValue(AppBarButtonSubItemChevronForegroundSubMenuOpenedProperty); }
             set { SetValue(AppBarButtonSubItemChevronForegroundSubMenuOpenedProperty, value); }
         }
 
@@ -6238,7 +6238,7 @@ namespace Unigram.Views.Settings
             DependencyProperty.Register("AppBarButtonSubItemChevronForegroundSubMenuOpened", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));
         public object AppBarButtonSubItemChevronForegroundDisabled
         {
-            get { return (object)GetValue(AppBarButtonSubItemChevronForegroundDisabledProperty); }
+            get { return GetValue(AppBarButtonSubItemChevronForegroundDisabledProperty); }
             set { SetValue(AppBarButtonSubItemChevronForegroundDisabledProperty, value); }
         }
 

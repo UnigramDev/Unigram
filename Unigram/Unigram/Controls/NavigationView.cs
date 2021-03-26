@@ -75,7 +75,7 @@ namespace Unigram.Controls
 
         public object PaneHeader
         {
-            get { return (object)GetValue(PaneHeaderProperty); }
+            get { return GetValue(PaneHeaderProperty); }
             set { SetValue(PaneHeaderProperty, value); }
         }
 
@@ -88,7 +88,7 @@ namespace Unigram.Controls
 
         public object PaneFooter
         {
-            get { return (object)GetValue(PaneFooterProperty); }
+            get { return GetValue(PaneFooterProperty); }
             set { SetValue(PaneFooterProperty, value); }
         }
 

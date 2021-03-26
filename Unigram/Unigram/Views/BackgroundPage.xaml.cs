@@ -252,7 +252,7 @@ namespace Unigram.Views
                     var wallpaper = ViewModel.Patterns[i];
                     var root = container.ContentTemplateRoot as Grid;
 
-                    var check = root.Children[1] as UIElement;
+                    var check = root.Children[1];
                     check.Visibility = wallpaper.Id == ViewModel.SelectedPattern?.Id ? Visibility.Visible : Visibility.Collapsed;
 
                     var content = root.Children[0] as Image;
@@ -397,7 +397,7 @@ namespace Unigram.Views
             var wallpaper = args.Item as Background;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
 
-            var check = root.Children[1] as UIElement;
+            var check = root.Children[1];
             check.Visibility = wallpaper.Id == ViewModel.SelectedPattern?.Id ? Visibility.Visible : Visibility.Collapsed;
 
             if (wallpaper.Document != null)

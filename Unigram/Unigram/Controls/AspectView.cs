@@ -14,7 +14,7 @@ namespace Unigram.Controls
 
         public object Constraint
         {
-            get { return (object)GetValue(ConstraintProperty); }
+            get { return GetValue(ConstraintProperty); }
             set { SetValue(ConstraintProperty, value); }
         }
 

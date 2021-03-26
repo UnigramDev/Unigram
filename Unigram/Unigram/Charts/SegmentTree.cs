@@ -17,7 +17,7 @@ namespace Unigram.Charts
                 return;
             }
             //The max size of this array is about 2 * 2 ^ log2(n) + 1
-            size = (int)(2 * Math.Pow(2.0, Math.Floor((Math.Log((double)array.Length) / Math.Log(2.0)) + 1)));
+            size = (int)(2 * Math.Pow(2.0, Math.Floor((Math.Log(array.Length) / Math.Log(2.0)) + 1)));
             heap = new Node[size];
             build(1, 0, array.Length);
         }

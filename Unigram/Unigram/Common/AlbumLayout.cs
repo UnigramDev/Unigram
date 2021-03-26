@@ -78,7 +78,7 @@ namespace Unigram.Common
             var maxAspectRatio = maxSize.Width / maxSize.Height;
             if (itemInfos.Length > 0)
             {
-                averageAspectRatio = averageAspectRatio / (double)itemInfos.Length;
+                averageAspectRatio = averageAspectRatio / itemInfos.Length;
             }
 
             if (!forceCalc)
@@ -242,7 +242,7 @@ namespace Unigram.Common
                         ratioSum += ratio;
                     }
 
-                    return (maxSize.Width - (double)(count - 1) * spacing) / ratioSum;
+                    return (maxSize.Width - (count - 1) * spacing) / ratioSum;
                 }
 
                 var attempts = new List<MosaicLayoutAttempt>();
@@ -314,7 +314,7 @@ namespace Unigram.Common
                 var optimalDiff = 0.0;
                 foreach (var attempt in attempts)
                 {
-                    var totalHeight = spacing * (double)(attempt.Heights.Length - 1);
+                    var totalHeight = spacing * (attempt.Heights.Length - 1);
                     var minLineHeight = double.MaxValue;
                     var maxLineHeight = 0.0;
                     foreach (var h in attempt.Heights)

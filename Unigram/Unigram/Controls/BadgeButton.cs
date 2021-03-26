@@ -20,7 +20,7 @@ namespace Unigram.Controls
 
         public object Badge
         {
-            get { return (object)GetValue(BadgeProperty); }
+            get { return GetValue(BadgeProperty); }
             set { SetValue(BadgeProperty, value); }
         }
 

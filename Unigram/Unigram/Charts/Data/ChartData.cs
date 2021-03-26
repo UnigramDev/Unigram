@@ -129,7 +129,7 @@ namespace Unigram.Charts.Data
             {
                 for (int i = 0; i < n; i++)
                 {
-                    xPercentage[i] = (float)(x[i] - start) / (float)(end - start);
+                    xPercentage[i] = (x[i] - start) / (float)(end - start);
                 }
             }
 

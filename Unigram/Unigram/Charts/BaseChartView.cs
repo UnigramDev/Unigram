@@ -548,7 +548,7 @@ namespace Unigram.Charts
                 return;
             }
 
-            thresholdMaxHeight = ((float)animateToMaxHeight / chartHeight) * SIGNATURE_TEXT_SIZE;
+            thresholdMaxHeight = (animateToMaxHeight / chartHeight) * SIGNATURE_TEXT_SIZE;
         }
 
 
@@ -692,7 +692,7 @@ namespace Unigram.Charts
                         continue;
                     }
 
-                    float xPercentage = (float)(chartData.x[i] - chartData.x[0]) /
+                    float xPercentage = (chartData.x[i] - chartData.x[0]) /
                             (float)((chartData.x[chartData.x.Length - 1] - chartData.x[0]));
                     float xPoint = xPercentage * fullWidth - offset;
                     float xPointOffset = xPoint - BOTTOM_SIGNATURE_OFFSET;

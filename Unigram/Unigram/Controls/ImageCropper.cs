@@ -808,7 +808,7 @@ namespace Unigram.Controls
             var group = new GeometryGroup();
             group.Children.Add(m_outerClip = new RectangleGeometry());
             group.Children.Add(m_innerClip = mask == ImageCropperMask.Rectangle
-                ? (Geometry)new RectangleGeometry()
+                ? new RectangleGeometry()
                 : new EllipseGeometry());
 
             clip.Data = group;

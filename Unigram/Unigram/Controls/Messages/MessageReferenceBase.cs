@@ -25,7 +25,7 @@ namespace Unigram.Controls.Messages
 
         public object Message
         {
-            get { return (object)GetValue(MessageProperty); }
+            get { return GetValue(MessageProperty); }
             set { SetValue(MessageProperty, value); }
         }
 

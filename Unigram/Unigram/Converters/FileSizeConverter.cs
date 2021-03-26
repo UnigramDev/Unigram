@@ -14,14 +14,14 @@ namespace Unigram.Converters
             }
             if (bytesCount < 1048576L)
             {
-                return string.Format("{0} KB", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+                return string.Format("{0} KB", (bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
             if (bytesCount >= 1073741824L && allowGb)
             {
-                return string.Format("{0} GB", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+                return string.Format("{0} GB", (bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
 
-            return string.Format("{0} MB", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+            return string.Format("{0} MB", (bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
         }
 
         public static string Convert(long bytesCount, long total, bool allowGb = false)
@@ -32,14 +32,14 @@ namespace Unigram.Converters
             }
             if (total < 1048576L)
             {
-                return string.Format("{0} ", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+                return string.Format("{0} ", (bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
             if (total >= 1073741824L && allowGb)
             {
-                return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+                return string.Format("{0}", (bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
             }
 
-            return string.Format("{0}", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
+            return string.Format("{0}", (bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
         }
 
         public object Convert(object value, Type targetType, object parameter, string language)
@@ -50,7 +50,7 @@ namespace Unigram.Converters
             }
             if (value is int)
             {
-                return Convert((long)((int)value));
+                return Convert((int)value);
             }
             return null;
         }

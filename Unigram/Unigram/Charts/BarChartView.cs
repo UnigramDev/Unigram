@@ -197,7 +197,7 @@ namespace Unigram.Charts
 
                         float xPoint = chartData.xPercentage[i] * pickerWidth;
                         float h = ANIMATE_PICKER_SIZES ? pickerMaxHeight : chartData.maxValue;
-                        float yPercentage = (float)y[i] / h * a;
+                        float yPercentage = y[i] / h * a;
                         float yPoint = (1f - yPercentage) * (bottom - top);
 
                         line.linesPath[j++] = xPoint;

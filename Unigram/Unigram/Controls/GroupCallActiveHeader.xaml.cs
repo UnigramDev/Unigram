@@ -87,16 +87,16 @@ namespace Unigram.Controls
         private float animateToAmplitude;
         WeavingState currentState;
         private long lastUpdateTime;
-        LineBlobDrawable lineBlobDrawable = new LineBlobDrawable(5);
-        LineBlobDrawable lineBlobDrawable1 = new LineBlobDrawable(7);
-        LineBlobDrawable lineBlobDrawable2 = new LineBlobDrawable(8);
+        readonly LineBlobDrawable lineBlobDrawable = new LineBlobDrawable(5);
+        readonly LineBlobDrawable lineBlobDrawable1 = new LineBlobDrawable(7);
+        readonly LineBlobDrawable lineBlobDrawable2 = new LineBlobDrawable(8);
         Color paint = Colors.Red;
         CanvasRadialGradientBrush shader;
-        List<CanvasControl> parents = new List<CanvasControl>();
+        readonly List<CanvasControl> parents = new List<CanvasControl>();
         WeavingState pausedState;
         WeavingState previousState;
         float progressToState = 1.0f;
-        WeavingState[] states = new WeavingState[2];
+        readonly WeavingState[] states = new WeavingState[2];
 
         CanvasRenderTarget target;
 
@@ -137,7 +137,7 @@ namespace Unigram.Controls
                     if (f7 != f8)
                     {
                         float f9 = animateAmplitudeDiff;
-                        float f10 = f8 + (((float)j) * f9);
+                        float f10 = f8 + (j * f9);
                         amplitude = f10;
                         if (f9 > 0.0f)
                         {
@@ -157,7 +157,7 @@ namespace Unigram.Controls
                     if (f11 != f12)
                     {
                         float f13 = animateAmplitudeDiff2;
-                        float f14 = f12 + (((float)j) * f13);
+                        float f14 = f12 + (j * f13);
                         amplitude2 = f14;
                         if (f13 > 0.0f)
                         {
@@ -174,7 +174,7 @@ namespace Unigram.Controls
                     }
                     if (previousState != null)
                     {
-                        float f15 = progressToState + (((float)j) / 250.0f);
+                        float f15 = progressToState + (j / 250.0f);
                         progressToState = f15;
                         if (f15 > 1.0f)
                         {
@@ -202,7 +202,7 @@ namespace Unigram.Controls
                                 previousState.update((int)(height - y), (int)(width - x), j3, amplitude);
                             }
                             //this.paint.setShader(this.previousState.shader);
-                            shader = this.previousState.shader;
+                            shader = previousState.shader;
                         }
                         else
                         {
@@ -215,7 +215,7 @@ namespace Unigram.Controls
                                     weavingState.update((int)(height - y), (int)(width - x), j3, amplitude);
                                 }
                                 //this.paint.setShader(this.currentState.shader);
-                                shader = this.currentState.shader;
+                                shader = currentState.shader;
                             }
                             else
                             {
@@ -342,8 +342,8 @@ namespace Unigram.Controls
 
         public class WeavingState
         {
-            int color1;
-            int color2;
+            readonly int color1;
+            readonly int color2;
             /* access modifiers changed from: private */
             public readonly int currentState;
             private float duration;
@@ -364,7 +364,7 @@ namespace Unigram.Controls
 
             private void createGradients(CanvasDrawingSession canvas)
             {
-                if (this.currentState == 0)
+                if (currentState == 0)
                 {
                     shader = new CanvasRadialGradientBrush(canvas, Color.FromArgb(0xFF, 0x00, 0x78, 0xff), Color.FromArgb(0xFF, 0x33, 0xc6, 0x59));
                 }
@@ -395,56 +395,56 @@ namespace Unigram.Controls
 
             public void update(int i, int i2, long j, float f)
             {
-                float f2 = this.duration;
-                if (f2 == 0.0f || this.time >= f2)
+                float f2 = duration;
+                if (f2 == 0.0f || time >= f2)
                 {
-                    this.duration = (float)(random.Next(700) + 500);
-                    this.time = 0.0f;
-                    if (this.targetX == -1.0f)
+                    duration = random.Next(700) + 500;
+                    time = 0.0f;
+                    if (targetX == -1.0f)
                     {
-                        if (this.currentState == 0)
+                        if (currentState == 0)
                         {
-                            this.targetX = ((((float)random.Next(100)) * 0.2f) / 100.0f) - 14.4f;
-                            this.targetY = ((((float)random.Next(100)) * 0.3f) / 100.0f) + 0.7f;
+                            targetX = ((random.Next(100) * 0.2f) / 100.0f) - 14.4f;
+                            targetY = ((random.Next(100) * 0.3f) / 100.0f) + 0.7f;
                         }
                         else
                         {
-                            this.targetX = ((((float)random.Next(100)) / 100.0f) * 0.2f) + 1.1f;
-                            this.targetY = (((float)random.Next(100)) * 4.0f) / 100.0f;
+                            targetX = ((random.Next(100) / 100.0f) * 0.2f) + 1.1f;
+                            targetY = (random.Next(100) * 4.0f) / 100.0f;
                         }
                     }
-                    this.startX = this.targetX;
-                    this.startY = this.targetY;
-                    if (this.currentState == 0)
+                    startX = targetX;
+                    startY = targetY;
+                    if (currentState == 0)
                     {
-                        this.targetX = ((((float)random.Next(100)) * 0.2f) / 100.0f) - 14.4f;
-                        this.targetY = ((((float)random.Next(100)) * 0.3f) / 100.0f) + 0.7f;
+                        targetX = ((random.Next(100) * 0.2f) / 100.0f) - 14.4f;
+                        targetY = ((random.Next(100) * 0.3f) / 100.0f) + 0.7f;
                     }
                     else
                     {
-                        this.targetX = ((((float)random.Next(100)) / 100.0f) * 0.2f) + 1.1f;
-                        this.targetY = (((float)random.Next(100)) * 2.0f) / 100.0f;
+                        targetX = ((random.Next(100) / 100.0f) * 0.2f) + 1.1f;
+                        targetY = (random.Next(100) * 2.0f) / 100.0f;
                     }
                 }
-                float f3 = (float)j;
-                float f4 = this.time + ((BlobDrawable.GRADIENT_SPEED_MIN + 0.5f) * f3) + (f3 * BlobDrawable.GRADIENT_SPEED_MAX * 2.0f * f);
-                this.time = f4;
-                float f5 = this.duration;
+                float f3 = j;
+                float f4 = time + ((BlobDrawable.GRADIENT_SPEED_MIN + 0.5f) * f3) + (f3 * BlobDrawable.GRADIENT_SPEED_MAX * 2.0f * f);
+                time = f4;
+                float f5 = duration;
                 if (f4 > f5)
                 {
-                    this.time = f5;
+                    time = f5;
                 }
-                float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(this.time / f5);
-                float f6 = (float)i2;
-                float f7 = this.startX;
-                float f8 = ((f7 + ((this.targetX - f7) * interpolation)) * f6) - 200.0f;
-                float f9 = this.startY;
-                float f10 = (((float)i) * (f9 + ((this.targetY - f9) * interpolation))) - 200.0f;
-                float f11 = (f6 / 400.0f) * (this.currentState == 0 ? 3.0f : 1.5f);
+                float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(time / f5);
+                float f6 = i2;
+                float f7 = startX;
+                float f8 = ((f7 + ((targetX - f7) * interpolation)) * f6) - 200.0f;
+                float f9 = startY;
+                float f10 = (i * (f9 + ((targetY - f9) * interpolation))) - 200.0f;
+                float f11 = (f6 / 400.0f) * (currentState == 0 ? 3.0f : 1.5f);
                 //this.matrix.reset();
                 //this.matrix.postTranslate(f8, f10);
                 //this.matrix.postScale(f11, f11, f8 + 200.0f, f10 + 200.0f);
-                this.shader.Transform = Matrix3x2.Multiply(Matrix3x2.CreateTranslation(f8, f10), Matrix3x2.CreateScale(f11, f11, new Vector2(f8 + 200.0f, f10 + 200.0f)));
+                shader.Transform = Matrix3x2.Multiply(Matrix3x2.CreateTranslation(f8, f10), Matrix3x2.CreateScale(f11, f11, new Vector2(f8 + 200.0f, f10 + 200.0f)));
             }
 
             public void checkColor()
@@ -471,22 +471,22 @@ namespace Unigram.Controls
         public float maxRadius;
         public float minRadius;
         //private Path path = new Path();
-        private float[] progress;
-        private float[] radius;
-        private float[] radiusNext;
+        private readonly float[] progress;
+        private readonly float[] radius;
+        private readonly float[] radiusNext;
         private readonly Random random;
-        private float[] speed;
+        private readonly float[] speed;
 
         public LineBlobDrawable(int i)
         {
             random = new Random();
-            N = (float)i;
+            N = i;
             int i2 = i + 1;
             radius = new float[i2];
             radiusNext = new float[i2];
             progress = new float[i2];
             speed = new float[i2];
-            for (int i3 = 0; ((float)i3) <= N; i3++)
+            for (int i3 = 0; i3 <= N; i3++)
             {
                 generateBlob(radius, i3);
                 generateBlob(radiusNext, i3);
@@ -498,15 +498,15 @@ namespace Unigram.Controls
         {
             float f = maxRadius;
             float f2 = minRadius;
-            fArr[i] = f2 + (MathF.Abs((((float)random.Next()) % 100.0f) / 100.0f) * (f - f2));
+            fArr[i] = f2 + (MathF.Abs((random.Next() % 100.0f) / 100.0f) * (f - f2));
             float[] fArr2 = speed;
-            double abs = (double)(MathF.Abs(((float)random.Next()) % 100.0f) / 100.0f);
+            double abs = MathF.Abs(random.Next() % 100.0f) / 100.0f;
             fArr2[i] = (float)((abs * 0.003d) + 0.017d);
         }
 
         public void update(float f, float f2)
         {
-            for (int i = 0; ((float)i) <= N; i++)
+            for (int i = 0; i <= N; i++)
             {
                 float[] fArr = progress;
                 float f3 = fArr[i];
@@ -531,7 +531,7 @@ namespace Unigram.Controls
             int i = 0;
             while (true)
             {
-                float f10 = (float)i;
+                float f10 = i;
                 float f11 = N;
                 if (f10 <= f11)
                 {
@@ -551,7 +551,7 @@ namespace Unigram.Controls
                         float f15 = fArr[i];
                         float f16 = (fArr2[i] * (1.0f - f15)) + (fArr3[i] * f15);
                         float f17 = f3 - f;
-                        float f18 = (f17 / f11) * ((float)i2);
+                        float f18 = (f17 / f11) * i2;
                         float f19 = (f17 / f11) * f10;
                         float f20 = f18 + ((f19 - f18) / 2.0f);
                         float f21 = (1.0f - f6) * f5;

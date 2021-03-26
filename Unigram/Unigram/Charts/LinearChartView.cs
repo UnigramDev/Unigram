@@ -60,7 +60,7 @@ namespace Unigram.Charts
                         }
 
                         float xPoint = chartData.xPercentage[i] * fullWidth - offset;
-                        float yPercentage = ((float)y[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
+                        float yPercentage = (y[i] - currentMinHeight) / (currentMaxHeight - currentMinHeight);
                         float padding = line.paint.StrokeWidth / 2f;
                         float yPoint = MeasuredHeight - chartBottom - padding - (yPercentage) * (MeasuredHeight - chartBottom - SIGNATURE_TEXT_HEIGHT - padding);
 

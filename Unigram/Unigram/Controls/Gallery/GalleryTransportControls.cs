@@ -63,7 +63,7 @@ namespace Unigram.Controls.Gallery
 
         public object Header
         {
-            get { return (object)GetValue(HeaderProperty); }
+            get { return GetValue(HeaderProperty); }
             set { SetValue(HeaderProperty, value); }
         }
 
@@ -76,7 +76,7 @@ namespace Unigram.Controls.Gallery
 
         public object Footer
         {
-            get { return (object)GetValue(FooterProperty); }
+            get { return GetValue(FooterProperty); }
             set { SetValue(FooterProperty, value); }
         }
 
@@ -89,7 +89,7 @@ namespace Unigram.Controls.Gallery
 
         public object Content
         {
-            get { return (object)GetValue(ContentProperty); }
+            get { return GetValue(ContentProperty); }
             set { SetValue(ContentProperty, value); }
         }
 

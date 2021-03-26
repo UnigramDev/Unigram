@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -116,7 +115,8 @@ namespace Unigram.Collections
             return index < int.MaxValue ? index : Count;
         }
 
-        private ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler> _handlers = new ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler>();
+        private readonly ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler> _handlers
+            = new ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler>();
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {

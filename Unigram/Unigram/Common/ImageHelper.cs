@@ -274,8 +274,8 @@ namespace Unigram.Common
 
                 if (decoder.PixelWidth > 1280 || decoder.PixelHeight > 1280)
                 {
-                    double ratioX = (double)1280 / cropWidth;
-                    double ratioY = (double)1280 / cropHeight;
+                    double ratioX = 1280d / cropWidth;
+                    double ratioY = 1280d / cropHeight;
                     double ratio = Math.Min(ratioX, ratioY);
 
                     cropWidth = cropWidth * ratio;
@@ -358,8 +358,8 @@ namespace Unigram.Common
 
             if (width > min || height > min)
             {
-                double ratioX = (double)min / width;
-                double ratioY = (double)min / height;
+                double ratioX = min / width;
+                double ratioY = min / height;
                 double ratio = Math.Min(ratioX, ratioY);
 
                 width = width * ratio;
@@ -368,8 +368,8 @@ namespace Unigram.Common
 
             if (width < max || height < max)
             {
-                double ratioX = (double)max / width;
-                double ratioY = (double)max / height;
+                double ratioX = max / width;
+                double ratioY = max / height;
                 double ratio = Math.Min(ratioX, ratioY);
 
                 width = width * ratio;
@@ -417,8 +417,8 @@ namespace Unigram.Common
 
             if (decoder.PixelWidth > 1280 || decoder.PixelHeight > 1280)
             {
-                double ratioX = (double)1280 / cropWidth;
-                double ratioY = (double)1280 / cropHeight;
+                double ratioX = 1280d / cropWidth;
+                double ratioY = 1280d / cropHeight;
                 double ratio = Math.Min(ratioX, ratioY);
 
                 cropWidth = cropWidth * ratio;

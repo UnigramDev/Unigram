@@ -6,7 +6,6 @@ using Unigram.ViewModels;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages.Content
 {

@@ -120,7 +120,7 @@ namespace Unigram.Controls
 
         public object CheckedContent
         {
-            get { return (object)GetValue(CheckedContentProperty); }
+            get { return GetValue(CheckedContentProperty); }
             set { SetValue(CheckedContentProperty, value); }
         }
 
@@ -200,7 +200,7 @@ namespace Unigram.Controls
 
     public class AnimatedGlyphToggleButtonAutomationPeer : ToggleButtonAutomationPeer
     {
-        private AnimatedGlyphToggleButton _owner;
+        private readonly AnimatedGlyphToggleButton _owner;
 
         public AnimatedGlyphToggleButtonAutomationPeer(AnimatedGlyphToggleButton owner)
             : base(owner)

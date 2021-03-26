@@ -353,8 +353,8 @@ namespace Unigram.Services
                     {
                         var decoder = await BitmapDecoder.CreateAsync(fileStream);
 
-                        double ratioX = (double)90 / originalWidth;
-                        double ratioY = (double)90 / originalHeight;
+                        double ratioX = 90d / originalWidth;
+                        double ratioY = 90d / originalHeight;
                         double ratio = Math.Min(ratioX, ratioY);
 
                         uint width = (uint)(originalWidth * ratio);

@@ -104,7 +104,7 @@ namespace Unigram.Controls
             {
                 StartFall();
 
-                _speedCoef -= (((float)i) / 16.0f) * 0.15f;
+                _speedCoef -= (i / 16.0f) * 0.15f;
 
                 if (_speedCoef < 0.2f)
                 {
@@ -184,7 +184,7 @@ namespace Unigram.Controls
             }
             else
             {
-                int dp = (int)(NextInt(10) + 4);
+                int dp = NextInt(10) + 4;
                 int measuredHeight = (int)(CanvasHeight / 4);
                 if (particle.side == 0)
                 {
@@ -236,7 +236,7 @@ namespace Unigram.Controls
                     return;
                 }
 
-                Rect Rect(double x1, double y1, double x2, double y2)
+                static Rect Rect(double x1, double y1, double x2, double y2)
                 {
                     return new Rect(x1, y1, x2 - x1, y2 - y1);
                 }
@@ -251,7 +251,7 @@ namespace Unigram.Controls
             {
                 float coefficient = _confetti.CanvasWidth / 360f;
 
-                float f = ((float)i) / 16.0f;
+                float f = i / 16.0f;
                 float f2 = x;
                 float f3 = moveX;
                 x = f2 + (f3 * f * coefficient);
