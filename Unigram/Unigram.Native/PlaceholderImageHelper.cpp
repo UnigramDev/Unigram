@@ -149,10 +149,13 @@ namespace winrt::Unigram::Native::implementation
 
 			uint8_t* pixels = new uint8_t[(width * 4) * height];
 
-			config.options.scaled_width = width;
-			config.options.scaled_height = height;
-			config.options.use_scaling = 1;
-			config.options.no_fancy_upsampling = 1;
+			if (width != iter.width || height != iter.height) {
+				config.options.scaled_width = width;
+				config.options.scaled_height = height;
+				config.options.use_scaling = 1;
+				config.options.no_fancy_upsampling = 1;
+			}
+
 			config.output.colorspace = MODE_BGRA;
 			config.output.is_external_memory = 1;
 			config.output.u.RGBA.rgba = pixels;
