@@ -1234,7 +1234,7 @@ namespace Unigram.Views
 
         private void TryGetWebPagePreview(IProtoService protoService, Chat chat, string text, Action<BaseObject> result)
         {
-            if (chat == null)
+            if (chat == null || string.IsNullOrWhiteSpace(text))
             {
                 result(null);
                 return;
@@ -1674,7 +1674,7 @@ namespace Unigram.Views
                     }
                 }
             }
-            //if (secret)
+            if (user != null || (basicGroup != null && basicGroup.CanDeleteMessages()) || (supergroup != null && supergroup.CanDeleteMessages()))
             {
                 flyout.CreateFlyoutItem(ViewModel.SetTimerCommand, Strings.Resources.SetTimer, new FontIcon { Glyph = Icons.Timer });
             }
