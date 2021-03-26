@@ -200,7 +200,7 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            var inner = container.Descendants<TextBox>().FirstOrDefault() as TextBox;
+            var inner = container.Descendants<TextBox>().FirstOrDefault();
             if (inner == null)
             {
                 return;

@@ -1441,7 +1441,7 @@ namespace Unigram.Services
             var task = GetAnimatedSetAsyncInternal(type);
             var result = await Task.WhenAny(task, Task.Delay(2000));
 
-            set = result == task ? task.Result as StickerSet : null;
+            set = result == task ? task.Result : null;
             tsc.TrySetResult(set);
 
             return set;

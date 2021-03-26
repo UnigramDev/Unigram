@@ -107,7 +107,7 @@ namespace Unigram.Views.Popups
             MapPresenter.Height = ActualHeight;
             MapPresenter.Margin = new Thickness(0, -(space / 2), 0, -(space / 2));
 
-            var scrollingHost = NearbyList.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            var scrollingHost = NearbyList.Descendants<ScrollViewer>().FirstOrDefault();
 
             var scrollerViewerManipulation = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollingHost);
 

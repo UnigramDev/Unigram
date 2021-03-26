@@ -298,7 +298,7 @@ namespace Unigram.Controls.Chats
 
             if (highlight)
             {
-                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault();
                 if (bubble != null)
                 {
                     bubble.Highlight();

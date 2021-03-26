@@ -76,7 +76,7 @@ namespace Unigram.Controls
                 return;
             }
 
-            var peer = ButtonAutomationPeer.CreatePeerForElement(button as Button);
+            var peer = ButtonAutomationPeer.CreatePeerForElement(button);
             var pattern = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
 
             pattern.Invoke();

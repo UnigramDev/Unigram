@@ -40,7 +40,7 @@ namespace Unigram.Controls
             var scrollViewer = ScrollingHost as ScrollViewer;
             if (scrollViewer == null && ScrollingHost != null)
             {
-                scrollViewer = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+                scrollViewer = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault();
             }
 
             if (scrollViewer == null)

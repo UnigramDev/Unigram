@@ -101,7 +101,7 @@ namespace Unigram.Controls
 
                 if (_textBox == null)
                 {
-                    _textBox = this.Ancestors<TagsTextBox>().FirstOrDefault() as TagsTextBox;
+                    _textBox = this.Ancestors<TagsTextBox>().FirstOrDefault();
                 }
 
                 if (_textBox != null)

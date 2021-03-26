@@ -6,6 +6,7 @@ using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -85,7 +86,7 @@ namespace Unigram.Controls.Messages.Content
 
                 var system = await Windows.ApplicationModel.Contacts.ContactManager.ConvertVCardToContactAsync(reference);
 
-                var transform = TransformToVisual(Window.Current.Content as UIElement);
+                var transform = TransformToVisual(Window.Current.Content);
                 var point = transform.TransformPoint(new Point());
 
                 Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, ActualWidth, ActualHeight));

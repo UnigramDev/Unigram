@@ -56,7 +56,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        protected virtual void BeginOnUIThread(Action action, Action fallback = null)
+        protected virtual void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
         {
             var dispatcher = Dispatcher;
             if (dispatcher == null)

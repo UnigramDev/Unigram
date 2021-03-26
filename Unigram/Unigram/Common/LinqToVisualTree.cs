@@ -186,9 +186,9 @@ namespace LinqToVisualTree
         /// <summary>
         /// Returns a collection of descendant elements which match the given type.
         /// </summary>
-        public static IEnumerable<DependencyObject> Descendants<T>(this DependencyObject item)
+        public static IEnumerable<T> Descendants<T>(this DependencyObject item)
         {
-            return item.Descendants().Where(i => i is T).Cast<DependencyObject>();
+            return item.Descendants().Where(i => i is T).Cast<T>();
         }
 
 
@@ -223,9 +223,9 @@ namespace LinqToVisualTree
         /// <summary>
         /// Returns a collection of ancestor elements which match the given type.
         /// </summary>
-        public static IEnumerable<DependencyObject> Ancestors<T>(this DependencyObject item)
+        public static IEnumerable<T> Ancestors<T>(this DependencyObject item)
         {
-            return item.Ancestors().Where(i => i is T).Cast<DependencyObject>();
+            return item.Ancestors().Where(i => i is T).Cast<T>();
         }
 
         /// <summary>

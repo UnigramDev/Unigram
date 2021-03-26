@@ -52,7 +52,7 @@ namespace Unigram.Controls.Drawers
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var scrollingHost = List.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            var scrollingHost = List.Descendants<ScrollViewer>().FirstOrDefault();
             if (scrollingHost != null)
             {
                 // Syncronizes GridView with the toolbar ListView

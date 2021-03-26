@@ -826,7 +826,7 @@ namespace Unigram.Common
 
             if (highlight)
             {
-                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault() as MessageBubble;
+                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault();
                 if (bubble == null)
                 {
                     return;
@@ -895,12 +895,12 @@ namespace Unigram.Common
             //    return bubble.ScrollingHost;
             //}
 
-            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault();
         }
 
         public static ScrollViewer GetScrollViewer(this Pivot listViewBase)
         {
-            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault();
         }
     }
 
