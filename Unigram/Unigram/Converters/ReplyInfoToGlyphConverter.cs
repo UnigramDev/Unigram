@@ -139,6 +139,8 @@ namespace Unigram.Converters
 
         public const string VoiceChat = "\uE900";
 
+        public const string EmojiHand = "\uE901";
+
         public const string AppFolder = "\uF122";
 
         public const string ChatBubblesQuestion = "\uE783";
