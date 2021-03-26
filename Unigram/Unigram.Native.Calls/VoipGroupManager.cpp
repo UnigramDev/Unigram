@@ -20,60 +20,56 @@ namespace winrt::Unigram::Native::Calls::implementation
 			logPath.data()
 		};
 
-		tgcalls::GroupInstanceDescriptor impl = tgcalls::GroupInstanceDescriptor{
-			tgcalls::StaticThreads::getThreads(),
-			config,
-			[this](tgcalls::GroupNetworkState state) {
-				auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::GroupNetworkStateChangedEventArgs>(state.isConnected, state.isTransitioningFromBroadcastToRtc);
-				m_networkStateUpdated(*this, *args);
-			},
-			[this](tgcalls::GroupLevelsUpdate const& levels) {
-				auto args = winrt::single_threaded_map<int32_t, IKeyValuePair<float, bool>>(/*std::move(levels)*/);
+		tgcalls::GroupInstanceDescriptor impl = tgcalls::GroupInstanceDescriptor();
+		impl.threads = tgcalls::StaticThreads::getThreads();
+		impl.config = config;
+		impl.networkStateUpdated = [this](tgcalls::GroupNetworkState state) {
+			auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::GroupNetworkStateChangedEventArgs>(state.isConnected, state.isTransitioningFromBroadcastToRtc);
+			m_networkStateUpdated(*this, *args);
+		};
+		impl.audioLevelsUpdated = [this](tgcalls::GroupLevelsUpdate const& levels) {
+			auto args = winrt::single_threaded_map<int32_t, IKeyValuePair<float, bool>>(/*std::move(levels)*/);
 
-				for (const tgcalls::GroupLevelUpdate& x : levels.updates) {
-					args.Insert(x.ssrc, winrt::make<winrt::impl::key_value_pair<IKeyValuePair<float, bool>>>(x.value.level, x.value.voice));
-				}
-
-				m_audioLevelsUpdated(*this, args.GetView());
-			},
-			[this](uint32_t, const tgcalls::AudioFrame&) {
-
-			},
-			string_to_unmanaged(descriptor.AudioInputId()),
-			string_to_unmanaged(descriptor.AudioOutputId()),
-			false,
-			nullptr,
-			nullptr,
-			[this](std::vector<uint32_t> const&) {
-
-			},
-			[this](std::vector<uint32_t> const& ssrcs) {
-				auto participants = std::vector<tgcalls::GroupParticipantDescription>();
-
-				for (const uint32_t& x : ssrcs) {
-					auto participant = tgcalls::GroupParticipantDescription();
-					participant.audioSsrc = x;
-					participants.push_back(participant);
-				}
-
-				m_impl->addParticipants(std::move(participants));
-			},
-			[this](int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done) {
-				int scale = 0;
-				switch (period) {
-					case 1000: scale = 0; break;
-					case 500: scale = 1; break;
-					case 250: scale = 2; break;
-					case 125: scale = 3; break;
-				}
-
-				auto task = std::make_shared<LoadPartTask>(time, scale, std::move(done));
-				auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::FrameRequestedEventArgs>(scale, time,
-					[task](int64_t time, int64_t response, FilePart filePart) { task->done(time, response, filePart); });
-
-				m_frameRequested(*this, *args);
-				return task;
+			for (const tgcalls::GroupLevelUpdate& x : levels.updates) {
+				args.Insert(x.ssrc, winrt::make<winrt::impl::key_value_pair<IKeyValuePair<float, bool>>>(x.value.level, x.value.voice));
 			}
+
+			m_audioLevelsUpdated(*this, args.GetView());
+		};
+		impl.onAudioFrame = [this](uint32_t, const tgcalls::AudioFrame&) {
+
+		};
+		impl.initialInputDeviceId = string_to_unmanaged(descriptor.AudioInputId());
+		impl.initialOutputDeviceId = string_to_unmanaged(descriptor.AudioOutputId());
+		impl.incomingVideoSourcesUpdated = [this](std::vector<uint32_t> const&) {
+
+		};
+		impl.participantDescriptionsRequired = [this](std::vector<uint32_t> const& ssrcs) {
+			auto participants = std::vector<tgcalls::GroupParticipantDescription>();
+
+			for (const uint32_t& x : ssrcs) {
+				auto participant = tgcalls::GroupParticipantDescription();
+				participant.audioSsrc = x;
+				participants.push_back(participant);
+			}
+
+			m_impl->addParticipants(std::move(participants));
+		};
+		impl.requestBroadcastPart = [this](int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done) {
+			int scale = 0;
+			switch (period) {
+			case 1000: scale = 0; break;
+			case 500: scale = 1; break;
+			case 250: scale = 2; break;
+			case 125: scale = 3; break;
+			}
+
+			auto task = std::make_shared<LoadPartTask>(time, scale, std::move(done));
+			auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::FrameRequestedEventArgs>(scale, time,
+				[task](int64_t time, int64_t response, FilePart filePart) { task->done(time, response, filePart); });
+
+			m_frameRequested(*this, *args);
+			return task;
 		};
 
 		m_impl = std::make_unique<tgcalls::GroupInstanceCustomImpl>(std::move(impl));
