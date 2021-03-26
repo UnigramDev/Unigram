@@ -44,6 +44,12 @@ namespace Unigram.Common
                 case SoundEffect.VoipBusy:
                     await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_busy.mp3")), 5, 0);
                     break;
+                case SoundEffect.VoiceChatJoin:
+                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voicechat_join.mp3")), tag: 0);
+                    break;
+                case SoundEffect.VoiceChatLeave:
+                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voicechat_leave.mp3")), tag: 0);
+                    break;
             }
         }
 
@@ -114,5 +120,7 @@ namespace Unigram.Common
         VoipRingback,
         VoipBusy,
         VoipConnecting,
+        VoiceChatJoin,
+        VoiceChatLeave
     }
 }
