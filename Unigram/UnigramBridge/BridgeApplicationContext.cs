@@ -14,8 +14,12 @@ namespace UnigramBridge
         private AppServiceConnection _connection = null;
         private NotifyIcon _notifyIcon = null;
 
+        private InterceptKeys _intercept;
+
         public BridgeApplicationContext()
         {
+            _intercept = new InterceptKeys();
+
             MenuItem openMenuItem = new MenuItem("Open Unigram", new EventHandler(OpenApp));
             MenuItem exitMenuItem = new MenuItem("Quit Unigram", new EventHandler(Exit));
             openMenuItem.DefaultItem = true;
