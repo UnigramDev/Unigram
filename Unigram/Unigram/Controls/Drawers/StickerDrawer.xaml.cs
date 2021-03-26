@@ -1,6 +1,7 @@
 ﻿using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -114,7 +115,7 @@ namespace Unigram.Controls.Drawers
         {
             if (_stickers.TryGetValue(file.Id, out List<StickerViewModel> items) && items.Count > 0)
             {
-                foreach (var sticker in items)
+                foreach (var sticker in items.ToImmutableHashSet())
                 {
                     sticker.UpdateFile(file);
 
@@ -145,7 +146,7 @@ namespace Unigram.Controls.Drawers
 
             if (_stickerSets.TryGetValue(file.Id, out List<StickerSetViewModel> sets) && sets.Count > 0)
             {
-                foreach (var item in sets)
+                foreach (var item in sets.ToImmutableHashSet())
                 {
                     var cover = item.Thumbnail ?? item.Covers.FirstOrDefault()?.Thumbnail;
                     if (cover == null)
@@ -193,7 +194,7 @@ namespace Unigram.Controls.Drawers
 
         private void Stickers_Loaded(object sender, RoutedEventArgs e)
         {
-            var scrollingHost = Stickers.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            var scrollingHost = Stickers.Descendants<ScrollViewer>().FirstOrDefault();
             if (scrollingHost != null)
             {
                 // Syncronizes GridView with the toolbar ListView
