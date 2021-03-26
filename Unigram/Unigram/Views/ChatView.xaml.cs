@@ -611,7 +611,7 @@ namespace Unigram.Views
 
                     content = content.FindName("Bubble") as FrameworkElement;
                 }
-                else if (content is StackPanel panel && !(content is MessageBubble))
+                else if (content is StackPanel panel and not MessageBubble)
                 {
                     content = panel.FindName("Service") as FrameworkElement;
                 }
@@ -621,7 +621,7 @@ namespace Unigram.Views
                     bubble.UpdateAttach(message);
                     bubble.UpdateMessageHeader(message);
                 }
-                else if (content is MessageService && container.ContentTemplateRoot is FrameworkElement root)
+                else if (content is MessageService && container.ContentTemplateRoot is FrameworkElement)
                 {
                     //root.Margin = new Thickness(0, message.IsFirst ? 8 : 4, 0, 0);
                 }
@@ -1656,7 +1656,7 @@ namespace Unigram.Views
 
             flyout.CreateFlyoutItem(ViewModel.SearchCommand, Strings.Resources.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
 
-            if (supergroup != null && !(supergroup.Status is ChatMemberStatusCreator) && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
+            if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || !string.IsNullOrEmpty(supergroup.Username)))
             {
                 flyout.CreateFlyoutItem(ViewModel.ReportCommand, Strings.Resources.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
             }
@@ -1788,7 +1788,7 @@ namespace Unigram.Views
                 {
                     element = content.FindName("Bubble") as FrameworkElement;
                 }
-                else if (content is StackPanel panel && !(content is MessageBubble))
+                else if (content is StackPanel panel and not MessageBubble)
                 {
                     element = panel.FindName("Service") as FrameworkElement;
                 }
@@ -2076,7 +2076,7 @@ namespace Unigram.Views
                     return true;
                 }
             }
-            else if (chat != null && chat.Type is ChatTypePrivate privata)
+            else if (chat != null && chat.Type is ChatTypePrivate)
             {
                 return true;
             }
@@ -2136,7 +2136,7 @@ namespace Unigram.Views
 
         private bool MessageStopPoll_Loaded(MessageViewModel message)
         {
-            if (message.Content is MessagePoll poll)
+            if (message.Content is MessagePoll)
             {
                 return message.CanBeEdited;
             }
@@ -2216,7 +2216,7 @@ namespace Unigram.Views
         private bool MessageCopyLink_Loaded(MessageViewModel message)
         {
             var chat = message.GetChat();
-            if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
+            if (chat != null && chat.Type is ChatTypeSupergroup)
             {
                 //var supergroup = ViewModel.ProtoService.GetSupergroup(supergroupType.SupergroupId);
                 //return !string.IsNullOrEmpty(supergroup.Username);
@@ -2463,7 +2463,7 @@ namespace Unigram.Views
 
             batch.End();
 
-            ViewModel.ChatActionManager.SetTyping(btnVoiceMessage.IsChecked.Value ? (ChatAction)new ChatActionRecordingVideoNote() : new ChatActionRecordingVoiceNote());
+            ViewModel.ChatActionManager.SetTyping(btnVoiceMessage.IsChecked.Value ? new ChatActionRecordingVideoNote() : new ChatActionRecordingVoiceNote());
         }
 
         private void VoiceButton_RecordingStopped(object sender, EventArgs e)
@@ -2632,9 +2632,8 @@ namespace Unigram.Views
                 return;
             }
 
-            TextField.Document.GetText(TextGetOptions.None, out string hidden);
+            TextField.Document.GetText(TextGetOptions.None, out _);
             TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
-
             if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
                 var insert = string.Empty;
@@ -2681,7 +2680,7 @@ namespace Unigram.Views
                 TextField.SetText(null, null);
                 ViewModel.SendCommand.Execute(insert);
             }
-            else if (e.ClickedItem is string hashtag && ChatTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out int index2))
+            else if (e.ClickedItem is string hashtag && ChatTextBox.SearchByHashtag(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string initial, out _))
             {
                 var insert = $"{hashtag} ";
                 var start = TextField.Document.Selection.StartPosition - 1 - initial.Length + insert.Length;
@@ -3832,6 +3831,7 @@ namespace Unigram.Views
                 ViewModel.HasBotCommands = false;
             }
 
+            Call.Glyph = Icons.Phone;
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
             VideoCall.Visibility = /*!secret &&*/ fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -4119,6 +4119,7 @@ namespace Unigram.Views
             }
             else
             {
+                Call.Glyph = Icons.VoiceChat;
                 Call.Visibility = Visibility.Visible;
             }
         }
@@ -4426,9 +4427,9 @@ namespace Unigram.Views
         float amplitude;
         float animateAmplitudeDiff;
         float animateToAmplitude;
-        private BlobDrawable buttonDrawable = new BlobDrawable(4);
-        private BlobDrawable blobDrawable = new BlobDrawable(6);
-        private BlobDrawable blobDrawable2 = new BlobDrawable(8);
+        private readonly BlobDrawable buttonDrawable = new BlobDrawable(4);
+        private readonly BlobDrawable blobDrawable = new BlobDrawable(6);
+        private readonly BlobDrawable blobDrawable2 = new BlobDrawable(8);
         bool showWaves = true;
         float wavesEnter = 0.0f;
 
@@ -4436,17 +4437,17 @@ namespace Unigram.Views
         {
             if (button)
             {
-                this.buttonDrawable.minRadius = large ? 36 : 20; // 22.0f;
-                this.buttonDrawable.maxRadius = large ? 40 : 24; //28.0f;
-                this.buttonDrawable.GenerateBlob();
+                buttonDrawable.minRadius = large ? 36 : 20; // 22.0f;
+                buttonDrawable.maxRadius = large ? 40 : 24; //28.0f;
+                buttonDrawable.GenerateBlob();
             }
 
-            this.blobDrawable.minRadius = large ? 56 : 32; // 22.0f;
-            this.blobDrawable.maxRadius = large ? 64 : 36; //28.0f;
-            this.blobDrawable2.minRadius = large ? 52 : 30; // 22.0f;
-            this.blobDrawable2.maxRadius = large ? 60 : 34; // 28.0f;
-            this.blobDrawable.GenerateBlob();
-            this.blobDrawable2.GenerateBlob();
+            blobDrawable.minRadius = large ? 56 : 32; // 22.0f;
+            blobDrawable.maxRadius = large ? 64 : 36; //28.0f;
+            blobDrawable2.minRadius = large ? 52 : 30; // 22.0f;
+            blobDrawable2.maxRadius = large ? 60 : 34; // 28.0f;
+            blobDrawable.GenerateBlob();
+            blobDrawable2.GenerateBlob();
             //this.blobDrawable.paint.setColor(ColorUtils.setAlphaComponent(Theme.getColor("voipgroup_speakingText"), 38));
             //this.blobDrawable2.paint.setColor(ColorUtils.setAlphaComponent(Theme.getColor("voipgroup_speakingText"), 38));
             blobDrawable.paint.A = large ? (byte)38 : (byte)61;
@@ -4469,54 +4470,54 @@ namespace Unigram.Views
 
         public void Draw(CanvasDrawingSession canvas, float x, float y, CanvasControl view)
         {
-            float f3 = this.animateToAmplitude;
-            float f4 = this.amplitude;
+            float f3 = animateToAmplitude;
+            float f4 = amplitude;
             if (f3 != f4)
             {
-                float f5 = this.animateAmplitudeDiff;
+                float f5 = animateAmplitudeDiff;
                 float f6 = f4 + (16.0f * f5);
-                this.amplitude = f6;
+                amplitude = f6;
                 if (f5 > 0.0f)
                 {
                     if (f6 > f3)
                     {
-                        this.amplitude = f3;
+                        amplitude = f3;
                     }
                 }
                 else if (f6 < f3)
                 {
-                    this.amplitude = f3;
+                    amplitude = f3;
                 }
                 view.Invalidate();
             }
-            float f7 = (this.amplitude * 0.2f) + 0.8f;
-            if (this.showWaves || this.wavesEnter != 0.0f)
+            float f7 = (amplitude * 0.2f) + 0.8f;
+            if (showWaves || wavesEnter != 0.0f)
             {
                 //canvas.save();
-                bool z = this.showWaves;
+                bool z = showWaves;
                 if (z)
                 {
-                    float f8 = this.wavesEnter;
+                    float f8 = wavesEnter;
                     if (f8 != 1.0f)
                     {
                         float f9 = f8 + 0.064f;
-                        this.wavesEnter = f9;
+                        wavesEnter = f9;
                         if (f9 > 1.0f)
                         {
-                            this.wavesEnter = 1.0f;
+                            wavesEnter = 1.0f;
                         }
-                        float interpolation = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
+                        float interpolation = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                         //canvas.scale(interpolation, interpolation, f, f2);
                         canvas.Transform = Matrix3x2.CreateScale(interpolation, interpolation, new Vector2(x, y));
-                        this.blobDrawable.Update(this.amplitude, 1.0f);
-                        this.blobDrawable.Draw(canvas, x, y);
-                        this.blobDrawable2.Update(this.amplitude, 1.0f);
-                        this.blobDrawable2.Draw(canvas, x, y);
+                        blobDrawable.Update(amplitude, 1.0f);
+                        blobDrawable.Draw(canvas, x, y);
+                        blobDrawable2.Update(amplitude, 1.0f);
+                        blobDrawable2.Draw(canvas, x, y);
                         canvas.Transform = Matrix3x2.Identity;
                         if (buttonDrawable != null)
                         {
-                            this.buttonDrawable.Update(this.amplitude, 1.0f);
-                            this.buttonDrawable.Draw(canvas, x, y);
+                            buttonDrawable.Update(amplitude, 1.0f);
+                            buttonDrawable.Draw(canvas, x, y);
                         }
                         view.Invalidate();
                         //canvas.restore();
@@ -4524,29 +4525,29 @@ namespace Unigram.Views
                 }
                 if (!z)
                 {
-                    float f10 = this.wavesEnter;
+                    float f10 = wavesEnter;
                     if (f10 != 0.0f)
                     {
                         float f11 = f10 - 0.064f;
-                        this.wavesEnter = f11;
+                        wavesEnter = f11;
                         if (f11 < 0.0f)
                         {
-                            this.wavesEnter = 0.0f;
+                            wavesEnter = 0.0f;
                         }
                     }
                 }
-                float interpolation2 = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
+                float interpolation2 = f7 * CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                 //canvas.scale(interpolation2, interpolation2, f, f2);
                 canvas.Transform = Matrix3x2.CreateScale(interpolation2, interpolation2, new Vector2(x, y));
-                this.blobDrawable.Update(this.amplitude, 1.0f);
-                this.blobDrawable.Draw(canvas, x, y);
-                this.blobDrawable2.Update(this.amplitude, 1.0f);
-                this.blobDrawable2.Draw(canvas, x, y);
+                blobDrawable.Update(amplitude, 1.0f);
+                blobDrawable.Draw(canvas, x, y);
+                blobDrawable2.Update(amplitude, 1.0f);
+                blobDrawable2.Draw(canvas, x, y);
                 canvas.Transform = Matrix3x2.Identity;
                 if (buttonDrawable != null)
                 {
-                    this.buttonDrawable.Update(this.amplitude, 1.0f);
-                    this.buttonDrawable.Draw(canvas, x, y);
+                    buttonDrawable.Update(amplitude, 1.0f);
+                    buttonDrawable.Draw(canvas, x, y);
                 }
                 view.Invalidate();
                 //canvas.restore();
@@ -4557,21 +4558,21 @@ namespace Unigram.Views
         {
             get
             {
-                float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(this.wavesEnter);
-                return (((this.amplitude * 0.2f) + 0.8f) * interpolation) + ((1.0f - interpolation) * 1.0f);
+                float interpolation = CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                return (((amplitude * 0.2f) + 0.8f) * interpolation) + ((1.0f - interpolation) * 1.0f);
             }
         }
 
         public void SetShowWaves(bool z)
         {
-            this.showWaves = z;
+            showWaves = z;
         }
 
         public void SetAmplitude(double d, CanvasControl view)
         {
             float f = ((float)d) / 100.0f;
             float f2 = 0.0f;
-            if (!this.showWaves)
+            if (!showWaves)
             {
                 f = 0.0f;
             }
@@ -4583,8 +4584,8 @@ namespace Unigram.Views
             {
                 f2 = f;
             }
-            this.animateToAmplitude = f2;
-            this.animateAmplitudeDiff = (f2 - this.amplitude) / 150.0f;
+            animateToAmplitude = f2;
+            animateAmplitudeDiff = (f2 - amplitude) / 150.0f;
             view.Invalidate();
         }
     }
@@ -4607,54 +4608,54 @@ namespace Unigram.Views
         public static float SCALE_SMALL_MIN = 0.926f;
         private readonly float L;
         private readonly float N;
-        private float[] angle;
-        private float[] angleNext;
+        private readonly float[] angle;
+        private readonly float[] angleNext;
         public float cubicBezierK = 1.0f;
         private Matrix3x2 m;
         public float maxRadius;
         public float minRadius;
         public Color paint = Colors.Red;
-        private Vector2[] pointEnd = new Vector2[2];
-        private Vector2[] pointStart = new Vector2[2];
-        private float[] progress;
-        private float[] radius;
-        private float[] radiusNext;
+        private readonly Vector2[] pointEnd = new Vector2[2];
+        private readonly Vector2[] pointStart = new Vector2[2];
+        private readonly float[] progress;
+        private readonly float[] radius;
+        private readonly float[] radiusNext;
         readonly Random random = new Random();
-        private float[] speed;
+        private readonly float[] speed;
 
         public BlobDrawable(int i)
         {
-            float f = (float)i;
-            this.N = f;
+            float f = i;
+            N = f;
             float d = (float)(f * 2.0f);
             //Double.isNaN(d);
-            this.L = (float)(MathF.Tan(3.141592653589793f / d) * 1.3333333333333333f);
-            this.radius = new float[i];
-            this.angle = new float[i];
-            this.radiusNext = new float[i];
-            this.angleNext = new float[i];
-            this.progress = new float[i];
-            this.speed = new float[i];
-            for (int i2 = 0; ((float)i2) < this.N; i2++)
+            L = MathF.Tan(3.141592653589793f / d) * 1.3333333333333333f;
+            radius = new float[i];
+            angle = new float[i];
+            radiusNext = new float[i];
+            angleNext = new float[i];
+            progress = new float[i];
+            speed = new float[i];
+            for (int i2 = 0; i2 < N; i2++)
             {
-                generateBlob(this.radius, this.angle, i2);
-                generateBlob(this.radiusNext, this.angleNext, i2);
-                this.progress[i2] = 0.0f;
+                generateBlob(radius, angle, i2);
+                generateBlob(radiusNext, angleNext, i2);
+                progress[i2] = 0.0f;
             }
         }
 
         private void generateBlob(float[] fArr, float[] fArr2, int i)
         {
-            fArr[i] = minRadius + (MathF.Abs((((float)this.random.Next()) % 100.0f) / 100.0f) * (maxRadius - minRadius));
-            fArr2[i] = ((360.0f / this.N) * ((float)i)) + (((((float)this.random.Next()) % 100.0f) / 100.0f) * (360.0f / this.N) * 0.05f);
-            double abs = (double)(MathF.Abs(((float)this.random.Next()) % 100.0f) / 100.0f);
+            fArr[i] = minRadius + (MathF.Abs((random.Next() % 100.0f) / 100.0f) * (maxRadius - minRadius));
+            fArr2[i] = ((360.0f / N) * i) + (((random.Next() % 100.0f) / 100.0f) * (360.0f / N) * 0.05f);
+            double abs = MathF.Abs(random.Next() % 100.0f) / 100.0f;
             Double.IsNaN(abs);
             speed[i] = (float)((abs * 0.003d) + 0.017d);
         }
 
         public void Update(float f, float f2)
         {
-            for (int i = 0; ((float)i) < this.N; i++)
+            for (int i = 0; i < N; i++)
             {
                 float f3 = progress[i];
                 progress[i] = f3 + (speed[i] * MIN_SPEED) + (speed[i] * f * MAX_SPEED * f2);
@@ -4674,13 +4675,13 @@ namespace Unigram.Views
             int i = 0;
             while (true)
             {
-                float f5 = this.N;
-                if (((float)i) < f5)
+                float f5 = N;
+                if (i < f5)
                 {
-                    float[] fArr = this.progress;
+                    float[] fArr = progress;
                     float f6 = fArr[i];
                     int i2 = i + 1;
-                    int i3 = ((float)i2) < f5 ? i2 : 0;
+                    int i3 = i2 < f5 ? i2 : 0;
                     float f7 = fArr[i3];
                     float f8 = 1.0f - f6;
                     float f9 = (radius[i] * f8) + (radiusNext[i] * f6);
@@ -4688,7 +4689,7 @@ namespace Unigram.Views
                     float f11 = (radius[i3] * f10) + (radiusNext[i3] * f7);
                     float f12 = angle[i] * f8;
                     float f13 = (angle[i3] * f10) + (angleNext[i3] * f7);
-                    float min = this.L * (MathF.Min(f9, f11) + ((Math.Max(f9, f11) - Math.Min(f9, f11)) / 2.0f)) * this.cubicBezierK;
+                    float min = L * (MathF.Min(f9, f11) + ((Math.Max(f9, f11) - Math.Min(f9, f11)) / 2.0f)) * cubicBezierK;
                     pointStart[0].X = x;
                     pointStart[0].Y = y - f9;
                     pointStart[1].X = x + min;
@@ -4729,11 +4730,11 @@ namespace Unigram.Views
 
         public void GenerateBlob()
         {
-            for (int i = 0; ((float)i) < this.N; i++)
+            for (int i = 0; i < N; i++)
             {
-                generateBlob(this.radius, this.angle, i);
-                generateBlob(this.radiusNext, this.angleNext, i);
-                this.progress[i] = 0.0f;
+                generateBlob(radius, angle, i);
+                generateBlob(radiusNext, angleNext, i);
+                progress[i] = 0.0f;
             }
         }
     }
