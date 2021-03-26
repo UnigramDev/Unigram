@@ -68,7 +68,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
+        public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
         {
             if (chat == null)
             {
@@ -148,7 +148,7 @@ namespace Unigram.Common
 
                 //Frame.Navigated += handler;
 
-                state = state ?? new Dictionary<string, object>();
+                state = state ?? new NavigationState();
 
                 if (message != null)
                 {
@@ -226,7 +226,7 @@ namespace Unigram.Common
             }
         }
 
-        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
+        public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
         {
             var chat = _protoService.GetChat(chatId);
             if (chat == null)

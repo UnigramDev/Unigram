@@ -485,7 +485,7 @@ namespace Unigram.Controls
             throw new NotImplementedException();
         }
 
-        public bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
+        public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
             throw new NotImplementedException();
         }

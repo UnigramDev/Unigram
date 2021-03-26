@@ -4,6 +4,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
@@ -18,7 +19,7 @@ namespace Unigram.ViewModels.Users
         {
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is long chatId)
             {

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Unigram.ViewModels.Delegates;
@@ -30,7 +31,7 @@ namespace Unigram.ViewModels
             CopyCommand = new RelayCommand(CopyExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, new TextEntity[0])));
             if (response is WebPage webPage)

@@ -5,6 +5,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Entities;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
@@ -20,7 +21,7 @@ namespace Unigram.ViewModels.Settings
             CopyCommand = new RelayCommand(CopyExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             IsValid = false;
             IsLoading = false;

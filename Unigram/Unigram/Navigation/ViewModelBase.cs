@@ -8,12 +8,12 @@ namespace Unigram.Navigation
     // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-MVVM
     public abstract class ViewModelBase : BindableBase, INavigable
     {
-        public virtual Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public virtual Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public virtual Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
         {
             return Task.CompletedTask;
         }

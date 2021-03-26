@@ -5,6 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
 using Windows.UI.Xaml.Controls;
@@ -34,7 +35,7 @@ namespace Unigram.ViewModels.Settings
             Aggregator.Subscribe(this);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             foreach (var scope in Scopes)
             {

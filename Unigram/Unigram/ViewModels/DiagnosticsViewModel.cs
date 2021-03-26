@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.Storage;
@@ -26,7 +27,7 @@ namespace Unigram.ViewModels
             VerbosityCommand = new RelayCommand(VerbosityExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var calls = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
             if (calls != null)

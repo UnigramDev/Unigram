@@ -8,6 +8,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Native;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
@@ -35,7 +36,7 @@ namespace Unigram.ViewModels.Settings
             aggregator.Subscribe(this);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var systemId = await _networkService.GetSystemProxyId();
 
@@ -74,7 +75,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             _networkService.ProxyChanged -= OnSystemProxyChanged;
             return base.OnNavigatedFromAsync(pageState, suspending);

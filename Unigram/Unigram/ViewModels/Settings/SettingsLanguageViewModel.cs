@@ -7,6 +7,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Host;
 using Windows.ApplicationModel.Resources.Core;
@@ -31,7 +32,7 @@ namespace Unigram.ViewModels.Settings
             DeleteCommand = new RelayCommand<LanguagePackInfo>(DeleteExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new GetLocalizationTargetInfo(false));
             if (response is LocalizationTargetInfo pack)

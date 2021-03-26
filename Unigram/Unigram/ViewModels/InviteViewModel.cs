@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -22,7 +23,7 @@ namespace Unigram.ViewModels
 
         public MvxObservableCollection<object> Items { get; private set; }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await _contactsService.ImportAsync();
             if (response is ImportedContacts importedContacts)

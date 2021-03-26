@@ -8,6 +8,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
@@ -48,7 +49,7 @@ namespace Unigram.ViewModels.Settings
         public MvxObservableCollection<ThemeInfoBase> Custom { get; private set; }
         public MvxObservableCollection<ThemeAccentInfo> Accents { get; private set; }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await RefreshThemesAsync();
         }

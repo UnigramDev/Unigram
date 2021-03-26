@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -20,7 +21,7 @@ namespace Unigram.ViewModels.Payments
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var buffer = parameter as byte[];
             if (buffer == null)

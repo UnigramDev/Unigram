@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
@@ -20,7 +21,7 @@ namespace Unigram.ViewModels.Settings
             ClearCacheCommand = new RelayCommand(ClearCacheExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             IsLoading = true;
 

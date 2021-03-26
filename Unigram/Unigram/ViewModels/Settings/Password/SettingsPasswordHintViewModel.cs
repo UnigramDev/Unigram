@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings.Password;
 using Windows.UI.Xaml.Navigation;
@@ -25,7 +26,7 @@ namespace Unigram.ViewModels.Settings.Password
             set => Set(ref _hint, value);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (state.TryGet("password", out string password))
             {
@@ -47,7 +48,7 @@ namespace Unigram.ViewModels.Settings.Password
                 return;
             }
 
-            var state = new Dictionary<string, object>
+            var state = new NavigationState
             {
                 { "password", password },
                 { "hint", hint }

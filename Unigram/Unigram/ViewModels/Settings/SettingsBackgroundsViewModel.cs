@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Storage.AccessCache;
@@ -26,11 +27,6 @@ namespace Unigram.ViewModels.Settings
             LocalCommand = new RelayCommand(LocalExecute);
             ColorCommand = new RelayCommand(ColorExecute);
             ResetCommand = new RelayCommand(ResetExecute);
-        }
-
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
-        {
-            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         private void RefreshItems()

@@ -69,13 +69,13 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override async Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override async Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             await base.OnNavigatedFromAsync(pageState, suspending);
             await Task.WhenAll(Children.Select(x => x.OnNavigatedFromAsync(pageState, suspending)));
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
             await Task.WhenAll(Children.Select(x => x.OnNavigatedToAsync(parameter, mode, state)));

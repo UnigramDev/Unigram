@@ -4,6 +4,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -22,7 +23,7 @@ namespace Unigram.ViewModels.SignIn
             ResetCommand = new RelayCommand(ResetExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var authState = ProtoService.GetAuthorizationState();
             if (authState is AuthorizationStateWaitPassword waitPassword)

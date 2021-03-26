@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Entities;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings;
 using Windows.UI.Xaml.Navigation;
@@ -20,7 +20,7 @@ namespace Unigram.ViewModels.Settings
             ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var authState = GetAuthorizationState();
             if (authState is AuthenticationCodeInfo codeInfo)

@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Charts.Data;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
@@ -97,7 +98,7 @@ namespace Unigram.ViewModels.Chats
             NavigationService.NavigateToChat(message.ChatId, message.Id);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 

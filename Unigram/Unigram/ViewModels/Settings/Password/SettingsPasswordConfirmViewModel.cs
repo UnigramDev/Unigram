@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -40,7 +41,7 @@ namespace Unigram.ViewModels.Settings.Password
             }
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (state.TryGet("email", out string email))
             {

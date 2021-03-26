@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -19,7 +20,7 @@ namespace Unigram.ViewModels.Users
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrEmpty(_firstName) && !string.IsNullOrEmpty(_phoneNumber));
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ProtoService.Send(new GetCountryCode(), result =>
             {

@@ -5,6 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Native.Calls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
@@ -27,7 +28,7 @@ namespace Unigram.ViewModels.Settings
             UseLessDataCommand = new RelayCommand(UseLessDataExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             return Task.CompletedTask;
         }

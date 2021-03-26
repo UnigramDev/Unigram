@@ -117,7 +117,7 @@ namespace Unigram.ViewModels
             set { Set(ref _members, value); }
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -202,7 +202,7 @@ namespace Unigram.ViewModels
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;

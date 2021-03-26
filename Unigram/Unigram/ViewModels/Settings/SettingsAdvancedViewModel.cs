@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Windows.System;
@@ -26,7 +27,7 @@ namespace Unigram.ViewModels.Settings
 
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             _update = _cloudUpdateService.NextUpdate;
             UpdateExecute();
@@ -35,7 +36,7 @@ namespace Unigram.ViewModels.Settings
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
             return base.OnNavigatedFromAsync(pageState, suspending);

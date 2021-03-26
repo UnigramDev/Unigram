@@ -22,7 +22,7 @@ namespace Unigram.Navigation.Services
 
         object Content { get; }
 
-        bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null);
+        bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null);
 
         bool CanGoBack { get; }
         bool CanGoForward { get; }
@@ -244,7 +244,7 @@ namespace Unigram.Navigation.Services
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
-        public bool Navigate(Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
+        public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
             Logger.Info($"Page: {page}, Parameter: {parameter}, NavigationTransitionInfo: {infoOverride}");
 

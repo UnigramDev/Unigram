@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Settings.Privacy;
 using Unigram.Views.Popups;
@@ -58,7 +59,7 @@ namespace Unigram.ViewModels.Settings
             aggregator.Subscribe(this);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ProtoService.Send(new GetAccountTtl(), result =>
             {
@@ -263,7 +264,7 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (passwordState.RecoveryEmailAddressCodeInfo != null)
                 {
-                    var state = new Dictionary<string, object>
+                    var state = new NavigationState
                     {
                         { "pattern", passwordState.RecoveryEmailAddressCodeInfo.EmailAddressPattern },
                         { "length", passwordState.RecoveryEmailAddressCodeInfo.Length }

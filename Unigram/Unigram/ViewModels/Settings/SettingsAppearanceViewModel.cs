@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.UI.Xaml.Controls;
@@ -25,7 +26,7 @@ namespace Unigram.ViewModels.Settings
             EmojiSetCommand = new RelayCommand(EmojiSetExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var emojiSet = Settings.Appearance.EmojiSet;
             EmojiSet = emojiSet.Title;

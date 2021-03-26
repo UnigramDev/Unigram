@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings.Password;
 using Windows.UI.Xaml.Controls;
@@ -29,7 +30,7 @@ namespace Unigram.ViewModels.Settings.Password
             set => Set(ref _address, value);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (state.TryGet("password", out string password))
             {
@@ -69,7 +70,7 @@ namespace Unigram.ViewModels.Settings.Password
             {
                 if (passwordState.RecoveryEmailAddressCodeInfo != null)
                 {
-                    var state = new Dictionary<string, object>
+                    var state = new NavigationState
                     {
                         { "email", address },
                         { "pattern", passwordState.RecoveryEmailAddressCodeInfo.EmailAddressPattern },

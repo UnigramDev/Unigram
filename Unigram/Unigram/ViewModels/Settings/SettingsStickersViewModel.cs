@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
@@ -59,7 +60,7 @@ namespace Unigram.ViewModels.Settings
             _ => Strings.Resources.StickersName
         };
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is int flags)
             {
@@ -99,7 +100,7 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             if (_type == StickersType.Installed || _type == StickersType.Masks)
             {

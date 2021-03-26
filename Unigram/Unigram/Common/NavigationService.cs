@@ -46,7 +46,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void Navigate<T>(this INavigationService service, Type page, object parameter = null, IDictionary<string, object> state = null, NavigationTransitionInfo infoOverride = null)
+        public static void Navigate<T>(this INavigationService service, Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
             //NavigatedEventHandler handler = null;
             //handler = (s, args) =>
@@ -128,7 +128,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void NavigateToThread(this INavigationService service, Chat chat, long thread, long? message = null, IDictionary<string, object> state = null)
+        public static void NavigateToThread(this INavigationService service, Chat chat, long thread, long? message = null, NavigationState state = null)
         {
             if (service is TLNavigationService serviceEx)
             {
@@ -136,7 +136,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void NavigateToThread(this INavigationService service, long chatId, long thread, long? message = null, IDictionary<string, object> state = null)
+        public static void NavigateToThread(this INavigationService service, long chatId, long thread, long? message = null, NavigationState state = null)
         {
             if (service is TLNavigationService serviceEx)
             {
@@ -144,7 +144,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long? thread = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
+        public static void NavigateToChat(this INavigationService service, Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
         {
             if (service is TLNavigationService serviceEx)
             {
@@ -152,7 +152,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long? thread = null, string accessToken = null, IDictionary<string, object> state = null, bool scheduled = false, bool force = true)
+        public static void NavigateToChat(this INavigationService service, long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true)
         {
             if (service is TLNavigationService serviceEx)
             {

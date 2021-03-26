@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Settings.Password;
 
@@ -47,7 +48,7 @@ namespace Unigram.ViewModels.Settings.Password
                 return;
             }
 
-            var state = new Dictionary<string, object>
+            var state = new NavigationState
             {
                 { "password", field1 }
             };

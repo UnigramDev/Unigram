@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views.Popups;
@@ -23,13 +24,13 @@ namespace Unigram.ViewModels.Settings
             AutolockCommand = new RelayCommand(AutolockExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             Aggregator.Subscribe(this);
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
             return base.OnNavigatedFromAsync(pageState, suspending);

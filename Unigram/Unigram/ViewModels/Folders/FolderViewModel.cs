@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
 using Windows.UI.Xaml.Navigation;
@@ -37,7 +38,7 @@ namespace Unigram.ViewModels.Folders
             SendCommand.RaiseCanExecuteChanged();
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ChatFilter filter = null;
 

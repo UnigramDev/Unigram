@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Supergroups;
 using Windows.UI.Xaml.Navigation;
@@ -20,7 +21,7 @@ namespace Unigram.ViewModels.Supergroups
             ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             await base.OnNavigatedToAsync(parameter, mode, state);
 

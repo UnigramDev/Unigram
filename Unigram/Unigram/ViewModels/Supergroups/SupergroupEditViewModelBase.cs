@@ -5,6 +5,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Windows.UI.Xaml.Controls;
@@ -97,7 +98,7 @@ namespace Unigram.ViewModels.Supergroups
 
         public MvxObservableCollection<Chat> AdminedPublicChannels { get; private set; }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -155,7 +156,7 @@ namespace Unigram.ViewModels.Supergroups
             return Task.CompletedTask;
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
             return Task.CompletedTask;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Payments;
 using Windows.UI.Xaml.Navigation;
@@ -14,7 +15,7 @@ namespace Unigram.ViewModels.Payments
         {
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var navigation = parameter as ReceiptNavigation;
             if (navigation == null)

@@ -9,6 +9,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.ViewModels.Folders;
@@ -360,7 +361,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
             //BeginOnUIThread(() => Settings.OnNavigatedToAsync(parameter, mode, state));

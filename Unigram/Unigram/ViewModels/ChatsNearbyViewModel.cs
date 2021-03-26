@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -51,7 +52,7 @@ namespace Unigram.ViewModels
             set => Set(ref _isChatsEmpty, value);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var location = await _locationService.GetPositionAsync();
             if (location == null)
@@ -90,7 +91,7 @@ namespace Unigram.ViewModels
             Aggregator.Subscribe(this);
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
             return base.OnNavigatedFromAsync(pageState, suspending);

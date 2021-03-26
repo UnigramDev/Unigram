@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unigram.Navigation.Services;
 using Windows.Foundation;
 using Windows.Storage;
 
@@ -8,7 +9,7 @@ namespace Unigram.Services
 {
     public interface ISettingsLegacyService
     {
-        IDictionary<string, object> Values { get; }
+        NavigationState Values { get; }
         bool Exists(string key);
         T Read<T>(string key, T fallback = default(T));
         void Remove(string key);
@@ -59,24 +60,24 @@ namespace Unigram.Services
             //}
 
             //return new SettingsService(targetContainer);
-            return new SettingsLegacyService(new Dictionary<string, object>());
+            return new SettingsLegacyService(new NavigationState());
         }
 
-        public IDictionary<string, object> Values { get; private set; }
+        public NavigationState Values { get; private set; }
 
-        private static readonly Dictionary<string, IDictionary<string, object>> _keys = new Dictionary<string, IDictionary<string, object>>();
+        private static readonly Dictionary<string, NavigationState> _keys = new Dictionary<string, NavigationState>();
 
-        private SettingsLegacyService(IDictionary<string, object> values)
+        private SettingsLegacyService(NavigationState values)
         {
             Values = values;
         }
 
         public ISettingsLegacyService Open(string folderName, bool createFolderIfNotExists = true)
         {
-            IDictionary<string, object> values;
+            NavigationState values;
             if (!_keys.TryGetValue(folderName, out values))
             {
-                _keys[folderName] = values = new Dictionary<string, object>();
+                _keys[folderName] = values = new NavigationState();
             }
 
             var service = new SettingsLegacyService(values);

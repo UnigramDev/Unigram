@@ -6,6 +6,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Settings;
@@ -34,7 +35,7 @@ namespace Unigram.ViewModels.SignIn
             ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ProtoService.Send(new GetCountryCode(), result =>
             {

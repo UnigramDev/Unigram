@@ -8,6 +8,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Entities;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
@@ -51,7 +52,7 @@ namespace Unigram.ViewModels
 
         public MvxObservableCollection<SettingsSearchEntry> Results { get; private set; }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var response = await ProtoService.SendAsync(new CreatePrivateChat(CacheService.Options.MyId, false));
             if (response is Chat chat)

@@ -7,6 +7,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -23,7 +24,7 @@ namespace Unigram.ViewModels.Settings
             ResetCommand = new RelayCommand(ResetExecute);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             ProtoService.Send(new GetNetworkStatistics(false), result =>
             {

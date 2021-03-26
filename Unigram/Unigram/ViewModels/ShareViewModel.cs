@@ -7,6 +7,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Navigation;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Factories;
 using Windows.ApplicationModel.DataTransfer;
@@ -56,7 +57,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, Navigation.Services.NavigationState state)
         {
             //if (mode == NavigationMode.New)
             //{
@@ -512,16 +513,10 @@ namespace Unigram.ViewModels
                     return;
                 }
 
-                var state = new Dictionary<string, object>();
-                state["switch_query"] = _switchInline.Query;
-                state["switch_bot"] = _switchInlineBot.Id;
-
-                //NavigationService.GoBack();
-
                 var service = WindowContext.GetForCurrentView().NavigationServices.GetByFrameId("Main" + ProtoService.SessionId);
                 if (service != null)
                 {
-                    service.NavigateToChat(chat, state: state);
+                    service.NavigateToChat(chat, state: NavigationState.GetSwitchQuery(_switchInline.Query, _switchInlineBot.Id));
                 }
             }
             else if (_package != null)

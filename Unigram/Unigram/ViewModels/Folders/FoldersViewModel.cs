@@ -4,6 +4,7 @@ using Telegram.Td.Api;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
 using Unigram.Views.Folders;
@@ -33,7 +34,7 @@ namespace Unigram.ViewModels.Folders
         public MvxObservableCollection<ChatFilterInfo> Items { get; private set; }
         public MvxObservableCollection<RecommendedChatFilter> Recommended { get; private set; }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             Items.ReplaceWith(CacheService.ChatFilters);
 
@@ -53,7 +54,7 @@ namespace Unigram.ViewModels.Folders
             Aggregator.Subscribe(this);
         }
 
-        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        public override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
             return base.OnNavigatedFromAsync(pageState, suspending);
