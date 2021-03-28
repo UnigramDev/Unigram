@@ -22,6 +22,7 @@ namespace Unigram.ViewModels.Gallery
         {
             StickersCommand = new RelayCommand(StickersExecute);
             ViewCommand = new RelayCommand(ViewExecute);
+            ForwardCommand = new RelayCommand(ForwardExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
             CopyCommand = new RelayCommand(CopyExecute);
             SaveCommand = new RelayCommand(SaveExecute);
@@ -209,6 +210,25 @@ namespace Unigram.ViewModels.Gallery
             if (service != null)
             {
                 service.NavigateToChat(message.ChatId, message: message.Id);
+            }
+        }
+
+        public RelayCommand ForwardCommand { get; }
+        protected virtual async void ForwardExecute()
+        {
+            if (_selectedItem is GalleryMessage message)
+            {
+                await SharePopup.GetForCurrentView().ShowAsync(message.Message);
+            }
+            else
+            {
+                var input = _selectedItem?.ToInput();
+                if (input == null)
+                {
+                    return;
+                }
+
+                await SharePopup.GetForCurrentView().ShowAsync(input);
             }
         }
 

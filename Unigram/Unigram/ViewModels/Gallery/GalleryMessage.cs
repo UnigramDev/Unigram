@@ -14,6 +14,8 @@ namespace Unigram.ViewModels.Gallery
             _message = message;
         }
 
+        public Message Message => _message;
+
         public long ChatId => _message.ChatId;
         public long Id => _message.Id;
 
@@ -155,6 +157,7 @@ namespace Unigram.ViewModels.Gallery
         public override bool CanView => true;
         public override bool CanCopy => !_message.IsSecret() && IsPhoto;
         public override bool CanSave => !_message.IsSecret();
+        public override bool CanShare => CanSave;
 
         public override int Duration
         {

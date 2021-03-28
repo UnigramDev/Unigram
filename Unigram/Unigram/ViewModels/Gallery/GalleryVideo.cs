@@ -58,9 +58,15 @@ namespace Unigram.ViewModels.Gallery
         public override bool IsVideo => true;
 
         public override bool CanSave => true;
+        public override bool CanShare => true;
 
         public override int Duration => _video.Duration;
 
         public override string MimeType => _video.MimeType;
+
+        public override InputMessageContent ToInput()
+        {
+            return new InputMessageVideo(new InputFileId(_video.VideoValue.Id), _video.Thumbnail?.ToInput(), new int[0], _video.Duration, _video.Width, _video.Height, _video.SupportsStreaming, null, 0);
+        }
     }
 }

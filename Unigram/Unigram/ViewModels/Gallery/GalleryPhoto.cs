@@ -56,5 +56,14 @@ namespace Unigram.ViewModels.Gallery
 
         public override bool CanCopy => true;
         public override bool CanSave => true;
+        public override bool CanShare => true;
+
+        public override InputMessageContent ToInput()
+        {
+            var big = _photo.GetBig();
+            var small = _photo.GetSmall();
+
+            return new InputMessagePhoto(new InputFileId(big.Photo.Id), small?.ToInputThumbnail(), new int[0], big.Width, big.Height, null, 0);
+        }
     }
 }

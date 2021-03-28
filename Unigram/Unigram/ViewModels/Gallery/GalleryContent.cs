@@ -48,9 +48,9 @@ namespace Unigram.ViewModels.Gallery
         public virtual bool CanSave { get; private set; }
         public virtual bool CanCopy { get; private set; }
 
-        public virtual void Share()
+        public virtual InputMessageContent ToInput()
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }
