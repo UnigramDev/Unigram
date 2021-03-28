@@ -19,6 +19,11 @@ namespace Unigram.Controls.Messages
         {
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new MessageReferenceAutomationPeer(this);
+        }
+
         public long MessageId { get; private set; }
 
         #region Message
@@ -139,7 +144,7 @@ namespace Unigram.Controls.Messages
                 var height = (int)(photoSize.Height * ratio);
 
                 ShowThumbnail();
-                SetThumbnail(new BitmapImage(new Uri("file:///" + photoSize.Photo.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical });
+                SetThumbnail(new BitmapImage(UriEx.GetLocal(photoSize.Photo.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical });
             }
             else
             {
@@ -165,7 +170,7 @@ namespace Unigram.Controls.Messages
                 var height = (int)(thumbnail.Height * ratio);
 
                 ShowThumbnail(radius);
-                SetThumbnail(new BitmapImage(new Uri("file:///" + thumbnail.File.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical });
+                SetThumbnail(new BitmapImage(UriEx.GetLocal(thumbnail.File.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical });
             }
             else
             {
@@ -658,7 +663,7 @@ namespace Unigram.Controls.Messages
                 builder.Append(child.Text);
             }
 
-            return builder.ToString();
+            return builder.Replace(Environment.NewLine, ": ").ToString();
         }
     }
 }
