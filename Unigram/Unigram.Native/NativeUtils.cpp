@@ -190,6 +190,13 @@ namespace winrt::Unigram::Native::implementation
 			}
 		}
 
+		std::wstring str = buff;
+		size_t sorting = str.find(L"_");
+
+		if (sorting != std::wstring::npos) {
+			return str.substr(0, sorting).c_str();
+		}
+
 		return buff;
 	}
 

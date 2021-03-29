@@ -42,23 +42,23 @@ namespace Unigram.Converters
 
         private BindConvert()
         {
-            //var region = new GeographicRegion();
-            //var code = region.CodeTwoLetter;
-
             var culture = NativeUtils.GetCurrentCulture();
             var languages = new[] { culture }.Union(GlobalizationPreferences.Languages);
+            var region = GlobalizationPreferences.HomeGeographicRegion;
+            var calendar = GlobalizationPreferences.Calendars.FirstOrDefault();
+            var clock = GlobalizationPreferences.Clocks.FirstOrDefault();
 
-            ShortDate = new DateTimeFormatter("shortdate", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            ShortTime = new DateTimeFormatter("shorttime", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            LongDate = new DateTimeFormatter("longdate", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            LongTime = new DateTimeFormatter("longtime", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            MonthFull = new DateTimeFormatter("month.full", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            MonthAbbreviatedDay = new DateTimeFormatter("month.abbreviated day", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            MonthFullYear = new DateTimeFormatter("month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            DayMonthFull = new DateTimeFormatter("day month.full", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            MonthAbbreviatedYear = new DateTimeFormatter("month.abbreviated year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-            DayMonthAbbreviatedYear = new DateTimeFormatter("day month.abbreviated year", languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            ShortDate = new DateTimeFormatter("shortdate", languages, region, calendar, clock);
+            ShortTime = new DateTimeFormatter("shorttime", languages, region, calendar, clock);
+            LongDate = new DateTimeFormatter("longdate", languages, region, calendar, clock);
+            LongTime = new DateTimeFormatter("longtime", languages, region, calendar, clock);
+            MonthFull = new DateTimeFormatter("month.full", languages, region, calendar, clock);
+            MonthAbbreviatedDay = new DateTimeFormatter("month.abbreviated day", languages, region, calendar, clock);
+            MonthFullYear = new DateTimeFormatter("month.full year", languages, region, calendar, clock);
+            DayMonthFull = new DateTimeFormatter("day month.full", languages, region, calendar, clock);
+            DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, region, calendar, clock);
+            MonthAbbreviatedYear = new DateTimeFormatter("month.abbreviated year", languages, region, calendar, clock);
+            DayMonthAbbreviatedYear = new DateTimeFormatter("day month.abbreviated year", languages, region, calendar, clock);
         }
 
         public static string MonthGrouping(DateTime date)
