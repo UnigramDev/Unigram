@@ -12,6 +12,7 @@ using Unigram.Converters;
 using Unigram.Native.Calls;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation.Metadata;
 using Windows.UI;
@@ -46,7 +47,7 @@ namespace Unigram.Views
 
             _service = voipService;
 
-            UpdateNetworkState();
+            UpdateNetworkState(_service.Call);
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -57,7 +58,6 @@ namespace Unigram.Views
             Window.Current.Closed += OnClosed;
 
             //Window.Current.SetTitleBar(BlurPanel);
-            TitleInfo.Text = cacheService.GetTitle(voipService.Chat);
             PhotoInfo.Source = PlaceholderHelper.GetChat(protoService, voipService.Chat, 36);
 
             List.ItemsSource = new GroupCallParticipantsCollection(protoService, aggregator, voipService.Call.Id) { Delegate = this };
@@ -140,14 +140,16 @@ namespace Unigram.Views
 
             this.BeginOnUIThread(() =>
             {
+                TitleInfo.Text = call.Title.Length > 0 ? call.Title : _cacheService.GetTitle(_service.Chat);
                 SubtitleInfo.Text = Locale.Declension("Participants", call.ParticipantCount);
-                UpdateNetworkState(_service.IsConnected);
+                RecordingInfo.Visibility = call.RecordDuration > 0 ? Visibility.Visible : Visibility.Collapsed;
+                UpdateNetworkState(call, _service.IsConnected);
             });
         }
 
         private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() => UpdateNetworkState(args.IsConnected));
+            this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, args.IsConnected));
         }
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
@@ -233,17 +235,11 @@ namespace Unigram.Views
                 _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, new MessageSenderUser(_cacheService.Options.MyId), Audio.IsChecked == false));
             }
 
-            UpdateNetworkState(_service.IsConnected);
+            UpdateNetworkState(_service.Call, _service.IsConnected);
         }
 
-        private void UpdateNetworkState(bool? connected = null)
+        private void UpdateNetworkState(GroupCall call, bool? connected = null)
         {
-            var call = _service.Call;
-            if (call == null)
-            {
-                return;
-            }
-
             if (connected == true)
             {
                 Audio.IsEnabled = !(_service.Manager.IsMuted && !call.CanUnmuteSelf);
@@ -259,11 +255,15 @@ namespace Unigram.Views
                 {
                     _drawable.SetColors(Color.FromArgb(0xFF, 0x00, 0x78, 0xff), Color.FromArgb(0xFF, 0x33, 0xc6, 0x59));
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
+
+                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmute.tgs");
                 }
                 else
                 {
                     _drawable.SetColors(Color.FromArgb(0xFF, 0x59, 0xc7, 0xf8), Color.FromArgb(0xFF, 0x00, 0x78, 0xff));
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
+
+                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceMute.tgs");
                 }
             }
             else
@@ -285,21 +285,48 @@ namespace Unigram.Views
                 return;
             }
 
-            var supergroup = _cacheService.GetSupergroup(chat);
-            if (supergroup == null)
+            if (call.CanBeManaged)
             {
-                return;
+                flyout.CreateFlyoutItem(SetTitle, Strings.Resources.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
             }
 
-            FontIcon GetCheckmark(bool condition)
+            if (call.CanChangeMuteNewParticipants)
             {
-                return condition ? new FontIcon { Glyph = Icons.Checkmark } : null;
+                var toggleFalse = new ToggleMenuFlyoutItem();
+                toggleFalse.Text = Strings.Resources.VoipGroupAllCanSpeak;
+                toggleFalse.IsChecked = !call.MuteNewParticipants;
+                toggleFalse.Click += (s, args) =>
+                {
+                    _protoService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, false));
+                };
+
+                var toggleTrue = new ToggleMenuFlyoutItem();
+                toggleTrue.Text = Strings.Resources.VoipGroupOnlyAdminsCanSpeak;
+                toggleTrue.IsChecked = call.MuteNewParticipants;
+                toggleTrue.Click += (s, args) =>
+                {
+                    _protoService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, true));
+                };
+
+                var settings = new MenuFlyoutSubItem();
+                settings.Text = Strings.Resources.VoipGroupEditPermissions;
+                settings.Icon = new FontIcon { Glyph = Icons.Key, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                settings.Items.Add(toggleFalse);
+                settings.Items.Add(toggleTrue);
+
+                flyout.Items.Add(settings);
             }
 
-            if (call.CanChangeMuteNewParticipants && supergroup != null && supergroup.CanManageVoiceChats())
+            if (call.CanBeManaged)
             {
-                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, false)), Strings.Resources.VoipGroupAllCanSpeak, GetCheckmark(!call.MuteNewParticipants));
-                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallMuteNewParticipants(call.Id, true)), Strings.Resources.VoipGroupOnlyAdminsCanSpeak, GetCheckmark(call.MuteNewParticipants));
+                if (call.RecordDuration > 0)
+                {
+                    flyout.CreateFlyoutItem(StopRecording, Strings.Resources.VoipGroupStopRecordCall, new FontIcon { Glyph = Icons.Record });
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(StartRecording, Strings.Resources.VoipGroupRecordCall, new FontIcon { Glyph = Icons.Record });
+                }
             }
 
             flyout.CreateFlyoutSeparator();
@@ -307,35 +334,67 @@ namespace Unigram.Views
             var inputId = _service.CurrentAudioInput;
             var outputId = _service.CurrentAudioOutput;
 
+            var defaultInput = new ToggleMenuFlyoutItem();
+            defaultInput.Text = Strings.Resources.Default;
+            defaultInput.IsChecked = inputId == string.Empty;
+            defaultInput.Click += (s, args) =>
+            {
+                _service.CurrentAudioInput = string.Empty;
+            };
+
             var input = new MenuFlyoutSubItem();
             input.Text = "Microphone";
             input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-            input.CreateFlyoutItem(id => _service.CurrentAudioInput = id, "", Strings.Resources.Default, GetCheckmark(inputId == ""));
+            input.Items.Add(defaultInput);
 
             var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
             foreach (var device in inputDevices)
             {
-                input.CreateFlyoutItem(id => _service.CurrentAudioInput = id, device.Id, device.Name, GetCheckmark(inputId == device.Id));
+                var deviceItem = new ToggleMenuFlyoutItem();
+                deviceItem.Text = device.Name;
+                deviceItem.IsChecked = inputId == device.Id;
+                deviceItem.Click += (s, args) =>
+                {
+                    _service.CurrentAudioInput = device.Id;
+                };
+
+                input.Items.Add(deviceItem);
             }
+
+            var defaultOutput = new ToggleMenuFlyoutItem();
+            defaultOutput.Text = Strings.Resources.Default;
+            defaultOutput.IsChecked = outputId == string.Empty;
+            defaultOutput.Click += (s, args) =>
+            {
+                _service.CurrentAudioOutput = string.Empty;
+            };
 
             var output = new MenuFlyoutSubItem();
             output.Text = "Speaker";
             output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-            output.CreateFlyoutItem(id => _service.CurrentAudioOutput = id, "", Strings.Resources.Default, GetCheckmark(outputId == ""));
+            output.Items.Add(defaultOutput);
 
             var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
             foreach (var device in outputDevices)
             {
-                output.CreateFlyoutItem(id => _service.CurrentAudioOutput = id, device.Id, device.Name, GetCheckmark(outputId == device.Id));
+                var deviceItem = new ToggleMenuFlyoutItem();
+                deviceItem.Text = device.Name;
+                deviceItem.IsChecked = outputId == device.Id;
+                deviceItem.Click += (s, args) =>
+                {
+                    _service.CurrentAudioOutput = device.Id;
+                };
+
+                output.Items.Add(deviceItem);
             }
 
             flyout.Items.Add(input);
             flyout.Items.Add(output);
 
             flyout.CreateFlyoutSeparator();
-            flyout.CreateFlyoutItem(() => { }, Strings.Resources.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
+            flyout.CreateFlyoutItem(ShareInviteLink, Strings.Resources.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
 
-            if (supergroup != null && supergroup.CanManageVoiceChats())
+            if (call.CanBeManaged)
             {
                 flyout.CreateFlyoutItem(() => Discard_Click(null, null), Strings.Resources.VoipGroupEndChat, new FontIcon { Glyph = Icons.Delete });
             }
@@ -349,6 +408,91 @@ namespace Unigram.Views
 
                 flyout.ShowAt((Button)sender);
             }
+        }
+
+        private async void SetTitle()
+        {
+            var call = _service.Call;
+            var chat = _service.Chat;
+
+            if (call == null || chat == null)
+            {
+                return;
+            }
+
+            var input = new InputDialog();
+            input.Title = Strings.Resources.VoipGroupTitle;
+            input.PrimaryButtonText = Strings.Resources.Save;
+            input.SecondaryButtonText = Strings.Resources.Cancel;
+            input.PlaceholderText = chat.Title;
+            input.Text = call.Title;
+            input.MaxLength = 64;
+            input.CanBeEmpty = true;
+
+            var confirm = await input.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                _protoService.Send(new SetGroupCallTitle(call.Id, input.Text));
+            }
+        }
+
+        private async void StartRecording()
+        {
+            var call = _service.Call;
+            var chat = _service.Chat;
+
+            if (call == null || chat == null)
+            {
+                return;
+            }
+
+            var input = new InputDialog();
+            input.Title = Strings.Resources.VoipGroupStartRecordingTitle;
+            input.Header = Strings.Resources.VoipGroupStartRecordingText;
+            input.PrimaryButtonText = Strings.Resources.Start;
+            input.SecondaryButtonText = Strings.Resources.Cancel;
+            input.PlaceholderText = Strings.Resources.VoipGroupSaveFileHint;
+            input.Text = call.Title;
+            input.MaxLength = 64;
+            input.CanBeEmpty = true;
+
+            var confirm = await input.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                _protoService.Send(new StartGroupCallRecording(call.Id, input.Text));
+            }
+        }
+
+        private async void StopRecording()
+        {
+            var call = _service.Call;
+            if (call == null)
+            {
+                return;
+            }
+
+            var popup = new MessagePopup();
+            popup.Title = Strings.Resources.VoipGroupStopRecordingTitle;
+            popup.Message = Strings.Resources.VoipGroupStopRecordingText;
+            popup.PrimaryButtonText = Strings.Resources.Stop;
+            popup.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                _protoService.Send(new EndGroupCallRecording(call.Id));
+            }
+        }
+
+        private async void ShareInviteLink()
+        {
+            var call = _service.Call;
+            if (call == null)
+            {
+                return;
+            }
+
+            await SharePopup.GetForCurrentView().ShowAsync(call);
         }
 
         private void AudioCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
@@ -418,26 +562,36 @@ namespace Unigram.Views
                 title.Text = _protoService.GetTitle(chat);
             }
 
-            if (participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser)
+            if (participant.IsHandRaised)
             {
-                speaking.Text = Strings.Resources.Listening;
+                speaking.Text = Strings.Resources.WantsToSpeak;
                 speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
-                glyph.Text = Icons.MicOff;
-                glyph.Foreground = new SolidColorBrush { Color = participant.CanUnmuteSelf ? Color.FromArgb(0xFF, 0x85, 0x85, 0x85) : Colors.Red };
+                glyph.Text = Icons.EmojiHand;
+                glyph.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
             }
             else if (participant.IsSpeaking)
             {
-                speaking.Text = Strings.Resources.Speaking;
+                if (participant.VolumeLevel != 10000)
+                {
+                    speaking.Text = string.Format("{0:N0}% {1}", participant.VolumeLevel / 100d, Strings.Resources.Speaking);
+                }
+                else
+                {
+                    speaking.Text = Strings.Resources.Speaking;
+                }
+
                 speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
                 glyph.Text = Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
             }
             else
             {
-                speaking.Text = Strings.Resources.Listening;
-                speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
-                glyph.Text = Icons.MicOn;
-                glyph.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+                var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
+
+                speaking.Text = participant.Bio.Length > 0 ? participant.Bio : Strings.Resources.Listening;
+                speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+                glyph.Text = muted ? Icons.MicOff : Icons.MicOn;
+                glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
         }
 
@@ -447,6 +601,26 @@ namespace Unigram.Views
 
             var element = sender as FrameworkElement;
             var participant = List.ItemFromContainer(sender) as GroupCallParticipant;
+
+            var call = _service.Call;
+
+            var slider = new Slider
+            {
+                Value = participant.VolumeLevel / 100d,
+                Minimum = 0,
+                Maximum = 200,
+                MinWidth = 200,
+                TickFrequency = 100,
+                TickPlacement = TickPlacement.Inline
+            };
+
+            var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
+            debounder.Invoked += (s, args) =>
+            {
+                _protoService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.Participant, (int)(args.NewValue * 100)));
+            };
+
+            flyout.Items.Add(new ContentMenuFlyoutItem { Content = slider });
 
             var supergroup = _cacheService.GetSupergroup(_service.Chat);
             if (supergroup == null)

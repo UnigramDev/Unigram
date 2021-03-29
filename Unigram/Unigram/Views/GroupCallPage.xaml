@@ -298,22 +298,41 @@
                     Height="{ThemeResource ChatPhotoSize}"
                     Margin="0,0,12,0"/>
 
-                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
-                    <TextBlock
-                        x:Name="TitleInfo"
-                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                        Style="{StaticResource BaseTextBlockStyle}"
-                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                        TextWrapping="NoWrap"
-                        TextTrimming="CharacterEllipsis"
-                        MaxLines="1"/>
+                <Grid VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            x:Name="TitleInfo"
+                            Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis"
+                            MaxLines="1"/>
+
+                        <TextBlock
+                            x:Name="RecordingInfo"
+                            Visibility="Collapsed"
+                            Foreground="Red"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            Text=" •"
+                            Grid.Column="1"/>
+                    </Grid>
                     <TextBlock
                         x:Name="SubtitleInfo"
                         Foreground="{ThemeResource PageHeaderDisabledBrush}"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         TextWrapping="NoWrap"
-                        TextTrimming="CharacterEllipsis"/>
-                </StackPanel>
+                        TextTrimming="CharacterEllipsis"
+                        Grid.Row="1"/>
+                </Grid>
 
                 <controls:GlyphButton
                     x:Name="GroupInvite"
@@ -492,12 +511,23 @@
                     VerticalAlignment="Top"
                     Margin="48,0,48,0"
                     Canvas.ZIndex="2"
-                    Grid.Column="1"/>
+                    Grid.Column="1"
+                    Opacity="0"/>
+                <controls:LottieView
+                    x:Name="Lottie"
+                    Width="96"
+                    Height="96"
+                    VerticalAlignment="Top"
+                    Margin="48,0,48,0"
+                    IsHitTestVisible="False"
+                    IsLoopingEnabled="False"
+                    Grid.Column="1"
+                    Canvas.ZIndex="3"/>
 
                 <controls:GlyphButton
                     x:Name="Leave"
                     Click="Leave_Click"
-                    Glyph="&#xE717;"
+                    Glyph="&#xE711;"
                     Background="#66FF0000"
                     Foreground="#FFFFFF"
                     Content="{CustomResource VoipGroupLeave}"
