@@ -419,7 +419,7 @@ namespace Unigram.Views
                 //    var file = user.ProfilePhoto.Big;
                 //    if (file.Local.IsDownloadingCompleted)
                 //    {
-                //        Image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                //        Image.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                 //        BackgroundPanel.Background = new SolidColorBrush(Colors.Transparent);
                 //    }
                 //    else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

@@ -213,7 +213,7 @@ namespace Unigram.Controls.Chats
                     }
                 }
             }
-            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null && !(ViewModel.Autocomplete is SearchStickersCollection))
+            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null && ViewModel.Autocomplete is not SearchStickersCollection)
             {
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
                 if (shift)
@@ -377,7 +377,7 @@ namespace Unigram.Controls.Chats
                 CancelInlineBotToken();
 
                 var token = (_inlineBotToken = new CancellationTokenSource()).Token;
-                if (SearchByInlineBot(query, out string username, out int index) && await ViewModel.ResolveInlineBotAsync(username, token))
+                if (SearchByInlineBot(query, out string username, out _) && await ViewModel.ResolveInlineBotAsync(username, token))
                 {
                     if (token.IsCancellationRequested)
                     {
@@ -438,7 +438,7 @@ namespace Unigram.Controls.Chats
                 autocomplete = new UsernameCollection(ViewModel.ProtoService, ViewModel.Chat.Id, ViewModel.ThreadId, username, index == 0, members);
                 return true;
             }
-            else if (SearchByHashtag(query, out string hashtag, out int index2))
+            else if (SearchByHashtag(query, out string hashtag, out _))
             {
                 autocomplete = new SearchHashtagsCollection(ViewModel.ProtoService, hashtag);
                 return true;

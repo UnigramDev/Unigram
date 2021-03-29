@@ -117,7 +117,7 @@ namespace Unigram.Controls.Chats
                     }
                     else
                     {
-                        _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                        _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.GetLocal(document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                 }
             }
@@ -131,7 +131,7 @@ namespace Unigram.Controls.Chats
                 var document = background.Document.DocumentValue;
                 if (document.Local.IsDownloadingCompleted)
                 {
-                    _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.GetLocal(document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
             }
         }

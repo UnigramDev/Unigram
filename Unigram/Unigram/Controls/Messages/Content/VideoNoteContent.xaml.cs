@@ -121,7 +121,7 @@ namespace Unigram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 1;
 
-                    Player.Source = new Uri("file:///" + file.Local.Path);
+                    Player.Source = UriEx.GetLocal(file.Local.Path);
                 }
             }
         }
@@ -130,7 +130,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                //Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                 Texture.ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

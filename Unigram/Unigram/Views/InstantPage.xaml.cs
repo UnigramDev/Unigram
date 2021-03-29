@@ -140,7 +140,7 @@ namespace Unigram.Views
                     {
                         foreach (var photo in photos)
                         {
-                            photo.Source = new BitmapImage(new Uri("file:///" + update.File.Local.Path));
+                            photo.Source = new BitmapImage(UriEx.GetLocal(update.File.Local.Path));
                         }
 
                         photos.Clear();
@@ -390,7 +390,7 @@ namespace Unigram.Views
                     var file = article.Photo.GetSmall()?.Photo;
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        photo.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
@@ -1382,7 +1382,7 @@ namespace Unigram.Views
                     var file = icon.Document.DocumentValue;
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        photo.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {

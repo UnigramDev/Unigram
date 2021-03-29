@@ -41,7 +41,7 @@ namespace Unigram.Common
 
         public static void CreateFlyoutSeparator(this MenuFlyout flyout)
         {
-            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem || flyout.Items[flyout.Items.Count - 1] is MenuFlyoutSubItem))
+            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem or MenuFlyoutSubItem))
             {
                 flyout.Items.Add(new MenuFlyoutSeparator());
             }
@@ -49,7 +49,7 @@ namespace Unigram.Common
 
         public static void CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
         {
-            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem || flyout.Items[flyout.Items.Count - 1] is MenuFlyoutSubItem))
+            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem or MenuFlyoutSubItem))
             {
                 flyout.Items.Add(new MenuFlyoutSeparator());
             }

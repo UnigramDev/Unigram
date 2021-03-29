@@ -86,7 +86,7 @@ namespace Unigram.Collections
                     {
                         return true;
                     }
-                    else if (_type == SearchChatsType.BasicAndSupergroups && !(chat.Type is ChatTypeBasicGroup) && !(chat.Type is ChatTypeSupergroup))
+                    else if (_type == SearchChatsType.BasicAndSupergroups && chat.Type is not ChatTypeBasicGroup && chat.Type is not ChatTypeSupergroup)
                     {
                         return !_protoService.CanPostMessages(chat);
                     }

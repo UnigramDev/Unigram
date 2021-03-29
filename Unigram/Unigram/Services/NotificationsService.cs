@@ -827,12 +827,12 @@ namespace Unigram.Services
         public async Task ProcessAsync(Dictionary<string, string> data)
         {
             var state = _protoService.GetAuthorizationState();
-            if (!(state is AuthorizationStateReady))
+            if (state is not AuthorizationStateReady)
             {
                 state = await _authorizationStateTask.Task;
             }
 
-            if (!(state is AuthorizationStateReady))
+            if (state is not AuthorizationStateReady)
             {
                 return;
             }

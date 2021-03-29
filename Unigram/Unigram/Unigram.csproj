@@ -438,6 +438,7 @@
     <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
     <Compile Include="Controls\AspectView.cs" />
+    <Compile Include="Controls\ContentMenuFlyoutItem.cs" />
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
     </Compile>
@@ -1376,6 +1377,18 @@
     <PRIResource Include="Strings\be\Resources.resw" />
     <Content Include="Assets\Animations\DiscussionGroupSetup.tgs" />
     <Content Include="Assets\Animations\Sun.tgs" />
+    <Content Include="Assets\Animations\VoiceHandOff.tgs" />
+    <Content Include="Assets\Animations\VoiceHandOff2.tgs" />
+    <Content Include="Assets\Animations\VoiceHandOn.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_1.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_2.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_3.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_4.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_5.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_6.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_7.tgs" />
+    <Content Include="Assets\Animations\VoiceMute.tgs" />
+    <Content Include="Assets\Animations\VoiceUnmute.tgs" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

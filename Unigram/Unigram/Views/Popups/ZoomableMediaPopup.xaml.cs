@@ -138,7 +138,7 @@ namespace Unigram.Views.Popups
                     {
                         Thumbnail.Opacity = 0;
                         Texture.Source = null;
-                        Container.Child = new LottieView { Source = new Uri("file:///" + file.Local.Path) };
+                        Container.Child = new LottieView { Source = UriEx.GetLocal(file.Local.Path) };
                     }
                     else
                     {
@@ -173,7 +173,7 @@ namespace Unigram.Views.Popups
                 {
                     Thumbnail.Opacity = 0;
                     Texture.Source = null;
-                    Container.Child = new AnimationView { Source = new Uri("file:///" + file.Local.Path) };
+                    Container.Child = new AnimationView { Source = UriEx.GetLocal(file.Local.Path) };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

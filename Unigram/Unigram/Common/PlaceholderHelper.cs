@@ -244,7 +244,7 @@ namespace Unigram.Common
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
+                    return new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -266,7 +266,7 @@ namespace Unigram.Common
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
+                    return new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -284,7 +284,7 @@ namespace Unigram.Common
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
+                    return new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -308,7 +308,7 @@ namespace Unigram.Common
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                return new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                return new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -478,7 +478,7 @@ namespace Unigram.Common
         public static ImageSource GetWebPFrame(string path, double maxWidth = 512)
         {
             //return null;
-            //return new BitmapImage(new Uri("file:///" + path));
+            //return new BitmapImage(UriEx.GetLocal(path));
             //return WebPImage.DecodeFromPath(path);
 
             var side = (int)maxWidth;
@@ -496,7 +496,7 @@ namespace Unigram.Common
 
             if (bitmap.PixelWidth == 0 && bitmap.PixelHeight == 0)
             {
-                bitmap.UriSource = new Uri("file:///" + path);
+                bitmap.UriSource = UriEx.GetLocal(path);
             }
 
             return bitmap;
@@ -505,7 +505,7 @@ namespace Unigram.Common
         public static async Task<ImageSource> GetWebPFrameAsync(string path, double maxWidth = 512)
         {
             //return null;
-            //return new BitmapImage(new Uri("file:///" + path));
+            //return new BitmapImage(UriEx.GetLocal(path));
             //return WebPImage.DecodeFromPath(path);
 
             var side = (int)maxWidth;
@@ -523,7 +523,7 @@ namespace Unigram.Common
 
             if (bitmap.PixelWidth == 0 && bitmap.PixelHeight == 0)
             {
-                bitmap.UriSource = new Uri("file:///" + path);
+                bitmap.UriSource = UriEx.GetLocal(path);
             }
 
             return bitmap;

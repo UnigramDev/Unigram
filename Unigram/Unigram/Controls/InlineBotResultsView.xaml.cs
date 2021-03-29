@@ -125,7 +125,7 @@ namespace Unigram.Controls
                     {
                         if (result is InlineQueryResultPhoto || result is InlineQueryResultVideo)
                         {
-                            image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                            image.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                         }
                         else if (result is InlineQueryResultSticker)
                         {
@@ -134,13 +134,13 @@ namespace Unigram.Controls
                     }
                     else if (content.Children[0] is AnimationView animationView)
                     {
-                        animationView.Thumbnail = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        animationView.Thumbnail = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     }
                     else if (content.Children[0] is Grid presenter)
                     {
                         //var presenter = content.Children[0] as Grid;
                         var thumb = presenter.Children[0] as Image;
-                        thumb.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        thumb.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     }
                 }
             }
@@ -166,11 +166,11 @@ namespace Unigram.Controls
                     var content = button.Content as Grid;
                     if (content.Children[0] is LottieView stickerView)
                     {
-                        stickerView.Source = new Uri("file:///" + file.Local.Path);
+                        stickerView.Source = UriEx.GetLocal(file.Local.Path);
                     }
                     else if (content.Children[0] is AnimationView animationView)
                     {
-                        animationView.Source = new Uri("file:///" + file.Local.Path);
+                        animationView.Source = UriEx.GetLocal(file.Local.Path);
                         animationView.Thumbnail = null;
                     }
 
@@ -260,7 +260,7 @@ namespace Unigram.Controls
 
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        image.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        image.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
@@ -299,7 +299,7 @@ namespace Unigram.Controls
 
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    stickerView.Source = new Uri("file:///" + file.Local.Path);
+                    stickerView.Source = UriEx.GetLocal(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -319,7 +319,7 @@ namespace Unigram.Controls
 
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    animationView.Source = new Uri("file:///" + file.Local.Path);
+                    animationView.Source = UriEx.GetLocal(file.Local.Path);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -331,7 +331,7 @@ namespace Unigram.Controls
                     {
                         if (thumbnail.Local.IsDownloadingCompleted)
                         {
-                            animationView.Thumbnail = new BitmapImage(new Uri("file:///" + thumbnail.Local.Path));
+                            animationView.Thumbnail = new BitmapImage(UriEx.GetLocal(thumbnail.Local.Path));
                         }
                         else if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
                         {
@@ -435,7 +435,7 @@ namespace Unigram.Controls
                 {
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        thumb.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        thumb.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {

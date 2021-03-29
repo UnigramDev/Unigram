@@ -6,8 +6,6 @@ using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-// The Content Dialog item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Controls
 {
     public sealed partial class InputDialog : ContentPopup
@@ -18,7 +16,11 @@ namespace Unigram.Controls
 
         public string PlaceholderText { get; set; } = string.Empty;
 
+        public int MaxLength { get; set; } = int.MaxValue;
+
         public InputScopeNameValue InputScope { get; set; }
+
+        public bool CanBeEmpty { get; set; }
 
         public InputDialog()
         {
@@ -38,6 +40,7 @@ namespace Unigram.Controls
             Label.Header = Header;
             Label.PlaceholderText = PlaceholderText;
             Label.Text = Text;
+            Label.MaxLength = MaxLength;
 
             InputScope scope = new InputScope();
             InputScopeName name = new InputScopeName();
@@ -50,7 +53,7 @@ namespace Unigram.Controls
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (string.IsNullOrEmpty(Label.Text))
+            if (string.IsNullOrEmpty(Label.Text) && !CanBeEmpty)
             {
                 args.Cancel = true;
                 return;
@@ -84,7 +87,7 @@ namespace Unigram.Controls
 
         private void Label_TextChanged(object sender, TextChangedEventArgs e)
         {
-            IsPrimaryButtonEnabled = !string.IsNullOrEmpty(Label.Text);
+            IsPrimaryButtonEnabled = CanBeEmpty || !string.IsNullOrEmpty(Label.Text);
         }
     }
 }

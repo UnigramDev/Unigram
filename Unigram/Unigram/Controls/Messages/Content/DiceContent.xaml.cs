@@ -36,8 +36,8 @@ namespace Unigram.Controls.Messages.Content
                 return;
             }
 
-            Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
-            Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
+            Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+            Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
 
             var state = dice.GetState();
             if (state is DiceStickersRegular regular)

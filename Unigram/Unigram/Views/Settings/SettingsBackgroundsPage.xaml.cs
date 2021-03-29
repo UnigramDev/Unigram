@@ -80,7 +80,7 @@ namespace Unigram.Views.Settings
                 var file = small.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    content.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = wallpaper.Document.Thumbnail.Width, DecodePixelHeight = wallpaper.Document.Thumbnail.Height, DecodePixelType = DecodePixelType.Logical };
+                    content.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = wallpaper.Document.Thumbnail.Width, DecodePixelHeight = wallpaper.Document.Thumbnail.Height, DecodePixelType = DecodePixelType.Logical };
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -146,7 +146,7 @@ namespace Unigram.Views.Settings
                             continue;
                         }
 
-                        content.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = small.Width, DecodePixelHeight = small.Height, DecodePixelType = DecodePixelType.Logical };
+                        content.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = small.Width, DecodePixelHeight = small.Height, DecodePixelType = DecodePixelType.Logical };
                     }
                 });
             }

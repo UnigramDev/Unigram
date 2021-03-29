@@ -303,11 +303,11 @@ namespace Unigram.Views.Host
             }
             else if (args.Item is RootDestination destination)
             {
-                if (destination == RootDestination.Separator && !(args.ItemContainer is Controls.NavigationViewItemSeparator))
+                if (destination == RootDestination.Separator && args.ItemContainer is not Controls.NavigationViewItemSeparator)
                 {
                     args.ItemContainer = new Controls.NavigationViewItemSeparator();
                 }
-                else if (destination != RootDestination.Separator && !(args.ItemContainer is Controls.NavigationViewItem))
+                else if (destination != RootDestination.Separator && args.ItemContainer is not Controls.NavigationViewItem)
                 {
                     args.ItemContainer = new Controls.NavigationViewItem();
                     args.ItemContainer.ContextRequested += OnContextRequested;

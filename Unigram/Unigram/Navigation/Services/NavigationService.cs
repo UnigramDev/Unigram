@@ -155,7 +155,7 @@ namespace Unigram.Navigation.Services
 
         private INavigable ResolveForPage(Page page)
         {
-            if (!(page.DataContext is INavigable) | page.DataContext == null)
+            if (page.DataContext is not INavigable || page.DataContext == null)
             {
                 // to support dependency injection, but keeping it optional.
                 var viewModel = BootStrapper.Current.ResolveForPage(page, this);

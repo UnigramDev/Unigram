@@ -200,6 +200,23 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:ContentMenuFlyoutItem">
+        <Setter Property="Padding" Value="{ThemeResource MenuFlyoutItemThemePadding}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ContentMenuFlyoutItem">
+                    <Grid>
+                        <ContentControl
+                            Content="{TemplateBinding Content}"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="local:RecentUserHeads">
         <Setter Property="Width" Value="88"/>
         <Setter Property="Height" Value="36"/>
@@ -1808,16 +1825,16 @@
                                       IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
                                       IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                       Margin="{TemplateBinding BorderThickness}"
-                                      Padding="{TemplateBinding Padding}"
+                                      Padding="48,13,0,15"
                                       IsTabStop="False"
                                       ZoomMode="Disabled"
                                       AutomationProperties.AccessibilityView="Raw" 
-                                      VerticalAlignment="Center"/>
+                                      VerticalAlignment="Stretch"/>
                         <ContentControl x:Name="PlaceholderTextContentPresenter"
                                         Grid.Row="1"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                         Margin="{TemplateBinding BorderThickness}"
-                                        Padding="{TemplateBinding Padding}"
+                                        Padding="48,4,0,6"
                                         IsTabStop="False"
                                         Grid.ColumnSpan="2"
                                         Content="{TemplateBinding PlaceholderText}"

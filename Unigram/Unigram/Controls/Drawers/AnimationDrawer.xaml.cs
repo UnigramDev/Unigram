@@ -123,7 +123,7 @@ namespace Unigram.Controls.Drawers
 
             if (file.Local.IsDownloadingCompleted)
             {
-                content.Source = new Uri("file:///" + file.Local.Path);
+                content.Source = UriEx.GetLocal(file.Local.Path);
                 content.Thumbnail = null;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -136,7 +136,7 @@ namespace Unigram.Controls.Drawers
                 {
                     if (thumbnail.Local.IsDownloadingCompleted)
                     {
-                        content.Thumbnail = new BitmapImage(new Uri("file:///" + thumbnail.Local.Path));
+                        content.Thumbnail = new BitmapImage(UriEx.GetLocal(thumbnail.Local.Path));
                     }
                     else if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
                     {
@@ -212,11 +212,11 @@ namespace Unigram.Controls.Drawers
 
                     if (item.Thumbnail?.File.Id == file.Id)
                     {
-                        content.Thumbnail = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                        content.Thumbnail = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                     }
                     else if (item.AnimationValue.Id == file.Id)
                     {
-                        content.Source = new Uri("file:///" + file.Local.Path);
+                        content.Source = UriEx.GetLocal(file.Local.Path);
                         _handler.ThrottleVisibleItems();
                     }
                 }

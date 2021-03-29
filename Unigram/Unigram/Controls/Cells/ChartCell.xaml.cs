@@ -435,7 +435,7 @@ namespace Unigram.Controls.Cells
                     //chartView.enabled = true;
                     //zoomedChartView.enabled = false;
 
-                    if (!(chartView is StackLinearChartView))
+                    if (chartView is not StackLinearChartView)
                     {
                         chartView.legendShowing = true;
                         chartView.MoveLegend();

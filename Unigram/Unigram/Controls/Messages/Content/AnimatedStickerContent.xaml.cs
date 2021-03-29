@@ -36,8 +36,8 @@ namespace Unigram.Controls.Messages.Content
 
             if (message.Content is MessageText text)
             {
-                Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
-                Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625);
+                Width = Player.Width = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
+                Height = Player.Height = 200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Player.ColorReplacements = Emoji.GetColorReplacements(text.Text.Text);
 
                 var sound = message.ProtoService.GetEmojiSound(sticker.Emoji);
@@ -79,7 +79,7 @@ namespace Unigram.Controls.Messages.Content
             if (file.Local.IsDownloadingCompleted)
             {
                 Player.IsLoopingEnabled = message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled;
-                Player.Source = new Uri("file:///" + file.Local.Path);
+                Player.Source = UriEx.GetLocal(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

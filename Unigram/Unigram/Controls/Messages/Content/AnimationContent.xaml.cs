@@ -127,7 +127,7 @@ namespace Unigram.Controls.Messages.Content
                     Subtitle.Text = Strings.Resources.AttachGif;
                     Overlay.Opacity = 1;
 
-                    Player.Source = new Uri("file:///" + file.Local.Path);
+                    Player.Source = UriEx.GetLocal(file.Local.Path);
                 }
             }
         }
@@ -136,7 +136,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted && thumbnail.Format is ThumbnailFormatJpeg)
             {
-                //Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                 Texture.Source = PlaceholderHelper.GetBlurred(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

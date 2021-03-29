@@ -114,7 +114,7 @@ namespace Unigram.Views
 
         public void Destroy(int id)
         {
-            if (_containers.TryRemove(id, out TLLocator container))
+            if (_containers.TryRemove(id, out _))
             {
                 //container.Dispose();
             }

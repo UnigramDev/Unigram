@@ -1328,7 +1328,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
 
             var chat = message.GetChat();
-            if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            if (chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
                 content = Strings.Resources.ActionCreateChannel;
             }
