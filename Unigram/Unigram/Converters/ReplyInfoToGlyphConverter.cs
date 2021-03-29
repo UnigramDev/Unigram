@@ -84,6 +84,9 @@ namespace Unigram.Converters
 
         public const string Send = "\uE919";
 
+        public const string Key = "\uE192";
+        public const string Record = "\uE903";
+
         public const string Delete = "\uE74D"; 
         public const string Share = "\uE72D"; 
         public const string Multiselect = "\uE762"; 
