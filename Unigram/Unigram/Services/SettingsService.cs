@@ -211,8 +211,8 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (3UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = "Introducing Voice Chats and More\r\n\r\nVoice Chats in Groups\r\n• Turn any of your group chats into a hop-on, hop-off conference call.\r\n• Choose 'Start Voice Chat' under ⋮ in the group profile to create a voice chat.\r\n• Get up to several thousand participants in each voice chat.\r\n• Control the number of speakers with flexible admin tools.\r\n\r\nSticker Outlines\r\n• Download stickers faster and watch shimmering outlines as they load.\r\n\r\nMore Animated Emoji\r\n• Send a single 🤗🥺🤠🥴🤫🤥🤑🤩🤭☠️\r\n🔍🔎💤✨⚡️⭐️🦾 or 💪 to see the latest animated emoji.";
+        public const ulong CurrentVersion = (7UL << 48) | (6UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = "VOICE CHATS 2.0: CHANNELS, MILLIONS OF LISTENERS, RECORDED CHATS, ADMIN TOOLS\r\n\r\nMillions of Concurrent Listeners\r\n• Start limitless Voice Chats in Groups and Channels.\r\n• Host discussions that can be listened to by millions of people simultaneously.\r\n\r\nVoice Chat Recordings\r\n• Record voice chats to share or publish in Channels later.\r\n• See that a chat is being recorded from the red dot next to its title.\r\n\r\nImproved List of Participants\r\n• See user bio texts right from the list of participants.\r\n• Raise your hand to show admins you want to speak.\r\n\r\nManagement Tools\r\n• Create separate Voice Chat Invite Links for listeners or speakers.\r\n• Change the title of your Voice Chat to give people an idea of the current topic.\r\n• Join Voice Chats as one of your Channels to hide your personal account.\r\n\r\nAuto-Delete Messages\r\n• Set messages to auto-delete for everyone 24 hours or 7 days after sending.\r\n• Control auto-delete settings in any of your chats, as well as in groups and channels where you are an admin.";
 
         public int Session => _session;
 
