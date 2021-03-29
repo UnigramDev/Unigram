@@ -106,7 +106,9 @@ namespace Unigram.Collections
                 update.IsMutedForAllUsers = participant.IsMutedForAllUsers;
                 update.IsMutedForCurrentUser = participant.IsMutedForCurrentUser;
                 update.IsSpeaking = participant.IsSpeaking;
+                update.IsHandRaised = participant.IsHandRaised;
                 update.VolumeLevel = participant.VolumeLevel;
+                update.Bio = participant.Bio;
                 update.Order = participant.Order;
                 update.Source = participant.Source;
                 update.Participant = participant.Participant;
