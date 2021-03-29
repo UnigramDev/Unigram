@@ -245,6 +245,29 @@ namespace Unigram.ViewModels
             }
         }
 
+        private GroupCall _groupCall;
+        public GroupCall GroupCall
+        {
+            get => _groupCall;
+            set
+            {
+                Set(ref _groupCall, value);
+                RaisePropertyChanged(nameof(IsSpeakerLinkEnabled));
+            }
+        }
+
+        public bool IsSpeakerLinkEnabled
+        {
+            get => _groupCall != null && _groupCall.CanBeManaged && _groupCall.MuteNewParticipants;
+        }
+
+        private bool _isSpeakerLink;
+        public bool IsSpeakerLink
+        {
+            get => _isSpeakerLink;
+            set => Set(ref _isSpeakerLink, value);
+        }
+
         private User _inviteBot;
         public User InviteBot
         {
@@ -533,6 +556,19 @@ namespace Unigram.ViewModels
                 if (service != null)
                 {
                     service.NavigateToChat(chat);
+                }
+            }
+            else if (_groupCall != null)
+            {
+                var response = await ProtoService.SendAsync(new GetGroupCallInviteLink(_groupCall.Id, _isSpeakerLink));
+                if (response is HttpUrl httpUrl)
+                {
+                    var formatted = new FormattedText(string.Format(Strings.Resources.VoipGroupInviteText, httpUrl.Url), new TextEntity[0]);
+
+                    foreach (var chat in chats)
+                    {
+                        await ProtoService.SendAsync(new SendMessage(chat.Id, 0, 0, new MessageSendOptions(false, false, null), null, new InputMessageText(formatted, false, false)));
+                    }
                 }
             }
 

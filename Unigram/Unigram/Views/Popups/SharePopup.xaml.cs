@@ -132,6 +132,20 @@ namespace Unigram.Views.Popups
             return (await PickChatsAsync(title, new long[0]))?.Select(x => cacheService.GetUser(x)).Where(x => x != null).ToList();
         }
 
+        public Task<ContentDialogResult> ShowAsync(GroupCall call)
+        {
+            ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
+            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.IsCommentEnabled = true;
+            ViewModel.IsSendAsCopyEnabled = false;
+            ViewModel.IsChatSelection = false;
+
+            ViewModel.Clear();
+            ViewModel.GroupCall = call;
+
+            return ShowAsync();
+        }
+
         public Task<ContentDialogResult> ShowAsync(DataPackageView package)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
