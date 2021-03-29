@@ -622,7 +622,7 @@ namespace Unigram.Controls.Cells
             {
                 UpdateUserStatus(chat, user.Status);
             }
-            else if (chat.VoiceChat != null)
+            else if (chat.VoiceChat.GroupCallId != 0)
             {
                 UpdateOnlineBadge(chat.VoiceChat.HasParticipants, true);
             }

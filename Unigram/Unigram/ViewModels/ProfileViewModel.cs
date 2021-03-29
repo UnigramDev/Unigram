@@ -812,11 +812,17 @@ namespace Unigram.ViewModels
             {
                 var dialog = new MessagePopup();
                 dialog.Title = Strings.Resources.StartVoipChatTitle;
-                dialog.Message = Strings.Resources.StartVoipChatAlertText;
+                dialog.Message = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+                    ? Strings.Resources.StartVoipChannelAlertText
+                    : Strings.Resources.StartVoipChatAlertText;
                 dialog.PrimaryButtonText = Strings.Resources.Create;
                 dialog.SecondaryButtonText = Strings.Resources.Cancel;
 
-                await _groupCallService.CreateAsync(chat.Id);
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    await _groupCallService.CreateAsync(chat.Id);
+                }
             }
         }
 

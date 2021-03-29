@@ -139,7 +139,7 @@ namespace Unigram.Services
             }
 
             var chat = CacheService.GetChat(chatId);
-            if (chat == null || chat.VoiceChat != null)
+            if (chat == null || chat.VoiceChat.GroupCallId != 0)
             {
                 return;
             }
