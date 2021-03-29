@@ -139,6 +139,11 @@ namespace Unigram.ViewModels
             }
         }
 
+        public bool CanUseTestDC
+        {
+            get => ProtoService.AuthorizationState is not AuthorizationStateReady;
+        }
+
         public bool UseTestDC
         {
             get => Settings.UseTestDC;

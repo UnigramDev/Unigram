@@ -1370,7 +1370,7 @@ namespace Unigram.Common
             {
                 return Locale.Declension("Days", (int)duration.TotalDays);
             }
-            if (duration.TotalHours >= 1)
+            else if (duration.TotalHours >= 1)
             {
                 return duration.ToString("h\\:mm\\:ss");
             }
