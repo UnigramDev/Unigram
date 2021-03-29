@@ -1366,6 +1366,10 @@ namespace Unigram.Common
         public static string GetDuration(this MessageVoiceChatEnded voiceChatEnded)
         {
             var duration = TimeSpan.FromSeconds(voiceChatEnded.Duration);
+            if (duration.TotalDays >= 1)
+            {
+                return Locale.Declension("Days", (int)duration.TotalDays);
+            }
             if (duration.TotalHours >= 1)
             {
                 return duration.ToString("h\\:mm\\:ss");
