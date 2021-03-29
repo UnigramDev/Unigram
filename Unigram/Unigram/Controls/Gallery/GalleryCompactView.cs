@@ -50,6 +50,7 @@ namespace Unigram.Controls.Gallery
             SetMediaPlayer(player);
 
             lifetime.Closed += OnReleased;
+            lifetime.Released += OnReleased;
         }
 
         public void Handle(UpdateFile update)
@@ -59,6 +60,9 @@ namespace Unigram.Controls.Gallery
 
         private void OnReleased(object sender, EventArgs e)
         {
+            _lifetime.Closed -= OnReleased;
+            _lifetime.Released -= OnReleased;
+
             _aggregator.Unsubscribe(this);
 
             if (_mediaPlayer != null)
