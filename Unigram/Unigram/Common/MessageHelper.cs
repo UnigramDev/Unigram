@@ -188,6 +188,7 @@ namespace Unigram.Common
             string phoneCode = null;
             string lang = null;
             string channel = null;
+            string voiceChat = null;
             bool hasUrl = false;
 
             var query = scheme.Query.ParseQueryString();
@@ -221,6 +222,7 @@ namespace Unigram.Common
                     game = query.GetParameter("game");
                     post = query.GetParameter("post");
                     comment = query.GetParameter("comment");
+                    voiceChat = query.GetParameter("voicechat");
                 }
             }
             else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
@@ -340,7 +342,7 @@ namespace Unigram.Common
             }
             else if (username != null)
             {
-                NavigateToUsername(protoService, navigation, username, botUser ?? botChat, post, comment, game);
+                NavigateToUsername(protoService, navigation, username, botUser ?? botChat, voiceChat, post, comment, game);
             }
             else if (message != null)
             {
@@ -417,6 +419,7 @@ namespace Unigram.Common
                     var post = query.GetParameter("post");
                     var game = query.GetParameter("game");
                     var comment = query.GetParameter("comment");
+                    var voiceChat = query.GetParameter("voicechat");
                     var result = url.StartsWith("http") ? url : ("https://" + url);
 
                     if (uri.Segments.Length >= 2)
@@ -499,7 +502,7 @@ namespace Unigram.Common
                             }
                             else
                             {
-                                NavigateToUsername(protoService, navigation, username, accessToken, post, string.IsNullOrEmpty(comment) ? null : comment, string.IsNullOrEmpty(game) ? null : game, pageKind);
+                                NavigateToUsername(protoService, navigation, username, accessToken, voiceChat, post, string.IsNullOrEmpty(comment) ? null : comment, string.IsNullOrEmpty(game) ? null : game, pageKind);
                             }
                         }
                     }
@@ -736,7 +739,7 @@ namespace Unigram.Common
             await StickerSetPopup.GetForCurrentView().ShowAsync(text);
         }
 
-        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string post, string comment, string game, PageKind kind = PageKind.Dialog)
+        public static async void NavigateToUsername(IProtoService protoService, INavigationService navigation, string username, string accessToken, string voiceChat, string post, string comment, string game, PageKind kind = PageKind.Dialog)
         {
             if (username.StartsWith("@"))
             {
@@ -790,6 +793,10 @@ namespace Unigram.Common
                             navigation.NavigateToChat(chat, message: message << 20);
                         }
                     }
+                    else if (voiceChat != null)
+                    {
+                        navigation.NavigateToChat(chat, state: new NavigationState { { "voiceChat", voiceChat } });
+                    }
                     else
                     {
                         navigation.NavigateToChat(chat);
@@ -814,7 +821,7 @@ namespace Unigram.Common
             {
                 if (info.ChatId != 0)
                 {
-                    navigation.NavigateToChat(info.ChatId);
+                    navigation.NavigateToChat(info.ChatId, force: true);
                 }
                 else
                 {
