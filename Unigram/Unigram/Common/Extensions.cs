@@ -28,6 +28,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Media.Imaging;
 using static Unigram.Services.GenerationService;
 using Point = Windows.Foundation.Point;
 
@@ -915,9 +916,14 @@ namespace Unigram.Common
 
     public static class UriEx
     {
-        public static Uri GetLocal(string path)
+        public static BitmapImage ToBitmap(string path, int width, int height)
         {
-            return new Uri("file:///" + Uri.EscapeUriString(path.Replace('\\', '/')));
+            return new BitmapImage(ToLocal(path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+        }
+
+        public static Uri ToLocal(string path)
+        {
+            //return new Uri("file:///" + Uri.EscapeUriString(path.Replace('\\', '/')));
 
             var directory = Path.GetDirectoryName(path);
             var file = Path.GetFileName(path);

@@ -66,7 +66,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
+                Texture.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

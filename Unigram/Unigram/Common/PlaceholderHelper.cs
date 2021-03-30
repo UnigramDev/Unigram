@@ -244,7 +244,7 @@ namespace Unigram.Common
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
+                    return UriEx.ToBitmap(file.Local.Path, side, side);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -266,7 +266,7 @@ namespace Unigram.Common
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
+                    return UriEx.ToBitmap(file.Local.Path, side, side);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -284,7 +284,7 @@ namespace Unigram.Common
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    return new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = side, DecodePixelHeight = side, DecodePixelType = DecodePixelType.Logical };
+                    return UriEx.ToBitmap(file.Local.Path, side, side);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -308,7 +308,7 @@ namespace Unigram.Common
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                return new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                return UriEx.ToBitmap(file.Local.Path, width, height);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -496,7 +496,7 @@ namespace Unigram.Common
 
             if (bitmap.PixelWidth == 0 && bitmap.PixelHeight == 0)
             {
-                bitmap.UriSource = UriEx.GetLocal(path);
+                bitmap.UriSource = UriEx.ToLocal(path);
             }
 
             return bitmap;
@@ -523,7 +523,7 @@ namespace Unigram.Common
 
             if (bitmap.PixelWidth == 0 && bitmap.PixelHeight == 0)
             {
-                bitmap.UriSource = UriEx.GetLocal(path);
+                bitmap.UriSource = UriEx.ToLocal(path);
             }
 
             return bitmap;

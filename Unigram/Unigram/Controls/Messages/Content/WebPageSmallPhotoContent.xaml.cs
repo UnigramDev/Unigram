@@ -3,7 +3,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages.Content
 {
@@ -82,7 +81,7 @@ namespace Unigram.Controls.Messages.Content
                 var width = (int)(small.Width * ratio);
                 var height = (int)(small.Height * ratio);
 
-                Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                Texture.Source = UriEx.ToBitmap(file.Local.Path, width, height);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

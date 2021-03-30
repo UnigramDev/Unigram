@@ -79,7 +79,7 @@ namespace Unigram.Controls.Messages.Content
             if (file.Local.IsDownloadingCompleted)
             {
                 Player.IsLoopingEnabled = message.Content is MessageSticker && SettingsService.Current.Stickers.IsLoopingEnabled;
-                Player.Source = UriEx.GetLocal(file.Local.Path);
+                Player.Source = UriEx.ToLocal(file.Local.Path);
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

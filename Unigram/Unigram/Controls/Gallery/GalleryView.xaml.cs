@@ -644,7 +644,7 @@ namespace Unigram.Controls.Gallery
                 }
                 else
                 {
-                    _mediaPlayer.Source = MediaSource.CreateFromUri(UriEx.GetLocal(file.Local.Path));
+                    _mediaPlayer.Source = MediaSource.CreateFromUri(UriEx.ToLocal(file.Local.Path));
                 }
 
                 _mediaPlayer.IsLoopingEnabled = item.IsLoop;

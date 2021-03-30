@@ -116,7 +116,7 @@ namespace Unigram.Views
                                 presenter.AutoPlay = true;
                                 presenter.IsLoopingEnabled = true;
                                 presenter.IsHitTestVisible = false;
-                                presenter.Source = UriEx.GetLocal(update.File.Local.Path);
+                                presenter.Source = UriEx.ToLocal(update.File.Local.Path);
 
                                 content.Children.Add(presenter);
 
@@ -140,7 +140,7 @@ namespace Unigram.Views
                     {
                         foreach (var photo in photos)
                         {
-                            photo.Source = new BitmapImage(UriEx.GetLocal(update.File.Local.Path));
+                            photo.Source = new BitmapImage(UriEx.ToLocal(update.File.Local.Path));
                         }
 
                         photos.Clear();
@@ -390,7 +390,7 @@ namespace Unigram.Views
                     var file = article.Photo.GetSmall()?.Photo;
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        photo.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
+                        photo.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {
@@ -985,7 +985,7 @@ namespace Unigram.Views
                 presenter.AutoPlay = true;
                 presenter.IsLoopingEnabled = true;
                 presenter.IsHitTestVisible = false;
-                presenter.Source = UriEx.GetLocal(block.Animation.AnimationValue.Local.Path);
+                presenter.Source = UriEx.ToLocal(block.Animation.AnimationValue.Local.Path);
 
                 content.Children.Add(presenter);
 
@@ -1382,7 +1382,7 @@ namespace Unigram.Views
                     var file = icon.Document.DocumentValue;
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        photo.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
+                        photo.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                     }
                     else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                     {

@@ -226,7 +226,7 @@ namespace Unigram.Views.Popups
                 }
                 else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
                 {
-                    lottie.Source = UriEx.GetLocal(file.Local.Path);
+                    lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -314,7 +314,7 @@ namespace Unigram.Views.Popups
                         }
                         else if (content.Children[0] is LottieView lottie)
                         {
-                            lottie.Source = UriEx.GetLocal(update.File.Local.Path);
+                            lottie.Source = UriEx.ToLocal(update.File.Local.Path);
                             _handler.ThrottleVisibleItems();
                         }
                     }

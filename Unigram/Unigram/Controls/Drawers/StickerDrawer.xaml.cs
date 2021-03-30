@@ -138,7 +138,7 @@ namespace Unigram.Controls.Drawers
                     }
                     else if (content.Children[0] is LottieView lottie)
                     {
-                        lottie.Source = UriEx.GetLocal(file.Local.Path);
+                        lottie.Source = UriEx.ToLocal(file.Local.Path);
                         _handler.ThrottleVisibleItems();
                     }
                 }
@@ -398,7 +398,7 @@ namespace Unigram.Controls.Drawers
                 }
                 else if (content.Children[0] is LottieView lottie)
                 {
-                    lottie.Source = UriEx.GetLocal(file.Local.Path);
+                    lottie.Source = UriEx.ToLocal(file.Local.Path);
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)

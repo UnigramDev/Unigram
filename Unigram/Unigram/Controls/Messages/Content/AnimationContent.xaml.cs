@@ -127,7 +127,7 @@ namespace Unigram.Controls.Messages.Content
                     Subtitle.Text = Strings.Resources.AttachGif;
                     Overlay.Opacity = 1;
 
-                    Player.Source = UriEx.GetLocal(file.Local.Path);
+                    Player.Source = UriEx.ToLocal(file.Local.Path);
                 }
             }
         }

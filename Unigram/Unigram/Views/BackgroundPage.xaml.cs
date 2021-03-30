@@ -339,7 +339,7 @@ namespace Unigram.Views
                         }
                         else
                         {
-                            rectangle.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.GetLocal(big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                            rectangle.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(big.DocumentValue.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                         }
                     }
                 }

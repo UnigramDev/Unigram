@@ -2997,7 +2997,7 @@ namespace Unigram.Views
                     }
                     else if (content.Children[0] is LottieView lottie)
                     {
-                        lottie.Source = new Uri("file:///" + file.Local.Path);
+                        lottie.Source = UriEx.GetLocal(file.Local.Path);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -4156,7 +4156,7 @@ namespace Unigram.Views
                         var photo = element.FindName("Photo") as Image;
                         if (photo != null)
                         {
-                            photo.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = 120, DecodePixelHeight = 120, DecodePixelType = DecodePixelType.Logical };
+                            photo.Source = UriEx.ToBitmap(file.Local.Path, 120, 120);
                         }
                     }
 
@@ -4340,7 +4340,7 @@ namespace Unigram.Views
                         }
                         else if (content.Children[0] is LottieView lottie)
                         {
-                            lottie.Source = new Uri("file:///" + file.Local.Path);
+                            lottie.Source = UriEx.GetLocal(file.Local.Path);
                             _autocompleteHandler.ThrottleVisibleItems();
                         }
                     }

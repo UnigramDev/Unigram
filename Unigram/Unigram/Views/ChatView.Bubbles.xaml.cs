@@ -216,7 +216,7 @@ namespace Unigram.Views
             ShowHideDateHeader(minDateIndex > 0, minDateIndex > 0 && minDateIndex < int.MaxValue);
 
             // Read and play messages logic:
-            if (messages.Count > 0 && !intermediate && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+            if (messages.Count > 0 && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 ViewModel.ProtoService.Send(new ViewMessages(chat.Id, ViewModel.ThreadId, messages, false));
             }
@@ -692,7 +692,7 @@ namespace Unigram.Views
 
                 content = grid.FindName("Bubble") as FrameworkElement;
             }
-            else if (content is StackPanel panel && !(content is MessageBubble))
+            else if (content is StackPanel panel and not MessageBubble)
             {
                 content = panel.FindName("Service") as FrameworkElement;
 
@@ -706,7 +706,7 @@ namespace Unigram.Views
                         {
                             if (file.Photo.Local.IsDownloadingCompleted)
                             {
-                                photo.Source = new BitmapImage(new Uri("file:///" + file.Photo.Local.Path)) { DecodePixelWidth = 120, DecodePixelHeight = 120, DecodePixelType = DecodePixelType.Logical };
+                                photo.Source = UriEx.ToBitmap(file.Photo.Local.Path, 120, 120);
                             }
                             else if (file.Photo.Local.CanBeDownloaded && !file.Photo.Local.IsDownloadingActive)
                             {
@@ -725,14 +725,11 @@ namespace Unigram.Views
                 bubble.UpdateMessage(args.Item as MessageViewModel);
                 args.Handled = true;
 
-                if (ViewModel.Settings.Diagnostics.BubbleAnimations)
+                args.RegisterUpdateCallback(2, (s, args) =>
                 {
-                    args.RegisterUpdateCallback(2, (s, args) =>
-                    {
-                        args.ItemContainer.SizeChanged += _sizeChangedHandler ??= new SizeChangedEventHandler(Item_SizeChanged);
-                        bubble.RegisterEvents();
-                    });
-                }
+                    args.ItemContainer.SizeChanged += _sizeChangedHandler ??= new SizeChangedEventHandler(Item_SizeChanged);
+                    bubble.RegisterEvents();
+                });
             }
             else if (content is MessageService service)
             {

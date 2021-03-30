@@ -170,7 +170,7 @@ namespace Unigram.Views.Popups
                 var file = emojiPack.Thumbnail;
                 if (file != null && file.Local.IsDownloadingCompleted)
                 {
-                    photo.Source = new BitmapImage { UriSource = UriEx.GetLocal(file.Local.Path), DecodePixelWidth = 40, DecodePixelHeight = 40 };
+                    photo.Source = new BitmapImage { UriSource = UriEx.ToLocal(file.Local.Path), DecodePixelWidth = 40, DecodePixelHeight = 40 };
                 }
                 else if (file != null && file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
@@ -264,7 +264,7 @@ namespace Unigram.Views.Popups
 
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        photo.Source = new BitmapImage { UriSource = UriEx.GetLocal(file.Local.Path), DecodePixelWidth = 40, DecodePixelHeight = 40 };
+                        photo.Source = new BitmapImage { UriSource = UriEx.ToLocal(file.Local.Path), DecodePixelWidth = 40, DecodePixelHeight = 40 };
                     }
                     else
                     {

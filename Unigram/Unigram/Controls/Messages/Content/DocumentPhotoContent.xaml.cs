@@ -159,7 +159,7 @@ namespace Unigram.Controls.Messages.Content
 
                     Overlay.Opacity = 0;
 
-                    Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
+                    Texture.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                 }
             }
         }

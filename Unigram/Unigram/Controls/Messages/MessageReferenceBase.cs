@@ -9,7 +9,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls.Messages
 {
@@ -144,7 +143,7 @@ namespace Unigram.Controls.Messages
                 var height = (int)(photoSize.Height * ratio);
 
                 ShowThumbnail();
-                SetThumbnail(new BitmapImage(UriEx.GetLocal(photoSize.Photo.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical });
+                SetThumbnail(UriEx.ToBitmap(photoSize.Photo.Local.Path, width, height));
             }
             else
             {
@@ -170,7 +169,7 @@ namespace Unigram.Controls.Messages
                 var height = (int)(thumbnail.Height * ratio);
 
                 ShowThumbnail(radius);
-                SetThumbnail(new BitmapImage(UriEx.GetLocal(thumbnail.File.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical });
+                SetThumbnail(UriEx.ToBitmap(thumbnail.File.Local.Path, width, height));
             }
             else
             {
