@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Native.Calls;
@@ -17,12 +19,14 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
 {
-    public interface IGroupCallService
+    public interface IGroupCallService : INotifyPropertyChanged
     {
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
 
         VoipGroupManager Manager { get; }
+
+        GroupCallParticipantsCollection Participants { get; }
 
         Chat Chat { get; }
         GroupCall Call { get; }
@@ -31,7 +35,10 @@ namespace Unigram.Services
 
         void Show();
 
+        Task<bool> CanChooseAliasAsync(long chatId);
+
         Task JoinAsync(long chatId, bool pickAlias = false);
+        Task RejoinAsync();
         void Leave();
 
         Task CreateAsync(long chatId);
@@ -48,6 +55,10 @@ namespace Unigram.Services
         private readonly DisposableMutex _updateLock = new DisposableMutex();
 
         private Chat _chat;
+
+        private MessageSender _alias;
+        private MessageSenders _availableAliases;
+        private TaskCompletionSource<MessageSenders> _availableAliasesTask;
 
         private GroupCall _call;
         private VoipGroupManager _manager;
@@ -70,6 +81,50 @@ namespace Unigram.Services
         }
 
         public VoipGroupManager Manager => _manager;
+
+        private GroupCallParticipantsCollection _participants;
+        public GroupCallParticipantsCollection Participants
+        {
+            get => _participants;
+            private set => Set(ref _participants, value);
+        }
+
+        public async Task<bool> CanChooseAliasAsync(long chatId)
+        {
+            var aliases = _availableAliases;
+            if (aliases != null)
+            {
+                return aliases.TotalCount > 1;
+            }
+
+            var tsc = _availableAliasesTask;
+            if (tsc != null)
+            {
+                var yolo = await tsc.Task;
+                return yolo.TotalCount > 1;
+            }
+
+            tsc = _availableAliasesTask = new TaskCompletionSource<MessageSenders>();
+
+            var result = await CanChooseAliasAsyncInternal(chatId);
+            tsc.TrySetResult(result);
+
+            return result.TotalCount > 1;
+        }
+
+        private async Task<MessageSenders> CanChooseAliasAsyncInternal(long chatId)
+        {
+            var response = await ProtoService.SendAsync(new GetAvailableVoiceChatAliases(chatId));
+            if (response is MessageSenders senders)
+            {
+                _availableAliases = senders;
+                _availableAliasesTask.TrySetResult(senders);
+                return senders;
+            }
+
+            return null;
+        }
+
 
         public async Task JoinAsync(long chatId, bool pickAlias)
         {
@@ -108,26 +163,9 @@ namespace Unigram.Services
             await JoinAsyncInternal(chat, chat.VoiceChat.GroupCallId, pickAlias);
         }
 
-        public void Leave()
+        public async void Leave()
         {
-            Task.Run(() =>
-            {
-                if (_manager != null)
-                {
-                    _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                    _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
-
-                    _manager.Dispose();
-                    _manager = null;
-                }
-
-                if (_call != null)
-                {
-                    ProtoService.Send(new LeaveGroupCall(_call.Id));
-                    _call = null;
-                    _chat = null;
-                }
-            });
+            await DisposeAsync(false);
         }
 
         public async Task CreateAsync(long chatId)
@@ -169,45 +207,14 @@ namespace Unigram.Services
                         return;
                     }
 
-                    if (_manager != null)
-                    {
-                        _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                        _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
-
-                        _manager.Dispose();
-                        _manager = null;
-                    }
-
-                    await ProtoService.SendAsync(new LeaveGroupCall(_call.Id));
-                    _call = null;
-                    _chat = null;
+                    await DisposeAsync(false);
                 }
             }
 
             var alias = chat.VoiceChat?.DefaultParticipantAlias;
             if (alias == null || pickAlias)
             {
-                var aliases = await ProtoService.SendAsync(new GetAvailableVoiceChatAliases(chat.Id));
-                if (aliases is MessageSenders senders)
-                {
-                    if (senders.Senders.Count > 0)
-                    {
-                        var dialog = new VoiceChatAliasesPopup(ProtoService, chat, senders.Senders.ToArray());
-                        var confirm = await dialog.ShowQueuedAsync();
-                        if (confirm == ContentDialogResult.Primary)
-                        {
-                            aliases = dialog.SelectedSender;
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    // TODO
-                }
+                alias = await PickAliasAsync(chat);
             }
 
             var response = await ProtoService.SendAsync(new GetGroupCall(groupCallId));
@@ -232,26 +239,77 @@ namespace Unigram.Services
 
                 await ShowAsync(groupCall, _manager);
 
-                _manager.EmitJoinPayload(async (ssrc, payload) =>
-                {
-                    var response = await ProtoService.SendAsync(new JoinGroupCall(groupCallId, null, payload, ssrc, true, string.Empty));
-                    if (response is GroupCallJoinResponseWebrtc data)
-                    {
-                        _source = ssrc;
-                        _manager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
-                        _manager.SetJoinResponsePayload(data, null);
-
-                        ProtoService.Send(new LoadGroupCallParticipants(groupCallId, 100));
-                    }
-                    else if (response is GroupCallJoinResponseStream)
-                    {
-                        _source = ssrc;
-                        _manager.SetConnectionMode(VoipGroupConnectionMode.Broadcast, true);
-
-                        ProtoService.Send(new LoadGroupCallParticipants(groupCallId, 100));
-                    }
-                });
+                Rejoin(groupCallId, alias);
             }
+        }
+
+        public async Task RejoinAsync()
+        {
+            var call = _call;
+            var chat = _chat;
+
+            if (call == null || chat == null)
+            {
+                return;
+            }
+
+            var alias = await PickAliasAsync(chat);
+            if (alias != null)
+            {
+                Rejoin(call.Id, alias);
+            }
+        }
+
+        private async Task<MessageSender> PickAliasAsync(Chat chat)
+        {
+            var available = await CanChooseAliasAsync(chat.Id);
+            if (available && _availableAliases != null)
+            {
+                var dialog = new VoiceChatAliasesPopup(ProtoService, chat, _availableAliases.Senders.ToArray());
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    return dialog.SelectedSender;
+                }
+            }
+
+            return null;
+        }
+
+        private void Rejoin(int groupCallId, MessageSender alias)
+        {
+            var leave = _alias != null && _alias.Equals(alias);
+
+            _alias = alias;
+
+            _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
+            _manager?.EmitJoinPayload(async (ssrc, payload) =>
+            {
+                if (leave)
+                {
+                    await ProtoService.SendAsync(new LeaveGroupCall(groupCallId));
+                }
+
+                Participants?.Dispose();
+                Participants = new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCallId);
+
+                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCallId, alias, payload, ssrc, true, string.Empty));
+                if (response is GroupCallJoinResponseWebrtc data)
+                {
+                    _source = ssrc;
+                    _manager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
+                    _manager.SetJoinResponsePayload(data, null);
+
+                    ProtoService.Send(new LoadGroupCallParticipants(groupCallId, 100));
+                }
+                else if (response is GroupCallJoinResponseStream)
+                {
+                    _source = ssrc;
+                    _manager.SetConnectionMode(VoipGroupConnectionMode.Broadcast, true);
+
+                    ProtoService.Send(new LoadGroupCallParticipants(groupCallId, 100));
+                }
+            });
         }
 
         private async void OnFrameRequested(VoipGroupManager sender, FrameRequestedEventArgs args)
@@ -305,9 +363,32 @@ namespace Unigram.Services
             }
         }
 
-        public void Discard()
+        public async void Discard()
         {
-            Task.Run(() =>
+            await DisposeAsync(true);
+        }
+
+        private Task DisposeAsync(bool? discard)
+        {
+            if (_call != null && discard is true)
+            {
+                ProtoService.Send(new DiscardGroupCall(_call.Id));
+            }
+            else if (_call != null && discard is false)
+            {
+                ProtoService.Send(new LeaveGroupCall(_call.Id));
+            }
+
+            _call = null;
+            _chat = null;
+
+            _alias = null;
+            _availableAliases = null;
+            _availableAliasesTask = null;
+
+            Participants = null;
+
+            return Task.Run(() =>
             {
                 if (_manager != null)
                 {
@@ -316,13 +397,8 @@ namespace Unigram.Services
 
                     _manager.Dispose();
                     _manager = null;
-                }
 
-                if (_call != null)
-                {
-                    ProtoService.Send(new DiscardGroupCall(_call.Id));
-                    _call = null;
-                    _chat = null;
+                    _source = 0;
                 }
             });
         }
@@ -358,15 +434,7 @@ namespace Unigram.Services
 
                     if (update.GroupCall.NeedRejoin)
                     {
-                        _manager.EmitJoinPayload(async (ssrc, payload) =>
-                        {
-                            var response = await ProtoService.SendAsync(new JoinGroupCall(update.GroupCall.Id, null, payload, ssrc, true, string.Empty));
-                            if (response is GroupCallJoinResponseWebrtc data)
-                            {
-                                _source = ssrc;
-                                _manager.SetJoinResponsePayload(data, null);
-                            }
-                        });
+                        Rejoin(update.GroupCall.Id, _alias);
                     }
                 }
             }

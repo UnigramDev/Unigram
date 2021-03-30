@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Td.Api;
-using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -30,7 +29,7 @@ namespace Unigram.Views
         private readonly ICacheService _cacheService;
         private readonly IEventAggregator _aggregator;
 
-        private readonly IGroupCallService _service;
+        private IGroupCallService _service;
 
         private VoipGroupManager _manager;
         private bool _disposed;
@@ -46,6 +45,13 @@ namespace Unigram.Views
             _aggregator = aggregator;
 
             _service = voipService;
+            _service.PropertyChanged += OnParticipantsChanged;
+
+            if (_service.Participants != null)
+            {
+                _service.Participants.Delegate = this;
+                List.ItemsSource = _service.Participants;
+            }
 
             UpdateNetworkState(_service.Call);
 
@@ -60,8 +66,6 @@ namespace Unigram.Views
             //Window.Current.SetTitleBar(BlurPanel);
             PhotoInfo.Source = PlaceholderHelper.GetChat(protoService, voipService.Chat, 36);
 
-            List.ItemsSource = new GroupCallParticipantsCollection(protoService, aggregator, voipService.Call.Id) { Delegate = this };
-
             if (voipService.Call != null)
             {
                 Update(voipService.Call);
@@ -71,6 +75,21 @@ namespace Unigram.Views
             {
                 Connect(voipService.Manager);
             }
+        }
+
+        private async void OnParticipantsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_service.Participants == null)
+            {
+                return;
+            }
+
+            _service.Participants.Delegate = this;
+
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                List.ItemsSource = _service.Participants;
+            });
         }
 
         private void OnClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
@@ -103,6 +122,12 @@ namespace Unigram.Views
                 _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
                 _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
                 _manager = null;
+            }
+
+            if (_service != null)
+            {
+                _service.PropertyChanged -= OnParticipantsChanged;
+                _service = null;
             }
         }
 
@@ -283,6 +308,13 @@ namespace Unigram.Views
             if (chat == null || call == null)
             {
                 return;
+            }
+
+            var aliases = await _service.CanChooseAliasAsync(chat.Id);
+            if (aliases)
+            {
+                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(), Strings.Resources.VoipGroupDisplayAs, new FontIcon { Glyph = Icons.Person });
+                flyout.CreateFlyoutSeparator();
             }
 
             if (call.CanBeManaged)

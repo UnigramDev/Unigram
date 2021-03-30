@@ -30,9 +30,10 @@ namespace Unigram.Collections
             _aggregator.Subscribe(this);
         }
 
-        public void Load()
+        public void Dispose()
         {
-            _protoService.Send(new LoadGroupCallParticipants(_groupCallId, 100));
+            _aggregator.Unsubscribe(this);
+            _handlers.Clear();
         }
 
         public void Handle(UpdateGroupCallParticipant update)
