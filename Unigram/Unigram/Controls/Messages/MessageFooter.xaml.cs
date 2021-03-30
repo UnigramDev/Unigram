@@ -122,7 +122,7 @@ namespace Unigram.Controls.Messages
                 bot = senderUser.Type is UserTypeBot;
             }
 
-            EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard) ? $"{Strings.Resources.EditedMessage}\u00A0\u2009" : string.Empty;
+            EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard ? $"{Strings.Resources.EditedMessage}\u00A0\u2009" : string.Empty;
         }
 
         public void UpdateMessageIsPinned(MessageViewModel message)
@@ -232,7 +232,7 @@ namespace Unigram.Controls.Messages
                 bot = senderUser.Type is UserTypeBot;
             }
 
-            if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard))
+            if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard)
             {
                 var edit = BindConvert.Current.DateTime(message.EditDate);
                 var editDate = BindConvert.Current.LongDate.Format(edit);
