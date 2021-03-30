@@ -118,6 +118,7 @@ namespace Unigram.Views.Popups
             }
 
             IsPrimaryButtonEnabled = condition;
+            IsLightDismissEnabled = condition;
         }
 
         public ObservableCollection<PollOptionViewModel> Items { get; private set; }
