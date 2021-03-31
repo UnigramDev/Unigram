@@ -423,12 +423,15 @@ namespace Unigram.Services
                 {
                     _call = update.GroupCall;
 
-                    var callPage = _callPage;
-                    if (callPage != null)
+                    var lifetime = _lifetime;
+                    if (lifetime != null)
                     {
-                        await callPage.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        lifetime.Dispatcher.Dispatch(() =>
                         {
-                            callPage.Update(update.GroupCall);
+                            if (lifetime.Window.Content is GroupCallPage callPage)
+                            {
+                                callPage.Update(update.GroupCall);
+                            }
                         });
                     }
 
