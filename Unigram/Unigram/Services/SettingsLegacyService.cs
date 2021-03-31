@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using Unigram.Navigation.Services;
 using Windows.Foundation;
 using Windows.Storage;
@@ -88,26 +87,18 @@ namespace Unigram.Services
 
         public void Remove(string key)
         {
-            if (Values.ContainsKey(key))
-            {
-                Values.Remove(key);
-            }
+            Values.Remove(key);
 
-            if (_keys.ContainsKey(key))
-            {
-                _keys.Remove(key);
-            }
+            _keys.TryRemove(key, out _);
         }
 
         public void Clear(bool deleteSubContainers = true)
         {
             Values.Clear();
+
             if (deleteSubContainers)
             {
-                foreach (var container in _keys.ToArray())
-                {
-                    _keys.Remove(container.Key);
-                }
+                _keys.Clear();
             }
         }
 
