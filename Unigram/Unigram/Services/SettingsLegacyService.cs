@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using Unigram.Navigation.Services;
 using Windows.Foundation;
@@ -65,7 +65,7 @@ namespace Unigram.Services
 
         public NavigationState Values { get; private set; }
 
-        private static readonly Dictionary<string, NavigationState> _keys = new Dictionary<string, NavigationState>();
+        private static readonly ConcurrentDictionary<string, NavigationState> _keys = new ConcurrentDictionary<string, NavigationState>();
 
         private SettingsLegacyService(NavigationState values)
         {
