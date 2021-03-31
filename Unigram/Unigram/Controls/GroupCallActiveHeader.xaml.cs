@@ -66,9 +66,12 @@ namespace Unigram.Controls
                 _drawable.addParent(sender);
             }
 
-            _drawable.setState(_manager.IsMuted ? 1 : 0);
-            _drawable.draw(0, 48, (float)sender.Size.Width, 48 + 40, args.DrawingSession, sender, 1);
-
+            if (_manager != null)
+            {
+                _drawable.setState(_manager.IsMuted ? 1 : 0);
+                _drawable.draw(0, 48, (float)sender.Size.Width, 48 + 40, args.DrawingSession, sender, 1);
+            }
+            
             sender.Invalidate();
         }
 
