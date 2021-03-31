@@ -492,22 +492,6 @@ namespace Unigram.Services
 
                     //Aggregator.Publish(new UpdateCallDialog(call, true));
                 }
-
-                var callPage = _callPage;
-                if (callPage == null)
-                {
-                    return;
-                }
-
-                await callPage.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    if (controller != null)
-                    {
-                        callPage.Connect(controller);
-                    }
-
-                    callPage.Update(call);
-                });
             }
         }
 
