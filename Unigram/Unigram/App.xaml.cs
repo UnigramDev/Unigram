@@ -93,6 +93,24 @@ namespace Unigram
                     { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
+
+            Client.SetFatalErrorCallback(message =>
+            {
+                SettingsService.Current.Diagnostics.LastErrorMessage = message;
+            });
+
+            var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
+            if (lastMessage != null && lastMessage.Length > 0)
+            {
+                var index = lastMessage.IndexOf(']', 10);
+                if (index != 0)
+                {
+                    lastMessage = lastMessage.Remove(10, index);
+                }
+
+                SettingsService.Current.Diagnostics.LastErrorMessage = null;
+                Microsoft.AppCenter.Crashes.Crashes.TrackError(new TdException(lastMessage));
+            }
 #endif
         }
 
