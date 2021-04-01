@@ -1,18 +1,21 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Views.Popups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
 {
-    public class PaymentFormStep5ViewModel : PaymentFormViewModelBase
+    public class PaymentFormStep5ViewModel : TLViewModelBase
     {
-        private readonly ValidatedOrderInfo _requestedInfo;
-        private readonly string _credentials;
         private readonly bool _save;
 
         public PaymentFormStep5ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
@@ -21,12 +24,33 @@ namespace Unigram.ViewModels.Payments
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var buffer = parameter as byte[];
-            if (buffer == null)
+            state.TryGet("chatId", out long chatId);
+            state.TryGet("messageId", out long messageId);
+
+            var message = await ProtoService.SendAsync(new GetMessage(chatId, messageId)) as Message;
+            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(chatId, messageId)) as PaymentForm;
+
+            if (message == null || paymentForm == null)
             {
-                return Task.CompletedTask;
+                return;
+            }
+
+            Message = message;
+            Invoice = message.Content as MessageInvoice;
+            PaymentForm = paymentForm;
+
+            Credentials = paymentForm.SavedCredentials;
+            Info = paymentForm.SavedOrderInfo;
+
+            if (paymentForm.SavedOrderInfo != null)
+            {
+                var response = await ProtoService.SendAsync(new ValidateOrderInfo(chatId, messageId, paymentForm.SavedOrderInfo, false));
+                if (response is ValidatedOrderInfo validated)
+                {
+                    ValidatedInfo = validated;
+                }
             }
 
             //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
@@ -47,148 +71,247 @@ namespace Unigram.ViewModels.Payments
             //        CredentialsTitle = savedCard.Title;
             //    }
 
-            //    var amount = 0L;
-            //    foreach (var price in _paymentForm.Invoice.Prices)
-            //    {
-            //        amount += price.Amount;
-            //    }
-
-            //    if (_shipping != null)
-            //    {
-            //        foreach (var price in _shipping.Prices)
-            //        {
-            //            amount += price.Amount;
-            //        }
-            //    }
-
-            //    TotalAmount = amount;
-
             //    _requestedInfo = tuple.Item4;
             //    _credentials = tuple.Item7;
             //    _save = tuple.Item8;
             //}
-
-            return Task.CompletedTask;
         }
 
         private User _bot;
         public User Bot
         {
-            get
-            {
-                return _bot;
-            }
-            set
-            {
-                Set(ref _bot, value);
-            }
+            get => _bot;
+            set => Set(ref _bot, value);
         }
 
-        private User _provider;
-        public User Provider
+        protected Message _message;
+        public Message Message
         {
-            get
-            {
-                return _provider;
-            }
-            set
-            {
-                Set(ref _provider, value);
-            }
+            get => _message;
+            set => Set(ref _message, value);
         }
 
-        private string _credentialsTitle;
-        public string CredentialsTitle
+        protected MessageInvoice _invoice;
+        public MessageInvoice Invoice
         {
-            get
-            {
-                return _credentialsTitle;
-            }
+            get => _invoice;
+            set => Set(ref _invoice, value);
+        }
+
+        protected PaymentForm _paymentForm;
+        public PaymentForm PaymentForm
+        {
+            get => _paymentForm;
             set
             {
-                Set(ref _credentialsTitle, value);
+                Set(ref _paymentForm, value);
+                RaisePropertyChanged(nameof(TotalAmount));
             }
         }
 
-        private long _totalAmount;
+        private ValidatedOrderInfo _validatedInfo;
+        public ValidatedOrderInfo ValidatedInfo
+        {
+            get => _validatedInfo;
+            set => Set(ref _validatedInfo, value);
+        }
+
+        private InputCredentials _inputCredentials;
+
+        private SavedCredentials _credentials;
+        public SavedCredentials Credentials
+        {
+            get => _credentials;
+            set => Set(ref _credentials, value);
+        }
+
         public long TotalAmount
         {
             get
             {
-                return _totalAmount;
-            }
-            set
-            {
-                Set(ref _totalAmount, value);
+                var amount = 0L;
+                if (_paymentForm != null)
+                {
+                    foreach (var price in _paymentForm.Invoice.PriceParts)
+                    {
+                        amount += price.Amount;
+                    }
+                }
+
+                if (_shipping != null)
+                {
+                    foreach (var price in _shipping.PriceParts)
+                    {
+                        amount += price.Amount;
+                    }
+                }
+
+                return amount;
             }
         }
 
         private OrderInfo _info;
         public OrderInfo Info
         {
-            get
-            {
-                return _info;
-            }
-            set
-            {
-                Set(ref _info, value);
-            }
+            get => _info;
+            set => Set(ref _info, value);
         }
 
         public ShippingOption _shipping;
         public ShippingOption Shipping
         {
-            get
-            {
-                return _shipping;
-            }
+            get => _shipping;
             set
             {
                 Set(ref _shipping, value);
+                RaisePropertyChanged(nameof(TotalAmount));
+            }
+        }
+
+        public async void ChooseCredentials()
+        {
+            var popup = new PaymentCredentialsPopup(_paymentForm);
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && popup.Credentials != null)
+            {
+                _inputCredentials = new InputCredentialsNew(popup.Credentials.Id, true);
+                Credentials = popup.Credentials;
+            }
+        }
+
+        public async void ChooseAddress()
+        {
+            var popup = new PaymentAddressPopup(_message.ChatId, _message.Id, _paymentForm.Invoice, _info);
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && popup.ValidatedInfo != null)
+            {
+                ValidatedInfo = popup.ValidatedInfo;
+            }
+        }
+
+        public async void ChooseShipping()
+        {
+            var items = _validatedInfo.ShippingOptions.Select(
+                x => new SelectRadioItem(x, BindConvert.Current.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
+
+            var dialog = new SelectRadioPopup(items);
+            dialog.Title = Strings.Resources.PaymentCheckoutShippingMethod;
+            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is ShippingOption index)
+            {
+                Shipping = index;
             }
         }
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, _bot.FirstName, _provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
+            if (_credentials == null)
+            {
+                ChooseCredentials();
+                return;
+            }
 
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(_totalAmount, _paymentForm.Invoice.Currency), _bot.FirstName, _invoice.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
-            if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+            if (_info == null)
+            {
+                ChooseAddress();
+                return;
+            }
+
+            if (_shipping == null)
+            {
+                ChooseShipping();
+                return;
+            }
+
+            var bot = CacheService.GetMessageSender(_message.Sender) as User;
+            var provider = CacheService.GetMessageSender(_message.Sender) as User;
+
+            var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
+
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _invoice.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
+            if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
             IsLoading = true;
 
-            //TLInputPaymentCredentialsBase credentials;
-            //if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
-            //{
-            //    credentials = new TLInputPaymentCredentialsSaved { Id = savedCard.Id, TmpPassword = ApplicationSettings.Current.TmpPassword.TmpPassword };
-            //}
-            //else
-            //{
-            //    credentials = new TLInputPaymentCredentials { Data = new TLDataJSON { Data = _credentials }, IsSave = _save };
-            //}
+            var infoId = _validatedInfo?.OrderInfoId ?? string.Empty;
+            var shippingId = _shipping?.Id ?? string.Empty;
 
-            //var response = await LegacyService.SendPaymentFormAsync(_message.Id, _requestedInfo?.Id, _shipping?.Id, credentials);
-            //if (response.IsSucceeded)
-            //{
-            //    if (response.Result is TLPaymentsPaymentVerficationNeeded verificationNeeded)
-            //    {
-            //        if (Uri.TryCreate(verificationNeeded.Url, UriKind.Absolute, out Uri uri))
-            //        {
-            //            await Launcher.LaunchUriAsync(uri);
-            //        }
-            //    }
+            var credentials = _inputCredentials;
+            if (credentials == null)
+            {
+                if (_paymentForm.SavedCredentials != null)
+                {
+                    var password = await GetTemporaryPasswordStateAsync();
+                    if (password.HasPassword && password.ValidFor > 0)
+                    {
+                        credentials = new InputCredentialsSaved(_paymentForm.SavedCredentials.Id);
+                    }
+                }
+            }
 
-            //    NavigationService.GoBackAt(1);
-            //}
-            //else if (response.Error != null)
-            //{
+            var response = await ProtoService.SendAsync(new SendPaymentForm(_message.ChatId, _message.Id, infoId, shippingId, credentials));
+            if (response is PaymentResult result)
+            {
+                if (Uri.TryCreate(result.VerificationUrl, UriKind.Absolute, out Uri uri))
+                {
+                    await Windows.System.Launcher.LaunchUriAsync(uri);
+                }
 
-            //}
+                NavigationService.GoBack();
+                NavigationService.Frame.ForwardStack.Clear();
+            }
+        }
+
+        private async Task<TemporaryPasswordState> GetTemporaryPasswordStateAsync()
+        {
+            var response = await ProtoService.SendAsync(new GetTemporaryPasswordState());
+            if (response is TemporaryPasswordState state)
+            {
+                if (state.HasPassword && state.ValidFor > 0)
+                {
+                    return state;
+                }
+
+                return await CreateTemporaryPasswordAsync();
+            }
+            else if (response is Error error)
+            {
+            }
+
+            return new TemporaryPasswordState(false, 0);
+        }
+
+        private async Task<TemporaryPasswordState> CreateTemporaryPasswordAsync()
+        {
+            var popup = new InputPopup(true);
+            popup.Header = string.Format(Strings.Resources.PaymentConfirmationMessage, _paymentForm.SavedCredentials.Title);
+            popup.PrimaryButtonText = Strings.Resources.Continue;
+            popup.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return null;
+            }
+
+            var response = await ProtoService.SendAsync(new CreateTemporaryPassword(popup.Text, 60 * 30));
+            if (response is TemporaryPasswordState state)
+            {
+                return state;
+            }
+            else if (response is Error error)
+            {
+
+            }
+
+            return new TemporaryPasswordState(false, 0);
         }
 
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)

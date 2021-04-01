@@ -66,91 +66,99 @@
     </Page.Resources>
 
     <local:HostedPage.Header>
-        <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.PaymentForm.Invoice.IsTest), FallbackValue=Checkout}"/>
+        <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.PaymentForm.Invoice.IsTest), Mode=OneWay, FallbackValue=Checkout}"/>
     </local:HostedPage.Header>
     
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <controls:ScrollViewerBackground 
-            Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-            ScrollingHost="{x:Bind ScrollingHost}"
-            VerticalAlignment="Top"/>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <StackPanel Padding="0,0,0,48">
-                <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush}" Padding="12" Margin="0,0,0,12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                <controls:HeaderedControl>
+                    <Grid Padding="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
 
-                    <Border Width="80" Height="80" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="3">
-                        <!--<Border.Background>
-                            <ImageBrush ImageSource="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                        </Border.Background>-->
-                    </Border>
+                        <Border Width="80" Height="80" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="3">
+                            <!--<Border.Background>
+                                <ImageBrush ImageSource="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                            </Border.Background>-->
+                        </Border>
 
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="{x:Bind ViewModel.Invoice.Title, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ViewModel.Invoice.Description, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-                    </StackPanel>
-                </Grid>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="{x:Bind ViewModel.Invoice.Title, Mode=OneWay, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Invoice.Description, Mode=OneWay, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, Mode=OneWay, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </controls:HeaderedControl>
 
-                <payments:LabeledPricesPanel
-                    Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
-                    Prices="{x:Bind ViewModel.PaymentForm.Invoice.PriceParts}"/>
-                <payments:LabeledPricesPanel
-                    Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency}"
-                    Prices="{x:Bind ViewModel.Shipping.PriceParts}"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="{CustomResource PaymentTransactionTotal}" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind Convert.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                </Grid>
-
-                <StackPanel Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.CredentialsTitle, FallbackValue=Empty}"/>
-                    <TextBlock Text="{CustomResource PaymentCheckoutMethod}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                <StackPanel MaxWidth="640" Padding="12,16,12,0">
+                    <payments:LabeledPricesPanel
+                        Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency, Mode=OneWay}"
+                        Prices="{x:Bind ViewModel.PaymentForm.Invoice.PriceParts, Mode=OneWay}"/>
+                    <payments:LabeledPricesPanel
+                        Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency, Mode=OneWay}"
+                        Prices="{x:Bind ViewModel.Shipping.PriceParts, Mode=OneWay}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{CustomResource PaymentTransactionTotal}" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind Convert.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                    </Grid>
                 </StackPanel>
 
-                <StackPanel Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, FallbackValue=Empty}"/>
-                    <TextBlock Text="{CustomResource PaymentCheckoutProvider}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                <controls:HeaderedControl>
+                    <controls:BadgeButton
+                        Click="{x:Bind ViewModel.ChooseCredentials}"
+                        Content="{x:Bind ViewModel.Credentials.Title, Mode=OneWay, FallbackValue=Empty}"
+                        Badge="{CustomResource PaymentCheckoutMethod}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.Info.ShippingAddress, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ConvertAddress(ViewModel.Info.ShippingAddress), FallbackValue=Empty}"/>
-                    <TextBlock Text="{CustomResource PaymentShippingAddress}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                    <controls:BadgeButton
+                        Click="{x:Bind ViewModel.ChooseAddress}"
+                        Content="{x:Bind ConvertAddress(ViewModel.Info.ShippingAddress), Mode=OneWay, FallbackValue=Empty}"
+                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedShippingAddress, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}"
+                        Badge="{CustomResource PaymentShippingAddress}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.Info.Name, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Info.Name, FallbackValue=Empty}"/>
-                    <TextBlock Text="{CustomResource PaymentCheckoutName}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                    <controls:BadgeButton
+                        Click="{x:Bind ViewModel.ChooseShipping}"
+                        Content="{x:Bind ViewModel.Shipping.Title, Mode=OneWay, FallbackValue=Empty}"
+                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.IsFlexible, Mode=OneWay, FallbackValue=Collapsed}"
+                        Badge="{CustomResource PaymentCheckoutShippingMethod}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.Info.PhoneNumber, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind Convert.PhoneNumber(ViewModel.Info.PhoneNumber), FallbackValue=Empty}"/>
-                    <TextBlock Text="{CustomResource PaymentCheckoutPhoneNumber}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                    <controls:BadgeButton
+                        Click="{x:Bind ViewModel.ChooseAddress}"
+                        Content="{x:Bind ViewModel.Info.Name, Mode=OneWay, FallbackValue=Empty}"
+                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedName, Mode=OneWay, FallbackValue=Collapsed}"
+                        Badge="{CustomResource PaymentCheckoutName}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.Info.EmailAddress, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Info.EmailAddress, FallbackValue=Empty}"/>
-                    <TextBlock Text="{CustomResource PaymentCheckoutEmail}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                    <controls:BadgeButton
+                        Click="{x:Bind ViewModel.ChooseAddress}"
+                        Content="{x:Bind Convert.PhoneNumber(ViewModel.Info.PhoneNumber), Mode=OneWay, FallbackValue=Empty}"
+                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedPhoneNumber, Mode=OneWay, FallbackValue=Collapsed}"
+                        Badge="{CustomResource PaymentCheckoutPhoneNumber}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
-                <!--<StackPanel Visibility="{x:Bind (Visibility)ViewModel.HasShipping, FallbackValue=Collapsed}" Padding="12,8">-->
-                <StackPanel Visibility="{x:Bind ViewModel.Shipping, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,8">
-                    <TextBlock Text="{x:Bind ViewModel.Shipping.Title, FallbackValue=Empty}"/>
-                    <TextBlock Text="{CustomResource PaymentCheckoutShippingMethod}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                    <controls:BadgeButton
+                        Click="{x:Bind ViewModel.ChooseAddress}"
+                        Content="{x:Bind ViewModel.Info.EmailAddress, Mode=OneWay, FallbackValue=Empty}"
+                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedEmailAddress, Mode=OneWay, FallbackValue=Collapsed}"
+                        Badge="{CustomResource PaymentCheckoutEmail}"
+                        Style="{StaticResource SubtitleBadgeButtonStyle}"/>
+                </controls:HeaderedControl>
+
             </StackPanel>
         </ScrollViewer>
 

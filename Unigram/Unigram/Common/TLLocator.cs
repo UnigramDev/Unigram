@@ -1050,33 +1050,17 @@ namespace Unigram.Views
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep1ViewModel))
+            else if (type == typeof(Unigram.ViewModels.Payments.PaymentAddressViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Payments.PaymentFormStep1ViewModel(
+                return (T)(object)new Unigram.ViewModels.Payments.PaymentAddressViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep2ViewModel))
+            else if (type == typeof(Unigram.ViewModels.Payments.PaymentCredentialsViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Payments.PaymentFormStep2ViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
-            else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep3ViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.Payments.PaymentFormStep3ViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
-            else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep4ViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.Payments.PaymentFormStep4ViewModel(
+                return (T)(object)new Unigram.ViewModels.Payments.PaymentCredentialsViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,

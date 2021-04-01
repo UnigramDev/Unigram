@@ -21,7 +21,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>602F1A7B283C48CF3345BD23DAEA58A1E444B2AD</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -184,6 +184,7 @@
     <Compile Include="Common\RemoteFileStream.cs" />
     <Compile Include="Common\SoundEffects.cs" />
     <Compile Include="Common\SunDate.cs" />
+    <Compile Include="Common\TdException.cs" />
     <Compile Include="Common\TextStyleRun.cs" />
     <Compile Include="Common\ThemeColorizer.cs" />
     <Compile Include="Common\TitleBar.cs" />
@@ -479,6 +480,8 @@
     <Compile Include="ViewModels\DialogPinnedViewModel.cs" />
     <Compile Include="ViewModels\DialogThreadViewModel.cs" />
     <Compile Include="ViewModels\Chats\MessageStatisticsViewModel.cs" />
+    <Compile Include="ViewModels\Payments\PaymentAddressViewModel.cs" />
+    <Compile Include="ViewModels\Payments\PaymentCredentialsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
@@ -504,6 +507,15 @@
     </Compile>
     <Compile Include="Views\GroupCallPage.xaml.cs">
       <DependentUpon>GroupCallPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\InputPopup.xaml.cs">
+      <DependentUpon>InputPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\PaymentAddressPopup.xaml.cs">
+      <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\PaymentCredentialsPopup.xaml.cs">
+      <DependentUpon>PaymentCredentialsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
@@ -666,12 +678,7 @@
     <Compile Include="ViewModels\LiveLocationViewModel.cs" />
     <Compile Include="ViewModels\LogOutViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
-    <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
-    <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
-    <Compile Include="ViewModels\Payments\PaymentFormStep3ViewModel.cs" />
-    <Compile Include="ViewModels\Payments\PaymentFormStep4ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
-    <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\SendLocationViewModel.cs" />
@@ -797,18 +804,6 @@
     </Compile>
     <Compile Include="Views\PasscodePage.xaml.cs">
       <DependentUpon>PasscodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Payments\PaymentFormStep1Page.xaml.cs">
-      <DependentUpon>PaymentFormStep1Page.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Payments\PaymentFormStep2Page.xaml.cs">
-      <DependentUpon>PaymentFormStep2Page.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Payments\PaymentFormStep3Page.xaml.cs">
-      <DependentUpon>PaymentFormStep3Page.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Payments\PaymentFormStep4Page.xaml.cs">
-      <DependentUpon>PaymentFormStep4Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Payments\PaymentFormStep5Page.xaml.cs">
       <DependentUpon>PaymentFormStep5Page.xaml</DependentUpon>
@@ -1100,9 +1095,6 @@
     <Compile Include="Common\LinqToVisualTree.cs" />
     <Compile Include="Common\MessageHelper.cs" />
     <Compile Include="Controls\GlyphButton.cs" />
-    <Compile Include="Controls\InputDialog.xaml.cs">
-      <DependentUpon>InputDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\PivotRadioButton.cs" />
     <Compile Include="Controls\Messages\MessageReference.xaml.cs">
@@ -1657,10 +1649,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\InputDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Messages\MessageReference.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1700,6 +1688,18 @@
     <Page Include="Views\GroupCallPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\InputPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\PaymentAddressPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\PaymentCredentialsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\SelectColorPopup.xaml">
       <SubType>Designer</SubType>
@@ -1826,22 +1826,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PasscodePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Payments\PaymentFormStep1Page.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Payments\PaymentFormStep2Page.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Payments\PaymentFormStep3Page.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Payments\PaymentFormStep4Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

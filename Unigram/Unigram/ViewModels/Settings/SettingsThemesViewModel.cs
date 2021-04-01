@@ -240,7 +240,7 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            var input = new InputDialog();
+            var input = new InputPopup();
             input.Title = Strings.Resources.NewTheme;
             input.Header = Strings.Resources.EnterThemeName;
             input.Text = $"{theme.Name} #2";

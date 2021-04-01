@@ -1,5 +1,5 @@
 <controls:ContentPopup
-    x:Class="Unigram.Controls.InputDialog"
+    x:Class="Unigram.Views.Popups.InputPopup"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls"
@@ -13,5 +13,20 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
-    <TextBox x:Name="Label" Margin="12,12,12,0" VerticalAlignment="Top" TextChanged="Label_TextChanged" KeyDown="Label_KeyDown"/>
+    <Grid>
+        <TextBox
+            x:Name="Label"
+            x:Load="False"
+            Margin="12,12,12,0"
+            VerticalAlignment="Top"
+            TextChanged="Label_TextChanged"
+            KeyDown="Label_KeyDown"/>
+        <PasswordBox
+            x:Name="Password"
+            x:Load="False"
+            Margin="12,12,12,0"
+            VerticalAlignment="Top"
+            PasswordChanged="Label_PasswordChanged"
+            KeyDown="Label_KeyDown"/>
+    </Grid>
 </controls:ContentPopup>

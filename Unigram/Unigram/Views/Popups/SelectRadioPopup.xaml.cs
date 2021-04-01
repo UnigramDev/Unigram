@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Unigram.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -8,22 +9,25 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class SelectRadioPopup : ContentPopup
     {
-        public SelectRadioPopup(params SelectRadioItem[] options)
+        public SelectRadioPopup(IEnumerable<SelectRadioItem> options)
         {
             InitializeComponent();
 
-            for (int i = 0; i < options.Length; i++)
+            var first = options.FirstOrDefault().Value;
+            var last = options.LastOrDefault().Value;
+
+            foreach (var option in options)
             {
                 var radio = new RadioButton();
                 radio.Checked += Radio_Checked;
-                radio.Content = options[i].Text;
-                radio.Tag = options[i];
-                radio.IsChecked = options[i].IsChecked;
-                radio.Margin = new Thickness(12, i == 0 ? 6 : 0, 0, 0);
+                radio.Content = option.Text;
+                radio.Tag = option;
+                radio.IsChecked = option.IsChecked;
+                radio.Margin = new Thickness(12, option.Value == first ? 6 : 0, 0, 0);
 
                 var rect = new Rectangle();
                 rect.Style = Resources["RectangleStyle"] as Style;
-                rect.Margin = new Thickness(12, 6, 0, i == options.Length - 1 ? 0 : 6);
+                rect.Margin = new Thickness(12, 6, 0, option.Value == last ? 0 : 6);
 
                 LayoutRoot.Items.Add(radio);
                 LayoutRoot.Items.Add(rect);

@@ -1,39 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.Entities;
-using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Stripe;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
 {
-    public class PaymentFormStep3ViewModel : PaymentFormViewModelBase
+    public class PaymentCredentialsViewModel : TLViewModelBase
     {
-        private readonly OrderInfo _info;
-        private readonly ValidatedOrderInfo _requestedInfo;
-        private readonly ShippingOption _shipping;
+        private PaymentForm _paymentForm;
+        private string _publishableKey;
 
-        private readonly string _publishableKey;
-
-        public PaymentFormStep3ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public PaymentCredentialsViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public bool Initialize(PaymentForm paymentForm)
         {
-            var buffer = parameter as byte[];
-            if (buffer == null)
-            {
-                return Task.CompletedTask;
-            }
-
             //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
             //{
             //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
@@ -46,52 +32,38 @@ namespace Unigram.ViewModels.Payments
             //    _requestedInfo = tuple.Item4;
             //    _shipping = tuple.Item5;
 
-            //    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
-            //    {
-            //        IsNativeUsed = true;
-            //        SelectedCountry = null;
+            _paymentForm = paymentForm;
 
-            //        var json = JsonObject.Parse(_paymentForm.NativeParams.Data);
+            CanSaveCredentials = _paymentForm.CanSaveCredentials;
 
-            //        NeedCountry = json.GetNamedBoolean("need_country", false);
-            //        NeedZip = json.GetNamedBoolean("need_zip", false);
-            //        NeedCardholderName = json.GetNamedBoolean("need_cardholder_name", false);
-
-            //        _publishableKey = json.GetNamedString("publishable_key", string.Empty);
-            //    }
-            //    else
-            //    {
-            //        IsNativeUsed = false;
-            //        RaisePropertyChanged("Navigate");
-            //    }
-
-            //    //var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
-            //    //if (info.ShippingAddress == null)
-            //    //{
-            //    //    info.ShippingAddress = new TLPostAddress();
-            //    //}
-
-            //    //Info = info;
-            //    //SelectedCountry = null;
-            //}
-
-            return Task.CompletedTask;
-        }
-
-        private bool _isNativeUsed;
-        public bool IsNativeUsed
-        {
-            get
+            if (paymentForm.PaymentsProvider != null)
             {
-                return _isNativeUsed;
+                IsNativeUsed = true;
+                SelectedCountry = null;
+
+                NeedCountry = paymentForm.PaymentsProvider.NeedCountry;
+                NeedZip = paymentForm.PaymentsProvider.NeedPostalCode;
+                NeedCardholderName = paymentForm.PaymentsProvider.NeedCardholderName;
+
+                _publishableKey = paymentForm.PaymentsProvider.PublishableKey;
+
+                return false;
             }
-            set
+            else
             {
-                Set(ref _isNativeUsed, value);
+                IsWebUsed = true;
+                RaisePropertyChanged("Navigate");
+
+                return true;
             }
         }
+
+        public bool IsNativeUsed { get; private set; }
+        public bool IsWebUsed { get; private set; }
 
         #region Native
+
+        public bool CanSaveCredentials { get; private set; }
 
         public bool NeedCountry { get; private set; }
 
@@ -202,8 +174,7 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async Task<SavedCredentials> ValidateAsync()
         {
             var save = _isSave ?? false;
             if (_paymentForm.SavedCredentials != null && !save && _paymentForm.CanSaveCredentials)
@@ -241,32 +212,32 @@ namespace Unigram.ViewModels.Payments
             if (!card.ValidateNumber())
             {
                 RaisePropertyChanged("CARD_NUMBER_INVALID");
-                return;
+                return null;
             }
             if (!card.ValidateExpireDate())
             {
                 RaisePropertyChanged("CARD_EXPIRE_DATE_INVALID");
-                return;
+                return null;
             }
             if (NeedCardholderName && string.IsNullOrWhiteSpace(_cardName))
             {
                 RaisePropertyChanged("CARD_HOLDER_NAME_INVALID");
-                return;
+                return null;
             }
             if (!card.ValidateCVC())
             {
                 RaisePropertyChanged("CARD_CVC_INVALID");
-                return;
+                return null;
             }
             if (NeedCountry && _selectedCountry == null)
             {
                 RaisePropertyChanged("CARD_COUNTRY_INVALID");
-                return;
+                return null;
             }
             if (NeedZip && string.IsNullOrWhiteSpace(_postcode))
             {
                 RaisePropertyChanged("CARD_ZIP_INVALID");
-                return;
+                return null;
             }
 
             IsLoading = true;
@@ -279,7 +250,7 @@ namespace Unigram.ViewModels.Payments
                     var title = card.GetBrand() + " *" + card.GetLast4();
                     var credentials = string.Format("{{\"type\":\"{0}\", \"id\":\"{1}\"}}", token.Type, token.Id);
 
-                    NavigateToNextStep(title, credentials, _isSave ?? false);
+                    return new SavedCredentials(credentials, title);
                 }
                 else
                 {
@@ -287,73 +258,7 @@ namespace Unigram.ViewModels.Payments
                 }
             }
 
-            //var save = _isSave ?? false;
-            //var info = new TLPaymentRequestedInfo();
-            //if (_paymentForm.Invoice.IsNameRequested)
-            //{
-            //    info.Name = _info.Name;
-            //}
-            //if (_paymentForm.Invoice.IsEmailRequested)
-            //{
-            //    info.Email = _info.Email;
-            //}
-            //if (_paymentForm.Invoice.IsPhoneRequested)
-            //{
-            //    info.Phone = _info.Phone;
-            //}
-            //if (_paymentForm.Invoice.IsShippingAddressRequested)
-            //{
-            //    info.ShippingAddress = _info.ShippingAddress;
-            //    info.ShippingAddress.CountryIso2 = _selectedCountry?.Code;
-            //}
-
-            //var response = await ProtoService.ValidateRequestedInfoAsync(save, _message.Id, info);
-            //if (response.IsSucceeded)
-            //{
-            //    IsLoading = false;
-
-            //    if (_paymentForm.HasSavedInfo && !save)
-            //    {
-            //        ProtoService.ClearSavedInfoAsync(true, false, null, null);
-            //    }
-
-            //    if (_paymentForm.Invoice.IsFlexible)
-            //    {
-            //        NavigationService.Navigate(typeof(PaymentFormStep2Page), TLTuple.Create(_message, _paymentForm, response.Result));
-            //    }
-            //    else if (_paymentForm.HasSavedCredentials)
-            //    {
-            //        // TODO: Is password expired?
-            //        var expired = true;
-            //        if (expired)
-            //        {
-            //            NavigationService.Navigate(typeof(PaymentFormStep4Page));
-            //        }
-            //        else
-            //        {
-            //            NavigationService.Navigate(typeof(PaymentFormStep5Page));
-            //        }
-            //    }
-            //    else
-            //    {
-            //        NavigationService.Navigate(typeof(PaymentFormStep3Page));
-            //    }
-            //}
-        }
-
-        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            base.RaisePropertyChanged(propertyName);
-
-            if (propertyName.Equals("IsLoading"))
-            {
-                SendCommand.RaiseCanExecuteChanged();
-            }
-        }
-
-        public void NavigateToNextStep(string title, string credentials, bool save)
-        {
-            //NavigationService.NavigateToPaymentFormStep5(_message, _paymentForm, _info, _requestedInfo, _shipping, title, credentials, save);
+            return null;
         }
     }
 }

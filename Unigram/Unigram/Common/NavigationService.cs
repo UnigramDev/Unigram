@@ -185,35 +185,6 @@ namespace Unigram.Common
             }
         }
 
-        #region Payments
-
-        public static void NavigateToPaymentFormStep1(this INavigationService service, MessageViewModel message, PaymentForm paymentForm)
-        {
-            service.Navigate(typeof(PaymentFormStep1Page), Tuple.Create(message, paymentForm));
-        }
-
-        public static void NavigateToPaymentFormStep2(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, OrderInfo info, ValidatedOrderInfo validatedInfo)
-        {
-            service.Navigate(typeof(PaymentFormStep2Page), Tuple.Create(message, paymentForm, info, validatedInfo));
-        }
-
-        public static void NavigateToPaymentFormStep3(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, OrderInfo info, ValidatedOrderInfo validatedInfo, ShippingOption shipping)
-        {
-            service.Navigate(typeof(PaymentFormStep3Page), Tuple.Create(message, paymentForm, info, validatedInfo, shipping));
-        }
-
-        public static void NavigateToPaymentFormStep4(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, OrderInfo info, ValidatedOrderInfo validatedInfo, ShippingOption shipping)
-        {
-            service.Navigate(typeof(PaymentFormStep4Page), Tuple.Create(message, paymentForm, info, validatedInfo, shipping));
-        }
-
-        public static void NavigateToPaymentFormStep5(this INavigationService service, MessageViewModel message, PaymentForm paymentForm, OrderInfo info, ValidatedOrderInfo validatedInfo, ShippingOption shipping, string title, string credentials, bool save)
-        {
-            service.Navigate(typeof(PaymentFormStep5Page), Tuple.Create(message, paymentForm, info, validatedInfo, shipping, title ?? string.Empty, credentials ?? string.Empty, save));
-        }
-
-        #endregion
-
         public static void RemovePeerFromStack(this INavigationService service, long target)
         {
             long peer;

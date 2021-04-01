@@ -9,6 +9,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
+using Unigram.Navigation.Services;
 using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Payments;
@@ -478,7 +479,7 @@ namespace Unigram.ViewModels
 
             var text = string.Empty;
 
-            var input = new InputDialog();
+            var input = new InputPopup();
             input.Title = Strings.Resources.ReportChat;
             input.PlaceholderText = Strings.Resources.ReportChatDescription;
             input.IsPrimaryButtonEnabled = true;
@@ -904,7 +905,7 @@ namespace Unigram.ViewModels
 
             var text = string.Empty;
 
-            var input = new InputDialog();
+            var input = new InputPopup();
             input.Title = Strings.Resources.ReportChat;
             input.PlaceholderText = Strings.Resources.ReportChatDescription;
             input.IsPrimaryButtonEnabled = true;
@@ -975,51 +976,11 @@ namespace Unigram.ViewModels
                 {
                     if (message.Content is MessageInvoice invoice && invoice.ReceiptMessageId != 0)
                     {
-                        //var response = await ProtoService.SendAsync(new GetPaymentReceipt(chat.Id, invoice.ReceiptMessageId));
-                        //if (response is PaymentReceipt receipt)
-                        //{
-                        //    NavigationService.Navigate(typeof(PaymentReceiptPage), TLTuple.Create(message, receipt));
-                        //}
-
-                        NavigationService.Navigate(typeof(PaymentReceiptPage), new ReceiptNavigation(chat.Id, invoice.ReceiptMessageId));
+                        NavigationService.Navigate(typeof(PaymentReceiptPage), state: NavigationState.GetInvoice(chat.Id, invoice.ReceiptMessageId));
                     }
                     else
                     {
-                        // TODO:
-                        await MessagePopup.ShowAsync("Payments are coming soon!", Strings.Resources.AppName, "OK");
-                        return;
-
-                        var response = await ProtoService.SendAsync(new GetPaymentForm(chat.Id, message.Id));
-                        if (response is PaymentForm form)
-                        {
-                            if (form.Invoice.NeedEmailAddress || form.Invoice.NeedName || form.Invoice.NeedPhoneNumber || form.Invoice.NeedShippingAddress)
-                            {
-                                NavigationService.NavigateToPaymentFormStep1(message, form);
-                            }
-                            else if (form.SavedCredentials != null)
-                            {
-                                //if (ApplicationSettings.Current.TmpPassword != null)
-                                //{
-                                //    if (ApplicationSettings.Current.TmpPassword.ValidUntil < TLUtils.Now + 60)
-                                //    {
-                                //        ApplicationSettings.Current.TmpPassword = null;
-                                //    }
-                                //}
-
-                                //if (ApplicationSettings.Current.TmpPassword != null)
-                                //{
-                                //    NavigationService.NavigateToPaymentFormStep5(message, form, null, null, null, null, null, true);
-                                //}
-                                //else
-                                //{
-                                //    NavigationService.NavigateToPaymentFormStep4(message, form, null, null, null);
-                                //}
-                            }
-                            else
-                            {
-                                NavigationService.NavigateToPaymentFormStep3(message, form, null, null, null);
-                            }
-                        }
+                        NavigationService.Navigate(typeof(PaymentFormStep5Page), state: NavigationState.GetInvoice(chat.Id, message.Id));
                     }
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)

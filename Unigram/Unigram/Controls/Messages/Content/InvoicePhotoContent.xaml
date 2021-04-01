@@ -17,14 +17,21 @@
         <Run x:Name="Description"/>
     </TextBlock>
 
-    <controls:AspectView x:Name="Photo"
-                         Background="Black"
-                         MinWidth="{ThemeResource TelegramMediaMinWidth}"
-                         MinHeight="{ThemeResource TelegramMediaMinHeight}"
-                         MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                         Margin="-8,0,-10,4">
+    <controls:AspectView
+        x:Name="Photo"
+        MinWidth="{ThemeResource TelegramMediaMinWidth}"
+        MinHeight="{ThemeResource TelegramMediaMinHeight}"
+        MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+        Margin="-10,0,-10,4">
         <Image x:Name="Texture" Stretch="UniformToFill"/>
-        <messages:InvoiceFooter x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4"/>
+        <messages:InvoiceFooter
+            x:Name="Footer"
+            Background="{ThemeResource MessageOverlayBackgroundBrush}"
+            Foreground="White"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Padding="8,2,8,4"
+            Margin="4"/>
     </controls:AspectView>
 </StackPanel>

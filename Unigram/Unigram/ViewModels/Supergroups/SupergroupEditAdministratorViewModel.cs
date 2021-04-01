@@ -8,6 +8,7 @@ using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views;
+using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;
 using Windows.UI.Xaml.Navigation;
@@ -452,7 +453,7 @@ namespace Unigram.ViewModels.Supergroups
                     return;
                 }
 
-                var input = new InputDialog();
+                var input = new InputPopup();
                 input.Title = "YOLO";
                 input.Header = "Yolo";
                 input.PlaceholderText = "Yolo";

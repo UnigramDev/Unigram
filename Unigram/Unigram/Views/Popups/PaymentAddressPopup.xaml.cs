@@ -1,25 +1,35 @@
-﻿using Unigram.Common;
+﻿using Telegram.Td.Api;
+using Unigram.Common;
+using Unigram.Controls;
 using Unigram.ViewModels.Payments;
-using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Payments
+namespace Unigram.Views.Popups
 {
-    public sealed partial class PaymentFormStep1Page : HostedPage
+    public sealed partial class PaymentAddressPopup : ContentPopup
     {
-        public PaymentFormStep1ViewModel ViewModel => DataContext as PaymentFormStep1ViewModel;
+        public PaymentAddressViewModel ViewModel => DataContext as PaymentAddressViewModel;
 
-        public PaymentFormStep1Page()
+        public ValidatedOrderInfo ValidatedInfo { get; private set; }
+
+        public PaymentAddressPopup(long chatId, long messageId, Invoice invoice, OrderInfo info)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentFormStep1ViewModel>();
+            DataContext = TLContainer.Current.Resolve<PaymentAddressViewModel>();
+
+            Title = Strings.Resources.PaymentShippingInfo;
+            PrimaryButtonText = Strings.Resources.OK;
+            SecondaryButtonText = Strings.Resources.Cancel;
+
+            ViewModel.Initialize(chatId, messageId, invoice, info);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
@@ -56,6 +66,17 @@ namespace Unigram.Views.Payments
                     VisualUtilities.ShakeView(FieldStreet2);
                     break;
             }
+        }
+
+        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+            var validated = await ViewModel.ValidateAsync();
+
+            ValidatedInfo = validated;
+
+            args.Cancel = validated == null;
+            deferral.Complete();
         }
     }
 }

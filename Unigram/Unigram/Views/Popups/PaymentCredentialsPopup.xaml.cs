@@ -1,30 +1,44 @@
 ﻿using System;
+using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Native;
 using Unigram.ViewModels.Payments;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Payments
+namespace Unigram.Views.Popups
 {
-    public sealed partial class PaymentFormStep3Page : HostedPage
+    public sealed partial class PaymentCredentialsPopup : ContentPopup
     {
-        public PaymentFormStep3ViewModel ViewModel => DataContext as PaymentFormStep3ViewModel;
+        public PaymentCredentialsViewModel ViewModel => DataContext as PaymentCredentialsViewModel;
 
-        public PaymentFormStep3Page()
+        public SavedCredentials Credentials { get; private set; }
+
+        public PaymentCredentialsPopup(PaymentForm paymentForm)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentFormStep3ViewModel>();
+            DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
 
-            Transitions = ApiInfo.CreateSlideTransition();
+            Title = Strings.Resources.PaymentCardInfo;
+            SecondaryButtonText = Strings.Resources.Cancel;
+
+            if (ViewModel.Initialize(paymentForm))
+            {
+                FindName(nameof(WebPanel));
+                View.Navigate(new Uri(paymentForm.Url));
+            }
+            else
+            {
+                PrimaryButtonText = Strings.Resources.OK;
+            }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             ViewModel.PropertyChanged -= OnPropertyChanged;
         }
@@ -52,19 +66,26 @@ namespace Unigram.Views.Payments
                     VisualUtilities.ShakeView(FieldPostcode);
                     break;
             }
-
-            if (e.PropertyName.Equals("Navigate"))
-            {
-                View.Navigate(new Uri(ViewModel.PaymentForm.Url));
-            }
         }
 
         private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
             sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramPaymentProxy((title, credentials) =>
             {
-                ViewModel.NavigateToNextStep(title, credentials, false);
+                Credentials = new SavedCredentials(credentials, title);
+                Hide(ContentDialogResult.Primary);
             }));
+        }
+
+        private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+            var validated = await ViewModel.ValidateAsync();
+
+            Credentials = validated;
+
+            args.Cancel = validated == null;
+            deferral.Complete();
         }
     }
 }

@@ -1,9 +1,7 @@
-﻿using LinqToVisualTree;
-using System.Linq;
+﻿using System.Linq;
 using Unigram.Common;
 using Unigram.Controls;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -69,16 +67,7 @@ namespace Unigram.Views.Popups
         {
             if (IsSimple && First.Password.Length == 4 && First.Password.All(x => x >= '0' && x <= '9') && First.Password.Equals(Confirm.Password))
             {
-                Done();
-            }
-        }
-
-        private void Done()
-        {
-            var button = this.Descendants<Button>().FirstOrDefault(x => x is Button y && y.Name == "PrimaryButton");
-            if (button != null)
-            {
-                new ButtonAutomationPeer(button).Invoke();
+                Hide(ContentDialogResult.Primary);
             }
         }
 
@@ -94,7 +83,7 @@ namespace Unigram.Views.Popups
                 }
                 else
                 {
-                    Done();
+                    Hide(ContentDialogResult.Primary);
                 }
 
                 e.Handled = true;
