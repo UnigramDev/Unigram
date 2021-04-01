@@ -165,7 +165,7 @@ namespace Unigram.CodeGen
                 typeof(ViewModels.StickerSetViewModel),
                 typeof(PaymentAddressViewModel),
                 typeof(PaymentCredentialsViewModel),
-                typeof(PaymentFormStep5ViewModel),
+                typeof(PaymentFormViewModel),
                 typeof(PaymentReceiptViewModel),
                 typeof(InviteViewModel),
                 typeof(ChatsNearbyViewModel),

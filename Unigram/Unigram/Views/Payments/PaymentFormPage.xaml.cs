@@ -4,14 +4,14 @@ using Unigram.ViewModels.Payments;
 
 namespace Unigram.Views.Payments
 {
-    public sealed partial class PaymentFormStep5Page : HostedPage
+    public sealed partial class PaymentFormPage : HostedPage
     {
-        public PaymentFormStep5ViewModel ViewModel => DataContext as PaymentFormStep5ViewModel;
+        public PaymentFormViewModel ViewModel => DataContext as PaymentFormViewModel;
 
-        public PaymentFormStep5Page()
+        public PaymentFormPage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentFormStep5ViewModel>();
+            DataContext = TLContainer.Current.Resolve<PaymentFormViewModel>();
 
             Transitions = ApiInfo.CreateSlideTransition();
         }

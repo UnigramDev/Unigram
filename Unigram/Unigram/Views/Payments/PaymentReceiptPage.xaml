@@ -86,7 +86,7 @@
                 </StackPanel>
 
                 <StackPanel Visibility="{x:Bind ViewModel.Receipt.OrderInfo.PhoneNumber, Converter={StaticResource NullToVisibilityConverter}, FallbackValue=Collapsed}" Padding="12,8">
-                    <TextBlock Text="{x:Bind converters:BindConvert.PhoneNumber(ViewModel.Receipt.OrderInfo.PhoneNumber), FallbackValue=Empty}"/>
+                    <TextBlock Text="{x:Bind converters:Converter.PhoneNumber(ViewModel.Receipt.OrderInfo.PhoneNumber), FallbackValue=Empty}"/>
                     <TextBlock Text="{CustomResource PaymentCheckoutPhoneNumber}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 

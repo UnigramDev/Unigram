@@ -14,11 +14,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments
 {
-    public class PaymentFormStep5ViewModel : TLViewModelBase
+    public class PaymentFormViewModel : TLViewModelBase
     {
         private readonly bool _save;
 
-        public PaymentFormStep5ViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
+        public PaymentFormViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);

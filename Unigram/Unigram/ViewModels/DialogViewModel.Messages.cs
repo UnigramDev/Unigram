@@ -980,7 +980,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        NavigationService.Navigate(typeof(PaymentFormStep5Page), state: NavigationState.GetInvoice(chat.Id, message.Id));
+                        NavigationService.Navigate(typeof(PaymentFormPage), state: NavigationState.GetInvoice(chat.Id, message.Id));
                     }
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
