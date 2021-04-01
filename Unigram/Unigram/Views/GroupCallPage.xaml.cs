@@ -452,7 +452,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var input = new InputDialog();
+            var input = new InputPopup();
             input.Title = Strings.Resources.VoipGroupTitle;
             input.PrimaryButtonText = Strings.Resources.Save;
             input.SecondaryButtonText = Strings.Resources.Cancel;
@@ -478,7 +478,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var input = new InputDialog();
+            var input = new InputPopup();
             input.Title = Strings.Resources.VoipGroupStartRecordingTitle;
             input.Header = Strings.Resources.VoipGroupStartRecordingText;
             input.PrimaryButtonText = Strings.Resources.Start;
