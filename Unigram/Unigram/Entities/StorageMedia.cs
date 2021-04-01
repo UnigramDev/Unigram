@@ -16,14 +16,18 @@ namespace Unigram.Entities
         public StorageMedia(StorageFile file, BasicProperties basic)
         {
             File = file;
-            Basic = basic;
+            //DateModified = basic.DateModified;
+            //ItemDate = basic.ItemDate;
+            Size = basic.Size;
 
             EditState = new BitmapEditState();
         }
 
         public StorageFile File { get; private set; }
 
-        public BasicProperties Basic { get; private set; }
+        //public DateTimeOffset DateModified { get; }
+        //public DateTimeOffset ItemDate { get; }
+        public ulong Size { get; }
 
         protected BitmapImage _thumbnail;
         public BitmapImage Thumbnail
@@ -191,7 +195,7 @@ namespace Unigram.Entities
                     }
                     else
                     {
-                        results.Add(new StorageDocument(file));
+                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
                     }
                 }
                 else if (file.ContentType == "video/mp4")
@@ -203,7 +207,7 @@ namespace Unigram.Entities
                     }
                     else
                     {
-                        results.Add(new StorageDocument(file));
+                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
                     }
                 }
                 else if (file.ContentType.StartsWith("audio/", StringComparison.OrdinalIgnoreCase))
@@ -215,12 +219,12 @@ namespace Unigram.Entities
                     }
                     else
                     {
-                        results.Add(new StorageDocument(file));
+                        results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
                     }
                 }
                 else
                 {
-                    results.Add(new StorageDocument(file));
+                    results.Add(new StorageDocument(file, await file.GetBasicPropertiesAsync()));
                 }
             }
 

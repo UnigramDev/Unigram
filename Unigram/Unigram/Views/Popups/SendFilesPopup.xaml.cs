@@ -275,10 +275,8 @@ namespace Unigram.Views.Popups
                 return;
             }
 
-            var props = await storage.File.GetBasicPropertiesAsync();
-
             title.Text = storage.File.Name;
-            subtitle.Text = FileSizeConverter.Convert((int)props.Size);
+            subtitle.Text = FileSizeConverter.Convert((long)storage.Size);
         }
 
         private void Grid_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
