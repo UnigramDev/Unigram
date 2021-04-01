@@ -20,7 +20,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            Amount.Text = BindConvert.Current.FormatAmount(invoice.TotalAmount, invoice.Currency);
+            Amount.Text = Converter.FormatAmount(invoice.TotalAmount, invoice.Currency);
             Label.Text = ConvertLabel(invoice.ReceiptMessageId != 0, invoice.IsTest);
         }
 

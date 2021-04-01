@@ -153,7 +153,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        await MessagePopup.ShowAsync(string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
+                        await MessagePopup.ShowAsync(string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate)), Strings.Resources.AppName, Strings.Resources.OK);
                     }
 
                     return true;
@@ -196,7 +196,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        label = string.Format(temporary, BindConvert.Current.BannedUntil(restricted.RestrictedUntilDate));
+                        label = string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate));
                     }
 
                     return true;

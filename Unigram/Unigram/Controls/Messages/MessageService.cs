@@ -17,6 +17,11 @@ namespace Unigram.Controls.Messages
 {
     public class MessageService : SimpleButton
     {
+        public MessageService()
+        {
+            DefaultStyleKey = typeof(MessageService);
+        }
+
         public void UpdateMessage(MessageViewModel message)
         {
             Tag = message;
@@ -163,14 +168,14 @@ namespace Unigram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                return (string.Format(Strings.Resources.MessageScheduledOn, BindConvert.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate))), null);
+                return (string.Format(Strings.Resources.MessageScheduledOn, Converter.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate))), null);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
                 return (Strings.Resources.MessageScheduledUntilOnline, null);
             }
 
-            return (BindConvert.DayGrouping(Utils.UnixTimestampToDateTime(message.Date)), null);
+            return (Converter.DayGrouping(Utils.UnixTimestampToDateTime(message.Date)), null);
         }
 
         #endregion
@@ -832,7 +837,7 @@ namespace Unigram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             var chat = message.GetChat();
-            if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            if (chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
             {
                 content = Strings.Resources.ActionChannelRemovedPhoto;
             }
@@ -1100,15 +1105,15 @@ namespace Unigram.Controls.Messages
             {
                 if (traveler.Id == message.ProtoService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinYouRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinYouRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, ref entities);
                 }
                 else if (watcher.Id == message.ProtoService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinOtherRadius, BindConvert.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.Resources.ActionUserWithinOtherRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
                     content = ReplaceWithLink(content, "un2", watcher, ref entities);
                 }
             }

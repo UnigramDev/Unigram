@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     BeginOnUIThread(() =>
                     {
-                        SinceDate = BindConvert.Current.DateTime(statistics.SinceDate);
+                        SinceDate = Converter.DateTime(statistics.SinceDate);
 
                         var groups = new Dictionary<TdNetworkType, List<NetworkStatisticsEntry>>();
 

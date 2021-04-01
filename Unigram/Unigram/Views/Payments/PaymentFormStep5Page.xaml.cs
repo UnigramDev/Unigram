@@ -1,6 +1,5 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Converters;
 using Unigram.ViewModels.Payments;
 
 namespace Unigram.Views.Payments
@@ -8,8 +7,6 @@ namespace Unigram.Views.Payments
     public sealed partial class PaymentFormStep5Page : HostedPage
     {
         public PaymentFormStep5ViewModel ViewModel => DataContext as PaymentFormStep5ViewModel;
-
-        public BindConvert Convert => BindConvert.Current;
 
         public PaymentFormStep5Page()
         {

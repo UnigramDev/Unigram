@@ -26,8 +26,8 @@ namespace Unigram.Views.Supergroups
                 return Strings.Resources.UserRestrictionsUntilForever;
             }
 
-            var dateTime = BindConvert.Current.DateTime(date);
-            return BindConvert.Current.ShortDate.Format(dateTime) + ", " + BindConvert.Current.ShortTime.Format(dateTime);
+            var dateTime = Converter.DateTime(date);
+            return Converter.ShortDate.Format(dateTime) + ", " + Converter.ShortTime.Format(dateTime);
         }
 
         #endregion

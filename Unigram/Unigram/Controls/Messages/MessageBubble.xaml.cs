@@ -90,7 +90,6 @@ namespace Unigram.Controls.Messages
         public string UpdateAutomation(MessageViewModel message)
         {
             var chat = message.GetChat();
-            var content = message.GeneratedContent ?? message.Content;
 
             var title = string.Empty;
             var senderBot = false;
@@ -137,12 +136,12 @@ namespace Unigram.Controls.Messages
                 builder.Append($"{message.AuthorSignature}, ");
             }
 
-            if (message.EditDate != 0 && message.ViaBotUserId == 0 && !senderBot && !(message.ReplyMarkup is ReplyMarkupInlineKeyboard))
+            if (message.EditDate != 0 && message.ViaBotUserId == 0 && !senderBot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard)
             {
                 builder.Append($"{Strings.Resources.EditedMessage}, ");
             }
 
-            var date = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            var date = string.Format(Strings.Resources.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
             if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));
@@ -790,7 +789,7 @@ namespace Unigram.Controls.Messages
                     FooterToNormal();
                     bottom = 4;
                 }
-                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && BindConvert.Current.DateTime(message.Date + location.LivePeriod) > DateTime.Now))
+                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && Converter.DateTime(message.Date + location.LivePeriod) > DateTime.Now))
                 {
                     FooterToHidden();
                 }
@@ -1044,7 +1043,7 @@ namespace Unigram.Controls.Messages
             {
                 result = ReplaceEntities(message, Span, voiceNote.Caption, out adjust);
             }
-            else if (content is MessageUnsupported unsupported)
+            else if (content is MessageUnsupported)
             {
                 result = GetEntities(message, Span, Strings.Resources.UnsupportedMedia, out adjust);
             }
@@ -1960,7 +1959,7 @@ namespace Unigram.Controls.Messages
 
                 goto Calculate;
             }
-            else if (constraint is Location location)
+            else if (constraint is Location)
             {
                 width = 320;
                 height = 200;
@@ -1982,7 +1981,7 @@ namespace Unigram.Controls.Messages
 
                 goto Calculate;
             }
-            else if (constraint is Sticker sticker)
+            else if (constraint is Sticker)
             {
                 // We actually don't have to calculate bubble width for stickers,
                 // As it might be wider due to reply
@@ -1991,7 +1990,7 @@ namespace Unigram.Controls.Messages
 
                 //goto Calculate;
             }
-            else if (constraint is Venue venue)
+            else if (constraint is Venue)
             {
                 width = 320;
                 height = 200;
@@ -2013,7 +2012,7 @@ namespace Unigram.Controls.Messages
 
                 goto Calculate;
             }
-            else if (constraint is VideoNote videoNote)
+            else if (constraint is VideoNote)
             {
                 // We actually don't have to calculate bubble width for video notes,
                 // As it might be wider due to reply/forward

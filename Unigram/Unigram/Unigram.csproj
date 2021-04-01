@@ -1100,7 +1100,7 @@
     <Compile Include="Controls\Messages\MessageReference.xaml.cs">
       <DependentUpon>MessageReference.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\BindConvert.cs" />
+    <Compile Include="Converters\Converter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\FileSizeConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />

@@ -16,7 +16,7 @@ namespace Unigram.Views.Popups
         {
             InitializeComponent();
 
-            var date = until == 0 ? DateTime.Now.AddMinutes(1) : BindConvert.Current.DateTime(until);
+            var date = until == 0 ? DateTime.Now.AddMinutes(1) : Converter.DateTime(until);
             Date.Date = date.Date;
             Time.Time = date.TimeOfDay;
 

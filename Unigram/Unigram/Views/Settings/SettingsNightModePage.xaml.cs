@@ -178,7 +178,7 @@ namespace Unigram.Views.Settings
 
         private string ConvertTimeSpan(TimeSpan time)
         {
-            return BindConvert.Current.ShortTime.Format(new DateTime(2020, 1, 1) + time);
+            return Converter.ShortTime.Format(new DateTime(2020, 1, 1) + time);
         }
 
         private string ConvertSunDate(bool enabled, Location location)
@@ -199,8 +199,8 @@ namespace Unigram.Views.Settings
             end = end.Add(sunrise);
 
             return string.Format(Strings.Resources.AutoNightUpdateLocationInfo,
-                BindConvert.Current.ShortTime.Format(start),
-                BindConvert.Current.ShortTime.Format(end));
+                Converter.ShortTime.Format(start),
+                Converter.ShortTime.Format(end));
         }
 
         private string ConvertBrightness(float value)

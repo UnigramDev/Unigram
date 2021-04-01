@@ -36,12 +36,12 @@ namespace Unigram.Views
             if (ViewModel.CacheService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = string.Format("{0}, {1}", BindConvert.Distance(nearby.Distance), Locale.Declension("Members", supergroup.MemberCount));
+                subtitle.Text = string.Format("{0}, {1}", Converter.Distance(nearby.Distance), Locale.Declension("Members", supergroup.MemberCount));
             }
             else
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = BindConvert.Distance(nearby.Distance);
+                subtitle.Text = Converter.Distance(nearby.Distance);
             }
 
             var photo = content.Children[0] as ProfilePicture;

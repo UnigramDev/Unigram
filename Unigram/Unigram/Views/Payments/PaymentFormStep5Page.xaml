@@ -3,8 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
-    xmlns:payments="using:Unigram.Views.Payments"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:converters="using:Unigram.Converters"
+    xmlns:payments="using:Unigram.Views.Payments"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -112,7 +113,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{CustomResource PaymentTransactionTotal}" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind Convert.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                        <TextBlock Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
                     </Grid>
                 </StackPanel>
 
@@ -146,7 +147,7 @@
 
                     <controls:BadgeButton
                         Click="{x:Bind ViewModel.ChooseAddress}"
-                        Content="{x:Bind Convert.PhoneNumber(ViewModel.Info.PhoneNumber), Mode=OneWay, FallbackValue=Empty}"
+                        Content="{x:Bind converters:Converter.PhoneNumber(ViewModel.Info.PhoneNumber), Mode=OneWay, FallbackValue=Empty}"
                         Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedPhoneNumber, Mode=OneWay, FallbackValue=Collapsed}"
                         Badge="{CustomResource PaymentCheckoutPhoneNumber}"
                         Style="{StaticResource SubtitleBadgeButtonStyle}"/>

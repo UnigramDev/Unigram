@@ -157,12 +157,12 @@ namespace Unigram.Charts.Data
             }
             else if (timeStep < 86400000L)
             {
-                formatter = BindConvert.Current.ShortTime;
+                formatter = Converter.ShortTime;
             }
             else
             {
                 //formatter = new SimpleDateFormat("MMM d");
-                formatter = BindConvert.Current.MonthAbbreviatedDay;
+                formatter = Converter.MonthAbbreviatedDay;
             }
 
             for (int i = 0; i < daysLookup.Length; i++)

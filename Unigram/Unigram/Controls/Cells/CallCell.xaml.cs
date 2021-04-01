@@ -21,7 +21,7 @@ namespace Unigram.Controls.Cells
             _call = call;
 
             DisplayLabel.Text = ConvertCount(call);
-            DateLabel.Text = BindConvert.Current.DateExtended(call.Message.Date);
+            DateLabel.Text = Converter.DateExtended(call.Message.Date);
             TypeLabel.Text = call.DisplayType;
 
             Photo.Source = PlaceholderHelper.GetUser(protoService, call.Peer, 36);
@@ -45,8 +45,8 @@ namespace Unigram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null && _call != null)
             {
-                var date = BindConvert.Current.DateTime(_call.Message.Date);
-                var text = $"{BindConvert.Current.LongDate.Format(date)} {BindConvert.Current.LongTime.Format(date)}";
+                var date = Converter.DateTime(_call.Message.Date);
+                var text = $"{Converter.LongDate.Format(date)} {Converter.LongTime.Format(date)}";
 
                 tooltip.Content = text;
             }

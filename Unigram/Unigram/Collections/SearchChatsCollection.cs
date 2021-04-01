@@ -415,11 +415,11 @@ namespace Unigram.Collections
 
                 if (start.DayOfYear == end.DayOfYear)
                 {
-                    return BindConvert.Current.DayMonthFullYear.Format(start);
+                    return Converter.DayMonthFullYear.Format(start);
                 }
                 else if (start.Month == end.Month)
                 {
-                    return BindConvert.Current.MonthAbbreviatedYear.Format(start);
+                    return Converter.MonthAbbreviatedYear.Format(start);
                 }
 
                 return start.Year.ToString();

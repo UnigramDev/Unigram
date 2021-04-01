@@ -23,7 +23,7 @@ namespace Unigram.Views.Settings
                 return null;
             }
 
-            return string.Format(Strings.Resources.NetworkUsageSince, string.Format(Strings.Resources.formatDateAtTime, BindConvert.Current.ShortDate.Format(sinceDate), BindConvert.Current.ShortTime.Format(sinceDate)));
+            return string.Format(Strings.Resources.NetworkUsageSince, string.Format(Strings.Resources.formatDateAtTime, Converter.ShortDate.Format(sinceDate), Converter.ShortTime.Format(sinceDate)));
         }
 
         #endregion

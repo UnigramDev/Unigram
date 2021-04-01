@@ -379,7 +379,7 @@ namespace Unigram.Views
 
                     if (article.PublishDate > 0)
                     {
-                        description.Text += " — " + BindConvert.Current.DayMonthFullYear.Format(BindConvert.Current.DateTime(article.PublishDate));
+                        description.Text += " — " + Converter.DayMonthFullYear.Format(Converter.DateTime(article.PublishDate));
                     }
                 }
 
@@ -613,7 +613,7 @@ namespace Unigram.Views
                     textBlock.Inlines.Add(new Run { Text = " — " });
                 }
 
-                textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DayMonthFullYear.Format(BindConvert.Current.DateTime(block.PublishDate)) });
+                textBlock.Inlines.Add(new Run { Text = Converter.DayMonthFullYear.Format(Converter.DateTime(block.PublishDate)) });
             }
 
             return textBlock;
@@ -1247,7 +1247,7 @@ namespace Unigram.Views
             Grid.SetRow(textAuthor, 0);
 
             var textDate = new TextBlock();
-            textDate.Text = BindConvert.Current.DateTime(block.Date).ToString("dd MMMM yyyy");
+            textDate.Text = Converter.DateTime(block.Date).ToString("dd MMMM yyyy");
             textDate.VerticalAlignment = VerticalAlignment.Top;
             textDate.Style = (Style)Resources["CaptionTextBlockStyle"];
             textDate.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];

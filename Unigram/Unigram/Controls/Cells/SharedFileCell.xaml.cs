@@ -164,7 +164,7 @@ namespace Unigram.Controls.Cells
 
         private string UpdateTimeLabel(Message message)
         {
-            return BindConvert.Current.BannedUntil(message.Date);
+            return Converter.BannedUntil(message.Date);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

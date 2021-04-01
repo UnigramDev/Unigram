@@ -35,7 +35,7 @@ namespace Unigram.Controls.Messages.Content
 
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
             ReasonGlyph.Text = outgoing ? "\uE60B\u00A0" : "\uE60C\u00A0";
-            DateLabel.Text = BindConvert.Current.Date(message.Date);
+            DateLabel.Text = Converter.Date(message.Date);
 
             if (call.Duration > 0 && !missed)
             {
@@ -59,8 +59,8 @@ namespace Unigram.Controls.Messages.Content
             var tooltip = sender as ToolTip;
             if (tooltip != null && _message != null)
             {
-                var date = BindConvert.Current.DateTime(_message.Date);
-                var text = $"{BindConvert.Current.LongDate.Format(date)} {BindConvert.Current.LongTime.Format(date)}";
+                var date = Converter.DateTime(_message.Date);
+                var text = $"{Converter.LongDate.Format(date)} {Converter.LongTime.Format(date)}";
 
                 tooltip.Content = text;
             }

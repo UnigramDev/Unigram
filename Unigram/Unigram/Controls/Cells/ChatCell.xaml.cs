@@ -1078,7 +1078,7 @@ namespace Unigram.Controls.Cells
 
         private string UpdateTimeLabel(Message message)
         {
-            return BindConvert.Current.DateExtended(message.Date);
+            return Converter.DateExtended(message.Date);
         }
 
         private string UpdateType(Chat chat)
@@ -1232,7 +1232,7 @@ namespace Unigram.Controls.Cells
             DraftLabel.Text = string.Empty;
             FromLabel.Text = from;
             BriefLabel.Text = message;
-            TimeLabel.Text = BindConvert.Current.ShortTime.Format(date);
+            TimeLabel.Text = Converter.ShortTime.Format(date);
             StateIcon.Glyph = sent ? "\uE601" : string.Empty;
 
             if (_container != null)

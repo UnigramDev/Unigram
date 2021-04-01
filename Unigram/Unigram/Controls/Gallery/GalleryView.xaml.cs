@@ -38,8 +38,6 @@ namespace Unigram.Controls.Gallery
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
-        public BindConvert Convert => BindConvert.Current;
-
         private Func<FrameworkElement> _closing;
 
         private readonly DispatcherTimer _inactivityTimer;
@@ -553,8 +551,8 @@ namespace Unigram.Controls.Gallery
 
         private string ConvertDate(int value)
         {
-            var date = Convert.DateTime(value);
-            return string.Format(Strings.Resources.formatDateAtTime, Convert.ShortDate.Format(date), Convert.ShortTime.Format(date));
+            var date = Converter.DateTime(value);
+            return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
         }
 
         private string ConvertOf(int index, int count)

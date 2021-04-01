@@ -83,7 +83,7 @@ namespace Unigram.ViewModels
                         var outgoing = message.IsOutgoing;
                         var missed = call.DiscardReason is CallDiscardReasonMissed || call.DiscardReason is CallDiscardReasonDeclined;
                         var failed = !outgoing && missed;
-                        var time = BindConvert.Current.DateTime(message.Date);
+                        var time = Converter.DateTime(message.Date);
 
                         if (currentPeer != null)
                         {

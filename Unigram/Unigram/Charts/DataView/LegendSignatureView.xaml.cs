@@ -196,7 +196,7 @@ namespace Unigram.Charts.DataView
         {
             //if (useHour) return capitalize(format2.format(date));
             //return capitalize(format.format(date)) + capitalize(format2.format(date));
-            return BindConvert.Current.DayMonthFullYear.Format(date);
+            return Converter.DayMonthFullYear.Format(date);
         }
 
         private String capitalize(String s)

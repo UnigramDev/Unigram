@@ -48,18 +48,18 @@ namespace Unigram.Controls
                 return;
             }
 
-            ValueLabel.Text = BindConvert.ShortNumber((int)value.Value);
+            ValueLabel.Text = Converter.ShortNumber((int)value.Value);
 
             var diff = value.Value - value.PreviousValue;
             if (diff > 0)
             {
                 VisualStateManager.GoToState(this, "Positive", false);
-                GrowthLabel.Text = string.Format("+{0} ({1:F2}%)", BindConvert.ShortNumber((int)diff), value.GrowthRatePercentage);
+                GrowthLabel.Text = string.Format("+{0} ({1:F2}%)", Converter.ShortNumber((int)diff), value.GrowthRatePercentage);
             }
             else if (diff < 0)
             {
                 VisualStateManager.GoToState(this, "Negative", false);
-                GrowthLabel.Text = string.Format("-{0} ({1:F2}%)", BindConvert.ShortNumber(-(int)diff), -value.GrowthRatePercentage);
+                GrowthLabel.Text = string.Format("-{0} ({1:F2}%)", Converter.ShortNumber(-(int)diff), -value.GrowthRatePercentage);
             }
         }
     }

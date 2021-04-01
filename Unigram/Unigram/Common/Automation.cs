@@ -340,7 +340,7 @@ namespace Unigram.Common
 
             builder.Append(Automation.GetSummary(cacheService, message));
 
-            var date = string.Format(Strings.Resources.TodayAtFormatted, BindConvert.Current.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            var date = string.Format(Strings.Resources.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
             if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.Resources.AccDescrSentDate, date));

@@ -192,7 +192,7 @@ namespace Unigram.ViewModels.Payments
         public async void ChooseShipping()
         {
             var items = _validatedInfo.ShippingOptions.Select(
-                x => new SelectRadioItem(x, BindConvert.Current.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
+                x => new SelectRadioItem(x, Converter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
 
             var dialog = new SelectRadioPopup(items);
             dialog.Title = Strings.Resources.PaymentCheckoutShippingMethod;

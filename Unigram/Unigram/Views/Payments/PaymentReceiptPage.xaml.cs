@@ -11,8 +11,6 @@ namespace Unigram.Views.Payments
     {
         public PaymentReceiptViewModel ViewModel => DataContext as PaymentReceiptViewModel;
 
-        public BindConvert Convert => BindConvert.Current;
-
         public PaymentReceiptPage()
         {
             InitializeComponent();
@@ -115,7 +113,7 @@ namespace Unigram.Views.Payments
 
                     var amount = new TextBlock();
                     amount.Style = App.Current.Resources["DisabledBodyTextBlockStyle"] as Style;
-                    amount.Text = BindConvert.Current.FormatAmount(price.Amount, _currency);
+                    amount.Text = Converter.FormatAmount(price.Amount, _currency);
                     amount.Margin = new Thickness(8, 4, 12, 4);
                     amount.TextAlignment = TextAlignment.Right;
 

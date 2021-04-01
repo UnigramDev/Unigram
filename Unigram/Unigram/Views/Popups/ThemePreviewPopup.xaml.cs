@@ -101,7 +101,7 @@ namespace Unigram.Views.Popups
 
             Photo.Source = PlaceholderHelper.GetNameForUser("Reinhardt", 30);
             Title.Text = "Reinhardt";
-            Subtitle.Text = string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.TodayAt, BindConvert.Current.ShortTime.Format(DateTime.Now.AddHours(-1)));
+            Subtitle.Text = string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.TodayAt, Converter.ShortTime.Format(DateTime.Now.AddHours(-1)));
 
             Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", new File { Local = new LocalFile { Path = "ms-appx:///Assets/Mockup/theme_preview_image.jpg", IsDownloadingCompleted = true } }, 500, 302, new int[0]) }), new FormattedText(), false), "Bring it on! I LIVE for this!", false, DateTime.Now.AddSeconds(-25), true, true);
             Message2.Mockup("Reinhardt, we need to find you some new tunes 🎶.", true, DateTime.Now, true, false);

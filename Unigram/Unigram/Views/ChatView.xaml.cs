@@ -48,7 +48,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Media.Imaging;
 using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views
@@ -56,8 +55,6 @@ namespace Unigram.Views
     public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IActivablePage
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
-
-        public BindConvert Convert => BindConvert.Current;
 
         private readonly Func<IDialogDelegate, DialogViewModel> _getViewModel;
         private DialogViewModel _viewModel;
@@ -2756,7 +2753,7 @@ namespace Unigram.Views
             var button = sender as Button;
             if (button.CommandParameter is int messageDate)
             {
-                var date = BindConvert.Current.DateTime(messageDate);
+                var date = Converter.DateTime(messageDate);
 
                 var dialog = new CalendarPopup();
                 dialog.MaxDate = DateTimeOffset.Now.Date;
@@ -2997,7 +2994,7 @@ namespace Unigram.Views
                     }
                     else if (content.Children[0] is LottieView lottie)
                     {
-                        lottie.Source = UriEx.GetLocal(file.Local.Path);
+                        lottie.Source = UriEx.ToLocal(file.Local.Path);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -4011,7 +4008,7 @@ namespace Unigram.Views
                         }
                         else
                         {
-                            ShowAction(string.Format(Strings.Resources.SendMessageRestricted, BindConvert.Current.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
+                            ShowAction(string.Format(Strings.Resources.SendMessageRestricted, Converter.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
                         }
                     }
                     else
@@ -4340,7 +4337,7 @@ namespace Unigram.Views
                         }
                         else if (content.Children[0] is LottieView lottie)
                         {
-                            lottie.Source = UriEx.GetLocal(file.Local.Path);
+                            lottie.Source = UriEx.ToLocal(file.Local.Path);
                             _autocompleteHandler.ThrottleVisibleItems();
                         }
                     }

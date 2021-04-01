@@ -52,7 +52,7 @@ namespace Unigram.Views.Chats
             var start = Utils.UnixTimestampToDateTime(startDate);
             var end = Utils.UnixTimestampToDateTime(endDate);
 
-            return string.Format("{0} - {1}", BindConvert.Current.ShortDate.Format(start), BindConvert.Current.ShortDate.Format(end));
+            return string.Format("{0} - {1}", Converter.ShortDate.Format(start), Converter.ShortDate.Format(end));
         }
 
         private string ConvertShowMore(int count)
@@ -193,7 +193,7 @@ namespace Unigram.Views.Chats
                     title.Text = caption.Text.Replace('\n', ' ');
                 }
 
-                subtitle.Text = BindConvert.DateAt(counters.Message.Date);
+                subtitle.Text = Converter.DateAt(counters.Message.Date);
 
                 views.Text = Locale.Declension("Views", counters.ViewCount);
                 shares.Text = Locale.Declension("Shares", counters.ForwardCount);

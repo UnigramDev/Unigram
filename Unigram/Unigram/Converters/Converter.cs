@@ -11,36 +11,23 @@ using Windows.System.UserProfile;
 
 namespace Unigram.Converters
 {
-    public class BindConvert
+    public static class Converter
     {
-        private static BindConvert _current;
-        public static BindConvert Current
-        {
-            get
-            {
-                if (_current == null)
-                {
-                    _current = new BindConvert();
-                }
+        public static DateTimeFormatter ShortDate { get; private set; }
+        public static DateTimeFormatter ShortTime { get; private set; }
+        public static DateTimeFormatter LongDate { get; private set; }
+        public static DateTimeFormatter LongTime { get; private set; }
 
-                return _current;
-            }
-        }
+        public static DateTimeFormatter MonthFull { get; private set; }
+        public static DateTimeFormatter MonthAbbreviatedDay { get; private set; }
+        public static DateTimeFormatter MonthFullYear { get; private set; }
+        public static DateTimeFormatter DayMonthFull { get; private set; }
+        public static DateTimeFormatter DayMonthFullYear { get; private set; }
+        public static DateTimeFormatter MonthAbbreviatedYear { get; private set; }
+        public static DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
+        public static DateTimeFormatter DayOfWeekAbbreviated { get; private set; }
 
-        public DateTimeFormatter ShortDate { get; private set; }
-        public DateTimeFormatter ShortTime { get; private set; }
-        public DateTimeFormatter LongDate { get; private set; }
-        public DateTimeFormatter LongTime { get; private set; }
-
-        public DateTimeFormatter MonthFull { get; private set; }
-        public DateTimeFormatter MonthAbbreviatedDay { get; private set; }
-        public DateTimeFormatter MonthFullYear { get; private set; }
-        public DateTimeFormatter DayMonthFull { get; private set; }
-        public DateTimeFormatter DayMonthFullYear { get; private set; }
-        public DateTimeFormatter MonthAbbreviatedYear { get; private set; }
-        public DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
-
-        private BindConvert()
+        static Converter()
         {
             var culture = NativeUtils.GetCurrentCulture();
             var languages = new[] { culture }.Union(GlobalizationPreferences.Languages);
@@ -59,6 +46,7 @@ namespace Unigram.Converters
             DayMonthFullYear = new DateTimeFormatter("day month.full year", languages, region, calendar, clock);
             MonthAbbreviatedYear = new DateTimeFormatter("month.abbreviated year", languages, region, calendar, clock);
             DayMonthAbbreviatedYear = new DateTimeFormatter("day month.abbreviated year", languages, region, calendar, clock);
+            DayOfWeekAbbreviated = new DateTimeFormatter("dayofweek.abbreviated", languages, region, calendar, clock);
         }
 
         public static string MonthGrouping(DateTime date)
@@ -68,10 +56,10 @@ namespace Unigram.Converters
             var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
             if (difference >= 12)
             {
-                return Current.MonthFullYear.Format(date);
+                return MonthFullYear.Format(date);
             }
 
-            return Current.MonthFull.Format(date);
+            return MonthFull.Format(date);
         }
 
         public static string DayGrouping(DateTime date)
@@ -81,14 +69,14 @@ namespace Unigram.Converters
             var difference = Math.Abs((date.Month - now.Month) + 12 * (date.Year - now.Year));
             if (difference >= 12)
             {
-                return Current.DayMonthFullYear.Format(date);
+                return DayMonthFullYear.Format(date);
             }
             else if (date.Date == now.Date)
             {
                 return Strings.Resources.MessageScheduleToday;
             }
 
-            return Current.DayMonthFull.Format(date);
+            return DayMonthFull.Format(date);
         }
 
         public static string Distance(float distance, bool away = true)
@@ -155,7 +143,7 @@ namespace Unigram.Converters
             }
         }
 
-        public string PhoneNumber(string number)
+        public static string PhoneNumber(string number)
         {
             if (number == null)
             {
@@ -165,7 +153,7 @@ namespace Unigram.Converters
             return Common.PhoneNumber.Format(number);
         }
 
-        public string BannedUntil(long date)
+        public static string BannedUntil(long date)
         {
             var banned = Utils.UnixTimestampToDateTime(date);
             return ShortDate.Format(banned) + ", " + ShortTime.Format(banned);
@@ -226,14 +214,14 @@ namespace Unigram.Converters
         //}
 
 
-        private readonly Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
+        private static readonly Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
 
-        public string FormatAmount(long amount, string currency)
+        public static string FormatAmount(long amount, string currency)
         {
             return Locale.FormatCurrency(amount, currency);
         }
 
-        public string ShippingOption(ShippingOption option, string currency)
+        public static string ShippingOption(ShippingOption option, string currency)
         {
             var amount = 0L;
             foreach (var price in option.PriceParts)
@@ -241,10 +229,10 @@ namespace Unigram.Converters
                 amount += price.Amount;
             }
 
-            return $"{FormatAmount(amount, currency)} - {option.Title}";
+            return $"{option.Title} - {FormatAmount(amount, currency)}";
         }
 
-        public string DateExtended(int value)
+        public static string DateExtended(int value)
         {
             var dateTime = Utils.UnixTimestampToDateTime(value);
 
@@ -258,16 +246,7 @@ namespace Unigram.Converters
             //Week
             if (dateTime.Date.AddDays(6) >= System.DateTime.Now.Date)
             {
-                if (_formatterCache.TryGetValue("dayofweek.abbreviated", out DateTimeFormatter formatter) == false)
-                {
-                    //var region = new GeographicRegion();
-                    //var code = region.CodeTwoLetter;
-
-                    formatter = new DateTimeFormatter("dayofweek.abbreviated", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
-                    _formatterCache["dayofweek.abbreviated"] = formatter;
-                }
-
-                return formatter.Format(dateTime);
+                return DayOfWeekAbbreviated.Format(dateTime);
             }
 
             //Long long time ago
@@ -275,20 +254,20 @@ namespace Unigram.Converters
             return ShortDate.Format(dateTime);
         }
 
-        public string Date(int value)
+        public static string Date(int value)
         {
             return ShortTime.Format(DateTime(value));
         }
 
-        public DateTime DateTime(int value)
+        public static DateTime DateTime(int value)
         {
             return Utils.UnixTimestampToDateTime(value);
         }
 
         public static string DateAt(int value)
         {
-            var date = Current.DateTime(value);
-            return string.Format(Strings.Resources.formatDateAtTime, Current.ShortDate.Format(date), Current.ShortTime.Format(date));
+            var date = DateTime(value);
+            return string.Format(Strings.Resources.formatDateAtTime, ShortDate.Format(date), ShortTime.Format(date));
         }
 
         public static string ShortNumber(int number)

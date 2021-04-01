@@ -5,6 +5,7 @@ using Unigram.Controls;
 using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Settings;
+using Unigram.Views.Popups;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
@@ -250,7 +251,7 @@ namespace Unigram.Views.Settings
 
         private async void Rename_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new InputDialog();
+            var dialog = new InputPopup();
             dialog.Title = Strings.Resources.EditName;
             dialog.Text = _theme.Name;
             dialog.PrimaryButtonText = Strings.Resources.OK;

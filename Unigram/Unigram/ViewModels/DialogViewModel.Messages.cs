@@ -271,8 +271,8 @@ namespace Unigram.ViewModels
                         title = ProtoService.GetTitle(senderChat);
                     }
 
-                    var date = BindConvert.Current.DateTime(message.Date);
-                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, BindConvert.Current.ShortDate.Format(date), BindConvert.Current.ShortTime.Format(date)));
+                    var date = Converter.DateTime(message.Date);
+                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date)));
 
                     if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                     {
@@ -1422,7 +1422,7 @@ namespace Unigram.ViewModels
         {
             if (message.Content is MessageHeaderDate)
             {
-                var date = BindConvert.Current.DateTime(message.Date);
+                var date = Converter.DateTime(message.Date);
 
                 var dialog = new CalendarPopup();
                 dialog.MaxDate = DateTimeOffset.Now.Date;

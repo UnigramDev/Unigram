@@ -425,7 +425,7 @@ namespace Unigram.Services
             var sound = silent ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
-            var dateTime = BindConvert.Current.DateTime(date).ToUniversalTime().ToString("s") + "Z";
+            var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             var user = _protoService.GetUser(_protoService.Options.MyId);
@@ -459,7 +459,7 @@ namespace Unigram.Services
             var sound = silent ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
-            var dateTime = BindConvert.Current.DateTime(date).ToUniversalTime().ToString("s") + "Z";
+            var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             var user = _protoService.GetUser(_protoService.Options.MyId);

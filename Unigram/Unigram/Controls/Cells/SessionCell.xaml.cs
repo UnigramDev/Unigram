@@ -33,7 +33,7 @@ namespace Unigram.Controls.Cells
 
             Subtitle.Text = string.Format("{0} — {1}", session.Ip, session.Country);
 
-            LastActiveDate.Text = BindConvert.Current.DateExtended(session.LastActiveDate);
+            LastActiveDate.Text = Converter.DateExtended(session.LastActiveDate);
         }
     }
 }

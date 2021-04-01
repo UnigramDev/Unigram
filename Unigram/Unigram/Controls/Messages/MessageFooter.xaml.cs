@@ -47,7 +47,7 @@ namespace Unigram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                DateLabel.Text = BindConvert.Current.Date(sendAtDate.SendDate);
+                DateLabel.Text = Converter.Date(sendAtDate.SendDate);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
@@ -56,20 +56,20 @@ namespace Unigram.Controls.Messages
             else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport)
             {
                 var original = Utils.UnixTimestampToDateTime(message.ForwardInfo.Date);
-                var date = BindConvert.Current.ShortDate.Format(original);
-                var time = BindConvert.Current.ShortTime.Format(original);
+                var date = Converter.ShortDate.Format(original);
+                var time = Converter.ShortTime.Format(original);
 
-                DateLabel.Text = string.Format("{0}, {1} {2} {3}", date, time, "Imported", BindConvert.Current.Date(message.Date));
+                DateLabel.Text = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Converter.Date(message.Date));
             }
             else
             {
-                DateLabel.Text = BindConvert.Current.Date(message.Date);
+                DateLabel.Text = Converter.Date(message.Date);
             }
         }
 
         public void Mockup(bool outgoing, DateTime date)
         {
-            DateLabel.Text = BindConvert.Current.ShortTime.Format(date);
+            DateLabel.Text = Converter.ShortTime.Format(date);
             StateLabel.Text = outgoing ? "\u00A0\u00A0\uE601" : string.Empty;
         }
 
@@ -90,7 +90,7 @@ namespace Unigram.Controls.Messages
 
             if (message.InteractionInfo?.ViewCount > 0)
             {
-                views = BindConvert.ShortNumber(message.InteractionInfo.ViewCount);
+                views = Converter.ShortNumber(message.InteractionInfo.ViewCount);
                 views += "   ";
             }
 
@@ -207,9 +207,9 @@ namespace Unigram.Controls.Messages
             string text;
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtTime)
             {
-                var dateTime = BindConvert.Current.DateTime(sendAtTime.SendDate);
-                var date = BindConvert.Current.LongDate.Format(dateTime);
-                var time = BindConvert.Current.LongTime.Format(dateTime);
+                var dateTime = Converter.DateTime(sendAtTime.SendDate);
+                var date = Converter.LongDate.Format(dateTime);
+                var time = Converter.LongTime.Format(dateTime);
 
                 text = $"{date} {time}";
             }
@@ -219,9 +219,9 @@ namespace Unigram.Controls.Messages
             }
             else
             {
-                var dateTime = BindConvert.Current.DateTime(message.Date);
-                var date = BindConvert.Current.LongDate.Format(dateTime);
-                var time = BindConvert.Current.LongTime.Format(dateTime);
+                var dateTime = Converter.DateTime(message.Date);
+                var date = Converter.LongDate.Format(dateTime);
+                var time = Converter.LongTime.Format(dateTime);
 
                 text = $"{date} {time}";
             }
@@ -234,9 +234,9 @@ namespace Unigram.Controls.Messages
 
             if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard)
             {
-                var edit = BindConvert.Current.DateTime(message.EditDate);
-                var editDate = BindConvert.Current.LongDate.Format(edit);
-                var editTime = BindConvert.Current.LongTime.Format(edit);
+                var edit = Converter.DateTime(message.EditDate);
+                var editDate = Converter.LongDate.Format(edit);
+                var editTime = Converter.LongTime.Format(edit);
 
                 text += $"\r\n{Strings.Resources.EditedMessage}: {editDate} {editTime}";
             }
@@ -244,13 +244,13 @@ namespace Unigram.Controls.Messages
             DateTime? original = null;
             if (message.ForwardInfo != null)
             {
-                original = BindConvert.Current.DateTime(message.ForwardInfo.Date);
+                original = Converter.DateTime(message.ForwardInfo.Date);
             }
 
             if (original != null)
             {
-                var originalDate = BindConvert.Current.LongDate.Format(original.Value);
-                var originalTime = BindConvert.Current.LongTime.Format(original.Value);
+                var originalDate = Converter.LongDate.Format(original.Value);
+                var originalTime = Converter.LongTime.Format(original.Value);
 
                 text += $"\r\n{Strings.Additional.OriginalMessage}: {originalDate} {originalTime}";
             }

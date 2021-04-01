@@ -42,7 +42,7 @@ namespace Unigram.Controls.Messages.Content
 
             if (location.LivePeriod > 0)
             {
-                var expired = BindConvert.Current.DateTime(message.Date + location.LivePeriod) < DateTime.Now;
+                var expired = Converter.DateTime(message.Date + location.LivePeriod) < DateTime.Now;
                 if (expired)
                 {
                     LivePanel.Visibility = Visibility.Collapsed;

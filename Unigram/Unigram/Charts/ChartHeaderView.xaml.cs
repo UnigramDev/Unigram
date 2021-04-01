@@ -21,11 +21,11 @@ namespace Unigram.Charts
 
             if (Dispatcher.HasThreadAccess)
             {
-                Label1.Text = string.Format("{0} - {1}", BindConvert.Current.ShortDate.Format(start), BindConvert.Current.ShortDate.Format(end));
+                Label1.Text = string.Format("{0} - {1}", Converter.ShortDate.Format(start), Converter.ShortDate.Format(end));
             }
             else
             {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Label1.Text = string.Format("{0} - {1}", BindConvert.Current.ShortDate.Format(start), BindConvert.Current.ShortDate.Format(end)));
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => Label1.Text = string.Format("{0} - {1}", Converter.ShortDate.Format(start), Converter.ShortDate.Format(end)));
             }
         }
 
