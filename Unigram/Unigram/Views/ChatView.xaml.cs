@@ -2841,7 +2841,7 @@ namespace Unigram.Views
                     Collapse_Click(null, null);
                 }
             }
-            else if (e.NewSize.Width < e.PreviousSize.Width && e.NewSize.Width < SIDEBAR_MIN_WIDTH && e.PreviousSize.Width >= SIDEBAR_MIN_WIDTH)
+            else if ((e.NewSize.Width < e.PreviousSize.Width || e.PreviousSize.Width == 0) && e.NewSize.Width < SIDEBAR_MIN_WIDTH && (e.PreviousSize.Width >= SIDEBAR_MIN_WIDTH || e.PreviousSize.Width == 0))
             {
                 if (_stickersMode == StickersPanelMode.Sidebar)
                 {
