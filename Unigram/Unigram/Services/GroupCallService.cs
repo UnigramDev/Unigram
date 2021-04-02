@@ -66,7 +66,6 @@ namespace Unigram.Services
 
         private bool _isConnected;
 
-        private GroupCallPage _callPage;
         private ViewLifetimeControl _callLifetime;
 
         public GroupCallService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
@@ -415,7 +414,7 @@ namespace Unigram.Services
             set => _outputWatcher.Set(value);
         }
 
-        public async void Handle(UpdateGroupCall update)
+        public void Handle(UpdateGroupCall update)
         {
             //using (_updateLock.WaitAsync())
             {
@@ -423,7 +422,7 @@ namespace Unigram.Services
                 {
                     _call = update.GroupCall;
 
-                    var lifetime = _lifetime;
+                    var lifetime = _callLifetime;
                     if (lifetime != null)
                     {
                         lifetime.Dispatcher.Dispatch(() =>
@@ -478,7 +477,7 @@ namespace Unigram.Services
         {
             using (await _updateLock.WaitAsync())
             {
-                if (_callPage == null)
+                if (_callLifetime == null)
                 {
                     var parameters = new ViewServiceParams
                     {
@@ -486,7 +485,7 @@ namespace Unigram.Services
                         Width = 380,
                         Height = 580,
                         PersistentId = "VoiceChat",
-                        Content = control => _callPage = new GroupCallPage(ProtoService, CacheService, Aggregator, this)
+                        Content = control => new GroupCallPage(ProtoService, CacheService, Aggregator, this)
                     };
 
                     _callLifetime = await _viewService.OpenAsync(parameters);
@@ -503,8 +502,6 @@ namespace Unigram.Services
             using (await _updateLock.WaitAsync())
             {
                 //Aggregator.Publish(new UpdateCallDialog(_call, true));
-
-                _callPage = null;
 
                 var lifetime = _callLifetime;
                 if (lifetime != null)
@@ -528,7 +525,6 @@ namespace Unigram.Services
         {
             using (await _updateLock.WaitAsync())
             {
-                _callPage = null;
                 _callLifetime = null;
                 //Aggregator.Publish(new UpdateCallDialog(_call, false));
             }
