@@ -21,7 +21,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>602F1A7B283C48CF3345BD23DAEA58A1E444B2AD</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -482,6 +482,7 @@
     <Compile Include="ViewModels\Chats\MessageStatisticsViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentAddressViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentCredentialsViewModel.cs" />
+    <Compile Include="ViewModels\Payments\PaymentFormViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsBlockedChatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStickersViewModel.cs" />
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
@@ -507,6 +508,9 @@
     </Compile>
     <Compile Include="Views\GroupCallPage.xaml.cs">
       <DependentUpon>GroupCallPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Payments\PaymentFormPage.xaml.cs">
+      <DependentUpon>PaymentFormPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
@@ -678,7 +682,6 @@
     <Compile Include="ViewModels\LiveLocationViewModel.cs" />
     <Compile Include="ViewModels\LogOutViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
-    <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\SendLocationViewModel.cs" />
@@ -804,9 +807,6 @@
     </Compile>
     <Compile Include="Views\PasscodePage.xaml.cs">
       <DependentUpon>PasscodePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Payments\PaymentFormStep5Page.xaml.cs">
-      <DependentUpon>PaymentFormStep5Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Payments\PaymentReceiptPage.xaml.cs">
       <DependentUpon>PaymentReceiptPage.xaml</DependentUpon>
@@ -1689,6 +1689,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Payments\PaymentFormPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\InputPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1826,10 +1830,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PasscodePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Payments\PaymentFormStep5Page.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

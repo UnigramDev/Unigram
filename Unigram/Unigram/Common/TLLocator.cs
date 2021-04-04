@@ -1066,9 +1066,9 @@ namespace Unigram.Views
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormStep5ViewModel))
+            else if (type == typeof(Unigram.ViewModels.Payments.PaymentFormViewModel))
             {
-                return (T)(object)new Unigram.ViewModels.Payments.PaymentFormStep5ViewModel(
+                return (T)(object)new Unigram.ViewModels.Payments.PaymentFormViewModel(
                     _protoService,
                     _cacheService,
                     _settingsService,
