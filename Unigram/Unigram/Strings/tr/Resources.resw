@@ -11938,6 +11938,9 @@ En az 5 karakter uzunluğunda olmalı.</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Tema Bağlantısı</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>bu sensin</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Bağlantının belirli bir sürenin ardından sona ermesini sağlayabilirsiniz.</value>
   </data>
@@ -12921,6 +12924,9 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Kanalı Aç</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Sohbeti Aç</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Grubu Aç</value>
   </data>
@@ -12950,6 +12956,9 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Üyeyi çıkar</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Katılımcıyı çıkar</value>
   </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Kayıt Başlığı</value>
@@ -13134,7 +13143,7 @@ Katılımcılar sohbetin kaydedildiğini görecek.</value>
     <value>Sesli arama yap</value>
   </data>
   <data name="VoipQuickReplies" xml:space="preserve">
-    <value>Metin ile Yanıtla</value>
+    <value>Mesaj ile Yanıtla</value>
   </data>
   <data name="VoipQuickRepliesExplain" xml:space="preserve">
     <value>Bu hızlı yanıtlar, gelen bir aramaya Telegram mesajı ile cevap vermek istediğinizde kullanılabilir. Sevdiğin bir şeyler söylemek için onları değiştirebilirsin.</value>

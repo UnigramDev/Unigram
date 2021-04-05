@@ -12001,6 +12001,9 @@ La lunghezza minima è 5 caratteri.</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Link tema</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>questo sei tu</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Puoi far scadere il link dopo un certo periodo di tempo.</value>
   </data>
@@ -12983,6 +12986,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Apri canale</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Apri chat</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Apri gruppo</value>
   </data>
@@ -13012,6 +13018,9 @@ Puoi usare **a–z**, **0–9** e underscore. La lunghezza minima è **5** carat
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Rimuovi membro</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Rimuovi partecipante</value>
   </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Titolo registrazione</value>

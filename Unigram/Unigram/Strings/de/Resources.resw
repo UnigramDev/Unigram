@@ -12030,6 +12030,9 @@ Die Mindestlänge beträgt 5 Zeichen.</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Link zum Thema</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>das bist du</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Du kannst den Link nach einiger Zeit ablaufen lassen.</value>
   </data>
@@ -13011,6 +13014,9 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Kanal öffnen</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Chat öffnen</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Gruppe öffnen</value>
   </data>
@@ -13041,6 +13047,9 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Mitglied entfernen</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Teilnehmer entfernen</value>
+  </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Titel der Aufnahme</value>
   </data>
@@ -13060,9 +13069,9 @@ Erlaubt sind **a–z**, **0–9** und Unterstriche. Die Mindestlänge beträgt *
     <value>Möchtest du mit deinem privaten Konto, dieser Gruppe oder lieber mit einem deiner Kanäle angezeigt werden?</value>
   </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
-    <value>Möchtest du diesen Chat aufnehmen und die Aufnahme als Audiodatei speichern?
+    <value>Diesen Chat aufnehmen und die Aufnahme als Audiodatei speichern?
 
-Andere Teilnehmer sehen, dass der Chat aufgenommen wird.</value>
+Teilnehmer sehen, dass der Chat aufgenommen wird.</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>Aufnahme starten</value>

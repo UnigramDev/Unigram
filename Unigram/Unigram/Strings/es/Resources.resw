@@ -644,10 +644,10 @@
     <value>Chat de voz iniciado</value>
   </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
-    <value>un1 inició el chat de voz</value>
+    <value>un1 inició un chat de voz</value>
   </data>
   <data name="ActionGroupCallStartedByYou" xml:space="preserve">
-    <value>Iniciaste el chat de voz</value>
+    <value>Iniciaste un chat de voz</value>
   </data>
   <data name="ActionGroupCallYouInvited" xml:space="preserve">
     <value>Invitaste a un2 al chat de voz</value>
@@ -740,7 +740,7 @@
     <value>¡Hiciste una captura de pantalla!</value>
   </data>
   <data name="ActionTTLChanged" xml:space="preserve">
-    <value>un1 estableció la eliminación automática de mensajes en {0}</value>
+    <value>un1 estableció la autoeliminación de mensajes en {0}</value>
   </data>
   <data name="ActionTTLChannelChanged" xml:space="preserve">
     <value>Los mensajes en este canal se eliminarán automáticamente en {0}</value>
@@ -752,7 +752,7 @@
     <value>un1 desactivó el temporizador de autoeliminación</value>
   </data>
   <data name="ActionTTLYouChanged" xml:space="preserve">
-    <value>Estableciste la eliminación automática de mensajes en {0}</value>
+    <value>Estableciste la autoeliminación de mensajes en {0}</value>
   </data>
   <data name="ActionTTLYouDisabled" xml:space="preserve">
     <value>Desactivaste el temporizador de autoeliminación</value>
@@ -1699,10 +1699,10 @@ automáticamente después de {0}.</value>
     <value>Actívalo si quieres que la multimedia se descargue automáticamente con datos móviles.</value>
   </data>
   <data name="AutoDownloadOnRoamingData" xml:space="preserve">
-    <value>En itinerancia de datos</value>
+    <value>En roaming</value>
   </data>
   <data name="AutoDownloadOnRoamingDataInfo" xml:space="preserve">
-    <value>Actívalo si quieres que la multimedia se descargue automáticamente en itinerancia de datos.</value>
+    <value>Actívalo si quieres que la multimedia se descargue automáticamente en roaming.</value>
   </data>
   <data name="AutoDownloadOnUpToFor" xml:space="preserve">
     <value>Hasta {0} para {1}</value>
@@ -2246,7 +2246,7 @@ Si no fuiste tú, por favor, escribe el código que enviamos por SMS. También p
     <value>Cancelar reenvío</value>
   </data>
   <data name="CancelForwardMessage" xml:space="preserve">
-    <value>¿Quieres cancelar el reenvío o enviar los mensajes a otro chat?</value>
+    <value>¿Quieres cancelar el reenvío o reenviar los mensajes a un chat diferente?</value>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">
     <value>El enlace no es válido o expiró.</value>
@@ -4728,7 +4728,7 @@ Duración: {1}</value>
     <value>acciones elegidas</value>
   </data>
   <data name="EventLogStartedVoiceChat" xml:space="preserve">
-    <value>un1 inició el chat de voz</value>
+    <value>un1 inició un chat de voz</value>
   </data>
   <data name="EventLogStopPoll" xml:space="preserve">
     <value>un1 detuvo la encuesta:</value>
@@ -4767,13 +4767,13 @@ Duración: {1}</value>
     <value>un1 permitió hablar a los nuevos participantes del chat de voz</value>
   </data>
   <data name="EventLogVoiceChatMuted" xml:space="preserve">
-    <value>un1 silenció a un2 en el chat de voz</value>
+    <value>un1 silenció a un2 en un chat de voz</value>
   </data>
   <data name="EventLogVoiceChatNotAllowedToSpeak" xml:space="preserve">
     <value>un1 silenció a los nuevos participantes del chat de voz</value>
   </data>
   <data name="EventLogVoiceChatUnmuted" xml:space="preserve">
-    <value>un1 permitió hablar a un2 en el chat de voz</value>
+    <value>un1 permitió hablar a un2 en un chat de voz</value>
   </data>
   <data name="EventLogYouChannelJoined" xml:space="preserve">
     <value/>
@@ -7260,10 +7260,10 @@ La longitud mínima es de 5 caracteres.</value>
     <value>Móvil</value>
   </data>
   <data name="NetworkUsageRoaming" xml:space="preserve">
-    <value>ITINERANCIA</value>
+    <value>ROAMING</value>
   </data>
   <data name="NetworkUsageRoamingTab" xml:space="preserve">
-    <value>Itinerancia</value>
+    <value>Roaming</value>
   </data>
   <data name="NetworkUsageSince" xml:space="preserve">
     <value>Uso de la red desde el {0}</value>
@@ -7812,7 +7812,7 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} envió un álbum al grupo {1}</value>
   </data>
   <data name="NotificationGroupCreatedCall" xml:space="preserve">
-    <value>{0} inició el chat de voz en {1}</value>
+    <value>{0} inició un chat de voz en {1}</value>
   </data>
   <data name="NotificationGroupEndedCall" xml:space="preserve">
     <value>{0} finalizó el chat de voz en {1}</value>
@@ -7824,10 +7824,10 @@ Puedes personalizar las notificaciones para un chat abriendo su información y s
     <value>{0} reenvió {2} al grupo {1}</value>
   </data>
   <data name="NotificationGroupInvitedToCall" xml:space="preserve">
-    <value>{0} añadió a {2} al chat de voz en {1}</value>
+    <value>{0} añadió a {2} a un chat de voz en {1}</value>
   </data>
   <data name="NotificationGroupInvitedYouToCall" xml:space="preserve">
-    <value>{0} te invitó al chat de voz en {1}</value>
+    <value>{0} te invitó a un chat de voz en {1}</value>
   </data>
   <data name="NotificationGroupKickMember" xml:space="preserve">
     <value>{0} eliminó a {2} del grupo {1}</value>
@@ -10476,7 +10476,7 @@ El grupo “**{1}**” pasará a ser privado.</value>
 El canal “**{1}**” pasará a ser privado.</value>
   </data>
   <data name="RoamingUsage" xml:space="preserve">
-    <value>Uso de datos de roaming</value>
+    <value>Uso de datos en roaming</value>
   </data>
   <data name="Satellite" xml:space="preserve">
     <value>Satélite</value>
@@ -11402,13 +11402,13 @@ El modo lento está activo. No puedes enviar más de un mensaje a la vez.</value
     <value>Por favor, confirma el código de tu país y pon tu número de teléfono.</value>
   </data>
   <data name="StartVoipChannelAlertText" xml:space="preserve">
-    <value>¿Quieres iniciar el chat de voz en este canal?</value>
+    <value>¿Quieres iniciar un chat de voz en este canal?</value>
   </data>
   <data name="StartVoipChat" xml:space="preserve">
     <value>Iniciar chat de voz</value>
   </data>
   <data name="StartVoipChatAlertText" xml:space="preserve">
-    <value>¿Quieres iniciar el chat de voz?</value>
+    <value>¿Iniciar un chat de voz en este grupo?</value>
   </data>
   <data name="StartVoipChatPermission" xml:space="preserve">
     <value>Gestionar chats de voz</value>
@@ -12009,6 +12009,9 @@ La longitud mínima es de 5 caracteres.</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Enlace del tema</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>tú</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Puedes hacer que el enlace expire después de un tiempo.</value>
   </data>
@@ -12322,7 +12325,7 @@ Pero si no estás de acuerdo con las modestas necesidades de Telegram, no podrem
     <value>En datos móviles</value>
   </data>
   <data name="UseLessDataOnRoaming" xml:space="preserve">
-    <value>En itinerancia</value>
+    <value>En roaming</value>
   </data>
   <data name="UseProxyAddress" xml:space="preserve">
     <value>Servidor</value>
@@ -12991,6 +12994,9 @@ La longitud mínima es de **5** caracteres.</value>
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Abrir canal</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Abrir chat</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Abrir grupo</value>
   </data>
@@ -13020,6 +13026,9 @@ La longitud mínima es de **5** caracteres.</value>
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Eliminar miembro</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Eliminar participante</value>
   </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Título de la grabación</value>
@@ -13171,7 +13180,7 @@ Otros participantes verán que el chat está siendo grabado.</value>
     <value>¿Quieres finalizar la llamada con **{0}** e iniciar una nueva con **{1}**?</value>
   </data>
   <data name="VoipOngoingAlert2" xml:space="preserve">
-    <value>¿Quieres finalizar la llamada con **{0}** e iniciar el chat de voz en **{1}**?</value>
+    <value>¿Quieres finalizar la llamada con **{0}** e iniciar un chat de voz en **{1}**?</value>
   </data>
   <data name="VoipOngoingAlertTitle" xml:space="preserve">
     <value>Otra llamada en curso</value>
@@ -13321,7 +13330,7 @@ Otros participantes verán que el chat está siendo grabado.</value>
     <value>Con Wi-Fi</value>
   </data>
   <data name="WhenRoaming" xml:space="preserve">
-    <value>En itinerancia de datos</value>
+    <value>En roaming</value>
   </data>
   <data name="WhenUsingMobileData" xml:space="preserve">
     <value>Con datos móviles</value>

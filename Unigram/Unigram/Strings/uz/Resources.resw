@@ -11941,6 +11941,9 @@ Minimum 5 ta belgi boʻlishi shart.</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Mavzu havolasi</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>bu sizsiz</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Muayyan vaqtdan keyin havolani eskiradigan qilishingiz mumkin.</value>
   </data>
@@ -12923,6 +12926,9 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Kanalni ochish</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Chatni ochish</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Guruhni ochish</value>
   </data>
@@ -12952,6 +12958,9 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Ishtirokchini chetlatish</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Ishtirokchini olib tashlash</value>
   </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Yozuv nomi</value>

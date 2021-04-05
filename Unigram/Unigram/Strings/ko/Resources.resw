@@ -749,7 +749,7 @@
     <value>이 채널에 메시지는 더 이상 자동삭제가 되지 않습니다.</value>
   </data>
   <data name="ActionTTLDisabled" xml:space="preserve">
-    <value>un1 님이 자동삭제 타이머를 비활성화 했습니다.</value>
+    <value>un1 님이 자동삭제 타이머를 비활성화했습니다.</value>
   </data>
   <data name="ActionTTLYouChanged" xml:space="preserve">
     <value>메시지가 {0} 이후에 자동삭제가 되도록 설정했습니다.</value>
@@ -1512,7 +1512,7 @@
     <value>음성 메시지</value>
   </data>
   <data name="AudioSavedHint" xml:space="preserve">
-    <value>음악에 파일이 저장됬습니다</value>
+    <value>음악에 파일이 저장됐습니다</value>
   </data>
   <data name="AudioSpeedFast" xml:space="preserve">
     <value>음성이 두배로 빨리 재생됩니다.</value>
@@ -1530,7 +1530,7 @@
     <value/>
   </data>
   <data name="AudiosSavedHint_other" xml:space="preserve">
-    <value>음악에 {0}개 파일이 저장됬습니다</value>
+    <value>음악에 {0}개 파일이 저장됐습니다</value>
   </data>
   <data name="AudiosSavedHint_two" xml:space="preserve">
     <value/>
@@ -2184,7 +2184,7 @@
     <value>죄송합니다. 사용자의 개인 정보 설정으로 인해 **{0}** 님에게 전화하실 수 없습니다.</value>
   </data>
   <data name="CallReportHint" xml:space="preserve">
-    <value>무엇이 잘못됬나요?</value>
+    <value>무엇이 잘못됐나요?</value>
   </data>
   <data name="CallReportIncludeLogs" xml:space="preserve">
     <value>기술 정보 포함</value>
@@ -4867,7 +4867,7 @@ telegram.org에서 자세히 알아보세요.</value>
     <value/>
   </data>
   <data name="FileSavedHint" xml:space="preserve">
-    <value>다운로드로 파일이 저장됬습니다</value>
+    <value>다운로드로 파일이 저장됐습니다</value>
   </data>
   <data name="FilesDataUsage" xml:space="preserve">
     <value>파일</value>
@@ -4882,7 +4882,7 @@ telegram.org에서 자세히 알아보세요.</value>
     <value/>
   </data>
   <data name="FilesSavedHint_other" xml:space="preserve">
-    <value>다운로드에 {0}개의 파일이 저장됬습니다</value>
+    <value>다운로드에 {0}개의 파일이 저장됐습니다</value>
   </data>
   <data name="FilesSavedHint_two" xml:space="preserve">
     <value/>
@@ -5560,7 +5560,7 @@ telegram.org에서 자세히 알아보세요.</value>
     <value/>
   </data>
   <data name="GifSavedToDownloadsHint" xml:space="preserve">
-    <value>다운로드로 GIF가 저장됬습니다</value>
+    <value>다운로드로 GIF가 저장됐습니다</value>
   </data>
   <data name="GifsTab" xml:space="preserve">
     <value>GIF</value>
@@ -6187,7 +6187,7 @@ telegram.org에서 자세히 알아보세요.</value>
     <value/>
   </data>
   <data name="items_other" xml:space="preserve">
-    <value>{0}개 아이템</value>
+    <value>항목 {0}개 </value>
   </data>
   <data name="items_two" xml:space="preserve">
     <value/>
@@ -6799,7 +6799,7 @@ telegram.org에서 자세히 알아보세요.</value>
     <value/>
   </data>
   <data name="MediaSavedHint_other" xml:space="preserve">
-    <value>갤러리로 {0}개의 아이템이 저장됬습니다</value>
+    <value>항목 {0}개가 갤러리에 저장되었습니다</value>
   </data>
   <data name="MediaSavedHint_two" xml:space="preserve">
     <value/>
@@ -9272,7 +9272,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value/>
   </data>
   <data name="PeopleCanJoinViaLinkCount_other" xml:space="preserve">
-    <value>이 링크를 통해 {0} 명이 입장 가능합니다</value>
+    <value>이 링크를 통해 {0} 명 입장 가능합니다</value>
   </data>
   <data name="PeopleCanJoinViaLinkCount_two" xml:space="preserve">
     <value/>
@@ -9468,10 +9468,10 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value/>
   </data>
   <data name="PhotoSavedHint" xml:space="preserve">
-    <value>갤러리로 사진이 저장됬습니다</value>
+    <value>갤러리로 사진이 저장됐습니다</value>
   </data>
   <data name="PhotoSavedToDownloadsHint" xml:space="preserve">
-    <value>다운로드로 사진이 저장됬습니다</value>
+    <value>다운로드로 사진이 저장됐습니다</value>
   </data>
   <data name="PhotosSavedHint_few" xml:space="preserve">
     <value/>
@@ -9483,7 +9483,7 @@ a부터 z 사이 글자, 0부터 9 사이 숫자와 밑줄을 사용하실 수 �
     <value/>
   </data>
   <data name="PhotosSavedHint_other" xml:space="preserve">
-    <value>갤러리에 {0}개의 사진이 저장됬습니다</value>
+    <value>갤러리에 {0}개의 사진이 저장됐습니다</value>
   </data>
   <data name="PhotosSavedHint_two" xml:space="preserve">
     <value/>
@@ -12006,6 +12006,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>테마 링크</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>회원님입니다</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>일정 시간 이후 링크를 만료시킬 수 있습니다.</value>
   </data>
@@ -12654,10 +12657,10 @@ https://telegram.org/blog/coronavirus</value>
     <value/>
   </data>
   <data name="VideoSavedHint" xml:space="preserve">
-    <value>갤러리로 영상이 저장됬습니다</value>
+    <value>갤러리로 영상이 저장됐습니다</value>
   </data>
   <data name="VideoSavedToDownloadsHint" xml:space="preserve">
-    <value>다운로드로 동영상이 저장됬습니다</value>
+    <value>다운로드로 동영상이 저장됐습니다</value>
   </data>
   <data name="VideosSavedHint_few" xml:space="preserve">
     <value/>
@@ -12669,7 +12672,7 @@ https://telegram.org/blog/coronavirus</value>
     <value/>
   </data>
   <data name="VideosSavedHint_other" xml:space="preserve">
-    <value>갤러리로 {0}개의 비디오가 저장됬습니다</value>
+    <value>갤러리로 {0}개의 비디오가 저장됐습니다</value>
   </data>
   <data name="VideosSavedHint_two" xml:space="preserve">
     <value/>
@@ -12864,7 +12867,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>**저장한 메시지로** 음성이 저장됨</value>
   </data>
   <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
-    <value>음성 녹음이 시작됨</value>
+    <value>음성 대화 녹음이 시작됨</value>
   </data>
   <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
     <value>말하기 요청 취소</value>
@@ -12992,6 +12995,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>채널 열기</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>대화 열기</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>그룹 열기</value>
   </data>
@@ -13022,6 +13028,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>참가자 추방</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>참가자 추방</value>
+  </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>녹음 제목</value>
   </data>
@@ -13043,7 +13052,7 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
     <value>이 대화 녹음을 시작하고 결과를 음성 파일로 저장 하고 싶으신가요?
 
-다른 참가자들은 이 대화가 녹음되는지 알게 됩니다.</value>
+참가자들은 이 대화가 녹음되는지 알게 됩니다.</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>녹음 시작</value>
@@ -13363,7 +13372,7 @@ https://telegram.org/blog/coronavirus</value>
 참고: 위젯에 비밀번호는 **무시**됩니다.</value>
   </data>
   <data name="WidgetPasscode2" xml:space="preserve">
-    <value>참고: 위젯에 비밀번호는 **무시**됩니다.</value>
+    <value>경고: 위젯에 비밀번호는 **무시**됩니다.</value>
   </data>
   <data name="WidgetPasscodeEnable" xml:space="preserve">
     <value>

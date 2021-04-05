@@ -1200,7 +1200,7 @@ Au delà, les lots inutilisés seront archivés.</value>
     <value>Aucun autocollant archivé</value>
   </data>
   <data name="ArchivedStickersInfo" xml:space="preserve">
-    <value>Vous pouvez ajouter jusqu'à 200 lots d'autocollants.
+    <value>Vous pouvez avoir 200 lots d'autocollants.
 Au delà, les lots inutilisés seront archivés.</value>
   </data>
   <data name="ArchiveHidden" xml:space="preserve">
@@ -1294,7 +1294,7 @@ Au delà, les lots inutilisés seront archivés.</value>
     <value>Voulez-vous vraiment supprimer et quitter le groupe ?</value>
   </data>
   <data name="AreYouSureDeleteAndExitChannel" xml:space="preserve">
-    <value>Voulez-vous vraiment supprimer et quitter le canal ?</value>
+    <value>Voulez-vous supprimer et quitter le canal ?</value>
   </data>
   <data name="AreYouSureDeleteAndExitName" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer et quitter le groupe **{0}** ?</value>
@@ -2044,7 +2044,7 @@ Lever : {1}</value>
     <value>Transférer la propriété du bot</value>
   </data>
   <data name="BotOwnershipTransferAlertText" xml:space="preserve">
-    <value>Vous pouvez transférer un bot uniquement si vous avez :</value>
+    <value>Vous pouvez transférer ce bot uniquement si vous avez :</value>
   </data>
   <data name="BotOwnershipTransferChangeOwner" xml:space="preserve">
     <value>Changer le propriétaire</value>
@@ -2670,7 +2670,7 @@ Si cela ne vous intéresse pas, nous vous suggérons de créer un canal privé.<
     <value>NOTIFICATIONS</value>
   </data>
   <data name="ChannelUserAddLimit" xml:space="preserve">
-    <value>Vous pouvez seulement ajouter les 200 premiers membres du canal. Un nombre illimité de personnes pourra le rejoindre avec un lien.</value>
+    <value>Désolé, vous pouvez seulement ajouter les 200 premiers abonnés. Veuillez noter qu'un nombre illimité de personnes peut le rejoindre avec le lien du canal.</value>
   </data>
   <data name="ChannelUserCantAdd" xml:space="preserve">
     <value>Vous ne pouvez pas ajouter cet utilisateur aux canaux.</value>
@@ -3330,7 +3330,7 @@ Une fois que {1} aura mis à jour Telegram, le mode "Touchez et maintenez pour v
   <data name="ConvertGroupInfo" xml:space="preserve">
     <value>**Limite de membres atteinte.**
 
-Pour aller au delà, passez à un supergroupe :
+Pour avoir plus d'espace et des fonctionnalités en plus, passez à un supergroupe :
 
 • Les supergroupes vont jusqu'à {0} membres
 • Les nouveaux membres peuvent voir tous les message
@@ -3454,7 +3454,7 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
     <value>Autocollants de groupe</value>
   </data>
   <data name="CurrentSession" xml:space="preserve">
-    <value>Session actuelle</value>
+    <value>Cet appareil</value>
   </data>
   <data name="CurvesAll" xml:space="preserve">
     <value>TOUS</value>
@@ -3952,7 +3952,7 @@ Vous pouvez toujours revenir au thème par défaut ici.</value>
     <value>Créer un nouveau groupe</value>
   </data>
   <data name="DiscussionGroupHelp" xml:space="preserve">
-    <value>**{0}** est lié au groupe en tant que forum de discussion.</value>
+    <value>Ce groupe fait office de forum de discussion pour {0}.</value>
   </data>
   <data name="DiscussionGroupHelp2" xml:space="preserve">
     <value>Tous les nouveaux messages publiés dans ce canal seront transférés à ce groupe.</value>
@@ -5538,7 +5538,7 @@ Cette action est **irréversible**.</value>
     <value>Laisser en tant que groupe normal</value>
   </data>
   <data name="GigagroupConvertCancelHint" xml:space="preserve">
-    <value>Si vous changez d'avis, allez dans les paramètres de votre groupe -> Permissions.</value>
+    <value>Si vous changez d'avis, allez dans les paramètres de votre groupe > Permissions.</value>
   </data>
   <data name="GigagroupConvertInfo1" xml:space="preserve">
     <value>Sans limite du nombre de membres.</value>
@@ -6215,7 +6215,7 @@ Tous les médias restent sur les serveurs Telegram et peuvent être télécharg�
     <value>Langue</value>
   </data>
   <data name="LanguageAlert" xml:space="preserve">
-    <value>Vous allez appliquer une langue (**{0}**) traduite à {1} %. 
+    <value>Vous êtes sur le point d'appliquer un paquet linguistique (**{0}**) traduit à {1} %. 
 
 Cela traduira toute votre interface. Vous pouvez suggérer des corrections sur la [plateforme de traduction].
 
@@ -6443,7 +6443,7 @@ Ce lien ne fonctionnera que pour les membres de cet échange.</value>
     <value/>
   </data>
   <data name="LinksCreatedByOtherAdmins" xml:space="preserve">
-    <value>Liens d'invitation créés par d'autres administrateurs</value>
+    <value>Liens créés par d'autres administrateurs</value>
   </data>
   <data name="LinksCreatedByThisAdmin" xml:space="preserve">
     <value>Liens d'invitation créés par cet admin</value>
@@ -6636,7 +6636,7 @@ Votre numéro de téléphone restera masqué.</value>
     <value>Gérer les liens d'invitation</value>
   </data>
   <data name="ManageLinksInfoHelp" xml:space="preserve">
-    <value>Vous pouvez créer des liens d'invitation supplémentaires ayant une durée de vie ou un nombre d'utilisations limités</value>
+    <value>Vous pouvez créer des liens d'invitation supplémentaires ayant une durée de vie ou un nombre d'utilisations limités.</value>
   </data>
   <data name="Map" xml:space="preserve">
     <value>Plan</value>
@@ -7167,7 +7167,8 @@ La longueur minimale est de 5 caractères.</value>
     <value>Quiconque proche de cette position (voisins, collègues de travail, camarades étudiants, participants à un évènement, visiteurs d'un lieu) verront votre groupe dans la section Personnes à proximité.</value>
   </data>
   <data name="NearbyCreateGroupInfo2" xml:space="preserve">
-    <value>Si vous démarrez un groupe sans rapport avec ce lieu, vous pourriez être restreint dans la création de nouveaux groupes basés sur la localisation.</value>
+    <value>Si vous créez un groupe sans rapport avec ce lieu, vous pourriez être 
+restreint dans la création de groupes basés sur la localisation.</value>
   </data>
   <data name="NearbyPeopleGreetingsDescription" xml:space="preserve">
     <value>Envoyer un message ou touchez la salutation ci-dessous pour montrer que vous êtes prêt à discuter.</value>
@@ -7362,7 +7363,7 @@ La longueur minimale est de 5 caractères.</value>
     <value>Vous n'êtes actuellement pas autorisé à publier dans les groupes publics.</value>
   </data>
   <data name="NoCallLog" xml:space="preserve">
-    <value>Vous n'avez pas encore passé d'appels.</value>
+    <value>Pas encore d'appels ici...</value>
   </data>
   <data name="NoChats" xml:space="preserve">
     <value>Bienvenue sur Telegram</value>
@@ -7423,7 +7424,7 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
     <value>Vous n'avez pas d'application pour les fichiers de type '{0}', installez-en une pour continuer</value>
   </data>
   <data name="NoLimit" xml:space="preserve">
-    <value>Aucune limite</value>
+    <value>Illimité</value>
   </data>
   <data name="NoMailInstalled" xml:space="preserve">
     <value>Merci d'envoyer un courriel expliquant votre problème à sms@stel.com</value>
@@ -7822,7 +7823,7 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
     <value>{0} vous a envoyé un GIF</value>
   </data>
   <data name="NotificationMessageGroupAudio" xml:space="preserve">
-    <value>{0} a envoyé un message vocal au groupe {1}</value>
+    <value>{0} a envoyé un message vocal dans {1}</value>
   </data>
   <data name="NotificationMessageGroupContact" xml:space="preserve">
     <value>{0} a partagé un contact avec le groupe {1}</value>
@@ -8005,7 +8006,7 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
     <value>Notifications pour les groupes</value>
   </data>
   <data name="NotificationsForPrivateChats" xml:space="preserve">
-    <value>Notifications pour les échanges privés</value>
+    <value>Notifications des échanges privés</value>
   </data>
   <data name="NotificationsGroups" xml:space="preserve">
     <value>Groupes</value>
@@ -8176,7 +8177,7 @@ L'équipe Telegram</value>
     <value/>
   </data>
   <data name="OnlyIfSilent" xml:space="preserve">
-    <value>Seulement en silencieux</value>
+    <value>Juste en silencieux</value>
   </data>
   <data name="OnlyWhenScreenOff" xml:space="preserve">
     <value>Si l'écran est éteint</value>
@@ -8224,7 +8225,7 @@ L'équipe Telegram</value>
     <value>VOIR LE THÈME</value>
   </data>
   <data name="OpenUrlAlert" xml:space="preserve">
-    <value>Ouvrir le lien {0} ?</value>
+    <value>Ouvrir ce lien : {0} ?</value>
   </data>
   <data name="OpenUrlAlert2" xml:space="preserve">
     <value>Voulez-vous ouvrir {0} ?</value>
@@ -9169,7 +9170,7 @@ Vous pouvez consulter notre *FAQ* pour plus d'informations.</value>
     <value>Code postal</value>
   </data>
   <data name="PaymentSuccessfullyPaid" xml:space="preserve">
-    <value>Vous venez de transférer {0} à {1} pour {2}</value>
+    <value>Vous avez transféré avec succès {0} à {1} pour {2}</value>
   </data>
   <data name="PaymentSuccessfullyPaidNoItem" xml:space="preserve">
     <value>Vous avez transféré {0} à {1} avec succès</value>
@@ -9286,7 +9287,7 @@ Veuillez activer les services de localisation pour accéder à cette fonctionnal
     <value>Échangez vos infos de contact avec les personnes à proximité et trouvez de nouveaux amis.</value>
   </data>
   <data name="Permanent" xml:space="preserve">
-    <value>Lien d'invitation</value>
+    <value>Lien primaire</value>
   </data>
   <data name="PermanentLinkForThisAdmin" xml:space="preserve">
     <value>Lien d'invitation pour cet adminstrateur</value>
@@ -9466,7 +9467,7 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
     <value>Épingler</value>
   </data>
   <data name="PinMessageAlert" xml:space="preserve">
-    <value>Voulez-vous épingler ce message pour tous les membres du groupe ?</value>
+    <value>Épingler ce message dans le groupe ?</value>
   </data>
   <data name="PinMessageAlertChannel" xml:space="preserve">
     <value>Voulez-vous épingler ce message dans ce canal ?</value>
@@ -9898,7 +9899,7 @@ Vous pouvez les modifier dans Paramètres > Confidentialité et Sécurité > Num
     <value>Toute personne sur Telegram peut scanner ce code pour rejoindre votre canal.</value>
   </data>
   <data name="QRCodeLinkHelpGroup" xml:space="preserve">
-    <value>Toute personne sur Telegram peut scanner ce code pour rejoindre votre groupe</value>
+    <value>Toute personne sur Telegram peut scanner ce code pour rejoindre votre groupe.</value>
   </data>
   <data name="QRCodePermissionNoCamera" xml:space="preserve">
     <value>Telegram a besoin d'accéder à votre caméra pour scanner des codes QR.</value>
@@ -10645,7 +10646,7 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
     <value>sem</value>
   </data>
   <data name="SecretLinkPreviewAlert" xml:space="preserve">
-    <value>Voulez-vous activer les aperçus de liens étendus dans les échanges secrets ? Notez que les aperçus sont générés sur les serveurs de Telegram.</value>
+    <value>Activer les aperçus de liens dans les échanges secrets ? Notez que les aperçus sont générés depuis les serveurs de Telegram.</value>
   </data>
   <data name="SecretWebPage" xml:space="preserve">
     <value>Aperçus des liens</value>
@@ -10771,7 +10772,7 @@ Vous devrez peut-être redémarrer l'application pour que cela prenne effet.</va
     <value>Envoyer {0}</value>
   </data>
   <data name="SendLiveLocation" xml:space="preserve">
-    <value>Partager ma position en temps réel</value>
+    <value>Position en temps réel…</value>
   </data>
   <data name="SendLiveLocationFor15m" xml:space="preserve">
     <value>pour 15 minutes</value>
@@ -11342,7 +11343,7 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
     <value>Démarrer un salon vocal</value>
   </data>
   <data name="StartVoipChatAlertText" xml:space="preserve">
-    <value>Voulez-vous vraiment démarrer un salon vocal dans ce groupe ?</value>
+    <value>Démarrer un salon vocal dans ce groupe ?</value>
   </data>
   <data name="StartVoipChatPermission" xml:space="preserve">
     <value>Gérer les salons vocaux</value>
@@ -11543,7 +11544,7 @@ Le mode ralenti est activé. Vous ne pouvez envoyer plus d'un message à la fois
     <value>Désactiver les suggestions</value>
   </data>
   <data name="SuggestStickers" xml:space="preserve">
-    <value>Suggérer des autocollants par emoji</value>
+    <value>Suggérer par emoji</value>
   </data>
   <data name="SuggestStickersAll" xml:space="preserve">
     <value>Tous les lots</value>
@@ -11943,6 +11944,9 @@ La longueur minimale est de 5 caractères.</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Lien du thème</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>c'est vous</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Vous pouvez faire en sorte que le lien expire après un certain temps.</value>
   </data>
@@ -12256,7 +12260,7 @@ Mais si les besoins modestes de Telegram ne vous conviennent pas, il nous est im
     <value>Données mobiles</value>
   </data>
   <data name="UseLessDataOnRoaming" xml:space="preserve">
-    <value>Seulement en itinérance</value>
+    <value>Juste en itinérance</value>
   </data>
   <data name="UseProxyAddress" xml:space="preserve">
     <value>Serveur</value>
@@ -12924,6 +12928,9 @@ Vous pouvez utiliser des **lettres**, des **chiffres**, et des **tirets bas**. L
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Ouvrir le canal</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Ouvrir l'échange</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Ouvrir le groupe</value>
   </data>
@@ -12953,6 +12960,9 @@ Vous pouvez utiliser des **lettres**, des **chiffres**, et des **tirets bas**. L
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Retirer un membre</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Retirer le participant</value>
   </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Titre de l'enregistrement</value>
@@ -13182,7 +13192,7 @@ Les participants verront que la discussion est en cours d'enregistrement.</value
     <value>Muet</value>
   </data>
   <data name="VoipUseLessData" xml:space="preserve">
-    <value>Moins de données lors des appels</value>
+    <value>Économiser les données</value>
   </data>
   <data name="VoipUserCameraIsOff" xml:space="preserve">
     <value>La caméra de {0} est désactivée</value>

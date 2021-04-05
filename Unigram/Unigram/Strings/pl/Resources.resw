@@ -5528,6 +5528,9 @@ Ta operacja jest **nieodwracalna**.</value>
   <data name="GigagroupConvertCancelButton" xml:space="preserve">
     <value>Opuść jako zwykłą grupę</value>
   </data>
+  <data name="GigagroupConvertCancelHint" xml:space="preserve">
+    <value>Jeśli zmienisz zdanie, przejdź do Ustawienia » Uprawnienia swojej grupy.</value>
+  </data>
   <data name="GigagroupConvertInfo1" xml:space="preserve">
     <value>Nie mają ograniczeń liczby członków.</value>
   </data>
@@ -9053,7 +9056,7 @@ Więcej informacji na ten temat możesz znaleźć w naszym dziale *FAQ*.</value>
     <value>Sposób dostawy</value>
   </data>
   <data name="PaymentConfirmationMessage" xml:space="preserve">
-    <value>Karta {0} jest zapisana. Aby płacić tą kartą, wprowadź swoje hasło weryfikacji dwustopniowej.</value>
+    <value>Twoja karta {0} jest zapisana. Aby płacić tą kartą, wprowadź swoje hasło weryfikacji dwustopniowej.</value>
   </data>
   <data name="PaymentConfirmationNewCard" xml:space="preserve">
     <value>Wybierz inną kartę</value>
@@ -10179,6 +10182,21 @@ Dziękujemy za współpracę!</value>
   </data>
   <data name="ReportSpamUser" xml:space="preserve">
     <value>ZABLOKUJ UŻYTKOWNIKA</value>
+  </data>
+  <data name="ReportTitleChild" xml:space="preserve">
+    <value>Zgłoś wykorzystywanie dzieci</value>
+  </data>
+  <data name="ReportTitleFake" xml:space="preserve">
+    <value>Zgłoś fałszerstwo</value>
+  </data>
+  <data name="ReportTitlePornography" xml:space="preserve">
+    <value>Zgłoś pornografię</value>
+  </data>
+  <data name="ReportTitleSpam" xml:space="preserve">
+    <value>Zgłoś spam</value>
+  </data>
+  <data name="ReportTitleViolence" xml:space="preserve">
+    <value>Zgłoś przemoc</value>
   </data>
   <data name="ReportUnrelatedGroup" xml:space="preserve">
     <value>Zgłoś niepowiązaną grupę</value>
@@ -11903,6 +11921,9 @@ Minimalna długość to 5 znaków.</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Link motywu</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>to jesteś ty</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Możesz ustawić wygaśnięcie linku po pewnym czasie.</value>
   </data>
@@ -12040,6 +12061,9 @@ Jeśli jednak nie odpowiadają ci te skromne wymagania Telegrama, nie będziemy 
   </data>
   <data name="TwoStepVerificationSetPassword" xml:space="preserve">
     <value>Ustaw hasło</value>
+  </data>
+  <data name="TwoStepVerificationShowPassword" xml:space="preserve">
+    <value>Pokaż hasło</value>
   </data>
   <data name="TwoStepVerificationTitle" xml:space="preserve">
     <value>Weryfikacja dwustopniowa</value>
@@ -12870,6 +12894,9 @@ Możesz użyć **a–z**, **0–9** i podkreśleń. Minimalna długość nazwy t
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Otwórz kanał</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Otwórz czat</value>
+  </data>
   <data name="VoipGroupOpenProfile" xml:space="preserve">
     <value>Otwórz profil</value>
   </data>
@@ -12893,6 +12920,9 @@ Możesz użyć **a–z**, **0–9** i podkreśleń. Minimalna długość nazwy t
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Usuń członka</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Usuń uczestnika </value>
   </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Tytuł nagrania</value>

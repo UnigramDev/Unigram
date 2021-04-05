@@ -2223,9 +2223,16 @@
     <value>إلغاء إعادة تعيين الحساب</value>
   </data>
   <data name="CancelAccountResetInfo" xml:space="preserve">
-    <value>شخص ما لديه صلاحية الوصول لرقمك **⁨{0}⁩** طلب حذف حسابك وتعطيل التحقق بخطوتين من حسابك.
+    <value>شخص ما لديه حق الوصول إلى **⁨{0}⁩** طلب حذف حسابك في تيليجرام وإعادة تعيين كلمة مرور التحقق بخطوتين.
 
-إذا لم تكن أنت من قام بذلك فقم رجاء بإدخال الرمز الذي أرسلناه للتوِّ برسالة SMS قصيرة.</value>
+ إن لم يكن أنت؛ فيرجى إدخال الرمز الذي أرسلناه إليك للتو عبر الرسائل النصية SMS.
+يمكنك أيضًا إلغاء حذف الحساب عن طريق **تغيير رقم هاتفك**.</value>
+  </data>
+  <data name="CancelAccountResetInfo2" xml:space="preserve">
+    <value>شخص ما لديه حق الوصول إلى **⁨{0}⁩** طلب حذف حسابك في تيليجرام وإعادة تعيين كلمة مرور التحقق بخطوتين.
+
+ إن لم يكن أنت؛ فيرجى إدخال الرمز الذي أرسلناه إليك للتو عبر الرسائل النصية SMS.
+يمكنك أيضًا إلغاء حذف الحساب عن طريق *تغيير رقم هاتفك*.</value>
   </data>
   <data name="CancelEmailQuestion" xml:space="preserve">
     <value>هل ترغب حقًا في إلغاء عملية إعداد بريد الاسترداد؟</value>
@@ -4081,7 +4088,7 @@
     <value>لقب مخصص سيكون مرئيًّا لجميع الأعضاء بدل من «⁨{0}⁩».</value>
   </data>
   <data name="EditAdminRemoveAdmin" xml:space="preserve">
-    <value>إزالة الإشراف</value>
+    <value>عزل المشرف</value>
   </data>
   <data name="EditAdminRights" xml:space="preserve">
     <value>تعديل صلاحيات المشرف</value>
@@ -4968,7 +4975,7 @@
     <value>إزالة المجلد</value>
   </data>
   <data name="FilterDeleteAlert" xml:space="preserve">
-    <value>هل ترغب حقًا في إزالة هذا المجلد؟ لن يتم حذف محادثاتك.</value>
+    <value>هل ترغب حقًا في إزالة هذا المجلد؟ لن تُحذف محادثاتك.</value>
   </data>
   <data name="FilterDeleteItem" xml:space="preserve">
     <value>حذف</value>
@@ -5882,7 +5889,7 @@
     <value>تم استيراد المحادثة بنجاح!</value>
   </data>
   <data name="ImportedInfo" xml:space="preserve">
-    <value>تم استيراد هذه الرسالة من تطبيق آخر. لا يمكننا ضمان أنها حقيقية.</value>
+    <value>هذه الرسالة مستوردة من تطبيق آخر. لا يمكننا ضمان أنها حقيقية.</value>
   </data>
   <data name="ImportedMessage" xml:space="preserve">
     <value>مستوردة</value>
@@ -8162,17 +8169,17 @@
     <value>تم إلغاء كتم الإشعارات</value>
   </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
-    <value>⁨{0}⁩؛
-لقد تم تسجيل الدخول لحسابك هذا من جهاز جديد في: ⁨{1}⁩
+    <value>⁨{0}⁩،
+لاحظنا تسجيل دخول إلى حسابك من جهاز جديد في: ⁨{1}⁩
 
 الجهاز: ⁨{2}⁩
 الموقع: ⁨{3}⁩
 
-إذا لم تكن أنت من قام بتسجيل الدخول فيمكنك الذهاب للإعدادات - الخصوصية والأمان - الجلسات النشطة - ومن ثَم إنهاء الجلسات المريبة.
+إن لم يكن أنت من قام بتسجيل الدخول؛ فيمكنك الذهاب إلى الإعدادات > الأجهزة وإنهاء تلك الجلسة.
 
-إذا كنت تعتقد أن شخصًا ما قام بتسجيل الدخول دون إذنك فيمكنك تفعيل التحقق بخطوتين عبر قسم الخصوصية واﻷمان في الإعدادات.
+إن كنت تعتقد أن شخصًا ما قام بتسجيل الدخول دون إذنك؛ فيمكنك تفعيل التحقق بخطوتين في إعدادات الخصوصية والأمان.
 
-شكرًا..
+تحياتنا،
 فريق تيليجرام</value>
   </data>
   <data name="NotMounted" xml:space="preserve">
@@ -9112,7 +9119,7 @@
     <value>الاسم</value>
   </data>
   <data name="PaymentCheckoutPay" xml:space="preserve">
-    <value>ادفع ⁨{0}⁩</value>
+    <value>دفع ⁨{0}⁩</value>
   </data>
   <data name="PaymentCheckoutPhoneNumber" xml:space="preserve">
     <value>رقم الهاتف</value>
@@ -9220,7 +9227,7 @@
     <value>يمكنك حفظ معلومات الشحن لاستخدامها لاحقًا.</value>
   </data>
   <data name="PaymentShippingStatePlaceholder" xml:space="preserve">
-    <value>الولاية</value>
+    <value>المنطقة</value>
   </data>
   <data name="PaymentShippingZipPlaceholder" xml:space="preserve">
     <value>الرمز البريدي</value>
@@ -10310,9 +10317,9 @@
     <value>محاولاتك الأخيرة لإعادة تعيين هذا الحساب قد أُلغيت من قبل مُستخدمه النشط. رجاءً، أعد المحاولة خلال سبعة أيام.</value>
   </data>
   <data name="ResetAccountInfo" xml:space="preserve">
-    <value>نظرًا لأن الحساب **⁨{0}⁩** نشطٌ ومحميٌ بكلمة مرور؛ سنقوم بحذفه خلال أسبوع لدواعٍ أمنية.
+    <value>بما أن الحساب ⁨{0}⁩ نشط ومحمي بكلمة مرور، سيتم حذفه بعد أسبوع واحد. هذا التأخير ضروري لأغراض أمنية.
 
-يمْكنك إلغاء هذه العملية في أي وقت.</value>
+يمكنك إلغاء هذه العملية في أي وقت.</value>
   </data>
   <data name="ResetAccountStatus" xml:space="preserve">
     <value>ستتمكن من إعادة تعيين حسابك بعد:</value>
@@ -11650,7 +11657,7 @@
     <value>مقروءة</value>
   </data>
   <data name="SwipeUnmute" xml:space="preserve">
-    <value>إزالة الكتم</value>
+    <value>إلغاء الكتم</value>
   </data>
   <data name="SwipeUnpin" xml:space="preserve">
     <value>إزالة التثبيت</value>
@@ -11998,6 +12005,9 @@
   </data>
   <data name="ThemeUrl" xml:space="preserve">
     <value>رابط النمط</value>
+  </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>هذا أنت</value>
   </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>يمكنك جعل صلاحية الرابط تنتهي بعد وقت محدد.</value>
@@ -12932,10 +12942,10 @@
     <value>الانضمام إلى المحادثة الصوتية بـ...</value>
   </data>
   <data name="VoipGroupJoinAsLinstener" xml:space="preserve">
-    <value>الانضمام كـ مستمع</value>
+    <value>الانضمام كمستمع</value>
   </data>
   <data name="VoipGroupJoinAsSpeaker" xml:space="preserve">
-    <value>الانضمام كـ متحدّث</value>
+    <value>الانضمام كمتحدّث</value>
   </data>
   <data name="VoipGroupJoinCall" xml:space="preserve">
     <value>الانضمام للمحادثة الصوتية</value>
@@ -12982,6 +12992,9 @@
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>فتح القناة</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>فتح المحادثة</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>فتح المجموعة</value>
   </data>
@@ -13011,6 +13024,9 @@
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>إزالة عضو</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>إزالة مشارك</value>
   </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>عنوان التسجيل</value>
@@ -13057,7 +13073,7 @@
     <value>إلغاء الكتم</value>
   </data>
   <data name="VoipGroupUnmuteForMe" xml:space="preserve">
-    <value>إزالة كتمه عندي</value>
+    <value>إلغاء كتمه عندي</value>
   </data>
   <data name="VoipGroupUserCanNowSpeak" xml:space="preserve">
     <value>الآن يمكن لـ «**⁨{0}⁩**» التحدّث.</value>

@@ -1638,7 +1638,7 @@ deleted {0} after they are sent.</value>
   <data name="AutoDownloadChannels" xml:space="preserve">
     <value>Channels</value>
   </data>
-  <data name="AutodownloadContacts" xml:space="preserve">
+  <data name="AutoDownloadContacts" xml:space="preserve">
     <value>Contacts</value>
   </data>
   <data name="AutoDownloadCustom" xml:space="preserve">

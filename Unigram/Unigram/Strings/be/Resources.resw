@@ -6091,6 +6091,18 @@
   <data name="InviteUser" xml:space="preserve">
     <value>Гэты карыстальнік яшчэ не мае Telegram, адправіць запрашэнне?</value>
   </data>
+  <data name="InvLinkToChats" xml:space="preserve">
+    <value>Запрашальная спасылка адпраўлена **{0}**.</value>
+  </data>
+  <data name="InvLinkToGroup" xml:space="preserve">
+    <value>Запрашальная спасылка адпраўлена **{0}**.</value>
+  </data>
+  <data name="InvLinkToSavedMessages" xml:space="preserve">
+    <value>Запрашальная спасылка адпраўлена ў **Захаваныя**.</value>
+  </data>
+  <data name="InvLinkToUser" xml:space="preserve">
+    <value>Запрашальная спасылка адпраўлена **{0}**.</value>
+  </data>
   <data name="IsRecordingAudio" xml:space="preserve">
     <value>{0} запісвае галасавое паведамленне...</value>
   </data>
@@ -10214,7 +10226,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Паскардзіцца на агрэсію ў дачыненні да дзяцей</value>
   </data>
   <data name="ReportTitleFake" xml:space="preserve">
-    <value>Паскардзіцца на падстаўны ўліковы запіс</value>
+    <value>Падстаўны ўліковы запіс</value>
   </data>
   <data name="ReportTitlePornography" xml:space="preserve">
     <value>Паскардзіцца на парнаграфію</value>
@@ -11338,6 +11350,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="StartText" xml:space="preserve">
     <value>Пацвердзіце код краіны і ўвядзіце ваш нумар тэлефона.</value>
   </data>
+  <data name="StartVoipChannelAlertText" xml:space="preserve">
+    <value>Хочаце пачаць галасавы чат у гэтым канале?</value>
+  </data>
   <data name="StartVoipChat" xml:space="preserve">
     <value>Пачаць галасавы чат</value>
   </data>
@@ -11943,6 +11958,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Спасылка тэмы</value>
+  </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>гэта вы</value>
   </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Вы можаце стварыць спасылку з абмежаваным тэрмінам дзеяння.</value>
@@ -12819,7 +12837,10 @@ https://telegram.org/blog/coronavirus</value>
     <value>Запрашальная спасылка скапіявана ў буфер абмену.</value>
   </data>
   <data name="VoipGroupCopyListenLink" xml:space="preserve">
-    <value>Капіяваць спасылку для слухачоў</value>
+    <value>КАПІЯВАЦЬ СПАСЫЛКУ ДЛЯ СЛУХАЧОЎ</value>
+  </data>
+  <data name="VoipGroupCopySpeakerLink" xml:space="preserve">
+    <value>КАПІЯВАЦЬ СПАСЫЛКУ ДЛЯ ПРАМОЎЦАЎ</value>
   </data>
   <data name="VoipGroupDisplayAs" xml:space="preserve">
     <value>Паказваць мяне як...</value>
@@ -12848,11 +12869,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupInviteAlreadyParticipant" xml:space="preserve">
     <value>Выбраны карыстальнік ужо ў гэтым галасавым чаце.</value>
   </data>
+  <data name="VoipGroupInviteCanSpeak" xml:space="preserve">
+    <value>Можа гаварыць</value>
+  </data>
   <data name="VoipGroupInvitedToVoiceChat" xml:space="preserve">
     <value>un1 запрасіў(-ла) un2 у галасавы чат</value>
   </data>
   <data name="VoipGroupInvitedUser" xml:space="preserve">
     <value>Вы запрасілі **{0}** у галасавы чат.</value>
+  </data>
+  <data name="VoipGroupInviteListenOnly" xml:space="preserve">
+    <value>Толькі слухаць</value>
   </data>
   <data name="VoipGroupInviteMember" xml:space="preserve">
     <value>Запрасіць удзельнікаў</value>
@@ -12862,6 +12889,18 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipGroupJoinAnonymousAdmin" xml:space="preserve">
     <value>На жаль, вы не можаце далучыцца да галасавога чата як ананімны кіраўнік.</value>
+  </data>
+  <data name="VoipGroupJoinAnonymouseAlert" xml:space="preserve">
+    <value>Вы сапраўды хочаце паказвацца ў гэтым галасавым чаце ад імя ваша асабістага ўліковага запісу? </value>
+  </data>
+  <data name="VoipGroupJoinAs" xml:space="preserve">
+    <value>Далучыцца да галасавога чата як…</value>
+  </data>
+  <data name="VoipGroupJoinAsLinstener" xml:space="preserve">
+    <value>ДАЛУЧЫЦЦА ЯК СЛУХАЧ</value>
+  </data>
+  <data name="VoipGroupJoinAsSpeaker" xml:space="preserve">
+    <value>ДАЛУЧЫЦЦА ЯК ПРАМОЎЦА</value>
   </data>
   <data name="VoipGroupJoinCall" xml:space="preserve">
     <value>Далучыцца да галасавога чата</value>
@@ -12908,6 +12947,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Адкрыць канал</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Адкрыць чат</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Адкрыць суполку</value>
   </data>
@@ -12932,8 +12974,17 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupRemoveMemberAlertText" xml:space="preserve">
     <value>Вы хочаце выдаліць {0} з гэтай суполкі?</value>
   </data>
+  <data name="VoipGroupRemoveMemberAlertText2" xml:space="preserve">
+    <value>Вы хочаце выдаліць {0} з галасавога чата і заблакіраваць яго ў {1}?</value>
+  </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Выдаліць удзельніка</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Выдаліць удзельніка</value>
+  </data>
+  <data name="VoipGroupSaveFileHint" xml:space="preserve">
+    <value>Назва запісу</value>
   </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Пошук удзельнікаў для запрашэння...</value>
@@ -12941,19 +12992,28 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Абагуліць спасылку</value>
   </data>
+  <data name="VoipGroupStartAs" xml:space="preserve">
+    <value>Пачаць галасавы чат як…</value>
+  </data>
   <data name="VoipGroupStartAsInfo" xml:space="preserve">
     <value>Выберыце як вас паказваць: як ваш асабісты ўліковы запіс або як ваш канал.</value>
   </data>
+  <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
+    <value>Выберыце як вас паказваць: як ваш асабісты ўліковы запіс, ад імя вашай суполкі або ад імя аднаго з вашых каналаў.</value>
+  </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
-    <value>Вы хочаце пачаць запіс гэтага чата і захаваць вынік як аўдыяфайл?
+    <value>Запісаць гэты чат і захаваць вынік як аўдыяфайл?
 
-Іншыя ўдзельнікі будуць бачыць, што чат запісваецца.</value>
+Удзельнікі будуць бачыць, што чат запісваецца.</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>Пачаць запіс</value>
   </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Спыніць запіс</value>
+  </data>
+  <data name="VoipGroupStopRecordingText" xml:space="preserve">
+    <value>Хочаце спыніць запіс гэтага галасавога чата?</value>
   </data>
   <data name="VoipGroupStopRecordingTitle" xml:space="preserve">
     <value>Спыніць запіс</value>
@@ -12983,7 +13043,7 @@ https://telegram.org/blog/coronavirus</value>
     <value>Цяпер гук ад **{0}** адключаны для вас у гэтым чаце.</value>
   </data>
   <data name="VoipGroupUserChanged" xml:space="preserve">
-    <value>Удзельнікі галасавога чата цяпер будуць бачыць вас як {0}</value>
+    <value>Удзельнікі галасавога чата цяпер будуць бачыць вас як **{0}**</value>
   </data>
   <data name="VoipGroupUserRemove" xml:space="preserve">
     <value>Выдаліць</value>
@@ -12996,6 +13056,12 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipGroupVolume" xml:space="preserve">
     <value>Гучнасць</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeak" xml:space="preserve">
+    <value>Цяпер вы можаце гаварыць.</value>
+  </data>
+  <data name="VoipGroupYouCanNowSpeakIn" xml:space="preserve">
+    <value>Вы цяпер можаце гаварыць у **{0}**.</value>
   </data>
   <data name="VoipHangingUp" xml:space="preserve">
     <value>Сканчэнне размовы</value>
@@ -13033,8 +13099,11 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipMutedTapedForSpeak" xml:space="preserve">
     <value>Вы папрасілі выказацца </value>
   </data>
+  <data name="VoipMutedTapedForSpeakInfo" xml:space="preserve">
+    <value>Мы паведамілі выступоўцам</value>
+  </data>
   <data name="VoipMutedTapForSpeak" xml:space="preserve">
-    <value>Націсніце, калі вы хочаце гаварыць</value>
+    <value>націсніце, калі вы хочаце гаварыць</value>
   </data>
   <data name="VoipNeedMicCameraPermission" xml:space="preserve">
     <value>Telegram патрэбны доступ да вашага мікрафона і камеры, каб вы маглі рабіць відэавыклікі.</value>
@@ -13184,6 +13253,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="WaitMore" xml:space="preserve">
     <value>Пачакайце яшчэ</value>
   </data>
+  <data name="WantsToSpeak" xml:space="preserve">
+    <value>хоча гаварыць</value>
+  </data>
   <data name="Warmth" xml:space="preserve">
     <value>Цеплыня</value>
   </data>
@@ -13252,9 +13324,15 @@ https://telegram.org/blog/coronavirus</value>
 
 Увага: ваш код блакіроўкі **не ўплывае** на віджэты.</value>
   </data>
+  <data name="WidgetPasscode2" xml:space="preserve">
+    <value>Увага: ваш код блакіроўкі **не ўплывае** на віджэты.</value>
+  </data>
   <data name="WidgetPasscodeEnable" xml:space="preserve">
     <value>
 Ваш код блакіроўкі **не паўплывае** на віджэты дадзеныя на галоўны экран.</value>
+  </data>
+  <data name="WidgetPasscodeEnable2" xml:space="preserve">
+    <value>Ваш код блакіроўкі **не паўплывае** на віджэты дадзеныя на галоўны экран.</value>
   </data>
   <data name="WidgetPreview" xml:space="preserve">
     <value>Перадпрагляд віджэта</value>
@@ -13327,6 +13405,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="YourContacts" xml:space="preserve">
     <value>Вашы кантакты ў Telegram</value>
+  </data>
+  <data name="YourContactsToInvite" xml:space="preserve">
+    <value>Вашы кантакты</value>
   </data>
   <data name="YourEmail" xml:space="preserve">
     <value>Вашa электронная пошта</value>
