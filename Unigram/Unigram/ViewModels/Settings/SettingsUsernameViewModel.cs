@@ -35,7 +35,7 @@ namespace Unigram.ViewModels.Settings
             RaisePropertyChanged(nameof(Username));
         }
 
-        private string _username;
+        private string _username = string.Empty;
         public string Username
         {
             get
@@ -194,7 +194,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
-            var response = await ProtoService.SendAsync(new SetUsername(_username));
+            var response = await ProtoService.SendAsync(new SetUsername(_username ?? string.Empty));
             if (response is Ok)
             {
                 NavigationService.GoBack();
