@@ -585,7 +585,7 @@ namespace Unigram.ViewModels
             {
                 var user = CacheService.GetUser(chat);
 
-                var dialog = new ScheduleMessagePopup(user, DateTime.Now.ToTimestamp(), CacheService.IsSavedMessages(chat));
+                var dialog = new ScheduleMessagePopup(user, DateTime.Now, CacheService.IsSavedMessages(chat));
                 var confirm = await dialog.ShowQueuedAsync();
 
                 if (confirm != ContentDialogResult.Primary)

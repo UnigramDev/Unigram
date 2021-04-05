@@ -3,7 +3,6 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
-using Unigram.Converters;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -12,11 +11,11 @@ namespace Unigram.Views.Popups
 {
     public sealed partial class ScheduleMessagePopup : ContentPopup
     {
-        public ScheduleMessagePopup(User user, int until, bool reminder)
+        public ScheduleMessagePopup(User user, DateTime? until, bool reminder)
         {
             InitializeComponent();
 
-            var date = until == 0 ? DateTime.Now.AddMinutes(1) : Converter.DateTime(until);
+            var date = until ?? DateTime.Now.AddMinutes(10);
             Date.Date = date.Date;
             Time.Time = date.TimeOfDay;
 
@@ -28,8 +27,6 @@ namespace Unigram.Views.Popups
 
             Date.MinDate = DateTime.Today;
             Date.MaxDate = DateTime.Today.AddYears(1);
-
-            Time.Time = DateTime.Now.TimeOfDay.Add(TimeSpan.FromMinutes(10));
 
             Title = reminder ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage;
             PrimaryButtonText = Strings.Resources.OK;
@@ -64,9 +61,14 @@ namespace Unigram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (Date.Date == null)
+            if (Date.Date == null || Date.Date < DateTime.Today)
             {
                 VisualUtilities.ShakeView(Date);
+                args.Cancel = true;
+            }
+            else if (Date.Date == DateTime.Today && Time.Time <= DateTime.Now.TimeOfDay)
+            {
+                VisualUtilities.ShakeView(Time);
                 args.Cancel = true;
             }
         }
