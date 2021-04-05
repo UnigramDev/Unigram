@@ -160,6 +160,7 @@ namespace Unigram.Views
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ProtoService);
             PinnedMessage.InitializeParent(Clipper);
 
+            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
             ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
 
             _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
