@@ -205,15 +205,15 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (message.IsEqualTo(message.PlaybackService.CurrentItem))
                 {
-                    if (message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
-                    {
-                        //Button.Glyph = Icons.Pause;
-                        Button.SetGlyph(file.Id, MessageContentState.Pause);
-                    }
-                    else
+                    if (message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
                     {
                         //Button.Glyph = Icons.Play;
                         Button.SetGlyph(file.Id, MessageContentState.Play);
+                    }
+                    else
+                    {
+                        //Button.Glyph = Icons.Pause;
+                        Button.SetGlyph(file.Id, MessageContentState.Pause);
                     }
 
                     UpdatePosition();
@@ -285,13 +285,13 @@ namespace Unigram.Controls.Messages.Content
             {
                 if (_message.IsEqualTo(_message.PlaybackService.CurrentItem))
                 {
-                    if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Playing)
+                    if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
                     {
-                        _message.PlaybackService.Pause();
+                        _message.PlaybackService.Play();
                     }
                     else
                     {
-                        _message.PlaybackService.Play();
+                        _message.PlaybackService.Pause();
                     }
                 }
                 else

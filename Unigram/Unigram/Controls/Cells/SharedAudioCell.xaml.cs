@@ -237,13 +237,13 @@ namespace Unigram.Controls.Cells
         {
             if (message.IsEqualTo(_playbackService.CurrentItem))
             {
-                if (_playbackService.PlaybackState != MediaPlaybackState.Paused && _playbackService.PlaybackState != MediaPlaybackState.None)
+                if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
                 {
-                    Button.SetGlyph(file.Id, MessageContentState.Pause);
+                    Button.SetGlyph(file.Id, MessageContentState.Play);
                 }
                 else
                 {
-                    Button.SetGlyph(file.Id, MessageContentState.Play);
+                    Button.SetGlyph(file.Id, MessageContentState.Pause);
                 }
 
                 UpdatePosition();
@@ -326,18 +326,18 @@ namespace Unigram.Controls.Cells
 
             if (_message.IsEqualTo(_playbackService.CurrentItem))
             {
-                if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
+                if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
                 {
-                    _playbackService.Pause();
+                    _playbackService.Play();
                 }
                 else
                 {
-                    _playbackService.Play();
+                    _playbackService.Pause();
                 }
             }
             else
             {
-                _playbackService.Enqueue(_message);
+                _playbackService.Play(_message);
             }
         }
 
@@ -366,18 +366,18 @@ namespace Unigram.Controls.Cells
             {
                 if (_message.IsEqualTo(_playbackService.CurrentItem))
                 {
-                    if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
+                    if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
                     {
-                        _playbackService.Pause();
+                        _playbackService.Play();
                     }
                     else
                     {
-                        _playbackService.Play();
+                        _playbackService.Pause();
                     }
                 }
                 else
                 {
-                    _playbackService.Enqueue(_message);
+                    _playbackService.Play(_message);
                 }
             }
         }

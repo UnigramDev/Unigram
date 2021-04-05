@@ -173,15 +173,15 @@ namespace Unigram.Controls.Cells
             {
                 if (message.IsEqualTo(_playbackService.CurrentItem))
                 {
-                    if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
-                    {
-                        //Button.Glyph = Icons.Pause;
-                        Button.SetGlyph(file.Id, MessageContentState.Pause);
-                    }
-                    else
+                    if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
                     {
                         //Button.Glyph = Icons.Play;
                         Button.SetGlyph(file.Id, MessageContentState.Play);
+                    }
+                    else
+                    {
+                        //Button.Glyph = Icons.Pause;
+                        Button.SetGlyph(file.Id, MessageContentState.Pause);
                     }
 
                     UpdatePosition();
@@ -236,24 +236,24 @@ namespace Unigram.Controls.Cells
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
                 //_protoService.DownloadFile(file.Id, 32);
-                _playbackService.Enqueue(_message);
+                _playbackService.Play(_message);
             }
             else
             {
                 if (_message.IsEqualTo(_playbackService.CurrentItem))
                 {
-                    if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
+                    if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
                     {
-                        _playbackService.Pause();
+                        _playbackService.Play();
                     }
                     else
                     {
-                        _playbackService.Play();
+                        _playbackService.Pause();
                     }
                 }
                 else
                 {
-                    _playbackService.Enqueue(_message);
+                    _playbackService.Play(_message);
                 }
             }
         }

@@ -34,8 +34,8 @@ namespace Unigram.Services
 
         void Clear();
 
-        void Enqueue(MessageViewModel message, long threadId = 0);
-        void Enqueue(Message message, long threadId = 0);
+        void Play(MessageViewModel message, long threadId = 0);
+        void Play(Message message, long threadId = 0);
 
         TimeSpan Position { get; }
         TimeSpan Duration { get; }
@@ -532,12 +532,12 @@ namespace Unigram.Services
             Dispose();
         }
 
-        public void Enqueue(MessageViewModel message, long threadId)
+        public void Play(MessageViewModel message, long threadId)
         {
-            Enqueue(message.Get(), threadId);
+            Play(message.Get(), threadId);
         }
 
-        public void Enqueue(Message message, long threadId)
+        public void Play(Message message, long threadId)
         {
             if (message == null)
             {
@@ -559,9 +559,14 @@ namespace Unigram.Services
 
             Dispose();
 
-            var item = GetPlaybackItem(message);
+            if (message.Content is not MessageAudio)
+            {
+                PlaybackRate = 1;
+            }
 
+            var item = GetPlaybackItem(message);
             var items = _items = new List<PlaybackItem>();
+
             _items.Add(item);
             _threadId = threadId;
 
@@ -614,23 +619,14 @@ namespace Unigram.Services
         {
             var token = $"{message.ChatId}_{message.Id}";
             var file = GetFile(message);
-            var mime = GetMimeType(message);
-            var duration = GetDuration(message);
 
-            var stream = new RemoteFileStream(_protoService, file, TimeSpan.FromSeconds(duration));
-            var source = MediaSource.CreateFromStream(stream, mime);
-            var item = new PlaybackItem(source);
-
-            _streams[file.Id].Add(stream);
-
-            source.CustomProperties["file"] = file.Id;
-            source.CustomProperties["message"] = message.Id;
-            source.CustomProperties["chat"] = message.ChatId;
-            source.CustomProperties["token"] = token;
-
-            item.File = file;
-            item.Message = message;
-            item.Token = token;
+            var source = CreateMediaSource(message, file);
+            var item = new PlaybackItem(source)
+            {
+                File = file,
+                Message = message,
+                Token = token
+            };
 
             if (message.Content is MessageAudio audio)
             {
@@ -654,21 +650,21 @@ namespace Unigram.Services
             return item;
         }
 
-        private MediaSource CreateMediaSource(PlaybackItem item)
+        private MediaSource CreateMediaSource(Message message, File file)
         {
-            var token = $"{item.Message.ChatId}_{item.Message.Id}";
+            var token = $"{message.ChatId}_{message.Id}";
 
-            var mime = GetMimeType(item.Message);
-            var duration = GetDuration(item.Message);
+            var mime = GetMimeType(message);
+            var duration = GetDuration(message);
 
-            var stream = new RemoteFileStream(_protoService, item.File, TimeSpan.FromSeconds(duration));
+            var stream = new RemoteFileStream(_protoService, file, TimeSpan.FromSeconds(duration));
             var source = MediaSource.CreateFromStream(stream, mime);
 
-            _streams[item.File.Id].Add(stream);
+            _streams[file.Id].Add(stream);
 
-            source.CustomProperties["file"] = item.File.Id;
-            source.CustomProperties["message"] = item.Message.Id;
-            source.CustomProperties["chat"] = item.Message.ChatId;
+            source.CustomProperties["file"] = file.Id;
+            source.CustomProperties["message"] = message.Id;
+            source.CustomProperties["chat"] = message.ChatId;
             source.CustomProperties["token"] = token;
 
             return source;

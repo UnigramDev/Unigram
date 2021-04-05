@@ -759,13 +759,13 @@ namespace Unigram.Controls.Gallery
             {
                 if (_mediaPlayer != null)
                 {
-                    if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+                    if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
                     {
-                        _mediaPlayer.Pause();
+                        _mediaPlayer.Play();
                     }
                     else
                     {
-                        _mediaPlayer.Play();
+                        _mediaPlayer.Pause();
                     }
 
                     args.Handled = true;
