@@ -47,7 +47,7 @@ namespace Unigram.Controls
         {
             var visible = true;
 
-            if (chat.VoiceChat.GroupCallId != call?.Id || call == null || call.IsJoined || call.IsActive)
+            if (chat.VoiceChat.GroupCallId != call?.Id || !chat.VoiceChat.HasParticipants || call == null || call.IsJoined)
             {
                 ShowHide(false);
                 visible = false;
