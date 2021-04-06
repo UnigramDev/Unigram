@@ -615,12 +615,14 @@ namespace Unigram.Controls
                         flags |= TextStyle.Underline;
                     }
 
-                    if (range.Link.Length > 0 && TryGetEntityType(range.Link, out TextEntityType linkType))
+                    if (range.Link.Length > 0 && TryGetEntityType(range.Link, out type))
                     {
                         flags |= TextStyle.Url;
                         flags &= ~TextStyle.Underline;
-
-                        type = linkType;
+                    }
+                    else
+                    {
+                        type = null;
                     }
                 }
 
