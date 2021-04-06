@@ -125,7 +125,7 @@ namespace Unigram.Controls
             var constraint = Constraint;
             if (constraint is MessageViewModel viewModel)
             {
-                ttl = viewModel.Ttl > 0;
+                ttl = viewModel.IsSecret();
                 constraint = viewModel.Content;
             }
             else if (constraint is Message message)

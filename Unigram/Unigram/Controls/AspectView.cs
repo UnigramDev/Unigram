@@ -45,7 +45,7 @@ namespace Unigram.Controls
             var constraint = Constraint;
             if (constraint is MessageViewModel viewModel)
             {
-                ttl = viewModel.Ttl > 0;
+                ttl = viewModel.IsSecret();
                 constraint = viewModel.Content;
 
                 if (viewModel.MediaAlbumId != 0 && Tag is true)

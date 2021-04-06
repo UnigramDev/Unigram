@@ -1880,7 +1880,7 @@ namespace Unigram.Controls.Messages
             var constraint = Tag;
             if (constraint is MessageViewModel viewModel)
             {
-                ttl = viewModel.Ttl > 0;
+                ttl = viewModel.IsSecret();
                 constraint = viewModel.GeneratedContent ?? viewModel.Content;
             }
             else if (constraint is Message message)
@@ -2063,11 +2063,11 @@ namespace Unigram.Controls.Messages
         {
             switch (content)
             {
-                case MessageLocation _:
-                case MessageVenue _:
-                case MessagePhoto _:
-                case MessageVideo _:
-                case MessageAnimation _:
+                case MessageLocation:
+                case MessageVenue:
+                case MessagePhoto:
+                case MessageVideo:
+                case MessageAnimation:
                     return true;
                 case MessageAlbum album:
                     return album.IsMedia;
