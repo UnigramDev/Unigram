@@ -342,6 +342,10 @@ namespace Unigram.Common
             }
             else if (username != null)
             {
+                NavigateToInviteLink(protoService, navigation, username.TrimStart('+'));
+            }
+            else if (username != null && username.StartsWith('+'))
+            {
                 NavigateToUsername(protoService, navigation, username, botUser ?? botChat, voiceChat, post, comment, game);
             }
             else if (message != null)
@@ -499,6 +503,10 @@ namespace Unigram.Common
                             else if (username.Equals("bg", StringComparison.OrdinalIgnoreCase))
                             {
                                 NavigateToBackground(protoService, navigation, post + uri.Query);
+                            }
+                            else if (username.StartsWith('+'))
+                            {
+                                NavigateToInviteLink(protoService, navigation, username.TrimStart('+'));
                             }
                             else
                             {
@@ -811,17 +819,12 @@ namespace Unigram.Common
 
         public static async void NavigateToInviteLink(IProtoService protoService, INavigationService navigation, string link)
         {
-            if (!link.StartsWith("http"))
-            {
-                link = "https://t.me/joinchat/" + link;
-            }
-
-            var response = await protoService.SendAsync(new CheckChatInviteLink(link));
+            var response = await protoService.CheckChatInviteLinkAsync(link);
             if (response is ChatInviteLinkInfo info)
             {
                 if (info.ChatId != 0)
                 {
-                    navigation.NavigateToChat(info.ChatId, force: true);
+                    navigation.NavigateToChat(info.ChatId);
                 }
                 else
                 {
