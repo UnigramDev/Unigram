@@ -882,7 +882,7 @@ namespace Unigram.ViewModels
             }
 
             var user = CacheService.GetUser(chat);
-            if (user == null || !(user.Type is UserTypeBot))
+            if (user == null || user.Type is not UserTypeBot)
             {
                 goto AddDate;
             }
@@ -2484,7 +2484,7 @@ namespace Unigram.ViewModels
 
         public void SaveDraft()
         {
-            if (_currentInlineBot != null)
+            if (_currentInlineBot != null || (_type != DialogType.History && _type != DialogType.Thread))
             {
                 return;
             }
@@ -3396,7 +3396,7 @@ namespace Unigram.ViewModels
 
             var text = string.Empty;
 
-            var input = new InputDialog();
+            var input = new InputPopup();
             input.Title = Strings.Resources.ReportChat;
             input.PlaceholderText = Strings.Resources.ReportChatDescription;
             input.IsPrimaryButtonEnabled = true;
