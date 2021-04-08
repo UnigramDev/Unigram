@@ -102,14 +102,8 @@ namespace Unigram
             var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
             if (lastMessage != null && lastMessage.Length > 0)
             {
-                var index = lastMessage.IndexOf(']', 10);
-                if (index != 0)
-                {
-                    lastMessage = lastMessage.Remove(10, index);
-                }
-
                 SettingsService.Current.Diagnostics.LastErrorMessage = null;
-                Microsoft.AppCenter.Crashes.Crashes.TrackError(new TdException(lastMessage));
+                Microsoft.AppCenter.Crashes.Crashes.TrackError(TdException.FromMessage(lastMessage));
             }
 #endif
         }
