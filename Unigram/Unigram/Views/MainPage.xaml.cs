@@ -1932,7 +1932,7 @@ namespace Unigram.Views
             {
                 var index = e.Key == Windows.System.VirtualKey.Up ? -1 : 1;
                 var next = activeList.SelectedIndex + index;
-                if (next >= 0 && next < activeResults.View.Count)
+                if (next >= 0 && next < activeResults?.View.Count)
                 {
                     activeList.SelectedIndex = next;
                     activeList.ScrollIntoView(activeList.SelectedItem);
