@@ -5,7 +5,6 @@ using Unigram.Converters;
 using Unigram.Services;
 using Windows.ApplicationModel.Resources;
 using Windows.Globalization.NumberFormatting;
-using Windows.System.UserProfile;
 
 namespace Unigram.Common
 {
@@ -35,7 +34,8 @@ namespace Unigram.Common
                 "tk", "ur", "zu", "mn", "gsw", "chr", "rm", "pt", "an", "ast"}, new PluralRules_One());
             AddRules(new String[] { "cs", "sk" }, new PluralRules_Czech());
             AddRules(new String[] { "ff", "fr", "kab" }, new PluralRules_French());
-            AddRules(new String[] { "hr", "ru", "sr", "uk", "be", "bs", "sh" }, new PluralRules_Balkan());
+            AddRules(new String[] { "ru", "uk", "be" }, new PluralRules_Balkan());
+            AddRules(new String[] { "sr", "hr", "bs", "sh" }, new PluralRules_Serbian());
             AddRules(new String[] { "lv" }, new PluralRules_Latvian());
             AddRules(new String[] { "lt" }, new PluralRules_Lithuanian());
             AddRules(new String[] { "pl" }, new PluralRules_Polish());
@@ -51,7 +51,7 @@ namespace Unigram.Common
             AddRules(new String[] { "ga", "se", "sma", "smi", "smj", "smn", "sms" }, new PluralRules_Two());
             AddRules(new String[] { "ak", "am", "bh", "fil", "tl", "guw", "hi", "ln", "mg", "nso", "ti", "wa" }, new PluralRules_Zero());
             AddRules(new String[]{"az", "bm", "fa", "ig", "hu", "ja", "kde", "kea", "ko", "my", "ses", "sg", "to",
-                "tr", "vi", "wo", "yo", "zh", "bo", "dz", "id", "jv", "ka", "km", "kn", "ms", "th"}, new PluralRules_None());
+                "tr", "vi", "wo", "yo", "zh", "bo", "dz", "id", "jv", "jw", "ka", "km", "kn", "ms", "th", "in"}, new PluralRules_None());
         }
 
         private static void AddRules(String[] languages, PluralRules rules)
@@ -1067,9 +1067,13 @@ namespace Unigram.Common
                 {
                     return QUANTITY_ONE;
                 }
-                else if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14) && !(rem100 >= 22 && rem100 <= 24))
+                else if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14))
                 {
                     return QUANTITY_FEW;
+                }
+                else if (rem10 >= 0 && rem10 <= 1 || rem10 >= 5 && rem10 <= 9 || rem100 >= 12 && rem100 <= 14)
+                {
+                    return QUANTITY_MANY;
                 }
                 else
                 {
@@ -1181,7 +1185,7 @@ namespace Unigram.Common
                 {
                     return QUANTITY_ZERO;
                 }
-                else if (count > 0 && count < 2)
+                else if (count == 1)
                 {
                     return QUANTITY_ONE;
                 }
@@ -1274,6 +1278,27 @@ namespace Unigram.Common
                 else if ((rem10 == 0 || (rem10 >= 5 && rem10 <= 9) || (rem100 >= 11 && rem100 <= 14)))
                 {
                     return QUANTITY_MANY;
+                }
+                else
+                {
+                    return QUANTITY_OTHER;
+                }
+            }
+        }
+
+        private class PluralRules_Serbian : PluralRules
+        {
+            public override int QuantityForNumber(int count)
+            {
+                int rem100 = count % 100;
+                int rem10 = count % 10;
+                if (rem10 == 1 && rem100 != 11)
+                {
+                    return QUANTITY_ONE;
+                }
+                else if (rem10 >= 2 && rem10 <= 4 && !(rem100 >= 12 && rem100 <= 14))
+                {
+                    return QUANTITY_FEW;
                 }
                 else
                 {
