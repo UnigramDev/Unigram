@@ -1718,6 +1718,11 @@ namespace Unigram.Controls.Cells
             BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
             
+            if (Children.Count > 14)
+            {
+                Children[14].Measure(availableSize);
+            }
+
             return base.MeasureOverride(availableSize);
 
             return new Size(availableSize.Width, PhotoPanel.DesiredSize.Height);
@@ -1850,6 +1855,11 @@ namespace Unigram.Controls.Cells
             rect.Width = briefWidth + MinithumbnailPanel.DesiredSize.Width;
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
+
+            if (Children.Count > 14)
+            {
+                Children[14].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+            }
 
             return finalSize;
         }
