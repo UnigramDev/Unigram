@@ -136,21 +136,21 @@ namespace Unigram.Converters
 
                 if (dateDay == day && year == dateYear)
                 {
-                    return string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.TodayAt, Converter.ShortTime.Format(online));
+                    return string.Format(Strings.Resources.LastSeenFormatted, string.Format(Strings.Resources.TodayAtFormatted, Converter.ShortTime.Format(online)));
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
-                    return string.Format("{0} {1} {2}", Strings.Resources.LastSeen, Strings.Resources.YesterdayAt, Converter.ShortTime.Format(online));
+                    return string.Format(Strings.Resources.LastSeenFormatted, string.Format(Strings.Resources.YesterdayAtFormatted, Converter.ShortTime.Format(online)));
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
                     string format = string.Format(Strings.Resources.formatDateAtTime, online.ToString(Strings.Resources.formatterMonth), Converter.ShortTime.Format(online));
-                    return string.Format("{0} {1}", Strings.Resources.LastSeenDate, format);
+                    return string.Format(Strings.Resources.LastSeenDateFormatted, format);
                 }
                 else
                 {
                     string format = string.Format(Strings.Resources.formatDateAtTime, online.ToString(Strings.Resources.formatterYear), Converter.ShortTime.Format(online));
-                    return string.Format("{0} {1}", Strings.Resources.LastSeenDate, format);
+                    return string.Format(Strings.Resources.LastSeenDateFormatted, format);
                 }
             }
             catch (Exception)
