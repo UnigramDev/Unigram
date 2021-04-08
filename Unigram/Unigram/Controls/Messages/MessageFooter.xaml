@@ -7,7 +7,7 @@
     xmlns:local="using:Unigram.Controls.Messages"
     mc:Ignorable="d"
     Background="Transparent"
-    CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
+    CornerRadius="{ThemeResource MessageServiceCornerRadius}"
     Foreground="{ThemeResource MessageSubtleLabelBrush}"
     VerticalAlignment="Bottom"
     HorizontalAlignment="Right"

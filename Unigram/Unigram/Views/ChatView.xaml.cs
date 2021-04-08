@@ -1,4 +1,5 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using LinqToVisualTree;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
@@ -94,11 +95,7 @@ namespace Unigram.Views
         public ChatView(Func<IDialogDelegate, DialogViewModel> getViewModel)
         {
             InitializeComponent();
-            DataContextChanged += (s, args) =>
-            {
-                _viewModel = ViewModel;
-            };
-            DataContext = getViewModel(this);
+            DataContext = _viewModel = getViewModel(this);
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             _autocompleteHandler = new AnimatedListHandler<Sticker>(ListAutocomplete);
@@ -458,7 +455,7 @@ namespace Unigram.Views
 
         public void Activate()
         {
-            DataContext = _getViewModel(this);
+            DataContext = _viewModel = _getViewModel(this);
             Bindings.Update();
 
             ViewModel.TextField = TextField;
@@ -471,15 +468,11 @@ namespace Unigram.Views
 
             CheckMessageBoxEmpty();
 
-            SearchMask.Update(ViewModel.Search);
+            SearchMask?.Update(ViewModel.Search);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
             ViewModel.Items.AttachChanged = OnAttachChanged;
-
-            if (ViewModel.Settings.Diagnostics.BubbleAnimations)
-            {
-                ViewModel.Items.CollectionChanged += OnCollectionChanged;
-            }
+            ViewModel.Items.CollectionChanged += OnCollectionChanged;
 
             //Playback.Update(ViewModel.CacheService, ViewModel.PlaybackService, ViewModel.NavigationService);
 
@@ -496,6 +489,7 @@ namespace Unigram.Views
         }
 
         private MessageBubble _measurement;
+        private int _collectionChanging;
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
@@ -537,7 +531,7 @@ namespace Unigram.Views
 
                 batch.End();
             }
-            else if (args.Action == NotifyCollectionChangedAction.Add && panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex - 1)
+            else if (args.Action == NotifyCollectionChangedAction.Add)
             {
                 var message = args.NewItems[0] as MessageViewModel;
                 if (message.IsInitial)
@@ -545,7 +539,32 @@ namespace Unigram.Views
                     return;
                 }
 
+                var content = message.GeneratedContent ?? message.Content;
+                var animateSendout = !message.IsChannelPost
+                    && message.IsOutgoing
+                    && message.SendingState is MessageSendingStatePending
+                    && message.Content is MessageText or MessageDice
+                    && message.GeneratedContent is MessageBigEmoji or MessageSticker or null
+                    && ApiInfo.CanAccessActualFloats
+                    && ViewModel.Settings.Diagnostics.BubbleAnimations;
+
+                var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex - 1;
+                if (withinViewport is false)
+                {
+                    if (animateSendout && ViewModel.ComposerHeader == null)
+                    {
+                        ShowHideComposerHeader(false);
+                    }
+
+                    return;
+                }
+
                 await Messages.ItemsStack.UpdateLayoutAsync();
+
+                if (animateSendout && ViewModel.ComposerHeader == null)
+                {
+                    ShowHideComposerHeader(false, true);
+                }
 
                 var owner = Messages.ContainerFromItem(args.NewItems[0]) as SelectorItem;
                 if (owner == null)
@@ -554,11 +573,51 @@ namespace Unigram.Views
                 }
 
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var diff = (float)owner.ActualHeight;
+
+                if (animateSendout)
+                {
+                    var messages = ElementCompositionPreview.GetElementVisual(Messages);
+
+                    batch.Completed += (s, args) =>
+                    {
+                        if (_collectionChanging-- > 1)
+                        {
+                            return;
+                        }
+
+                        Canvas.SetZIndex(TextArea, 0);
+
+                        if (messages.Clip is InsetClip messagesClip)
+                        {
+                            messagesClip.BottomInset = -SettingsService.Current.Appearance.BubbleRadius;
+                        }
+                    };
+
+                    _collectionChanging++;
+                    Canvas.SetZIndex(TextArea, -1);
+
+                    if (messages.Clip is InsetClip messagesClip)
+                    {
+                        messagesClip.BottomInset = -96;
+                    }
+
+                    var head = TextArea.ActualSize.Y - 48;
+                    diff = owner.ActualSize.Y > 40
+                        ? owner.ActualSize.Y - head
+                        : owner.ActualSize.Y;
+                }
+
+                var outer = animateSendout ? 250 : 500 * 1;
+                var inner = 250 * 1;
+                var delay = 0;
 
                 var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                anim.InsertKeyFrame(0, new Vector3(0, (float)owner.ActualHeight, 0));
+                anim.InsertKeyFrame(0, new Vector3(0, diff, 0));
                 anim.InsertKeyFrame(1, new Vector3());
-                //anim.Duration = TimeSpan.FromSeconds(1);
+                anim.Duration = TimeSpan.FromMilliseconds(outer);
+                anim.DelayTime = TimeSpan.FromMilliseconds(delay);
+                anim.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
                 for (int i = panel.FirstCacheIndex; i <= args.NewStartingIndex; i++)
                 {
@@ -569,8 +628,51 @@ namespace Unigram.Views
                     }
 
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
-
                     var visual = ElementCompositionPreview.GetElementVisual(child);
+
+                    if (i == args.NewStartingIndex && animateSendout)
+                    {
+                        var bubble = owner.Descendants<MessageBubble>().FirstOrDefault();
+                        var reply = message.ReplyToMessageState != ReplyToMessageState.Hidden && message.ReplyToMessageId != 0;
+
+                        var xOffset = content switch
+                        {
+                            MessageBigEmoji => 48,
+                            MessageSticker or MessageDice => 48,
+                            _ => 48 - 10f
+                        };
+
+                        var yOffset = content switch
+                        {
+                            MessageBigEmoji => 66,
+                            MessageSticker or MessageDice => 36,
+                            _ => reply ? 29 : 44f
+                        };
+
+                        var xScale = (TextArea.ActualSize.X - xOffset) / bubble.ActualSize.X;
+                        var yScale = content switch
+                        {
+                            MessageText => TextArea.ActualSize.Y / bubble.ActualSize.Y, 
+                            _ => 1
+                        };
+
+                        var fontScale = content switch
+                        {
+                            MessageBigEmoji => 14 / 32f,
+                            MessageSticker => 20 / (200 * message.ProtoService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)),
+                            _ => 1
+                        };
+
+                        bubble.AnimateSendout(xScale, yScale, fontScale, outer, inner, delay, reply);
+
+                        anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                        anim.InsertKeyFrame(0, new Vector3(0, yOffset, 0));
+                        anim.InsertKeyFrame(1, new Vector3());
+                        anim.Duration = TimeSpan.FromMilliseconds(outer);
+                        anim.DelayTime = TimeSpan.FromMilliseconds(delay);
+                        anim.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                    }
+
                     visual.StartAnimation("Offset", anim);
                 }
 
@@ -729,9 +831,7 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(args.OccludedRect.Height);
-            StickersPanel.Height = args.OccludedRect.Height;
             ReplyMarkupPanel.MaxHeight = args.OccludedRect.Height;
-            //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
 
             Collapse_Click(null, null);
             CollapseMarkup(false);
@@ -2387,7 +2487,7 @@ namespace Unigram.Views
 
         private void InlinePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _textShadowVisual.IsVisible = e.NewSize.Height > 0;
+            _textShadowVisual.IsVisible = Math.Round(e.NewSize.Height) > ViewModel.Settings.Appearance.BubbleRadius;
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -3461,7 +3561,7 @@ namespace Unigram.Views
         private bool _composerHeaderCollapsed = false;
         private bool _textFormattingCollapsed = false;
 
-        private void ShowHideComposerHeader(bool show)
+        private void ShowHideComposerHeader(bool show, bool sendout = false)
         {
             if (ButtonAction.Visibility == Visibility.Visible)
             {
@@ -3471,20 +3571,14 @@ namespace Unigram.Views
                 return;
             }
 
-            var composer = ElementCompositionPreview.GetElementVisual(ComposerHeader);
-            var messages = ElementCompositionPreview.GetElementVisual(Messages);
-            var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
-
-            //textArea.Clip?.StopAnimation("TopInset");
-            //messages.Clip?.StopAnimation("TopInset");
-            //composer.Clip?.StopAnimation("BottomInset");
-            //messages.StopAnimation("Offset");
-            //composer.StopAnimation("Offset");
-
             if ((show && ComposerHeader.Visibility == Visibility.Visible) || (!show && (ComposerHeader.Visibility == Visibility.Collapsed || _composerHeaderCollapsed)))
             {
                 return;
             }
+
+            var composer = ElementCompositionPreview.GetElementVisual(ComposerHeader);
+            var messages = ElementCompositionPreview.GetElementVisual(Messages);
+            var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
 
             var value = show ? 48 : 0;
 
@@ -3500,6 +3594,7 @@ namespace Unigram.Views
                 var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
                 animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
                 animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
+                animClip3.Duration = TimeSpan.FromMilliseconds(150);
 
                 rect.StartAnimation("Offset", animClip3);
             }
@@ -3515,7 +3610,16 @@ namespace Unigram.Views
                 textArea.Clip.StartAnimation("TopInset", animClip3);
             }
 
-            messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
+            if (messages.Clip is InsetClip messagesClip)
+            {
+                messagesClip.TopInset = value;
+                messagesClip.BottomInset = -96;
+            }
+            else
+            {
+                messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, -96);
+            }
+
             composer.Clip = textArea.Compositor.CreateInsetClip(0, 0, 0, value);
 
             var batch = composer.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -3523,7 +3627,7 @@ namespace Unigram.Views
             {
                 textArea.Clip = null;
                 composer.Clip = null;
-                messages.Clip = null;
+                //messages.Clip = null;
                 composer.Offset = new Vector3();
                 messages.Offset = new Vector3();
 
@@ -3556,17 +3660,26 @@ namespace Unigram.Views
             anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
             anim1.Duration = TimeSpan.FromMilliseconds(150);
 
-            //textArea.Clip.StartAnimation("TopInset", animClip);
-            messages.Clip.StartAnimation("TopInset", animClip2);
+            if (!sendout)
+            {
+                messages.Clip.StartAnimation("TopInset", animClip2);
+                messages.StartAnimation("Offset", anim1);
+            }
+
             composer.Clip.StartAnimation("BottomInset", animClip);
-            messages.StartAnimation("Offset", anim1);
             composer.StartAnimation("Offset", anim1);
 
             batch.End();
 
 
-
-            ContentPanel.Margin = new Thickness(0, -48, 0, 0);
+            if (sendout)
+            {
+                ContentPanel.Margin = new Thickness(0, 0, 0, -48);
+            }
+            else
+            {
+                ContentPanel.Margin = new Thickness(0, -48, 0, 0);
+            }
 
             if (show)
             {
@@ -3746,8 +3859,15 @@ namespace Unigram.Views
                 InlinePanel.Margin = new Thickness();
             }
 
-            Messages.Margin = new Thickness(0, 0, 0, -radius);
-            Messages.Padding = new Thickness(0, 0, 0, radius + 6);
+            var messages = ElementCompositionPreview.GetElementVisual(Messages);
+            if (messages.Clip is InsetClip messagesClip)
+            {
+                messagesClip.BottomInset = -radius;
+            }
+            else
+            {
+                messages.Clip = Window.Current.Compositor.CreateInsetClip(0, 0, 0, -radius);
+            }
         }
 
         public void UpdateAutocomplete(Chat chat, IAutocompleteCollection collection)

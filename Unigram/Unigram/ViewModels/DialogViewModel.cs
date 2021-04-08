@@ -9,7 +9,6 @@ using Unigram.Common;
 using Unigram.Common.Chats;
 using Unigram.Controls;
 using Unigram.Controls.Chats;
-using Unigram.Native.Calls;
 using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
@@ -2626,7 +2625,7 @@ namespace Unigram.ViewModels
             TextField?.Focus(FocusState.Programmatic);
         }
 
-        private long GetReply(bool clean)
+        private long GetReply(bool clean, bool notify = true)
         {
             var embedded = _composerHeader;
             if (embedded == null || embedded.ReplyToMessage == null)
@@ -2636,7 +2635,14 @@ namespace Unigram.ViewModels
 
             if (clean)
             {
-                ComposerHeader = null;
+                if (notify)
+                {
+                    ComposerHeader = null;
+                }
+                else
+                {
+                    _composerHeader = null;
+                }
             }
 
             return embedded.ReplyToMessage.Id;
@@ -2752,7 +2758,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var reply = GetReply(true);
+                var reply = GetReply(true, !Settings.Diagnostics.BubbleAnimations);
 
                 //if (string.Equals(text.Trim(), "\uD83C\uDFB2"))
                 if (CacheService.IsDiceEmoji(text, out string dice))

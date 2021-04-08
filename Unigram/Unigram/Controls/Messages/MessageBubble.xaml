@@ -16,17 +16,18 @@
         <Grid x:Name="ContentPanel"
               MinHeight="30"
               Padding="0,4,0,0"
-              Background="{ThemeResource MessageBackgroundBrush}">
+              SizeChanged="OnSizeChanged">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>
                     <VisualState x:Name="LightStateOut">
                         <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                            <Setter Target="Footer.Padding" Value="6,2,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="Footer.Stroke" Value="White"/>
-                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
+                            <Setter Target="BackgroundPanel.Background" Value="{x:Null}"/>
+                            <Setter Target="CrossPanel.Background" Value="{x:Null}"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
@@ -39,16 +40,18 @@
                             <Setter Target="Header.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Message.Margin" Value="0,0,0,28"/>
+                            <Setter Target="Message.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Panel.(Grid.Column)" Value="2"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="LightState">
                         <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                            <Setter Target="Footer.Padding" Value="6,2,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="Footer.Stroke" Value="White"/>
-                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
+                            <Setter Target="BackgroundPanel.Background" Value="{x:Null}"/>
+                            <Setter Target="CrossPanel.Background" Value="{x:Null}"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
@@ -61,12 +64,13 @@
                             <Setter Target="Header.HorizontalAlignment" Value="Left"/>
                             <Setter Target="Media.HorizontalAlignment" Value="Left"/>
                             <Setter Target="Message.Margin" Value="0,0,0,10"/>
+                            <Setter Target="Message.HorizontalAlignment" Value="Left"/>
                             <Setter Target="Panel.(Grid.Column)" Value="0"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="MediaState">
                         <VisualState.Setters>
-                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                            <Setter Target="Footer.Padding" Value="6,2,6,4"/>
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="Footer.Stroke" Value="White"/>
@@ -90,6 +94,18 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <Border
+                x:Name="BackgroundPanel"
+                Background="{ThemeResource MessageBackgroundBrush}"
+                Margin="0,-4,0,0"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Grid.RowSpan="3">
+                <Border
+                    x:Name="CrossPanel"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+            </Border>
+
             <Grid x:Name="Header" Margin="10,0,10,0" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

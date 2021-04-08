@@ -10,6 +10,7 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
     xmlns:contract8Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)" xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
     Loaded="OnLoaded"
@@ -138,7 +139,8 @@
                                           ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
                                           IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                           BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
-                                          AutomationProperties.AccessibilityView="Raw">
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          contract7Present:CanContentRenderOutsideBounds="True">
                                 <ItemsPresenter Header="{TemplateBinding Header}"
                                                 HeaderTemplate="{TemplateBinding HeaderTemplate}"
                                                 HeaderTransitions="{TemplateBinding HeaderTransitions}"
@@ -159,7 +161,7 @@
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,4">
-                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click" Style="{StaticResource ServiceButtonStyle}">
+                <messages:MessageService x:Name="Service" Click="ServiceMessage_Click">
                     <TextBlock Foreground="White" TextAlignment="Center" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </messages:MessageService>
 
@@ -170,7 +172,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <messages:MessageService Click="ServiceMessage_Click" Margin="0,8,0,4" Style="{StaticResource ServiceButtonStyle}">
+            <messages:MessageService Click="ServiceMessage_Click" Margin="0,8,0,4">
                 <TextBlock Foreground="White" TextAlignment="Center" FontFamily="{ThemeResource EmojiThemeFontFamily}" Style="{StaticResource CaptionTextBlockStyle}"/>
             </messages:MessageService>
         </DataTemplate>
@@ -520,7 +522,7 @@
                             Visibility="Collapsed"
                             HorizontalAlignment="Center"
                             SizeChanged="DateHeaderPanel_SizeChanged">
-                        <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,8,0,0" Style="{StaticResource ServiceButtonStyle}">
+                        <messages:MessageService x:Name="DateHeader" Click="Date_Click" BorderThickness="0,8,0,0">
                             <TextBlock x:Name="DateHeaderLabel" Text="31 dicembre 2017" Foreground="White" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </messages:MessageService>
                     </Border>

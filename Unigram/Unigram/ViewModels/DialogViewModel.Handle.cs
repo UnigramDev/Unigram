@@ -925,8 +925,6 @@ namespace Unigram.ViewModels
 
         private async void InsertMessage(Message message, long? oldMessageId = null)
         {
-            var loadMore = false;
-
             using (await _loadMoreLock.WaitAsync())
             {
                 //if (!IsFirstSliceLoaded)
@@ -959,15 +957,13 @@ namespace Unigram.ViewModels
                         InsertMessageInOrder(Items, result[0]);
                     }
                 }
-                else if (message.IsOutgoing)
+                else if (message.IsOutgoing && message.SendingState is MessageSendingStatePending)
                 {
-                    loadMore = true;
+                    if (_composerHeader == null)
+                    {
+                        ComposerHeader = null;
+                    }
                 }
-            }
-
-            if (loadMore)
-            {
-                await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
             }
         }
 

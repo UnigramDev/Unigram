@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -32,14 +33,29 @@ namespace Unigram.Controls.Messages
 
         private string _query;
 
+        private bool _ignoreSizeChanged = true;
+
+        private MessageCornerRadius _cornerRadius;
+        private readonly CompositionGeometricClip _cornerRadiusClip;
+
         public MessageBubble()
         {
             InitializeComponent();
 
-            //ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
             //ElementCompositionPreview.SetIsTranslationEnabled(Footer, true);
+
+            var content = ElementCompositionPreview.GetElementVisual(ContentPanel);
+            var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
+            cross.Opacity = 0;
+
+            if (ApiInfo.CanAccessActualFloats && ApiInfo.CanUseDirectComposition)
+            {
+                _cornerRadiusClip = Window.Current.Compositor.CreateGeometricClip();
+                content.Clip = _cornerRadiusClip;
+            }
         }
 
         public void UpdateQuery(string text)
@@ -257,35 +273,15 @@ namespace Unigram.Controls.Messages
             }
             else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
             {
-                ContentPanel.CornerRadius = new CornerRadius();
+                _cornerRadius = new MessageCornerRadius();
             }
             else
             {
-                ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
+                _cornerRadius = new MessageCornerRadius(topLeft, topRight, bottomRight, bottomLeft);
             }
 
-            //if (_selectorItem != null)
-            //{
-            //    //_selectorItem.Margin = new Thickness(0, message.IsFirst ? 2 : 1, 0, message.IsLast ? 2 : 1);
-            //    //_selectorItem.Margin = new Thickness(0, message.IsFirst ? 3 : 1, 0, 1);
-            //    _selectorItem.Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
-            //}
-            //else
-            {
-                //Margin = new Thickness(0, message.IsFirst ? 2 : 1, 0, message.IsLast ? 2 : 1);
-                //Margin = new Thickness(0, message.IsFirst ? 3 : 1, 0, 1);
-                Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
-            }
-
-
-            //UpdateMessageContent(message, true);
-        }
-
-        private SelectorItem _selectorItem;
-
-        public void UpdateSelectorItem(SelectorItem selectorItem)
-        {
-            _selectorItem = selectorItem;
+            Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
+            UpdateClip();
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -1408,19 +1404,209 @@ namespace Unigram.Controls.Messages
 
         public void RegisterEvents()
         {
-            ContentPanel.SizeChanged -= OnSizeChanged;
-            ContentPanel.SizeChanged += OnSizeChanged;
+            _ignoreSizeChanged = false;
         }
 
         public void UnregisterEvents()
         {
-            ContentPanel.SizeChanged -= OnSizeChanged;
+            _ignoreSizeChanged = true;
+        }
+
+        private void UpdateClip()
+        {
+            if (ApiInfo.CanAccessActualFloats)
+            {
+                _cornerRadiusClip.Geometry = GenerateContourPath(ContentPanel.ActualSize, _cornerRadius);
+            }
+            else
+            {
+                ContentPanel.CornerRadius = _cornerRadius.ToCornerRadius();
+            }
+        }
+
+        private CompositionGeometry GenerateContourPath(Vector2 size, MessageCornerRadius radius)
+        {
+            if (radius.Zero)
+            {
+                // I am not sure of the reason for this anymore, but light messages reply has a -4 margin
+                // This way the clip will fit those additional 4 pixels on the sides.
+                var rectangle = Window.Current.Compositor.CreateRectangleGeometry();
+                rectangle.Size = new Vector2(size.X + 8, size.Y);
+                rectangle.Offset = new Vector2(-4, 0);
+
+                return rectangle;
+            }
+
+            using (var builder = new CanvasPathBuilder(null))
+            {
+                builder.BeginFigure(new Vector2(0, radius.TopLeft));
+                builder.AddArc(new Vector2(radius.TopLeft, 0), radius.TopLeft, radius.TopLeft, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+                builder.AddLine(new Vector2(size.X - radius.TopRight, 0));
+                builder.AddArc(new Vector2(size.X, radius.TopRight), radius.TopRight, radius.TopRight, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+                builder.AddLine(new Vector2(size.X, size.Y - radius.BottomRight));
+                builder.AddArc(new Vector2(size.X - radius.BottomRight, size.Y), radius.BottomRight, radius.BottomRight, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+                builder.AddLine(new Vector2(radius.BottomLeft, size.Y));
+                builder.AddArc(new Vector2(0, size.Y - radius.BottomLeft), radius.BottomLeft, radius.BottomLeft, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+                builder.EndFigure(CanvasFigureLoop.Closed);
+
+                var path = CanvasGeometry.CreatePath(builder);
+                var compositionPath = new CompositionPath(path);
+
+                return Window.Current.Compositor.CreatePathGeometry(compositionPath);
+            }
+        }
+
+        public void AnimateSendout(float xScale, float yScale, float fontScale, double outer, double inner, double delay, bool reply)
+        {
+            var content = _message?.GeneratedContent ?? _message?.Content;
+            var panel = ElementCompositionPreview.GetElementVisual(ContentPanel);
+
+            if (content is MessageText)
+            {
+                var crossScale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                crossScale.InsertKeyFrame(0, new Vector3(1, yScale, 1));
+                crossScale.InsertKeyFrame(1, new Vector3(1));
+                crossScale.Duration = TimeSpan.FromMilliseconds(outer);
+                crossScale.DelayTime = TimeSpan.FromMilliseconds(delay);
+                crossScale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+                var crossScale2 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                crossScale2.InsertKeyFrame(0, new Vector2(1, yScale));
+                crossScale2.InsertKeyFrame(1, new Vector2(1));
+                crossScale2.Duration = TimeSpan.FromMilliseconds(outer);
+                crossScale2.DelayTime = TimeSpan.FromMilliseconds(delay);
+                crossScale2.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+                var outOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                outOpacity.InsertKeyFrame(0, 1);
+                outOpacity.InsertKeyFrame(1, 0);
+                outOpacity.Duration = TimeSpan.FromMilliseconds(outer);
+                outOpacity.DelayTime = TimeSpan.FromMilliseconds(delay);
+                outOpacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+                var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
+                cross.StartAnimation("Opacity", outOpacity);
+
+                var background = ElementCompositionPreview.GetElementVisual(BackgroundPanel);
+                background.CenterPoint = new Vector3(0, reply ? 0 : ContentPanel.ActualSize.Y / 2, 0);
+                background.StartAnimation("Scale", crossScale);
+
+                _cornerRadiusClip.CenterPoint = new Vector2(0, reply ? 0 : ContentPanel.ActualSize.Y / 2);
+                _cornerRadiusClip.StartAnimation("Scale", crossScale2);
+            }
+
+            var header = ElementCompositionPreview.GetElementVisual(Header);
+            var text = ElementCompositionPreview.GetElementVisual(Message);
+            var media = ElementCompositionPreview.GetElementVisual(Media);
+            var footer = ElementCompositionPreview.GetElementVisual(Footer);
+
+            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(0, new Vector3(xScale, 1, 1));
+            scale.InsertKeyFrame(1, new Vector3(1));
+            scale.Duration = TimeSpan.FromMilliseconds(inner);
+
+            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1, 1)");
+            factor.SetReferenceParameter("content", panel);
+
+            CompositionAnimation textScale = factor;
+            if (fontScale != 1)
+            {
+                var textScaleImpl = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                textScaleImpl.InsertKeyFrame(0, fontScale);
+                textScaleImpl.InsertKeyFrame(1, 1);
+                textScaleImpl.Duration = TimeSpan.FromMilliseconds(outer);
+                textScaleImpl.DelayTime = TimeSpan.FromMilliseconds(delay);
+                textScaleImpl.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+                textScale = Window.Current.Compositor.CreateExpressionAnimation("Vector3(this.Scale * (1 / content.Scale.X), this.Scale, 1)");
+                textScale.SetReferenceParameter("content", panel);
+                textScale.Properties.InsertScalar("Scale", fontScale);
+                textScale.Properties.StartAnimation("Scale", textScaleImpl);
+
+                Message.Tag = textScaleImpl;
+                Media.Tag = textScale;
+            }
+
+            var inOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            inOpacity.InsertKeyFrame(0, 0);
+            inOpacity.InsertKeyFrame(1, 1);
+            inOpacity.Duration = TimeSpan.FromMilliseconds(outer);
+            inOpacity.DelayTime = TimeSpan.FromMilliseconds(delay);
+            inOpacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+            var headerLeft = (float)Header.Margin.Left;
+            var textLeft = (float)Message.Margin.Left;
+
+            var mediaLeft = (float)Media.Margin.Left;
+            var mediaBottom = (float)Media.Margin.Bottom;
+
+            var footerRight = (float)Footer.Margin.Right;
+            var footerBottom = (float)Footer.Margin.Bottom;
+
+            header.CenterPoint = new Vector3(-headerLeft, 0, 0);
+            text.CenterPoint = new Vector3(-textLeft, Message.ActualSize.Y, 0);
+            media.CenterPoint = new Vector3(-mediaLeft, Media.ActualSize.Y + mediaBottom, 0);
+            footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
+
+            header.StartAnimation("Scale", factor);
+            text.StartAnimation("Scale", textScale);
+            media.StartAnimation("Scale", textScale);
+            footer.StartAnimation("Scale", factor);
+            footer.StartAnimation("Opacity", inOpacity);
+
+            var headerOffsetX = content is MessageText ? 10 : 14;
+            var headerOffsetY = 0f;
+
+            var textOffsetX = 0f;
+            var textOffsetY = 0f;
+
+            if (content is MessageSticker or MessageDice)
+            {
+                headerOffsetY = reply ? 46 : 0;
+                textOffsetX = ContentPanel.ActualSize.X - Media.ActualSize.X; // - 10;
+            }
+            if (content is MessageBigEmoji)
+            {
+                headerOffsetY = reply ? -36 : 0;
+                textOffsetX = ContentPanel.ActualSize.X - Message.ActualSize.X; //- 10;
+            }
+            else if (content is MessageText)
+            {
+                textOffsetY = reply ? 16 : 0;
+            }
+
+            var headerOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            headerOffset.InsertKeyFrame(0, new Vector3(-(headerOffsetX * (1 / xScale)), headerOffsetY, 0));
+            headerOffset.InsertKeyFrame(1, new Vector3(0));
+            headerOffset.Duration = TimeSpan.FromMilliseconds(headerOffsetY > 0 ? outer : inner);
+            headerOffset.DelayTime = TimeSpan.FromMilliseconds(delay);
+            headerOffset.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            header.StartAnimation("Translation", headerOffset);
+
+            var textOffset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            textOffset.InsertKeyFrame(0, new Vector3(-textOffsetX, textOffsetY, 0));
+            textOffset.InsertKeyFrame(1, new Vector3());
+            textOffset.Duration = TimeSpan.FromMilliseconds(textOffsetY > 0 ? outer : inner);
+
+            if (content is MessageSticker or MessageDice)
+            {
+                media.StartAnimation("Translation", textOffset);
+            }
+            else
+            {
+                text.StartAnimation("Translation", textOffset);
+            }
+
+            panel.CenterPoint = new Vector3(ContentPanel.ActualSize, 0);
+            panel.StartAnimation("Scale", scale);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            UpdateClip();
+
             var message = _message;
-            if (message == null || e.PreviousSize.Width < 1 || e.PreviousSize.Height < 1)
+            if (message == null || e.PreviousSize.Width < 1 || e.PreviousSize.Height < 1 || _ignoreSizeChanged)
             {
                 return;
             }
@@ -2076,6 +2262,29 @@ namespace Unigram.Controls.Messages
                 default:
                     return false;
             }
+        }
+    }
+
+    public struct MessageCornerRadius
+    {
+        public float TopLeft;
+        public float TopRight;
+        public float BottomRight;
+        public float BottomLeft;
+
+        public MessageCornerRadius(float topLeft, float topRight, float bottomRight, float bottomLeft)
+        {
+            TopLeft = topLeft;
+            TopRight = topRight;
+            BottomRight = bottomRight;
+            BottomLeft = bottomLeft;
+        }
+
+        public bool Zero => TopLeft == 0 && TopRight == 0 && BottomRight == 0 && BottomLeft == 0;
+
+        public CornerRadius ToCornerRadius()
+        {
+            return new CornerRadius(TopLeft, TopRight, BottomRight, BottomLeft);
         }
     }
 }

@@ -29,6 +29,9 @@ namespace Unigram.Common
         private static bool? _canCheckThreadAccess;
         public static bool CanCheckThreadAccess => _canCheckThreadAccess ??= ApiInformation.IsPropertyPresent("Windows.System.DispatcherQueue", "HasThreadAccess");
 
+        private static bool? _canAccessActualFloats;
+        public static bool CanAccessActualFloats => _canAccessActualFloats ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "ActualSize");
+
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
 

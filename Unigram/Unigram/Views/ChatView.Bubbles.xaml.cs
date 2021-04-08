@@ -325,7 +325,7 @@ namespace Unigram.Views
             // If autoplay is enabled and the message contains a video note, then we want a different behavior
             if (ViewModel.Settings.IsAutoPlayAnimationsEnabled && (message.Content is MessageVideoNote || text?.WebPage != null && text.WebPage.Video != null))
             {
-                ViewModel.PlaybackService.Enqueue(message, ViewModel.ThreadId);
+                ViewModel.PlaybackService.Play(message, ViewModel.ThreadId);
                 //if (_old.TryGetValue(message.Id, out MediaPlayerItem item))
                 //{
                 //    if (item.Presenter == null || item.Presenter.MediaPlayer == null)
@@ -721,7 +721,6 @@ namespace Unigram.Views
             if (content is MessageBubble bubble)
             {
                 bubble.UpdateQuery(ViewModel.Search?.Query);
-                bubble.UpdateSelectorItem(args.ItemContainer);
                 bubble.UpdateMessage(args.Item as MessageViewModel);
                 args.Handled = true;
 
