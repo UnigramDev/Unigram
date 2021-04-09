@@ -1,5 +1,6 @@
 ﻿using System;
 using Telegram.Td.Api;
+using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.Storage;
@@ -144,8 +145,16 @@ namespace Unigram.Controls.Messages.Content
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                Texture.Background = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                try
+                {
+                    Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                    Button.Style = App.Current.Resources["ImmersiveFileButtonStyle"] as Style;
+                }
+                catch
+                {
+                    Texture.Background = null;
+                    Button.Style = App.Current.Resources["InlineFileButtonStyle"] as Style;
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
@@ -158,7 +167,7 @@ namespace Unigram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageDocument document)
+            if (content is MessageDocument)
             {
                 return true;
             }

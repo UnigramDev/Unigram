@@ -1,11 +1,8 @@
-﻿using System;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Messages.Content
 {

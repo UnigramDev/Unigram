@@ -75,7 +75,7 @@ namespace Unigram.Controls.Messages.Content
             }
         }
 
-        public void UpdateFile(MessageViewModel message, File file)
+        public async void UpdateFile(MessageViewModel message, File file)
         {
             var photo = GetContent(message.Content);
             if (photo == null)
@@ -172,7 +172,22 @@ namespace Unigram.Controls.Messages.Content
                         height = (int)(big.Height * ratio);
                     }
 
-                    Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
+                    try
+                    {
+                        BitmapImage image;
+                        Texture.Source = image = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height }; // UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
+
+                        var test = await message.ProtoService.GetFileAsync(file);
+                        using (var stream = await test.OpenReadAsync())
+                        {
+                            await image.SetSourceAsync(stream);
+                        }
+
+                    }
+                    catch
+                    {
+                        Texture.Source = null;
+                    }
                 }
             }
         }
@@ -181,7 +196,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                //Background = new ImageBrush { ImageSource = new BitmapImage(new Uri("file:///" + file.Local.Path)), Stretch = Stretch.UniformToFill };
+                //Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.GetLocal(file.Local.Path)), Stretch = Stretch.UniformToFill };
                 Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -192,7 +207,7 @@ namespace Unigram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessagePhoto photo)
+            if (content is MessagePhoto)
             {
                 return true;
             }
@@ -237,6 +252,11 @@ namespace Unigram.Controls.Messages.Content
             var big = photo.GetBig();
             if (big == null)
             {
+                if (_message?.SendingState is MessageSendingStateFailed)
+                {
+                    _message.ProtoService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                }
+
                 return;
             }
 

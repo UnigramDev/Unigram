@@ -58,7 +58,7 @@ namespace Unigram.Controls.Gallery
             UpdateFile(item, data);
         }
 
-        public void UpdateFile(GalleryContent item, File file)
+        public async void UpdateFile(GalleryContent item, File file)
         {
             var data = item.GetFile();
             var thumb = item.GetThumbnail();
@@ -109,7 +109,24 @@ namespace Unigram.Controls.Gallery
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Photo);
                     Button.Opacity = 0;
-                    Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+
+                    try
+                    {
+                        BitmapImage image;
+                        Texture.Source = image = new BitmapImage(); // (UriEx.GetLocal(file.Local.Path));
+
+                        var test = await item.ProtoService.GetFileAsync(file);
+                        using (var stream = await test.OpenReadAsync())
+                        {
+                            await image.SetSourceAsync(stream);
+                        }
+
+                        Texture.Source = image;
+                    }
+                    catch
+                    {
+                        Texture.Source = null;
+                    }
                 }
             }
         }
@@ -118,7 +135,7 @@ namespace Unigram.Controls.Gallery
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                //Texture.Source = new BitmapImage(new Uri("file:///" + file.Local.Path));
+                //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
                 Panel.Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path), Stretch = Stretch.UniformToFill };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

@@ -63,7 +63,7 @@ namespace Unigram.Controls.Messages
                 ? media.DesiredSize.Width
                 : Math.Max(media.DesiredSize.Width, text.DesiredSize.Width + margin.Width);
 
-            return new Size(width, text.DesiredSize.Height + media.DesiredSize.Height + margin.Height);
+            return new Size(Math.Max(footer.DesiredSize.Width, width), text.DesiredSize.Height + media.DesiredSize.Height + margin.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
