@@ -172,7 +172,7 @@ namespace Unigram.Views.Settings
             {
                 if (content.Children[0] is Image photo)
                 {
-                    photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
+                    photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 48);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                 }
                 else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
@@ -266,7 +266,7 @@ namespace Unigram.Views.Settings
 
                         if (content.Children[0] is Image photo)
                         {
-                            photo.Source = await PlaceholderHelper.GetWebPFrameAsync(update.File.Local.Path);
+                            photo.Source = await PlaceholderHelper.GetWebPFrameAsync(update.File.Local.Path, 48);
                             ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                         }
                         else if (content.Children[0] is LottieView lottie)

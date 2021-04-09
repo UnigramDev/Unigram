@@ -133,7 +133,7 @@ namespace Unigram.Controls.Drawers
 
                     if (content.Children[0] is Border border && border.Child is Image photo)
                     {
-                        photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
+                        photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
                         ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                     }
                     else if (content.Children[0] is LottieView lottie)
@@ -176,7 +176,7 @@ namespace Unigram.Controls.Drawers
                     }
                     else
                     {
-                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
                     }
                 }
             }
@@ -393,7 +393,7 @@ namespace Unigram.Controls.Drawers
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
-                    photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path);
+                    photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                 }
                 else if (content.Children[0] is LottieView lottie)
@@ -471,7 +471,7 @@ namespace Unigram.Controls.Drawers
                     }
                     else
                     {
-                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 36);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

@@ -41,9 +41,9 @@ namespace winrt::Unigram::Native::implementation
 			return s_current.as<winrt::Unigram::Native::PlaceholderImageHelper>();
 		}
 
-		void DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream);
+		void DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
 
-		Windows::Foundation::Size DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream);
+		void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
 		void DrawQr(hstring data, _In_ Color foreground, _In_ Color background, IRandomAccessStream randomAccessStream);
 		void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
 

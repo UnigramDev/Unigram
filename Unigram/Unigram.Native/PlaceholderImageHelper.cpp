@@ -84,8 +84,10 @@ namespace winrt::Unigram::Native::implementation
 		}
 	};
 
-	void PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream)
+	void PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
 	{
+		size = Windows::Foundation::Size{ 0,0 };
+
 		FILE* file = _wfopen(fileName.data(), L"rb");
 		if (file == NULL) {
 			return;
@@ -147,6 +149,9 @@ namespace winrt::Unigram::Native::implementation
 				height = (int)(iter.height * ratio);
 			}
 
+			size.Width = width;
+			size.Height = height;
+
 			uint8_t* pixels = new uint8_t[(width * 4) * height];
 
 			if (width != iter.width || height != iter.height) {
@@ -205,11 +210,9 @@ namespace winrt::Unigram::Native::implementation
 		free(buffer);
 	}
 
-	Windows::Foundation::Size PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream)
+	void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
 	{
-		Windows::Foundation::Size size;
 		winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
-		return size;
 	}
 
 	void PlaceholderImageHelper::DrawQr(hstring data, Color foreground, Color background, IRandomAccessStream randomAccessStream)

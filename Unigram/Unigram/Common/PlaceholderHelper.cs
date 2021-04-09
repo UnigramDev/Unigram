@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Unigram.Converters;
 using Unigram.Native;
 using Unigram.Services;
+using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -329,7 +330,7 @@ namespace Unigram.Common
                 {
                     try
                     {
-                        PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream);
+                        PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream, out _);
                         bitmap.SetSource(stream);
                     }
                     catch { }
@@ -356,8 +357,8 @@ namespace Unigram.Common
                 {
                     try
                     {
-                        var size = PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream);
-                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Windows.Foundation.Size(size.Width / 3, size.Height / 3));
+                        PlaceholderImageHelper.Current.DrawSvg(text, foreground, stream, out Size size);
+                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(size.Width / 3, size.Height / 3));
                     }
                     catch { }
                 }
@@ -481,14 +482,24 @@ namespace Unigram.Common
             //return new BitmapImage(UriEx.GetLocal(path));
             //return WebPImage.DecodeFromPath(path);
 
-            var side = (int)maxWidth;
-
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.Current.DrawWebP(path, side, stream);
+                    PlaceholderImageHelper.Current.DrawWebP(path, 512, stream, out Size size);
+
+                    if (size.Width > 0 && size.Height > 0 && maxWidth != 512)
+                    {
+                        double ratioX = maxWidth / size.Width;
+                        double ratioY = maxWidth / size.Height;
+                        double ratio = Math.Min(ratioX, ratioY);
+
+                        bitmap.DecodePixelWidth = (int)(size.Width * ratio);
+                        bitmap.DecodePixelHeight = (int)(size.Height * ratio);
+                        bitmap.DecodePixelType = DecodePixelType.Logical;
+                    }
+
                     bitmap.SetSource(stream);
                 }
                 catch { }
@@ -508,14 +519,25 @@ namespace Unigram.Common
             //return new BitmapImage(UriEx.GetLocal(path));
             //return WebPImage.DecodeFromPath(path);
 
-            var side = (int)maxWidth;
-
             var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, side, stream));
+                    Size size;
+                    await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, 512, stream, out size));
+
+                    if (size.Width > 0 && size.Height > 0 && maxWidth != 512)
+                    {
+                        double ratioX = maxWidth / size.Width;
+                        double ratioY = maxWidth / size.Height;
+                        double ratio = Math.Min(ratioX, ratioY);
+
+                        bitmap.DecodePixelWidth = (int)(size.Width * ratio);
+                        bitmap.DecodePixelHeight = (int)(size.Height * ratio);
+                        bitmap.DecodePixelType = DecodePixelType.Logical;
+                    }
+
                     await bitmap.SetSourceAsync(stream);
                 }
                 catch { }
@@ -536,7 +558,7 @@ namespace Unigram.Common
             {
                 if (webp)
                 {
-                    return GetWebPFrame(path);
+                    return GetWebPFrame(path, width);
                 }
 
                 return null;

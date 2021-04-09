@@ -8,7 +8,6 @@ using Unigram.ViewModels;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Popups
@@ -106,7 +105,7 @@ namespace Unigram.Views.Popups
                 var file = sticker.Thumbnail.File;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                    content.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 60);
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
