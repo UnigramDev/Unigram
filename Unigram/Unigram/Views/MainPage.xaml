@@ -495,7 +495,7 @@
                 <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="3">
                     <PivotItem x:Name="TabChats" Header="Chats">
                         <Grid>
-                            <Grid x:Name="DialogsSearchPanel">
+                            <Grid x:Name="DialogsSearchPanel" x:Load="False">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition/>
@@ -871,8 +871,9 @@
                         </Grid>
                     </PivotItem>
                     <PivotItem Header="{CustomResource Contacts}">
-                        <Grid>
+                        <Grid x:Name="ContactsRoot" x:Load="False">
                             <ListView x:Name="ContactsSearchListView"
+                                      x:Load="False"
                                       ItemsSource="{x:Bind ContactsResults.View, Mode=OneWay}"
                                       IsItemClickEnabled="True"
                                       SelectionMode="None"
@@ -1015,26 +1016,28 @@
                         </Grid>
                     </PivotItem>
                     <PivotItem x:Name="Calls" Header="{CustomResource Calls}">
-                        <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
-                                  ItemClick="ListView_ItemClick"
-                                  IsItemClickEnabled="True"
-                                  ContainerContentChanging="Calls_ContainerContentChanging"
-                                  SelectionMode="None">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <cells:CallCell ContextRequested="Call_ContextRequested"/>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    <Setter Property="Padding" Value="0"/>
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <!--<ListView.ItemContainerTransitions>
-                                 <TransitionCollection/>
-                                 </ListView.ItemContainerTransitions>-->
-                        </ListView>
+                        <Grid x:Name="CallsRoot" x:Load="False">
+                            <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
+                                      ItemClick="ListView_ItemClick"
+                                      IsItemClickEnabled="True"
+                                      ContainerContentChanging="Calls_ContainerContentChanging"
+                                      SelectionMode="None">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <cells:CallCell ContextRequested="Call_ContextRequested"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Padding" Value="0"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <!--<ListView.ItemContainerTransitions>
+                                     <TransitionCollection/>
+                                     </ListView.ItemContainerTransitions>-->
+                            </ListView>
+                        </Grid>
                     </PivotItem>
                     <PivotItem Header="{CustomResource Settings}">
                         <Grid x:Name="SettingsRoot" x:Load="False">

@@ -34,6 +34,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -794,7 +795,7 @@ namespace Unigram.Views
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel.Aggregator.Subscribe(this);
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
@@ -816,6 +817,17 @@ namespace Unigram.Views
 
                 Bindings.StopTracking();
                 Bindings.Update();
+            }
+
+            if (SettingsService.Current.Diagnostics.IsLastErrorDiskFull)
+            {
+                SettingsService.Current.Diagnostics.IsLastErrorDiskFull = false;
+                
+                var confirm = await MessagePopup.ShowAsync("Unigram has previously failed to launch because the device storage was full.\r\n\r\nMake sure there's enough storage space available and press **OK** to continue.", "Disk storage is full", Strings.Resources.OK, Strings.Resources.StorageUsage);
+                if (confirm == ContentDialogResult.Secondary)
+                {
+                    MasterDetail.NavigationService.Navigate(typeof(SettingsStoragePage));
+                }
             }
         }
 
@@ -1663,9 +1675,11 @@ namespace Unigram.Views
                     break;
                 case 1:
                     Root?.SetSelectedIndex(RootDestination.Contacts);
+                    FindName(nameof(ContactsRoot));
                     break;
                 case 2:
                     Root?.SetSelectedIndex(RootDestination.Calls);
+                    FindName(nameof(CallsRoot));
                     break;
                 case 3:
                     Root?.SetSelectedIndex(RootDestination.Settings);
@@ -1743,6 +1757,7 @@ namespace Unigram.Views
                 _searchCollapsed = true;
             }
 
+            FindName(nameof(DialogsSearchPanel));
             DialogsPanel.Visibility = Visibility.Visible;
 
             var chats = ElementCompositionPreview.GetElementVisual(DialogsPanel);
@@ -1919,9 +1934,27 @@ namespace Unigram.Views
                 }
             }
 
-            var activePanel = rpMasterTitlebar.SelectedIndex == 0 ? DialogsPanel : ContactsPanel;
-            var activeList = rpMasterTitlebar.SelectedIndex == 0 ? DialogsSearchListView : ContactsSearchListView;
-            var activeResults = rpMasterTitlebar.SelectedIndex == 0 ? ChatsResults : ContactsResults;
+            Grid activePanel;
+            ListView activeList;
+            CollectionViewSource activeResults;
+
+            switch (rpMasterTitlebar.SelectedIndex)
+            {
+                case 0:
+                    FindName(nameof(DialogsSearchPanel));
+                    activePanel = DialogsPanel;
+                    activeList = DialogsSearchListView;
+                    activeResults = ChatsResults;
+                    break;
+                case 1:
+                    FindName(nameof(ContactsSearchListView));
+                    activePanel = ContactsPanel;
+                    activeList = ContactsSearchListView;
+                    activeResults = ContactsResults;
+                    break;
+                default:
+                    return;
+            }
 
             if (activePanel.Visibility == Visibility.Visible)
             {
