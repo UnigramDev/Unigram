@@ -15,13 +15,13 @@ namespace Unigram.Controls
 {
     public class RecentUserHeads : Control
     {
-        private RecentUserCollection _items = new RecentUserCollection();
-        private HashSet<UIElement> _toBeRemoved = new HashSet<UIElement>();
+        private readonly RecentUserCollection _items = new RecentUserCollection();
+        private readonly HashSet<UIElement> _toBeRemoved = new HashSet<UIElement>();
 
         private Grid _layoutRoot;
 
-        private int _maxCount = 3;
-        private int _maxIndex = 2;
+        private readonly int _maxCount = 3;
+        private readonly int _maxIndex = 2;
 
         public RecentUserHeads()
         {
@@ -105,6 +105,8 @@ namespace Unigram.Controls
                 }
             }
 
+            index = Math.Max(Math.Min(_layoutRoot.Children.Count - 1, index), 0);
+
             Canvas.SetZIndex(container, -index);
             _layoutRoot.Children.Insert(index, container);
 
@@ -145,7 +147,7 @@ namespace Unigram.Controls
                 }
             }
 
-            if (container != null)
+            if (container != null && _layoutRoot.Children.Count < _maxCount)
             {
                 Canvas.SetZIndex(container, -_maxCount);
                 _layoutRoot.Children.Insert(_maxCount, container);
@@ -158,6 +160,11 @@ namespace Unigram.Controls
 
         private void MoveItem(int oldIndex, int newIndex)
         {
+            if (oldIndex >= _layoutRoot.Children.Count || newIndex >= _layoutRoot.Children.Count)
+            {
+                return;
+            }
+
             _layoutRoot.Children.Move((uint)oldIndex, (uint)newIndex);
 
             var compositor = Window.Current.Compositor;
