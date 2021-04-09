@@ -328,6 +328,7 @@
         <controls:GlyphToggleButton
             x:Name="RateButton"
             Click="Rate_Click"
+            ContextRequested="Rate_ContextRequested"
             UncheckedForeground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
             CheckedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
             Glyph="&#xEC57;"

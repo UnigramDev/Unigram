@@ -7,6 +7,7 @@ using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Windows.Foundation.Metadata;
 using Windows.Media.Playback;
 using Windows.System;
 using Windows.UI.Composition;
@@ -178,8 +179,8 @@ namespace Unigram.Controls
 
             VolumeSlider.Value = _playbackService.Volume * 100;
 
-            PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Playing ? Icons.Pause : Icons.Play;
-            Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Playing ? Strings.Resources.AccActionPause : Strings.Resources.AccActionPlay);
+            PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Paused ? Icons.Play : Icons.Pause;
+            Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Paused ? Strings.Resources.AccActionPlay : Strings.Resources.AccActionPause);
 
             var webPage = message.Content is MessageText text ? text.WebPage : null;
 
@@ -301,18 +302,18 @@ namespace Unigram.Controls
         private void UpdateRate()
         {
             RateButton.Visibility = _playbackService.IsSupportedPlaybackRateRange(2.0, 2.0) ? Visibility.Visible : Visibility.Collapsed;
-            RateButton.IsChecked = _playbackService.PlaybackRate == 2.0;
+            RateButton.IsChecked = _playbackService.PlaybackRate != 1.0;
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (_playbackService.PlaybackState == MediaPlaybackState.Playing)
+            if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
             {
-                _playbackService.Pause();
+                _playbackService.Play();
             }
             else
             {
-                _playbackService.Play();
+                _playbackService.Pause();
             }
         }
 
@@ -384,6 +385,39 @@ namespace Unigram.Controls
             {
                 _playbackService.PlaybackRate = 1.0;
                 RateButton.IsChecked = false;
+            }
+        }
+
+        private void Rate_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var flyout = new MenuFlyout();
+            var rates = new double[] { 0.25, 0.5, 0.75, 1, 1.25, 1.50, 1.75, 2 };
+
+            for (int i = 0; i < rates.Length; i++)
+            {
+                var rate = rates[i];
+                var toggle = new ToggleMenuFlyoutItem
+                {
+                    Text = $"{rate}",
+                    IsChecked = _playbackService.PlaybackRate == rate,
+                    CommandParameter = rate,
+                    Command = new RelayCommand<double>(x =>
+                    {
+                        _playbackService.PlaybackRate = rate;
+                        RateButton.IsChecked = rate != 1;
+                    })
+                };
+
+                flyout.Items.Add(toggle);
+            }
+
+            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
+            {
+                flyout.ShowAt(RateButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+            }
+            else
+            {
+                flyout.ShowAt(RateButton);
             }
         }
 
