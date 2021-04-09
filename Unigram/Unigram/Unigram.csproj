@@ -150,6 +150,7 @@
     <Compile Include="Charts\StackBarChartView.cs" />
     <Compile Include="Charts\StackLinearChartView.cs" />
     <Compile Include="Charts\StepChartView.cs" />
+    <Compile Include="Collections\CollectionSeparator.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\IncrementalCollectionWithDelegate.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Common\AnimatedRepeaterHandler.cs" />
     <Compile Include="Common\AnimatedListHandler.cs" />
     <Compile Include="Common\ApiInfo.cs" />
+    <Compile Include="Common\AsyncHelper.cs" />
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Common\Chats\InputChatActionManager.cs" />
     <Compile Include="Common\Chats\OutputChatActionManager.cs" />
@@ -469,6 +471,7 @@
     <Compile Include="Navigation\Services\NavigationService.cs" />
     <Compile Include="Navigation\Services\NavigationServiceList.cs" />
     <Compile Include="Selectors\ChatStatisticsOverviewTemplateSelector.cs" />
+    <Compile Include="Selectors\InviteLinkTemplateSelector.cs" />
     <Compile Include="Services\CallsService.cs" />
     <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
