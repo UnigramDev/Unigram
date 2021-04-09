@@ -14,7 +14,6 @@ using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
-using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
@@ -238,7 +237,7 @@ namespace Unigram.Services
 
                 await ShowAsync(groupCall, _manager);
 
-                Rejoin(groupCallId, alias);
+                Rejoin(groupCall, alias);
             }
         }
 
@@ -255,7 +254,7 @@ namespace Unigram.Services
             var alias = await PickAliasAsync(chat);
             if (alias != null)
             {
-                Rejoin(call.Id, alias);
+                Rejoin(call, alias);
             }
         }
 
@@ -275,38 +274,31 @@ namespace Unigram.Services
             return null;
         }
 
-        private void Rejoin(int groupCallId, MessageSender alias)
+        private void Rejoin(GroupCall groupCall, MessageSender alias)
         {
-            var leave = _alias != null && _alias.Equals(alias);
-
             _alias = alias;
 
             _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false);
             _manager?.EmitJoinPayload(async (ssrc, payload) =>
             {
-                if (leave)
-                {
-                    await ProtoService.SendAsync(new LeaveGroupCall(groupCallId));
-                }
-
                 Participants?.Dispose();
-                Participants = new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCallId);
+                Participants = new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
 
-                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCallId, alias, payload, ssrc, true, string.Empty));
+                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, payload, ssrc, true, string.Empty));
                 if (response is GroupCallJoinResponseWebrtc data)
                 {
                     _source = ssrc;
                     _manager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
                     _manager.SetJoinResponsePayload(data, null);
 
-                    ProtoService.Send(new LoadGroupCallParticipants(groupCallId, 100));
+                    Participants?.Load();
                 }
                 else if (response is GroupCallJoinResponseStream)
                 {
                     _source = ssrc;
                     _manager.SetConnectionMode(VoipGroupConnectionMode.Broadcast, true);
 
-                    ProtoService.Send(new LoadGroupCallParticipants(groupCallId, 100));
+                    Participants?.Load();
                 }
             });
         }
@@ -354,10 +346,23 @@ namespace Unigram.Services
             _isConnected = args.IsConnected;
         }
 
+        private readonly Dictionary<int, (bool, int)> _lastUpdates = new Dictionary<int, (bool, int)>();
+
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
         {
+            var now = DateTime.Now.ToTimestamp();
+
             foreach (var level in levels)
             {
+                if (_lastUpdates.TryGetValue(level.Key, out var data))
+                {
+                    if (data.Item1 == level.Value.Value || now < data.Item2 + 1)
+                    {
+                        continue;
+                    }
+                }
+
+                _lastUpdates[level.Key] = (level.Value.Value, now);
                 ProtoService.Send(new SetGroupCallParticipantIsSpeaking(_call.Id, level.Key == 0 ? _source : level.Key, level.Value.Value));
             }
         }
@@ -436,7 +441,7 @@ namespace Unigram.Services
 
                     if (update.GroupCall.NeedRejoin)
                     {
-                        Rejoin(update.GroupCall.Id, _alias);
+                        Rejoin(update.GroupCall, _alias);
                     }
                 }
             }

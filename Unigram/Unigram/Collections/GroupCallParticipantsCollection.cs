@@ -11,29 +11,49 @@ using Windows.System;
 
 namespace Unigram.Collections
 {
-    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, IDelegable<IGroupCallDelegate>, IHandle<UpdateGroupCallParticipant>
+    public class GroupCallParticipantsCollection : ObservableCollection<GroupCallParticipant>, IDelegable<IGroupCallDelegate>, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
     {
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
 
         private readonly int _groupCallId;
+        private bool _loadedAllParticipants;
 
         public IGroupCallDelegate Delegate { get; set; }
 
-        public GroupCallParticipantsCollection(IProtoService protoService, IEventAggregator aggregator, int groupCallId)
+        public GroupCallParticipantsCollection(IProtoService protoService, IEventAggregator aggregator, GroupCall groupCall)
         {
             _protoService = protoService;
             _aggregator = aggregator;
 
-            _groupCallId = groupCallId;
+            _groupCallId = groupCall.Id;
+            _loadedAllParticipants = groupCall.LoadedAllParticipants;
 
             _aggregator.Subscribe(this);
+        }
+
+        public void Load()
+        {
+            _protoService.Send(new LoadGroupCallParticipants(_groupCallId, 100));
         }
 
         public void Dispose()
         {
             _aggregator.Unsubscribe(this);
             _handlers.Clear();
+        }
+
+        public void Handle(UpdateGroupCall update)
+        {
+            if (_groupCallId == update.GroupCall.Id)
+            {
+                if (_loadedAllParticipants && _loadedAllParticipants != update.GroupCall.LoadedAllParticipants)
+                {
+                    Load();
+                }
+
+                _loadedAllParticipants = update.GroupCall.LoadedAllParticipants;
+            }
         }
 
         public void Handle(UpdateGroupCallParticipant update)
