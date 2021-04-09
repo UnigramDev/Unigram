@@ -335,8 +335,7 @@ namespace Unigram.Controls
 
             if (newValue == null)
             {
-                //canvas.Paused = true;
-                //canvas.ResetElapsedTime();
+                _source = null;
                 Subscribe(false);
                 return;
             }
