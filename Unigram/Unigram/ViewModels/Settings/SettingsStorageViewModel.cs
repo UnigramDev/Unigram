@@ -5,7 +5,6 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -17,7 +16,6 @@ namespace Unigram.ViewModels.Settings
         public SettingsStorageViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            ChangeTtlCommand = new RelayCommand(ChangeTtlExecute);
             ClearCacheCommand = new RelayCommand(ClearCacheExecute);
         }
 
@@ -46,7 +44,7 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        public int FilesTtl
+        public int KeepMedia
         {
             get
             {
@@ -55,11 +53,13 @@ namespace Unigram.ViewModels.Settings
 
                 return CacheService.Options.UseStorageOptimizer ? ttl / 60 / 60 / 24 : 0;
             }
-            //set
-            //{
-            //    Settings.FilesTtl = value;
-            //    RaisePropertyChanged();
-            //}
+            set
+            {
+                CacheService.Options.StorageMaxTimeFromLastAccess = value * 60 * 60 * 24;
+                CacheService.Options.UseStorageOptimizer = value > 0;
+
+                RaisePropertyChanged();
+            }
         }
 
         private StorageStatisticsFast _statisticsFast;
@@ -224,35 +224,6 @@ namespace Unigram.ViewModels.Settings
             IsLoading = false;
 
             return value;
-        }
-
-        public RelayCommand ChangeTtlCommand { get; }
-        private async void ChangeTtlExecute()
-        {
-            var enabled = CacheService.Options.UseStorageOptimizer;
-            var ttl = CacheService.Options.StorageMaxTimeFromLastAccess;
-
-            var items = new[]
-            {
-                new SelectRadioItem(3, Locale.Declension("Days", 3), enabled && ttl == 3 * 60 * 60 * 24),
-                new SelectRadioItem(7, Locale.Declension("Weeks", 1), enabled && ttl == 7 * 60 * 60 * 24),
-                new SelectRadioItem(30, Locale.Declension("Months", 1), enabled && ttl == 30 * 60 * 60 * 24),
-                new SelectRadioItem(0, Strings.Resources.KeepMediaForever, !enabled)
-            };
-
-            var dialog = new SelectRadioPopup(items);
-            dialog.Title = Strings.Resources.KeepMedia;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is int index)
-            {
-                CacheService.Options.StorageMaxTimeFromLastAccess = index * 60 * 60 * 24;
-                CacheService.Options.UseStorageOptimizer = index > 0;
-
-                RaisePropertyChanged(nameof(FilesTtl));
-            }
         }
     }
 }

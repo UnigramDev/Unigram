@@ -35,11 +35,29 @@
             <ListView.Header>
                 <StackPanel>
                     <controls:HeaderedControl
-                        Footer="{CustomResource KeepMediaInfo}">
-                        <controls:BadgeButton
-                            Command="{x:Bind ViewModel.ChangeTtlCommand}"
-                            Content="{CustomResource KeepMedia}"
-                            Badge="{x:Bind ConvertTtl(ViewModel.FilesTtl), Mode=OneWay}"/>
+                            x:Name="KeepMediaPanel"
+                            Header="{CustomResource KeepMedia}"
+                            Footer="{CustomResource KeepMediaInfo}">
+                        <Grid x:Name="KeepMediaTicks" Padding="12,6,12,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Slider
+                                x:Name="KeepMedia"
+                                Value="{x:Bind ConvertKeepMedia(ViewModel.KeepMedia), Mode=TwoWay, BindBack=ConvertKeepMediaBack}"
+                                Maximum="3"
+                                Minimum="0"
+                                SmallChange="1"
+                                LargeChange="1"
+                                StepFrequency="1"
+                                TickFrequency="1"
+                                TickPlacement="Outside"
+                                IsThumbToolTipEnabled="False"
+                                Grid.Row="1"/>
+                        </Grid>
+                        <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl

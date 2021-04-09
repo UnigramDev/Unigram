@@ -1,4 +1,5 @@
-﻿using Telegram.Td.Api;
+﻿using System;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -16,6 +17,30 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsStorageViewModel>();
+
+            InitializeKeepMediaTicks();
+        }
+
+        private void InitializeKeepMediaTicks()
+        {
+            int j = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                var label = new TextBlock { Text = ConvertKeepMediaTick(i), TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch, Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style };
+                Grid.SetColumn(label, j);
+
+                KeepMediaTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+
+                if (i < 3)
+                {
+                    KeepMediaTicks.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                }
+
+                KeepMediaTicks.Children.Add(label);
+                j += 2;
+            }
+
+            Grid.SetColumnSpan(KeepMedia, KeepMediaTicks.ColumnDefinitions.Count);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -89,6 +114,77 @@ namespace Unigram.Views.Settings
         {
             return value != null;
         }
+
+        private int ConvertKeepMedia(int value)
+        {
+            switch (Math.Max(0, Math.Min(30, value)))
+            {
+                case 0:
+                default:
+                    return 3;
+                case 3:
+                    return 0;
+                case 7:
+                    return 2;
+                case 30:
+                    return 3;
+            }
+        }
+
+        private void ConvertKeepMediaBack(double value)
+        {
+            switch (value)
+            {
+                case 0:
+                    ViewModel.KeepMedia = 3;
+                    break;
+                case 1:
+                    ViewModel.KeepMedia = 7;
+                    break;
+                case 2:
+                    ViewModel.KeepMedia = 30;
+                    break;
+                case 3:
+                    ViewModel.KeepMedia = 0;
+                    break;
+            }
+        }
+
+        private string ConvertKeepMediaTick(double value)
+        {
+            var days = 0;
+            switch (value)
+            {
+                case 0:
+                    days = 3;
+                    break;
+                case 1:
+                    days = 7;
+                    break;
+                case 2:
+                    days = 30;
+                    break;
+                case 3:
+                    days = 0;
+                    break;
+            }
+
+            if (days < 1)
+            {
+                return Strings.Resources.KeepMediaForever;
+            }
+            else if (days < 7)
+            {
+                return Locale.Declension("Days", days);
+            }
+            else if (days < 30)
+            {
+                return Locale.Declension("Weeks", 1);
+            }
+
+            return Locale.Declension("Months", 1);
+        }
+
 
         #endregion
     }
