@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Td.Api;
@@ -10,21 +9,47 @@ using Unigram.ViewModels.Drawers;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Controls.Drawers
 {
+    public class ItemContextRequestedEventArgs<T> : EventArgs
+    {
+        private readonly ContextRequestedEventArgs _args;
+
+        public ItemContextRequestedEventArgs(T item, ContextRequestedEventArgs args)
+        {
+            _args = args;
+            Item = item;
+        }
+
+        public bool TryGetPosition(UIElement relativeTo, out Point point)
+        {
+            return _args.TryGetPosition(relativeTo, out point);
+        }
+
+        public T Item { get; }
+
+        public bool Handled
+        {
+            get => _args.Handled;
+            set => _args.Handled = value;
+        }
+    }
+
     public sealed partial class AnimationDrawer : UserControl, IDrawer
     {
         public AnimationDrawerViewModel ViewModel => DataContext as AnimationDrawerViewModel;
 
         public Action<Animation> ItemClick { get; set; }
-        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
+        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> ItemContextRequested;
 
-        private readonly AnimatedRepeaterHandler<Animation> _handler;
-        private readonly ZoomableRepeaterHandler _zoomer;
+        private readonly AnimatedListHandler<Animation> _handler;
+        private readonly ZoomableListHandler _zoomer;
 
         private readonly FileContext<Animation> _animations = new FileContext<Animation>();
 
@@ -34,9 +59,9 @@ namespace Unigram.Controls.Drawers
         {
             InitializeComponent();
 
-            _handler = new AnimatedRepeaterHandler<Animation>(Repeater, ScrollingHost);
+            _handler = new AnimatedListHandler<Animation>(List);
 
-            _zoomer = new ZoomableRepeaterHandler(Repeater);
+            _zoomer = new ZoomableListHandler(List);
             _zoomer.Opening = _handler.UnloadVisibleItems;
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ProtoService.DownloadFile(fileId, 32);
@@ -50,12 +75,6 @@ namespace Unigram.Controls.Drawers
             debouncer.Invoked += (s, args) =>
             {
                 ViewModel.FindAnimations(FieldAnimations.Text);
-                //var items = ViewModel.Stickers.SearchStickers;
-                //if (items != null && string.Equals(FieldStickers.Text, items.Query))
-                //{
-                //    await items.LoadMoreItemsAsync(1);
-                //    await items.LoadMoreItemsAsync(2);
-                //}
             };
         }
 
@@ -86,34 +105,45 @@ namespace Unigram.Controls.Drawers
             _handler.UnloadVisibleItems();
         }
 
-        private void Animation_Click(object sender, RoutedEventArgs e)
+        private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            var button = sender as Button;
-            var animation = button.Tag as Animation;
-
-            Animation_Click(sender, animation);
-        }
-
-        private void Animation_Click(object sender, Animation animation)
-        {
-            ItemClick?.Invoke(animation);
-
-            if (Window.Current.Bounds.Width >= 500)
+            if (e.ClickedItem is Animation animation)
             {
-                Focus(FocusState.Programmatic);
+                ItemClick?.Invoke(animation);
             }
         }
 
-        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var button = args.Element as Button;
-            var animation = button.DataContext as Animation;
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new GridViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += OnContextRequested;
 
-            _zoomer.ElementPrepared(button);
+                _zoomer.ElementPrepared(args.ItemContainer);
+            }
 
-            button.Tag = animation;
+            args.IsContainerPrepared = true;
+        }
 
-            var content = button.Content as AnimationView;
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            var content = args.ItemContainer.ContentTemplateRoot as Border;
+            var animation = args.Item as Animation;
+
+            if (args.InRecycleQueue)
+            {
+                if (content.Child is AnimationView recycle)
+                {
+                    recycle.Source = null;
+                }
+
+                return;
+            }
+
+            var view = content.Child as AnimationView;
 
             var file = animation.AnimationValue;
             if (file == null)
@@ -123,12 +153,12 @@ namespace Unigram.Controls.Drawers
 
             if (file.Local.IsDownloadingCompleted)
             {
-                content.Source = UriEx.ToLocal(file.Local.Path);
-                content.Thumbnail = null;
+                view.Source = UriEx.ToLocal(file.Local.Path);
+                view.Thumbnail = null;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
-                content.Source = null;
+                view.Source = null;
                 DownloadFile(file.Id, animation);
 
                 var thumbnail = animation.Thumbnail?.File;
@@ -136,35 +166,26 @@ namespace Unigram.Controls.Drawers
                 {
                     if (thumbnail.Local.IsDownloadingCompleted)
                     {
-                        content.Thumbnail = new BitmapImage(UriEx.ToLocal(thumbnail.Local.Path));
+                        view.Thumbnail = new BitmapImage(UriEx.ToLocal(thumbnail.Local.Path));
                     }
                     else if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
                     {
-                        content.Thumbnail = null;
+                        view.Thumbnail = null;
                         DownloadFile(thumbnail.Id, animation);
                     }
                 }
             }
         }
 
-        private void OnElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
-        {
-            _zoomer.ElementClearing(args.Element);
-
-            if (args.Element is Button button && button.Content is Grid content && content.Children[0] is Image image)
-            {
-                if (content.Children.Count > 1)
-                {
-                    content.Children.RemoveAt(1);
-                }
-
-                image.Source = null;
-            }
-        }
-
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            ItemContextRequested?.Invoke(sender, args);
+            var animation = List.ItemFromContainer(sender) as Animation;
+            if (animation == null)
+            {
+                return;
+            }
+
+            ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs<Animation>(animation, args));
         }
 
         private void FieldAnimations_TextChanged(object sender, TextChangedEventArgs e)
@@ -196,27 +217,21 @@ namespace Unigram.Controls.Drawers
                 {
                     item.UpdateFile(file);
 
-                    var index = ViewModel.Items.IndexOf(item);
-                    if (index < 0)
+                    var container = List.ContainerFromItem(item) as SelectorItem;
+                    if (container == null)
                     {
                         continue;
                     }
 
-                    var button = Repeater.TryGetElement(index) as Button;
-                    if (button == null)
+                    var content = container.ContentTemplateRoot as Border;
+                    if (content == null)
                     {
                         continue;
                     }
 
-                    var content = button.Content as AnimationView;
-
-                    if (item.Thumbnail?.File.Id == file.Id)
+                    if (content.Child is AnimationView view)
                     {
-                        content.Thumbnail = new BitmapImage(UriEx.ToLocal(file.Local.Path));
-                    }
-                    else if (item.AnimationValue.Id == file.Id)
-                    {
-                        content.Source = UriEx.ToLocal(file.Local.Path);
+                        view.Source = UriEx.ToLocal(file.Local.Path);
                         _handler.ThrottleVisibleItems();
                     }
                 }

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Drawers"
     xmlns:viewModels="using:Unigram.ViewModels.Drawers"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
@@ -35,36 +36,49 @@
             Height="48"
             Grid.Row="2"/>
 
-        <muxc:ItemsRepeaterScrollHost Grid.Row="2">
-            <ScrollViewer
-                x:Name="ScrollingHost"
-                VerticalScrollBarVisibility="Auto"
-                VerticalScrollMode="Auto">
-                <muxc:ItemsRepeater
-                    x:Name="Repeater"
-                    ItemsSource="{x:Bind ConvertItems(ViewModel.Items), Mode=OneWay}"
-                    ElementPrepared="OnElementPrepared"
-                    ElementClearing="OnElementClearing"
-                    VerticalAlignment="Top">
-                    <muxc:ItemsRepeater.Layout>
-                        <controls:MosaicLayout />
-                    </muxc:ItemsRepeater.Layout>
-                    <muxc:ItemsRepeater.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                Click="Animation_Click"
-                                ContextRequested="OnContextRequested"
-                                Style="{StaticResource GridViewButtonStyle}"
-                                Margin="0,0,2,2">
-                                <controls:AnimationView
-                                    x:Name="Player"
-                                    AutoPlay="False"/>
-                            </Button>
-                        </DataTemplate>
-                    </muxc:ItemsRepeater.ItemTemplate>
-                </muxc:ItemsRepeater>
-            </ScrollViewer>
-        </muxc:ItemsRepeaterScrollHost>
+        <GridView
+            x:Name="List"
+            ItemsSource="{x:Bind ConvertItems(ViewModel.Items), Mode=OneWay}"
+            common:FluidGridView.OrientationOnly="False"
+            ChoosingItemContainer="OnChoosingItemContainer"
+            ContainerContentChanging="OnContainerContentChanging"
+            IsItemClickEnabled="True"
+            SelectionMode="None"
+            ItemClick="OnItemClick"
+            Padding="2,0"
+            Grid.Row="2">
+            <common:FluidGridView.Triggers>
+                <common:FluidGridViewTrigger RowsOrColumns="3"/>
+            </common:FluidGridView.Triggers>
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="2">
+                        <controls:AnimationView
+                            x:Name="Player"
+                            AutoPlay="False"/>
+                    </Border>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+            <GridView.Footer>
+                <Border Height="12"/>
+            </GridView.Footer>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="Margin" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection/>
+            </GridView.ItemContainerTransitions>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid Orientation="Horizontal" AreStickyGroupHeadersEnabled="False" CacheLength="2"/>
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+        </GridView>
 
         <Grid x:Name="ToolbarContainer">
             <Border x:Name="Separator"/>

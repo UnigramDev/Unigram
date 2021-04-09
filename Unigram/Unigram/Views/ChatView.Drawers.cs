@@ -1,19 +1,18 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Drawers;
 using Unigram.Converters;
-using Unigram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views
 {
     public partial class ChatView
     {
-        private void Sticker_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void Sticker_ContextRequested(UIElement sender, ItemContextRequestedEventArgs<Sticker> args)
         {
             var element = sender as FrameworkElement;
-            var sticker = element.Tag as StickerViewModel;
+            var sticker = args.Item;
 
             if (sticker == null)
             {
@@ -21,15 +20,15 @@ namespace Unigram.Views
             }
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, (Sticker)sticker, Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Sticker });
+            flyout.CreateFlyoutItem(ViewModel.StickerViewCommand, sticker, Strings.Resources.ViewPackPreview, new FontIcon { Glyph = Icons.Sticker });
 
             if (ViewModel.ProtoService.IsStickerFavorite(sticker.StickerValue.Id))
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, (Sticker)sticker, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
+                flyout.CreateFlyoutItem(ViewModel.StickerUnfaveCommand, sticker, Strings.Resources.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, (Sticker)sticker, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Star });
+                flyout.CreateFlyoutItem(ViewModel.StickerFaveCommand, sticker, Strings.Resources.AddToFavorites, new FontIcon { Glyph = Icons.Star });
             }
 
             if (ViewModel.Type == ViewModels.DialogType.History)
@@ -43,17 +42,17 @@ namespace Unigram.Views
                 var self = ViewModel.CacheService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), (Sticker)sticker, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-                //flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, true, null)), sticker.Get(), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
+                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, null, true)), sticker, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
+                flyout.CreateFlyoutItem(new RelayCommand<Sticker>(anim => ViewModel.StickerSendExecute(anim, true, null)), sticker, self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
             }
 
             args.ShowAt(flyout, element);
         }
 
-        private void Animation_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void Animation_ContextRequested(UIElement sender, ItemContextRequestedEventArgs<Animation> args)
         {
             var element = sender as FrameworkElement;
-            var animation = element.DataContext as Animation;
+            var animation = args.Item;
 
             if (animation == null)
             {
@@ -83,7 +82,7 @@ namespace Unigram.Views
 
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, null, true)), animation, Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-                //flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, true, null)), animation, self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.Schedule });
+                flyout.CreateFlyoutItem(new RelayCommand<Animation>(anim => ViewModel.AnimationSendExecute(anim, true, null)), animation, self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
             }
 
             args.ShowAt(flyout, element);

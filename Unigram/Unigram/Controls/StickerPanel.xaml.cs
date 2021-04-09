@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Controls.Drawers;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels;
@@ -14,7 +15,6 @@ using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
@@ -26,10 +26,10 @@ namespace Unigram.Controls
         public Action<string> EmojiClick { get; set; }
 
         public Action<Sticker> StickerClick { get; set; }
-        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> StickerContextRequested;
+        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> StickerContextRequested;
 
         public Action<Animation> AnimationClick { get; set; }
-        public event TypedEventHandler<UIElement, ContextRequestedEventArgs> AnimationContextRequested;
+        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
 
         private StickersPanelMode _widget;
 

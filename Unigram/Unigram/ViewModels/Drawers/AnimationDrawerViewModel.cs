@@ -84,6 +84,65 @@ namespace Unigram.ViewModels.Drawers
             });
         }
 
+        private void Merge(IList<Animation> destination, IList<Animation> origin)
+        {
+            if (destination.Count > 0)
+            {
+                for (int i = 0; i < destination.Count; i++)
+                {
+                    var item = destination[i];
+                    var index = -1;
+
+                    for (int j = 0; j < origin.Count; j++)
+                    {
+                        if (origin[j].AnimationValue.Id == item.AnimationValue.Id)
+                        {
+                            index = j;
+                            break;
+                        }
+                    }
+
+                    if (index == -1)
+                    {
+                        destination.Remove(item);
+                        i--;
+                    }
+                }
+
+                for (int i = 0; i < origin.Count; i++)
+                {
+                    var item = origin[i];
+                    var index = -1;
+
+                    for (int j = 0; j < destination.Count; j++)
+                    {
+                        if (destination[j].AnimationValue.Id == item.AnimationValue.Id)
+                        {
+                            //destination[j].Update(filter);
+
+                            index = j;
+                            break;
+                        }
+                    }
+
+                    if (index > -1 && index != i)
+                    {
+                        destination.RemoveAt(index);
+                        destination.Insert(Math.Min(i, destination.Count), item);
+                    }
+                    else if (index == -1)
+                    {
+                        destination.Insert(Math.Min(i, destination.Count), item);
+                    }
+                }
+            }
+            else
+            {
+                destination.Clear();
+                destination.AddRange(origin);
+            }
+        }
+
         public AnimationsCollection SavedItems { get; private set; }
 
         public TrendingAnimationsCollection TrendingItems { get; private set; }
