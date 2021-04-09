@@ -293,7 +293,7 @@ namespace Unigram.Controls.Drawers
                             continue;
                         }
 
-                        UpdateContainerContent(sticker, container);
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid);
                     }
                 }
             }
@@ -363,7 +363,7 @@ namespace Unigram.Controls.Drawers
 
             if (args.InRecycleQueue)
             {
-                if (content.Children[0] is Image photo)
+                if (content.Children[0] is Border border && border.Child is Image photo)
                 {
                     photo.Source = null;
                 }
@@ -375,19 +375,17 @@ namespace Unigram.Controls.Drawers
                 return;
             }
 
-            UpdateContainerContent(sticker, args.ItemContainer);
+            UpdateContainerContent(sticker, content);
             args.Handled = true;
         }
 
-        private async void UpdateContainerContent(StickerViewModel sticker, SelectorItem container)
+        private async void UpdateContainerContent(StickerViewModel sticker, Grid content)
         {
             var file = sticker.StickerValue;
             if (file == null)
             {
                 return;
             }
-
-            var content = container.ContentTemplateRoot as Grid;
 
             if (file.Local.IsDownloadingCompleted)
             {

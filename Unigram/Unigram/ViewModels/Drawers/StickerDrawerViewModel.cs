@@ -96,7 +96,7 @@ namespace Unigram.ViewModels.Drawers
             {
                 if (result is Stickers favorite)
                 {
-                    BeginOnUIThread(() => _favoriteSet.Update(favorite, true));
+                    BeginOnUIThread(() => Merge(_favoriteSet.Stickers, favorite.StickersValue));
                 }
             });
         }
@@ -112,32 +112,88 @@ namespace Unigram.ViewModels.Drawers
             {
                 if (result is Stickers recent)
                 {
-                    BeginOnUIThread(() =>
+                    for (int i = 0; i < _favoriteSet.Stickers.Count; i++)
                     {
-                        for (int i = 0; i < _favoriteSet.Stickers.Count; i++)
+                        var favSticker = _favoriteSet.Stickers[i];
+                        for (int j = 0; j < recent.StickersValue.Count; j++)
                         {
-                            var favSticker = _favoriteSet.Stickers[i];
-                            for (int j = 0; j < recent.StickersValue.Count; j++)
+                            var recSticker = recent.StickersValue[j];
+                            if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
                             {
-                                var recSticker = recent.StickersValue[j];
-                                if (recSticker.StickerValue.Id == favSticker.StickerValue.Id)
-                                {
-                                    recent.StickersValue.Remove(recSticker);
-                                    break;
-                                }
+                                recent.StickersValue.Remove(recSticker);
+                                break;
                             }
                         }
+                    }
 
-                        for (int i = 20; i < recent.StickersValue.Count; i++)
-                        {
-                            recent.StickersValue.RemoveAt(20);
-                            i--;
-                        }
+                    for (int i = 20; i < recent.StickersValue.Count; i++)
+                    {
+                        recent.StickersValue.RemoveAt(20);
+                        i--;
+                    }
 
-                        _recentSet.Update(recent, true);
-                    });
+                    BeginOnUIThread(() => Merge(_recentSet.Stickers, recent.StickersValue));
                 }
             });
+        }
+
+        private void Merge(IList<StickerViewModel> destination, IList<Sticker> origin)
+        {
+            if (destination.Count > 0)
+            {
+                for (int i = 0; i < destination.Count; i++)
+                {
+                    var user = destination[i];
+                    var index = -1;
+
+                    for (int j = 0; j < origin.Count; j++)
+                    {
+                        if (origin[j].SetId == user.SetId && origin[j].StickerValue.Id == user.StickerValue.Id)
+                        {
+                            index = j;
+                            break;
+                        }
+                    }
+
+                    if (index == -1)
+                    {
+                        destination.Remove(user);
+                        i--;
+                    }
+                }
+
+                for (int i = 0; i < origin.Count; i++)
+                {
+                    var filter = origin[i];
+                    var index = -1;
+
+                    for (int j = 0; j < destination.Count; j++)
+                    {
+                        if (destination[j].SetId == filter.SetId && destination[j].StickerValue.Id == filter.StickerValue.Id)
+                        {
+                            destination[j].Update(filter);
+
+                            index = j;
+                            break;
+                        }
+                    }
+
+                    if (index > -1 && index != i)
+                    {
+                        destination.RemoveAt(index);
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, Aggregator, filter));
+                    }
+                    else if (index == -1)
+                    {
+                        destination.Insert(Math.Min(i, destination.Count), new StickerViewModel(ProtoService, Aggregator, filter));
+                    }
+                }
+            }
+            else
+            {
+                destination.Clear();
+                destination.AddRange(origin.Select(x => new StickerViewModel(ProtoService, Aggregator, x)));
+            }
         }
 
         public void Handle(UpdateInstalledStickerSets update)

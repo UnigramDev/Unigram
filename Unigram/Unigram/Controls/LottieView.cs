@@ -107,10 +107,10 @@ namespace Unigram.Controls
             _canvas = canvas;
             _canvas.CreateResources += OnCreateResources;
             _canvas.Draw += OnDraw;
-            _canvas.Unloaded += OnUnloaded;
 
             _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
             _layoutRoot.Loaded += OnLoaded;
+            _layoutRoot.Unloaded += OnUnloaded;
 
             OnSourceChanged(UriToPath(Source), _source);
 
@@ -129,7 +129,6 @@ namespace Unigram.Controls
                 _canvas = new CanvasControl();
                 _canvas.CreateResources += OnCreateResources;
                 _canvas.Draw += OnDraw;
-                _canvas.Unloaded += OnUnloaded;
 
                 _layoutRoot.Children.Add(_canvas);
 
@@ -144,11 +143,13 @@ namespace Unigram.Controls
             _unloaded = true;
             Subscribe(false);
 
-            _canvas.CreateResources -= OnCreateResources;
-            _canvas.Draw -= OnDraw;
-            _canvas.Unloaded -= OnUnloaded;
-            _canvas.RemoveFromVisualTree();
-            _canvas = null;
+            if (_canvas != null)
+            {
+                _canvas.CreateResources -= OnCreateResources;
+                _canvas.Draw -= OnDraw;
+                _canvas.RemoveFromVisualTree();
+                _canvas = null;
+            }
 
             _source = null;
 
