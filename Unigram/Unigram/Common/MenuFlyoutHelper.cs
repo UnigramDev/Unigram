@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using Unigram.Controls.Drawers;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -13,6 +14,33 @@ namespace Unigram.Common
     public static class MenuFlyoutHelper
     {
         public static void ShowAt(this ContextRequestedEventArgs args, MenuFlyout flyout, FrameworkElement element)
+        {
+            if (flyout.Items.Count > 0 && args.TryGetPosition(element, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                try
+                {
+                    flyout.ShowAt(element, point);
+                }
+                catch { }
+            }
+            else if (flyout.Items.Count > 0)
+            {
+                try
+                {
+                    flyout.ShowAt(element);
+                }
+                catch { }
+            }
+
+            args.Handled = true;
+        }
+
+        public static void ShowAt<T>(this ItemContextRequestedEventArgs<T> args, MenuFlyout flyout, FrameworkElement element)
         {
             if (flyout.Items.Count > 0 && args.TryGetPosition(element, out Point point))
             {

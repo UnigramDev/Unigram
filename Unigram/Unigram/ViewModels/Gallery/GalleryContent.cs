@@ -1,5 +1,4 @@
-﻿using System;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Services;
 
 namespace Unigram.ViewModels.Gallery

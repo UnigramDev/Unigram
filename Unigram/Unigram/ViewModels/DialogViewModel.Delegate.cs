@@ -607,7 +607,7 @@ namespace Unigram.ViewModels
 
         public void PlayMessage(MessageViewModel message)
         {
-            _playbackService.Enqueue(message, _threadId);
+            _playbackService.Play(message, _threadId);
         }
 
 

@@ -305,7 +305,7 @@ namespace Unigram.Common
 
         protected int getSpanCount(double viewPortAvailableSize)
         {
-            return (int)(viewPortAvailableSize / 5d);
+            return (int)(viewPortAvailableSize / 3d);
         }
 
         protected int getFlowItemCount()

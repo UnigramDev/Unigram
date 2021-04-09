@@ -64,7 +64,7 @@ namespace Unigram.Views.Supergroups
                     }
                     else
                     {
-                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 48);
                     }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
@@ -117,7 +117,7 @@ namespace Unigram.Views.Supergroups
                 }
                 else
                 {
-                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                    photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 48);
                 }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

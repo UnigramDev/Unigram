@@ -27,5 +27,7 @@
             get => _lastErrorMessage ??= GetValueOrDefault("LastErrorMessage", string.Empty);
             set => AddOrUpdateValue(ref _lastErrorMessage, "LastErrorMessage", value);
         }
+
+        public bool IsLastErrorDiskFull { get; set; }
     }
 }

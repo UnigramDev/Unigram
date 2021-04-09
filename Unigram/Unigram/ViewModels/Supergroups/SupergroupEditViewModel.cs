@@ -3,11 +3,11 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Entities;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Chats;
 using Unigram.Views.Popups;
 using Unigram.Views.Supergroups;
 using Windows.Foundation;
@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Supergroups
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
             EditPhotoCommand = new RelayCommand<StorageMedia>(EditPhotoExecute);
 
-            RevokeCommand = new RelayCommand(RevokeExecute);
+            LinksCommand = new RelayCommand(LinksExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
 
             SendCommand = new RelayCommand(SendExecute);
@@ -454,8 +454,8 @@ namespace Unigram.ViewModels.Supergroups
             NavigationService.Navigate(typeof(SupergroupEditLinkedChatPage), chat.Id);
         }
 
-        public RelayCommand RevokeCommand { get; }
-        private async void RevokeExecute()
+        public RelayCommand LinksCommand { get; }
+        private void LinksExecute()
         {
             var chat = _chat;
             if (chat == null)
@@ -463,13 +463,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.RevokeAlert, Strings.Resources.RevokeLink, Strings.Resources.RevokeButton, Strings.Resources.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            //ProtoService.Send(new RevokeChatInviteLink(chat.Id));
+            NavigationService.Navigate(typeof(ChatInviteLinkPage), chat.Id);
         }
 
         public RelayCommand DeleteCommand { get; }

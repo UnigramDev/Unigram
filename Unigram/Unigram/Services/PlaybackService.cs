@@ -426,11 +426,10 @@ namespace Unigram.Services
             set
             {
                 _playbackRate = value;
-                _transport.PlaybackRate = value;
-
                 try
                 {
                     _mediaPlayer.PlaybackSession.PlaybackRate = value;
+                    _transport.PlaybackRate = value;
                 }
                 catch { }
             }

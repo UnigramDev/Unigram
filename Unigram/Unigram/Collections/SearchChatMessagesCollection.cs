@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Td.Api;
 using Unigram.Services;
@@ -63,6 +62,6 @@ namespace Unigram.Collections
             });
         }
 
-        public bool HasMoreItems => throw new NotImplementedException();
+        public bool HasMoreItems => true;
     }
 }
