@@ -407,9 +407,10 @@
             x:Name="Biometrics"
             Click="Biometrics_Click"
             Visibility="Collapsed"
-            Glyph="&#xEB68;"
+            Glyph="&#xE904;"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
+            FontSize="24"
             Margin="0,24"
             Radius="24"/>
     </Grid>

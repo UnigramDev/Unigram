@@ -62,7 +62,7 @@
                     <controls:BadgeButton
                         Content="{CustomResource Passcode}"
                         Badge="{x:Bind ConvertOnOff(ViewModel.IsPasscodeEnabled), Mode=OneWay}"
-                        Glyph="&#xE928;"
+                        Glyph="&#xE904;"
                         Command="{x:Bind ViewModel.PasscodeCommand}"
                         Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
