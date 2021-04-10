@@ -28,7 +28,7 @@ namespace Unigram.Controls
         {
             if (_player != null)
             {
-                _player.SetPosition(ActualTheme != ElementTheme.Dark ? 1 : 0);
+                _player.Seek(ActualTheme != ElementTheme.Dark ? 1 : 0);
                 _player.Play(ActualTheme != ElementTheme.Dark);
             }
         }

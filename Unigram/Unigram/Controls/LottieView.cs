@@ -109,6 +109,7 @@ namespace Unigram.Controls
             _canvas.Draw += OnDraw;
 
             _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
+            _layoutRoot.Loading += OnLoading;
             _layoutRoot.Loaded += OnLoaded;
             _layoutRoot.Unloaded += OnUnloaded;
 
@@ -117,9 +118,9 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void Load()
         {
-            if (_unloaded)
+            if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
                 while (_layoutRoot.Children.Count > 0)
                 {
@@ -135,6 +136,16 @@ namespace Unigram.Controls
                 _unloaded = false;
                 OnSourceChanged(UriToPath(Source), _source);
             }
+        }
+
+        private void OnLoading(FrameworkElement sender, object args)
+        {
+            Load();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Load();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -301,7 +312,7 @@ namespace Unigram.Controls
             }
         }
 
-        public void SetPosition(double position)
+        public void Seek(double position)
         {
             if (position < 0 || position > 1)
             {
@@ -346,10 +357,12 @@ namespace Unigram.Controls
                 return;
             }
 
+            _source = newValue;
+
             var shouldPlay = _shouldPlay;
 
             var animation = await Task.Run(() => LottieAnimation.LoadFromFile(newValue, _isCachingEnabled, ColorReplacements));
-            if (animation == null)
+            if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
             {
                 // The app can't access the file specified
                 return;
@@ -360,7 +373,6 @@ namespace Unigram.Controls
                 shouldPlay = true;
             }
 
-            _source = newValue;
             _animation = animation;
             _hideThumbnail = true;
 
@@ -404,6 +416,8 @@ namespace Unigram.Controls
 
         public bool Play(bool backward = false)
         {
+            Load();
+
             var canvas = _canvas;
             if (canvas == null)
             {

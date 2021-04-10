@@ -60,6 +60,7 @@ namespace Unigram.Controls
 
             _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
             _layoutRoot.Loaded += OnLoaded;
+            _layoutRoot.Loading += OnLoading;
             _layoutRoot.Unloaded += OnUnloaded;
 
             _thumbnail = (Image)GetTemplateChild("Thumbnail");
@@ -69,9 +70,9 @@ namespace Unigram.Controls
             base.OnApplyTemplate();
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void Load()
         {
-            if (_unloaded)
+            if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
                 while (_layoutRoot.Children.Count > 1)
                 {
@@ -87,6 +88,16 @@ namespace Unigram.Controls
                 _unloaded = false;
                 OnSourceChanged(UriToPath(Source), _source);
             }
+        }
+
+        private void OnLoading(FrameworkElement sender, object args)
+        {
+            Load();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Load();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -226,10 +237,12 @@ namespace Unigram.Controls
                 return;
             }
 
+            _source = newValue;
+
             var shouldPlay = _shouldPlay;
 
             var animation = await Task.Run(() => VideoAnimation.LoadFromFile(newValue, false, true));
-            if (animation == null)
+            if (animation == null || !string.Equals(newValue, _source, StringComparison.OrdinalIgnoreCase))
             {
                 // The app can't access the file specified
                 return;
@@ -240,7 +253,6 @@ namespace Unigram.Controls
                 shouldPlay = true;
             }
 
-            _source = newValue;
             _animation = animation;
             _bitmap = null;
 
@@ -268,6 +280,8 @@ namespace Unigram.Controls
 
         public bool Play()
         {
+            Load();
+
             var canvas = _canvas;
             if (canvas == null)
             {

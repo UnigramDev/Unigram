@@ -68,7 +68,7 @@ namespace Unigram.ViewModels.Drawers
             {
                 if (result is Animations animation)
                 {
-                    BeginOnUIThread(() => SavedItems.ReplaceWith(animation.AnimationsValue));
+                    BeginOnUIThread(() => Merge(SavedItems, animation.AnimationsValue));
                 }
             });
         }
@@ -79,7 +79,7 @@ namespace Unigram.ViewModels.Drawers
             {
                 if (result is Animations animation)
                 {
-                    BeginOnUIThread(() => SavedItems.ReplaceWith(animation.AnimationsValue));
+                    BeginOnUIThread(() => Merge(SavedItems, animation.AnimationsValue));
                 }
             });
         }

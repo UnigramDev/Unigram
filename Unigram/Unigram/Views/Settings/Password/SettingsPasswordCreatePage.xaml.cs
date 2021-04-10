@@ -48,7 +48,7 @@ namespace Unigram.Views.Settings.Password
                 {
                     _next = State.Idle;
                     Walkthrough.Header.Source = new Uri("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyClose.tgs");
-                    Walkthrough.Header.SetPosition(0.5);
+                    Walkthrough.Header.Seek(0.5);
                 }
                 else if (_current == State.Peek)
                 {

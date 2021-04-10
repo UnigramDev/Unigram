@@ -95,19 +95,20 @@ namespace Unigram.Controls
             _canvas = canvas;
             _canvas.CreateResources += OnCreateResources;
             _canvas.Draw += OnDraw;
-            _canvas.Unloaded += OnUnloaded;
 
             _layoutRoot = GetTemplateChild("LayoutRoot") as Grid;
+            _layoutRoot.Loading += OnLoading;
             _layoutRoot.Loaded += OnLoaded;
+            _layoutRoot.Unloaded += OnUnloaded;
 
             SetValue(_previousState, _previous);
 
             base.OnApplyTemplate();
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void Load()
         {
-            if (_unloaded)
+            if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
                 while (_layoutRoot.Children.Count > 0)
                 {
@@ -126,17 +127,29 @@ namespace Unigram.Controls
             }
         }
 
+        private void OnLoading(FrameworkElement sender, object args)
+        {
+            Load();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Load();
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _shouldPlay = false;
             _unloaded = true;
             Subscribe(false);
 
-            _canvas.CreateResources -= OnCreateResources;
-            _canvas.Draw -= OnDraw;
-            _canvas.Unloaded -= OnUnloaded;
-            _canvas.RemoveFromVisualTree();
-            _canvas = null;
+            if (_canvas != null)
+            {
+                _canvas.CreateResources -= OnCreateResources;
+                _canvas.Draw -= OnDraw;
+                _canvas.RemoveFromVisualTree();
+                _canvas = null;
+            }
 
             _valueState = null;
 
@@ -447,6 +460,8 @@ namespace Unigram.Controls
 
         public bool Play()
         {
+            Load();
+
             var canvas = _canvas;
             if (canvas == null)
             {
