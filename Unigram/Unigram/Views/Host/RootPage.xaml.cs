@@ -49,26 +49,24 @@ namespace Unigram.Views.Host
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
             {
-                //RootDestination.Separator,
-
-                RootDestination.NewChat,
-                RootDestination.NewSecretChat,
-                RootDestination.NewChannel,
-
+                RootDestination.SavedMessages,
+                // ------------
                 RootDestination.Separator,
-
+                // ------------
                 RootDestination.Chats,
                 RootDestination.Contacts,
                 RootDestination.Calls,
                 RootDestination.Settings,
-
-                //RootDestination.Separator,
-
-                //RootDestination.Wallet,
-
+                // ------------
                 RootDestination.Separator,
-
-                RootDestination.SavedMessages,
+                // ------------
+                RootDestination.NewChat,
+                RootDestination.NewSecretChat,
+                RootDestination.NewChannel,
+                // ------------
+                RootDestination.Separator,
+                // ------------
+                RootDestination.Tips,
                 RootDestination.News
             };
 
@@ -440,6 +438,10 @@ namespace Unigram.Views.Host
                         content.Glyph = Icons.Bookmark;
                         break;
 
+                    case RootDestination.Tips:
+                        content.Text = Strings.Resources.TelegramFeatures;
+                        content.Glyph = Icons.QuestionCircle;
+                        break;
                     case RootDestination.News:
                         content.Text = "News";
                         content.Glyph = Icons.Megaphone;
@@ -710,18 +712,20 @@ namespace Unigram.Views.Host
     {
         AddAccount,
 
-        NewChat,
-        NewSecretChat,
-        NewChannel,
+        SavedMessages,
 
         Chats,
         Contacts,
         Calls,
         Settings,
 
+        NewChat,
+        NewSecretChat,
+        NewChannel,
+
         InviteFriends,
 
-        SavedMessages,
+        Tips,
         News,
 
         Separator
