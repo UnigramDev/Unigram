@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 03/20/2021 10:35:12
+// 	Generated: 04/10/2021 16:35:21
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2177,6 +2177,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ActionGroupCallJustStarted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Voice chat scheduled on {0}"
+        /// </summary>
+        public static string ActionGroupCallScheduled
+        {
+            get
+            {
+                return resourceLoader.GetString("ActionGroupCallScheduled");
             }
         }
         
@@ -5802,11 +5813,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Contacts"
         /// </summary>
-        public static string AutodownloadContacts
+        public static string AutoDownloadContacts
         {
             get
             {
-                return resourceLoader.GetString("AutodownloadContacts");
+                return resourceLoader.GetString("AutoDownloadContacts");
             }
         }
         
@@ -41117,6 +41128,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "\'Starts on\' MMM d \'at\' HH:mm"
+        /// </summary>
+        public static string StartDayAt
+        {
+            get
+            {
+                return resourceLoader.GetString("StartDayAt");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "\'Starts on\' MMM d yyyy \'at\' HH:mm"
+        /// </summary>
+        public static string StartDayYearAt
+        {
+            get
+            {
+                return resourceLoader.GetString("StartDayYearAt");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Start Secret Chat"
         /// </summary>
         public static string StartEncryptedChat
@@ -41139,6 +41172,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "MMM d\',\' HH:mm"
+        /// </summary>
+        public static string StartShortDayAt
+        {
+            get
+            {
+                return resourceLoader.GetString("StartShortDayAt");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "MMM d yyyy\',\' HH:mm"
+        /// </summary>
+        public static string StartShortDayYearAt
+        {
+            get
+            {
+                return resourceLoader.GetString("StartShortDayYearAt");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "\'Today,\' HH:mm"
+        /// </summary>
+        public static string StartShortTodayAt
+        {
+            get
+            {
+                return resourceLoader.GetString("StartShortTodayAt");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Please confirm your country code and enter your phone number."
         /// </summary>
         public static string StartText
@@ -41146,6 +41212,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("StartText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "\'Starts today at\' HH:mm"
+        /// </summary>
+        public static string StartTodayAt
+        {
+            get
+            {
+                return resourceLoader.GetString("StartTodayAt");
             }
         }
         
@@ -42468,6 +42545,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TelegramFaqUrl");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram Features"
+        /// </summary>
+        public static string TelegramFeatures
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramFeatures");
             }
         }
         
@@ -46343,6 +46431,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "The members of the channel will be notified that the voice chat will start in {0}."
+        /// </summary>
+        public static string VoipChannelScheduleInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelScheduleInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members of this channel will be notified once you start the voice chat.\10\10You will be displayed as:"
+        /// </summary>
+        public static string VoipChannelStart
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChannelStart");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Join"
         /// </summary>
         public static string VoipChatJoin
@@ -46350,6 +46460,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipChatJoin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Starts in"
+        /// </summary>
+        public static string VoipChatStartsIn
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatStartsIn");
             }
         }
         
@@ -47102,6 +47223,39 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "The members of the group will be notified that the voice chat will start in {0}."
+        /// </summary>
+        public static string VoipGroupScheduleInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupScheduleInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Schedule Voice Chat"
+        /// </summary>
+        public static string VoipGroupScheduleVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupScheduleVoiceChat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Scheduled Voice Chat"
+        /// </summary>
+        public static string VoipGroupScheduledVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupScheduledVoiceChat");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Search members to invite..."
         /// </summary>
         public static string VoipGroupSearchMembers
@@ -47113,6 +47267,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Set Reminder"
+        /// </summary>
+        public static string VoipGroupSetReminder
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupSetReminder");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Share invite link"
         /// </summary>
         public static string VoipGroupShareInviteLink
@@ -47120,6 +47285,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipGroupShareInviteLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members of this group will be notified once you start the voice chat.\10\10You will be displayed as:"
+        /// </summary>
+        public static string VoipGroupStart
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupStart");
             }
         }
         
@@ -47157,6 +47333,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Start Now"
+        /// </summary>
+        public static string VoipGroupStartNow
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupStartNow");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Record this chat and save the result into an audio file?
         ///
         ///Participants will see that the chat is being recorded."
@@ -47177,6 +47364,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipGroupStartRecordingTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Start Voice Chat"
+        /// </summary>
+        public static string VoipGroupStartVoiceChat
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupStartVoiceChat");
             }
         }
         

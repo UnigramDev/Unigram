@@ -643,6 +643,9 @@
   <data name="ActionGroupCallJustStarted" xml:space="preserve">
     <value>Voice chat started</value>
   </data>
+  <data name="ActionGroupCallScheduled" xml:space="preserve">
+    <value>Voice chat scheduled on {0}</value>
+  </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>un1 started a voice chat</value>
   </data>
@@ -11387,14 +11390,32 @@ Slow Mode is enabled. You can't send more than one message at once.</value>
   <data name="Start" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="StartDayAt" xml:space="preserve">
+    <value>\'Starts on\' MMM d \'at\' HH:mm</value>
+  </data>
+  <data name="StartDayYearAt" xml:space="preserve">
+    <value>\'Starts on\' MMM d yyyy \'at\' HH:mm</value>
+  </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>Start Secret Chat</value>
   </data>
   <data name="StartMessaging" xml:space="preserve">
     <value>Start Messaging</value>
   </data>
+  <data name="StartShortDayAt" xml:space="preserve">
+    <value>MMM d\',\' HH:mm</value>
+  </data>
+  <data name="StartShortDayYearAt" xml:space="preserve">
+    <value>MMM d yyyy\',\' HH:mm</value>
+  </data>
+  <data name="StartShortTodayAt" xml:space="preserve">
+    <value>\'Today,\' HH:mm</value>
+  </data>
   <data name="StartText" xml:space="preserve">
     <value>Please confirm your country code and enter your phone number.</value>
+  </data>
+  <data name="StartTodayAt" xml:space="preserve">
+    <value>\'Starts today at\' HH:mm</value>
   </data>
   <data name="StartVoipChannelAlertText" xml:space="preserve">
     <value>Do you want to start a voice chat in this channel?</value>
@@ -11757,6 +11778,9 @@ If '**Sync Contacts**' is enabled, contacts will be re-synced.</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq</value>
+  </data>
+  <data name="TelegramFeatures" xml:space="preserve">
+    <value>Telegram Features</value>
   </data>
   <data name="TelegramPassport" xml:space="preserve">
     <value>Telegram Passport</value>
@@ -12829,8 +12853,17 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipCallEnded" xml:space="preserve">
     <value>Call ended</value>
   </data>
+  <data name="VoipChannelScheduleInfo" xml:space="preserve">
+    <value>The members of the channel will be notified that the voice chat will start in {0}.</value>
+  </data>
+  <data name="VoipChannelStart" xml:space="preserve">
+    <value>Members of this channel will be notified once you start the voice chat.\10\10You will be displayed as:</value>
+  </data>
   <data name="VoipChatJoin" xml:space="preserve">
     <value>Join</value>
+  </data>
+  <data name="VoipChatStartsIn" xml:space="preserve">
+    <value>Starts in</value>
   </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Connecting</value>
@@ -13036,11 +13069,26 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Recording Title</value>
   </data>
+  <data name="VoipGroupScheduleInfo" xml:space="preserve">
+    <value>The members of the group will be notified that the voice chat will start in {0}.</value>
+  </data>
+  <data name="VoipGroupScheduleVoiceChat" xml:space="preserve">
+    <value>Schedule Voice Chat</value>
+  </data>
+  <data name="VoipGroupScheduledVoiceChat" xml:space="preserve">
+    <value>Scheduled Voice Chat</value>
+  </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Search members to invite...</value>
   </data>
+  <data name="VoipGroupSetReminder" xml:space="preserve">
+    <value>Set Reminder</value>
+  </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Share invite link</value>
+  </data>
+  <data name="VoipGroupStart" xml:space="preserve">
+    <value>Members of this group will be notified once you start the voice chat.\10\10You will be displayed as:</value>
   </data>
   <data name="VoipGroupStartAs" xml:space="preserve">
     <value>Start Voice Chat as...</value>
@@ -13051,6 +13099,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
     <value>Choose whether you want to be displayed as your personal account, this group, or one of your channels.</value>
   </data>
+  <data name="VoipGroupStartNow" xml:space="preserve">
+    <value>Start Now</value>
+  </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
     <value>Record this chat and save the result into an audio file?
 
@@ -13058,6 +13109,9 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>Start recording</value>
+  </data>
+  <data name="VoipGroupStartVoiceChat" xml:space="preserve">
+    <value>Start Voice Chat</value>
   </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Stop recording</value>
