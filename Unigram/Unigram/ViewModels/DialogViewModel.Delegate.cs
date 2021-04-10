@@ -619,28 +619,15 @@ namespace Unigram.ViewModels
 
 
 
-        public bool IsAdmin(int userId)
+        public string GetAdminTitle(MessageViewModel message)
         {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return false;
-            }
-
-            if (_admins.TryGetValue(chat.Id, out IList<ChatAdministrator> value))
-            {
-                var admin = value.FirstOrDefault(x => x.UserId == userId);
-                return admin != null;
-            }
-
-            return false;
-        }
-
-        public string GetAdminTitle(MessageSender sender)
-        {
-            if (sender is MessageSenderUser senderUser)
+            if (message.Sender is MessageSenderUser senderUser)
             {
                 return GetAdminTitle(senderUser.UserId);
+            }
+            else if (message.Sender is MessageSenderChat && !message.IsChannelPost)
+            {
+                return message.AuthorSignature.Length > 0 ? message.AuthorSignature : null;
             }
 
             return null;
