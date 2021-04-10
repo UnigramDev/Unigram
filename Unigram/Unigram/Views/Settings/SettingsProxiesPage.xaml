@@ -69,18 +69,6 @@
                     <Setter Property="MaxWidth" Value="640"/>
                 </Style>
             </ListView.ItemContainerStyle>
-            <ListView.Footer>
-                <controls:HeaderedControl
-                    Footer="{CustomResource UseProxyForCallsInfo}"
-                    Margin="0,0,0,24">
-                    <CheckBox
-                        x:Name="FieldCalls"
-                        Content="{CustomResource UseProxyForCalls}"
-                        IsEnabled="False"
-                        Margin="12,6,12,0"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,0"/>
-                </controls:HeaderedControl>
-            </ListView.Footer>
         </controls:TableListView>
     </Grid>
 </local:HostedPage>
