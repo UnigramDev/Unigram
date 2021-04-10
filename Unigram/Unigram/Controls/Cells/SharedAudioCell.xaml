@@ -43,7 +43,7 @@
     </Grid>
 
     <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-        <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+        <TextBlock x:Name="Title" Foreground="{ThemeResource MessageForegroundBrush}" MaxLines="1" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
         <TextBlock x:Name="Subtitle" Style="{StaticResource DisabledCaptionTextBlockStyle}"/>
     </StackPanel>
 </Grid>

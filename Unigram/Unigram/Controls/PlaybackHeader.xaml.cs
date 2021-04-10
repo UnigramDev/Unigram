@@ -66,6 +66,9 @@ namespace Unigram.Controls
             _playbackService.PositionChanged += OnPositionChanged;
             _playbackService.PlaylistChanged -= OnPlaylistChanged;
             _playbackService.PlaylistChanged += OnPlaylistChanged;
+
+            Items.ItemsSource = _playbackService.Items;
+
             UpdateRate();
             UpdateGlyph();
         }
@@ -444,11 +447,9 @@ namespace Unigram.Controls
             }
             else
             {
-                Command?.Execute(message);
+                _navigationService.NavigateToChat(message.ChatId, message.Id);
             }
         }
-
-        public ICommand Command { get; set; }
 
 
 
@@ -485,6 +486,20 @@ namespace Unigram.Controls
             if (args.Item is PlaybackItem item && args.ItemContainer.ContentTemplateRoot is SharedAudioCell cell)
             {
                 cell.UpdateMessage(_playbackService, _cacheService, item.Message);
+            }
+        }
+
+        private void Items_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is PlaybackItem item)
+            {
+                _navigationService.NavigateToChat(item.Message.ChatId, item.Message.Id);
+            }
+
+            var flyout = FlyoutBase.GetAttachedFlyout(ViewButton);
+            if (flyout != null)
+            {
+                flyout.Hide();
             }
         }
     }

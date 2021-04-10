@@ -240,9 +240,11 @@
                         </Style>
                     </Flyout.FlyoutPresenterStyle>
                     <ListView x:Name="Items"
+                              IsItemClickEnabled="True"
+                              ItemClick="Items_ItemClick"
                               SelectionMode="None"
                               ContainerContentChanging="Items_ContainerContentChanging"
-                              Padding="0,11,0,0">
+                              Padding="0,6,0,6">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <cells:SharedAudioCell/>
@@ -251,7 +253,7 @@
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="Padding" Value="12,0,12,12"/>
+                                <Setter Property="Padding" Value="12,6,12,6"/>
                             </Style>
                         </ListView.ItemContainerStyle>
                     </ListView>
