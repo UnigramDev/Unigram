@@ -94,6 +94,8 @@ namespace Unigram.Controls.Messages
                     return UpdateSupergroupChatCreate(message, supergroupChatCreate, active);
                 case MessageVoiceChatEnded voiceChatEnded:
                     return UpdateVoiceChatEnded(message, voiceChatEnded, active);
+                case MessageVoiceChatScheduled voiceChatScheduled:
+                    return UpdateVoiceChatScheduled(message, voiceChatScheduled, active);
                 case MessageVoiceChatStarted voiceChatStarted:
                     return UpdateVoiceChatStarted(message, voiceChatStarted, active);
                 case MessageWebsiteConnected websiteConnected:
@@ -1016,6 +1018,16 @@ namespace Unigram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             content = string.Format(Strings.Resources.ActionGroupCallEnded, voiceChatEnded.GetDuration());
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateVoiceChatScheduled(MessageViewModel message, MessageVoiceChatScheduled voiceChatScheduled, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            content = string.Format(Strings.Resources.ActionGroupCallScheduled, voiceChatScheduled.GetStartsAt());
 
             return (content, entities);
         }

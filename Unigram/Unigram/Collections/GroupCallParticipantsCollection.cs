@@ -126,6 +126,7 @@ namespace Unigram.Collections
                 update.CanBeUnmutedForCurrentUser = participant.CanBeUnmutedForCurrentUser;
                 update.IsMutedForAllUsers = participant.IsMutedForAllUsers;
                 update.IsMutedForCurrentUser = participant.IsMutedForCurrentUser;
+                update.IsCurrentUser = participant.IsCurrentUser;
                 update.IsSpeaking = participant.IsSpeaking;
                 update.IsHandRaised = participant.IsHandRaised;
                 update.VolumeLevel = participant.VolumeLevel;

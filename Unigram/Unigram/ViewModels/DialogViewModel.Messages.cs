@@ -1452,7 +1452,7 @@ namespace Unigram.ViewModels
                     await StickerSetPopup.GetForCurrentView().ShowAsync(stickerSetChanged.NewStickerSetId);
                 }
             }
-            else if (message.Content is MessageVoiceChatStarted)
+            else if (message.Content is MessageVoiceChatStarted or MessageVoiceChatScheduled)
             {
                 await _groupCallService.JoinAsync(message.ChatId);
             }

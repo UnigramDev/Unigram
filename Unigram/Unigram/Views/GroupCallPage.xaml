@@ -344,7 +344,7 @@
             </Grid>
         </controls:ContentPageHeader>
 
-        <Grid VerticalAlignment="Top" Grid.Row="2">
+        <Grid x:Name="ParticipantsPanel" VerticalAlignment="Top" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
@@ -411,6 +411,25 @@
                 </ListView>
             </Border>
         </Grid>
+
+        <StackPanel x:Name="ScheduledPanel" x:Load="False" VerticalAlignment="Center" Grid.Row="2">
+            <TextBlock
+                Text="{CustomResource VoipChatStartsIn}"
+                TextAlignment="Center"
+                TextLineBounds="TrimToBaseline"
+                Style="{StaticResource TitleTextBlockStyle}"/>
+            <TextBlock
+                x:Name="StartsIn"
+                FontWeight="Bold"
+                TextAlignment="Center"
+                Style="{StaticResource HeaderTextBlockStyle}"
+                Foreground="{StaticResource VoiceChatPurpleBrush}"/>
+
+            <TextBlock
+                x:Name="StartsAt"
+                TextAlignment="Center"
+                Style="{StaticResource SubtitleTextBlockStyle}"/>
+        </StackPanel>
 
         <StackPanel x:Name="BottomPanel" Grid.Row="3">
             <StackPanel.ChildrenTransitions>
@@ -502,7 +521,7 @@
                 <controls:CallToggleButton
                     x:Name="Audio"
                     Click="Audio_Click"
-                    IsEnabled="False"
+                    IsEnabled="True"
                     IsChecked="False"
                     IsOneWay="False"
                     Glyph="&#xE720;"
@@ -521,6 +540,8 @@
                     Margin="48,0,48,0"
                     IsHitTestVisible="False"
                     IsLoopingEnabled="False"
+                    IsCachingEnabled="False"
+                    AutoPlay="False"
                     Grid.Column="1"
                     Canvas.ZIndex="3"/>
 

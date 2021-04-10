@@ -1364,6 +1364,41 @@ namespace Unigram.Common
             return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
+        public static string GetStartsAt(this MessageVoiceChatScheduled messageVoiceChatScheduled)
+        {
+            var date = Converters.Converter.DateTime(messageVoiceChatScheduled.StartDate);
+            return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+        }
+
+        public static string GetStartsAt(this GroupCall groupCall)
+        {
+            var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
+            return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+        }
+
+        public static string GetStartsIn(this GroupCall groupCall)
+        {
+            var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
+            var duration = date - DateTime.Now;
+
+            if (duration.TotalDays >= 7)
+            {
+                return Locale.Declension("Weeks", 1);
+            }
+            if (duration.TotalDays >= 1)
+            {
+                return Locale.Declension("Days", (int)duration.TotalDays);
+            }
+            else if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
+        }
+
         public static string GetDuration(this MessageVoiceChatEnded voiceChatEnded)
         {
             var duration = TimeSpan.FromSeconds(voiceChatEnded.Duration);

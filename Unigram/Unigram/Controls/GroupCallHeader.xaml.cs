@@ -10,17 +10,36 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
     public sealed partial class GroupCallHeader : HyperlinkButton
     {
+        private readonly DispatcherTimer _scheduledTimer;
+
         private UIElement _parent;
-        private int _prevId;
+        private GroupCall _call;
 
         public GroupCallHeader()
         {
             InitializeComponent();
+
+            _scheduledTimer = new DispatcherTimer();
+            _scheduledTimer.Tick += OnTick;
+            _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
+        }
+
+        private void OnTick(object sender, object e)
+        {
+            if (_call != null && _call.ScheduledStartDate != 0)
+            {
+                JoinButton.Content = _call.GetStartsIn();
+            }
+            else
+            {
+                _scheduledTimer.Stop();
+            }
         }
 
         public void InitializeParent(UIElement parent, IProtoService protoService)
@@ -47,22 +66,47 @@ namespace Unigram.Controls
         {
             var visible = true;
 
-            if (chat.VoiceChat.GroupCallId != call?.Id || !chat.VoiceChat.HasParticipants || call == null || call.IsJoined)
-            {
-                ShowHide(false);
-                visible = false;
-            }
-            else
+            //if (chat.VoiceChat.GroupCallId != call?.Id || !chat.VoiceChat.HasParticipants || call == null || call.IsJoined)
+            //{
+            //    ShowHide(false);
+            //    visible = false;
+            //}
+            //else
+            if (call != null && chat.VoiceChat.GroupCallId == call.Id && ((chat.VoiceChat.HasParticipants && !call.IsJoined) || call.ScheduledStartDate > 0))
             {
                 ShowHide(true);
 
-                TitleLabel.Text = Strings.Resources.VoipGroupVoiceChat;
+                TitleLabel.Text = call.ScheduledStartDate > 0 && call.Title.Length > 0 ? call.Title : Strings.Resources.VoipGroupVoiceChat;
                 ServiceLabel.Text = call.ParticipantCount > 0 ? Locale.Declension("Participants", call.ParticipantCount) : Strings.Resources.MembersTalkingNobody;
+
+                if (call.ScheduledStartDate != 0)
+                {
+                    var date = Converters.Converter.DateTime(call.ScheduledStartDate);
+                    var duration = date - DateTime.Now;
+
+                    if (duration.TotalDays < 1)
+                    {
+                        _scheduledTimer.Start();
+                    }
+                    else
+                    {
+                        _scheduledTimer.Stop();
+                    }
+
+                    JoinButton.Background = App.Current.Resources["VoiceChatPurpleBrush"] as Brush;
+                    JoinButton.Content = call.GetStartsIn();
+                }
+                else
+                {
+                    _scheduledTimer.Stop();
+                    JoinButton.Background = App.Current.Resources["StartButtonBackground"] as Brush;
+                    JoinButton.Content = Strings.Resources.VoipChatJoin;
+                }
 
                 var destination = RecentUsers.Items;
                 var origin = call.RecentSpeakers;
 
-                if (_prevId == call.Id)
+                if (_call?.Id == call.Id)
                 {
                     for (int i = 0; i < origin.Count; i++)
                     {
@@ -114,8 +158,13 @@ namespace Unigram.Controls
                     RecentUsers.Items.ReplaceWith(origin.Select(x => x.ParticipantId));
                 }
             }
+            else
+            {
+                ShowHide(false);
+                visible = false;
+            }
 
-            _prevId = call?.Id ?? 0;
+            _call = call;
             return visible;
         }
 

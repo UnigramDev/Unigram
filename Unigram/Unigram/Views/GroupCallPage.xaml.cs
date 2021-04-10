@@ -3,6 +3,7 @@ using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -36,6 +37,8 @@ namespace Unigram.Views
 
         private readonly ButtonWavesDrawable _drawable = new ButtonWavesDrawable();
 
+        private readonly DispatcherTimer _scheduledTimer;
+
         public GroupCallPage(IProtoService protoService, ICacheService cacheService, IEventAggregator aggregator, IGroupCallService voipService)
         {
             InitializeComponent();
@@ -43,6 +46,10 @@ namespace Unigram.Views
             _protoService = protoService;
             _cacheService = cacheService;
             _aggregator = aggregator;
+
+            _scheduledTimer = new DispatcherTimer();
+            _scheduledTimer.Interval = TimeSpan.FromSeconds(1);
+            _scheduledTimer.Tick += OnTick;
 
             _service = voipService;
             _service.PropertyChanged += OnParticipantsChanged;
@@ -52,8 +59,6 @@ namespace Unigram.Views
                 _service.Participants.Delegate = this;
                 List.ItemsSource = _service.Participants;
             }
-
-            UpdateNetworkState(_service.Call);
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -68,12 +73,43 @@ namespace Unigram.Views
 
             if (voipService.Call != null)
             {
-                Update(voipService.Call);
+                Update(voipService.Call, voipService.CurrentUser);
             }
 
             if (voipService.Manager != null)
             {
                 Connect(voipService.Manager);
+            }
+        }
+
+        enum ButtonState
+        {
+            None,
+            SetReminder,
+            CancelReminder,
+            Start,
+            RaiseHand,
+            Mute,
+            Unmute
+        }
+
+        enum ButtonColors
+        {
+            None,
+            Disabled,
+            Mute,
+            Unmute
+        }
+
+        private void OnTick(object sender, object e)
+        {
+            if (_service.Call != null && _service.Call.ScheduledStartDate != 0)
+            {
+                StartsIn.Text = _service.Call.GetStartsIn();
+            }
+            else
+            {
+                _scheduledTimer.Stop();
             }
         }
 
@@ -156,7 +192,7 @@ namespace Unigram.Views
 
         }
 
-        public void Update(GroupCall call)
+        public void Update(GroupCall call, GroupCallParticipant currentUser)
         {
             if (_disposed)
             {
@@ -167,14 +203,44 @@ namespace Unigram.Views
             {
                 TitleInfo.Text = call.Title.Length > 0 ? call.Title : _cacheService.GetTitle(_service.Chat);
                 SubtitleInfo.Text = Locale.Declension("Participants", call.ParticipantCount);
+
                 RecordingInfo.Visibility = call.RecordDuration > 0 ? Visibility.Visible : Visibility.Collapsed;
-                UpdateNetworkState(call, _service.IsConnected);
+
+                if (call.ScheduledStartDate != 0)
+                {
+                    var date = Converter.DateTime(call.ScheduledStartDate);
+                    var duration = date - DateTime.Now;
+
+                    if (duration.TotalDays < 1)
+                    {
+                        _scheduledTimer.Start();
+                    }
+                    else
+                    {
+                        _scheduledTimer.Stop();
+                    }
+
+                    FindName(nameof(ScheduledPanel));
+                    StartsAt.Text = call.GetStartsAt();
+                    StartsIn.Text = call.GetStartsIn();
+                }
+                else
+                {
+                    _scheduledTimer.Stop();
+
+                    if (ScheduledPanel != null)
+                    {
+                        UnloadObject(ScheduledPanel);
+                    }
+                }
+
+                UpdateNetworkState(call, currentUser, _service.IsConnected);
             });
         }
 
         private void OnNetworkStateUpdated(VoipGroupManager sender, GroupNetworkStateChangedEventArgs args)
         {
-            this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, args.IsConnected));
+            this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected));
         }
 
         private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
@@ -254,48 +320,178 @@ namespace Unigram.Views
 
         private void Audio_Click(object sender, RoutedEventArgs e)
         {
-            if (_service.Manager != null)
-            {
-                _service.Manager.IsMuted = Audio.IsChecked == false;
-                _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, new MessageSenderUser(_cacheService.Options.MyId), Audio.IsChecked == false));
-            }
+            var call = _service.Call;
+            var currentUser = _service.CurrentUser;
 
-            UpdateNetworkState(_service.Call, _service.IsConnected);
-        }
-
-        private void UpdateNetworkState(GroupCall call, bool? connected = null)
-        {
-            if (connected == true)
+            if (call != null && call.ScheduledStartDate > 0)
             {
-                Audio.IsEnabled = !(_service.Manager.IsMuted && !call.CanUnmuteSelf);
-            }
-            else if (connected == false)
-            {
-                Audio.IsEnabled = false;
-            }
-
-            if (Audio.IsEnabled)
-            {
-                if (Audio.IsChecked == true)
+                if (call.CanBeManaged)
                 {
-                    _drawable.SetColors(Color.FromArgb(0xFF, 0x00, 0x78, 0xff), Color.FromArgb(0xFF, 0x33, 0xc6, 0x59));
-                    Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
-
-                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmute.tgs");
+                    _protoService.Send(new StartScheduledGroupCall(call.Id));
                 }
                 else
                 {
-                    _drawable.SetColors(Color.FromArgb(0xFF, 0x59, 0xc7, 0xf8), Color.FromArgb(0xFF, 0x00, 0x78, 0xff));
-                    Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
-
-                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceMute.tgs");
+                    _protoService.Send(new ToggleGroupCallEnabledStartNotification(call.Id, !call.EnabledStartNotification));
                 }
             }
-            else
+            else if (currentUser != null && (currentUser.CanBeMutedForAllUsers || currentUser.CanBeUnmutedForAllUsers))
             {
-                _drawable.SetColors(Color.FromArgb(0xFF, 0x3e, 0x3f, 0x41), Color.FromArgb(0xFF, 0x3e, 0x3f, 0x41));
-                Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x3e, 0x3f, 0x41) };
+                if (_service.Manager != null)
+                {
+                    _service.Manager.IsMuted = !currentUser.IsMutedForAllUsers;
+                    _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, new MessageSenderUser(_cacheService.Options.MyId), _service.Manager.IsMuted));
+                }
             }
+            else if (currentUser != null)
+            {
+                _protoService.Send(new ToggleGroupCallParticipantIsHandRaised(call.Id, _service.CurrentUser.ParticipantId, true));
+            }
+        }
+
+        private void UpdateNetworkState(GroupCall call, GroupCallParticipant currentUser, bool? connected = null)
+        {
+            if (call != null && currentUser != null && call.CanUnmuteSelf != currentUser.CanUnmuteSelf)
+            {
+                return;
+            }
+
+            if (call != null && call.ScheduledStartDate > 0)
+            {
+                if (call.CanBeManaged)
+                {
+                    SetButtonState(ButtonState.Start);
+                }
+                else
+                {
+                    SetButtonState(call.EnabledStartNotification ? ButtonState.SetReminder : ButtonState.CancelReminder);
+                }
+            }
+            else if (currentUser != null && currentUser.CanBeUnmutedForAllUsers)
+            {
+                SetButtonState(ButtonState.Mute);
+            }
+            else if (currentUser != null && currentUser.CanBeMutedForAllUsers)
+            {
+                SetButtonState(ButtonState.Unmute);
+            }
+            else if (call != null && call.IsJoined)
+            {
+                SetButtonState(ButtonState.RaiseHand);
+            }
+        }
+
+        private ButtonState _prevState;
+        private ButtonColors _prevColors;
+
+        private void SetButtonState(ButtonState state)
+        {
+            if (state == _prevState)
+            {
+                return;
+            }
+
+            ButtonColors colors = _prevColors;
+
+            switch (state)
+            {
+                case ButtonState.CancelReminder:
+                    colors = ButtonColors.Disabled;
+                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminder.tgs");
+                    Lottie.Play();
+                    break;
+                case ButtonState.SetReminder:
+                    colors = ButtonColors.Disabled;
+                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminder.tgs");
+                    Lottie.Play();
+                    break;
+                case ButtonState.Start:
+                    colors = ButtonColors.Disabled;
+                    Lottie.Pause();
+                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceStart.tgs");
+                    break;
+                case ButtonState.Unmute:
+                    colors = ButtonColors.Mute;
+                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmute.tgs");
+                    Lottie.Play();
+                    break;
+                case ButtonState.Mute:
+                    colors = ButtonColors.Unmute;
+                    switch (_prevState)
+                    {
+                        case ButtonState.CancelReminder:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminderToMute.tgs");
+                            Lottie.Play();
+                            break;
+                        case ButtonState.RaiseHand:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceRaiseHandToMute.tgs");
+                            Lottie.Play();
+                            break;
+                        case ButtonState.SetReminder:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminderToMute.tgs");
+                            Lottie.Play();
+                            break;
+                        case ButtonState.Start:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceStart.tgs");
+                            Lottie.Play();
+                            break;
+                        default:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceMute.tgs");
+                            Lottie.Play();
+                            break;
+                    }
+                    break;
+                case ButtonState.RaiseHand:
+                    colors = ButtonColors.Disabled;
+                    switch (_prevState)
+                    {
+                        case ButtonState.CancelReminder:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminderToRaiseHand.tgs");
+                            Lottie.Play();
+                            break;
+                        case ButtonState.Mute:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceMuteToRaiseHand.tgs");
+                            Lottie.Play();
+                            break;
+                        case ButtonState.Unmute:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmuteToRaiseHand.tgs");
+                            Lottie.Play();
+                            break;
+                        case ButtonState.SetReminder:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminderToRaiseHand.tgs");
+                            Lottie.Play();
+                            break;
+                        default:
+                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceHand_1.tgs");
+                            Lottie.Play();
+                            break;
+                    }
+                    break;
+            }
+
+            _prevState = state;
+
+            if (colors == _prevColors)
+            {
+                return;
+            }
+
+            switch (colors)
+            {
+                case ButtonColors.Disabled:
+                    _drawable.SetColors(0xff57A4FE, 0xffF05459, 0xff766EE9);
+                    Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
+                    break;
+                case ButtonColors.Mute:
+                    _drawable.SetColors(0xFF0078ff, 0xFF33c659);
+                    Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
+                    break;
+                case ButtonColors.Unmute:
+                    _drawable.SetColors(0xFF59c7f8, 0xFF0078ff);
+                    Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
+                    break;
+            }
+
+            _prevColors = colors;
         }
 
         private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
@@ -349,7 +545,7 @@ namespace Unigram.Views
                 flyout.Items.Add(settings);
             }
 
-            if (call.CanBeManaged)
+            if (call.CanBeManaged && call.ScheduledStartDate == 0)
             {
                 if (call.RecordDuration > 0)
                 {
@@ -363,67 +559,72 @@ namespace Unigram.Views
 
             flyout.CreateFlyoutSeparator();
 
-            var inputId = _service.CurrentAudioInput;
-            var outputId = _service.CurrentAudioOutput;
-
-            var defaultInput = new ToggleMenuFlyoutItem();
-            defaultInput.Text = Strings.Resources.Default;
-            defaultInput.IsChecked = inputId == string.Empty;
-            defaultInput.Click += (s, args) =>
+            if (call.ScheduledStartDate == 0)
             {
-                _service.CurrentAudioInput = string.Empty;
-            };
 
-            var input = new MenuFlyoutSubItem();
-            input.Text = "Microphone";
-            input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-            input.Items.Add(defaultInput);
+                var inputId = _service.CurrentAudioInput;
+                var outputId = _service.CurrentAudioOutput;
 
-            var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
-            foreach (var device in inputDevices)
-            {
-                var deviceItem = new ToggleMenuFlyoutItem();
-                deviceItem.Text = device.Name;
-                deviceItem.IsChecked = inputId == device.Id;
-                deviceItem.Click += (s, args) =>
+                var defaultInput = new ToggleMenuFlyoutItem();
+                defaultInput.Text = Strings.Resources.Default;
+                defaultInput.IsChecked = inputId == string.Empty;
+                defaultInput.Click += (s, args) =>
                 {
-                    _service.CurrentAudioInput = device.Id;
+                    _service.CurrentAudioInput = string.Empty;
                 };
 
-                input.Items.Add(deviceItem);
-            }
+                var input = new MenuFlyoutSubItem();
+                input.Text = "Microphone";
+                input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                input.Items.Add(defaultInput);
 
-            var defaultOutput = new ToggleMenuFlyoutItem();
-            defaultOutput.Text = Strings.Resources.Default;
-            defaultOutput.IsChecked = outputId == string.Empty;
-            defaultOutput.Click += (s, args) =>
-            {
-                _service.CurrentAudioOutput = string.Empty;
-            };
-
-            var output = new MenuFlyoutSubItem();
-            output.Text = "Speaker";
-            output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-            output.Items.Add(defaultOutput);
-
-            var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
-            foreach (var device in outputDevices)
-            {
-                var deviceItem = new ToggleMenuFlyoutItem();
-                deviceItem.Text = device.Name;
-                deviceItem.IsChecked = outputId == device.Id;
-                deviceItem.Click += (s, args) =>
+                var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
+                foreach (var device in inputDevices)
                 {
-                    _service.CurrentAudioOutput = device.Id;
+                    var deviceItem = new ToggleMenuFlyoutItem();
+                    deviceItem.Text = device.Name;
+                    deviceItem.IsChecked = inputId == device.Id;
+                    deviceItem.Click += (s, args) =>
+                    {
+                        _service.CurrentAudioInput = device.Id;
+                    };
+
+                    input.Items.Add(deviceItem);
+                }
+
+                var defaultOutput = new ToggleMenuFlyoutItem();
+                defaultOutput.Text = Strings.Resources.Default;
+                defaultOutput.IsChecked = outputId == string.Empty;
+                defaultOutput.Click += (s, args) =>
+                {
+                    _service.CurrentAudioOutput = string.Empty;
                 };
 
-                output.Items.Add(deviceItem);
+                var output = new MenuFlyoutSubItem();
+                output.Text = "Speaker";
+                output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                output.Items.Add(defaultOutput);
+
+                var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+                foreach (var device in outputDevices)
+                {
+                    var deviceItem = new ToggleMenuFlyoutItem();
+                    deviceItem.Text = device.Name;
+                    deviceItem.IsChecked = outputId == device.Id;
+                    deviceItem.Click += (s, args) =>
+                    {
+                        _service.CurrentAudioOutput = device.Id;
+                    };
+
+                    output.Items.Add(deviceItem);
+                }
+
+                flyout.Items.Add(input);
+                flyout.Items.Add(output);
+
+                flyout.CreateFlyoutSeparator();
             }
 
-            flyout.Items.Add(input);
-            flyout.Items.Add(output);
-
-            flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(ShareInviteLink, Strings.Resources.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
 
             if (call.CanBeManaged)
@@ -690,8 +891,7 @@ namespace Unigram.Views
         private float _animateAmplitudeDiff;
         private float _animateToAmplitude;
 
-        private Color _stopStart;
-        private Color _stopEnd;
+        private uint[] _stops;
 
         public ButtonWavesDrawable()
         {
@@ -723,16 +923,14 @@ namespace Unigram.Views
             _animateAmplitudeDiff = (amplitude - _amplitude) / ((BlobDrawable.AMPLITUDE_SPEED * 500.0f) + 100.0f);
         }
 
-        public void SetColors(Color start, Color end)
+        public void SetColors(params uint[] stops)
         {
-            if (start == _stopStart && end == _stopEnd)
+            if (_stops != null && stops.SequenceEqual(_stops))
             {
                 return;
             }
 
-            _stopStart = start;
-            _stopEnd = end;
-
+            _stops = stops;
             _layerGradient = null;
         }
 
@@ -820,9 +1018,20 @@ namespace Unigram.Views
             }
             using (var layer = canvas.CreateLayer(new CanvasImageBrush(canvas, _target)))
             {
-                if (_layerGradient == null)
+                if (_layerGradient == null && _stops != null)
                 {
-                    _layerGradient = new CanvasRadialGradientBrush(canvas, _stopStart, _stopEnd);
+                    var stops = new CanvasGradientStop[_stops.Length];
+
+                    for (int i = 0; i < _stops.Length; i++)
+                    {
+                        stops[i] = new CanvasGradientStop
+                        {
+                            Color = ColorEx.FromHex(_stops[i]),
+                            Position = i / (_stops.Length - 1f)
+                        };
+                    }
+
+                    _layerGradient = new CanvasRadialGradientBrush(canvas, stops);
                     _layerGradient.RadiusX = MathF.Sqrt(200 * 200 + 200 * 200);
                     _layerGradient.RadiusY = MathF.Sqrt(200 * 200 + 200 * 200);
                     _layerGradient.Center = new Vector2(300, 0);
@@ -831,7 +1040,10 @@ namespace Unigram.Views
                     //_layerGradient.Center = new Vector2(150 + 70, 150 - 70);
                 }
 
-                canvas.FillRectangle(0, 0, 300, 300, _layerGradient);
+                if (_layerGradient != null)
+                {
+                    canvas.FillRectangle(0, 0, 300, 300, _layerGradient);
+                }
             }
 
             view.Invalidate();

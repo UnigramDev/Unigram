@@ -28,7 +28,10 @@ namespace Unigram.Services
         GroupCallParticipantsCollection Participants { get; }
 
         Chat Chat { get; }
+        
         GroupCall Call { get; }
+        GroupCallParticipant CurrentUser { get; }
+
         int Source { get; }
         bool IsConnected { get; }
 
@@ -60,9 +63,11 @@ namespace Unigram.Services
         private TaskCompletionSource<MessageSenders> _availableAliasesTask;
 
         private GroupCall _call;
+        private GroupCallParticipant _currentUser;
         private VoipGroupManager _manager;
         private int _source;
 
+        private bool _isScheduled;
         private bool _isConnected;
 
         private ViewLifetimeControl _callLifetime;
@@ -112,7 +117,7 @@ namespace Unigram.Services
 
         private async Task<MessageSenders> CanChooseAliasAsyncInternal(long chatId)
         {
-            var response = await ProtoService.SendAsync(new GetAvailableVoiceChatAliases(chatId));
+            var response = await ProtoService.SendAsync(new GetVoiceChatAvailableParticipants(chatId));
             if (response is MessageSenders senders)
             {
                 _availableAliases = senders;
@@ -180,7 +185,7 @@ namespace Unigram.Services
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CreateVoiceChat(chat.Id));
+            var response = await ProtoService.SendAsync(new CreateVoiceChat(chat.Id, string.Empty, 0));
             if (response is GroupCallId groupCallId)
             {
                 await JoinAsyncInternal(chat, groupCallId.Id, false);
@@ -209,7 +214,7 @@ namespace Unigram.Services
                 }
             }
 
-            var alias = chat.VoiceChat?.DefaultParticipantAlias;
+            var alias = chat.VoiceChat?.DefaultParticipantId;
             if (alias == null || pickAlias)
             {
                 alias = await PickAliasAsync(chat);
@@ -220,6 +225,8 @@ namespace Unigram.Services
             {
                 _chat = chat;
                 _call = groupCall;
+
+                _isScheduled = groupCall.ScheduledStartDate > 0;
 
                 var descriptor = new VoipGroupDescriptor
                 {
@@ -386,6 +393,8 @@ namespace Unigram.Services
             _call = null;
             _chat = null;
 
+            _isScheduled = false;
+
             _alias = null;
             _availableAliases = null;
             _availableAliasesTask = null;
@@ -434,15 +443,17 @@ namespace Unigram.Services
                         {
                             if (lifetime.Window.Content is GroupCallPage callPage)
                             {
-                                callPage.Update(update.GroupCall);
+                                callPage.Update(update.GroupCall, _currentUser);
                             }
                         });
                     }
 
-                    if (update.GroupCall.NeedRejoin)
+                    if (update.GroupCall.NeedRejoin || _isScheduled != (update.GroupCall.ScheduledStartDate > 0))
                     {
                         Rejoin(update.GroupCall, _alias);
                     }
+
+                    _isScheduled = update.GroupCall.ScheduledStartDate > 0;
                 }
             }
 
@@ -451,6 +462,23 @@ namespace Unigram.Services
 
         public void Handle(UpdateGroupCallParticipant update)
         {
+            if (_call?.Id == update.GroupCallId && update.Participant.IsCurrentUser)
+            {
+                _currentUser = update.Participant;
+
+                var lifetime = _callLifetime;
+                if (lifetime != null)
+                {
+                    lifetime.Dispatcher.Dispatch(() =>
+                    {
+                        if (lifetime.Window.Content is GroupCallPage callPage)
+                        {
+                            callPage.Update(_call, update.Participant);
+                        }
+                    });
+                }
+            }
+
             var manager = _manager;
             if (manager == null)
             {
@@ -462,6 +490,7 @@ namespace Unigram.Services
 
         public Chat Chat => _chat;
         public GroupCall Call => _call;
+        public GroupCallParticipant CurrentUser => _currentUser;
         public int Source => _source;
 
         public bool IsConnected => _isConnected;
