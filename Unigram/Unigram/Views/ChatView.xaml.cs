@@ -1760,7 +1760,7 @@ namespace Unigram.Views
             }
             if (user != null && user.Id != ViewModel.CacheService.Options.MyId)
             {
-                if (!user.IsContact)
+                if (!user.IsContact && !LastSeenConverter.IsServiceUser(user) && !LastSeenConverter.IsSupportUser(user))
                 {
                     if (!string.IsNullOrEmpty(user.PhoneNumber))
                     {
@@ -3169,7 +3169,11 @@ namespace Unigram.Views
             Call.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
-            GroupCall.ShowHide(chat.VoiceChat?.HasParticipants ?? false);
+            // We want to collapse the bar only of we know that there's no call at all
+            if (chat.VoiceChat.GroupCallId == 0)
+            {
+                GroupCall.ShowHide(false);
+            }
 
             UpdateChatPermissions(chat);
         }
