@@ -94,6 +94,7 @@
 
         <controls:GlyphButton
             x:Name="HideButton"
+            AutomationProperties.Name="{CustomResource UnpinMessageAlertTitle}"
             Glyph="&#xE711;"
             Grid.Column="3"/>
         <controls:GlyphButton
