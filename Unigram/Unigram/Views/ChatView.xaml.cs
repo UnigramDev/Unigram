@@ -4041,9 +4041,9 @@ namespace Unigram.Views
 
             foreach (var member in fullInfo.Members)
             {
-                if (member.BotInfo != null)
+                if (member.BotInfo != null && member.MemberId is MessageSenderUser senderUser)
                 {
-                    commands.AddRange(member.BotInfo.Commands.Select(x => new UserCommand(member.UserId, x)).ToList());
+                    commands.AddRange(member.BotInfo.Commands.Select(x => new UserCommand(senderUser.UserId, x)));
                 }
             }
 
@@ -4187,9 +4187,9 @@ namespace Unigram.Views
 
                 foreach (var member in members.Members)
                 {
-                    if (member.BotInfo != null)
+                    if (member.BotInfo != null && member.MemberId is MessageSenderUser senderUser)
                     {
-                        commands.AddRange(member.BotInfo.Commands.Select(x => new UserCommand(member.UserId, x)).ToList());
+                        commands.AddRange(member.BotInfo.Commands.Select(x => new UserCommand(senderUser.UserId, x)));
                     }
                 }
 

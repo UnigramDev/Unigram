@@ -567,7 +567,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var whoUser = message.ProtoService.GetMessageSender(voiceChatParticipantIsMutedToggled.Participant);
+            var whoUser = message.ProtoService.GetMessageSender(voiceChatParticipantIsMutedToggled.ParticipantId);
 
             if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
             {
@@ -591,7 +591,7 @@ namespace Unigram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var whoUser = message.ProtoService.GetMessageSender(voiceChatParticipantVolumeLevelChanged.Participant);
+            var whoUser = message.ProtoService.GetMessageSender(voiceChatParticipantVolumeLevelChanged.ParticipantId);
 
             if (message.ProtoService.TryGetUser(message.Sender, out User fromUser))
             {

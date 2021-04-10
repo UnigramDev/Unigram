@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Telegram.Td.Api;
 
 namespace Unigram.Navigation.Services
 {
@@ -9,9 +10,18 @@ namespace Unigram.Navigation.Services
             return new NavigationState { { "chatId", chatId }, { "messageId", messageId } };
         }
 
-        public static NavigationState GetChatMember(long chatId, int userId)
+        public static NavigationState GetChatMember(long chatId, MessageSender memberId)
         {
-            return new NavigationState { { "chatId", chatId }, { "userId", userId } };
+            if (memberId is MessageSenderUser user)
+            {
+                return new NavigationState { { "chatId", chatId }, { "senderUserId", user.UserId } };
+            }
+            else if (memberId is MessageSenderChat chat)
+            {
+                return new NavigationState { { "chatId", chatId }, { "senderChatId", chat.ChatId } };
+            }
+
+            return new NavigationState();
         }
 
         public static NavigationState GetSwitchQuery(string query, int botId)

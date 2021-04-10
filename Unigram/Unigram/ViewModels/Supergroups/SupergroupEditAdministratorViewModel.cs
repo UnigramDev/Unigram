@@ -57,7 +57,7 @@ namespace Unigram.ViewModels.Supergroups
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             state.TryGet("chatId", out long chatId);
-            state.TryGet("userId", out int userId);
+            state.TryGet("senderUserId", out int userId);
 
             Chat = ProtoService.GetChat(chatId);
 
@@ -67,18 +67,18 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, userId));
+            var response = await ProtoService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(userId)));
             if (response is ChatMember member)
             {
-                var item = ProtoService.GetUser(member.UserId);
-                var cache = ProtoService.GetUserFull(member.UserId);
+                var item = ProtoService.GetUser(userId);
+                var cache = ProtoService.GetUserFull(userId);
 
                 Delegate?.UpdateMember(chat, item, member);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache == null)
                 {
-                    ProtoService.Send(new GetUserFullInfo(member.UserId));
+                    ProtoService.Send(new GetUserFullInfo(userId));
                 }
                 else
                 {
@@ -323,7 +323,7 @@ namespace Unigram.ViewModels.Supergroups
         }
 
         public RelayCommand ProfileCommand { get; }
-        private async void ProfileExecute()
+        private void ProfileExecute()
         {
             var member = _member;
             if (member == null)
@@ -331,11 +331,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CreatePrivateChat(member.UserId, false));
-            if (response is Chat chat)
-            {
-                NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-            }
+            NavigationService.NavigateToSender(member.MemberId);
         }
 
         public RelayCommand SendCommand { get; }
@@ -378,7 +374,7 @@ namespace Unigram.ViewModels.Supergroups
                 };
             }
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.UserId, status));
+            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Ok)
             {
                 NavigationService.RemoveLastIf(typeof(SupergroupAddAdministratorPage));
@@ -412,7 +408,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var user = CacheService.GetUser(member.UserId);
+            var user = CacheService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;
@@ -489,7 +485,7 @@ namespace Unigram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.UserId, new ChatMemberStatusMember()));
+            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
             if (response is Ok)
             {
                 NavigationService.RemoveLastIf(typeof(SupergroupAddAdministratorPage));

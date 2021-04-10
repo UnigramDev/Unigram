@@ -97,11 +97,7 @@ namespace Unigram.Views.Supergroups
         {
             if (e.ClickedItem is ChatMember member)
             {
-                var response = await ViewModel.ProtoService.SendAsync(new CreatePrivateChat(member.UserId, false));
-                if (response is Chat chat)
-                {
-                    ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
+                ViewModel.NavigationService.NavigateToSender(member.MemberId);
             }
         }
 
@@ -153,7 +149,7 @@ namespace Unigram.Views.Supergroups
                 return false;
             }
 
-            if (member.UserId == ViewModel.CacheService.Options.MyId)
+            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
             {
                 return false;
             }
@@ -168,7 +164,7 @@ namespace Unigram.Views.Supergroups
                 return false;
             }
 
-            if (member.UserId == ViewModel.CacheService.Options.MyId)
+            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
             {
                 return false;
             }
@@ -188,7 +184,7 @@ namespace Unigram.Views.Supergroups
                 return false;
             }
 
-            if (member.UserId == ViewModel.CacheService.Options.MyId)
+            if (member.MemberId.IsUser(ViewModel.CacheService.Options.MyId))
             {
                 return false;
             }
@@ -236,7 +232,7 @@ namespace Unigram.Views.Supergroups
             args.ItemContainer.Tag = args.Item;
             content.Tag = args.Item;
 
-            var user = ViewModel.ProtoService.GetUser(member.UserId);
+            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;

@@ -12,7 +12,7 @@ namespace Unigram.ViewModels.Supergroups
         public SupergroupAddRestrictedViewModel(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator, new SupergroupMembersFilterRecent(), query => new SupergroupMembersFilterSearch(query))
         {
-            AddCommand = new RelayCommand<int>(AddExecute);
+            AddCommand = new RelayCommand<MessageSender>(AddExecute);
         }
 
         private SearchMembersAndUsersCollection _search;
@@ -28,8 +28,8 @@ namespace Unigram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand<int> AddCommand { get; }
-        private async void AddExecute(int userId)
+        public RelayCommand<MessageSender> AddCommand { get; }
+        private async void AddExecute(MessageSender memberId)
         {
             var chat = _chat;
             if (chat == null)
@@ -39,7 +39,7 @@ namespace Unigram.ViewModels.Supergroups
 
             if (chat.Type is ChatTypeSupergroup super && super.IsChannel)
             {
-                var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, userId, new ChatMemberStatusBanned()));
+                var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, memberId, new ChatMemberStatusBanned()));
                 if (response is Ok)
                 {
                     NavigationService.GoBack();
@@ -51,7 +51,7 @@ namespace Unigram.ViewModels.Supergroups
             }
             else
             {
-                NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, userId));
+                NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, memberId));
             }
         }
     }

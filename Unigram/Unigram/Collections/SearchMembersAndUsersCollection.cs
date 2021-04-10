@@ -51,10 +51,9 @@ namespace Unigram.Collections
                     {
                         foreach (var member in members.Members)
                         {
-                            var user = _protoService.GetUser(member.UserId);
-                            if (user != null)
+                            if (_protoService.TryGetUser(member.MemberId, out User user))
                             {
-                                _users.Add(member.UserId);
+                                _users.Add(user.Id);
                                 _chat.Add(new SearchResult(user, _query, false));
                             }
                         }

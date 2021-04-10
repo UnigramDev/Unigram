@@ -20,7 +20,7 @@ namespace Unigram.Converters
                 case ChatMemberStatusBanned:
                     return string.Format(Strings.Resources.UserRestrictionsBy, protoService.GetUser(member.InviterUserId).GetFullName());
                 default:
-                    return LastSeenConverter.GetLabel(protoService.GetUser(member.UserId), false);
+                    return LastSeenConverter.GetLabel(protoService.GetMessageSender(member.MemberId) as User, false);
             }
         }
 

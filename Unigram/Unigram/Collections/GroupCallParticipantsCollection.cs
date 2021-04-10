@@ -79,7 +79,7 @@ namespace Unigram.Collections
                 }
                 else
                 {
-                    var already = this.FirstOrDefault(x => x.Participant.IsEqual(update.Participant.Participant));
+                    var already = this.FirstOrDefault(x => x.ParticipantId.IsEqual(update.Participant.ParticipantId));
                     if (already != null)
                     {
                         Remove(already);
@@ -99,7 +99,7 @@ namespace Unigram.Collections
             for (int i = 0; i < Count; i++)
             {
                 var item = this[i];
-                if (item.Participant.IsEqual(participant.Participant))
+                if (item.ParticipantId.IsEqual(participant.ParticipantId))
                 {
                     prev = i;
                     update = item;
@@ -107,7 +107,7 @@ namespace Unigram.Collections
                 }
 
                 var order = participant.Order.CompareTo(item.Order);
-                var compare = participant.Participant.ComparaTo(item.Participant);
+                var compare = participant.ParticipantId.ComparaTo(item.ParticipantId);
 
                 if (index == int.MaxValue && (order > 0 || participant.Order == item.Order && compare >= 0))
                 {
@@ -132,7 +132,7 @@ namespace Unigram.Collections
                 update.Bio = participant.Bio;
                 update.Order = participant.Order;
                 update.Source = participant.Source;
-                update.Participant = participant.Participant;
+                update.ParticipantId = participant.ParticipantId;
             }
 
             return index < int.MaxValue ? index : Count;

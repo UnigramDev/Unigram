@@ -583,12 +583,12 @@ namespace Unigram.Views
             var speaking = content.Children[2] as TextBlock;
             var glyph = content.Children[3] as TextBlock;
 
-            if (_cacheService.TryGetUser(participant.Participant, out User user))
+            if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
             {
                 photo.Source = PlaceholderHelper.GetUser(_protoService, user, 36);
                 title.Text = user.GetFullName();
             }
-            else if (_cacheService.TryGetChat(participant.Participant, out Chat chat))
+            else if (_cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
             {
                 photo.Source = PlaceholderHelper.GetChat(_protoService, chat, 36);
                 title.Text = _protoService.GetTitle(chat);
@@ -649,28 +649,28 @@ namespace Unigram.Views
             var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
             debounder.Invoked += (s, args) =>
             {
-                _protoService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.Participant, (int)(args.NewValue * 100)));
+                _protoService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
             };
 
             flyout.Items.Add(new ContentMenuFlyoutItem { Content = slider });
 
-            var supergroup = _cacheService.GetSupergroup(_service.Chat);
-            if (supergroup == null)
+            if (participant.CanBeUnmutedForAllUsers && participant.IsMutedForAllUsers)
             {
-                return;
+                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
+            }
+            else if (participant.CanBeMutedForAllUsers && !participant.IsMutedForAllUsers)
+            {
+                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
+            }
+            else if (participant.CanBeUnmutedForCurrentUser && participant.IsMutedForCurrentUser)
+            {
+                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupUnmuteForMe, new FontIcon { Glyph = Icons.MicOn });
+            }
+            else if (participant.CanBeMutedForCurrentUser && !participant.IsMutedForCurrentUser)
+            {
+                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMuteForMe, new FontIcon { Glyph = Icons.MicOff });
             }
 
-            if (supergroup != null && supergroup.CanManageVoiceChats() && (participant.Participant is MessageSenderChat || !participant.Participant.IsUser(_cacheService.Options.MyId)))
-            {
-                if ((participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser) && !participant.CanUnmuteSelf)
-                {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.Participant, participant.CanUnmuteSelf)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
-                }
-                else
-                {
-                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.Participant, participant.CanUnmuteSelf)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
-                }
-            }
 
             args.ShowAt(flyout, element);
         }

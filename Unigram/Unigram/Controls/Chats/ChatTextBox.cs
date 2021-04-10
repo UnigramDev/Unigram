@@ -527,8 +527,7 @@ namespace Unigram.Controls.Chats
                         {
                             foreach (var member in members.Members)
                             {
-                                var user = _protoService.GetUser(member.UserId);
-                                if (user != null)
+                                if (_protoService.TryGetUser(member.MemberId, out Telegram.Td.Api.User user))
                                 {
                                     Add(user);
                                     count++;

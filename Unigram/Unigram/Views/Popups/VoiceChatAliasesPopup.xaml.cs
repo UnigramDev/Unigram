@@ -18,7 +18,7 @@ namespace Unigram.Views.Popups
             InitializeComponent();
 
             _protoService = protoService;
-            var already = senders.FirstOrDefault(x => x.IsEqual(chat.VoiceChat.DefaultParticipantAlias));
+            var already = senders.FirstOrDefault(x => x.IsEqual(chat.VoiceChat.DefaultParticipantId));
 
             Title = chat.VoiceChat.GroupCallId != 0
                 ? Strings.Resources.VoipGroupDisplayAs

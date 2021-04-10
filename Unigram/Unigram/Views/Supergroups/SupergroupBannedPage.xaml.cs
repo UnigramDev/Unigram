@@ -65,7 +65,7 @@ namespace Unigram.Views.Supergroups
                 return;
             }
 
-            ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
+            ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
         }
 
         #region Context menu
@@ -127,7 +127,7 @@ namespace Unigram.Views.Supergroups
             args.ItemContainer.Tag = args.Item;
             content.Tag = args.Item;
 
-            var user = ViewModel.ProtoService.GetUser(member.UserId);
+            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;

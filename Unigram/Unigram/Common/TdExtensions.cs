@@ -930,37 +930,38 @@ namespace Unigram.Common
         {
             switch (message.Content)
             {
-                case MessageBasicGroupChatCreate _:
-                case MessageChatAddMembers _:
-                case MessageChatChangePhoto _:
-                case MessageChatChangeTitle _:
-                case MessageChatDeleteMember _:
-                case MessageChatDeletePhoto _:
-                case MessageChatJoinByLink _:
-                case MessageChatSetTtl _:
-                case MessageChatUpgradeFrom _:
-                case MessageChatUpgradeTo _:
-                case MessageContactRegistered _:
-                case MessageCustomServiceAction _:
-                case MessageGameScore _:
-                case MessageInviteVoiceChatParticipants _:
-                case MessageProximityAlertTriggered _:
-                case MessagePassportDataSent _:
-                case MessagePaymentSuccessful _:
-                case MessagePinMessage _:
-                case MessageScreenshotTaken _:
-                case MessageSupergroupChatCreate _:
-                case MessageVoiceChatEnded _:
+                case MessageBasicGroupChatCreate:
+                case MessageChatAddMembers:
+                case MessageChatChangePhoto:
+                case MessageChatChangeTitle:
+                case MessageChatDeleteMember:
+                case MessageChatDeletePhoto:
+                case MessageChatJoinByLink:
+                case MessageChatSetTtl:
+                case MessageChatUpgradeFrom:
+                case MessageChatUpgradeTo:
+                case MessageContactRegistered:
+                case MessageCustomServiceAction:
+                case MessageGameScore:
+                case MessageInviteVoiceChatParticipants:
+                case MessageProximityAlertTriggered:
+                case MessagePassportDataSent:
+                case MessagePaymentSuccessful:
+                case MessagePinMessage:
+                case MessageScreenshotTaken:
+                case MessageSupergroupChatCreate:
+                case MessageVoiceChatEnded:
+                case MessageVoiceChatScheduled:
                 case MessageVoiceChatStarted:
-                case MessageWebsiteConnected _:
+                case MessageWebsiteConnected:
                     return true;
-                case MessageExpiredPhoto _:
-                case MessageExpiredVideo _:
+                case MessageExpiredPhoto:
+                case MessageExpiredVideo:
                     return true;
                 // Local types:
-                case MessageChatEvent _:
-                case MessageHeaderDate _:
-                case MessageHeaderUnread _:
+                case MessageChatEvent:
+                case MessageHeaderDate:
+                case MessageHeaderUnread:
                     return true;
                 default:
                     return false;
@@ -971,8 +972,8 @@ namespace Unigram.Common
         {
             switch (result)
             {
-                case InlineQueryResultAnimation _:
-                case InlineQueryResultPhoto _:
+                case InlineQueryResultAnimation:
+                case InlineQueryResultPhoto:
                     return true;
                 case InlineQueryResultVideo video:
                     return string.IsNullOrEmpty(video.Title);

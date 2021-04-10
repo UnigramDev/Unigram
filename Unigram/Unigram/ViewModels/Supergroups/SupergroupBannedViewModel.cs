@@ -46,7 +46,7 @@ namespace Unigram.ViewModels.Supergroups
 
             Members.Remove(member);
 
-            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.UserId, new ChatMemberStatusMember()));
+            var response = await ProtoService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
             if (response is Error)
             {
                 Members.Insert(index, member);

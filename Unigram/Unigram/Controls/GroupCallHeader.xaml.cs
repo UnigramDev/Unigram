@@ -71,7 +71,7 @@ namespace Unigram.Controls
 
                         for (int j = 0; j < destination.Count; j++)
                         {
-                            if (destination[j].IsEqual(item.Speaker))
+                            if (destination[j].IsEqual(item.ParticipantId))
                             {
                                 index = j;
                                 break;
@@ -84,7 +84,7 @@ namespace Unigram.Controls
                         }
                         else if (index == -1)
                         {
-                            destination.Insert(Math.Min(i, destination.Count), item.Speaker);
+                            destination.Insert(Math.Min(i, destination.Count), item.ParticipantId);
                         }
                     }
 
@@ -95,7 +95,7 @@ namespace Unigram.Controls
 
                         for (int j = 0; j < origin.Count; j++)
                         {
-                            if (origin[j].Speaker.IsEqual(item))
+                            if (origin[j].ParticipantId.IsEqual(item))
                             {
                                 index = j;
                                 break;
@@ -111,7 +111,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    RecentUsers.Items.ReplaceWith(origin.Select(x => x.Speaker));
+                    RecentUsers.Items.ReplaceWith(origin.Select(x => x.ParticipantId));
                 }
             }
 

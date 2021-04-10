@@ -30,7 +30,7 @@ namespace Unigram.ViewModels.Payments
             state.TryGet("messageId", out long messageId);
 
             var message = await ProtoService.SendAsync(new GetMessage(chatId, messageId)) as Message;
-            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(chatId, messageId)) as PaymentForm;
+            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(chatId, messageId, new PaymentFormTheme())) as PaymentForm;
 
             if (message == null || paymentForm == null)
             {
@@ -240,6 +240,7 @@ namespace Unigram.ViewModels.Payments
 
             IsLoading = true;
 
+            var formId = _paymentForm.Id;
             var infoId = _validatedInfo?.OrderInfoId ?? string.Empty;
             var shippingId = _shipping?.Id ?? string.Empty;
 
@@ -256,7 +257,7 @@ namespace Unigram.ViewModels.Payments
                 }
             }
 
-            var response = await ProtoService.SendAsync(new SendPaymentForm(_message.ChatId, _message.Id, infoId, shippingId, credentials));
+            var response = await ProtoService.SendAsync(new SendPaymentForm(_message.ChatId, _message.Id, formId, infoId, shippingId, credentials, 0));
             if (response is PaymentResult result)
             {
                 if (Uri.TryCreate(result.VerificationUrl, UriKind.Absolute, out Uri uri))

@@ -59,17 +59,17 @@ namespace Unigram.Views.Supergroups
 
             if (e.ClickedItem is ChatMember member)
             {
-                ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.UserId));
+                ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
             }
             else if (e.ClickedItem is SearchResult result)
             {
                 if (result.User is User user)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, user.Id));
+                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, new MessageSenderUser(user.Id)));
                 }
                 else if (result.Chat is Chat temp && temp.Type is ChatTypePrivate privata)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, privata.UserId));
+                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, new MessageSenderUser(privata.UserId)));
                 }
             }
         }
@@ -86,7 +86,7 @@ namespace Unigram.Views.Supergroups
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var member = args.Item as ChatMember;
 
-            var user = ViewModel.ProtoService.GetUser(member.UserId);
+            var user = ViewModel.ProtoService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {
                 return;
