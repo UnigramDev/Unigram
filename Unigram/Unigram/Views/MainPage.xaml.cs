@@ -2426,6 +2426,10 @@ namespace Unigram.Views
                     MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                 }
             }
+            else if (destination == RootDestination.Tips)
+            {
+                MessageHelper.NavigateToUsername(ViewModel.ProtoService, MasterDetail.NavigationService, "TelegramTips", null, null, null, null, null);
+            }
             else if (destination == RootDestination.News)
             {
                 MessageHelper.NavigateToUsername(ViewModel.ProtoService, MasterDetail.NavigationService, "unigram", null, null, null, null, null);
