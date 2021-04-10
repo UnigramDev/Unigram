@@ -115,6 +115,11 @@ namespace Unigram.Views
             }
         }
 
+        private void Field_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+        {
+            args.TryCancel();
+        }
+
         private void Enter_Click(object sender, RoutedEventArgs e)
         {
             if (_passcodeService.Check(Field.Password))
@@ -135,6 +140,8 @@ namespace Unigram.Views
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
+            Window.Current.Activated += Window_Activated;
+
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
@@ -161,8 +168,18 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Window.Current.Activated -= Window_Activated;
+
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+        }
+
+        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            {
+                Field.Focus(FocusState.Keyboard);
+            }
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -200,6 +217,10 @@ namespace Unigram.Views
                         {
                             Unlock();
                         }
+                        else
+                        {
+                            Field.Focus(FocusState.Keyboard);
+                        }
                     }
                     else
                     {
@@ -208,10 +229,17 @@ namespace Unigram.Views
                         {
                             Unlock();
                         }
+                        else
+                        {
+                            Field.Focus(FocusState.Keyboard);
+                        }
                     }
                 }
             }
-            catch { }
+            catch
+            {
+                Field.Focus(FocusState.Keyboard);
+            }
         }
     }
 }
