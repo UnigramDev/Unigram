@@ -83,7 +83,7 @@ namespace Unigram.Controls.Messages.Content
                     height += Children[i].DesiredSize.Height;
                 }
 
-                return new Size(width, height);
+                return finalSize;
             }
 
             var positions = _positions;
@@ -97,7 +97,7 @@ namespace Unigram.Controls.Messages.Content
                 Children[i].Arrange(positions.Item1[i]);
             }
 
-            return positions.Item2;
+            return finalSize;
         }
 
         public void UpdateMessage(MessageViewModel message)
