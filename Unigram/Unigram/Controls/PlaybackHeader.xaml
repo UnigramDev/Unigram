@@ -309,8 +309,8 @@
             Height="40"
             Grid.Column="4"
             Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-            AutomationProperties.Name="{CustomResource AccDescrClosePlayer}"
-            ToolTipService.ToolTip="{CustomResource AccDescrClosePlayer}">
+            AutomationProperties.Name="{CustomResource VoipGroupVolume}"
+            ToolTipService.ToolTip="{CustomResource VoipGroupVolume}">
             <controls:GlyphButton.Flyout>
                 <Flyout Placement="Bottom">
                     <Flyout.FlyoutPresenterStyle>
