@@ -339,7 +339,7 @@ namespace Unigram.Views
                 if (_service.Manager != null)
                 {
                     _service.Manager.IsMuted = !currentUser.IsMutedForAllUsers;
-                    _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, new MessageSenderUser(_cacheService.Options.MyId), _service.Manager.IsMuted));
+                    _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, _service.Manager.IsMuted));
                 }
             }
             else if (currentUser != null)
