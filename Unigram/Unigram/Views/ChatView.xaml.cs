@@ -3327,7 +3327,7 @@ namespace Unigram.Views
                 return;
             }
 
-            if (actions != null && actions.Count > 0)
+            if (actions != null && actions.Count > 0 && (ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread))
             {
                 ChatActionLabel.Text = InputChatActionManager.GetTypingString(chat, actions, ViewModel.CacheService.GetUser, out ChatAction commonAction);
                 ChatActionIndicator.UpdateAction(commonAction);
