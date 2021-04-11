@@ -50,7 +50,7 @@ namespace Unigram.Controls.Messages
             var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
             cross.Opacity = 0;
 
-            if (ApiInfo.CanAccessActualFloats && ApiInfo.CanUseDirectComposition)
+            if (ApiInfo.CanUseActualFloats && ApiInfo.CanUseDirectComposition)
             {
                 _cornerRadiusClip = Window.Current.Compositor.CreateGeometricClip();
                 content.Clip = _cornerRadiusClip;
@@ -1413,7 +1413,7 @@ namespace Unigram.Controls.Messages
 
         private void UpdateClip()
         {
-            if (ApiInfo.CanAccessActualFloats)
+            if (ApiInfo.CanUseActualFloats)
             {
                 _cornerRadiusClip.Geometry = GenerateContourPath(ContentPanel.ActualSize, _cornerRadius);
             }
@@ -1666,13 +1666,40 @@ namespace Unigram.Controls.Messages
             //return;
 
             var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(prev.X / next.X, prev.Y / next.Y, 1));
+            anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
             anim.InsertKeyFrame(1, Vector3.One);
-            //anim.Duration = TimeSpan.FromSeconds(1);
 
-            var visual = ElementCompositionPreview.GetElementVisual(ContentPanel);
-            visual.CenterPoint = new Vector3(outgoing ? next.X : 0, 0, 0);
-            visual.StartAnimation("Scale", anim);
+            var panel = ElementCompositionPreview.GetElementVisual(ContentPanel);
+            panel.CenterPoint = new Vector3(outgoing ? next.X : 0, 0, 0);
+            panel.StartAnimation("Scale", anim);
+
+            if (ApiInfo.CanUseActualFloats)
+            {
+                var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+                factor.SetReferenceParameter("content", panel);
+
+                var header = ElementCompositionPreview.GetElementVisual(Header);
+                var text = ElementCompositionPreview.GetElementVisual(Message);
+                var media = ElementCompositionPreview.GetElementVisual(Media);
+                var footer = ElementCompositionPreview.GetElementVisual(Footer);
+
+                var headerLeft = (float)Header.Margin.Left;
+                var textLeft = (float)Message.Margin.Left;
+                var mediaLeft = (float)Media.Margin.Left;
+
+                var footerRight = (float)Footer.Margin.Right;
+                var footerBottom = (float)Footer.Margin.Bottom;
+
+                header.CenterPoint = new Vector3(-headerLeft, 0, 0);
+                text.CenterPoint = new Vector3(-textLeft, 0, 0);
+                media.CenterPoint = new Vector3(-mediaLeft, 0, 0);
+                footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
+
+                header.StartAnimation("Scale", factor);
+                text.StartAnimation("Scale", factor);
+                media.StartAnimation("Scale", factor);
+                footer.StartAnimation("Scale", factor);
+            }
         }
 
         private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)

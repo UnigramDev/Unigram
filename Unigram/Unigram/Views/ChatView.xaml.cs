@@ -437,6 +437,8 @@ namespace Unigram.Views
         {
             if (ViewModel != null)
             {
+                ViewModel.Dispose();
+
                 ViewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
                 ViewModel.PropertyChanged -= OnPropertyChanged;
                 ViewModel.Items.AttachChanged = null;
@@ -449,8 +451,6 @@ namespace Unigram.Views
                 ViewModel.TextField = null;
                 ViewModel.ListField = null;
                 ViewModel.Sticker_Click = null;
-
-                ViewModel.Dispose();
             }
         }
 
@@ -564,7 +564,7 @@ namespace Unigram.Views
                     && message.SendingState is MessageSendingStatePending
                     && message.Content is MessageText or MessageDice
                     && message.GeneratedContent is MessageBigEmoji or MessageSticker or null
-                    && ApiInfo.CanAccessActualFloats;
+                    && ApiInfo.CanUseActualFloats;
 
                 var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex - 1;
                 if (withinViewport is false)
