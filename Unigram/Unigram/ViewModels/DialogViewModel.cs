@@ -2148,14 +2148,12 @@ namespace Unigram.ViewModels
 
                 Delegate?.UpdateUser(chat, item, false);
 
-                if (cache == null)
-                {
-                    ProtoService.Send(new GetUserFullInfo(privata.UserId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateUserFullInfo(chat, item, cache, false, _accessToken != null);
                 }
+
+                ProtoService.Send(new GetUserFullInfo(privata.UserId));
             }
             else if (chat.Type is ChatTypeSecret secretType)
             {
@@ -2166,14 +2164,12 @@ namespace Unigram.ViewModels
                 Delegate?.UpdateSecretChat(chat, secret);
                 Delegate?.UpdateUser(chat, item, true);
 
-                if (cache == null)
-                {
-                    ProtoService.Send(new GetUserFullInfo(secret.UserId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateUserFullInfo(chat, item, cache, true, false);
                 }
+
+                ProtoService.Send(new GetUserFullInfo(secret.UserId));
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
             {
@@ -2182,14 +2178,12 @@ namespace Unigram.ViewModels
 
                 Delegate?.UpdateBasicGroup(chat, item);
 
-                if (cache == null)
-                {
-                    ProtoService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateBasicGroupFullInfo(chat, item, cache);
                 }
+
+                ProtoService.Send(new GetBasicGroupFullInfo(basic.BasicGroupId));
 
                 ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
                 {
@@ -2206,15 +2200,13 @@ namespace Unigram.ViewModels
 
                 Delegate?.UpdateSupergroup(chat, item);
 
-                if (cache == null)
-                {
-                    ProtoService.Send(new GetSupergroupFullInfo(super.SupergroupId));
-                }
-                else
+                if (cache != null)
                 {
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                     //Stickers?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
+
+                ProtoService.Send(new GetSupergroupFullInfo(super.SupergroupId));
 
                 ProtoService.Send(new GetChatAdministrators(chat.Id), result =>
                 {
@@ -2225,7 +2217,7 @@ namespace Unigram.ViewModels
                 });
             }
 
-            UpdateGroupCall(chat, chat.VoiceChat?.GroupCallId ?? 0);
+            UpdateGroupCall(chat, chat.VoiceChat.GroupCallId);
 
             ShowReplyMarkup(chat);
             ShowDraftMessage(chat);
