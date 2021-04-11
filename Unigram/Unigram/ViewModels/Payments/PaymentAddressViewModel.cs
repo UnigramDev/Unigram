@@ -103,7 +103,7 @@ namespace Unigram.ViewModels.Payments
             if (_invoice.NeedShippingAddress)
             {
                 info.ShippingAddress = _info.ShippingAddress;
-                info.ShippingAddress.CountryCode = _selectedCountry?.Code?.ToUpper();
+                info.ShippingAddress.CountryCode = _selectedCountry?.Code ?? string.Empty;
             }
 
             var response = await ProtoService.SendAsync(new ValidateOrderInfo(_chatId, _messageId, info, save));
