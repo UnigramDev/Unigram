@@ -3866,6 +3866,7 @@ namespace Unigram.Views
             var messages = ElementCompositionPreview.GetElementVisual(Messages);
             if (messages.Clip is InsetClip messagesClip)
             {
+                messagesClip.TopInset = 0;
                 messagesClip.BottomInset = -radius;
             }
             else
