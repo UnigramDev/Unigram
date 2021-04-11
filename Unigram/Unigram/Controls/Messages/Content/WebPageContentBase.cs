@@ -136,6 +136,17 @@ namespace Unigram.Controls.Messages.Content
 
                 button.Visibility = Visibility.Visible;
             }
+            else if (string.Equals(webPage.Type, "telegram_voicechat", StringComparison.OrdinalIgnoreCase))
+            {
+                if (run1 != null)
+                {
+                    run1.Text = run3.Text = string.Empty;
+                    run2.Text = webPage.Url.Contains("?voicechat=") ? Strings.Resources.VoipGroupJoinAsSpeaker : Strings.Resources.VoipGroupJoinAsLinstener;
+                    run3.Foreground = null;
+                }
+
+                button.Visibility = Visibility.Visible;
+            }
             else if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
             {
                 if (run1 != null)

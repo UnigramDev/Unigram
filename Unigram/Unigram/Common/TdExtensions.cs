@@ -879,6 +879,9 @@ namespace Unigram.Common
             {
                 if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(webPage.Type, "video", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(webPage.Type, "embed", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(webPage.Type, "gif", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(webPage.Type, "document", StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
@@ -888,11 +891,11 @@ namespace Unigram.Common
                     var photo = webPage.Photo;
                     var big = photo.GetBig();
 
-                    return big != null && big.Width > 400 && webPage.InstantViewVersion != 0;
+                    return big != null && big.Width > 256 && webPage.InstantViewVersion != 0;
                 }
             }
 
-            return webPage.Photo != null;
+            return false;
         }
 
         public static bool IsSmallPhoto(this WebPage webPage)
@@ -1367,12 +1370,30 @@ namespace Unigram.Common
         public static string GetStartsAt(this MessageVoiceChatScheduled messageVoiceChatScheduled)
         {
             var date = Converters.Converter.DateTime(messageVoiceChatScheduled.StartDate);
+            if (date.Date == DateTime.Today)
+            {
+                return string.Format(Strings.Resources.TodayAtFormattedWithToday, Converters.Converter.ShortTime.Format(date));
+            }
+            else if (date.Date.AddDays(1) == DateTime.Today)
+            {
+                return string.Format(Strings.Resources.YesterdayAtFormatted, Converters.Converter.ShortTime.Format(date));
+            }
+
             return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
         }
 
         public static string GetStartsAt(this GroupCall groupCall)
         {
             var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
+            if (date.Date == DateTime.Today)
+            {
+                return string.Format(Strings.Resources.TodayAtFormattedWithToday, Converters.Converter.ShortTime.Format(date));
+            }
+            else if (date.Date.AddDays(1) == DateTime.Today)
+            {
+                return string.Format(Strings.Resources.YesterdayAtFormatted, Converters.Converter.ShortTime.Format(date));
+            }
+
             return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
         }
 
@@ -1381,21 +1402,21 @@ namespace Unigram.Common
             var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
             var duration = date - DateTime.Now;
 
-            if (duration.TotalDays >= 7)
+            if (Math.Abs(duration.TotalDays) >= 7)
             {
                 return Locale.Declension("Weeks", 1);
             }
-            if (duration.TotalDays >= 1)
+            if (Math.Abs(duration.TotalDays) >= 1)
             {
                 return Locale.Declension("Days", (int)duration.TotalDays);
             }
-            else if (duration.TotalHours >= 1)
+            else if (Math.Abs(duration.TotalHours) >= 1)
             {
-                return duration.ToString("h\\:mm\\:ss");
+                return (duration.TotalSeconds < 0 ? "-" : "") + duration.ToString("h\\:mm\\:ss");
             }
             else
             {
-                return duration.ToString("mm\\:ss");
+                return (duration.TotalSeconds < 0 ? "-" : "") + duration.ToString("mm\\:ss");
             }
         }
 
