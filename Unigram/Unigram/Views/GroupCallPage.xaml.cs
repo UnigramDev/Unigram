@@ -89,6 +89,7 @@ namespace Unigram.Views
             CancelReminder,
             Start,
             RaiseHand,
+            HandRaised,
             Mute,
             Unmute
         }
@@ -103,7 +104,7 @@ namespace Unigram.Views
 
         private void OnTick(object sender, object e)
         {
-            if (_service.Call != null && _service.Call.ScheduledStartDate != 0)
+            if (_service != null && _service.Call != null && _service.Call.ScheduledStartDate != 0)
             {
                 StartsIn.Text = _service.Call.GetStartsIn();
             }
@@ -115,7 +116,7 @@ namespace Unigram.Views
 
         private async void OnParticipantsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (_service.Participants == null)
+            if (_disposed || _service?.Participants == null)
             {
                 return;
             }
@@ -221,6 +222,7 @@ namespace Unigram.Views
                     }
 
                     FindName(nameof(ScheduledPanel));
+                    ParticipantsPanel.Visibility = Visibility.Collapsed;
                     StartsAt.Text = call.GetStartsAt();
                     StartsIn.Text = call.GetStartsIn();
                 }
@@ -232,6 +234,8 @@ namespace Unigram.Views
                     {
                         UnloadObject(ScheduledPanel);
                     }
+
+                    ParticipantsPanel.Visibility = Visibility.Visible;
                 }
 
                 UpdateNetworkState(call, currentUser, _service.IsConnected);
@@ -263,20 +267,20 @@ namespace Unigram.Views
 
             if (call.CanBeManaged)
             {
-                var dialog = new MessagePopup();
-                dialog.RequestedTheme = ElementTheme.Dark;
-                dialog.Title = Strings.Resources.VoipGroupLeaveAlertTitle;
-                dialog.Message = Strings.Resources.VoipGroupLeaveAlertText;
-                dialog.PrimaryButtonText = Strings.Resources.VoipGroupLeave;
-                dialog.SecondaryButtonText = Strings.Resources.Cancel;
-                dialog.CheckBoxLabel = Strings.Resources.VoipGroupLeaveAlertEndChat;
+                var popup = new MessagePopup();
+                popup.RequestedTheme = ElementTheme.Dark;
+                popup.Title = Strings.Resources.VoipGroupLeaveAlertTitle;
+                popup.Message = Strings.Resources.VoipGroupLeaveAlertText;
+                popup.PrimaryButtonText = Strings.Resources.VoipGroupLeave;
+                popup.SecondaryButtonText = Strings.Resources.Cancel;
+                popup.CheckBoxLabel = Strings.Resources.VoipGroupLeaveAlertEndChat;
 
-                var confirm = await dialog.ShowQueuedAsync();
+                var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Window.Current.Close();
 
-                    if (dialog.IsChecked == true)
+                    if (popup.IsChecked == true)
                     {
                         _service.Discard();
                     }
@@ -303,14 +307,14 @@ namespace Unigram.Views
                 return;
             }
 
-            var dialog = new MessagePopup();
-            dialog.RequestedTheme = ElementTheme.Dark;
-            dialog.Title = Strings.Resources.VoipGroupEndAlertTitle;
-            dialog.Message = Strings.Resources.VoipGroupEndAlertText;
-            dialog.PrimaryButtonText = Strings.Resources.VoipGroupEnd;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+            var popup = new MessagePopup();
+            popup.RequestedTheme = ElementTheme.Dark;
+            popup.Title = Strings.Resources.VoipGroupEndAlertTitle;
+            popup.Message = Strings.Resources.VoipGroupEndAlertText;
+            popup.PrimaryButtonText = Strings.Resources.VoipGroupEnd;
+            popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await dialog.ShowQueuedAsync();
+            var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 Window.Current.Close();
@@ -334,13 +338,23 @@ namespace Unigram.Views
                     _protoService.Send(new ToggleGroupCallEnabledStartNotification(call.Id, !call.EnabledStartNotification));
                 }
             }
-            else if (currentUser != null && (currentUser.CanBeMutedForAllUsers || currentUser.CanBeUnmutedForAllUsers))
+            //else if (currentUser != null && (currentUser.CanBeMutedForAllUsers || currentUser.CanBeUnmutedForAllUsers))
+            //{
+            //    if (_service.Manager != null)
+            //    {
+            //        _service.Manager.IsMuted = !currentUser.IsMutedForAllUsers;
+            //        _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, _service.Manager.IsMuted));
+            //    }
+            //}
+            else if (currentUser != null && currentUser.CanUnmuteSelf && _service.Manager.IsMuted)
             {
-                if (_service.Manager != null)
-                {
-                    _service.Manager.IsMuted = !currentUser.IsMutedForAllUsers;
-                    _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, _service.Manager.IsMuted));
-                }
+                _service.Manager.IsMuted = false;
+                _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, false));
+            }
+            else if (currentUser != null && !_service.Manager.IsMuted)
+            {
+                _service.Manager.IsMuted = true;
+                _protoService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, currentUser.ParticipantId, true));
             }
             else if (currentUser != null)
             {
@@ -366,13 +380,19 @@ namespace Unigram.Views
                     SetButtonState(call.EnabledStartNotification ? ButtonState.SetReminder : ButtonState.CancelReminder);
                 }
             }
-            else if (currentUser != null && currentUser.CanBeUnmutedForAllUsers)
+            //else if (currentUser != null && currentUser.CanBeUnmutedForAllUsers)
+            else if (currentUser != null && currentUser.CanUnmuteSelf && _service.Manager.IsMuted)
             {
                 SetButtonState(ButtonState.Mute);
             }
-            else if (currentUser != null && currentUser.CanBeMutedForAllUsers)
+            //else if (currentUser != null && currentUser.CanBeMutedForAllUsers)
+            else if (currentUser != null && !_service.Manager.IsMuted)
             {
                 SetButtonState(ButtonState.Unmute);
+            }
+            else if (currentUser != null && currentUser.IsHandRaised)
+            {
+                SetButtonState(ButtonState.HandRaised);
             }
             else if (call != null && call.IsJoined)
             {
@@ -396,73 +416,83 @@ namespace Unigram.Views
             {
                 case ButtonState.CancelReminder:
                     colors = ButtonColors.Disabled;
+                    AudioInfo.Text = Strings.Resources.VoipGroupCancelReminder;
+                    Lottie.AutoPlay = true;
                     Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminder.tgs");
-                    Lottie.Play();
                     break;
                 case ButtonState.SetReminder:
                     colors = ButtonColors.Disabled;
+                    AudioInfo.Text = Strings.Resources.VoipGroupSetReminder;
+                    Lottie.AutoPlay = true;
                     Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminder.tgs");
-                    Lottie.Play();
                     break;
                 case ButtonState.Start:
                     colors = ButtonColors.Disabled;
-                    Lottie.Pause();
+                    AudioInfo.Text = Strings.Resources.VoipGroupStartNow;
+                    Lottie.AutoPlay = false;
                     Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceStart.tgs");
                     break;
                 case ButtonState.Unmute:
                     colors = ButtonColors.Mute;
+                    AudioInfo.Text = Strings.Resources.VoipGroupUnmute;
+                    Lottie.AutoPlay = true;
                     Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmute.tgs");
-                    Lottie.Play();
                     break;
                 case ButtonState.Mute:
                     colors = ButtonColors.Unmute;
+                    AudioInfo.Text = Strings.Resources.VoipTapToMute;
                     switch (_prevState)
                     {
                         case ButtonState.CancelReminder:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminderToMute.tgs");
-                            Lottie.Play();
                             break;
                         case ButtonState.RaiseHand:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceRaiseHandToMute.tgs");
-                            Lottie.Play();
                             break;
                         case ButtonState.SetReminder:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminderToMute.tgs");
-                            Lottie.Play();
                             break;
                         case ButtonState.Start:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceStart.tgs");
                             Lottie.Play();
                             break;
                         default:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceMute.tgs");
-                            Lottie.Play();
                             break;
                     }
                     break;
                 case ButtonState.RaiseHand:
+                case ButtonState.HandRaised:
                     colors = ButtonColors.Disabled;
+                    AudioInfo.Text = state == ButtonState.HandRaised
+                        ? Strings.Resources.VoipMutedTapedForSpeak
+                        : Strings.Resources.VoipMutedByAdmin;
                     switch (_prevState)
                     {
                         case ButtonState.CancelReminder:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminderToRaiseHand.tgs");
-                            Lottie.Play();
                             break;
                         case ButtonState.Mute:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceMuteToRaiseHand.tgs");
-                            Lottie.Play();
                             break;
                         case ButtonState.Unmute:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmuteToRaiseHand.tgs");
-                            Lottie.Play();
                             break;
                         case ButtonState.SetReminder:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminderToRaiseHand.tgs");
-                            Lottie.Play();
                             break;
                         default:
+                            Lottie.AutoPlay = true;
                             Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceHand_1.tgs");
-                            Lottie.Play();
                             break;
                     }
                     break;
@@ -654,6 +684,7 @@ namespace Unigram.Views
             }
 
             var input = new InputPopup();
+            input.RequestedTheme = ElementTheme.Dark;
             input.Title = Strings.Resources.VoipGroupTitle;
             input.PrimaryButtonText = Strings.Resources.Save;
             input.SecondaryButtonText = Strings.Resources.Cancel;
@@ -680,6 +711,7 @@ namespace Unigram.Views
             }
 
             var input = new InputPopup();
+            input.RequestedTheme = ElementTheme.Dark;
             input.Title = Strings.Resources.VoipGroupStartRecordingTitle;
             input.Header = Strings.Resources.VoipGroupStartRecordingText;
             input.PrimaryButtonText = Strings.Resources.Start;
@@ -705,6 +737,7 @@ namespace Unigram.Views
             }
 
             var popup = new MessagePopup();
+            popup.RequestedTheme = ElementTheme.Dark;
             popup.Title = Strings.Resources.VoipGroupStopRecordingTitle;
             popup.Message = Strings.Resources.VoipGroupStopRecordingText;
             popup.PrimaryButtonText = Strings.Resources.Stop;
@@ -837,41 +870,66 @@ namespace Unigram.Views
 
             var call = _service.Call;
 
-            var slider = new Slider
+            if (participant.IsCurrentUser)
             {
-                Value = participant.VolumeLevel / 100d,
-                Minimum = 0,
-                Maximum = 200,
-                MinWidth = 200,
-                TickFrequency = 100,
-                TickPlacement = TickPlacement.Inline
-            };
-
-            var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
-            debounder.Invoked += (s, args) =>
-            {
-                _protoService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
-            };
-
-            flyout.Items.Add(new ContentMenuFlyoutItem { Content = slider });
-
-            if (participant.CanBeUnmutedForAllUsers && participant.IsMutedForAllUsers)
-            {
-                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
+                if (participant.IsHandRaised)
+                {
+                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsHandRaised(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupCancelRaiseHand, new FontIcon { Glyph = Icons.EmojiHand });
+                }
             }
-            else if (participant.CanBeMutedForAllUsers && !participant.IsMutedForAllUsers)
+            else
             {
-                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
-            }
-            else if (participant.CanBeUnmutedForCurrentUser && participant.IsMutedForCurrentUser)
-            {
-                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupUnmuteForMe, new FontIcon { Glyph = Icons.MicOn });
-            }
-            else if (participant.CanBeMutedForCurrentUser && !participant.IsMutedForCurrentUser)
-            {
-                flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMuteForMe, new FontIcon { Glyph = Icons.MicOff });
-            }
+                var slider = new Slider
+                {
+                    Value = participant.VolumeLevel / 100d,
+                    Minimum = 0,
+                    Maximum = 200,
+                    MinWidth = 200,
+                    TickFrequency = 100,
+                    TickPlacement = TickPlacement.Inline
+                };
 
+                var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
+                debounder.Invoked += (s, args) =>
+                {
+                    _protoService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
+                };
+
+                flyout.Items.Add(new ContentMenuFlyoutItem { Content = slider });
+
+                if (participant.CanBeUnmutedForAllUsers && participant.IsMutedForAllUsers)
+                {
+                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
+                }
+                else if (participant.CanBeMutedForAllUsers && !participant.IsMutedForAllUsers)
+                {
+                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
+                }
+                else if (participant.CanBeUnmutedForCurrentUser && participant.IsMutedForCurrentUser)
+                {
+                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupUnmuteForMe, new FontIcon { Glyph = Icons.MicOn });
+                }
+                else if (participant.CanBeMutedForCurrentUser && !participant.IsMutedForCurrentUser)
+                {
+                    flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.Resources.VoipGroupMuteForMe, new FontIcon { Glyph = Icons.MicOff });
+                }
+
+                //if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
+                //{
+                //    flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.Resources.VoipGroupOpenProfile, new FontIcon { Glyph = Icons.Person });
+                //}
+                //else if (_cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
+                //{
+                //    if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                //    {
+                //        flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.Resources.VoipGroupOpenChannel, new FontIcon { Glyph = Icons.Megaphone });
+                //    }
+                //    else
+                //    {
+                //        flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.Resources.VoipGroupOpenGroup, new FontIcon { Glyph = Icons.People });
+                //    }
+                //}
+            }
 
             args.ShowAt(flyout, element);
         }

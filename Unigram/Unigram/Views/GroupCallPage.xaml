@@ -33,15 +33,15 @@
             <Setter Property="FontSize" Value="{StaticResource GlyphLargeFontSize}" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Glyph" Value="&#xE700;" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="48" />
             <Setter Property="Width" Value="48" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+            <Setter Property="Radius" Value="24" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:GlyphButton">
-                        <Grid>
+                        <Grid Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -74,191 +74,15 @@
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <Border
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="24"
-                                Width="48"
-                                Height="48">
-                                <Grid x:Name="RootGrid">
-                                    <TextBlock
-                                        x:Name="ContentPresenter"
-                                        Margin="{TemplateBinding Padding}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        Text="{TemplateBinding Glyph}"/>
-                                </Grid>
-                            </Border>
-
-                            <ContentPresenter
-                                x:Name="ContentPresenter1"
-                                Foreground="#FFFFFF"
-                                Content="{TemplateBinding Content}"
-                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                Margin="-8,4,-8,8"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Grid.Row="1"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <SolidColorBrush x:Key="CallToggleButtonBackgroundBrush" Color="Transparent"/>
-        <SolidColorBrush x:Key="CallToggleButtonForegroundBrush" Color="#FFFFFF"/>
-        <SolidColorBrush x:Key="CallToggleButtonForegroundPointerOverBrush" Color="#FFFFFF"/>
-        <SolidColorBrush x:Key="CallToggleButtonForegroundPressedBrush" Color="#FFFFFF"/>
-        <SolidColorBrush x:Key="CallToggleButtonCrossBrush" Color="#FFFFFF"/>
-        <SolidColorBrush x:Key="CallToggleButtonCrossDisabledBrush" Color="#FFFFFF"/>
-
-        <SolidColorBrush x:Key="CallToggleButtonBackgroundCheckedBrush" Color="Transparent"/>
-        <SolidColorBrush x:Key="CallToggleButtonForegroundCheckedBrush" Color="#FFFFFF"/>
-
-        <Style TargetType="controls:CallToggleButton">
-            <Setter Property="Background" Value="{ThemeResource CallToggleButtonBackgroundBrush}" />
-            <Setter Property="Foreground" Value="{ThemeResource CallToggleButtonForegroundBrush}" />
-            <Setter Property="Padding" Value="8,4,8,4" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
-            <Setter Property="FontSize" Value="32" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="UseSystemFocusVisuals" Value="True" />
-            <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Width" Value="96" />
-            <Setter Property="Height" Value="Auto" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:CallToggleButton">
-                        <Grid>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonForegroundPointerOverBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonForegroundPressedBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonCrossDisabledBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Checked">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonBackgroundCheckedBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonForegroundCheckedBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedPointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonBackgroundCheckedBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonForegroundCheckedBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedPressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonBackgroundCheckedBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CallToggleButtonForegroundCheckedBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="CheckedDisabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonBackgroundCheckedDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonForegroundCheckedDisabled}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" Width="96" Height="96" CornerRadius="48">
+                            <Grid x:Name="RootGrid">
                                 <TextBlock
-                                x:Name="ContentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Text="{TemplateBinding Glyph}"
-                                FontSize="{TemplateBinding FontSize}"/>
-
-                                <Path
-                                x:Name="CrossBackground"
-                                Data="M0,20 L20,0"
-                                StrokeThickness="4"
-                                Stroke="{ThemeResource CallToggleButtonBackgroundBrush}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                StrokeStartLineCap="Round"
-                                StrokeEndLineCap="Round"/>
-                                <Path
-                                x:Name="CrossForeground"
-                                Data="M0,20 L20,0"
-                                StrokeThickness="2"
-                                Stroke="{ThemeResource CallToggleButtonCrossBrush}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                StrokeStartLineCap="Round"
-                                StrokeEndLineCap="Round"/>
+                                    x:Name="ContentPresenter"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    Text="{TemplateBinding Glyph}"/>
                             </Grid>
-
-                            <ContentPresenter
-                            x:Name="ContentPresenter1"
-                            Foreground="{ThemeResource CallToggleButtonForegroundPointerOverBrush}"
-                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                            FontSize="{ThemeResource ControlContentThemeFontSize}"
-                            Margin="-8,4,-8,12"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Grid.Row="1"/>
-                            <ContentPresenter
-                            x:Name="ContentPresenter2"
-                            Foreground="{ThemeResource CallToggleButtonForegroundPointerOverBrush}"
-                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                            FontSize="{ThemeResource ControlContentThemeFontSize}"
-                            Margin="-8,4,-8,12"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Grid.Row="1"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -486,17 +310,17 @@
             </Grid>
 
             <Grid HorizontalAlignment="Center">
-                <Grid.ChildrenTransitions>
-                    <TransitionCollection>
-                        <RepositionThemeTransition/>
-                        <AddDeleteThemeTransition/>
-                    </TransitionCollection>
-                </Grid.ChildrenTransitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="24"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <controls:GlyphButton
                     x:Name="Settings"
                     Click="Menu_ContextRequested"
@@ -505,7 +329,13 @@
                     Foreground="#FFFFFF"
                     Content="{CustomResource Settings}"
                     Style="{StaticResource CallGlyphButtonStyle}"
-                    Margin="0,24,0,0"/>
+                    Grid.Row="1"/>
+                <TextBlock
+                    Text="{CustomResource Settings}"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,4,0,0"
+                    Grid.Row="2"/>
 
                 <xaml:CanvasControl
                     x:Name="AudioCanvas"
@@ -516,21 +346,22 @@
                     VerticalAlignment="Top"
                     IsHitTestVisible="False"
                     Canvas.ZIndex="1"
-                    Grid.Column="1"/>
+                    Grid.Column="1"
+                    Grid.RowSpan="3"/>
 
-                <controls:CallToggleButton
+                <controls:GlyphButton
                     x:Name="Audio"
                     Click="Audio_Click"
-                    IsEnabled="True"
-                    IsChecked="False"
-                    IsOneWay="False"
                     Glyph="&#xE720;"
                     Content="{CustomResource VoipUnmute}"
-                    CheckedContent="{CustomResource VoipTapToMute}"
                     VerticalAlignment="Top"
+                    Width="96"
+                    Height="96"
+                    Radius="48"
                     Margin="48,0,48,0"
                     Canvas.ZIndex="2"
                     Grid.Column="1"
+                    Grid.RowSpan="3"
                     Opacity="0"/>
                 <controls:LottieView
                     x:Name="Lottie"
@@ -543,6 +374,17 @@
                     IsCachingEnabled="False"
                     AutoPlay="False"
                     Grid.Column="1"
+                    Grid.RowSpan="3"
+                    Canvas.ZIndex="3"/>
+
+                <TextBlock
+                    x:Name="AudioInfo"
+                    Text="{CustomResource VoipGroupLeave}"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,4,0,12"
+                    Grid.Column="1"
+                    Grid.Row="3"
                     Canvas.ZIndex="3"/>
 
                 <controls:GlyphButton
@@ -553,15 +395,16 @@
                     Foreground="#FFFFFF"
                     Content="{CustomResource VoipGroupLeave}"
                     Style="{StaticResource CallGlyphButtonStyle}"
-                    Margin="0,24,0,0"
-                    Grid.Column="2"/>
-                <!--<controls:CallHangupButton
-                    x:Name="Accept"
-                    Click="Accept_Click"
-                    Content="{CustomResource AcceptCall}"
-                    CheckedContent="{CustomResource VoipEndCall}"
-                    Visibility="Collapsed"
-                    Grid.Column="4"/>-->
+                    Grid.Column="2"
+                    Grid.Row="1"/>
+                <TextBlock
+                    Text="{CustomResource VoipGroupLeave}"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,4,0,0"
+                    Grid.Column="2"
+                    Grid.Row="2"/>
+
             </Grid>
         </StackPanel>
     </Grid>
