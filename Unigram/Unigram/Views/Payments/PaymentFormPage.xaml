@@ -127,7 +127,7 @@
                     <controls:BadgeButton
                         Click="{x:Bind ViewModel.ChooseAddress}"
                         Content="{x:Bind ConvertAddress(ViewModel.Info.ShippingAddress), Mode=OneWay, FallbackValue=Empty}"
-                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedShippingAddress, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}"
+                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedShippingAddress, Mode=OneWay, FallbackValue=Collapsed}"
                         Badge="{CustomResource PaymentShippingAddress}"
                         Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 

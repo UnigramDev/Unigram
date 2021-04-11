@@ -215,20 +215,20 @@ namespace Unigram.ViewModels.Payments
                 return;
             }
 
-            if (_info == null)
+            if (_info == null && _paymentForm.Invoice.NeedInfo())
             {
                 ChooseAddress();
                 return;
             }
 
-            if (_shipping == null)
+            if (_shipping == null && _validatedInfo.ShippingOptions.Count > 0)
             {
                 ChooseShipping();
                 return;
             }
 
-            var bot = CacheService.GetMessageSender(_message.Sender) as User;
-            var provider = CacheService.GetMessageSender(_message.Sender) as User;
+            var bot = CacheService.GetUser(_paymentForm.SellerBotUserId);
+            var provider = CacheService.GetUser(_paymentForm.PaymentsProviderUserId);
 
             var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
 

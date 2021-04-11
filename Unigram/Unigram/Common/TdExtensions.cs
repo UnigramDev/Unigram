@@ -206,6 +206,11 @@ namespace Unigram.Common
                  string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
         }
 
+        public static bool NeedInfo(this Invoice invoice)
+        {
+            return invoice.NeedShippingAddress || invoice.NeedPhoneNumber || invoice.NeedName || invoice.NeedEmailAddress;
+        }
+
         public static InputThumbnail ToInputThumbnail(this PhotoSize photo)
         {
             if (photo == null)
