@@ -238,6 +238,7 @@
 
         <StackPanel x:Name="ScheduledPanel" x:Load="False" VerticalAlignment="Center" Grid.Row="2">
             <TextBlock
+                x:Name="ScheduledInfo"
                 Text="{CustomResource VoipChatStartsIn}"
                 TextAlignment="Center"
                 TextLineBounds="TrimToBaseline"

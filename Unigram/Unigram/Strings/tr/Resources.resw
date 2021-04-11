@@ -643,6 +643,9 @@
   <data name="ActionGroupCallJustStarted" xml:space="preserve">
     <value>Sesli sohbet başladı</value>
   </data>
+  <data name="ActionGroupCallScheduled" xml:space="preserve">
+    <value>Sesli sohbet {0} için planlandı</value>
+  </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>un1 sesli sohbet başlattı</value>
   </data>
@@ -2444,6 +2447,9 @@ Not: Parolayı unutursanız, uygulamayı silmeniz ve yeniden yüklemeniz gerekir
   <data name="ChannelDeleteMenu" xml:space="preserve">
     <value>Kanalı sil</value>
   </data>
+  <data name="ChannelDescriptionChanged" xml:space="preserve">
+    <value>Kanal açıklaması güncellendi.</value>
+  </data>
   <data name="ChannelDiscuss" xml:space="preserve">
     <value>TARTIŞMA</value>
   </data>
@@ -2649,6 +2655,9 @@ Not: Parolayı unutursanız, uygulamayı silmeniz ve yeniden yüklemeniz gerekir
   </data>
   <data name="ChannelSubscribers" xml:space="preserve">
     <value>Aboneler</value>
+  </data>
+  <data name="ChannelTitleChanged" xml:space="preserve">
+    <value>Kanal başlığı güncellendi.</value>
   </data>
   <data name="ChannelTooMuch" xml:space="preserve">
     <value>Üzgünüz, birçok grup ve kanalın üyesisiniz. Lütfen yeni bir tane oluşturmadan önce birkaçından ayrılın.</value>
@@ -3549,6 +3558,24 @@ Buradan her zaman varsayılan Telegram temasına geri dönebilirsiniz.</value>
     <value/>
   </data>
   <data name="DaysLeft_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_one" xml:space="preserve">
+    <value>{0} gün</value>
+  </data>
+  <data name="DaysSchedule_other" xml:space="preserve">
+    <value>{0} gün</value>
+  </data>
+  <data name="DaysSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="Deactivate" xml:space="preserve">
@@ -5720,7 +5747,7 @@ bir sorunuz mu var?</value>
     <value>Listenin üstünde gizle</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
-    <value>Kişi listenizde olmayan kullanıcılardan birçok yeni sohbet alıyorsunuz. Bu tür sohbetlerin otomatik olarak **sessize alınmasını** ve **arşivlenmesini** ister misiniz?</value>
+    <value>Kişiler Listeniz dışındaki kullanıcılardan birçok yeni sohbet alıyorsunuz. Bu tür sohbetlerin **otomatik sessize alınmasını** ve **arşivlenmesini** ister misiniz?</value>
   </data>
   <data name="HideNewChatsAlertTitle" xml:space="preserve">
     <value>Yeni sohbetler gizlensin mi?</value>
@@ -5793,6 +5820,24 @@ Sese geçmek için dokunun.</value>
   <data name="HoursBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="HoursSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_one" xml:space="preserve">
+    <value>{0} saat</value>
+  </data>
+  <data name="HoursSchedule_other" xml:space="preserve">
+    <value>{0} saat</value>
+  </data>
+  <data name="HoursSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Hybrid" xml:space="preserve">
     <value>Karma</value>
   </data>
@@ -5824,7 +5869,7 @@ Sese geçmek için dokunun.</value>
     <value>Sohbet başarıyla içe aktarıldı!</value>
   </data>
   <data name="ImportedInfo" xml:space="preserve">
-    <value>Bu mesaj, başka bir uygulamadan içe aktarıldı. Gerçek olduğunu garanti edemeyiz.</value>
+    <value>Bu mesaj, başka bir uygulamadan içe aktarıldı. Bunun gerçek olduğunu garanti edemeyiz.</value>
   </data>
   <data name="ImportedMessage" xml:space="preserve">
     <value>İçe aktarıldı</value>
@@ -7090,6 +7135,24 @@ Uzunluk en az 5 karakterdir.</value>
     <value/>
   </data>
   <data name="MinutesBold_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_one" xml:space="preserve">
+    <value>{0} dakika</value>
+  </data>
+  <data name="MinutesSchedule_other" xml:space="preserve">
+    <value>{0} dakika</value>
+  </data>
+  <data name="MinutesSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="MobileHidden" xml:space="preserve">
@@ -8500,7 +8563,7 @@ cihazdan ulaşabilmenizi sağlar.</value>
     <value>Vatandaşlık</value>
   </data>
   <data name="PassportCity" xml:space="preserve">
-    <value>Şehir</value>
+    <value>İlçe</value>
   </data>
   <data name="PassportCorrectErrors" xml:space="preserve">
     <value>Hataları düzeltmek için dokunun.</value>
@@ -8933,7 +8996,7 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Kişisel verilerinize erişmek için lütfen parolanızı girin.</value>
   </data>
   <data name="PassportState" xml:space="preserve">
-    <value>Bölge</value>
+    <value>İl</value>
   </data>
   <data name="PassportStreet1" xml:space="preserve">
     <value>Sokak</value>
@@ -9046,6 +9109,9 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
   <data name="PaymentCheckoutMethod" xml:space="preserve">
     <value>Ödeme yöntemi</value>
   </data>
+  <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
+    <value>Yeni kart</value>
+  </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Ad</value>
   </data>
@@ -9075,6 +9141,9 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
   </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Üzgünüz, ödeme reddedildi.</value>
+  </data>
+  <data name="PaymentInfoHint" xml:space="preserve">
+    <value>**{1}** için **{0}** ödediniz.</value>
   </data>
   <data name="PaymentInvoice" xml:space="preserve">
     <value>FATURA</value>
@@ -9116,7 +9185,7 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Üzgünüz, ödeme bot tarafından iptal edildi.</value>
   </data>
   <data name="PaymentReceipt" xml:space="preserve">
-    <value>Makbuz</value>
+    <value>Fatura</value>
   </data>
   <data name="PaymentShippingAddress" xml:space="preserve">
     <value>Teslimat adresi</value>
@@ -9128,7 +9197,7 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
     <value>Adres 2 (Sokak)</value>
   </data>
   <data name="PaymentShippingCityPlaceholder" xml:space="preserve">
-    <value>Şehir</value>
+    <value>İlçe</value>
   </data>
   <data name="PaymentShippingCountry" xml:space="preserve">
     <value>Ülke</value>
@@ -9171,6 +9240,12 @@ Daha fazla bilgi için *SSS* sayfamızı ziyaret edebilirsiniz.</value>
   </data>
   <data name="PaymentTestInvoice" xml:space="preserve">
     <value>TEST FATURASI</value>
+  </data>
+  <data name="PaymentTip" xml:space="preserve">
+    <value>Bahşiş</value>
+  </data>
+  <data name="PaymentTipOptional" xml:space="preserve">
+    <value>Bahşiş (İsteğe bağlı)</value>
   </data>
   <data name="PaymentTransactionMessage" xml:space="preserve">
     <value>{2} için {1} botuna gerçekten {0} göndermek istiyor musunuz?</value>
@@ -10614,6 +10689,24 @@ Bunun etkili olması için uygulamayı yeniden başlatmanız gerekebilir.</value
   <data name="SecondsBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="SecondsSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_one" xml:space="preserve">
+    <value>{0} saniye</value>
+  </data>
+  <data name="SecondsSchedule_other" xml:space="preserve">
+    <value>{0} saniye</value>
+  </data>
+  <data name="SecondsSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="SecretChat" xml:space="preserve">
     <value>Gizli sohbetler</value>
   </data>
@@ -11317,8 +11410,17 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   <data name="Speaking" xml:space="preserve">
     <value>konuşuyor</value>
   </data>
+  <data name="SpeakingWithVolume" xml:space="preserve">
+    <value>{0}% konuşuyor</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>Başlat</value>
+  </data>
+  <data name="StartDayAt" xml:space="preserve">
+    <value>d MMM HH:mm 'tarihinde başlayacak'</value>
+  </data>
+  <data name="StartDayYearAt" xml:space="preserve">
+    <value>d MMM yyyy HH:mm 'tarihinde başlayacak'</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>Gizli sohbet başlat</value>
@@ -11326,8 +11428,29 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   <data name="StartMessaging" xml:space="preserve">
     <value>Mesajlaşmaya Başlayın</value>
   </data>
+  <data name="StartsDayAt" xml:space="preserve">
+    <value>d MMM HH:mm 'saatinde başlayacak'</value>
+  </data>
+  <data name="StartsDayYearAt" xml:space="preserve">
+    <value>d MMM yyyy HH:mm 'saatinde başlayacak'</value>
+  </data>
+  <data name="StartShortDayAt" xml:space="preserve">
+    <value>d MMM',' HH:mm</value>
+  </data>
+  <data name="StartShortDayYearAt" xml:space="preserve">
+    <value>d MMM yyyy',' HH:mm</value>
+  </data>
+  <data name="StartShortTodayAt" xml:space="preserve">
+    <value>'Bugün,' HH:mm</value>
+  </data>
+  <data name="StartsTodayAt" xml:space="preserve">
+    <value>'Bugün' HH:mm 'saatinde başlayacak'</value>
+  </data>
   <data name="StartText" xml:space="preserve">
     <value>Lütfen ülke kodunuzu onaylayın ve telefon numaranızı girin.</value>
+  </data>
+  <data name="StartTodayAt" xml:space="preserve">
+    <value>'Bugün' HH:mm 'saatinde başlayacak'</value>
   </data>
   <data name="StartVoipChannelAlertText" xml:space="preserve">
     <value>Bu kanalda sesli sohbet başlatmak ister misiniz?</value>
@@ -11637,6 +11760,21 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   <data name="TapOnThePencil" xml:space="preserve">
     <value>Yeni bir sohbet başlatmak için kalem üzerine dokunun</value>
   </data>
+  <data name="TapToAddBio" xml:space="preserve">
+    <value>hakkında bilgisi eklemek için dokunun</value>
+  </data>
+  <data name="TapToAddDescription" xml:space="preserve">
+    <value>açıklama eklemek için dokunun</value>
+  </data>
+  <data name="TapToAddPhoto" xml:space="preserve">
+    <value>fotoğraf eklemek için dokunun</value>
+  </data>
+  <data name="TapToAddPhotoOrBio" xml:space="preserve">
+    <value>resim veya hakkında eklemek için dokunun</value>
+  </data>
+  <data name="TapToAddPhotoOrDescription" xml:space="preserve">
+    <value>Fotoğraf veya açıklama eklemek için dokunun</value>
+  </data>
   <data name="TapToChange" xml:space="preserve">
     <value>Değiştirmek için dokunun</value>
   </data>
@@ -11690,6 +11828,12 @@ Yavaş Mod etkin. Tek seferde birden fazla mesaj gönderemezsiniz.</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/tr</value>
+  </data>
+  <data name="TelegramFeatures" xml:space="preserve">
+    <value>Telegram Özellikleri</value>
+  </data>
+  <data name="TelegramFeaturesUrl" xml:space="preserve">
+    <value>https://t.me/TelegramTips</value>
   </data>
   <data name="TelegramPassport" xml:space="preserve">
     <value>Telegram Passport</value>
@@ -12726,6 +12870,15 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="Voice_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="VoipAddBio" xml:space="preserve">
+    <value>Hakkında Ekle</value>
+  </data>
+  <data name="VoipAddDescription" xml:space="preserve">
+    <value>Açıklama ekle</value>
+  </data>
+  <data name="VoipAddPhoto" xml:space="preserve">
+    <value>Fotoğraf Ekle</value>
+  </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Cevapla</value>
   </data>
@@ -12750,14 +12903,50 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipCallEnded" xml:space="preserve">
     <value>Arama sonlandı</value>
   </data>
+  <data name="VoipChannelScheduleInfo" xml:space="preserve">
+    <value>Bu kanalın abonelerine {0} içerisinde sesli sohbetin başlayacağı bildirilecek.</value>
+  </data>
+  <data name="VoipChannelStart2" xml:space="preserve">
+    <value>Sesli sohbete başladığınızda bu kanalın aboneleri bilgilendirilecektir.</value>
+  </data>
+  <data name="VoipChatDisplayedAs" xml:space="preserve">
+    <value>Şöyle görüneceksiniz:</value>
+  </data>
   <data name="VoipChatJoin" xml:space="preserve">
     <value>Katıl</value>
+  </data>
+  <data name="VoipChatLateBy" xml:space="preserve">
+    <value>Erteleyen:</value>
+  </data>
+  <data name="VoipChatReminderHint" xml:space="preserve">
+    <value>Başladığında size haber vereceğiz.</value>
+  </data>
+  <data name="VoipChatShare" xml:space="preserve">
+    <value>Paylaş</value>
+  </data>
+  <data name="VoipChatStartsIn" xml:space="preserve">
+    <value>Kalan süre:</value>
   </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Bağlanıyor</value>
   </data>
   <data name="VoipDeclineCall" xml:space="preserve">
     <value>Reddet</value>
+  </data>
+  <data name="VoipEditBio" xml:space="preserve">
+    <value>Hakkındayı Düzenle</value>
+  </data>
+  <data name="VoipEditDescription" xml:space="preserve">
+    <value>Açıklamayı düzenle</value>
+  </data>
+  <data name="VoipEditName" xml:space="preserve">
+    <value>İsmi Düzenle</value>
+  </data>
+  <data name="VoipEditTitle" xml:space="preserve">
+    <value>Başlığı düzenle</value>
+  </data>
+  <data name="VoipEditTitleHint" xml:space="preserve">
+    <value>Başlık</value>
   </data>
   <data name="VoipEndCall" xml:space="preserve">
     <value>Aramayı Bitir</value>
@@ -12798,8 +12987,20 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
     <value>Sesli sohbet kaydı başladı.</value>
   </data>
+  <data name="VoipGroupBioEditAlertText" xml:space="preserve">
+    <value>Hakkınızda birkaç satır ekleyebilirsiniz. Herkes bu yazıyı görebilecek.</value>
+  </data>
+  <data name="VoipGroupBioEditTitle" xml:space="preserve">
+    <value>Hakkında</value>
+  </data>
+  <data name="VoipGroupCancelChat" xml:space="preserve">
+    <value>Sesli sohbeti iptal et</value>
+  </data>
   <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
     <value>Konuşma isteğini iptal et</value>
+  </data>
+  <data name="VoipGroupCancelReminder" xml:space="preserve">
+    <value>Hatırlatıcıyı Kapat</value>
   </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Bağlanıyor…</value>
@@ -12963,11 +13164,35 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Kayıt Başlığı</value>
   </data>
+  <data name="VoipGroupScheduledVoiceChat" xml:space="preserve">
+    <value>Planlanmış Sesli Sohbet</value>
+  </data>
+  <data name="VoipGroupScheduleInfo" xml:space="preserve">
+    <value>Bu grubun üyelerine {0} içerisinde sesli sohbetin başlayacağı bildirilecek.</value>
+  </data>
+  <data name="VoipGroupScheduleVoiceChat" xml:space="preserve">
+    <value>Sesli Sohbet Planla</value>
+  </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Davet etmek için üye arayın…</value>
   </data>
+  <data name="VoipGroupSetReminder" xml:space="preserve">
+    <value>Hatırlatıcı Ayarla</value>
+  </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Bağlantıyı paylaş</value>
+  </data>
+  <data name="VoipGroupShareLink" xml:space="preserve">
+    <value>Davet Bağlantısını Paylaş</value>
+  </data>
+  <data name="VoipGroupSoundMuted" xml:space="preserve">
+    <value>Sesli sohbet sessize alındı.</value>
+  </data>
+  <data name="VoipGroupSoundUnmuted" xml:space="preserve">
+    <value>Sesli sohbetin sesi açıldı.</value>
+  </data>
+  <data name="VoipGroupStart2" xml:space="preserve">
+    <value>Sesli sohbeti başlattığınızda bu grubun üyeleri bilgilendirilecektir.</value>
   </data>
   <data name="VoipGroupStartAs" xml:space="preserve">
     <value>Sesli Sohbete Başla...</value>
@@ -12978,6 +13203,9 @@ Ancak Telegram'ın mütevazı ihtiyaçlarını kabul etmiyorsanız, bu hizmeti b
   <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
     <value>Kişisel hesabınızın bu grup veya kanallarınızdan biri olarak gösterilmesini isteyip istemediğinizi seçin.</value>
   </data>
+  <data name="VoipGroupStartNow" xml:space="preserve">
+    <value>Şimdi Başlat</value>
+  </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
     <value>Bu sohbet kaydedilsin ve sonuç bir ses dosyasına kaydedilsin mi?
 
@@ -12985,6 +13213,9 @@ Katılımcılar sohbetin kaydedildiğini görecek.</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>Kaydı başlat</value>
+  </data>
+  <data name="VoipGroupStartVoiceChat" xml:space="preserve">
+    <value>Sesli Sohbet Başlat</value>
   </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Kaydı durdur</value>
@@ -13163,6 +13394,9 @@ Katılımcılar sohbetin kaydedildiğini görecek.</value>
   <data name="VoipRingtoneInfo" xml:space="preserve">
     <value>Bu kişi Telegram'da sizi aradığında kullanılacak zil sesini özelleştirebilirsiniz.</value>
   </data>
+  <data name="VoipSetNewPhoto" xml:space="preserve">
+    <value>Yeni Fotoğraf Ayarla</value>
+  </data>
   <data name="VoipSettingsRingtone" xml:space="preserve">
     <value>Zil Sesi</value>
   </data>
@@ -13180,6 +13414,9 @@ Katılımcılar sohbetin kaydedildiğini görecek.</value>
   </data>
   <data name="VoipSwitchToVideoCall" xml:space="preserve">
     <value>Görüntülü aramaya geçilsin mi?</value>
+  </data>
+  <data name="VoipTapToAddBio" xml:space="preserve">
+    <value>Hakkında bilgisi eklemek için dokunun</value>
   </data>
   <data name="VoipTapToMute" xml:space="preserve">
     <value>Yayındasınız</value>
@@ -13377,6 +13614,9 @@ Parolanız, ana ekrana eklenen widget'ları **etkilemeyecektir**.</value>
   <data name="YouLeft" xml:space="preserve">
     <value>Bu gruptan ayrıldınız</value>
   </data>
+  <data name="YourBioChanged" xml:space="preserve">
+    <value>Hakkında güncellendi.</value>
+  </data>
   <data name="YourCode" xml:space="preserve">
     <value>Telefon doğrulama</value>
   </data>
@@ -13426,6 +13666,9 @@ Parolanızı unutursanız, Telegram hesabınıza erişimi kaybedersiniz. Hesabı
   </data>
   <data name="YourName" xml:space="preserve">
     <value>Adınız</value>
+  </data>
+  <data name="YourNameChanged" xml:space="preserve">
+    <value>İsim güncellendi.</value>
   </data>
   <data name="YourPassword" xml:space="preserve">
     <value>Parolanız</value>

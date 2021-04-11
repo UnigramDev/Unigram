@@ -9062,6 +9062,9 @@
   <data name="PaymentCheckoutMethod" xml:space="preserve">
     <value>Спосаб аплаты</value>
   </data>
+  <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
+    <value>Новая картка</value>
+  </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Імя</value>
   </data>
@@ -12749,6 +12752,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="Voice_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="VoipAddDescription" xml:space="preserve">
+    <value>Дадаць апісанне</value>
+  </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Адказаць</value>
   </data>
@@ -12773,6 +12779,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipCallEnded" xml:space="preserve">
     <value>Выклік скончаны</value>
   </data>
+  <data name="VoipChannelScheduleInfo" xml:space="preserve">
+    <value>Падпісчыкі канала будуць апавешчаны, што галасавы чат пачнецца праз {0}.</value>
+  </data>
   <data name="VoipChatJoin" xml:space="preserve">
     <value>Далучыцца</value>
   </data>
@@ -12781,6 +12790,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipDeclineCall" xml:space="preserve">
     <value>Адхіліць</value>
+  </data>
+  <data name="VoipEditDescription" xml:space="preserve">
+    <value>Рэдагаваць апісанне</value>
   </data>
   <data name="VoipEndCall" xml:space="preserve">
     <value>Завяршыць</value>
@@ -12821,8 +12833,14 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
     <value>Запіс галасавога чата пачаўся.</value>
   </data>
+  <data name="VoipGroupBioEditTitle" xml:space="preserve">
+    <value>Пра сябе</value>
+  </data>
   <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
     <value>Скасаваць запыт на выступленне</value>
+  </data>
+  <data name="VoipGroupCancelReminder" xml:space="preserve">
+    <value>Скасаваць напамін</value>
   </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Злучэнне...</value>
@@ -12986,11 +13004,23 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Назва запісу</value>
   </data>
+  <data name="VoipGroupScheduledVoiceChat" xml:space="preserve">
+    <value>Запланаваны галасавы чат</value>
+  </data>
+  <data name="VoipGroupScheduleVoiceChat" xml:space="preserve">
+    <value>Запланаваць галасавы чат</value>
+  </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Пошук удзельнікаў для запрашэння...</value>
   </data>
+  <data name="VoipGroupSetReminder" xml:space="preserve">
+    <value>Задаць напамін</value>
+  </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Абагуліць спасылку</value>
+  </data>
+  <data name="VoipGroupShareLink" xml:space="preserve">
+    <value>Абагуліць запрашальную спасылку</value>
   </data>
   <data name="VoipGroupStartAs" xml:space="preserve">
     <value>Пачаць галасавы чат як…</value>
@@ -13001,6 +13031,9 @@ https://telegram.org/blog/coronavirus</value>
   <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
     <value>Выберыце як вас паказваць: як ваш асабісты ўліковы запіс, ад імя вашай суполкі або ад імя аднаго з вашых каналаў.</value>
   </data>
+  <data name="VoipGroupStartNow" xml:space="preserve">
+    <value>Пачаць</value>
+  </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
     <value>Запісаць гэты чат і захаваць вынік як аўдыяфайл?
 
@@ -13008,6 +13041,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>Пачаць запіс</value>
+  </data>
+  <data name="VoipGroupStartVoiceChat" xml:space="preserve">
+    <value>Пачаць галасавы чат</value>
   </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Спыніць запіс</value>
@@ -13186,6 +13222,9 @@ https://telegram.org/blog/coronavirus</value>
   </data>
   <data name="VoipRingtoneInfo" xml:space="preserve">
     <value>Вы можаце дапасаваць мелодыю выкліку, якая будзе гучаць, калі гэты кантакт тэлефануе вам праз Telegram.</value>
+  </data>
+  <data name="VoipSetNewPhoto" xml:space="preserve">
+    <value>Задаць новае фота</value>
   </data>
   <data name="VoipSettingsRingtone" xml:space="preserve">
     <value>Мелодыя выкліку</value>

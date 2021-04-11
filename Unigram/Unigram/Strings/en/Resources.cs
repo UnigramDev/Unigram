@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 04/10/2021 16:35:21
+// 	Generated: 04/11/2021 20:16:10
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -42560,6 +42560,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "https://t.me/TelegramTips"
+        /// </summary>
+        public static string TelegramFeaturesUrl
+        {
+            get
+            {
+                return resourceLoader.GetString("TelegramFeaturesUrl");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Telegram Passport"
         /// </summary>
         public static string TelegramPassport
@@ -46464,6 +46475,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Late by"
+        /// </summary>
+        public static string VoipChatLateBy
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipChatLateBy");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Starts in"
         /// </summary>
         public static string VoipChatStartsIn
@@ -46647,6 +46669,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("VoipGroupCancelRaiseHand");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel Reminder"
+        /// </summary>
+        public static string VoipGroupCancelReminder
+        {
+            get
+            {
+                return resourceLoader.GetString("VoipGroupCancelReminder");
             }
         }
         

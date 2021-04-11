@@ -449,7 +449,7 @@
     <value>Wyższa jakość</value>
   </data>
   <data name="AccDescrVideoCompressLow" xml:space="preserve">
-    <value>Niższa jakość</value>
+    <value>Mniejszy rozmiar</value>
   </data>
   <data name="AccDescrVideoMessage" xml:space="preserve">
     <value>Nagraj wiadomość wideo</value>
@@ -12349,6 +12349,9 @@ Możesz użyć **a–z**, **0–9** i podkreśleń. Minimalna długość nazwy t
   </data>
   <data name="UserRemovedBy" xml:space="preserve">
     <value>Usunięty przez {0}</value>
+  </data>
+  <data name="UserRemovedFromChatHint" xml:space="preserve">
+    <value>Usunięto **{0}** z **{1}**</value>
   </data>
   <data name="UserRestricted" xml:space="preserve">
     <value>Nie masz uprawnień, by to zrobić</value>

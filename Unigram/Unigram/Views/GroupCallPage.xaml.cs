@@ -223,6 +223,7 @@ namespace Unigram.Views
 
                     FindName(nameof(ScheduledPanel));
                     ParticipantsPanel.Visibility = Visibility.Collapsed;
+                    ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.Resources.VoipChatLateBy : Strings.Resources.VoipChatStartsIn;
                     StartsAt.Text = call.GetStartsAt();
                     StartsIn.Text = call.GetStartsIn();
                 }

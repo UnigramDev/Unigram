@@ -3553,6 +3553,24 @@ Istalgan vaqtda esa Telegramning odatiy mavzusiga ushbu joydan qaytishingiz mumk
   <data name="DaysLeft_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="DaysSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_one" xml:space="preserve">
+    <value>{0} kun</value>
+  </data>
+  <data name="DaysSchedule_other" xml:space="preserve">
+    <value>{0} kun</value>
+  </data>
+  <data name="DaysSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Deactivate" xml:space="preserve">
     <value>HOZIROQ OʻCHIRISH</value>
   </data>
@@ -5723,7 +5741,7 @@ Unutmang, u qora roʻyxatda boʻlmasa, guruhning taklif havolasi orqali qayta qo
     <value>Roʻyxat tepasida berkitish</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
-    <value>Siz kontaktlar roʻyxatingizda boʻlmaganlardan koʻplab yangi chatlar olmoqdasiz. Bunday chatlarni *avtomatik sukut qilish** va **arxivlashni** xohlaysizmi?</value>
+    <value>Sizga kontaktlar roʻyxatingizda boʻlmaganlar tez-tez yozishmoqda. Bunday chatlarni *avtomatik sukut qilish** va **arxivlashni** xohlaysizmi?</value>
   </data>
   <data name="HideNewChatsAlertTitle" xml:space="preserve">
     <value>Yangi chatlar berkitilsinmi?</value>
@@ -5792,6 +5810,24 @@ Unutmang, u qora roʻyxatda boʻlmasa, guruhning taklif havolasi orqali qayta qo
     <value/>
   </data>
   <data name="HoursBold_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_one" xml:space="preserve">
+    <value>{0} soat</value>
+  </data>
+  <data name="HoursSchedule_other" xml:space="preserve">
+    <value>{0} soat</value>
+  </data>
+  <data name="HoursSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="Hybrid" xml:space="preserve">
@@ -7093,6 +7129,24 @@ Kamida 5 ta belgi boʻlishi zarur.</value>
     <value/>
   </data>
   <data name="MinutesBold_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_one" xml:space="preserve">
+    <value>{0} daqiqa</value>
+  </data>
+  <data name="MinutesSchedule_other" xml:space="preserve">
+    <value>{0} daqiqa</value>
+  </data>
+  <data name="MinutesSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="MobileHidden" xml:space="preserve">
@@ -10617,6 +10671,24 @@ O'zgarishlar kuchga kirish uchun dasturni qayta ishga tushirishingiz zarur.</val
   <data name="SecondsBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="SecondsSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_one" xml:space="preserve">
+    <value>{0} soniya</value>
+  </data>
+  <data name="SecondsSchedule_other" xml:space="preserve">
+    <value>{0} soniya</value>
+  </data>
+  <data name="SecondsSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="SecretChat" xml:space="preserve">
     <value>Maxfiy chatlar</value>
   </data>
@@ -11319,6 +11391,9 @@ Sekin rejim yoqilgan. Siz birdaniga bittadan ortiq xabar yubora olmaysiz.</value
   </data>
   <data name="Speaking" xml:space="preserve">
     <value>gapirmoqda</value>
+  </data>
+  <data name="SpeakingWithVolume" xml:space="preserve">
+    <value>{0}% gapirmoqda</value>
   </data>
   <data name="Start" xml:space="preserve">
     <value>Boshlash</value>
@@ -12755,6 +12830,9 @@ Bu sizning Telegramdagi ma'lumotlaringizga ta'sir qilmaydi.</value>
   <data name="VoipChatJoin" xml:space="preserve">
     <value>Qoʻshilish</value>
   </data>
+  <data name="VoipChatShare" xml:space="preserve">
+    <value>Ulashish</value>
+  </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Ulanmoqda</value>
   </data>
@@ -13068,7 +13146,7 @@ Ishtirokchilar chat yozib olinayotganini koʻradi.</value>
     <value>Ovozsiz</value>
   </data>
   <data name="VoipMutedByAdmin" xml:space="preserve">
-    <value>Administrator tomonidan sukut qilingan</value>
+    <value>Siz tinglovchisiz</value>
   </data>
   <data name="VoipMutedByAdminInfo" xml:space="preserve">
     <value>Siz faqat tinglay olasiz</value>

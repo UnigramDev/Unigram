@@ -14,6 +14,7 @@ using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Services
@@ -39,7 +40,7 @@ namespace Unigram.Services
 
         Task<bool> CanChooseAliasAsync(long chatId);
 
-        Task JoinAsync(long chatId, bool pickAlias = false);
+        Task JoinAsync(long chatId);
         Task RejoinAsync();
         void Leave();
 
@@ -129,7 +130,7 @@ namespace Unigram.Services
         }
 
 
-        public async Task JoinAsync(long chatId, bool pickAlias)
+        public async Task JoinAsync(long chatId)
         {
             var permissions = await MediaDeviceWatcher.CheckAccessAsync(false);
             if (permissions == false)
@@ -163,7 +164,7 @@ namespace Unigram.Services
             //    return;
             //}
 
-            await JoinAsyncInternal(chat, chat.VoiceChat.GroupCallId, pickAlias);
+            await JoinAsyncInternal(chat, chat.VoiceChat.GroupCallId, null);
         }
 
         public async void Leave()
@@ -185,14 +186,38 @@ namespace Unigram.Services
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new CreateVoiceChat(chat.Id, string.Empty, 0));
-            if (response is GroupCallId groupCallId)
+            await CanChooseAliasAsync(chat.Id);
+
+            var popup = new VoiceChatAliasesPopup(ProtoService, chat, true, _availableAliases?.Senders.ToArray());
+
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
             {
-                await JoinAsyncInternal(chat, groupCallId.Id, false);
+                var participantId = popup.SelectedSender ?? new MessageSenderUser(CacheService.Options.MyId);
+                var startDate = 0;
+
+                if (popup.IsScheduleSelected)
+                {
+                    var schedule = new ScheduleVoiceChatPopup(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
+                    
+                    var again = await schedule.ShowQueuedAsync();
+                    if (again != ContentDialogResult.Primary)
+                    {
+                        return;
+                    }
+
+                    startDate = schedule.Value.ToTimestamp();
+                }
+
+                var response = await ProtoService.SendAsync(new CreateVoiceChat(chat.Id, string.Empty, startDate));
+                if (response is GroupCallId groupCallId)
+                {
+                    await JoinAsyncInternal(chat, groupCallId.Id, participantId);
+                }
             }
         }
 
-        private async Task JoinAsyncInternal(Chat chat, int groupCallId, bool pickAlias)
+        private async Task JoinAsyncInternal(Chat chat, int groupCallId, MessageSender alias)
         {
             var activeCall = _call;
             if (activeCall != null)
@@ -214,10 +239,11 @@ namespace Unigram.Services
                 }
             }
 
-            var alias = chat.VoiceChat?.DefaultParticipantId;
-            if (alias == null || pickAlias)
+            alias ??= chat.VoiceChat.DefaultParticipantId;
+
+            if (alias == null)
             {
-                alias = await PickAliasAsync(chat);
+                alias = await PickAliasAsync(chat, false);
             }
 
             var response = await ProtoService.SendAsync(new GetGroupCall(groupCallId));
@@ -244,7 +270,14 @@ namespace Unigram.Services
 
                 await ShowAsync(groupCall, _manager);
 
-                Rejoin(groupCall, alias);
+                if (groupCall.ScheduledStartDate > 0)
+                {
+                    ProtoService.Send(new SetVoiceChatDefaultParticipant(chat.Id, alias));
+                }
+                else
+                {
+                    Rejoin(groupCall, alias);
+                }
             }
         }
 
@@ -258,23 +291,25 @@ namespace Unigram.Services
                 return;
             }
 
-            var alias = await PickAliasAsync(chat);
+            var alias = await PickAliasAsync(chat, true);
             if (alias != null)
             {
                 Rejoin(call, alias);
             }
         }
 
-        private async Task<MessageSender> PickAliasAsync(Chat chat)
+        private async Task<MessageSender> PickAliasAsync(Chat chat, bool darkTheme)
         {
             var available = await CanChooseAliasAsync(chat.Id);
             if (available && _availableAliases != null)
             {
-                var dialog = new VoiceChatAliasesPopup(ProtoService, chat, _availableAliases.Senders.ToArray());
-                var confirm = await dialog.ShowQueuedAsync();
+                var popup = new VoiceChatAliasesPopup(ProtoService, chat, false, _availableAliases.Senders.ToArray());
+                popup.RequestedTheme = darkTheme ? ElementTheme.Dark : ElementTheme.Default;
+
+                var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    return dialog.SelectedSender;
+                    return popup.SelectedSender;
                 }
             }
 

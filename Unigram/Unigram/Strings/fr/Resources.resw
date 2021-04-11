@@ -8105,8 +8105,7 @@ Pour personnaliser les notifications d'un échange, ouvrez son profil et sélect
     <value>Notifications activées</value>
   </data>
   <data name="NotificationUnrecognizedDevice" xml:space="preserve">
-    <value>
-{0},
+    <value>{0},
 Nous avons détecté une connexion sur votre compte depuis un nouvel appareil le {1}
 
 Appareil : {2}
@@ -8114,7 +8113,7 @@ Position : {3}
 
 Si ce n'était pas vous, vous pouvez vous rendre dans Paramètres > Confidentialité et sécurité > Sessions actives pour terminer cette session.
 
-Si vous pensez qu'une personne s'est connectée à votre compte à votre insu, vous pouvez activer la double authentification dans les paramètres Confidentialité et sécurité.
+Si vous pensez que quelqu'un s'est connecté à votre compte sans votre consentement, vous pouvez activer la double authentification dans les paramètres de Confidentialité et sécurité.
 
 Cordialement,
 L'équipe Telegram</value>
@@ -12983,7 +12982,7 @@ Vous pouvez utiliser des **lettres**, des **chiffres**, et des **tirets bas**. L
     <value>Choisissez si vous souhaitez apparaître sous votre compte personnel, ce groupe ou l'un de vos canaux.</value>
   </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
-    <value>Voulez-vous commencer à enregistrer ce salon et l'enregistrer sous forme audio ?
+    <value>Enregistrer ce salon et l'enregistrer dans un fichier audio ?
 
 Les participants verront que la discussion est en cours d'enregistrement.</value>
   </data>

@@ -627,7 +627,7 @@
     <value>un1 ha editat l'enllaç un2 a un3</value>
   </data>
   <data name="ActionEditedInviteLinkToSame" xml:space="preserve">
-    <value>un1  ha editat l'enllaç {0}</value>
+    <value>un1 ha editat l'enllaç {0}</value>
   </data>
   <data name="ActionEditedInviteLinkToSameClickable" xml:space="preserve">
     <value>un1 ha editat l’enllaç un2</value>
@@ -1593,7 +1593,7 @@ Per a confirmar-ho, aneu a la Configuració > Dispositius > Escaneja el QR i esc
     <value>Elimineu de manera automàtica els missatges nous després d'un període de temps determinat.</value>
   </data>
   <data name="AutoDeleteAlertTitle" xml:space="preserve">
-    <value>Autodestruïu missatges</value>
+    <value>Autodestrucció de missatges</value>
   </data>
   <data name="AutoDeleteAlertUserInfo" xml:space="preserve">
     <value>Elimineu de manera automàtica els missatges nous després de cert temps, també per a {0}.</value>
@@ -9652,7 +9652,7 @@ Hi accedirem només durant el temps que estipuleu, i ho podeu aturar en qualsevo
     <value>Llocs web on heu usat Telegram per a iniciar sessió.</value>
   </data>
   <data name="PrivacyCallsP2PHelp" xml:space="preserve">
-    <value>En desactivar-ho, les trucades es transmetran via els servidors de Telegram perquè no es reveli la vostra IP, però la qualitat de la trucada es reduirà.</value>
+    <value>En desactivar-ho, les trucades es transmetran pels servidors de Telegram perquè no es reveli la vostra IP, però la qualitat de la trucada es reduirà.</value>
   </data>
   <data name="PrivacyCallsP2PTitle" xml:space="preserve">
     <value>D'igual a igual</value>
@@ -11936,6 +11936,9 @@ La longitud mínima és de 5 caràcters</value>
   <data name="ThemeUrl" xml:space="preserve">
     <value>Enllaç del tema</value>
   </data>
+  <data name="ThisIsYou" xml:space="preserve">
+    <value>sou vós</value>
+  </data>
   <data name="TimeLimitHelp" xml:space="preserve">
     <value>Podeu fer que l'enllaç caduqui després d'un temps.</value>
   </data>
@@ -12921,6 +12924,9 @@ caràcters.</value>
   <data name="VoipGroupOpenChannel" xml:space="preserve">
     <value>Obre el canal</value>
   </data>
+  <data name="VoipGroupOpenChat" xml:space="preserve">
+    <value>Obre el xat</value>
+  </data>
   <data name="VoipGroupOpenGroup" xml:space="preserve">
     <value>Obre el grup</value>
   </data>
@@ -12950,6 +12956,9 @@ caràcters.</value>
   </data>
   <data name="VoipGroupRemoveMemberAlertTitle" xml:space="preserve">
     <value>Elimina el membre</value>
+  </data>
+  <data name="VoipGroupRemoveMemberAlertTitle2" xml:space="preserve">
+    <value>Expulsió de participant</value>
   </data>
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Nom del fitxer</value>

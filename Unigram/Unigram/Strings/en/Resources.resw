@@ -11782,6 +11782,9 @@ If '**Sync Contacts**' is enabled, contacts will be re-synced.</value>
   <data name="TelegramFeatures" xml:space="preserve">
     <value>Telegram Features</value>
   </data>
+  <data name="TelegramFeaturesUrl" xml:space="preserve">
+    <value>https://t.me/TelegramTips</value>
+  </data>
   <data name="TelegramPassport" xml:space="preserve">
     <value>Telegram Passport</value>
   </data>
@@ -12862,6 +12865,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   <data name="VoipChatJoin" xml:space="preserve">
     <value>Join</value>
   </data>
+  <data name="VoipChatLateBy" xml:space="preserve">
+    <value>Late by</value>
+  </data>
   <data name="VoipChatStartsIn" xml:space="preserve">
     <value>Starts in</value>
   </data>
@@ -12912,6 +12918,9 @@ You can use **a–z**, **0–9** and underscores. Minimum length is **5** charac
   </data>
   <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
     <value>Cancel request to speak</value>
+  </data>
+  <data name="VoipGroupCancelReminder" xml:space="preserve">
+    <value>Cancel Reminder</value>
   </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Connecting...</value>

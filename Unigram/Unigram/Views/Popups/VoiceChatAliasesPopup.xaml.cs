@@ -5,6 +5,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Services;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Popups
@@ -13,7 +14,7 @@ namespace Unigram.Views.Popups
     {
         private readonly IProtoService _protoService;
 
-        public VoiceChatAliasesPopup(IProtoService protoService, Chat chat, IList<MessageSender> senders)
+        public VoiceChatAliasesPopup(IProtoService protoService, Chat chat, bool canSchedule, IList<MessageSender> senders)
         {
             InitializeComponent();
 
@@ -28,12 +29,18 @@ namespace Unigram.Views.Popups
                 ? Strings.Resources.VoipGroupStartAsInfo
                 : Strings.Resources.VoipGroupStartAsInfoGroup;
 
-            PrimaryButtonText = Strings.Resources.Save;
-            SecondaryButtonText = Strings.Resources.Close;
-
             List.ItemsSource = senders;
             List.SelectedItem = already ?? senders.FirstOrDefault();
+
+            Schedule.Visibility = canSchedule
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            PrimaryButtonText = Strings.Resources.Save;
+            SecondaryButtonText = Strings.Resources.Close;
         }
+
+        public bool IsScheduleSelected { get; private set; }
 
         public MessageSender SelectedSender => List.SelectedItem as MessageSender;
 
@@ -99,6 +106,12 @@ namespace Unigram.Views.Popups
             {
                 IsPrimaryButtonEnabled = false;
             }
+        }
+
+        private void Schedule_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            IsScheduleSelected = true;
+            Hide(ContentDialogResult.Primary);
         }
     }
 }

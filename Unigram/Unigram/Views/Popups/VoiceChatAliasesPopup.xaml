@@ -18,6 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock
             x:Name="MessageLabel"
@@ -45,5 +46,14 @@
                 <TransitionCollection/>
             </ListView.ItemContainerTransitions>
         </ListView>
+
+        <HyperlinkButton
+            x:Name="Schedule"
+            Click="Schedule_Click"
+            Content="{CustomResource VoipGroupScheduleVoiceChat}"
+            HorizontalAlignment="Center"
+            Margin="12,8,12,8"
+            Grid.Row="2"/>
+
     </Grid>
 </controls:ContentPopup>

@@ -2070,7 +2070,7 @@
     <value>مشاركة</value>
   </data>
   <data name="BotStart" xml:space="preserve">
-    <value>ابدأ</value>
+    <value>بدء</value>
   </data>
   <data name="BotStatusCantRead" xml:space="preserve">
     <value>لا يمكنه الوصول للرسائل</value>
@@ -2091,7 +2091,7 @@
     <value>التحويل إلى مجموعة نشر</value>
   </data>
   <data name="BroadcastGroupConvertInfo" xml:space="preserve">
-    <value>يمكن أن تضم مجموعات النشر أكثر من 200,000 عضو ولكن يُسمح للمشرفين فقط إرسال الرسائل فيها.</value>
+    <value>يمكن لمجموعات النشر أن تضم أكثر من 200,000 عضو، لكن يُسمح للمشرفين فقط بنشر الرسائل فيها.</value>
   </data>
   <data name="BroadcastGroupConvertSuccess" xml:space="preserve">
     <value>يمكن لمجموعتك الآن أن تضم أكثر من 200,000 عضو.</value>
@@ -3413,7 +3413,7 @@
     <value>إنشاء جهة اتصال جديدة</value>
   </data>
   <data name="CreateNewFilter" xml:space="preserve">
-    <value>إنشاء مجلد جديد</value>
+    <value>إنشاء مجلّد جديد</value>
   </data>
   <data name="CreateNewFilterInfo" xml:space="preserve">
     <value>أنشئ مجلدات لمختلف المجموعات والمحادثات وتنقّل بينها بسرعة.</value>
@@ -4996,7 +4996,7 @@
     <value>تطبيق التغييرات؟</value>
   </data>
   <data name="FilterEdit" xml:space="preserve">
-    <value>تعديل المجلد</value>
+    <value>تعديل المجلّد</value>
   </data>
   <data name="FilterEditAll" xml:space="preserve">
     <value>تعديل المجلدات</value>
@@ -5044,13 +5044,13 @@
     <value>استثناء محادثات</value>
   </data>
   <data name="FilterNew" xml:space="preserve">
-    <value>مجلد جديد</value>
+    <value>مجلّد جديد</value>
   </data>
   <data name="FilterNoChats" xml:space="preserve">
     <value>ما من محادثات</value>
   </data>
   <data name="FilterNoChatsToDisplay" xml:space="preserve">
-    <value>المجلد فارغ</value>
+    <value>المجلّد فارغ</value>
   </data>
   <data name="FilterNoChatsToDisplayInfo" xml:space="preserve">
     <value>ما من محادثات تنتمي لهذا المجلد حاليًّا.</value>
@@ -5104,7 +5104,7 @@
     <value>ترتيب التبويبات</value>
   </data>
   <data name="Filters" xml:space="preserve">
-    <value>المجلدات</value>
+    <value>المجلّدات</value>
   </data>
   <data name="FilterSecretChats" xml:space="preserve">
     <value>المحادثات السرية</value>
@@ -5164,7 +5164,7 @@
     <value>محاولات كثيرة. ترجى إعادة المحاولة بعد ⁨{0}⁩</value>
   </data>
   <data name="Folder" xml:space="preserve">
-    <value>مجلد</value>
+    <value>مجلّد</value>
   </data>
   <data name="FollowersChartTitle" xml:space="preserve">
     <value>المتابِعون</value>
@@ -6446,7 +6446,7 @@
     <value>لم يعد الرابط نشطًا</value>
   </data>
   <data name="LinkInfo" xml:space="preserve">
-    <value>يمكن لمستخدمي تيليجرام الانضمام إلى مجموعتك عبر هذا الرابط.</value>
+    <value>يمكن لأي شخص لديه تيليجرام الانضمام إلى مجموعتك عبر هذا الرابط.</value>
   </data>
   <data name="LinkInfoChannel" xml:space="preserve">
     <value>سيتمكن أي شخص لديه تيليجرام من الانضمام إلى قناتك عبر هذا الرابط.</value>
@@ -6482,7 +6482,7 @@
     <value>هذا الرابط لم يعد نشطًا</value>
   </data>
   <data name="LinkLimitReached" xml:space="preserve">
-    <value>بلغت الحد</value>
+    <value>بلغ الحد</value>
   </data>
   <data name="LinkNotFound" xml:space="preserve">
     <value>للأسف لا يمكنك الوصول إلى هذه الرسالة؛ أنت لست عضوًا في المحادثة التي تم نشرها فيها.</value>
@@ -9131,7 +9131,7 @@
     <value>طريقة الشحن</value>
   </data>
   <data name="PaymentConfirmationMessage" xml:space="preserve">
-    <value>بطاقتك ⁨{0}⁩ مسجلة مسبقًا. لتتمكن من استخدامها، يرجى إدخال كلمة مرور التحقق بخطوتين.</value>
+    <value>بطاقتك ⁨{0}⁩ مسجلة مسبقًا. يرجى إدخال كلمة مرور التحقق بخطوتين لتتمكن من استخدامها.</value>
   </data>
   <data name="PaymentConfirmationNewCard" xml:space="preserve">
     <value>اختر بطاقة مختلفة</value>
@@ -11645,7 +11645,7 @@
     <value>حذف</value>
   </data>
   <data name="SwipeSettingsFolders" xml:space="preserve">
-    <value>تغيير الملف</value>
+    <value>تغيير المجلّد</value>
   </data>
   <data name="SwipeSettingsMute" xml:space="preserve">
     <value>كتم</value>

@@ -643,6 +643,9 @@
   <data name="ActionGroupCallJustStarted" xml:space="preserve">
     <value>Bual suara dimula</value>
   </data>
+  <data name="ActionGroupCallScheduled" xml:space="preserve">
+    <value>Bual suara dijadualkan pada {0}</value>
+  </data>
   <data name="ActionGroupCallStarted" xml:space="preserve">
     <value>un1 mula bual suara</value>
   </data>
@@ -3549,6 +3552,24 @@ Anda boleh tukar ke tema asal Telegram pada bila-bila masa di sini.</value>
   <data name="DaysLeft_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="DaysSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_other" xml:space="preserve">
+    <value>{0} hari</value>
+  </data>
+  <data name="DaysSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="DaysSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Deactivate" xml:space="preserve">
     <value>HAPUS SEKARANG</value>
   </data>
@@ -5792,6 +5813,24 @@ Ambil perhatian mereka masih boleh sertai melalui link jemputan grup selagi mere
   <data name="HoursBold_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="HoursSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_other" xml:space="preserve">
+    <value>{0} jam</value>
+  </data>
+  <data name="HoursSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="HoursSchedule_zero" xml:space="preserve">
+    <value/>
+  </data>
   <data name="Hybrid" xml:space="preserve">
     <value>Hibrid</value>
   </data>
@@ -7089,6 +7128,24 @@ Panjang minima adalah 5 abjad.</value>
     <value/>
   </data>
   <data name="MinutesBold_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_other" xml:space="preserve">
+    <value>{0} minit</value>
+  </data>
+  <data name="MinutesSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="MinutesSchedule_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="MobileHidden" xml:space="preserve">
@@ -9044,6 +9101,9 @@ Anda boleh melawat *FAQ* kami untuk maklumat lanjut.</value>
   <data name="PaymentCheckoutMethod" xml:space="preserve">
     <value>Cara pembayaran</value>
   </data>
+  <data name="PaymentCheckoutMethodNewCard" xml:space="preserve">
+    <value>Kad baru</value>
+  </data>
   <data name="PaymentCheckoutName" xml:space="preserve">
     <value>Nama</value>
   </data>
@@ -9073,6 +9133,9 @@ Anda boleh melawat *FAQ* kami untuk maklumat lanjut.</value>
   </data>
   <data name="PaymentFailed" xml:space="preserve">
     <value>Maaf, bayaran ditolak.</value>
+  </data>
+  <data name="PaymentInfoHint" xml:space="preserve">
+    <value>Anda bayar **{0}** untuk **{1}**.</value>
   </data>
   <data name="PaymentInvoice" xml:space="preserve">
     <value>INVOIS</value>
@@ -9169,6 +9232,12 @@ Anda boleh melawat *FAQ* kami untuk maklumat lanjut.</value>
   </data>
   <data name="PaymentTestInvoice" xml:space="preserve">
     <value>INVOIS PERCUBAAN</value>
+  </data>
+  <data name="PaymentTip" xml:space="preserve">
+    <value>Tip</value>
+  </data>
+  <data name="PaymentTipOptional" xml:space="preserve">
+    <value>Tip (Pilihan)</value>
   </data>
   <data name="PaymentTransactionMessage" xml:space="preserve">
     <value>Adakah anda ingin memindahkan {0} kepada {1} bot untuk {2}?</value>
@@ -10460,7 +10529,7 @@ Saluran ini "**{1}**" akan bertukar ke peribadi.</value>
     <value>Mesej Berjadual</value>
   </data>
   <data name="ScheduledOrNoSoundHint" xml:space="preserve">
-    <value>Tekan lama butang untuk kirim mesej berjadual atau kirim tanpa bunyi.</value>
+    <value>Tekan lama butang untuk jadualkan mesej atau kirim tanpa bunyi.</value>
   </data>
   <data name="ScheduleMessage" xml:space="preserve">
     <value>Mesej berjadual</value>
@@ -10612,6 +10681,24 @@ Anda mungkin perlu mula semula aplikasi sebelum ianya berkuatkuasa.</value>
     <value/>
   </data>
   <data name="SecondsBold_zero" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_few" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_many" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_one" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_other" xml:space="preserve">
+    <value>{0} saat</value>
+  </data>
+  <data name="SecondsSchedule_two" xml:space="preserve">
+    <value/>
+  </data>
+  <data name="SecondsSchedule_zero" xml:space="preserve">
     <value/>
   </data>
   <data name="SecretChat" xml:space="preserve">
@@ -11317,8 +11404,17 @@ Mod Perlahan didayakan. Anda tak boleh kirim lebih dari satu mesej dalam masa ya
   <data name="Speaking" xml:space="preserve">
     <value>bercakap</value>
   </data>
+  <data name="SpeakingWithVolume" xml:space="preserve">
+    <value>{0}% bercakap</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>Mula</value>
+  </data>
+  <data name="StartDayAt" xml:space="preserve">
+    <value>'Mula pada' d MMM 'jam' HH:mm</value>
+  </data>
+  <data name="StartDayYearAt" xml:space="preserve">
+    <value>'Mula pada' d MMM yyyy 'jam' HH:mm</value>
   </data>
   <data name="StartEncryptedChat" xml:space="preserve">
     <value>Mulai Bual Rahsia</value>
@@ -11326,8 +11422,29 @@ Mod Perlahan didayakan. Anda tak boleh kirim lebih dari satu mesej dalam masa ya
   <data name="StartMessaging" xml:space="preserve">
     <value>Mula Bermesej</value>
   </data>
+  <data name="StartsDayAt" xml:space="preserve">
+    <value>'Mula pada' d MMM 'jam' HH:mm</value>
+  </data>
+  <data name="StartsDayYearAt" xml:space="preserve">
+    <value>'Mula pada' d MMM yyyy 'jam' HH:mm</value>
+  </data>
+  <data name="StartShortDayAt" xml:space="preserve">
+    <value>d MMM',' HH:mm</value>
+  </data>
+  <data name="StartShortDayYearAt" xml:space="preserve">
+    <value>d MMM yyyy',' HH:mm</value>
+  </data>
+  <data name="StartShortTodayAt" xml:space="preserve">
+    <value>'Hari ini,' HH:mm</value>
+  </data>
+  <data name="StartsTodayAt" xml:space="preserve">
+    <value>'Mula hari ini jam' HH:mm</value>
+  </data>
   <data name="StartText" xml:space="preserve">
     <value>Sila sahkan kod negara dan masukkan nombor fon anda.</value>
+  </data>
+  <data name="StartTodayAt" xml:space="preserve">
+    <value>'Mula hari ini jam' HH:mm</value>
   </data>
   <data name="StartVoipChannelAlertText" xml:space="preserve">
     <value>Anda ingin mula bual suara di saluran ini?</value>
@@ -11637,6 +11754,21 @@ Jika '**Segerak Kenalan**' didayakn, kenalan akan disegeak semula.</value>
   <data name="TapOnThePencil" xml:space="preserve">
     <value>Tekan pada pensil untuk mula bual baru</value>
   </data>
+  <data name="TapToAddBio" xml:space="preserve">
+    <value>tekan untuk tambah bio</value>
+  </data>
+  <data name="TapToAddDescription" xml:space="preserve">
+    <value>tekan untuk tambah diskripsi</value>
+  </data>
+  <data name="TapToAddPhoto" xml:space="preserve">
+    <value>tekan untuk tambah foto</value>
+  </data>
+  <data name="TapToAddPhotoOrBio" xml:space="preserve">
+    <value>tekan untuk tambah foto atau bio</value>
+  </data>
+  <data name="TapToAddPhotoOrDescription" xml:space="preserve">
+    <value>Tekan untuk tambah foto atau diskripsi</value>
+  </data>
   <data name="TapToChange" xml:space="preserve">
     <value>Tekan untuk tukar</value>
   </data>
@@ -11690,6 +11822,9 @@ Jika '**Segerak Kenalan**' didayakn, kenalan akan disegeak semula.</value>
   </data>
   <data name="TelegramFaqUrl" xml:space="preserve">
     <value>https://telegram.org/faq/ms</value>
+  </data>
+  <data name="TelegramFeatures" xml:space="preserve">
+    <value>Ciri Telegram</value>
   </data>
   <data name="TelegramPassport" xml:space="preserve">
     <value>Telegram Passport</value>
@@ -12722,6 +12857,15 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="Voice_zero" xml:space="preserve">
     <value/>
   </data>
+  <data name="VoipAddBio" xml:space="preserve">
+    <value>Tambah Bio</value>
+  </data>
+  <data name="VoipAddDescription" xml:space="preserve">
+    <value>Tambah diskripsi</value>
+  </data>
+  <data name="VoipAddPhoto" xml:space="preserve">
+    <value>Tambah Foto</value>
+  </data>
   <data name="VoipAnswerCall" xml:space="preserve">
     <value>Jawab</value>
   </data>
@@ -12746,14 +12890,50 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipCallEnded" xml:space="preserve">
     <value>Panggilan tamat</value>
   </data>
+  <data name="VoipChannelScheduleInfo" xml:space="preserve">
+    <value>Pelanggan saluran akan diberitahu bual suara akan bermula dalam {0}.</value>
+  </data>
+  <data name="VoipChannelStart2" xml:space="preserve">
+    <value>Pelanggan saluran ini akan diberitahu bila anda mula bual suara.</value>
+  </data>
+  <data name="VoipChatDisplayedAs" xml:space="preserve">
+    <value>Anda akan dipaparkan sebagai:</value>
+  </data>
   <data name="VoipChatJoin" xml:space="preserve">
     <value>Sertai</value>
+  </data>
+  <data name="VoipChatLateBy" xml:space="preserve">
+    <value>Lewat selama</value>
+  </data>
+  <data name="VoipChatReminderHint" xml:space="preserve">
+    <value>Kami akan beritahu anda bila ianya bermula.</value>
+  </data>
+  <data name="VoipChatShare" xml:space="preserve">
+    <value>Kongsi</value>
+  </data>
+  <data name="VoipChatStartsIn" xml:space="preserve">
+    <value>Mula dalam</value>
   </data>
   <data name="VoipConnecting" xml:space="preserve">
     <value>Menyambung</value>
   </data>
   <data name="VoipDeclineCall" xml:space="preserve">
     <value>Tolak</value>
+  </data>
+  <data name="VoipEditBio" xml:space="preserve">
+    <value>Sunting Bio</value>
+  </data>
+  <data name="VoipEditDescription" xml:space="preserve">
+    <value>Sunting diskripsi</value>
+  </data>
+  <data name="VoipEditName" xml:space="preserve">
+    <value>Sunting Nama</value>
+  </data>
+  <data name="VoipEditTitle" xml:space="preserve">
+    <value>Sunting tajuk</value>
+  </data>
+  <data name="VoipEditTitleHint" xml:space="preserve">
+    <value>Tajuk</value>
   </data>
   <data name="VoipEndCall" xml:space="preserve">
     <value>Tamat</value>
@@ -12794,8 +12974,20 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupAudioRecordStarted" xml:space="preserve">
     <value>Rakaman bual suara dimula.</value>
   </data>
+  <data name="VoipGroupBioEditAlertText" xml:space="preserve">
+    <value>Anda boleh tambah beberapa baris tentang anda. Semua dapat lihat teks ni.</value>
+  </data>
+  <data name="VoipGroupBioEditTitle" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="VoipGroupCancelChat" xml:space="preserve">
+    <value>Batal bual suara</value>
+  </data>
   <data name="VoipGroupCancelRaiseHand" xml:space="preserve">
     <value>Batal pemintaan untuk cakap</value>
+  </data>
+  <data name="VoipGroupCancelReminder" xml:space="preserve">
+    <value>Batal Peringatan</value>
   </data>
   <data name="VoipGroupConnecting" xml:space="preserve">
     <value>Menghubungi...</value>
@@ -12959,11 +13151,35 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupSaveFileHint" xml:space="preserve">
     <value>Tajuk Rakaman</value>
   </data>
+  <data name="VoipGroupScheduledVoiceChat" xml:space="preserve">
+    <value>Bual Suara Berjadual</value>
+  </data>
+  <data name="VoipGroupScheduleInfo" xml:space="preserve">
+    <value>Ahli grup akan diberitahu bual suara akan bermula dalam {0}.</value>
+  </data>
+  <data name="VoipGroupScheduleVoiceChat" xml:space="preserve">
+    <value>Jadualkan Bual Suara</value>
+  </data>
   <data name="VoipGroupSearchMembers" xml:space="preserve">
     <value>Cari ahli untuk jemput...</value>
   </data>
+  <data name="VoipGroupSetReminder" xml:space="preserve">
+    <value>Set Peringatan</value>
+  </data>
   <data name="VoipGroupShareInviteLink" xml:space="preserve">
     <value>Kongsi link jemputan</value>
+  </data>
+  <data name="VoipGroupShareLink" xml:space="preserve">
+    <value>Kongsi Link Jemputan</value>
+  </data>
+  <data name="VoipGroupSoundMuted" xml:space="preserve">
+    <value>Bunyi bual suara disenyapkan.</value>
+  </data>
+  <data name="VoipGroupSoundUnmuted" xml:space="preserve">
+    <value>Bunyi bual suara boleh didengar.</value>
+  </data>
+  <data name="VoipGroupStart2" xml:space="preserve">
+    <value>Ahli grup ini akan diberitahu bila anda mula bual suara.</value>
   </data>
   <data name="VoipGroupStartAs" xml:space="preserve">
     <value>Mula Bual Suara sebagai...</value>
@@ -12974,6 +13190,9 @@ Anda boleh guna **a–z**, **0–9** dan _. Panjang minima adalah **5** abjad.</
   <data name="VoipGroupStartAsInfoGroup" xml:space="preserve">
     <value>Pilih samada anda ingin dipaparkan sebagai akaun peribadi anda, grup ini, atau salah satu dari saluran anda.</value>
   </data>
+  <data name="VoipGroupStartNow" xml:space="preserve">
+    <value>Mula Sekarang</value>
+  </data>
   <data name="VoipGroupStartRecordingText" xml:space="preserve">
     <value>Rakam bual ini dan simpannya sebagai fail audio?
 
@@ -12981,6 +13200,9 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   </data>
   <data name="VoipGroupStartRecordingTitle" xml:space="preserve">
     <value>Mula rakaman</value>
+  </data>
+  <data name="VoipGroupStartVoiceChat" xml:space="preserve">
+    <value>Mula Bual Suara</value>
   </data>
   <data name="VoipGroupStopRecordCall" xml:space="preserve">
     <value>Henti rakaman</value>
@@ -13159,6 +13381,9 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   <data name="VoipRingtoneInfo" xml:space="preserve">
     <value>Anda boleh sesuaikan nada dering yang digunakan bila kenalan ini memanggil anda dengan Telegram.</value>
   </data>
+  <data name="VoipSetNewPhoto" xml:space="preserve">
+    <value>Set Foto Baru</value>
+  </data>
   <data name="VoipSettingsRingtone" xml:space="preserve">
     <value>Nada dering</value>
   </data>
@@ -13176,6 +13401,9 @@ Peserta lain akan dapat melihat bual sedang dirakam.</value>
   </data>
   <data name="VoipSwitchToVideoCall" xml:space="preserve">
     <value>Tukar ke panggilan video?</value>
+  </data>
+  <data name="VoipTapToAddBio" xml:space="preserve">
+    <value>Tekan untuk tambah Bio</value>
   </data>
   <data name="VoipTapToMute" xml:space="preserve">
     <value>Anda kini Langsung</value>

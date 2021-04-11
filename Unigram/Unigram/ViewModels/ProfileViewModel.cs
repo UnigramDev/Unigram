@@ -810,19 +810,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var dialog = new MessagePopup();
-                dialog.Title = Strings.Resources.StartVoipChatTitle;
-                dialog.Message = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
-                    ? Strings.Resources.StartVoipChannelAlertText
-                    : Strings.Resources.StartVoipChatAlertText;
-                dialog.PrimaryButtonText = Strings.Resources.Create;
-                dialog.SecondaryButtonText = Strings.Resources.Cancel;
-
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    await _groupCallService.CreateAsync(chat.Id);
-                }
+                await _groupCallService.CreateAsync(chat.Id);
             }
         }
 

@@ -11513,8 +11513,7 @@
     <value>{0} підписники</value>
   </data>
   <data name="Subscribers_many" xml:space="preserve">
-    <value>
-{0} підписників</value>
+    <value>{0} підписників</value>
   </data>
   <data name="Subscribers_one" xml:space="preserve">
     <value>{0} підписник</value>

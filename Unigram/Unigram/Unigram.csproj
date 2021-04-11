@@ -476,6 +476,7 @@
     <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ProtoService.ChatList.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
+    <Compile Include="Services\Updates\UpdateSwitchToSender.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IChatListDelegate.cs" />
     <Compile Include="ViewModels\Delegates\IGroupCallDelegate.cs" />
@@ -523,6 +524,9 @@
     </Compile>
     <Compile Include="Views\Popups\PaymentCredentialsPopup.xaml.cs">
       <DependentUpon>PaymentCredentialsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ScheduleVoiceChatPopup.xaml.cs">
+      <DependentUpon>ScheduleVoiceChatPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SelectColorPopup.xaml.cs">
       <DependentUpon>SelectColorPopup.xaml</DependentUpon>
@@ -1384,6 +1388,19 @@
     <Content Include="Assets\Animations\VoiceHand_7.tgs" />
     <Content Include="Assets\Animations\VoiceMute.tgs" />
     <Content Include="Assets\Animations\VoiceUnmute.tgs" />
+    <Content Include="Assets\Animations\VoiceCancelReminder.tgs" />
+    <Content Include="Assets\Animations\VoiceCancelReminderToMute.tgs" />
+    <Content Include="Assets\Animations\VoiceCancelReminderToRaiseHand.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_10.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_8.tgs" />
+    <Content Include="Assets\Animations\VoiceHand_9.tgs" />
+    <Content Include="Assets\Animations\VoiceMuteToRaiseHand.tgs" />
+    <Content Include="Assets\Animations\VoiceRaiseHandToMute.tgs" />
+    <Content Include="Assets\Animations\VoiceSetReminder.tgs" />
+    <Content Include="Assets\Animations\VoiceSetReminderToMute.tgs" />
+    <Content Include="Assets\Animations\VoiceSetReminderToRaiseHand.tgs" />
+    <Content Include="Assets\Animations\VoiceStart.tgs" />
+    <Content Include="Assets\Animations\VoiceUnmuteToRaiseHand.tgs" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1707,6 +1724,10 @@
     <Page Include="Views\Popups\PaymentCredentialsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ScheduleVoiceChatPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\SelectColorPopup.xaml">
       <SubType>Designer</SubType>

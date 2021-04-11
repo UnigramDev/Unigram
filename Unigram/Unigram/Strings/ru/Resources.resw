@@ -6199,7 +6199,7 @@
     <value>Январь</value>
   </data>
   <data name="JoinByPeekChannelText" xml:space="preserve">
-    <value>Этот частный канал. Чтобы видеть материалы в дальнейшем, необходимо подписаться на него.</value>
+    <value>Это частный канал. Чтобы видеть материалы в дальнейшем, необходимо подписаться на него.</value>
   </data>
   <data name="JoinByPeekChannelTitle" xml:space="preserve">
     <value>Подписаться</value>
