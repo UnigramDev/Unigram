@@ -1179,10 +1179,20 @@ namespace Unigram.ViewModels
             }
         }
 
+        // This is to notify the view to update bindings
+        public event EventHandler MessageSliceLoaded;
+
+        private void NotifyMessageSliceLoaded()
+        {
+            MessageSliceLoaded?.Invoke(this, EventArgs.Empty);
+            MessageSliceLoaded = null;
+        }
+
         public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, bool second = false)
         {
             if (_type != DialogType.History && _type != DialogType.Thread && _type != DialogType.Pinned)
             {
+                NotifyMessageSliceLoaded();
                 return;
             }
 
@@ -1218,6 +1228,7 @@ namespace Unigram.ViewModels
                     _repliesStack.Push(previousId.Value);
                 }
 
+                NotifyMessageSliceLoaded();
                 return;
             }
             else if (second)
@@ -1230,12 +1241,14 @@ namespace Unigram.ViewModels
                 //var max = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
                 //var offset = _dialog?.UnreadCount > 0 && max > 0 ? -16 : 0;
                 //await LoadFirstSliceAsync(max, offset);
+                NotifyMessageSliceLoaded();
                 return;
             }
 
             var chat = _chat;
             if (chat == null)
             {
+                NotifyMessageSliceLoaded();
                 return;
             }
 
@@ -1243,6 +1256,7 @@ namespace Unigram.ViewModels
             {
                 if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id)
                 {
+                    NotifyMessageSliceLoaded();
                     return;
                 }
 
@@ -1283,6 +1297,7 @@ namespace Unigram.ViewModels
                     if (wait != send)
                     {
                         Items.Clear();
+                        NotifyMessageSliceLoaded();
                     }
                 }
 
@@ -1295,6 +1310,7 @@ namespace Unigram.ViewModels
                         _isLoadingPreviousSlice = false;
                         IsLoading = false;
 
+                        NotifyMessageSliceLoaded();
                         return;
                     }
 
@@ -1386,6 +1402,7 @@ namespace Unigram.ViewModels
                     }
 
                     Items.ReplaceWith(replied);
+                    NotifyMessageSliceLoaded();
 
                     IsLastSliceLoaded = null;
                     IsFirstSliceLoaded = IsEndReached();
@@ -2021,12 +2038,14 @@ namespace Unigram.ViewModels
             {
                 Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Loadings scheduled messages", chat.Id));
 
+                NotifyMessageSliceLoaded();
                 LoadScheduledSliceAsync();
             }
             else if (_type == DialogType.EventLog)
             {
                 Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Loadings event log", chat.Id));
 
+                NotifyMessageSliceLoaded();
                 LoadEventLogSliceAsync();
             }
             else if (state.TryGet("message_id", out long navigation))
@@ -2750,7 +2769,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var reply = GetReply(true, !Settings.Diagnostics.BubbleAnimations);
+                var reply = GetReply(true, false);
 
                 //if (string.Equals(text.Trim(), "\uD83C\uDFB2"))
                 if (CacheService.IsDiceEmoji(text, out string dice))

@@ -437,6 +437,7 @@ namespace Unigram.Views
         {
             if (ViewModel != null)
             {
+                ViewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
                 ViewModel.PropertyChanged -= OnPropertyChanged;
                 ViewModel.Items.AttachChanged = null;
                 ViewModel.Items.CollectionChanged -= OnCollectionChanged;
@@ -453,10 +454,28 @@ namespace Unigram.Views
             }
         }
 
+        private void OnMessageSliceLoaded(object sender, EventArgs e)
+        {
+            if (sender is DialogViewModel viewModel)
+            {
+                viewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
+            }
+
+            Bindings.Update();
+        }
+
         public void Activate()
         {
             DataContext = _viewModel = _getViewModel(this);
-            Bindings.Update();
+
+            if (_viewModel.Settings.Diagnostics.SynchronizeMessageSlice)
+            {
+                _viewModel.MessageSliceLoaded += OnMessageSliceLoaded;
+            }
+            else
+            {
+                Bindings.Update();
+            }
 
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
@@ -545,8 +564,7 @@ namespace Unigram.Views
                     && message.SendingState is MessageSendingStatePending
                     && message.Content is MessageText or MessageDice
                     && message.GeneratedContent is MessageBigEmoji or MessageSticker or null
-                    && ApiInfo.CanAccessActualFloats
-                    && ViewModel.Settings.Diagnostics.BubbleAnimations;
+                    && ApiInfo.CanAccessActualFloats;
 
                 var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex - 1;
                 if (withinViewport is false)

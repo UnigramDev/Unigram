@@ -119,12 +119,12 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool BubbleAnimations
+        public bool SynchronizeMessageSlice
         {
-            get => Settings.Diagnostics.BubbleAnimations;
+            get => Settings.Diagnostics.SynchronizeMessageSlice;
             set
             {
-                Settings.Diagnostics.BubbleAnimations = value;
+                Settings.Diagnostics.SynchronizeMessageSlice = value;
                 RaisePropertyChanged();
             }
         }

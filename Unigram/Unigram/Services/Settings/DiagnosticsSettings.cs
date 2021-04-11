@@ -1,4 +1,6 @@
-﻿namespace Unigram.Services.Settings
+﻿using Unigram.Common;
+
+namespace Unigram.Services.Settings
 {
     public class DiagnosticsSettings : SettingsServiceBase
     {
@@ -7,11 +9,11 @@
         {
         }
 
-        private bool? _bubbleAnimations;
-        public bool BubbleAnimations
+        private bool? _synchronizeMessageSlice;
+        public bool SynchronizeMessageSlice
         {
-            get => _bubbleAnimations ??= GetValueOrDefault("BubbleAnimations", true);
-            set => AddOrUpdateValue(ref _bubbleAnimations, "BubbleAnimations", value);
+            get => _synchronizeMessageSlice ??= GetValueOrDefault("SynchronizeMessageSlice", !ApiInfo.IsStoreRelease);
+            set => AddOrUpdateValue(ref _synchronizeMessageSlice, "SynchronizeMessageSlice", value);
         }
 
         private bool? _minithumbnails;
