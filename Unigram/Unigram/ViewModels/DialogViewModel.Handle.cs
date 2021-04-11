@@ -9,6 +9,7 @@ using Unigram.Services;
 using Unigram.Services.Updates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Unigram.ViewModels
 {
@@ -318,28 +319,29 @@ namespace Unigram.ViewModels
                 BeginOnUIThread(() =>
                 {
                     var field = ListField;
-                    if (field == null)
+                    if (field == null || field.ItemsSource != Items)
                     {
                         return;
                     }
 
                     var panel = field.ItemsPanelRoot as ItemsStackPanel;
-                    if (panel == null)
-                    {
-                        return;
-                    }
-
-                    if (panel.FirstCacheIndex < 0)
+                    if (panel == null || panel.FirstCacheIndex < 0)
                     {
                         return;
                     }
 
                     for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
                     {
-                        var container = field.ContainerFromIndex(i) as ListViewItem;
+                        var container = field.ContainerFromIndex(i) as SelectorItem;
                         if (container == null)
                         {
-                            return;
+                            continue;
+                        }
+
+                        var message = field.ItemFromContainer(container) as MessageViewModel;
+                        if (message == null || !message.IsOutgoing)
+                        {
+                            continue;
                         }
 
                         var content = container.ContentTemplateRoot as FrameworkElement;
@@ -350,7 +352,7 @@ namespace Unigram.ViewModels
 
                         if (content is MessageBubble bubble)
                         {
-                            bubble.UpdateMessageState(Items[i]);
+                            bubble.UpdateMessageState(message);
                         }
                     }
                 });
@@ -672,8 +674,9 @@ namespace Unigram.ViewModels
         {
             if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
-                //if (Items.Count > 0 && Items[Items.Count - 1].Id == update.OldMessageId)
-                //{
+                //Handle(new UpdateDeleteMessages(update.Message.ChatId, new[] { update.Message.Id }, true, true));
+                //Handle(new UpdateNewMessage(update.Message));
+
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
@@ -684,12 +687,6 @@ namespace Unigram.ViewModels
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages(false);
                 });
-                //}
-                //else
-                //{
-                //    var endReached = IsEndReached();
-                //    BeginOnUIThread(() => InsertMessage(update.Message, update.OldMessageId));
-                //}
 
                 if (Settings.Notifications.InAppSounds)
                 {
