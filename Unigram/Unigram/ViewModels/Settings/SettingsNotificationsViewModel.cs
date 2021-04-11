@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Collections;
@@ -6,6 +7,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Views;
 using Unigram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -114,6 +116,8 @@ namespace Unigram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsAllAccountsAvailable => TLContainer.Current.GetSessions().Count() > 1;
 
         public bool IsAllAccountsNotifications
         {
