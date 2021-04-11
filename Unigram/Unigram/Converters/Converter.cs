@@ -214,8 +214,6 @@ namespace Unigram.Converters
         //}
 
 
-        private static readonly Dictionary<string, DateTimeFormatter> _formatterCache = new Dictionary<string, DateTimeFormatter>();
-
         public static string FormatAmount(long amount, string currency)
         {
             return Locale.FormatCurrency(amount, currency);

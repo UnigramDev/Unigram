@@ -62,11 +62,6 @@ namespace Unigram.Controls.Messages
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
         }
 
-        public void UpdateIndex(int value, int maximum, bool intermediate)
-        {
-            //Line.UpdateIndex(value, maximum, intermediate);
-        }
-
         private readonly Queue<(Chat, MessageViewModel, bool, int, int)> _queue = new Queue<(Chat, MessageViewModel, bool, int, int)>();
         private bool _playing;
 
@@ -437,22 +432,6 @@ namespace Unigram.Controls.Messages
 
         private readonly Queue<(int, int, int)> _queue = new Queue<(int, int, int)>();
         private bool _playing;
-
-        public void UpdateIndex(int value, int maximum, int direction, bool intermediate)
-        {
-            if (_prevValue == value && intermediate)
-            {
-                return;
-            }
-
-            if (!intermediate)
-            {
-                _queue.Clear();
-            }
-
-            UpdateIndex(value, maximum, direction);
-            _prevValue = value;
-        }
 
         public void UpdateIndex(int value, int maximum, int direction)
         {

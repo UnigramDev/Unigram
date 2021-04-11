@@ -413,19 +413,25 @@ namespace Unigram.Controls.Gallery
                 Preview.Opacity = 1;
 
                 var root = Preview.Presenter;
-
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                if (animation != null)
+                if (root.IsLoaded)
                 {
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                    var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                    if (animation != null)
                     {
-                        animation.Configuration = new BasicConnectedAnimationConfiguration();
-                    }
+                        if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
+                        {
+                            animation.Configuration = new BasicConnectedAnimationConfiguration();
+                        }
 
-                    var element = _closing();
-                    if (element.ActualWidth > 0)
-                    {
-                        animation.TryStart(element);
+                        var element = _closing();
+                        if (element.ActualWidth > 0)
+                        {
+                            animation.TryStart(element);
+                        }
+                        else
+                        {
+                            Hide();
+                        }
                     }
                     else
                     {
@@ -552,7 +558,7 @@ namespace Unigram.Controls.Gallery
         private string ConvertDate(int value)
         {
             var date = Converter.DateTime(value);
-            return string.Format(Strings.Resources.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+            return string.Format(Strings.Resources.formatDateAtTime, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date));
         }
 
         private string ConvertOf(int index, int count)

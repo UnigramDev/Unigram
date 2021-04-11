@@ -30,8 +30,8 @@
                         Header="Minithumbnails"
                         Style="{StaticResource CheckButtonStyle}"/>
                     <ToggleSwitch
-                        IsOn="{x:Bind ViewModel.BubbleAnimations, Mode=TwoWay}"
-                        Header="Bubble animations"
+                        IsOn="{x:Bind ViewModel.SynchronizeMessageSlice, Mode=TwoWay}"
+                        Header="Synchronize message slice"
                         Style="{StaticResource CheckButtonStyle}"/>
                 </controls:HeaderedControl>
 

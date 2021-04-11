@@ -1620,50 +1620,6 @@ namespace Unigram.Controls.Messages
             var next = e.NewSize.ToVector2();
 
             var outgoing = message.IsOutgoing && !message.IsChannelPost;
-            //if (outgoing && prev.X != next.X)
-            //{
-            //    var animText = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    animText.InsertKeyFrame(0, new Vector3(next.X - prev.X, 0, 0));
-            //    animText.InsertKeyFrame(1, Vector3.Zero);
-            //    //animText.Duration = TimeSpan.FromSeconds(1);
-
-            //    var text = ElementCompositionPreview.GetElementVisual(Message);
-            //    text.StartAnimation("Translation", animText);
-            //}
-
-            //if (prev.Y != next.Y || !outgoing)
-            //{
-            //    var animFooter = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            //    animFooter.InsertKeyFrame(0, new Vector3(outgoing ? 0 : prev.X - next.X, prev.Y - next.Y, 0));
-            //    animFooter.InsertKeyFrame(1, Vector3.Zero);
-            //    //animFooter.Duration = TimeSpan.FromSeconds(1);
-
-            //    var footer = ElementCompositionPreview.GetElementVisual(Footer);
-            //    footer.StartAnimation("Translation", animFooter);
-            //}
-
-            //var visual = ElementCompositionPreview.GetElementVisual(ContentPanel);
-
-            //var clip = visual.Clip;
-            //if (clip == null)
-            //{
-            //    clip = visual.Clip = visual.Compositor.CreateInsetClip();
-            //}
-
-            //var anim1 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            //anim1.InsertKeyFrame(0, next.X - prev.X);
-            //anim1.InsertKeyFrame(1, 0);
-            ////anim1.Duration = TimeSpan.FromSeconds(1);
-
-            //var anim2 = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            //anim2.InsertKeyFrame(0, next.Y - prev.Y);
-            //anim2.InsertKeyFrame(1, 0);
-            ////anim2.Duration = TimeSpan.FromSeconds(1);
-
-            //clip.StartAnimation(outgoing ? "LeftInset" : "RightInset", anim1);
-            //clip.StartAnimation("BottomInset", anim2);
-
-            //return;
 
             var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             anim.InsertKeyFrame(0, new Vector3(prev / next, 1));

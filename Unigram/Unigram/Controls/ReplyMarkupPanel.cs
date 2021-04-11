@@ -34,29 +34,6 @@ namespace Unigram.Controls
     {
         private double _keyboardHeight = 260;
 
-        //#region ReplyMarkup
-
-        //public TLReplyMarkupBase ReplyMarkup
-        //{
-        //    get { return (TLReplyMarkupBase)GetValue(ReplyMarkupProperty); }
-        //    set { SetValue(ReplyMarkupProperty, value); }
-        //}
-
-        //public static readonly DependencyProperty ReplyMarkupProperty =
-        //    DependencyProperty.Register("ReplyMarkup", typeof(TLReplyMarkupBase), typeof(ReplyMarkupPanel), new PropertyMetadata(null, OnReplyMarkupChanged));
-
-        //private static void OnReplyMarkupChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    ((ReplyMarkupPanel)d).OnReplyMarkupChanged((TLReplyMarkupBase)e.NewValue, (TLReplyMarkupBase)e.OldValue);
-        //}
-
-        //#endregion
-
-        private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
-        {
-            _keyboardHeight = args.OccludedRect.Height;
-        }
-
         private void UpdateSize(ReplyMarkup markup, bool inline)
         {
             if (markup is ReplyMarkupShowKeyboard keyboard && !inline && Parent is ScrollViewer scroll)
