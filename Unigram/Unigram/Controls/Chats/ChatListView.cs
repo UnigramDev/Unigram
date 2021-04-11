@@ -22,6 +22,15 @@ namespace Unigram.Controls.Chats
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private bool _loadingMore = false;
 
+        private bool _programmaticExternal;
+        private bool _programmaticScrolling;
+
+        public bool IsProgrammaticScrolling
+        {
+            get => _programmaticExternal || _programmaticScrolling;
+            set => _programmaticExternal = value;
+        }
+
         public ChatListView()
         {
             DefaultStyleKey = typeof(ListView);
@@ -219,6 +228,9 @@ namespace Unigram.Controls.Chats
                 return;
             }
 
+            _programmaticScrolling = true;
+            await this.UpdateLayoutAsync();
+
             // We are going to try two times, as the first one seem to fail sometimes
             // leading the chat to the wrong scrolling position
             var iter = 2;
@@ -238,6 +250,7 @@ namespace Unigram.Controls.Chats
 
             if (selectorItem == null)
             {
+                _programmaticScrolling = _programmaticExternal = false;
                 Logs.Logger.Debug(Logs.LogTarget.Chat, "selectorItem == null, abort");
                 return;
             }
@@ -260,6 +273,7 @@ namespace Unigram.Controls.Chats
 
                 if (selectorItem == null)
                 {
+                    _programmaticScrolling = _programmaticExternal = false;
                     Logs.Logger.Debug(Logs.LogTarget.Chat, "selectorItem == null after layout, abort");
                     return;
                 }
@@ -311,6 +325,8 @@ namespace Unigram.Controls.Chats
                 await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center);
             }
             //scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
+
+            _programmaticScrolling = _programmaticExternal = false;
         }
     }
 }
