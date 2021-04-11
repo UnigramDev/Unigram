@@ -72,7 +72,7 @@ namespace Unigram.Controls
             //    visible = false;
             //}
             //else
-            if (call != null && chat.VoiceChat.GroupCallId == call.Id && ((chat.VoiceChat.HasParticipants && !call.IsJoined) || call.ScheduledStartDate > 0))
+            if (call != null && chat.VoiceChat.GroupCallId == call.Id && ((chat.VoiceChat.HasParticipants && !(call.IsJoined || call.NeedRejoin)) || call.ScheduledStartDate > 0))
             {
                 ShowHide(true);
 
@@ -93,12 +93,17 @@ namespace Unigram.Controls
                         _scheduledTimer.Stop();
                     }
 
+                    TitleLabel.Text = call.Title.Length > 0 ? call.Title : Strings.Resources.VoipGroupScheduledVoiceChat;
+
                     JoinButton.Background = App.Current.Resources["VoiceChatPurpleBrush"] as Brush;
                     JoinButton.Content = call.GetStartsIn();
                 }
                 else
                 {
                     _scheduledTimer.Stop();
+
+                    TitleLabel.Text = Strings.Resources.VoipGroupVoiceChat;
+
                     JoinButton.Background = App.Current.Resources["StartButtonBackground"] as Brush;
                     JoinButton.Content = Strings.Resources.VoipChatJoin;
                 }

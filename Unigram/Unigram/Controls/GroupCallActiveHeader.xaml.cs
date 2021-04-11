@@ -153,7 +153,7 @@ namespace Unigram.Controls
                         {
                             amplitude = f7;
                         }
-                        view.Invalidate();
+                        //view.Invalidate();
                     }
                     float f11 = animateToAmplitude;
                     float f12 = amplitude2;
@@ -173,7 +173,7 @@ namespace Unigram.Controls
                         {
                             amplitude2 = f11;
                         }
-                        view.Invalidate();
+                        //view.Invalidate();
                     }
                     if (previousState != null)
                     {
@@ -184,7 +184,7 @@ namespace Unigram.Controls
                             progressToState = 1.0f;
                             previousState = null;
                         }
-                        view.Invalidate();
+                        //view.Invalidate();
                     }
                 }
                 long j3 = j;

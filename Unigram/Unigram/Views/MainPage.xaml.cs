@@ -524,7 +524,7 @@ namespace Unigram.Views
                 {
                     FindName(nameof(CallBanner));
                 }
-                else if (update.GroupCall != null && update.GroupCall.IsJoined)
+                else if (update.GroupCall != null && (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin))
                 {
                     FindName(nameof(GroupCallBanner));
                     GroupCallBanner.Update(ViewModel.GroupCallService.Manager);
@@ -2426,9 +2426,9 @@ namespace Unigram.Views
                     MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                 }
             }
-            else if (destination == RootDestination.Tips)
+            else if (destination == RootDestination.Tips && Uri.TryCreate(Strings.Resources.TelegramFeaturesUrl, UriKind.Absolute, out Uri tipsUri))
             {
-                MessageHelper.NavigateToUsername(ViewModel.ProtoService, MasterDetail.NavigationService, "TelegramTips", null, null, null, null, null);
+                MessageHelper.OpenTelegramUrl(ViewModel.ProtoService, MasterDetail.NavigationService, tipsUri);
             }
             else if (destination == RootDestination.News)
             {
