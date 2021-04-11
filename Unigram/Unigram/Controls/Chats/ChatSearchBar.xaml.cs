@@ -153,10 +153,10 @@ namespace Unigram.Controls.Chats
         {
             if (count == 0)
             {
-                return Strings.Resources.NoResult;
+                return "0/0";
             }
 
-            return string.Format(Strings.Resources.Of, index + 1, count);
+            return string.Format("{0}/{1}", index + 1, count);
         }
 
         #endregion
@@ -330,16 +330,6 @@ namespace Unigram.Controls.Chats
             }
 
             return true;
-        }
-
-        private void Field_GotFocus(object sender, RoutedEventArgs e)
-        {
-            DeleteButton.RequestedTheme = QueryButton.RequestedTheme = ElementTheme.Light;
-        }
-
-        private void Field_LostFocus(object sender, RoutedEventArgs e)
-        {
-            DeleteButton.RequestedTheme = QueryButton.RequestedTheme = ElementTheme.Default;
         }
     }
 }

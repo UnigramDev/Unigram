@@ -663,7 +663,7 @@
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        FontStyle="Normal"
-                                       FontSize="12"
+                                       FontSize="16"
                                        Text="&#xE711;"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        AutomationProperties.AccessibilityView="Raw" />
@@ -727,7 +727,7 @@
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        FontStyle="Normal"
-                                       FontSize="12"
+                                       FontSize="16"
                                        Text="&#xE721;"
                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                                        AutomationProperties.AccessibilityView="Raw" />
