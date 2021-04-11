@@ -4,6 +4,7 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Controls;
 using Unigram.ViewModels.Drawers;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -16,6 +17,8 @@ namespace Unigram.Common
         private readonly DispatcherTimer _debouncer;
 
         private readonly Dictionary<long, IPlayerView> _prev = new Dictionary<long, IPlayerView>();
+
+        private bool _unloaded;
 
         public AnimatedListHandler(ListViewBase listView)
         {
@@ -37,6 +40,8 @@ namespace Unigram.Common
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            _listView.Items.VectorChanged += OnVectorChanged;
+
             var scrollViewer = _listView.GetScrollViewer();
             if (scrollViewer != null)
             {
@@ -53,6 +58,17 @@ namespace Unigram.Common
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             UnloadVisibleItems();
+        }
+
+        private void OnVectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs e)
+        {
+            if (_unloaded)
+            {
+                return;
+            }
+
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -206,6 +222,8 @@ namespace Unigram.Common
 
                 _prev[item.Key] = item.Value;
             }
+
+            _unloaded = false;
         }
 
         public void UnloadVisibleItems()
@@ -220,6 +238,7 @@ namespace Unigram.Common
             }
 
             _prev.Clear();
+            _unloaded = true;
         }
     }
 }
