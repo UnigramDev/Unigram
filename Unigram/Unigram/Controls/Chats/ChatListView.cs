@@ -229,7 +229,7 @@ namespace Unigram.Controls.Chats
             }
 
             _programmaticScrolling = true;
-            await this.UpdateLayoutAsync();
+            await this.UpdateLayoutAsync(true);
 
             // We are going to try two times, as the first one seem to fail sometimes
             // leading the chat to the wrong scrolling position
