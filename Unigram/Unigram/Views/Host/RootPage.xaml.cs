@@ -53,16 +53,16 @@ namespace Unigram.Views.Host
                 // ------------
                 RootDestination.Separator,
                 // ------------
+                RootDestination.NewChat,
+                RootDestination.NewSecretChat,
+                RootDestination.NewChannel,
+                // ------------
+                RootDestination.Separator,
+                // ------------
                 RootDestination.Chats,
                 RootDestination.Contacts,
                 RootDestination.Calls,
                 RootDestination.Settings,
-                // ------------
-                RootDestination.Separator,
-                // ------------
-                RootDestination.NewChat,
-                RootDestination.NewSecretChat,
-                RootDestination.NewChannel,
                 // ------------
                 RootDestination.Separator,
                 // ------------
