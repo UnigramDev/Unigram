@@ -68,6 +68,7 @@ namespace Unigram.Controls
         private readonly LoopThread _threadUI;
         private bool _subscribed;
 
+        private bool _loaded;
         private bool _unloaded;
 
         public DiceView()
@@ -108,7 +109,7 @@ namespace Unigram.Controls
 
         private void Load()
         {
-            if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
+            if (_unloaded && _layoutRoot != null && ((ApiInfo.CanUseIsLoaded && _layoutRoot.IsLoaded) || _loaded))
             {
                 while (_layoutRoot.Children.Count > 0)
                 {
@@ -129,11 +130,13 @@ namespace Unigram.Controls
 
         private void OnLoading(FrameworkElement sender, object args)
         {
+            _loaded = true;
             Load();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            _loaded = true;
             Load();
         }
 

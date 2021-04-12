@@ -80,6 +80,7 @@ namespace Unigram.Controls
         private readonly LoopThread _threadUI;
         private bool _subscribed;
 
+        private bool _loaded;
         private bool _unloaded;
 
         public LottieView()
@@ -120,7 +121,7 @@ namespace Unigram.Controls
 
         private void Load()
         {
-            if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
+            if (_unloaded && _layoutRoot != null && ((ApiInfo.CanUseIsLoaded && _layoutRoot.IsLoaded) || _loaded))
             {
                 while (_layoutRoot.Children.Count > 0)
                 {
@@ -140,11 +141,13 @@ namespace Unigram.Controls
 
         private void OnLoading(FrameworkElement sender, object args)
         {
+            _loaded = true;
             Load();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            _loaded = true;
             Load();
         }
 
@@ -386,7 +389,7 @@ namespace Unigram.Controls
             }
             else
             {
-                _index = _isCachingEnabled ? 0 : _animationTotalFrame - 1;
+                _index = 0; //_isCachingEnabled ? 0 : _animationTotalFrame - 1;
             }
 
             //canvas.Paused = true;

@@ -14,23 +14,33 @@ namespace Unigram.Common
 
         public static bool IsPackagedRelease => !IsStoreRelease;
 
+        // 1809
         private static bool? _canUseDirectComposition;
         public static bool CanUseDirectComposition => _canUseDirectComposition ??= ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7);
 
+        // 1809
         private static bool? _canUseViewports;
         public static bool CanUseViewports => _canUseViewports ??= ApiInformation.IsEventPresent("Windows.UI.Xaml.FrameworkElement", "EffectiveViewportChanged");
 
+        // 1903
         private static bool? _canUseWindowManagement;
         public static bool CanUseWindowManagement => _canUseWindowManagement ??= ApiInformation.IsTypePresent("Windows.UI.WindowManagement.DisplayRegion");
 
+        // 1903
         private static bool? _canUnconstrainFromBounds;
         public static bool CanUnconstrainFromBounds => _canUnconstrainFromBounds ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.Primitives.Popup", "ShouldConstrainToRootBounds");
 
+        // 1903
         private static bool? _canCheckThreadAccess;
         public static bool CanCheckThreadAccess => _canCheckThreadAccess ??= ApiInformation.IsPropertyPresent("Windows.System.DispatcherQueue", "HasThreadAccess");
 
+        // 1903
         private static bool? _canUseActualFloats;
         public static bool CanUseActualFloats => _canUseActualFloats ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "ActualSize");
+
+        // 1809
+        private static bool? _canUseIsLoaded;
+        public static bool CanUseIsLoaded => _canUseIsLoaded ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.FrameworkElement", "IsLoaded");
 
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
