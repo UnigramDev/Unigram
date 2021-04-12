@@ -235,6 +235,7 @@
                         InputScope="Search"
                         TextChanged="OnTextChanged"
                         SelectionChanged="OnSelectionChanged"
+                        PreviewKeyDown="OnKeyDown"
                         Style="{StaticResource Test}"
                         Grid.ColumnSpan="3"/>
 

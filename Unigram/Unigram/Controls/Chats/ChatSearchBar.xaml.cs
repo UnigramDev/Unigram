@@ -21,7 +21,12 @@ namespace Unigram.Controls.Chats
         public ChatSearchBar()
         {
             InitializeComponent();
-            Field.PreviewKeyDown += OnKeyDown;
+
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += (s, args) =>
+            {
+                ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
+            };
         }
 
         public void Update(ChatSearchViewModel viewModel)
