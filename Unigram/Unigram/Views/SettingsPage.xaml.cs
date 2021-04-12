@@ -38,7 +38,7 @@ namespace Unigram.Views
             Bindings?.StopTracking();
         }
 
-        private string GetVersion()
+        public static string GetVersion()
         {
             Package package = Package.Current;
             PackageId packageId = package.Id;
