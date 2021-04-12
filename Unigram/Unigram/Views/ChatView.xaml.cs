@@ -3108,7 +3108,7 @@ namespace Unigram.Views
                 {
                     if (content.Children[0] is Border border && border.Child is Image photo)
                     {
-                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 68);
                         ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                     }
                     else if (content.Children[0] is LottieView lottie)
@@ -4476,7 +4476,7 @@ namespace Unigram.Views
 
                         if (content.Children[0] is Border border && border.Child is Image photo)
                         {
-                            photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
+                            photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 68);
                             ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
                         }
                         else if (content.Children[0] is LottieView lottie)
