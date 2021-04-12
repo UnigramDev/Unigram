@@ -2165,6 +2165,7 @@ namespace Unigram.ViewModels
                 var item = ProtoService.GetUser(privata.UserId);
                 var cache = ProtoService.GetUserFull(privata.UserId);
 
+                _stickers?.UpdateSupergroupFullInfo(chat, null, null);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache != null)
@@ -2180,6 +2181,7 @@ namespace Unigram.ViewModels
                 var item = ProtoService.GetUser(secretType.UserId);
                 var cache = ProtoService.GetUserFull(secretType.UserId);
 
+                _stickers?.UpdateSupergroupFullInfo(chat, null, null);
                 Delegate?.UpdateSecretChat(chat, secret);
                 Delegate?.UpdateUser(chat, item, true);
 
@@ -2195,6 +2197,7 @@ namespace Unigram.ViewModels
                 var item = ProtoService.GetBasicGroup(basic.BasicGroupId);
                 var cache = ProtoService.GetBasicGroupFull(basic.BasicGroupId);
 
+                _stickers?.UpdateSupergroupFullInfo(chat, null, null);
                 Delegate?.UpdateBasicGroup(chat, item);
 
                 if (cache != null)
@@ -2221,8 +2224,8 @@ namespace Unigram.ViewModels
 
                 if (cache != null)
                 {
+                    _stickers?.UpdateSupergroupFullInfo(chat, item, cache);
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
-                    //Stickers?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
                 ProtoService.Send(new GetSupergroupFullInfo(super.SupergroupId));

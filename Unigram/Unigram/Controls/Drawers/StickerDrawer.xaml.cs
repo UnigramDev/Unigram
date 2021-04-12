@@ -429,6 +429,8 @@ namespace Unigram.Controls.Drawers
 
             if (args.Item is SupergroupStickerSetViewModel supergroup)
             {
+                Automation.SetToolTip(args.ItemContainer, supergroup.Title);
+
                 var chat = ViewModel.CacheService.GetChat(supergroup.ChatId);
                 if (chat == null)
                 {
@@ -445,6 +447,8 @@ namespace Unigram.Controls.Drawers
             }
             else if (args.Item is StickerSetViewModel sticker)
             {
+                Automation.SetToolTip(args.ItemContainer, sticker.Title);
+
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
                 var photo = content?.Children[0] as Image;
 

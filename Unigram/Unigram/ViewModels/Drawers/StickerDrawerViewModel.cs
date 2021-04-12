@@ -19,9 +19,14 @@ namespace Unigram.ViewModels.Drawers
 {
     public class StickerDrawerViewModel : TLViewModelBase, IHandle<UpdateRecentStickers>, IHandle<UpdateFavoriteStickers>, IHandle<UpdateInstalledStickerSets>
     {
+        private readonly DisposableMutex _supergroupLock = new();
+
         private readonly StickerSetViewModel _recentSet;
         private readonly StickerSetViewModel _favoriteSet;
         private readonly SupergroupStickerSetViewModel _groupSet;
+
+        private long _groupSetId;
+        private long _groupSetChatId;
 
         private bool _updated;
         private bool _updating;
@@ -48,22 +53,7 @@ namespace Unigram.ViewModels.Drawers
                 Name = "tg/groupStickers"
             });
 
-            //_groupSet = new TLChannelStickerSet
-            //{
-            //    Set = new TLStickerSet
-            //    {
-            //        Title = Strings.Resources.GroupStickers,
-            //        ShortName = "tg/groupStickers",
-            //    },
-            //};
-
-            FeaturedStickers = new MvxObservableCollection<TLFeaturedStickerSet>();
             SavedStickers = new StickerSetCollection();
-
-            //SyncStickers();
-            //SyncGifs();
-
-            InstallCommand = new RelayCommand<TLFeaturedStickerSet>(InstallExecute);
 
             Aggregator.Subscribe(this);
         }
@@ -218,8 +208,6 @@ namespace Unigram.ViewModels.Drawers
             Update(null);
         }
 
-        public MvxObservableCollection<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
-
         public StickerSetCollection SavedStickers { get; private set; }
 
         private SearchStickerSetsCollection _searchStickers;
@@ -253,44 +241,65 @@ namespace Unigram.ViewModels.Drawers
 
         public async void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
         {
-            SavedStickers.Remove(_groupSet);
-
-            var refresh = true;
-
-            var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
-            if (appData.Values.TryGetValue("Stickers" + group.Id, out object stickersObj))
+            using (await _supergroupLock.WaitAsync())
             {
-                var stickersId = (long)stickersObj;
-                if (stickersId == fullInfo.StickerSetId)
+                if ((_groupSetId == fullInfo?.StickerSetId && _groupSetChatId == chat.Id) || fullInfo == null)
                 {
-                    refresh = false;
-                }
-            }
+                    if (fullInfo == null)
+                    {
+                        _groupSetId = 0;
+                        _groupSetChatId = 0;
+                        SavedStickers.Remove(_groupSet);
+                    }
 
-            if (fullInfo.StickerSetId != 0 && refresh)
-            {
-                if (fullInfo.StickerSetId == _groupSet.Id && chat.Id == _groupSet.ChatId)
-                {
-                    SavedStickers.Add(_groupSet);
                     return;
                 }
 
-                var response = await ProtoService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
-                if (response is StickerSet stickerSet)
+                var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
+                if (appData.Values.TryGetValue("Stickers" + chat.Id, out object stickersObj))
                 {
-                    BeginOnUIThread(() =>
+                    var stickersId = (long)stickersObj;
+                    if (stickersId == fullInfo.StickerSetId)
+                    {
+                        _groupSetId = 0;
+                        _groupSetChatId = 0;
+                        SavedStickers.Remove(_groupSet);
+                        return;
+                    }
+                }
+
+                if (fullInfo.StickerSetId != 0)
+                {
+                    var response = await ProtoService.SendAsync(new GetStickerSet(fullInfo.StickerSetId));
+                    if (response is StickerSet stickerSet)
                     {
                         _groupSet.Update(chat.Id, stickerSet);
 
                         if (_groupSet.Stickers != null && _groupSet.Stickers.Count > 0)
                         {
+                            _groupSetId = stickerSet.Id;
+                            _groupSetChatId = chat.Id;
                             SavedStickers.Add(_groupSet);
                         }
                         else
                         {
+                            _groupSetId = 0;
+                            _groupSetChatId = 0;
                             SavedStickers.Remove(_groupSet);
                         }
-                    });
+                    }
+                    else
+                    {
+                        _groupSetId = 0;
+                        _groupSetChatId = 0;
+                        SavedStickers.Remove(_groupSet);
+                    }
+                }
+                else
+                {
+                    _groupSetId = 0;
+                    _groupSetChatId = 0;
+                    SavedStickers.Remove(_groupSet);
                 }
             }
         }
@@ -406,95 +415,6 @@ namespace Unigram.ViewModels.Drawers
                 Set(ref _featuredUnreadCount, value);
             }
         }
-
-        public RelayCommand<TLFeaturedStickerSet> InstallCommand { get; }
-        private async void InstallExecute(TLFeaturedStickerSet featured)
-        {
-            //if (_stickersService.IsStickerPackInstalled(featured.Set.Id) == false)
-            //{
-            //    var response = await LegacyService.InstallStickerSetAsync(new TLInputStickerSetID { Id = featured.Set.Id, AccessHash = featured.Set.AccessHash }, false);
-            //    if (response.IsSucceeded)
-            //    {
-            //        _stickersService.LoadStickers(featured.Set.IsMasks ? StickerType.Mask : StickerType.Image, false, true);
-
-            //        featured.Set.IsInstalled = true;
-            //        featured.Set.IsArchived = false;
-            //    }
-            //}
-            //else
-            //{
-            //    _stickersService.RemoveStickersSet(featured.Set, featured.Set.IsOfficial ? 1 : 0, true);
-
-            //    featured.Set.IsInstalled = featured.Set.IsOfficial;
-            //    featured.Set.IsArchived = featured.Set.IsOfficial;
-
-            //    NavigationService.GoBack();
-            //}
-        }
-
-        //protected override void BeginOnUIThread(Action action)
-        //{
-        //    // This is somehow needed because this viewmodel requires a Dispatcher
-        //    // in some situations where base one might be null.
-        //    Execute.BeginOnUIThread(action);
-        //}
-    }
-
-    public class TLChannelStickerSet : System.Object
-    {
-        //public TLChannel With { get; set; }
-        //public TLChannelFull Full { get; set; }
-    }
-
-    public class TLFeaturedStickerSet : System.Object
-    {
-        //public TLStickerSet Set { get; set; }
-
-        //private TLVector<TLDocumentBase> _covers;
-        //public TLVector<TLDocumentBase> Covers
-        //{
-        //    get
-        //    {
-        //        return _covers;
-        //    }
-        //    set
-        //    {
-        //        _covers = new TLVector<TLDocumentBase>();
-
-        //        for (int i = 0; i < 5; i++)
-        //        {
-        //            if (i < value.Count)
-        //            {
-        //                _covers.Add(value[i]);
-        //            }
-        //            else
-        //            {
-        //                _covers.Add(null);
-        //            }
-        //        }
-        //    }
-        //}
-
-        private bool _isUnread;
-        public bool IsUnread
-        {
-            get
-            {
-                return _isUnread;
-            }
-            set
-            {
-                _isUnread = value;
-            }
-        }
-
-        public string Unread
-        {
-            get
-            {
-                return _isUnread ? "\u2022" : string.Empty;
-            }
-        }
     }
 
     public class SupergroupStickerSetViewModel : StickerSetViewModel
@@ -504,14 +424,9 @@ namespace Unigram.ViewModels.Drawers
         {
         }
 
-        public SupergroupStickerSetViewModel(IProtoService protoService, IEventAggregator aggregator, StickerSetInfo info, StickerSet set)
-            : base(protoService, aggregator, info, set)
-        {
-        }
-
         public void Update(long chatId, StickerSet set, bool reset = true)
         {
-            _info.Id = set.Id;
+            //_info.Id = set.Id;
             ChatId = chatId;
 
             if (reset)
@@ -523,6 +438,10 @@ namespace Unigram.ViewModels.Drawers
                 Stickers.ReplaceWith(set.Stickers.Select(x => new StickerViewModel(_protoService, _aggregator, x)));
             }
         }
+
+        public override void Update(StickerSet set, bool reset = false) { }
+
+        public override void Update(Stickers stickers, bool raise = false) { }
 
         public long ChatId { get; private set; }
     }
@@ -571,7 +490,7 @@ namespace Unigram.ViewModels.Drawers
             Covers = info.Covers;
         }
 
-        public void Update(StickerSet set, bool reset = false)
+        public virtual void Update(StickerSet set, bool reset = false)
         {
             _set = set;
 
@@ -586,7 +505,7 @@ namespace Unigram.ViewModels.Drawers
             }
         }
 
-        public void Update(Stickers stickers, bool raise = false)
+        public virtual void Update(Stickers stickers, bool raise = false)
         {
             if (raise)
             {

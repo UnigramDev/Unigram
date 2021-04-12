@@ -61,8 +61,10 @@
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Title}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                            <TextBlock
+                                Text="{x:Bind Title}"
+                                Style="{StaticResource InfoCaptionTextBlockStyle}"/>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                     <GroupStyle.HeaderContainerStyle>
@@ -222,20 +224,20 @@
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
                                 <!--<Image Margin="6" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Title}"/>-->
                                 <Grid Padding="6">
-                                    <Image AutomationProperties.Name="{x:Bind Title}" ToolTipService.ToolTip="{x:Bind Title}"/>
+                                    <Image/>
                                 </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
-                                <controls:ProfilePicture Margin="6" AutomationProperties.Name="{x:Bind Title}" ToolTipService.ToolTip="{x:Bind Title}" IsEnabled="False"/>
+                                <controls:ProfilePicture
+                                    Margin="6"
+                                    IsEnabled="False"/>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
-                                <Border AutomationProperties.Name="{x:Bind Title}"
-                                        ToolTipService.ToolTip="{x:Bind Title}"
-                                        Background="Transparent">
+                                <Border Background="Transparent">
                                     <FontIcon
                                         Glyph="&#xE911;"
                                         FontFamily="{StaticResource TelegramThemeFontFamily}"/>
@@ -244,9 +246,7 @@
                         </selectors:StickerSetTemplateSelector.RecentsTemplate>
                         <selectors:StickerSetTemplateSelector.FavedTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
-                                <Border AutomationProperties.Name="{x:Bind Title}"
-                                        ToolTipService.ToolTip="{x:Bind Title}"
-                                        Background="Transparent">
+                                <Border Background="Transparent">
                                     <FontIcon Glyph="&#xE734;" Style="{StaticResource DefaultFontIconStyle}" />
                                 </Border>
                             </DataTemplate>
