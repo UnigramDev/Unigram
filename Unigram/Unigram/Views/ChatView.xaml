@@ -819,7 +819,7 @@
             <controls:ReplyMarkupPanel x:Name="ReplyMarkup" AllowFocusOnInteraction="False" ButtonClick="ReplyMarkup_ButtonClick" Margin="8,0,8,4"/>
         </ScrollViewer>
 
-        <Grid x:Name="KeyboardItems" Grid.Row="4">
+        <Grid x:Name="KeyboardItems" Grid.Row="4" Canvas.ZIndex="3">
             <controls:StickerPanel x:Name="StickersPanel" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
         </Grid>
 
