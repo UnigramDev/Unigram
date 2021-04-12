@@ -118,7 +118,7 @@
                         </Grid.RowDefinitions>
                         <TextBlock
                             Text="{CustomResource PaymentTipOptional}"
-                            Style="{StaticResource BaseTextBlockStyle}"
+                            Style="{StaticResource InfoBodyTextBlockStyle}"
                             Margin="12,4,0,4"/>
                         <TextBlock
                             Style="{StaticResource BodyTextBlockStyle}"
