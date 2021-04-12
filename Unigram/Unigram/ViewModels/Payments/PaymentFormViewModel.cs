@@ -44,6 +44,8 @@ namespace Unigram.ViewModels.Payments
             Credentials = paymentForm.SavedCredentials;
             Info = paymentForm.SavedOrderInfo;
 
+            RaisePropertyChanged(nameof(HasSuggestedTipAmounts));
+
             if (paymentForm.SavedOrderInfo != null)
             {
                 var response = await ProtoService.SendAsync(new ValidateOrderInfo(chatId, messageId, paymentForm.SavedOrderInfo, false));
@@ -125,6 +127,41 @@ namespace Unigram.ViewModels.Payments
             set => Set(ref _credentials, value);
         }
 
+        private long _tipAmount;
+        public long TipAmount
+        {
+            get => _tipAmount;
+            set
+            {
+                Set(ref _tipAmount, value);
+                RaisePropertyChanged(nameof(TipAmountSelection));
+                RaisePropertyChanged(nameof(TotalAmount));
+            }
+        }
+
+        public object TipAmountSelection
+        {
+            get
+            {
+                var invoice = _paymentForm?.Invoice;
+                if (invoice != null && invoice.SuggestedTipAmounts.Contains(_tipAmount))
+                {
+                    return _tipAmount;
+                }
+
+                return null;
+            }
+            set
+            {
+                if (value is long tip)
+                {
+                    Set(ref _tipAmount, tip, nameof(TipAmount));
+                }
+            }
+        }
+
+        public bool HasSuggestedTipAmounts => _paymentForm?.Invoice.SuggestedTipAmounts.Count > 0;
+
         public long TotalAmount
         {
             get
@@ -146,7 +183,7 @@ namespace Unigram.ViewModels.Payments
                     }
                 }
 
-                return amount;
+                return amount + _tipAmount;
             }
         }
 
@@ -171,6 +208,7 @@ namespace Unigram.ViewModels.Payments
         public async void ChooseCredentials()
         {
             var popup = new PaymentCredentialsPopup(_paymentForm);
+
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary && popup.Credentials != null)
             {
@@ -182,6 +220,7 @@ namespace Unigram.ViewModels.Payments
         public async void ChooseAddress()
         {
             var popup = new PaymentAddressPopup(_message.ChatId, _message.Id, _paymentForm.Invoice, _info);
+
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary && popup.ValidatedInfo != null)
             {
@@ -194,15 +233,33 @@ namespace Unigram.ViewModels.Payments
             var items = _validatedInfo.ShippingOptions.Select(
                 x => new SelectRadioItem(x, Converter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
 
-            var dialog = new SelectRadioPopup(items);
-            dialog.Title = Strings.Resources.PaymentCheckoutShippingMethod;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
-            dialog.SecondaryButtonText = Strings.Resources.Cancel;
+            var popup = new SelectRadioPopup(items);
+            popup.Title = Strings.Resources.PaymentCheckoutShippingMethod;
+            popup.PrimaryButtonText = Strings.Resources.OK;
+            popup.SecondaryButtonText = Strings.Resources.Cancel;
 
-            var confirm = await dialog.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && dialog.SelectedIndex is ShippingOption index)
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && popup.SelectedIndex is ShippingOption index)
             {
                 Shipping = index;
+            }
+        }
+
+        public async void ChooseTipAmount()
+        {
+            var popup = new InputPopup(InputPopupType.Value);
+            popup.Value = Converter.Amount(_tipAmount, _paymentForm.Invoice.Currency);
+            popup.Maximum = Converter.Amount(_paymentForm.Invoice.MaxTipAmount, _paymentForm.Invoice.Currency);
+            popup.Formatter = Locale.GetCurrencyFormatter(_paymentForm.Invoice.Currency);
+
+            popup.Title = Strings.Resources.SearchTipToday;
+            popup.PrimaryButtonText = Strings.Resources.OK;
+            popup.SecondaryButtonText = Strings.Resources.Cancel;
+
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                TipAmount = Converter.AmountBack(popup.Value, _paymentForm.Invoice.Currency);
             }
         }
 
@@ -221,7 +278,7 @@ namespace Unigram.ViewModels.Payments
                 return;
             }
 
-            if (_shipping == null && _validatedInfo.ShippingOptions.Count > 0)
+            if (_shipping == null && _validatedInfo?.ShippingOptions.Count > 0)
             {
                 ChooseShipping();
                 return;
@@ -291,7 +348,7 @@ namespace Unigram.ViewModels.Payments
 
         private async Task<TemporaryPasswordState> CreateTemporaryPasswordAsync()
         {
-            var popup = new InputPopup(true);
+            var popup = new InputPopup(InputPopupType.Password);
             popup.Header = string.Format(Strings.Resources.PaymentConfirmationMessage, _paymentForm.SavedCredentials.Title);
             popup.PrimaryButtonText = Strings.Resources.Continue;
             popup.SecondaryButtonText = Strings.Resources.Cancel;

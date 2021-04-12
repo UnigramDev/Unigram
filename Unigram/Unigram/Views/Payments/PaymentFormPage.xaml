@@ -80,7 +80,7 @@
                       VerticalScrollMode="Auto">
             <StackPanel Padding="0,0,0,48">
                 <controls:HeaderedControl>
-                    <Grid Padding="12">
+                    <Grid Padding="12,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition/>
@@ -98,24 +98,83 @@
                             <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, Mode=OneWay, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                         </StackPanel>
                     </Grid>
-                </controls:HeaderedControl>
+                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,8"/>
 
-                <StackPanel MaxWidth="640" Padding="12,16,12,0">
                     <payments:LabeledPricesPanel
                         Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency, Mode=OneWay}"
                         Prices="{x:Bind ViewModel.PaymentForm.Invoice.PriceParts, Mode=OneWay}"/>
                     <payments:LabeledPricesPanel
                         Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency, Mode=OneWay}"
                         Prices="{x:Bind ViewModel.Shipping.PriceParts, Mode=OneWay}"/>
+
+                    <Grid Visibility="{x:Bind ViewModel.HasSuggestedTipAmounts, Mode=OneWay}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Text="{CustomResource PaymentTipOptional}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            Margin="12,4,0,4"/>
+                        <TextBlock
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            TextAlignment="Right"
+                            Margin="8,4,12,4"
+                            Grid.Column="1">
+                            <Hyperlink Click="{x:Bind ViewModel.ChooseTipAmount}">
+                                <Run Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TipAmount, ViewModel.PaymentForm.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"/>
+                            </Hyperlink>
+                        </TextBlock>
+
+                        <ListView
+                            ItemsSource="{x:Bind ViewModel.PaymentForm.Invoice.SuggestedTipAmounts, Mode=OneWay}"
+                            SelectedItem="{x:Bind ViewModel.TipAmountSelection, Mode=TwoWay}"
+                            ContainerContentChanging="SuggestedTipAmounts_ContainerContentChanging"
+                            Padding="12,0,4,0"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="MinWidth" Value="0"/>
+                                    <Setter Property="Margin" Value="0,0,8,0"/>
+                                    <Setter Property="Padding" Value="8,4,8,4"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+                    </Grid>
+                    
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{CustomResource PaymentTransactionTotal}" Margin="12,4,0,8" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}" Margin="8,4,12,8" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                        <TextBlock
+                            Text="{CustomResource PaymentTransactionTotal}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            Margin="12,4,0,8"/>
+                        <TextBlock
+                            Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            TextAlignment="Right"
+                            Margin="8,4,12,8"
+                            Grid.Column="1"/>
                     </Grid>
-                </StackPanel>
+                </controls:HeaderedControl>
 
                 <controls:HeaderedControl>
                     <controls:BadgeButton

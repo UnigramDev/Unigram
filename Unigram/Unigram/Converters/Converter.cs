@@ -219,6 +219,63 @@ namespace Unigram.Converters
             return Locale.FormatCurrency(amount, currency);
         }
 
+        public static double Amount(long amount, string currency)
+        {
+            return amount / GetAmountFraction(currency);
+        }
+
+        public static long AmountBack(double amount, string currency)
+        {
+            return (long)(amount * GetAmountFraction(currency));
+        }
+
+        public static double GetAmountFraction(string currency)
+        {
+            if (currency == null)
+            {
+                return 1;
+            }
+
+            switch (currency.ToUpper())
+            {
+                case "CLF":
+                    return 10000.0d;
+                case "BHD":
+                case "IQD":
+                case "JOD":
+                case "KWD":
+                case "LYD":
+                case "OMR":
+                case "TND":
+                    return 1000.0d;
+                case "BIF":
+                case "BYR":
+                case "CLP":
+                case "CVE":
+                case "DJF":
+                case "GNF":
+                case "ISK":
+                case "JPY":
+                case "KMF":
+                case "KRW":
+                case "MGA":
+                case "PYG":
+                case "RWF":
+                case "UGX":
+                case "UYI":
+                case "VND":
+                case "VUV":
+                case "XAF":
+                case "XOF":
+                case "XPF":
+                    return 1.0d;
+                case "MRO":
+                    return 10.0d;
+                default:
+                    return 100.0d;
+            }
+        }
+
         public static string ShippingOption(ShippingOption option, string currency)
         {
             var amount = 0L;

@@ -1,6 +1,8 @@
 ﻿using Telegram.Td.Api;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.ViewModels.Payments;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Views.Payments
 {
@@ -60,6 +62,20 @@ namespace Unigram.Views.Payments
         private string ConvertPay(long amount, string currency)
         {
             return string.Format(Strings.Resources.PaymentCheckoutPay, Locale.FormatCurrency(amount, currency));
+        }
+
+        private void SuggestedTipAmounts_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+
+            var content = args.ItemContainer.ContentTemplateRoot as TextBlock;
+            if (args.Item is long value)
+            {
+                content.Text = Converter.FormatAmount(value, ViewModel.PaymentForm.Invoice.Currency);
+            }
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unigram.Converters;
+using Unigram.Native;
 using Unigram.Services;
 using Windows.ApplicationModel.Resources;
-using Windows.Globalization.NumberFormatting;
+using Windows.System.UserProfile;
 
 namespace Unigram.Common
 {
@@ -17,7 +19,7 @@ namespace Unigram.Common
         private const int QUANTITY_FEW = 0x0008;
         private const int QUANTITY_MANY = 0x0010;
 
-        private static readonly Dictionary<string, CurrencyFormatter> _currencyCache = new Dictionary<string, CurrencyFormatter>();
+        private static readonly Dictionary<string, CurrencyNumberFormatter> _currencyCache = new Dictionary<string, CurrencyNumberFormatter>();
 
         private static readonly Dictionary<string, PluralRules> _allRules = new Dictionary<string, PluralRules>();
         private static readonly ResourceLoader _loader;
@@ -104,6 +106,21 @@ namespace Unigram.Common
             }
         }
 
+        public static CurrencyNumberFormatter GetCurrencyFormatter(string currency)
+        {
+            if (_currencyCache.TryGetValue(currency, out CurrencyNumberFormatter formatter) == false)
+            {
+                var culture = NativeUtils.GetCurrentCulture();
+                var languages = new[] { culture }.Union(GlobalizationPreferences.Languages);
+                var region = GlobalizationPreferences.HomeGeographicRegion;
+
+                formatter = new CurrencyNumberFormatter(currency, languages, region);
+                _currencyCache[currency] = formatter;
+            }
+
+            return formatter;
+        }
+
         public static string FormatCurrency(long amount, string currency)
         {
             if (currency == null)
@@ -177,12 +194,7 @@ namespace Unigram.Common
                     break;
             }
 
-            if (_currencyCache.TryGetValue(currency, out CurrencyFormatter formatter) == false)
-            {
-                formatter = new CurrencyFormatter(currency);
-                _currencyCache[currency] = formatter;
-            }
-
+            var formatter = GetCurrencyFormatter(currency);
             if (formatter != null)
             {
                 return (discount ? "-" : string.Empty) + formatter.Format(doubleAmount);
