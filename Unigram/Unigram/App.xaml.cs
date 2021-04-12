@@ -37,6 +37,8 @@ namespace Unigram
         public static ShareOperation ShareOperation { get; set; }
         public static Window ShareWindow { get; set; }
 
+        public bool IsBackground { get; private set; }
+
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 
         public static AppServiceConnection Connection { get; private set; }
@@ -94,10 +96,7 @@ namespace Unigram
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
 
-            Client.SetFatalErrorCallback(message =>
-            {
-                SettingsService.Current.Diagnostics.LastErrorMessage = message;
-            });
+            Client.SetFatalErrorCallback(FatalErrorCallback);
 
             var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
             if (lastMessage != null && lastMessage.Length > 0)
@@ -107,6 +106,29 @@ namespace Unigram
                 Microsoft.AppCenter.Crashes.Crashes.TrackError(TdException.FromMessage(lastMessage));
             }
 #endif
+
+            this.EnteredBackground += OnEnteredBackground;
+            this.LeavingBackground += OnLeavingBackground;
+        }
+
+        private void FatalErrorCallback(string message)
+        {
+            message += Environment.NewLine;
+            message += "Application version: " + SettingsPage.GetVersion();
+            message += Environment.NewLine;
+            message += "Entered background: " + IsBackground;
+
+            SettingsService.Current.Diagnostics.LastErrorMessage = message;
+        }
+
+        private void OnEnteredBackground(object sender, EnteredBackgroundEventArgs e)
+        {
+            IsBackground = true;
+        }
+
+        private void OnLeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        {
+            IsBackground = false;
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
