@@ -66,6 +66,8 @@
                 <controls:HeaderedControl
                     Header="{CustomResource InAppNotifications}">
                     <CheckBox
+                        x:Name="InAppFlash"
+                        x:Load="False"
                         IsChecked="{x:Bind ViewModel.InAppFlash, Mode=TwoWay}"
                         Content="Flash window when receiving a notification"
                         Margin="12,6,12,0"/>
