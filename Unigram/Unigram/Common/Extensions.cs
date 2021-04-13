@@ -22,6 +22,7 @@ using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -902,6 +903,16 @@ namespace Unigram.Common
         public static ScrollViewer GetScrollViewer(this Pivot listViewBase)
         {
             return listViewBase.Descendants<ScrollViewer>().FirstOrDefault();
+        }
+
+        public static async Task ConsolidateAsync(this ApplicationView view)
+        {
+            if (await view.TryConsolidateAsync())
+            {
+                return;
+            }
+
+            Window.Current.Close();
         }
     }
 

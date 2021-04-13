@@ -124,7 +124,7 @@ namespace Unigram.Views.Host
             }
         }
 
-        private void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
+        private async void ProcessAppCommands(ShortcutCommand command, AcceleratorKeyEventArgs args)
         {
             if (command == ShortcutCommand.Search)
             {
@@ -137,7 +137,7 @@ namespace Unigram.Views.Host
             }
             else if (command == ShortcutCommand.Close)
             {
-                Window.Current.Close();
+                await ApplicationView.GetForCurrentView().ConsolidateAsync();
             }
         }
     }

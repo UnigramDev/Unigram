@@ -279,8 +279,6 @@ namespace Unigram.Views
                 var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    Window.Current.Close();
-
                     if (popup.IsChecked == true)
                     {
                         _service.Discard();
@@ -289,12 +287,14 @@ namespace Unigram.Views
                     {
                         _service.Leave();
                     }
+
+                    await ApplicationView.GetForCurrentView().ConsolidateAsync();
                 }
             }
             else
             {
-                Window.Current.Close();
                 _service.Leave();
+                await ApplicationView.GetForCurrentView().ConsolidateAsync();
             }
         }
 
@@ -318,8 +318,8 @@ namespace Unigram.Views
             var confirm = await popup.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
-                Window.Current.Close();
                 _service.Discard();
+                await ApplicationView.GetForCurrentView().ConsolidateAsync();
             }
         }
 
@@ -887,7 +887,7 @@ namespace Unigram.Views
                     Maximum = 200,
                     MinWidth = 200,
                     TickFrequency = 100,
-                    TickPlacement = TickPlacement.Inline
+                    TickPlacement = TickPlacement.Outside
                 };
 
                 var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
