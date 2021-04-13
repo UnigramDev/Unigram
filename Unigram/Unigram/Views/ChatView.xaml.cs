@@ -144,6 +144,8 @@ namespace Unigram.Views
                 BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
             }
 
+            Messages.ViewVisibleMessages = ViewVisibleMessages;
+
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
 

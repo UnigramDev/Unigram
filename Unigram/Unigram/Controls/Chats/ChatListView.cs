@@ -1,4 +1,5 @@
 ﻿using LinqToVisualTree;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ namespace Unigram.Controls.Chats
 
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
+
+        public Action<bool> ViewVisibleMessages { get; set; }
 
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private bool _loadingMore = false;
@@ -326,6 +329,7 @@ namespace Unigram.Controls.Chats
             //scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
 
             _programmaticScrolling = _programmaticExternal = false;
+            ViewVisibleMessages?.Invoke(true);
         }
     }
 }
