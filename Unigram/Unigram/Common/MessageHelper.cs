@@ -342,11 +342,11 @@ namespace Unigram.Common
             }
             else if (username != null)
             {
-                NavigateToInviteLink(protoService, navigation, username.TrimStart('+'));
+                NavigateToUsername(protoService, navigation, username, botUser ?? botChat, voiceChat, post, comment, game);
             }
             else if (username != null && username.StartsWith('+'))
             {
-                NavigateToUsername(protoService, navigation, username, botUser ?? botChat, voiceChat, post, comment, game);
+                NavigateToInviteLink(protoService, navigation, username.TrimStart('+'));
             }
             else if (message != null)
             {
@@ -973,7 +973,7 @@ namespace Unigram.Common
 
         #region Entity
 
-        public static async void Hyperlink_ContextRequested(MessageViewModel message, UIElement sender, ContextRequestedEventArgs args)
+        public static void Hyperlink_ContextRequested(MessageViewModel message, UIElement sender, ContextRequestedEventArgs args)
         {
             var text = sender as RichTextBlock;
             if (args.TryGetPosition(sender, out Point point))
@@ -1069,6 +1069,65 @@ namespace Unigram.Common
             {
                 args.Handled = false;
             }
+        }
+
+        public static IList<MenuFlyoutItemBase> Hyperlink_ContextRequested(MessageViewModel message, RichTextBlock text, Point point)
+        {
+            if (point.X < 0 || point.Y < 0)
+            {
+                point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+            }
+
+            var items = new List<MenuFlyoutItemBase>();
+
+            var length = text.SelectedText.Length;
+            if (length > 0)
+            {
+                var link = text.SelectedText;
+
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                copy.Click += LinkCopy_Click;
+
+                items.Add(copy);
+            }
+            else
+            {
+                var hyperlink = text.GetHyperlinkFromPoint(point);
+                if (hyperlink == null)
+                {
+                    return items;
+                }
+
+                var link = GetEntityData(hyperlink);
+                if (link == null)
+                {
+                    return items;
+                }
+
+                var type = GetEntityType(hyperlink);
+                if (type == null || type is TextEntityTypeUrl || type is TextEntityTypeTextUrl)
+                {
+                    var open = new MenuFlyoutItem { Text = Strings.Resources.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+
+                    var action = GetEntityAction(hyperlink);
+                    if (action != null)
+                    {
+                        open.Click += (s, args) => action();
+                    }
+                    else
+                    {
+                        open.Click += LinkOpen_Click;
+                    }
+
+                    items.Add(open);
+                }
+
+                var copy = new MenuFlyoutItem { Text = Strings.Resources.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
+                copy.Click += LinkCopy_Click;
+                items.Add(copy);
+            }
+
+            return items;
         }
 
         public static void Hyperlink_ContextRequested(UIElement sender, string link, ContextRequestedEventArgs args)
