@@ -1,6 +1,5 @@
 import "Unigram.Native.Calls.idl";
 import "VoipGroupDescriptor.idl";
-import "VoipGroupParticipantDescription.idl";
 import "GroupNetworkStateChangedEventArgs.idl";
 import "FrameRequestedEventArgs.idl";
 
@@ -16,8 +15,10 @@ namespace Unigram.Native.Calls
         void SetConnectionMode(VoipGroupConnectionMode connectionMode, Boolean keepBroadcastIfWasEnabled);
 
         void EmitJoinPayload(EmitJsonPayloadDelegate completion);
-        void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponseWebrtc payload, Windows.Foundation.Collections.IVector<VoipGroupParticipantDescription> participants);
-        void AddParticipants(Windows.Foundation.Collections.IVector<VoipGroupParticipantDescription> participants);
+        [default_overload]
+        void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponseWebrtc payload);
+        void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponseWebrtc payload, Windows.Foundation.Collections.IVector<Telegram.Td.Api.GroupCallParticipant> participants);
+        void AddParticipants(Windows.Foundation.Collections.IVector<Telegram.Td.Api.GroupCallParticipant> participants);
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
         Boolean IsMuted;

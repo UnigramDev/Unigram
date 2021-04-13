@@ -331,7 +331,7 @@ namespace Unigram.Services
                 {
                     _source = ssrc;
                     _manager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
-                    _manager.SetJoinResponsePayload(data, null);
+                    _manager.SetJoinResponsePayload(data);
 
                     Participants?.Load();
                 }

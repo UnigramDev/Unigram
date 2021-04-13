@@ -234,10 +234,6 @@
       <DependentUpon>VoipGroupManager.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="VoipGroupParticipantDescription.h">
-      <DependentUpon>VoipGroupParticipantDescription.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="VoipManager.h">
       <DependentUpon>VoipManager.idl</DependentUpon>
     </ClInclude>
@@ -351,10 +347,6 @@
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="VoipGroupParticipantDescription.cpp">
-      <DependentUpon>VoipGroupParticipantDescription.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="VoipManager.cpp">
       <DependentUpon>VoipManager.idl</DependentUpon>
     </ClCompile>
@@ -378,9 +370,6 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="VoipGroupManager.idl">
-      <SubType>Designer</SubType>
-    </Midl>
-    <Midl Include="VoipGroupParticipantDescription.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="VoipManager.idl" />

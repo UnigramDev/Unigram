@@ -55,6 +55,7 @@
             x:Name="JoinButton"
             Content="{CustomResource VoipChatJoin}"
             Style="{StaticResource StartButtonStyle}"
+            FontWeight="SemiBold"
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
             Margin="0,0,12,0"

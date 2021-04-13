@@ -106,7 +106,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 			});
 	}
 
-	void VoipGroupManager::SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload, IVector<VoipGroupParticipantDescription> participants) {
+	void VoipGroupManager::SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload) {
+		SetJoinResponsePayload(payload, nullptr);
+	}
+
+	void VoipGroupManager::SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload, IVector<GroupCallParticipant> participants) {
 		auto fingerprints = std::vector<tgcalls::GroupJoinPayloadFingerprint>();
 		auto candidates = std::vector<tgcalls::GroupJoinResponseCandidate>();
 
@@ -160,7 +164,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_impl->setJoinResponsePayload(std::move(impl), std::move(participantsImpl));
 	}
 
-	void VoipGroupManager::AddParticipants(IVector<VoipGroupParticipantDescription> participants) {
+	void VoipGroupManager::AddParticipants(IVector<GroupCallParticipant> participants) {
 		auto impl = std::vector<tgcalls::GroupParticipantDescription>();
 
 		//for (const VoipGroupParticipantDescription& x : participants) {

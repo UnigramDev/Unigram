@@ -191,7 +191,6 @@
     <Midl Include="VoipGroupManager.idl" />
     <Midl Include="VoipGroupDescriptor.idl" />
     <Midl Include="GroupNetworkStateChangedEventArgs.idl" />
-    <Midl Include="VoipGroupParticipantDescription.idl" />
     <Midl Include="FrameRequestedEventArgs.idl" />
   </ItemGroup>
   <ItemGroup>

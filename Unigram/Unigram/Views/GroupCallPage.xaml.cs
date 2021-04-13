@@ -365,11 +365,6 @@ namespace Unigram.Views
 
         private void UpdateNetworkState(GroupCall call, GroupCallParticipant currentUser, bool? connected = null)
         {
-            if (call != null && currentUser != null && call.CanUnmuteSelf != currentUser.CanUnmuteSelf)
-            {
-                return;
-            }
-
             if (call != null && call.ScheduledStartDate > 0)
             {
                 if (call.CanBeManaged)
