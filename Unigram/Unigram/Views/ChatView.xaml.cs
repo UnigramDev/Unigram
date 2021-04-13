@@ -1324,14 +1324,18 @@ namespace Unigram.Views
 
                     if (result is WebPage webPage)
                     {
-                        if (embedded == null)
+                        if (embedded != null && embedded.WebPageDisabled && string.Equals(embedded.WebPageUrl, webPage.Url, StringComparison.OrdinalIgnoreCase))
                         {
-                            viewModel.ComposerHeader = new MessageComposerHeader { WebPagePreview = webPage, WebPageUrl = webPage.Url };
+                            return;
                         }
-                        else
+
+                        viewModel.ComposerHeader = new MessageComposerHeader
                         {
-                            viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = webPage, WebPageUrl = webPage.Url };
-                        }
+                            EditingMessage = embedded?.EditingMessage,
+                            ReplyToMessage = embedded?.ReplyToMessage,
+                            WebPagePreview = webPage,
+                            WebPageUrl = webPage.Url
+                        };
                     }
                     else if (embedded != null)
                     {
@@ -1341,7 +1345,11 @@ namespace Unigram.Views
                         }
                         else if (embedded.WebPagePreview != null)
                         {
-                            viewModel.ComposerHeader = new MessageComposerHeader { EditingMessage = embedded.EditingMessage, ReplyToMessage = embedded.ReplyToMessage, WebPagePreview = null };
+                            viewModel.ComposerHeader = new MessageComposerHeader
+                            {
+                                EditingMessage = embedded.EditingMessage,
+                                ReplyToMessage = embedded.ReplyToMessage
+                            };
                         }
                     }
                 });
@@ -3448,7 +3456,7 @@ namespace Unigram.Views
 
         public void UpdateComposerHeader(Chat chat, MessageComposerHeader header)
         {
-            if (header == null)
+            if (header == null || (header.IsEmpty && header.WebPageDisabled))
             {
                 // Let's reset
                 //ComposerHeader.Visibility = Visibility.Collapsed;

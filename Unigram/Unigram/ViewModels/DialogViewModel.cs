@@ -2566,28 +2566,19 @@ namespace Unigram.ViewModels
             }
         }
 
-        private bool _disableWebPagePreview;
         public bool DisableWebPagePreview
         {
             get
             {
-                var chat = _chat;
-                if (chat == null)
-                {
-                    return false;
-                }
-
                 // Force disable if needed
-                if (chat.Type is ChatTypeSecret && !Settings.IsSecretPreviewsEnabled)
+
+                var chat = _chat;
+                if (chat?.Type is ChatTypeSecret && !Settings.IsSecretPreviewsEnabled)
                 {
                     return true;
                 }
 
-                return _disableWebPagePreview;
-            }
-            set
-            {
-                Set(ref _disableWebPagePreview, value);
+                return false;
             }
         }
 
@@ -2602,16 +2593,14 @@ namespace Unigram.ViewModels
 
             if (container.WebPagePreview != null)
             {
-                if (container.IsEmpty)
+                ComposerHeader = new MessageComposerHeader
                 {
-                    ComposerHeader = null;
-                }
-                else
-                {
-                    ComposerHeader = new MessageComposerHeader { EditingMessage = container.EditingMessage, ReplyToMessage = container.ReplyToMessage, WebPagePreview = null };
-                }
-
-                DisableWebPagePreview = true;
+                    EditingMessage = container.EditingMessage,
+                    ReplyToMessage = container.ReplyToMessage,
+                    WebPageUrl = container.WebPageUrl,
+                    WebPagePreview = null,
+                    WebPageDisabled = true
+                };
             }
             else
             {
@@ -2705,10 +2694,9 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var disablePreview = DisableWebPagePreview;
-            DisableWebPagePreview = false;
-
             var header = _composerHeader;
+            var disablePreview = header?.WebPageDisabled ?? false;
+
             if (header?.EditingMessage != null)
             {
                 var editing = header.EditingMessage;
@@ -3924,7 +3912,7 @@ namespace Unigram.ViewModels
         public WebPage WebPagePreview { get; set; }
         public string WebPageUrl { get; set; }
 
-        public bool IsWebPageHidden { get; set; }
+        public bool WebPageDisabled { get; set; }
 
         public bool IsEmpty
         {

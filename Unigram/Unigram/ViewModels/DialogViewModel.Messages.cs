@@ -726,9 +726,20 @@ namespace Unigram.ViewModels
 
             if (message.Content is MessageText text)
             {
-                input = text.Text;
-                container.WebPagePreview = text.WebPage;
-                container.WebPageUrl = text.WebPage?.Url;
+                if (text.WebPage != null)
+                {
+                    container.WebPagePreview = text.WebPage;
+                    container.WebPageUrl = text.WebPage.Url;
+                }
+                else
+                {
+                    var url = text.Text.Entities.FirstOrDefault(x => x.Type is TextEntityTypeUrl);
+                    if (url != null)
+                    {
+                        container.WebPageUrl = text.Text.Text.Substring(url.Offset, url.Length);
+                        container.WebPageDisabled = true;
+                    }
+                }
             }
 
             ComposerHeader = container;
