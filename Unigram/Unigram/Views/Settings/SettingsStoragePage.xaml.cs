@@ -125,9 +125,9 @@ namespace Unigram.Views.Settings
                 case 3:
                     return 0;
                 case 7:
-                    return 2;
+                    return 1;
                 case 30:
-                    return 3;
+                    return 2;
             }
         }
 
@@ -184,7 +184,6 @@ namespace Unigram.Views.Settings
 
             return Locale.Declension("Months", 1);
         }
-
 
         #endregion
     }

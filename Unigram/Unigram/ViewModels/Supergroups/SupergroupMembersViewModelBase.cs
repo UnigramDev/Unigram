@@ -74,28 +74,14 @@ namespace Unigram.ViewModels.Supergroups
                     basicDelegate.UpdateBasicGroup(chat, item);
                 }
 
-                var filter = default(ChatMembersFilter);
-                switch (_filter)
+                ChatMembersFilter filter = _filter switch
                 {
-                    case SupergroupMembersFilterAdministrators:
-                        filter = new ChatMembersFilterAdministrators();
-                        break;
-                    case SupergroupMembersFilterBanned:
-                        filter = new ChatMembersFilterBanned();
-                        break;
-                    case SupergroupMembersFilterBots:
-                        filter = new ChatMembersFilterBots();
-                        break;
-                    case SupergroupMembersFilterRecent:
-                        filter = null;
-                        break;
-                    case SupergroupMembersFilterRestricted:
-                        filter = new ChatMembersFilterRestricted();
-                        break;
-                    case SupergroupMembersFilterSearch:
-                        filter = null;
-                        break;
-                }
+                    SupergroupMembersFilterAdministrators => new ChatMembersFilterAdministrators(),
+                    SupergroupMembersFilterBanned => new ChatMembersFilterBanned(),
+                    SupergroupMembersFilterBots => new ChatMembersFilterBots(),
+                    SupergroupMembersFilterRestricted => new ChatMembersFilterRestricted(),
+                    _ => null
+                };
 
                 Members = new ChatMemberCollection(ProtoService, chat.Id, string.Empty, filter);
             }
@@ -117,28 +103,14 @@ namespace Unigram.ViewModels.Supergroups
             }
             else if (chat.Type is ChatTypeBasicGroup)
             {
-                var filter = default(ChatMembersFilter);
-                switch (_filter)
+                ChatMembersFilter filter = _filter switch
                 {
-                    case SupergroupMembersFilterAdministrators:
-                        filter = new ChatMembersFilterAdministrators();
-                        break;
-                    case SupergroupMembersFilterBanned:
-                        filter = new ChatMembersFilterBanned();
-                        break;
-                    case SupergroupMembersFilterBots:
-                        filter = new ChatMembersFilterBots();
-                        break;
-                    case SupergroupMembersFilterRecent:
-                        filter = null;
-                        break;
-                    case SupergroupMembersFilterRestricted:
-                        filter = new ChatMembersFilterRestricted();
-                        break;
-                    case SupergroupMembersFilterSearch:
-                        filter = null;
-                        break;
-                }
+                    SupergroupMembersFilterAdministrators => new ChatMembersFilterAdministrators(),
+                    SupergroupMembersFilterBanned => new ChatMembersFilterBanned(),
+                    SupergroupMembersFilterBots => new ChatMembersFilterBots(),
+                    SupergroupMembersFilterRestricted => new ChatMembersFilterRestricted(),
+                    _ => null
+                };
 
                 Search = new ChatMemberCollection(ProtoService, chat.Id, query, filter);
             }

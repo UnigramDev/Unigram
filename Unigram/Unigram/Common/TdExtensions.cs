@@ -825,31 +825,19 @@ namespace Unigram.Common
 
         public static FormattedText GetCaption(this MessageContent content)
         {
-            switch (content)
+            return content switch
             {
-                case MessageAlbum album:
-                    return album.Caption;
-                case MessageAnimation animation:
-                    return animation.Caption;
-                case MessageAudio audio:
-                    return audio.Caption;
-                case MessageDocument document:
-                    return document.Caption;
-                case MessagePhoto photo:
-                    return photo.Caption;
-                case MessageVideo video:
-                    return video.Caption;
-                case MessageVoiceNote voiceNote:
-                    return voiceNote.Caption;
-
-                case MessageBigEmoji bigEmoji:
-                    return bigEmoji.Text;
-
-                case MessageText text:
-                    return text.Text;
-            }
-
-            return null;
+                MessageAlbum album => album.Caption,
+                MessageAnimation animation => animation.Caption,
+                MessageAudio audio => audio.Caption,
+                MessageDocument document => document.Caption,
+                MessagePhoto photo => photo.Caption,
+                MessageVideo video => video.Caption,
+                MessageVoiceNote voiceNote => voiceNote.Caption,
+                MessageBigEmoji bigEmoji => bigEmoji.Text,
+                MessageText text => text.Text,
+                _ => null,
+            };
         }
 
         public static bool HasCaption(this MessageContent content)

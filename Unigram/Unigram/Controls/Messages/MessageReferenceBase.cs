@@ -48,7 +48,7 @@ namespace Unigram.Controls.Messages
                 return;
             }
 
-            if (embedded.WebPagePreview != null)
+            if (embedded.WebPagePreview != null && !embedded.WebPageDisabled)
             {
                 MessageId = 0;
                 Visibility = Visibility.Visible;

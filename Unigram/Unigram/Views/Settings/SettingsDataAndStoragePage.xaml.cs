@@ -79,7 +79,7 @@ namespace Unigram.Views.Settings
                     switch (a)
                     {
                         case 0:
-                            builder.Append(Strings.Resources.AutodownloadContacts);
+                            builder.Append(Strings.Resources.AutoDownloadContacts);
                             break;
                         case 1:
                             builder.Append(Strings.Resources.AutoDownloadPm);
