@@ -31,6 +31,10 @@ namespace Unigram.Views.Settings
             {
                 MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
             }
+
+#if !DEBUG
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("SettingsThemePage");
+#endif
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
