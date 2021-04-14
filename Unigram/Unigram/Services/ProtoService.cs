@@ -348,6 +348,7 @@ namespace Unigram.Services
                 }
 
                 InitializeDiagnostics();
+                InitializeFlush();
 
                 _client.Send(new SetOption("language_pack_database_path", new OptionValueString(System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "langpack"))));
                 _client.Send(new SetOption("localization_target", new OptionValueString("android")));
@@ -392,6 +393,29 @@ namespace Unigram.Services
             UpdateVersion();
         }
 
+        private void InitializeFlush()
+        {
+            // Flush animated stickers cache files that have not been accessed in three days
+            Task.Factory.StartNew(() =>
+            {
+                var now = DateTime.Now;
+
+                var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}", "stickers");
+                var files = System.IO.Directory.GetFiles(path, "*.cache");
+
+                foreach (var file in files)
+                {
+                    var date = System.IO.File.GetLastAccessTime(file);
+
+                    var diff = now - date;
+                    if (diff.TotalDays >= 3)
+                    {
+                        System.IO.File.Delete(file);
+                    }
+                }
+            });
+        }
+
         private async void UpdateConfig(BaseObject value)
         {
             if (value is JsonValueObject obj)
@@ -429,7 +453,7 @@ namespace Unigram.Services
             }
         }
 
-        public static unsafe string EncodeToBase64(string id, string accessHash, string fileReferenceBase64)
+        private unsafe string EncodeToBase64(string id, string accessHash, string fileReferenceBase64)
         {
             using var bufferWriter = new ArrayPoolBufferWriter<byte>();
 
