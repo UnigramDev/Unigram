@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;

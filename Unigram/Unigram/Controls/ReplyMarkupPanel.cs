@@ -4,7 +4,6 @@ using System.Linq;
 using Telegram.Td.Api;
 using Unigram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -32,7 +31,7 @@ namespace Unigram.Controls
 
     public class ReplyMarkupPanel : Grid
     {
-        private double _keyboardHeight = 260;
+        private readonly double _keyboardHeight = 260;
 
         private void UpdateSize(ReplyMarkup markup, bool inline)
         {

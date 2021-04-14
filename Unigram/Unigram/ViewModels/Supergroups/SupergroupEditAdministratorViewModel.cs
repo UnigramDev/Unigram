@@ -7,7 +7,6 @@ using Unigram.Controls;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.ViewModels.Delegates;
-using Unigram.Views;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Unigram.Views.Supergroups;

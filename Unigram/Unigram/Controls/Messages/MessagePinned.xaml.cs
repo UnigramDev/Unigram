@@ -427,11 +427,11 @@ namespace Unigram.Controls.Messages
             return Window.Current.Compositor.CreateColorBrush(Colors.White);
         }
 
-        private int _prevValue;
-        private int _nextValue;
-
         private readonly Queue<(int, int, int)> _queue = new Queue<(int, int, int)>();
         private bool _playing;
+
+        private int _nextValue;
+
 
         public void UpdateIndex(int value, int maximum, int direction)
         {

@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
 
