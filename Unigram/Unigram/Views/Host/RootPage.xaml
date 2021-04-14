@@ -55,11 +55,10 @@
                             </VisualStateManager.VisualStateGroups>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
                                       Glyph="&#xE0E5;"
-                                      FontSize="12"
+                                      FontSize="20"
                                       Foreground="{ThemeResource CheckBoxForegroundUnchecked}"
                                       RenderTransformOrigin="0.5,0.5"
-                                      VerticalAlignment="Bottom"
-                                      Margin="0,0,0,2">
+                                      VerticalAlignment="Bottom">
                                 <FontIcon.RenderTransform>
                                     <RotateTransform x:Name="CheckGlyphRotation" />
                                 </FontIcon.RenderTransform>
