@@ -413,7 +413,7 @@ namespace Unigram.Controls.Gallery
                 Preview.Opacity = 1;
 
                 var root = Preview.Presenter;
-                if ((root.IsLoaded && ApiInfo.CanUseIsLoaded) || !ApiInfo.CanUseIsLoaded)
+                if ((ApiInfo.CanUseIsLoaded && root.IsLoaded) || !ApiInfo.CanUseIsLoaded)
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                     if (animation != null)
