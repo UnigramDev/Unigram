@@ -377,7 +377,7 @@
                     Text="{CustomResource VoipGroupLeave}"
                     TextAlignment="Center"
                     VerticalAlignment="Top"
-                    Margin="0,4,0,24"
+                    Margin="0,8,0,24"
                     Grid.Column="1"
                     Grid.Row="3"
                     Canvas.ZIndex="3"/>
