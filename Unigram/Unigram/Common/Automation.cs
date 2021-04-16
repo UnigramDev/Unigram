@@ -194,7 +194,14 @@ namespace Unigram.Common
             }
             else if (message.Content is MessageVideo video)
             {
-                return (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text) + ", ";
+                var result = (video.IsSecret ? Strings.Resources.AttachDestructingVideo : Strings.Resources.AttachVideo) + GetCaption(video.Caption.Text) + ", ";
+
+                if (details)
+                {
+                    result += FileSizeConverter.Convert(video.Video.VideoValue.Size) + ", ";
+                }
+
+                return result;
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -211,14 +218,22 @@ namespace Unigram.Common
                 var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
                 var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
 
+                string result;
                 if (performer == null && title == null)
                 {
-                    return Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text) + ", ";
+                    result = Strings.Resources.AttachMusic + GetCaption(audio.Caption.Text) + ", ";
                 }
                 else
                 {
-                    return $"{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text) + ", ";
+                    result = $"{performer ?? Strings.Resources.AudioUnknownArtist} - {title ?? Strings.Resources.AudioUnknownTitle}" + GetCaption(audio.Caption.Text) + ", ";
                 }
+
+                if (details)
+                {
+                    result += FileSizeConverter.Convert(audio.Audio.AudioValue.Size) + ", ";
+                }
+
+                return result;
             }
             else if (message.Content is MessageDocument document)
             {
