@@ -407,7 +407,7 @@ namespace Unigram.Views.Chats
             }
 
             AutomationProperties.SetName(args.ItemContainer,
-                Automation.GetSummary(ViewModel.ProtoService, message));
+                Automation.GetSummary(ViewModel.ProtoService, message, true));
 
             if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton hyperlink)
             {

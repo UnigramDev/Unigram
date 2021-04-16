@@ -198,6 +198,11 @@ namespace Unigram.Common
 
                 if (details)
                 {
+                    result += video.Video.GetDuration() + ", ";
+                }
+
+                if (details && !video.Video.VideoValue.Local.IsDownloadingCompleted)
+                {
                     result += FileSizeConverter.Convert(video.Video.VideoValue.Size) + ", ";
                 }
 
@@ -229,6 +234,11 @@ namespace Unigram.Common
                 }
 
                 if (details)
+                {
+                    result += audio.Audio.GetDuration() + ", ";
+                }
+
+                if (details && !audio.Audio.AudioValue.Local.IsDownloadingCompleted)
                 {
                     result += FileSizeConverter.Convert(audio.Audio.AudioValue.Size) + ", ";
                 }
