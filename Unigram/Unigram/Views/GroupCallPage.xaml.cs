@@ -95,8 +95,8 @@ namespace Unigram.Views
         {
             None,
             Disabled,
-            Mute,
-            Unmute
+            Unmute,
+            Mute
         }
 
         private void OnTick(object sender, object e)
@@ -426,14 +426,14 @@ namespace Unigram.Views
                     Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceStart.tgs");
                     break;
                 case ButtonState.Unmute:
-                    colors = ButtonColors.Mute;
-                    AudioInfo.Text = Strings.Resources.VoipGroupUnmute;
+                    colors = ButtonColors.Unmute;
+                    AudioInfo.Text = Strings.Resources.VoipTapToMute;
                     Lottie.AutoPlay = true;
                     Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmute.tgs");
                     break;
                 case ButtonState.Mute:
-                    colors = ButtonColors.Unmute;
-                    AudioInfo.Text = Strings.Resources.VoipTapToMute;
+                    colors = ButtonColors.Mute;
+                    AudioInfo.Text = Strings.Resources.VoipGroupUnmute;
                     switch (_prevState)
                     {
                         case ButtonState.CancelReminder:
@@ -504,11 +504,11 @@ namespace Unigram.Views
                     _drawable.SetColors(0xff57A4FE, 0xffF05459, 0xff766EE9);
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                     break;
-                case ButtonColors.Mute:
+                case ButtonColors.Unmute:
                     _drawable.SetColors(0xFF0078ff, 0xFF33c659);
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
                     break;
-                case ButtonColors.Unmute:
+                case ButtonColors.Mute:
                     _drawable.SetColors(0xFF59c7f8, 0xFF0078ff);
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
                     break;
@@ -842,6 +842,15 @@ namespace Unigram.Views
                 speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
                 glyph.Text = Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
+            }
+            else if (participant.IsCurrentUser)
+            {
+                var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
+
+                speaking.Text = Strings.Resources.ThisIsYou;
+                speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
+                glyph.Text = muted ? Icons.MicOff : Icons.MicOn;
+                glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
             else
             {
