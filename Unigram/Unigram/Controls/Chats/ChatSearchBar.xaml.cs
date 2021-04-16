@@ -25,7 +25,10 @@ namespace Unigram.Controls.Chats
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => Field.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>
             {
-                ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
+                if (Field.State != ChatSearchState.Members)
+                {
+                    ViewModel?.Search(Field.Text, Field.From, Field.Filter?.Filter);
+                }
             };
         }
 
