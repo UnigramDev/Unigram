@@ -190,7 +190,14 @@ namespace Unigram.Common
 
             if (message.Content is MessageVoiceNote voiceNote)
             {
-                return Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", " + (voiceNote.IsListened ? "" : Strings.Resources.AccDescrMsgNotPlayed + ", ");
+                var result = Strings.Resources.AttachAudio + GetCaption(voiceNote.Caption.Text) + ", " + (voiceNote.IsListened ? "" : Strings.Resources.AccDescrMsgNotPlayed + ", ");
+
+                if (details)
+                {
+                    result += voiceNote.VoiceNote.GetDuration() + ", ";
+                }
+
+                return result;
             }
             else if (message.Content is MessageVideo video)
             {
