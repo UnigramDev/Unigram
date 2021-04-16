@@ -68,9 +68,6 @@ namespace Unigram.Views
 
             Window.Current.Closed += OnClosed;
 
-            //Window.Current.SetTitleBar(BlurPanel);
-            PhotoInfo.Source = PlaceholderHelper.GetChat(protoService, voipService.Chat, 36);
-
             if (voipService.Call != null)
             {
                 Update(voipService.Call, voipService.CurrentUser);
@@ -141,7 +138,6 @@ namespace Unigram.Views
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             Dispose();
-
             AudioCanvas.RemoveFromVisualTree();
         }
 
@@ -203,7 +199,6 @@ namespace Unigram.Views
             this.BeginOnUIThread(() =>
             {
                 TitleInfo.Text = call.Title.Length > 0 ? call.Title : _cacheService.GetTitle(_service.Chat);
-                SubtitleInfo.Text = Locale.Declension("Participants", call.ParticipantCount);
 
                 RecordingInfo.Visibility = call.RecordDuration > 0 ? Visibility.Visible : Visibility.Collapsed;
 
@@ -222,6 +217,7 @@ namespace Unigram.Views
                     }
 
                     FindName(nameof(ScheduledPanel));
+                    SubtitleInfo.Text = Strings.Resources.VoipGroupScheduledVoiceChat;
                     ParticipantsPanel.Visibility = Visibility.Collapsed;
                     ScheduledInfo.Text = duration < TimeSpan.Zero ? Strings.Resources.VoipChatLateBy : Strings.Resources.VoipChatStartsIn;
                     StartsAt.Text = call.GetStartsAt();
@@ -236,6 +232,7 @@ namespace Unigram.Views
                         UnloadObject(ScheduledPanel);
                     }
 
+                    SubtitleInfo.Text = Locale.Declension("Participants", call.ParticipantCount);
                     ParticipantsPanel.Visibility = Visibility.Visible;
                 }
 
@@ -1050,7 +1047,7 @@ namespace Unigram.Views
             {
                 if (_maskGradient == null)
                 {
-                    _maskGradient = new CanvasRadialGradientBrush(session, Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF));
+                    _maskGradient = new CanvasRadialGradientBrush(session, Color.FromArgb(0x77, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF));
                     _maskGradient.Center = new Vector2(150, 150);
                 }
 

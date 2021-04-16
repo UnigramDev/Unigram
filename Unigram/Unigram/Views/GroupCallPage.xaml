@@ -90,25 +90,40 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="#000000" RequestedTheme="Dark">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
-            <RowDefinition Height="48"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <TextBlock
-                Text="{CustomResource VoipGroupVoiceChat}"
-                VerticalAlignment="Center"
-                TextLineBounds="TrimToCapHeight"
-                Margin="12,0,0,0"
-                AutomationProperties.LiveSetting="Assertive"
-                Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                Style="{StaticResource CaptionTextBlockStyle}"/>
+        <Border>
+            <Grid HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    x:Name="TitleInfo"
+                    Text="{CustomResource VoipGroupVoiceChat}"
+                    VerticalAlignment="Center"
+                    TextLineBounds="TrimToCapHeight"
+                    Margin="12,0,0,0"
+                    AutomationProperties.LiveSetting="Assertive"
+                    Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}"/>
+
+                <TextBlock
+                    x:Name="RecordingInfo"
+                    Visibility="Collapsed"
+                    Foreground="Red"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text=" •"
+                    Grid.Column="1"/>
+            </Grid>
         </Border>
 
-        <controls:ContentPageHeader Background="#000000" BackVisibility="Collapsed" Grid.Row="1">
+        <!--<controls:ContentPageHeader Background="#000000" BackVisibility="Collapsed" Grid.Row="1">
             <Grid Margin="12,0,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -127,35 +142,6 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Grid HorizontalAlignment="Left">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            x:Name="TitleInfo"
-                            Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                            Style="{StaticResource BaseTextBlockStyle}"
-                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                            TextWrapping="NoWrap"
-                            TextTrimming="CharacterEllipsis"
-                            MaxLines="1"/>
-
-                        <TextBlock
-                            x:Name="RecordingInfo"
-                            Visibility="Collapsed"
-                            Foreground="Red"
-                            Style="{StaticResource BaseTextBlockStyle}"
-                            Text=" •"
-                            Grid.Column="1"/>
-                    </Grid>
-                    <TextBlock
-                        x:Name="SubtitleInfo"
-                        Foreground="{ThemeResource PageHeaderDisabledBrush}"
-                        Style="{StaticResource CaptionTextBlockStyle}"
-                        TextWrapping="NoWrap"
-                        TextTrimming="CharacterEllipsis"
-                        Grid.Row="1"/>
                 </Grid>
 
                 <controls:GlyphButton
@@ -166,7 +152,15 @@
                     Style="{StaticResource HeaderGlyphButtonStyle}"
                     Grid.Column="2"/>
             </Grid>
-        </controls:ContentPageHeader>
+        </controls:ContentPageHeader>-->
+        <TextBlock
+            x:Name="SubtitleInfo"
+            Foreground="{ThemeResource PageHeaderDisabledBrush}"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            TextWrapping="NoWrap"
+            TextTrimming="CharacterEllipsis"
+            Margin="12,-8,0,0"
+            Grid.Row="1"/>
 
         <Grid x:Name="ParticipantsPanel" VerticalAlignment="Top" Grid.Row="2">
             <Grid.RowDefinitions>
@@ -174,7 +168,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,16" CornerRadius="8">
+            <Border Background="{ThemeResource PageHeaderBorderBrush}" Margin="12,16" CornerRadius="8">
                 <ListView
                     x:Name="List"
                     SelectionMode="None"
