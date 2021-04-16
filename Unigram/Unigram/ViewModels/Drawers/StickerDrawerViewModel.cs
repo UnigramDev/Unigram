@@ -255,15 +255,16 @@ namespace Unigram.ViewModels.Drawers
                     return;
                 }
 
+                _groupSetId = 0;
+                _groupSetChatId = 0;
+                SavedStickers.Remove(_groupSet);
+
                 var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
                 if (appData.Values.TryGetValue("Stickers" + chat.Id, out object stickersObj))
                 {
                     var stickersId = (long)stickersObj;
                     if (stickersId == fullInfo.StickerSetId)
                     {
-                        _groupSetId = 0;
-                        _groupSetChatId = 0;
-                        SavedStickers.Remove(_groupSet);
                         return;
                     }
                 }
@@ -281,25 +282,7 @@ namespace Unigram.ViewModels.Drawers
                             _groupSetChatId = chat.Id;
                             SavedStickers.Add(_groupSet);
                         }
-                        else
-                        {
-                            _groupSetId = 0;
-                            _groupSetChatId = 0;
-                            SavedStickers.Remove(_groupSet);
-                        }
                     }
-                    else
-                    {
-                        _groupSetId = 0;
-                        _groupSetChatId = 0;
-                        SavedStickers.Remove(_groupSet);
-                    }
-                }
-                else
-                {
-                    _groupSetId = 0;
-                    _groupSetChatId = 0;
-                    SavedStickers.Remove(_groupSet);
                 }
             }
         }

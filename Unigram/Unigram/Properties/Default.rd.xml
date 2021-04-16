@@ -28,5 +28,7 @@
       </Method>
     </Type>
 
+    <Type Name="Unigram.ViewModels.Drawers.SupergroupStickerSetViewModel" Dynamic="Required All"/>
+
   </Application>
 </Directives>
