@@ -1970,6 +1970,14 @@ namespace Unigram.Views
                     }
                 }
             }
+            else if (message.Content is MessageAlbum album && args.OriginalSource is DependencyObject originaSource)
+            {
+                var ancestor = originaSource.AncestorsAndSelf<IContent>().FirstOrDefault();
+                if (ancestor != null)
+                {
+                    message = ancestor.Message;
+                }
+            }
 
             var response = await ViewModel.ProtoService.SendAsync(new GetMessage(message.ChatId, message.Id));
             if (response is Message)
