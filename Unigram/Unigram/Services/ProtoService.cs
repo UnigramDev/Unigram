@@ -540,7 +540,7 @@ namespace Unigram.Services
 
         private async void UpdateVersion()
         {
-            if (_settings.Version < SettingsService.CurrentVersion)
+            if (_settings.Version < SettingsService.CurrentVersion && _settings.Version > 0)
             {
                 var response = await SendAsync(new CreatePrivateChat(777000, false));
                 if (response is Chat chat)
