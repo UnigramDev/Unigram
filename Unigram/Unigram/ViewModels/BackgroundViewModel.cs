@@ -317,7 +317,7 @@ namespace Unigram.ViewModels
             if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
             {
                 var item = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
-                var generated = await item.ToGeneratedAsync(ConversionType.Copy);
+                var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
 
                 task = ProtoService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), Settings.Appearance.IsDarkTheme()));
             }

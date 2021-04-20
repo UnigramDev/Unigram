@@ -292,12 +292,12 @@ namespace Unigram.Common
             return relativePath;
         }
 
-        public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null)
+        public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null, bool forceCopy = false)
         {
             var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
             var path = file.Path;
 
-            if (conversion == ConversionType.Copy && arguments == null && NativeUtils.IsFileReadable(file.Path))
+            if (conversion == ConversionType.Copy && arguments == null && NativeUtils.IsFileReadable(file.Path) && !forceCopy)
             {
                 return new InputFileLocal(path);
             }

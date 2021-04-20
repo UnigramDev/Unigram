@@ -66,7 +66,7 @@ namespace Unigram.Controls.Chats
             Update(session, protoService.SelectedBackground, SettingsService.Current.Appearance.IsDarkTheme());
         }
 
-        private void Update(int session, Background background, bool dark)
+        private async void Update(int session, Background background, bool dark)
         {
             if (BackgroundEquals(_oldBackground, background) && _oldDark == dark)
             {
@@ -131,7 +131,20 @@ namespace Unigram.Controls.Chats
                 var document = background.Document.DocumentValue;
                 if (document.Local.IsDownloadingCompleted)
                 {
-                    _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+                    try
+                    {
+                        BitmapImage image;
+                        _colorBackground.Fill = new ImageBrush { ImageSource = image = new BitmapImage(), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
+
+                        var test = await _protoService.GetFileAsync(document);
+                        using (var stream = await test.OpenReadAsync())
+                        {
+                            await image.SetSourceAsync(stream);
+                        }
+                    }
+                    catch { }
+
+                    //_colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
             }
         }

@@ -182,7 +182,6 @@ namespace Unigram.Controls.Messages.Content
                         {
                             await image.SetSourceAsync(stream);
                         }
-
                     }
                     catch
                     {
