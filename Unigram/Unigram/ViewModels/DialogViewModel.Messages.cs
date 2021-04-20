@@ -985,14 +985,7 @@ namespace Unigram.ViewModels
 
                 if (inline.Type is InlineKeyboardButtonTypeBuy)
                 {
-                    if (message.Content is MessageInvoice invoice && invoice.ReceiptMessageId != 0)
-                    {
-                        NavigationService.Navigate(typeof(PaymentReceiptPage), state: NavigationState.GetInvoice(chat.Id, invoice.ReceiptMessageId));
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(PaymentFormPage), state: NavigationState.GetInvoice(chat.Id, message.Id));
-                    }
+                    NavigationService.NavigateToInvoice(message);
                 }
                 else if (inline.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
                 {

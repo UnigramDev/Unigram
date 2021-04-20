@@ -83,10 +83,6 @@ namespace Unigram.Services.ViewService
         public Window Window { get; }
         #endregion
 
-        #region NavigationService
-        public INavigationService NavigationService { get; set; }
-        #endregion
-
         private ViewLifetimeControl(CoreWindow newWindow)
         {
             WindowWrapper = WindowContext.Current(Window.Current);

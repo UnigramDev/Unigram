@@ -178,7 +178,6 @@ namespace Unigram.Services.ViewService
                     };
 
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, id, false);
-                    control.NavigationService = nav;
                     nav.Navigate(page, parameter);
                     newWindow.Content = BootStrapper.Current.CreateRootElement(nav);
                     newWindow.Activate();

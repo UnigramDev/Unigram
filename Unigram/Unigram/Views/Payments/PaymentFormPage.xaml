@@ -67,7 +67,9 @@
     </Page.Resources>
 
     <local:HostedPage.Header>
-        <controls:PageHeader Text="{x:Bind ConvertTitle(ViewModel.PaymentForm.Invoice.IsTest), Mode=OneWay, FallbackValue=Checkout}"/>
+        <controls:PageHeader
+            Text="{x:Bind ConvertTitle(ViewModel.Invoice.IsTest), Mode=OneWay, FallbackValue=Checkout}"
+            BackVisibility="Collapsed"/>
     </local:HostedPage.Header>
     
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
@@ -93,18 +95,18 @@
                         </Border>
 
                         <StackPanel Grid.Column="1">
-                            <TextBlock Text="{x:Bind ViewModel.Invoice.Title, Mode=OneWay, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                            <TextBlock Text="{x:Bind ViewModel.Invoice.Description, Mode=OneWay, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind ViewModel.MessageContent.Title, Mode=OneWay, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind ViewModel.MessageContent.Description, Mode=OneWay, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                             <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, Mode=OneWay, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                         </StackPanel>
                     </Grid>
                     <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,0,0,8"/>
 
                     <payments:LabeledPricesPanel
-                        Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency, Mode=OneWay}"
-                        Prices="{x:Bind ViewModel.PaymentForm.Invoice.PriceParts, Mode=OneWay}"/>
+                        Currency="{x:Bind ViewModel.Invoice.Currency, Mode=OneWay}"
+                        Prices="{x:Bind ViewModel.Invoice.PriceParts, Mode=OneWay}"/>
                     <payments:LabeledPricesPanel
-                        Currency="{x:Bind ViewModel.PaymentForm.Invoice.Currency, Mode=OneWay}"
+                        Currency="{x:Bind ViewModel.Invoice.Currency, Mode=OneWay}"
                         Prices="{x:Bind ViewModel.Shipping.PriceParts, Mode=OneWay}"/>
 
                     <Grid Visibility="{x:Bind ViewModel.HasSuggestedTipAmounts, Mode=OneWay}">
@@ -126,12 +128,12 @@
                             Margin="8,4,12,4"
                             Grid.Column="1">
                             <Hyperlink Click="{x:Bind ViewModel.ChooseTipAmount}">
-                                <Run Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TipAmount, ViewModel.PaymentForm.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"/>
+                                <Run Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TipAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"/>
                             </Hyperlink>
                         </TextBlock>
 
                         <ListView
-                            ItemsSource="{x:Bind ViewModel.PaymentForm.Invoice.SuggestedTipAmounts, Mode=OneWay}"
+                            ItemsSource="{x:Bind ViewModel.Invoice.SuggestedTipAmounts, Mode=OneWay}"
                             SelectedItem="{x:Bind ViewModel.TipAmountSelection, Mode=TwoWay}"
                             ContainerContentChanging="SuggestedTipAmounts_ContainerContentChanging"
                             Padding="12,0,4,0"
@@ -168,7 +170,7 @@
                             Style="{StaticResource BaseTextBlockStyle}"
                             Margin="12,4,0,8"/>
                         <TextBlock
-                            Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
+                            Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TotalAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
                             Style="{StaticResource BaseTextBlockStyle}"
                             TextAlignment="Right"
                             Margin="8,4,12,8"
@@ -186,35 +188,35 @@
                     <controls:BadgeButton
                         Click="{x:Bind ViewModel.ChooseAddress}"
                         Content="{x:Bind ConvertAddress(ViewModel.Info.ShippingAddress), Mode=OneWay, FallbackValue=Empty}"
-                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedShippingAddress, Mode=OneWay, FallbackValue=Collapsed}"
+                        Visibility="{x:Bind ViewModel.Invoice.NeedShippingAddress, Mode=OneWay, FallbackValue=Collapsed}"
                         Badge="{CustomResource PaymentShippingAddress}"
                         Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
                     <controls:BadgeButton
                         Click="{x:Bind ViewModel.ChooseShipping}"
                         Content="{x:Bind ViewModel.Shipping.Title, Mode=OneWay, FallbackValue=Empty}"
-                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.IsFlexible, Mode=OneWay, FallbackValue=Collapsed}"
+                        Visibility="{x:Bind ViewModel.Invoice.IsFlexible, Mode=OneWay, FallbackValue=Collapsed}"
                         Badge="{CustomResource PaymentCheckoutShippingMethod}"
                         Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
                     <controls:BadgeButton
                         Click="{x:Bind ViewModel.ChooseAddress}"
                         Content="{x:Bind ViewModel.Info.Name, Mode=OneWay, FallbackValue=Empty}"
-                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedName, Mode=OneWay, FallbackValue=Collapsed}"
+                        Visibility="{x:Bind ViewModel.Invoice.NeedName, Mode=OneWay, FallbackValue=Collapsed}"
                         Badge="{CustomResource PaymentCheckoutName}"
                         Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
                     <controls:BadgeButton
                         Click="{x:Bind ViewModel.ChooseAddress}"
                         Content="{x:Bind converters:Converter.PhoneNumber(ViewModel.Info.PhoneNumber), Mode=OneWay, FallbackValue=Empty}"
-                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedPhoneNumber, Mode=OneWay, FallbackValue=Collapsed}"
+                        Visibility="{x:Bind ViewModel.Invoice.NeedPhoneNumber, Mode=OneWay, FallbackValue=Collapsed}"
                         Badge="{CustomResource PaymentCheckoutPhoneNumber}"
                         Style="{StaticResource SubtitleBadgeButtonStyle}"/>
 
                     <controls:BadgeButton
                         Click="{x:Bind ViewModel.ChooseAddress}"
                         Content="{x:Bind ViewModel.Info.EmailAddress, Mode=OneWay, FallbackValue=Empty}"
-                        Visibility="{x:Bind ViewModel.PaymentForm.Invoice.NeedEmailAddress, Mode=OneWay, FallbackValue=Collapsed}"
+                        Visibility="{x:Bind ViewModel.Invoice.NeedEmailAddress, Mode=OneWay, FallbackValue=Collapsed}"
                         Badge="{CustomResource PaymentCheckoutEmail}"
                         Style="{StaticResource SubtitleBadgeButtonStyle}"/>
                 </controls:HeaderedControl>
@@ -225,7 +227,7 @@
         <Grid Background="{ThemeResource PageHeaderBackgroundBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}"
               Grid.Row="1">
-            <Button Content="{x:Bind ConvertPay(ViewModel.TotalAmount, ViewModel.PaymentForm.Invoice.Currency), FallbackValue=Empty}" Command="{x:Bind ViewModel.SendCommand}" Style="{StaticResource SendButtonStyle}"/>
+            <Button Content="{x:Bind ConvertPay(ViewModel.TotalAmount, ViewModel.Invoice.Currency), FallbackValue=Empty}" Command="{x:Bind ViewModel.SendCommand}" Style="{StaticResource SendButtonStyle}"/>
         </Grid>
     </Grid>
 </local:HostedPage>

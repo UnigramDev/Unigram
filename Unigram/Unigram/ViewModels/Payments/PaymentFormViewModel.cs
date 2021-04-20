@@ -9,6 +9,7 @@ using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Views.Popups;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -38,8 +39,10 @@ namespace Unigram.ViewModels.Payments
             }
 
             Message = message;
-            Invoice = message.Content as MessageInvoice;
+            MessageContent = message.Content as MessageInvoice;
             PaymentForm = paymentForm;
+            Invoice = paymentForm.Invoice;
+            Bot = CacheService.GetUser(paymentForm.SellerBotUserId);
 
             Credentials = paymentForm.SavedCredentials;
             Info = paymentForm.SavedOrderInfo;
@@ -93,8 +96,15 @@ namespace Unigram.ViewModels.Payments
             set => Set(ref _message, value);
         }
 
-        protected MessageInvoice _invoice;
-        public MessageInvoice Invoice
+        private MessageInvoice _messageContent;
+        public MessageInvoice MessageContent
+        {
+            get => _messageContent;
+            set => Set(ref _messageContent, value);
+        }
+
+        protected Invoice _invoice;
+        public Invoice Invoice
         {
             get => _invoice;
             set => Set(ref _invoice, value);
@@ -289,7 +299,7 @@ namespace Unigram.ViewModels.Payments
 
             var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
 
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _invoice.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _messageContent.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -322,8 +332,7 @@ namespace Unigram.ViewModels.Payments
                     await Windows.System.Launcher.LaunchUriAsync(uri);
                 }
 
-                NavigationService.GoBack();
-                NavigationService.Frame.ForwardStack.Clear();
+                await ApplicationView.GetForCurrentView().ConsolidateAsync();
             }
         }
 

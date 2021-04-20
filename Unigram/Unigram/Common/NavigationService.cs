@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Navigation.Services;
+using Unigram.ViewModels;
 using Unigram.Views;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -123,6 +124,14 @@ namespace Unigram.Common
             if (service is TLNavigationService serviceEx)
             {
                 serviceEx.NavigateToInstant(url);
+            }
+        }
+
+        public static void NavigateToInvoice(this INavigationService service, MessageViewModel message)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                serviceEx.NavigateToInvoice(message);
             }
         }
 

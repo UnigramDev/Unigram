@@ -211,8 +211,17 @@ namespace Unigram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (7UL << 48) | (6UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = "VOICE CHATS 2.0: CHANNELS, MILLIONS OF LISTENERS, RECORDED CHATS, ADMIN TOOLS\r\n\r\nMillions of Concurrent Listeners\r\n• Start limitless Voice Chats in Groups and Channels.\r\n• Host discussions that can be listened to by millions of people simultaneously.\r\n\r\nVoice Chat Recordings\r\n• Record voice chats to share or publish in Channels later.\r\n• See that a chat is being recorded from the red dot next to its title.\r\n\r\nImproved List of Participants\r\n• See user bio texts right from the list of participants.\r\n• Raise your hand to show admins you want to speak.\r\n\r\nManagement Tools\r\n• Create separate Voice Chat Invite Links for listeners or speakers.\r\n• Change the title of your Voice Chat to give people an idea of the current topic.\r\n• Join Voice Chats as one of your Channels to hide your personal account.\r\n\r\nAuto-Delete Messages\r\n• Set messages to auto-delete for everyone 24 hours or 7 days after sending.\r\n• Control auto-delete settings in any of your chats, as well as in groups and channels where you are an admin.";
+        public const ulong CurrentVersion = (7UL << 48) | (7UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"Payments 2.0, Scheduled Voice Chats
+
+**Payments 2.0**
+• Offer real goods and services for sale in any group, channel or bot – Telegram doesn't charge a commission.
+• Pay for goods securely using one of the 8 integrated payment providers – Telegram doesn't collect your payment info.
+• See how this works in our @TestStore.
+
+**Scheduled Voice Chats**
+• Schedule voice chats to let participants know about them in advance.
+• View a countdown to the voice chat and get notified when it starts.";
 
         public int Session => _session;
 

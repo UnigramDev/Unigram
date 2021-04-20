@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 using Unigram.Controls;
+using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Services.ViewService;
+using Unigram.ViewModels;
 using Unigram.Views;
+using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Unigram.Views.Settings;
 using Windows.ApplicationModel.DataTransfer;
@@ -21,14 +25,16 @@ namespace Unigram.Common
     {
         private readonly IProtoService _protoService;
         private readonly IPasscodeService _passcodeService;
+        private readonly IViewService _viewService;
 
         private readonly Dictionary<string, AppWindow> _instantWindows = new Dictionary<string, AppWindow>();
 
-        public TLNavigationService(IProtoService protoService, Frame frame, int session, string id)
+        public TLNavigationService(IProtoService protoService, IViewService viewService, Frame frame, int session, string id)
             : base(frame, session, id)
         {
             _protoService = protoService;
             _passcodeService = TLContainer.Current.Passcode;
+            _viewService = viewService;
         }
 
         public int SessionId => _protoService.SessionId;
@@ -66,6 +72,34 @@ namespace Unigram.Common
             {
                 Navigate(typeof(InstantPage), url);
             }
+        }
+
+        public async void NavigateToInvoice(MessageViewModel message)
+        {
+            var parameters = new ViewServiceParams
+            {
+                //Title = Strings.Resources.Invoice,
+                Width = 380,
+                Height = 580,
+                PersistentId = "Payments",
+                Content = control =>
+                {
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
+                    if (message.Content is MessageInvoice invoice && invoice.ReceiptMessageId != 0)
+                    {
+                        nav.Navigate(typeof(PaymentReceiptPage), state: Navigation.Services.NavigationState.GetInvoice(message.ChatId, invoice.ReceiptMessageId));
+                    }
+                    else
+                    {
+                        nav.Navigate(typeof(PaymentFormPage), state: Navigation.Services.NavigationState.GetInvoice(message.ChatId, message.Id));
+                    }
+
+                    return BootStrapper.Current.CreateRootElement(nav);
+
+                }
+            };
+
+            await _viewService.OpenAsync(parameters);
         }
 
         public async void NavigateToSender(MessageSender sender)
