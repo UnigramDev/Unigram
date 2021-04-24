@@ -40,11 +40,16 @@ namespace Unigram.Controls
         public event EventHandler<double> MinimumChanged;
         public event EventHandler<double> MaximumChanged;
 
-        public TimeSpan OriginalDuration { get; private set; }
-
-        public void SetOriginalDuration(TimeSpan duration)
+        private TimeSpan _originalDuration;
+        public TimeSpan OriginalDuration
         {
-            OriginalDuration = duration;
+            get => _originalDuration;
+            set => SetOriginalDuration(value);
+        }
+
+        private void SetOriginalDuration(TimeSpan duration)
+        {
+            _originalDuration = duration;
 
             _maxLength = Math.Min(10 / duration.TotalSeconds, 1);
             _minLength = Math.Min(3 / duration.TotalSeconds, 1);

@@ -114,25 +114,28 @@ namespace Unigram.Views.Popups
                 times.Add(clip.OriginalDuration / count * i);
             }
 
+            TrimRange.OriginalDuration = clip.OriginalDuration;
             TrimThumbnails.Children.Clear();
 
-            var thumbnails = await composition.GetThumbnailsAsync(times, width, height, VideoFramePrecision.NearestKeyFrame);
-
-            foreach (var thumb in thumbnails)
+            try
             {
-                var bitmap = new BitmapImage();
-                await bitmap.SetSourceAsync(thumb);
+                var thumbnails = await composition.GetThumbnailsAsync(times, width, height, VideoFramePrecision.NearestKeyFrame);
 
-                var image = new Image();
-                image.Width = width;
-                image.Height = height;
-                image.Stretch = Windows.UI.Xaml.Media.Stretch.UniformToFill;
-                image.Source = bitmap;
+                foreach (var thumb in thumbnails)
+                {
+                    var bitmap = new BitmapImage();
+                    await bitmap.SetSourceAsync(thumb);
 
-                TrimThumbnails.Children.Add(image);
+                    var image = new Image();
+                    image.Width = width;
+                    image.Height = height;
+                    image.Stretch = Windows.UI.Xaml.Media.Stretch.UniformToFill;
+                    image.Source = bitmap;
+
+                    TrimThumbnails.Children.Add(image);
+                }
             }
-
-            TrimRange.SetOriginalDuration(clip.OriginalDuration);
+            catch { }
         }
 
         private void Accept_Click(object sender, RoutedEventArgs e)
