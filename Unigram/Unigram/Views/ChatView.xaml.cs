@@ -628,7 +628,7 @@ namespace Unigram.Views
                         : owner.ActualSize.Y;
                 }
 
-                var outer = animateSendout ? 250 : 500 * 1;
+                var outer = animateSendout ? 500 * 1 : 250;
                 var inner = 250 * 1;
                 var delay = 0;
 
@@ -672,7 +672,7 @@ namespace Unigram.Views
                         var xScale = (TextArea.ActualSize.X - xOffset) / bubble.ActualSize.X;
                         var yScale = content switch
                         {
-                            MessageText => TextArea.ActualSize.Y / bubble.ActualSize.Y, 
+                            MessageText => TextArea.ActualSize.Y / bubble.ActualSize.Y,
                             _ => 1
                         };
 
