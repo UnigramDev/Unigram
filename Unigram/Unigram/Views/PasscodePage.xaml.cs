@@ -130,6 +130,8 @@ namespace Unigram.Views
             {
                 VisualUtilities.ShakeView(Field);
                 Field.Password = string.Empty;
+
+                InputPane.GetForCurrentView().TryShow();
             }
         }
 
@@ -145,13 +147,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-            if (!_passcodeService.IsBiometricsEnabled)
-            {
-                Field.Focus(FocusState.Keyboard);
-                return;
-            }
-
-            if (await KeyCredentialManager.IsSupportedAsync())
+            if (_passcodeService.IsBiometricsEnabled && await KeyCredentialManager.IsSupportedAsync())
             {
                 Biometrics.Visibility = Visibility.Visible;
 
@@ -163,6 +159,7 @@ namespace Unigram.Views
             else
             {
                 Field.Focus(FocusState.Keyboard);
+                InputPane.GetForCurrentView().TryShow();
             }
         }
 
