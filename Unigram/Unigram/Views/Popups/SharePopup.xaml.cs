@@ -768,6 +768,11 @@ namespace Unigram.Views.Popups
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
+            if (ChatsPanel.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                return;
+            }
+
             if (e.ClickedItem is Chat chat && ViewModel.CacheService.IsSavedMessages(chat))
             {
                 if (ViewModel.SelectedItems.IsEmpty())
