@@ -256,7 +256,7 @@ namespace Unigram.Controls.Chats
             {
                 var brush = Window.Current.Compositor.CreateRadialGradientBrush();
                 brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, colors[i]));
-                //brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.1f, colors[i]));
+                brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.1f, colors[i]));
                 brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, colors[i].WithAlpha(0)));
                 brush.CenterPoint = new Vector2(150, 150);
 
@@ -302,8 +302,10 @@ namespace Unigram.Controls.Chats
                     break;
                 }
 
+                var minSide = Math.Min(actualSize.X, actualSize.Y);
+
                 var pointCenter = new Vector2(actualSize.X * positions[i * 2].X, actualSize.Y * positions[i * 2].Y);
-                var pointSize = new Vector2(actualSize.X * 2.0f, actualSize.Y * 2.0f);
+                var pointSize = new Vector2(minSide * 2.0f, minSide * 2.0f);
 
                 if (animate)
                 {
@@ -315,7 +317,6 @@ namespace Unigram.Controls.Chats
 
                     var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                     offset.InsertKeyFrame(1, new Vector3(pointCenter.X - 150, pointCenter.Y - 150, 0));
-                    //offset.Duration = TimeSpan.FromSeconds(2);
                     offset.Duration = TimeSpan.FromMilliseconds(500);
 
                     _pivotVisuals[i].StartAnimation("Scale", scale);
