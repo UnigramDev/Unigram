@@ -86,7 +86,11 @@ namespace Unigram.Services
 
             foreach (var file in files)
             {
-                result.Add(await DeserializeAsync(file));
+                try
+                {
+                    result.Add(await DeserializeAsync(file));
+                }
+                catch { }
             }
 
             return result;
