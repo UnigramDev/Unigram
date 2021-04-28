@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using Telegram.Td.Api;
 using Unigram.Controls.Messages;
 using Unigram.Converters;
@@ -138,7 +139,15 @@ namespace Unigram.Common
             {
                 if (album.IsMedia)
                 {
-                    return Locale.Declension("Photos", album.Messages.Count) + ", ";
+                    var photos = album.Messages.Count(x => x.Content is MessagePhoto);
+                    var videos = album.Messages.Count - photos;
+
+                    if (album.Messages.Count > 0 && album.Messages[0].Content is MessageVideo)
+                    {
+                        return Locale.Declension("Videos", videos) + ", " + Locale.Declension("Photos", photos) + ", ";
+                    }
+
+                    return Locale.Declension("Photos", photos) + ", " + Locale.Declension("Videos", videos) + ", ";
                 }
                 else if (album.Messages.Count > 0 && album.Messages[0].Content is MessageAudio)
                 {
