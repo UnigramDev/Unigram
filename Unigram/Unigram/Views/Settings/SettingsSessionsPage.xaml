@@ -26,11 +26,12 @@
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <ListView ItemsSource="{x:Bind ItemsSource.View}"
-                  IsItemClickEnabled="True"
-                  SelectionMode="None"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  ItemClick="ListView_ItemClick">
+        <controls:TextListView
+            ItemsSource="{x:Bind ItemsSource.View}"
+            IsItemClickEnabled="True"
+            SelectionMode="None"
+            ContainerContentChanging="OnContainerContentChanging"
+            ItemClick="ListView_ItemClick">
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderContainerStyle>
@@ -133,6 +134,6 @@
                     <ItemsStackPanel AreStickyGroupHeadersEnabled="False"/>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
-        </ListView>
+        </controls:TextListView>
     </Grid>
 </local:HostedPage>

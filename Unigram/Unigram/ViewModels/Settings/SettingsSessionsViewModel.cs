@@ -147,5 +147,15 @@ namespace Unigram.ViewModels.Settings
     {
         public string Title { get; set; }
         public string Footer { get; set; }
+
+        public override string ToString()
+        {
+            if (Footer != null)
+            {
+                return Footer + ", " + Title;
+            }
+
+            return Title;
+        }
     }
 }
