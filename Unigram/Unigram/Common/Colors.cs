@@ -362,6 +362,11 @@ namespace Unigram.Common
     }
     public static class ColorEx
     {
+        public static Color WithAlpha(this Color color, byte alpha)
+        {
+            return Color.FromArgb(alpha, color.R, color.G, color.B);
+        }
+
         public static Color FromHex(uint hexValue)
         {
             byte a = (byte)((hexValue & 0xff000000) >> 24);

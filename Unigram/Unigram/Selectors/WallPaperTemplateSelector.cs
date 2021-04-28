@@ -15,7 +15,7 @@ namespace Unigram.Selectors
         {
             if (item is Background wallpaper)
             {
-                if (wallpaper.Id == 1000001)
+                if (wallpaper.Id == Constants.WallpaperLocalId && wallpaper.Name == Constants.WallpaperDefaultFileName)
                 {
                     return DefaultTemplate;
                 }

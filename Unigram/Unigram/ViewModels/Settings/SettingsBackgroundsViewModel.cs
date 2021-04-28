@@ -34,12 +34,7 @@ namespace Unigram.ViewModels.Settings
                     var items = wallpapers.BackgroundsValue.ToList();
                     var background = CacheService.SelectedBackground;
 
-                    var predefined = items.FirstOrDefault(x => x.Id == 1000001);
-                    if (predefined != null)
-                    {
-                        items.Remove(predefined);
-                        items.Insert(0, predefined);
-                    }
+                    var predefined = new Background(Constants.WallpaperLocalId, true, false, Constants.WallpaperDefaultFileName, null, null);
 
                     var selected = items.FirstOrDefault(x => x.Id == background?.Id);
                     if (selected != null)
@@ -47,10 +42,12 @@ namespace Unigram.ViewModels.Settings
                         items.Remove(selected);
                         items.Insert(0, selected);
                     }
-                    //else if (id == Constants.WallpaperLocalId)
-                    //{
-                    //    //items.Insert(0, selected = new Background(Constants.WallpaperLocalId, new PhotoSize[0], 0));
-                    //}
+                    else if (background == null)
+                    {
+                        selected = predefined;
+                    }
+
+                    items.Insert(0, predefined);
 
                     BeginOnUIThread(() =>
                     {

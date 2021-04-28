@@ -2416,7 +2416,7 @@ namespace Unigram.Common
                 return background.Name + builder;
             }
 
-            return null;
+            return background.Name;
         }
 
         public static LinearGradientBrush GetGradient(int topColor, int bottomColor, int angle)

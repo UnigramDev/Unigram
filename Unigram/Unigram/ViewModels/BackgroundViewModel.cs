@@ -40,7 +40,11 @@ namespace Unigram.ViewModels
             if (parameter is string data)
             {
                 var split = data.Split('#');
-                if (split[0] == Constants.WallpaperLocalFileName && split.Length == 2)
+                if (split[0] == Constants.WallpaperDefaultFileName)
+                {
+                    background = new Background(Constants.WallpaperLocalId, false, false, Constants.WallpaperDefaultFileName, null, null);
+                }
+                else if (split[0] == Constants.WallpaperLocalFileName && split.Length == 2)
                 {
                     background = new Background(Constants.WallpaperLocalId, false, false, split[1], null, new BackgroundTypeWallpaper(false, false));
                 }
@@ -314,7 +318,11 @@ namespace Unigram.ViewModels
 
             // This is a new background and it has to be uploaded to Telegram servers
             Task<BaseObject> task;
-            if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
+            if (wallpaper.Id == Constants.WallpaperLocalId && wallpaper.Name == Constants.WallpaperDefaultFileName)
+            {
+                task = ProtoService.SendAsync(new SetBackground(null, null, Settings.Appearance.IsDarkTheme()));
+            }
+            else if (wallpaper.Id == Constants.WallpaperLocalId && StorageApplicationPermissions.FutureAccessList.ContainsItem(wallpaper.Name))
             {
                 var item = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(wallpaper.Name);
                 var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
@@ -352,7 +360,10 @@ namespace Unigram.ViewModels
             }
             if (response is Error error)
             {
-
+                if (error.Code == 404)
+                {
+                    NavigationService.GoBack();
+                }
             }
         }
     }

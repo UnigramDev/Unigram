@@ -5,6 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Brushes;
 using Unigram.Services;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,6 +28,8 @@ namespace Unigram.Controls.Chats
         private readonly Rectangle _imageBackground;
         private readonly Rectangle _colorBackground;
 
+        private readonly ChatBackgroundDefault _defaultBackground;
+
         private readonly Compositor _compositor;
 
         private SpriteVisual _blurVisual;
@@ -37,11 +40,20 @@ namespace Unigram.Controls.Chats
             _imageBackground = new Rectangle();
             _colorBackground = new Rectangle();
 
+            _defaultBackground = new ChatBackgroundDefault();
+
             Children.Add(_colorBackground);
             Children.Add(_imageBackground);
 
             _compositor = Window.Current.Compositor;
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
+
+            SizeChanged += OnSizeChanged;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _defaultBackground.UpdateLayout(e.NewSize.ToVector2());
         }
 
         public void Handle(UpdateSelectedBackground update)
@@ -70,6 +82,11 @@ namespace Unigram.Controls.Chats
         {
             if (BackgroundEquals(_oldBackground, background) && _oldDark == dark)
             {
+                if (background == null && ApiInfo.CanUseActualFloats)
+                {
+                    _defaultBackground.UpdateLayout(ActualSize, true);
+                }
+
                 return;
             }
 
@@ -78,19 +95,20 @@ namespace Unigram.Controls.Chats
 
             if (background == null)
             {
-                UpdateBlurred(false);
+                UpdateBlurred(true);
 
                 Background = null;
                 _colorBackground.Opacity = 1;
 
-                //if (SettingsService.Current.Appearance.IsLightTheme())
                 if (ActualTheme == ElementTheme.Light)
                 {
-                    _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-light.png") };
+                    _colorBackground.Fill = null;
+                    ElementCompositionPreview.SetElementChildVisual(_colorBackground, _defaultBackground.Visual);
                 }
                 else
                 {
                     _colorBackground.Fill = new TiledBrush { Source = new Uri("ms-appx:///Assets/Images/DefaultBackground.theme-dark.png") };
+                    ElementCompositionPreview.SetElementChildVisual(_colorBackground, null);
                 }
             }
             else if (background.Type is BackgroundTypeFill typeFill)
@@ -100,6 +118,8 @@ namespace Unigram.Controls.Chats
                 Background = typeFill.ToBrush();
                 _colorBackground.Opacity = 1;
                 _colorBackground.Fill = null;
+
+                ElementCompositionPreview.SetElementChildVisual(_colorBackground, null);
             }
             else if (background.Type is BackgroundTypePattern typePattern)
             {
@@ -120,6 +140,8 @@ namespace Unigram.Controls.Chats
                         _colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
                 }
+
+                ElementCompositionPreview.SetElementChildVisual(_colorBackground, null);
             }
             else if (background.Type is BackgroundTypeWallpaper typeWallpaper)
             {
@@ -146,6 +168,8 @@ namespace Unigram.Controls.Chats
 
                     //_colorBackground.Fill = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(document.Local.Path)), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
+
+                ElementCompositionPreview.SetElementChildVisual(_colorBackground, null);
             }
         }
 
@@ -172,14 +196,14 @@ namespace Unigram.Controls.Chats
             }
         }
 
-        private void UpdateBlurred(bool enabled)
+        private void UpdateBlurred(bool enabled, float amount = 12)
         {
             if (enabled)
             {
                 var graphicsEffect = new GaussianBlurEffect
                 {
                     Name = "Blur",
-                    BlurAmount = 12,
+                    BlurAmount = amount,
                     BorderMode = EffectBorderMode.Hard,
                     Source = new CompositionEffectSourceParameter("backdrop")
                 };
@@ -205,6 +229,103 @@ namespace Unigram.Controls.Chats
 
                 _blurVisual?.Dispose();
                 _blurVisual = null;
+            }
+        }
+    }
+
+    public class ChatBackgroundDefault
+    {
+        private readonly SpriteVisual[] _pivotVisuals = new SpriteVisual[4];
+        private int _phase;
+
+        public ChatBackgroundDefault()
+        {
+            var container = Window.Current.Compositor.CreateContainerVisual();
+            container.RelativeSizeAdjustment = Vector2.One;
+            container.Clip = Window.Current.Compositor.CreateInsetClip();
+
+            var colors = new Color[]
+            {
+                Color.FromArgb(0xFF, 0x7F, 0xA3, 0x81),
+                Color.FromArgb(0xFF, 0xFF, 0xF5, 0xC5),
+                Color.FromArgb(0xFF, 0x33, 0x6F, 0x55),
+                Color.FromArgb(0xFF, 0xFB, 0xE3, 0x7D)
+            };
+
+            for (int i = 0; i < colors.Length; i++)
+            {
+                var brush = Window.Current.Compositor.CreateRadialGradientBrush();
+                brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, colors[i]));
+                //brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.1f, colors[i]));
+                brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, colors[i].WithAlpha(0)));
+                brush.CenterPoint = new Vector2(150, 150);
+
+                var visual = Window.Current.Compositor.CreateSpriteVisual();
+                visual.CenterPoint = new Vector3(150, 150, 0);
+                visual.Size = new Vector2(300, 300);
+                visual.Brush = brush;
+
+                _pivotVisuals[i] = visual;
+                container.Children.InsertAtTop(visual);
+            }
+
+            Visual = container;
+        }
+
+        public ContainerVisual Visual { get; }
+
+        public void UpdateLayout(Vector2 actualSize, bool animate = false)
+        {
+            if (animate)
+            {
+                _phase++;
+            }
+
+            var positions = new Vector2[]
+            {
+                new Vector2(0.80f, 0.10f),
+                new Vector2(0.60f, 0.15f),
+                new Vector2(0.35f, 0.25f),
+                new Vector2(0.25f, 0.60f),
+                new Vector2(0.15f, 0.90f),
+                new Vector2(0.40f, 0.80f),
+                new Vector2(0.65f, 0.75f),
+                new Vector2(0.75f, 0.40f),
+            };
+
+            positions.Shift(_phase % 8);
+
+            for (int i = 0; i < _pivotVisuals.Length; i++)
+            {
+                if (_pivotVisuals.Length <= i || _pivotVisuals[i] == null)
+                {
+                    break;
+                }
+
+                var pointCenter = new Vector2(actualSize.X * positions[i * 2].X, actualSize.Y * positions[i * 2].Y);
+                var pointSize = new Vector2(actualSize.X * 2.0f, actualSize.Y * 2.0f);
+
+                if (animate)
+                {
+                    var size = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                    size.InsertKeyFrame(1, pointSize);
+
+                    var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    scale.InsertKeyFrame(1, new Vector3(pointSize.X / 300, pointSize.Y / 300, 0));
+
+                    var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                    offset.InsertKeyFrame(1, new Vector3(pointCenter.X - 150, pointCenter.Y - 150, 0));
+                    //offset.Duration = TimeSpan.FromSeconds(2);
+                    offset.Duration = TimeSpan.FromMilliseconds(500);
+
+                    _pivotVisuals[i].StartAnimation("Scale", scale);
+                    _pivotVisuals[i].StartAnimation("Offset", offset);
+                }
+                else
+                {
+                    _pivotVisuals[i].Scale = new Vector3(pointSize.X / 300, pointSize.Y / 300, 0);
+                    _pivotVisuals[i].Offset = new Vector3(pointCenter.X - 150, pointCenter.Y - 150, 0);
+                }
             }
         }
     }

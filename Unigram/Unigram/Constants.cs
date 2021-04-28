@@ -20,6 +20,7 @@
         public const string WallpaperFileName = "wallpaper.jpg";
         public const string WallpaperLocalFileName = "wallpaper.local.jpg";
         public const string WallpaperColorFileName = "wallpaper.color.jpg";
+        public const string WallpaperDefaultFileName = "wallpaper.default.jpg";
         public const int WallpaperLocalId = -1;
 
         public const int ChatListMain = 0;

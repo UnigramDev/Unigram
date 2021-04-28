@@ -236,6 +236,19 @@ namespace Unigram.Common
             return props.Orientation == VideoOrientation.Rotate180 || props.Orientation == VideoOrientation.Normal ? props.Width : props.Height;
         }
 
+        public static T[] Shift<T>(this T[] array, int offset)
+        {
+            while (offset > 0)
+            {
+                var element = array[0];
+                Array.Copy(array, 1, array, 0, array.Length - 1);
+                array[array.Length - 1] = element;
+                offset -= 1;
+            }
+
+            return array;
+        }
+
         /// <summary>
         /// Applies the action to each element in the list.
         /// </summary>
