@@ -284,10 +284,10 @@ namespace Unigram.Controls.Chats
             var positions = new Vector2[]
             {
                 new Vector2(0.80f, 0.10f),
-                new Vector2(0.60f, 0.15f),
+                new Vector2(0.60f, 0.20f),
                 new Vector2(0.35f, 0.25f),
                 new Vector2(0.25f, 0.60f),
-                new Vector2(0.15f, 0.90f),
+                new Vector2(0.20f, 0.90f),
                 new Vector2(0.40f, 0.80f),
                 new Vector2(0.65f, 0.75f),
                 new Vector2(0.75f, 0.40f),
