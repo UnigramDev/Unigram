@@ -287,13 +287,13 @@ namespace Unigram.ViewModels.Chats
         public RelayCommand PreviousCommand { get; }
         private async void PreviousExecute()
         {
-            if (Items == null || SelectedIndex >= Items.TotalCount)
-            {
-                return;
-            }
-
             using (await _loadMoreLock.WaitAsync())
             {
+                if (Items == null || SelectedIndex >= Items.TotalCount)
+                {
+                    return;
+                }
+
                 if (SelectedIndex >= Items.Count - 1)
                 {
                     var result = await Items.LoadMoreItemsAsync(100);
