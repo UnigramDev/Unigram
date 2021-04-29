@@ -24,7 +24,6 @@ using System;
 using System.Collections.Concurrent;
 using Unigram.Logs;
 using Unigram.Navigation;
-using Unigram.Navigation.Services;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
