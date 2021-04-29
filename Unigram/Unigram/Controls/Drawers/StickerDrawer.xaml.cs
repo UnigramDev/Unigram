@@ -134,7 +134,7 @@ namespace Unigram.Controls.Drawers
                     if (content.Child is Image photo)
                     {
                         photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                        ElementCompositionPreview.SetElementChildVisual(content.Child, null);
+                        ElementCompositionPreview.SetElementChildVisual(content, null);
                     }
                     else if (content.Child is LottieView lottie)
                     {
@@ -392,7 +392,7 @@ namespace Unigram.Controls.Drawers
                 if (content.Child is Image photo)
                 {
                     photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                    ElementCompositionPreview.SetElementChildVisual(content.Child, null);
+                    ElementCompositionPreview.SetElementChildVisual(content, null);
                 }
                 else if (content.Child is LottieView lottie)
                 {
