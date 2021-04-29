@@ -1,8 +1,11 @@
-﻿using Telegram.Td.Api;
+﻿using System.Numerics;
+using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels.Payments;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views.Payments
 {
@@ -16,11 +19,32 @@ namespace Unigram.Views.Payments
             DataContext = TLContainer.Current.Resolve<PaymentFormViewModel>();
 
             Transitions = ApiInfo.CreateSlideTransition();
+
+            var updateShadow = DropShadowEx.Attach(BuyShadow, 20, 0.25f);
+            updateShadow.RelativeSizeAdjustment = Vector2.One;
         }
 
-        private string ConvertTitle(bool test)
+        private string ConvertTitle(bool receipt, bool test)
         {
-            return (test ? "Test " : string.Empty) + Strings.Resources.PaymentCheckout;
+            if (receipt)
+            {
+                return Strings.Resources.PaymentReceipt + (test ? " (Test)" : string.Empty);
+            }
+
+            return Strings.Resources.PaymentCheckout + (test ? " (Test)" : string.Empty);
+        }
+
+        private ImageSource ConvertPhoto(Photo photo)
+        {
+            var small = photo?.GetSmall();
+            if (small == null)
+            {
+                Photo.Visibility = Visibility.Collapsed;
+                return null;
+            }
+
+            Photo.Visibility = Visibility.Visible;
+            return PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small);
         }
 
         private string ConvertAddress(Address address)
@@ -59,8 +83,13 @@ namespace Unigram.Views.Payments
             return result.Trim(',', ' ');
         }
 
-        private string ConvertPay(long amount, string currency)
+        private string ConvertPay(bool receipt, long amount, string currency)
         {
+            if (receipt)
+            {
+                return Strings.Resources.Close.ToUpper();
+            }
+
             return string.Format(Strings.Resources.PaymentCheckoutPay, Locale.FormatCurrency(amount, currency));
         }
 

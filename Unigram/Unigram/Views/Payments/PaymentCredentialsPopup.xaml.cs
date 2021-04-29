@@ -6,7 +6,7 @@ using Unigram.Native;
 using Unigram.ViewModels.Payments;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Views.Popups
+namespace Unigram.Views.Payments
 {
     public sealed partial class PaymentCredentialsPopup : ContentPopup
     {

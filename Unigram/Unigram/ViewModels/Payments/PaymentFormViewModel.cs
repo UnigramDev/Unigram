@@ -8,6 +8,7 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
+using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
@@ -31,16 +32,46 @@ namespace Unigram.ViewModels.Payments
             state.TryGet("messageId", out long messageId);
 
             var message = await ProtoService.SendAsync(new GetMessage(chatId, messageId)) as Message;
-            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(chatId, messageId, new PaymentFormTheme())) as PaymentForm;
+            if (message?.Content is MessageInvoice invoice)
+            {
+                if (invoice.ReceiptMessageId == 0)
+                {
+                    await InitializeForm(message);
+                }
+                else
+                {
+                    await InitializeReceipt(message, invoice.ReceiptMessageId);
+                }
+            }
+            else if (message?.Content is MessagePaymentSuccessful)
+            {
+                await InitializeReceipt(message, message.Id);
+            }
+        }
 
-            if (message == null || paymentForm == null)
+        private async Task InitializeForm(Message message)
+        {
+            IsReceipt = false;
+
+            var invoice = message.Content as MessageInvoice;
+            if (invoice == null)
+            {
+                return;
+            }
+
+            var paymentForm = await ProtoService.SendAsync(new GetPaymentForm(message.ChatId, message.Id, new PaymentFormTheme())) as PaymentForm;
+            if (paymentForm == null)
             {
                 return;
             }
 
             Message = message;
-            MessageContent = message.Content as MessageInvoice;
             PaymentForm = paymentForm;
+
+            Photo = invoice.Photo;
+            Title = invoice.Title;
+            Description = invoice.Description;
+
             Invoice = paymentForm.Invoice;
             Bot = CacheService.GetUser(paymentForm.SellerBotUserId);
 
@@ -51,35 +82,38 @@ namespace Unigram.ViewModels.Payments
 
             if (paymentForm.SavedOrderInfo != null)
             {
-                var response = await ProtoService.SendAsync(new ValidateOrderInfo(chatId, messageId, paymentForm.SavedOrderInfo, false));
+                var response = await ProtoService.SendAsync(new ValidateOrderInfo(message.ChatId, message.Id, paymentForm.SavedOrderInfo, false));
                 if (response is ValidatedOrderInfo validated)
                 {
                     ValidatedInfo = validated;
                 }
             }
+        }
 
-            //using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
-            //{
-            //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
+        private async Task InitializeReceipt(Message message, long receiptMessageId)
+        {
+            IsReceipt = true;
 
-            //    Message = tuple.Item1;
-            //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-            //    PaymentForm = tuple.Item2;
-            //    Info = tuple.Item3;
-            //    Shipping = tuple.Item5;
-            //    CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
-            //    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
-            //    Provider = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.ProviderId) as TLUser;
+            var paymentReceipt = await ProtoService.SendAsync(new GetPaymentReceipt(message.ChatId, receiptMessageId)) as PaymentReceipt;
+            if (paymentReceipt == null)
+            {
+                return;
+            }
 
-            //    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
-            //    {
-            //        CredentialsTitle = savedCard.Title;
-            //    }
+            Message = message;
 
-            //    _requestedInfo = tuple.Item4;
-            //    _credentials = tuple.Item7;
-            //    _save = tuple.Item8;
-            //}
+            Photo = paymentReceipt.Photo;
+            Title = paymentReceipt.Title;
+            Description = paymentReceipt.Description;
+
+            Invoice = paymentReceipt.Invoice;
+            Bot = CacheService.GetUser(paymentReceipt.SellerBotUserId);
+
+            Credentials = new SavedCredentials(string.Empty, paymentReceipt.CredentialsTitle);
+            Info = paymentReceipt.OrderInfo;
+
+            Shipping = paymentReceipt.ShippingOption;
+            TipAmount = paymentReceipt.TipAmount;
         }
 
         private User _bot;
@@ -96,11 +130,32 @@ namespace Unigram.ViewModels.Payments
             set => Set(ref _message, value);
         }
 
-        private MessageInvoice _messageContent;
-        public MessageInvoice MessageContent
+        private bool _isReceipt;
+        public bool IsReceipt
         {
-            get => _messageContent;
-            set => Set(ref _messageContent, value);
+            get => _isReceipt;
+            set => Set(ref _isReceipt, value);
+        }
+
+        private Photo _photo;
+        public Photo Photo
+        {
+            get => _photo;
+            set => Set(ref _photo, value);
+        }
+
+        private string _title;
+        public string Title
+        {
+            get => _title;
+            set => Set(ref _title, value);
+        }
+
+        private string _description;
+        public string Description
+        {
+            get => _description;
+            set => Set(ref _description, value);
         }
 
         protected Invoice _invoice;
@@ -177,9 +232,9 @@ namespace Unigram.ViewModels.Payments
             get
             {
                 var amount = 0L;
-                if (_paymentForm != null)
+                if (_invoice != null)
                 {
-                    foreach (var price in _paymentForm.Invoice.PriceParts)
+                    foreach (var price in _invoice.PriceParts)
                     {
                         amount += price.Amount;
                     }
@@ -217,6 +272,11 @@ namespace Unigram.ViewModels.Payments
 
         public async void ChooseCredentials()
         {
+            if (_paymentForm == null)
+            {
+                return;
+            }
+
             var popup = new PaymentCredentialsPopup(_paymentForm);
 
             var confirm = await popup.ShowQueuedAsync();
@@ -229,6 +289,11 @@ namespace Unigram.ViewModels.Payments
 
         public async void ChooseAddress()
         {
+            if (_paymentForm == null)
+            {
+                return;
+            }
+
             var popup = new PaymentAddressPopup(_message.ChatId, _message.Id, _paymentForm.Invoice, _info);
 
             var confirm = await popup.ShowQueuedAsync();
@@ -240,7 +305,19 @@ namespace Unigram.ViewModels.Payments
 
         public async void ChooseShipping()
         {
-            var items = _validatedInfo.ShippingOptions.Select(
+            if (_paymentForm == null)
+            {
+                return;
+            }
+
+            var validatedInfo = _validatedInfo;
+            if (validatedInfo == null)
+            {
+                ChooseAddress();
+                return;
+            }
+
+            var items = validatedInfo.ShippingOptions.Select(
                 x => new SelectRadioItem(x, Converter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
 
             var popup = new SelectRadioPopup(items);
@@ -276,6 +353,12 @@ namespace Unigram.ViewModels.Payments
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
+            if (_paymentForm == null)
+            {
+                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                return;
+            }
+
             if (_credentials == null)
             {
                 ChooseCredentials();
@@ -299,7 +382,7 @@ namespace Unigram.ViewModels.Payments
 
             var disclaimer = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentWarningText, bot.FirstName, provider.FirstName), Strings.Resources.PaymentWarning, Strings.Resources.OK);
 
-            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _messageContent.Title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await MessagePopup.ShowAsync(string.Format(Strings.Resources.PaymentTransactionMessage, Locale.FormatCurrency(TotalAmount, _paymentForm.Invoice.Currency), bot.FirstName, _title), Strings.Resources.PaymentTransactionReview, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -322,6 +405,11 @@ namespace Unigram.ViewModels.Payments
                         credentials = new InputCredentialsSaved(_paymentForm.SavedCredentials.Id);
                     }
                 }
+            }
+
+            if (credentials == null)
+            {
+                return;
             }
 
             var response = await ProtoService.SendAsync(new SendPaymentForm(_message.ChatId, _message.Id, formId, infoId, shippingId, credentials, 0));
@@ -365,7 +453,7 @@ namespace Unigram.ViewModels.Payments
             var confirm = await popup.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
             {
-                return null;
+                return new TemporaryPasswordState(false, 0);
             }
 
             var response = await ProtoService.SendAsync(new CreateTemporaryPassword(popup.Text, 60 * 30));

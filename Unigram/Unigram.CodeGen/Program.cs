@@ -166,7 +166,6 @@ namespace Unigram.CodeGen
                 typeof(PaymentAddressViewModel),
                 typeof(PaymentCredentialsViewModel),
                 typeof(PaymentFormViewModel),
-                typeof(PaymentReceiptViewModel),
                 typeof(InviteViewModel),
                 typeof(ChatsNearbyViewModel),
                 typeof(FoldersViewModel),

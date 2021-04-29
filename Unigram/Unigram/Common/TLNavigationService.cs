@@ -78,21 +78,14 @@ namespace Unigram.Common
         {
             var parameters = new ViewServiceParams
             {
-                //Title = Strings.Resources.Invoice,
+                Title = message.Content is MessageInvoice invoice && invoice.ReceiptMessageId == 0 ? Strings.Resources.PaymentCheckout : Strings.Resources.PaymentReceipt,
                 Width = 380,
                 Height = 580,
                 PersistentId = "Payments",
                 Content = control =>
                 {
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
-                    if (message.Content is MessageInvoice invoice && invoice.ReceiptMessageId != 0)
-                    {
-                        nav.Navigate(typeof(PaymentReceiptPage), state: Navigation.Services.NavigationState.GetInvoice(message.ChatId, invoice.ReceiptMessageId));
-                    }
-                    else
-                    {
-                        nav.Navigate(typeof(PaymentFormPage), state: Navigation.Services.NavigationState.GetInvoice(message.ChatId, message.Id));
-                    }
+                    nav.Navigate(typeof(PaymentFormPage), state: Navigation.Services.NavigationState.GetInvoice(message.ChatId, message.Id));
 
                     return BootStrapper.Current.CreateRootElement(nav);
 

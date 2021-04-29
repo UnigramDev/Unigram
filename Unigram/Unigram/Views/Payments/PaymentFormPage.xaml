@@ -5,7 +5,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:converters="using:Unigram.Converters"
-    xmlns:payments="using:Unigram.Views.Payments"
+    xmlns:payments="using:Unigram.Controls.Payments"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -68,19 +68,15 @@
 
     <local:HostedPage.Header>
         <controls:PageHeader
-            Text="{x:Bind ConvertTitle(ViewModel.Invoice.IsTest), Mode=OneWay, FallbackValue=Checkout}"
+            Text="{x:Bind ConvertTitle(ViewModel.IsReceipt, ViewModel.Invoice.IsTest), Mode=OneWay, FallbackValue=Checkout}"
             BackVisibility="Collapsed"/>
     </local:HostedPage.Header>
-    
+
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel Padding="0,0,0,48">
+            <StackPanel Padding="0,0,0,60">
                 <controls:HeaderedControl>
                     <Grid Padding="12,8">
                         <Grid.ColumnDefinitions>
@@ -88,15 +84,15 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Width="80" Height="80" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="3">
-                            <!--<Border.Background>
-                                <ImageBrush ImageSource="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                            </Border.Background>-->
+                        <Border x:Name="Photo" Width="80" Height="80" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="3">
+                            <Border.Background>
+                                <ImageBrush ImageSource="{x:Bind ConvertPhoto(ViewModel.Photo), Mode=OneWay}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                            </Border.Background>
                         </Border>
 
                         <StackPanel Grid.Column="1">
-                            <TextBlock Text="{x:Bind ViewModel.MessageContent.Title, Mode=OneWay, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                            <TextBlock Text="{x:Bind ViewModel.MessageContent.Description, Mode=OneWay, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind ViewModel.Description, Mode=OneWay, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                             <TextBlock Text="{x:Bind ViewModel.Bot.FirstName, Mode=OneWay, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                         </StackPanel>
                     </Grid>
@@ -159,7 +155,7 @@
                             </ListView.ItemContainerStyle>
                         </ListView>
                     </Grid>
-                    
+
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -224,10 +220,29 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Grid Background="{ThemeResource PageHeaderBackgroundBrush}"
-              Height="{ThemeResource AppBarThemeCompactHeight}"
-              Grid.Row="1">
-            <Button Content="{x:Bind ConvertPay(ViewModel.TotalAmount, ViewModel.Invoice.Currency), FallbackValue=Empty}" Command="{x:Bind ViewModel.SendCommand}" Style="{StaticResource SendButtonStyle}"/>
+        <Grid
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            Margin="12">
+            <Rectangle
+                x:Name="BuyShadow"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource StartButtonBackground}"
+                Margin="2"
+                RadiusX="18"
+                RadiusY="18"/>
+            <controls:BadgeButton
+                x:Name="BuyCommand"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Content="{x:Bind ConvertPay(ViewModel.IsReceipt, ViewModel.TotalAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
+                Style="{StaticResource StartButtonStyle}"
+                FontWeight="SemiBold"
+                Padding="16,3,16,5"
+                Radius="18"
+                Margin="0"
+                Height="36"/>
         </Grid>
+
     </Grid>
 </local:HostedPage>

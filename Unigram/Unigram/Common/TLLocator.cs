@@ -1074,14 +1074,6 @@ namespace Unigram.Views
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Unigram.ViewModels.Payments.PaymentReceiptViewModel))
-            {
-                return (T)(object)new Unigram.ViewModels.Payments.PaymentReceiptViewModel(
-                    _protoService,
-                    _cacheService,
-                    _settingsService,
-                    _eventAggregator);
-            }
             else if (type == typeof(Unigram.ViewModels.InviteViewModel))
             {
                 return (T)(object)new Unigram.ViewModels.InviteViewModel(

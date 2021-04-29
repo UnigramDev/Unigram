@@ -9,10 +9,8 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
-using Unigram.Navigation.Services;
 using Unigram.Views;
 using Unigram.Views.Chats;
-using Unigram.Views.Payments;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Pickers;
@@ -1459,6 +1457,10 @@ namespace Unigram.ViewModels
             else if (message.Content is MessageVoiceChatStarted or MessageVoiceChatScheduled)
             {
                 await _groupCallService.JoinAsync(message.ChatId);
+            }
+            else if (message.Content is MessagePaymentSuccessful)
+            {
+                NavigationService.NavigateToInvoice(message);
             }
         }
 
