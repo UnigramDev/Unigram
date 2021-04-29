@@ -9,6 +9,7 @@ using Unigram.Navigation;
 using Unigram.Navigation.Services;
 using Unigram.Services;
 using Unigram.Services.Updates;
+using Unigram.Services.ViewService;
 using Unigram.Views;
 using Unigram.Views.Host;
 using Windows.ApplicationModel;
@@ -107,8 +108,8 @@ namespace Unigram
             }
 #endif
 
-            this.EnteredBackground += OnEnteredBackground;
-            this.LeavingBackground += OnLeavingBackground;
+            EnteredBackground += OnEnteredBackground;
+            LeavingBackground += OnLeavingBackground;
         }
 
         private void FatalErrorCallback(string message)
@@ -152,7 +153,7 @@ namespace Unigram
             WindowContext.Default().Dispatcher.Dispatch(() =>
             {
                 var passcode = TLContainer.Current.Passcode;
-                if (passcode != null && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                if (passcode != null)
                 {
                     passcode.Lock();
                     ShowPasscode(false);
@@ -214,14 +215,7 @@ namespace Unigram
             }
             else
             {
-                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Touch)
-                {
-                    TLContainer.Current.Passcode.CloseTime = DateTime.Now;
-                }
-                else
-                {
-                    TLContainer.Current.Passcode.CloseTime = DateTime.MaxValue;
-                }
+                TLContainer.Current.Passcode.CloseTime = DateTime.Now;
             }
         }
 
@@ -440,7 +434,7 @@ namespace Unigram
                 return new TLRootNavigationService(TLContainer.Current.Resolve<ISessionService>(session), frame, session, id);
             }
 
-            return new TLNavigationService(TLContainer.Current.Resolve<IProtoService>(session), frame, session, id);
+            return new TLNavigationService(TLContainer.Current.Resolve<IProtoService>(session), TLContainer.Current.Resolve<IViewService>(session), frame, session, id);
         }
 
         private async void OnStartSync()

@@ -2,13 +2,11 @@
 {
     public class UpdatePasscodeLock
     {
-        public UpdatePasscodeLock(bool enabled, bool locked)
+        public UpdatePasscodeLock(bool enabled)
         {
             IsEnabled = enabled;
-            IsLocked = locked;
         }
 
         public bool IsEnabled { get; private set; }
-        public bool IsLocked { get; private set; }
     }
 }

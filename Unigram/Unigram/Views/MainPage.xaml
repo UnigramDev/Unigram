@@ -326,13 +326,12 @@
                                     Style="{StaticResource HeaderGlyphButtonStyle}"
                                     AutomationProperties.Name="{CustomResource ProxySettings}"
                                     ToolTipService.ToolTip="{CustomResource ProxySettings}"/>
-                                <controls:GlyphToggleButton
+                                <controls:GlyphButton
                                     x:Name="Lock"
                                     Visibility="Collapsed"
                                     Glyph="&#xE785;"
-                                    CheckedGlyph="&#xE72E;"
                                     Click="Lock_Click"
-                                    Style="{StaticResource HeaderGlyphToggleButtonStyle}"
+                                    Style="{StaticResource HeaderGlyphButtonStyle}"
                                     AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
                                     ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"/>
                             </StackPanel>

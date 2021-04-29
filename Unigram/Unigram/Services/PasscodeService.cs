@@ -110,25 +110,13 @@ namespace Unigram.Services
         public void Lock()
         {
             _settingsService.IsLocked = true;
-            Publish(true, true);
+            Publish(true);
         }
 
         public void Unlock()
         {
             _settingsService.IsLocked = false;
-            Publish(true, false);
-        }
-
-        public void ChangeLocked()
-        {
-            if (_settingsService.IsLocked)
-            {
-                Unlock();
-            }
-            else
-            {
-                Lock();
-            }
+            Publish(true);
         }
 
         public void Set(string passcode, bool simple, int timeout)
@@ -142,18 +130,19 @@ namespace Unigram.Services
             _settingsService.AutolockTimeout = timeout;
             _settingsService.CloseTime = DateTime.MaxValue;
             _settingsService.IsLocked = false;
-            Publish(true, false);
+            Publish(true);
         }
 
         public void Reset()
         {
             _settingsService.Clear();
-            Publish(false, false);
+            Publish(false);
         }
 
-        private void Publish(bool enabled, bool locked)
+        private void Publish(bool enabled)
         {
-            var update = new UpdatePasscodeLock(enabled, locked);
+            var update = new UpdatePasscodeLock(enabled);
+
             foreach (var aggregator in TLContainer.Current.ResolveAll<IEventAggregator>())
             {
                 aggregator.Publish(update);

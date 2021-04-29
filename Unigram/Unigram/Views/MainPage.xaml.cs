@@ -185,7 +185,6 @@ namespace Unigram.Views
         private void InitializeLock()
         {
             Lock.Visibility = ViewModel.Passcode.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
-            Lock.IsChecked = ViewModel.Passcode.IsLocked;
         }
 
         #region Handle
@@ -377,7 +376,6 @@ namespace Unigram.Views
             this.BeginOnUIThread(() =>
             {
                 Lock.Visibility = update.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
-                Lock.IsChecked = update.IsLocked;
             });
         }
 
@@ -2007,23 +2005,8 @@ namespace Unigram.Views
                 return;
             }
 
-            Lock.IsChecked = !Lock.IsChecked;
-
-            if (Lock.IsChecked == true)
-            {
-                ViewModel.Passcode.Lock();
-
-                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-                {
-                    App.ShowPasscode(false);
-                }
-
-                Automation.SetToolTip(Lock, Strings.Resources.AccDescrPasscodeUnlock);
-            }
-            else
-            {
-                Automation.SetToolTip(Lock, Strings.Resources.AccDescrPasscodeLock);
-            }
+            ViewModel.Passcode.Lock();
+            App.ShowPasscode(false);
         }
 
         private void EditPhoto_Click(object sender, RoutedEventArgs e)
