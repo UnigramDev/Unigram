@@ -158,8 +158,7 @@ namespace Unigram.ViewModels
             }
             else if (content is VoiceNote)
             {
-                // Voice notes aren't part of the deal
-                return true;
+                return !Settings.AutoDownload.Disabled;
             }
 
             return false;
