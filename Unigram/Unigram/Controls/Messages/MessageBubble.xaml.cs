@@ -1438,6 +1438,9 @@ namespace Unigram.Controls.Messages
 
             using (var builder = new CanvasPathBuilder(null))
             {
+                //size.X = MathF.Truncate(size.X);
+                //size.Y = MathF.Truncate(size.Y);
+
                 builder.BeginFigure(new Vector2(0, radius.TopLeft));
                 builder.AddArc(new Vector2(radius.TopLeft, 0), radius.TopLeft, radius.TopLeft, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
                 builder.AddLine(new Vector2(size.X - radius.TopRight, 0));
