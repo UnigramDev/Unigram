@@ -143,7 +143,7 @@
                         Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="{CustomResource ChatSettings}"
-                        Glyph="&#xE8BD;"
+                        Glyph="&#xE90F;"
                         Click="Appearance_Click"
                         Style="{StaticResource GlyphBadgeButtonStyle}"/>
                     <controls:BadgeButton
