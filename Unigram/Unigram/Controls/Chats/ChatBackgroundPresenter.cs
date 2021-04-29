@@ -5,6 +5,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Brushes;
 using Unigram.Services;
+using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -262,29 +263,32 @@ namespace Unigram.Controls.Chats
             container.RelativeSizeAdjustment = Vector2.One;
             container.Clip = Window.Current.Compositor.CreateInsetClip();
 
-            var colors = new Color[]
+            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateRadialGradientBrush"))
             {
-                Color.FromArgb(0xFF, 0x7F, 0xA3, 0x81),
-                Color.FromArgb(0xFF, 0xFF, 0xF5, 0xC5),
-                Color.FromArgb(0xFF, 0x33, 0x6F, 0x55),
-                Color.FromArgb(0xFF, 0xFB, 0xE3, 0x7D)
-            };
+                var colors = new Color[]
+                {
+                    Color.FromArgb(0xFF, 0x7F, 0xA3, 0x81),
+                    Color.FromArgb(0xFF, 0xFF, 0xF5, 0xC5),
+                    Color.FromArgb(0xFF, 0x33, 0x6F, 0x55),
+                    Color.FromArgb(0xFF, 0xFB, 0xE3, 0x7D)
+                };
 
-            for (int i = 0; i < colors.Length; i++)
-            {
-                var brush = Window.Current.Compositor.CreateRadialGradientBrush();
-                brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, colors[i]));
-                brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.1f, colors[i]));
-                brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, colors[i].WithAlpha(0)));
-                brush.CenterPoint = new Vector2(150, 150);
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    var brush = Window.Current.Compositor.CreateRadialGradientBrush();
+                    brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, colors[i]));
+                    brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.1f, colors[i]));
+                    brush.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, colors[i].WithAlpha(0)));
+                    brush.CenterPoint = new Vector2(150, 150);
 
-                var visual = Window.Current.Compositor.CreateSpriteVisual();
-                visual.CenterPoint = new Vector3(150, 150, 0);
-                visual.Size = new Vector2(300, 300);
-                visual.Brush = brush;
+                    var visual = Window.Current.Compositor.CreateSpriteVisual();
+                    visual.CenterPoint = new Vector3(150, 150, 0);
+                    visual.Size = new Vector2(300, 300);
+                    visual.Brush = brush;
 
-                _pivotVisuals[i] = visual;
-                container.Children.InsertAtTop(visual);
+                    _pivotVisuals[i] = visual;
+                    container.Children.InsertAtTop(visual);
+                }
             }
 
             Visual = container;
@@ -315,7 +319,7 @@ namespace Unigram.Controls.Chats
 
             for (int i = 0; i < _pivotVisuals.Length; i++)
             {
-                if (_pivotVisuals.Length <= i || _pivotVisuals[i] == null)
+                if (_pivotVisuals[i] == null)
                 {
                     break;
                 }
