@@ -119,16 +119,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool SynchronizeMessageSlice
-        {
-            get => Settings.Diagnostics.SynchronizeMessageSlice;
-            set
-            {
-                Settings.Diagnostics.SynchronizeMessageSlice = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public VerbosityLevel Verbosity
         {
             get => (VerbosityLevel)Settings.VerbosityLevel;

@@ -470,15 +470,7 @@ namespace Unigram.Views
         {
             DataContext = _viewModel = _getViewModel(this);
 
-            if (_viewModel.Settings.Diagnostics.SynchronizeMessageSlice)
-            {
-                _viewModel.MessageSliceLoaded += OnMessageSliceLoaded;
-            }
-            else
-            {
-                Bindings.Update();
-            }
-
+            _viewModel.MessageSliceLoaded += OnMessageSliceLoaded;
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
             ViewModel.Sticker_Click = Stickers_ItemClick;

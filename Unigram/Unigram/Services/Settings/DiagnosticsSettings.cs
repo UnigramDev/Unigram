@@ -9,13 +9,6 @@ namespace Unigram.Services.Settings
         {
         }
 
-        private bool? _synchronizeMessageSlice;
-        public bool SynchronizeMessageSlice
-        {
-            get => _synchronizeMessageSlice ??= GetValueOrDefault("SynchronizeMessageSlice", ApiInfo.IsPackagedRelease);
-            set => AddOrUpdateValue(ref _synchronizeMessageSlice, "SynchronizeMessageSlice", value);
-        }
-
         private bool? _minithumbnails;
         public bool Minithumbnails
         {
