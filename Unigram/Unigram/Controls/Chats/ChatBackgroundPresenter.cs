@@ -95,7 +95,7 @@ namespace Unigram.Controls.Chats
 
             if (background == null)
             {
-                UpdateBlurred(true);
+                UpdateBlurred(ActualTheme == ElementTheme.Light, 20);
 
                 Background = null;
                 _colorBackground.Opacity = 1;
@@ -233,6 +233,24 @@ namespace Unigram.Controls.Chats
         }
     }
 
+    public class ChatBackgroundDefaultPreview : Panel
+    {
+        private readonly ChatBackgroundDefault _background;
+
+        public ChatBackgroundDefaultPreview()
+        {
+            _background = new ChatBackgroundDefault();
+            ElementCompositionPreview.SetElementChildVisual(this, _background.Visual);
+
+            SizeChanged += OnSizeChanged;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _background.UpdateLayout(e.NewSize.ToVector2());
+        }
+    }
+
     public class ChatBackgroundDefault
     {
         private readonly SpriteVisual[] _pivotVisuals = new SpriteVisual[4];
@@ -304,8 +322,17 @@ namespace Unigram.Controls.Chats
 
                 var minSide = Math.Min(actualSize.X, actualSize.Y);
 
+                var x = minSide;
+                var y = minSide;
+
+                if (actualSize.X > actualSize.Y * 2 || actualSize.Y > actualSize.X * 2)
+                {
+                    x = actualSize.X;
+                    y = actualSize.Y;
+                }
+
                 var pointCenter = new Vector2(actualSize.X * positions[i * 2].X, actualSize.Y * positions[i * 2].Y);
-                var pointSize = new Vector2(minSide * 2.0f, minSide * 2.0f);
+                var pointSize = new Vector2(x * 2, y * 2);
 
                 if (animate)
                 {

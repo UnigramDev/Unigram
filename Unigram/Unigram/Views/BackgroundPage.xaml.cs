@@ -136,8 +136,7 @@ namespace Unigram.Views
                     var bitmap = new BitmapImage();
                     await bitmap.SetSourceAsync(stream);
 
-                    var content = sender as Border;
-                    var rectangle = content.Child as Rectangle;
+                    var rectangle = sender as Rectangle;
                     rectangle.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
             }
@@ -149,11 +148,9 @@ namespace Unigram.Views
                     return;
                 }
 
-                var content = sender as Border;
-                var rectangle = content.Child as Rectangle;
+                var rectangle = sender as Rectangle;
                 if (wallpaper.Type is BackgroundTypeWallpaper)
                 {
-                    content.Background = null;
                     rectangle.Opacity = 1;
                     rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                 }
@@ -201,28 +198,26 @@ namespace Unigram.Views
             }
 
             Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
-
-            if (wallpaper.Id == Constants.WallpaperLocalId || wallpaper.Document != null)
+            
+            if (wallpaper.Type is BackgroundTypeWallpaper)
             {
                 Blur.Visibility = Visibility.Visible;
+
+                Message1.Mockup(Strings.Resources.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                Message2.Mockup(Strings.Resources.BackgroundPreviewLine2, true, DateTime.Now);
             }
             else
             {
                 Blur.Visibility = Visibility.Collapsed;
-                ViewModel.IsBlurEnabled = false;
-            }
 
-            if (wallpaper.Type is BackgroundTypeFill || wallpaper.Type is BackgroundTypePattern)
-            {
-                Blur.Visibility = Visibility.Collapsed;
-                Pattern.Visibility = Visibility.Visible;
-                Color.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Blur.Visibility = Visibility.Visible;
-                Pattern.Visibility = Visibility.Collapsed;
-                Color.Visibility = Visibility.Collapsed;
+                if (wallpaper.Type is BackgroundTypeFill || wallpaper.Type is BackgroundTypePattern)
+                {
+                    Pattern.Visibility = Visibility.Visible;
+                    Color.Visibility = Visibility.Visible;
+                }
+
+                Message1.Mockup(Strings.Resources.BackgroundColorSinglePreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                Message2.Mockup(Strings.Resources.BackgroundColorSinglePreviewLine2, true, DateTime.Now);
             }
         }
 

@@ -434,22 +434,16 @@
                     <selectors:WallPaperTemplateSelector>
                         <selectors:WallPaperTemplateSelector.DefaultTemplate>
                             <DataTemplate>
-                                <Rectangle>
-                                    <Rectangle.Fill>
-                                        <brushes:TiledBrush Source="ms-appx:///Assets/Images/DefaultBackground.theme-light.png"/>
-                                    </Rectangle.Fill>
-                                </Rectangle>
+                                <chats:ChatBackgroundDefaultPreview/>
                             </DataTemplate>
                         </selectors:WallPaperTemplateSelector.DefaultTemplate>
                         <selectors:WallPaperTemplateSelector.ItemTemplate>
                             <DataTemplate>
-                                <Border DataContextChanged="Image_DataContextChanged">
-                                    <Rectangle>
-                                        <Rectangle.Fill>
-                                            <ImageBrush/>
-                                        </Rectangle.Fill>
-                                    </Rectangle>
-                                </Border>
+                                <Rectangle DataContextChanged="Image_DataContextChanged">
+                                    <Rectangle.Fill>
+                                        <ImageBrush/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
                             </DataTemplate>
                         </selectors:WallPaperTemplateSelector.ItemTemplate>
                         <selectors:WallPaperTemplateSelector.SolidTemplate>

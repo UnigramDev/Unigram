@@ -81,8 +81,8 @@
                     <selectors:WallPaperTemplateSelector.DefaultTemplate>
                         <DataTemplate x:DataType="td:Background">
                             <controls:AspectView Constraint="{x:Bind}">
-                                <Image Source="{ThemeResource DefaultBackgroundBrush}" Stretch="UniformToFill"/>
-                                
+                                <chats:ChatBackgroundDefaultPreview/>
+
                                 <Grid VerticalAlignment="Center">
                                     <Rectangle x:Name="NormalRectangle"
                                                Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
