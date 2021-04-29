@@ -94,7 +94,7 @@ namespace Unigram.ViewModels.SignIn
         private void GotUserCountry(string code)
         {
             Country country = null;
-            foreach (var local in Country.Countries)
+            foreach (var local in Country.All)
             {
                 if (string.Equals(local.Code, code, StringComparison.OrdinalIgnoreCase))
                 {
@@ -132,8 +132,6 @@ namespace Unigram.ViewModels.SignIn
             get => _phoneNumber;
             set => Set(ref _phoneNumber, value);
         }
-
-        public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
         public RelayCommand SwitchCommand { get; }
         private void SwitchExecute()

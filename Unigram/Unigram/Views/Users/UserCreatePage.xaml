@@ -51,22 +51,11 @@
             </controls:HeaderedControl>
 
             <controls:HeaderedControl>
-                <ComboBox ItemsSource="{x:Bind ViewModel.Countries}"
-                          SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
-                          PlaceholderText="{CustomResource ChooseCountry}"
-                          MinWidth="280"
-                          HorizontalAlignment="Stretch"
-                          Margin="12,8,12,4"
-                          Grid.Row="3">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="models:Country">
-                            <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                                <Run Text="{x:Bind DisplayName}"/>
-                                <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
-                            </TextBlock>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                <controls:CountryBox
+                    Country="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
+                    MinWidth="280"
+                    HorizontalAlignment="Stretch"
+                    Margin="12,8,12,4"/>
 
                 <controls:PhoneTextBox
                     x:Name="PrimaryInput"

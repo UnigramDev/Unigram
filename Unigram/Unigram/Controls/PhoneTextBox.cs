@@ -181,10 +181,10 @@ namespace Unigram.Controls
 
         private static void OnCountryChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((PhoneTextBox)d).OnCountryChange((Country)e.NewValue, (Country)e.OldValue);
+            ((PhoneTextBox)d).OnCountryChanged((Country)e.NewValue, (Country)e.OldValue);
         }
 
-        private void OnCountryChange(Country newValue, Country oldValue)
+        private void OnCountryChanged(Country newValue, Country oldValue)
         {
             if (newValue?.PhoneCode == oldValue?.PhoneCode)
             {

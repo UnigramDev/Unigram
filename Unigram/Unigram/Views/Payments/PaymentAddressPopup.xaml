@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:entities="using:Unigram.Entities"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Opened="OnOpened"
@@ -55,7 +56,7 @@
                         PlaceholderText="{CustomResource PaymentShippingStatePlaceholder}"/>
                     <ComboBox
                         x:Name="FieldCountry"
-                        ItemsSource="{x:Bind ViewModel.Countries}"
+                        ItemsSource="{x:Bind entities:Country.All}"
                         SelectedItem="{x:Bind ViewModel.SelectedCountry, Mode=TwoWay}"
                         DisplayMemberPath="DisplayName"
                         PlaceholderText="{CustomResource PaymentShippingCountry}"/>

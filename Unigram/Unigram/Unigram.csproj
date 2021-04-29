@@ -280,6 +280,9 @@
     <Compile Include="Controls\ColorTextBox.cs" />
     <Compile Include="Controls\ConfettiView.cs" />
     <Compile Include="Controls\ContentPopup.cs" />
+    <Compile Include="Controls\CountryBox.xaml.cs">
+      <DependentUpon>CountryBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DiceView.cs" />
     <Compile Include="Controls\Drawers\AnimationDrawer.xaml.cs">
       <DependentUpon>AnimationDrawer.xaml</DependentUpon>
@@ -1495,6 +1498,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Chats\ChatTextFormatting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\CountryBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

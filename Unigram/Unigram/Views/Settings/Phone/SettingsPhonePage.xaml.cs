@@ -1,4 +1,5 @@
-﻿using Unigram.Common;
+﻿using System;
+using Unigram.Common;
 using Unigram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -42,12 +43,9 @@ namespace Unigram.Views.Settings
             PrimaryInput.Focus(FocusState.Keyboard);
         }
 
-        private void Countries_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Countries_SelectionChanged(object sender, EventArgs e)
         {
-            if (e.AddedItems?.Count > 0)
-            {
-                PrimaryInput.Focus(FocusState.Keyboard);
-            }
+            PrimaryInput.Focus(FocusState.Keyboard);
         }
 
         private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -58,6 +56,5 @@ namespace Unigram.Views.Settings
                 e.Handled = true;
             }
         }
-
     }
 }

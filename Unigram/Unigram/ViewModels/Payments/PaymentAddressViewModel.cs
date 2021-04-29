@@ -29,7 +29,7 @@ namespace Unigram.ViewModels.Payments
             Invoice = invoice;
             Info = info;
 
-            SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryCode, StringComparison.OrdinalIgnoreCase));
+            SelectedCountry = Country.All.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryCode, StringComparison.OrdinalIgnoreCase));
         }
 
         private Invoice _invoice;
@@ -46,9 +46,7 @@ namespace Unigram.ViewModels.Payments
             set => Set(ref _info, value);
         }
 
-        public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
-
-        private Country _selectedCountry = Country.Countries[0];
+        private Country _selectedCountry = Country.All[0];
         public Country SelectedCountry
         {
             get

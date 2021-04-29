@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Users
         private void GotUserCountry(string code)
         {
             Country country = null;
-            foreach (var local in Country.Countries)
+            foreach (var local in Country.All)
             {
                 if (string.Equals(local.Code, code, StringComparison.OrdinalIgnoreCase))
                 {
@@ -96,8 +96,6 @@ namespace Unigram.ViewModels.Users
                 SendCommand.RaiseCanExecuteChanged();
             }
         }
-
-        public IList<Country> Countries { get; } = Country.Countries.OrderBy(x => x.DisplayName).ToList();
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()

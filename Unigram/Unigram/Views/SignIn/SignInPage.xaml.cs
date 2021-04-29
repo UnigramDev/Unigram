@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using Unigram.Common;
 using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.SignIn;
@@ -69,12 +70,9 @@ namespace Unigram.Views.SignIn
             PrimaryInput.Focus(FocusState.Keyboard);
         }
 
-        private void Countries_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Countries_SelectionChanged(object sender, EventArgs e)
         {
-            if (e.AddedItems?.Count > 0)
-            {
-                PrimaryInput.Focus(FocusState.Keyboard);
-            }
+            PrimaryInput.Focus(FocusState.Keyboard);
         }
 
         private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)
