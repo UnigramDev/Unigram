@@ -27,7 +27,9 @@
 
         <DataTemplate x:Key="ItemTemplate">
             <Border Margin="2">
-                <Image/>
+                <Border>
+                    <Image/>
+                </Border>
             </Border>
         </DataTemplate>
     </UserControl.Resources>
