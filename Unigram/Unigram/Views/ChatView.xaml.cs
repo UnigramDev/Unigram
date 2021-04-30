@@ -216,11 +216,13 @@ namespace Unigram.Views
                 btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
             };
 
-            var visual = DropShadowEx.Attach(ArrowShadow, 2, 0.25f, null);
+            var visual = DropShadowEx.Attach(ArrowShadow, 2);
+            visual.RelativeSizeAdjustment = Vector2.Zero;
             visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
 
-            visual = DropShadowEx.Attach(ArrowMentionsShadow, 2, 0.25f, null);
+            visual = DropShadowEx.Attach(ArrowMentionsShadow, 2);
+            visual.RelativeSizeAdjustment = Vector2.Zero;
             visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
 
@@ -240,7 +242,7 @@ namespace Unigram.Views
             //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
             //}
 
-            _textShadowVisual = DropShadowEx.Attach(Separator, 20, 0.25f);
+            _textShadowVisual = DropShadowEx.Attach(Separator);
             _textShadowVisual.IsVisible = false;
 
             //TextField.Language = Native.NativeUtils.GetCurrentCulture();
@@ -2528,7 +2530,6 @@ namespace Unigram.Views
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _textShadowVisual.Size = e.NewSize.ToVector2();
             _rootVisual.Size = e.NewSize.ToVector2();
         }
 
@@ -2851,17 +2852,6 @@ namespace Unigram.Views
         }
 
         #region Binding
-
-        //public Visibility ConvertBotInfo(TLBotInfo info, bool last)
-        //{
-        //    return info != null && !string.IsNullOrEmpty(info.Description) && last ? Visibility.Visible : Visibility.Collapsed;
-        //}
-
-        private Visibility ConvertShadowVisibility(Visibility inline, object stickers, object autocomplete)
-        {
-            _textShadowVisual.IsVisible = inline == Visibility.Visible || stickers != null || autocomplete != null;
-            return Visibility.Visible;
-        }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
         {

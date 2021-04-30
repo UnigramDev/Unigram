@@ -1,4 +1,5 @@
 ﻿using System;
+using Unigram.Common;
 using Unigram.Views.SignIn;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -42,6 +43,8 @@ namespace Unigram.Views
             LayoutRoot.ManipulationCompleted += LayoutRoot_ManipulationCompleted;
 
             SetIndex(_selectedIndex = 0);
+
+            DropShadowEx.Attach(StartShadow);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

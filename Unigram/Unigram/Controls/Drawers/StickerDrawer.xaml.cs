@@ -65,8 +65,7 @@ namespace Unigram.Controls.Drawers
 
             //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
 
-            var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
-            shadow.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(Separator);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldStickers.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += async (s, args) =>

@@ -38,8 +38,7 @@ namespace Unigram.Controls
             InitializeComponent();
             DataContext = new object();
 
-            var shadow = DropShadowEx.Attach(HeaderSeparator, 20, 0.25f);
-            shadow.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(HeaderSeparator);
 
             var protoService = TLContainer.Current.Resolve<IProtoService>();
 

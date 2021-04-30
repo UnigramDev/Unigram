@@ -119,8 +119,7 @@ namespace Unigram.Views.Popups
             PrimaryButtonText = Strings.Resources.ApplyTheme;
             SecondaryButtonText = Strings.Resources.Cancel;
 
-            var shadow = DropShadowEx.Attach(Shadow, 20, 0.25f);
-            shadow.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(Shadow);
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

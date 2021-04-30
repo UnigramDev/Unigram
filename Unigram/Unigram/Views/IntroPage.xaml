@@ -259,10 +259,28 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center" />
 
-        <controls:BadgeButton
-            x:Name="Start"
-            Click="Start_Click"
-            Content="{CustomResource StartMessaging}"
-            Style="{StaticResource StartButtonStyle}"/>
+        <Grid
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            Margin="12"
+            Grid.Row="1">
+            <Rectangle
+                x:Name="StartShadow"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="{ThemeResource StartButtonBackground}"
+                Margin="2"
+                RadiusX="18"
+                RadiusY="18"/>
+            <controls:BadgeButton
+                x:Name="Start"
+                Click="Start_Click"
+                Content="{CustomResource StartMessaging}"
+                Style="{StaticResource StartButtonStyle}"
+                Padding="16,3,16,5"
+                Radius="18"
+                Margin="0"
+                Height="36"/>
+        </Grid>
     </Grid>
 </Page>

@@ -106,8 +106,7 @@ namespace Unigram.Views
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
-            var updateShadow = DropShadowEx.Attach(UpdateShadow, 20, 0.25f);
-            updateShadow.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(UpdateShadow);
 
             if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
             {

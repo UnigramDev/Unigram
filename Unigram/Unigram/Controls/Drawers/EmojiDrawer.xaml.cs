@@ -1,7 +1,6 @@
 ﻿using LinqToVisualTree;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Services.Settings;
@@ -33,8 +32,7 @@ namespace Unigram.Controls.Drawers
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
-            var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
-            shadow.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(Separator);
 
             _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
             _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();

@@ -20,8 +20,7 @@ namespace Unigram.Views.Payments
 
             Transitions = ApiInfo.CreateSlideTransition();
 
-            var updateShadow = DropShadowEx.Attach(BuyShadow, 20, 0.25f);
-            updateShadow.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(BuyShadow);
         }
 
         private string ConvertTitle(bool receipt, bool test)

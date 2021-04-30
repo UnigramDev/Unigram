@@ -10,7 +10,7 @@ namespace Unigram.Common
 {
     public static class DropShadowEx
     {
-        public static Visual Attach(UIElement element, float radius, float opacity, CompositionClip clip = null)
+        public static Visual Attach(UIElement element, float radius = 20, float opacity = 0.25f)
         {
             var elementVisual = ElementCompositionPreview.GetElementVisual(element);
 
@@ -23,7 +23,7 @@ namespace Unigram.Common
             visual.Shadow = shadow;
             visual.Size = new Vector2(0, 0);
             visual.Offset = new Vector3(0, 0, 0);
-            visual.Clip = clip;
+            visual.RelativeSizeAdjustment = Vector2.One;
 
             switch (element)
             {

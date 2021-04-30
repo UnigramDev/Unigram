@@ -463,6 +463,7 @@
         <Setter Property="BorderBrush" Value="{ThemeResource StartButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Radius" Value="16" />
+        <Setter Property="UseSystemFocusVisuals" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
@@ -510,6 +511,15 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Focused">
+                                    <VisualState.Setters>
+                                        <Setter Target="FocusEllipse.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Unfocused" />
+                                <VisualState x:Name="PointerFocused" />
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter x:Name="ContentPresenter"
                                           CornerRadius="{TemplateBinding Radius}"
@@ -522,6 +532,8 @@
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                           AutomationProperties.AccessibilityView="Raw" />
+
+                        <Border x:Name="FocusEllipse" CornerRadius="{TemplateBinding Radius}" BorderBrush="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}" BorderThickness="2" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

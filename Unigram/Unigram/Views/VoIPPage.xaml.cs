@@ -101,8 +101,7 @@ namespace Unigram.Views
             // Why does this crashes due to an access violation exception on certain devices?
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
 
-            var viewfinder = DropShadowEx.Attach(ViewfinderShadow, 20, 0.25f);
-            viewfinder.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(ViewfinderShadow);
 
             #endregion
 

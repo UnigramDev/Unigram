@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Services;
@@ -68,8 +67,7 @@ namespace Unigram.Controls.Drawers
 
             ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
-            var shadow = DropShadowEx.Attach(Separator, 20, 0.25f);
-            shadow.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(Separator);
 
             var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => FieldAnimations.TextChanged += new TextChangedEventHandler(handler));
             debouncer.Invoked += (s, args) =>

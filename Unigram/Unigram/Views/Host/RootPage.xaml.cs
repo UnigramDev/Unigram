@@ -81,8 +81,7 @@ namespace Unigram.Views.Host
 
             Navigation.Content = _navigationService.Frame;
 
-            var shadow = DropShadowEx.Attach(ThemeShadow, 20, 0.25f);
-            shadow.RelativeSizeAdjustment = Vector2.One;
+            DropShadowEx.Attach(ThemeShadow);
         }
 
         public void UpdateComponent()
