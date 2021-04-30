@@ -1192,7 +1192,6 @@
     <Content Include="Assets\Filters\channels.png" />
     <Content Include="Assets\Filters\crown.png" />
     <Content Include="Assets\Filters\custom.png" />
-    <Content Include="Assets\Filters\edit.png" />
     <Content Include="Assets\Filters\favorite.png" />
     <Content Include="Assets\Filters\flower.png" />
     <Content Include="Assets\Filters\game.png" />
@@ -1402,7 +1401,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
-    <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-16.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-24.png" />
     <Content Include="Assets\JumpList\SavedMessages\SavedMessages.targetsize-256.png" />
