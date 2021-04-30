@@ -768,7 +768,7 @@ namespace Unigram.Views.Popups
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (ChatsPanel.SelectionMode == ListViewSelectionMode.Multiple)
+            if (ViewModel.SearchType != SearchChatsType.Post)
             {
                 return;
             }
