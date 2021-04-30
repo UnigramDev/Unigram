@@ -315,12 +315,10 @@ namespace Unigram.Views
                         return;
                     }
 
-                    var content = Presenter.ContentTemplateRoot as Border;
-                    var rectangle = content.Child as Rectangle;
+                    var rectangle = Presenter.ContentTemplateRoot as Rectangle;
 
                     if (wallpaper.Type is BackgroundTypeWallpaper)
                     {
-                        content.Background = null;
                         rectangle.Opacity = 1;
                         rectangle.Fill = new ImageBrush { ImageSource = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, big.DocumentValue, 0, 0), AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                     }
