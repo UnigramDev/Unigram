@@ -111,7 +111,7 @@ namespace Unigram.Views
             }
         }
 
-        private async void OnParticipantsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnParticipantsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (_disposed || _service?.Participants == null)
             {
@@ -119,11 +119,7 @@ namespace Unigram.Views
             }
 
             _service.Participants.Delegate = this;
-
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                List.ItemsSource = _service.Participants;
-            });
+            this.BeginOnUIThread(() => List.ItemsSource = _service.Participants);
         }
 
         private void OnClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
