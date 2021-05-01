@@ -242,7 +242,7 @@ namespace Unigram.Views.Popups
 
                 if (ApiInfo.CanUseDirectComposition)
                 {
-                    CompositionPathParser.ParseThumbnail(sticker.Outline, 60, out ShapeVisual visual, false);
+                    CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
                 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
@@ -193,7 +194,7 @@ namespace Unigram.Views.Settings
 
                 if (ApiInfo.CanUseDirectComposition)
                 {
-                    CompositionPathParser.ParseThumbnail(outline, 48, out ShapeVisual visual, false);
+                    CompositionPathParser.ParseThumbnail(outline, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
                 }
 
@@ -248,7 +249,7 @@ namespace Unigram.Views.Settings
             {
                 this.BeginOnUIThread(async () =>
                 {
-                    foreach (var stickerSet in stickers)
+                    foreach (var stickerSet in stickers.ToImmutableHashSet())
                     {
                         stickerSet.UpdateFile(update.File);
 

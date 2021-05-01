@@ -65,7 +65,7 @@ namespace Unigram.Common
             return new CompositionPath(CanvasGeometry.CreatePath(builder));
         }
 
-        public static CompositionAnimation ParseThumbnail(IList<ClosedVectorPath> contours, double side, out ShapeVisual visual, bool animated = true)
+        public static CompositionAnimation ParseThumbnail(IList<ClosedVectorPath> contours, out ShapeVisual visual, bool animated = true)
         {
             CompositionPath path;
             if (contours.Count > 0)
@@ -98,12 +98,16 @@ namespace Unigram.Common
             var foregroundShape = Window.Current.Compositor.CreateSpriteShape(foreground);
             foregroundShape.FillBrush = gradient;
 
+            var clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(path));
+            clip.ViewBox = Window.Current.Compositor.CreateViewBox();
+            clip.ViewBox.Size = new Vector2(512, 512);
+            clip.ViewBox.Stretch = CompositionStretch.UniformToFill;
+
             visual = Window.Current.Compositor.CreateShapeVisual();
-            visual.Clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(path));
+            visual.Clip = clip;
             visual.Shapes.Add(backgroundShape);
             visual.Shapes.Add(foregroundShape);
-            visual.Size = new Vector2(512, 512);
-            visual.Scale = new Vector3((float)side / 512f, (float)side / 512f, 1);
+            visual.RelativeSizeAdjustment = Vector2.One;
 
             if (animated)
             {

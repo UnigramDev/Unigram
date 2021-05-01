@@ -74,7 +74,7 @@ namespace Unigram.Controls.Messages.Content
         {
             if (ApiInfo.CanUseDirectComposition)
             {
-                _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, 200, out ShapeVisual visual);
+                _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, out ShapeVisual visual);
                 ElementCompositionPreview.SetElementChildVisual(this, visual);
             }
         }

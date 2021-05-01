@@ -411,7 +411,7 @@ namespace Unigram.Controls.Drawers
 
                 if (ApiInfo.CanUseDirectComposition)
                 {
-                    CompositionPathParser.ParseThumbnail(sticker.Outline, 60, out ShapeVisual visual, false);
+                    CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Child, visual);
                 }
 
