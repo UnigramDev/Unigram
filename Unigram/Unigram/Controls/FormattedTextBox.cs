@@ -698,7 +698,7 @@ namespace Unigram.Controls
             {
                 SetText(formattedText.Text, formattedText.Entities);
             }
-            else
+            else if (!IsEmpty)
             {
                 OnSettingText();
                 Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
