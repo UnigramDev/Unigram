@@ -127,13 +127,22 @@ namespace Unigram.ViewModels
         public RelayCommand<TLCallGroup> CallDeleteCommand { get; }
         private async void CallDeleteExecute(TLCallGroup group)
         {
-            var confirm = await MessagePopup.ShowAsync(Strings.Resources.ConfirmDeleteCallLog, Strings.Resources.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var popup = new MessagePopup
+            {
+                Title = Strings.Resources.DeleteCalls,
+                Message = Strings.Resources.DeleteSelectedCallsText,
+                PrimaryButtonText = Strings.Resources.Delete,
+                SecondaryButtonText = Strings.Resources.Cancel,
+                CheckBoxLabel = Strings.Resources.DeleteCallsForEveryone
+            };
+
+            var confirm = await popup.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var response = await ProtoService.SendAsync(new DeleteMessages(group.ChatId, group.Items.Select(x => x.Id).ToArray(), false));
+            var response = await ProtoService.SendAsync(new DeleteMessages(group.ChatId, group.Items.Select(x => x.Id).ToArray(), popup.IsChecked == true));
             if (response is Ok)
             {
                 Items.Remove(group);
