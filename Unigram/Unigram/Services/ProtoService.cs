@@ -1037,12 +1037,12 @@ namespace Unigram.Services
 
         public bool IsSavedMessages(User user)
         {
-            return user.Id == _options.MyId;
+            return user?.Id == _options.MyId;
         }
 
         public bool IsSavedMessages(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate privata && privata.UserId == _options.MyId)
+            if (chat?.Type is ChatTypePrivate privata && privata.UserId == _options.MyId)
             {
                 return true;
             }
