@@ -13,6 +13,8 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContext = new object();
+
+            NavigationCacheMode = NavigationCacheMode.Required;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
