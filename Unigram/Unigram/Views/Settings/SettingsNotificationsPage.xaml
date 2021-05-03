@@ -71,7 +71,7 @@
                         IsChecked="{x:Bind ViewModel.InAppFlash, Mode=TwoWay}"
                         Content="Flash window when receiving a notification"
                         Margin="12,6,12,0"/>
-                    <Rectangle Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
+                    <Rectangle x:Name="InAppFlashSeparator" x:Load="False" Fill="{ThemeResource TelegramSeparatorMediumBrush}" Height="1" Margin="12,6,0,6"/>
                     
                     <CheckBox
                         IsChecked="{x:Bind ViewModel.InAppSounds, Mode=TwoWay}"
