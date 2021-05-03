@@ -54,10 +54,6 @@ namespace Unigram.Controls
         private string _source;
         private LottieAnimation _animation;
 
-        private bool _animationShouldCache;
-        private bool _animationIsCaching;
-        private static readonly SemaphoreSlim _cachingSemaphone = new SemaphoreSlim(1, 1);
-
         private double _animationFrameRate;
         private int _animationTotalFrame;
 
@@ -230,7 +226,7 @@ namespace Unigram.Controls
         public void Invalidate()
         {
             var animation = _animation;
-            if (animation == null || _animationIsCaching || _canvas == null || _bitmap == null || _unloaded)
+            if (animation == null || _canvas == null || _bitmap == null || _unloaded)
             {
                 return;
             }
@@ -250,25 +246,6 @@ namespace Unigram.Controls
             }
 
             animation.RenderSync(_bitmap, index);
-
-            if (_animationShouldCache)
-            {
-                _animationShouldCache = false;
-                _animationIsCaching = true;
-
-                ThreadPool.QueueUserWorkItem(state =>
-                {
-                    if (animation is LottieAnimation cached)
-                    {
-                        _cachingSemaphone.Wait();
-
-                        cached.CreateCache(256, 256);
-
-                        _animationIsCaching = false;
-                        _cachingSemaphone.Release();
-                    }
-                }, animation);
-            }
 
             IndexChanged?.Invoke(this, index);
 
@@ -379,7 +356,6 @@ namespace Unigram.Controls
             _animation = animation;
             _hideThumbnail = true;
 
-            _animationShouldCache = animation.ShouldCache;
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
 
@@ -451,15 +427,6 @@ namespace Unigram.Controls
 
         public void Pause()
         {
-            var canvas = _canvas;
-            if (canvas == null)
-            {
-                //_source = newValue;
-                return;
-            }
-
-            //canvas.Paused = true;
-            //canvas.ResetElapsedTime();
             Subscribe(false);
         }
 
