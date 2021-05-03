@@ -121,10 +121,10 @@
     <value>الرسائل</value>
   </data>
   <data name="CopyImage" xml:space="preserve">
-    <value>Copy image</value>
+    <value>نسخ الصورة</value>
   </data>
   <data name="DeletedMessage" xml:space="preserve">
-    <value>Deleted message</value>
+    <value>رسالة محذوفة</value>
   </data>
   <data name="News" xml:space="preserve">
     <value>أخبار</value>
@@ -134,7 +134,7 @@
     <comment>Original message date and time</comment>
   </data>
   <data name="SaveAs" xml:space="preserve">
-    <value>Save as...</value>
+    <value>حفظ كـ...</value>
   </data>
   <data name="Select" xml:space="preserve">
     <value>حدد</value>
