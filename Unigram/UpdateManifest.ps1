@@ -1,17 +1,31 @@
 param (
   [string]$path = $(throw "-path is required"),
-  [string]$config = "DEBUG"
+  [string]$config = "DEBUG",
+  [string]$store = "true",
+  [string]$sign = "true"
 )
 
 #exit
 
 Write-Output "Config: $config"
 Write-Output "Path: $path"
+Write-Output "Store: $store"
+Write-Output "Sign: $sign"
 
 $path = Resolve-Path $path
 $path_manifest = "${path}\Package.appxmanifest"
 
 $config = $config.ToUpper()
+
+if ($config -eq "RELEASE") {
+    if ($sign -eq "false" -and $store -eq "false") {
+        $config = "DIRECT"
+    }
+    elseif ("store" -eq "false") {
+        $config = "DEBUG"
+    }
+}
+
 
 try {
     $out = Invoke-Command -ScriptBlock {git -C $path rev-list --count HEAD}
@@ -29,44 +43,65 @@ if ([double]::TryParse($out, [ref]$rtn) -ne $true) {
 [xml]$document = Get-Content $path_manifest
 
 $h = @{}
-$h["DEBUG"] = "38833FF26BA1D.UnigramExperimental"
-$h["RELEASE"] = "38833FF26BA1D.UnigramPreview"
+$h["DEBUG"] = @{
+    Name = "38833FF26BA1D.UnigramExperimental";
+    Publisher = "CN=D89C87B4-2758-402A-8F40-3571D00882AB";
+    DisplayName = "Unigram Experimental";
+    PublisherDisplayName = "Unigram, Inc.";
+    AppName = "Telegram"
+}
+$h["RELEASE"] = @{
+    Name = "38833FF26BA1D.UnigramPreview";
+    Publisher = "CN=D89C87B4-2758-402A-8F40-3571D00882AB";
+    DisplayName = "Unigram - Telegram for Windows 10";
+    PublisherDisplayName = "Unigram, Inc.";
+    AppName = "Unigram"
+}
+$h["DIRECT"] = @{
+    Name = "38833FF26BA1D.Unigram";
+    Publisher = 'CN=Telegram FZ-LLC, O=Telegram FZ-LLC, STREET="Business Central Towers, Tower A, Office 2301 2303", L=Dubai, S=Dubai, C=AE, OID.2.5.4.15=Private Organization, OID.1.3.6.1.4.1.311.60.2.1.3=AE, SERIALNUMBER=94349';
+    DisplayName = "Unigram - Telegram for Windows 10";
+    PublisherDisplayName = "Telegram FZ-LLC";
+    AppName = "Unigram"
+}
 
 $identity = $document.GetElementsByTagName("Identity")[0]
-$original1 = $identity.Attributes["Name"].Value
-$original2 = $identity.Attributes["Version"].Value
+$identity.Attributes["Name"].Value = $h[$config].Name
+$identity.Attributes["Publisher"].Value = $h[$config].Publisher
 
-$identity.Attributes["Name"].Value = $h[$config]
-
-$version = $identity.Attributes["Version"].Value;
+$version = $identity.Attributes["Version"].Value
 $regex = [regex]'(?:(\d+)\.)(?:(\d+)\.)(?:(\d*?)\.\d+)'
 
 $identity.Attributes["Version"].Value = $regex.Replace($version, '$1.$2.{0}.0' -f $out)
 
-if ($original1 -eq $identity.Attributes["Name"].Value -and $original2 -eq $identity.Attributes["Version"].Value) {
-    exit
-}
-
-$h = @{}
-$h["DEBUG"] = "Unigram Experimental"
-$h["RELEASE"] = "Unigram - Telegram for Windows 10"
-
 $properties = $document.GetElementsByTagName("Properties")[0]
 $displayName = $properties.GetElementsByTagName("DisplayName")[0]
-$displayName.InnerText = $h[$config]
+$displayName.InnerText = $h[$config].DisplayName
 
-$h = @{}
-$h["DEBUG"] = "Telegram"
-$h["RELEASE"] = "Unigram"
+$publisherDisplayName = $properties.GetElementsByTagName("PublisherDisplayName")[0]
+$publisherDisplayName.InnerText = $h[$config].PublisherDisplayName
 
 $visualElements = $document.GetElementsByTagName("uap:VisualElements")[0]
-$visualElements.Attributes["DisplayName"].Value = $h[$config]
+$visualElements.Attributes["DisplayName"].Value = $h[$config].AppName
 
 $document.Save("$path_manifest.tmp")
 
 if(Compare-Object -ReferenceObject $(Get-Content $path_manifest) -DifferenceObject $(Get-Content "$path_manifest.tmp")) {
     $document.Save($path_manifest)
-    Write-Output "Changes applied"
+    Write-Output "Package.appxmanifest updated"
 }
 
 Remove-Item "$path_manifest.tmp"
+
+$storeAssociation = Get-Content "${path}\Package.StoreAssociation.xml"
+
+$publisher = $h[$config].Publisher
+$publisherDisplayName = $h[$config].PublisherDisplayName
+
+$storeAssociation = $storeAssociation -replace "<Publisher>(.*?)</Publisher>", "<Publisher>$publisher</Publisher>"
+$storeAssociation = $storeAssociation -replace "<PublisherDisplayName>(.*?)</PublisherDisplayName>", "<PublisherDisplayName>$publisherDisplayName</PublisherDisplayName>"
+
+if(Compare-Object -ReferenceObject $(Get-Content "${path}\Package.StoreAssociation.xml") -DifferenceObject $storeAssociation) {
+    Set-Content -Path "${path}\Package.StoreAssociation.xml" -Value $storeAssociation
+    Write-Output "Package.StoreAssociation.xml updated"
+}
