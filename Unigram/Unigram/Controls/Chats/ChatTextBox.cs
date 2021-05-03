@@ -725,16 +725,18 @@ namespace Unigram.Controls.Chats
             UpdateInlinePlaceholder(null, null);
         }
 
+        private bool _wasEmpty;
         public override bool IsEmpty
         {
             get
             {
                 var isEmpty = string.IsNullOrWhiteSpace(Text);
-                if (isEmpty)
+                if (isEmpty && !_wasEmpty)
                 {
                     Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
                 }
 
+                _wasEmpty = isEmpty;
                 return isEmpty;
             }
         }

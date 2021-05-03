@@ -566,6 +566,11 @@ namespace Unigram.Controls
         {
             OnGettingFormattedText();
 
+            if (IsEmpty)
+            {
+                return new FormattedText(string.Empty, new TextEntity[0]);
+            }
+
             Document.BatchDisplayUpdates();
             Document.GetText(TextGetOptions.None, out string value);
 
