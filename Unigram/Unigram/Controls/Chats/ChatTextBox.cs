@@ -345,7 +345,7 @@ namespace Unigram.Controls.Chats
 
         private async void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            Document.GetText(TextGetOptions.NoHidden, out string text);
+            Document.GetText(TextGetOptions.None, out string text);
 
             // This needs to run before text empty check as it cleans up
             // some stuff it inline bot isn't found

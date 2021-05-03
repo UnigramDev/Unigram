@@ -2767,8 +2767,8 @@ namespace Unigram.Views
                 return;
             }
 
-            TextField.Document.GetText(TextGetOptions.None, out _);
-            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
+            TextField.Document.GetText(TextGetOptions.None, out string text);
+            
             if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
                 var insert = string.Empty;
