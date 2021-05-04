@@ -2760,7 +2760,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var reply = GetReply(true, false);
+                var reply = GetReply(true, !ApiInfo.CanUseActualFloats);
 
                 //if (string.Equals(text.Trim(), "\uD83C\uDFB2"))
                 if (CacheService.IsDiceEmoji(text, out string dice))
