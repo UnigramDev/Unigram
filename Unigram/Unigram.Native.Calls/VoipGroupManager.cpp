@@ -7,7 +7,7 @@
 #include "VoipVideoCapture.h"
 #include "VoipVideoRendererToken.h"
 #include "GroupNetworkStateChangedEventArgs.h"
-#include "FrameRequestedEventArgs.h"
+#include "BroadcastPartRequestedEventArgs.h"
 #include "MediaChannelDescriptionsRequestedEventArgs.h"
 
 #include "StaticThreads.h"
@@ -157,6 +157,11 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	void VoipGroupManager::SetVolume(int32_t ssrc, double volume) {
 		m_impl->setVolume(ssrc, volume);
+	}
+
+	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::SetFullSizeVideoEndpointId(hstring endpointId, CanvasControl canvas) {
+		m_impl->setFullSizeVideoEndpointId(string_to_unmanaged(endpointId));
+		return AddIncomingVideoOutput(endpointId, canvas);
 	}
 
 

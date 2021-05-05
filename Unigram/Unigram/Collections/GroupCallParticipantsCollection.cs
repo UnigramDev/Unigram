@@ -16,8 +16,7 @@ namespace Unigram.Collections
         private readonly IProtoService _protoService;
         private readonly IEventAggregator _aggregator;
 
-        private readonly int _groupCallId;
-        private bool _loadedAllParticipants;
+        private GroupCall _groupCall;
 
         public IGroupCallDelegate Delegate { get; set; }
 
@@ -26,15 +25,14 @@ namespace Unigram.Collections
             _protoService = protoService;
             _aggregator = aggregator;
 
-            _groupCallId = groupCall.Id;
-            _loadedAllParticipants = groupCall.LoadedAllParticipants;
+            _groupCall = groupCall;
 
             _aggregator.Subscribe(this);
         }
 
         public void Load()
         {
-            _protoService.Send(new LoadGroupCallParticipants(_groupCallId, 100));
+            _protoService.Send(new LoadGroupCallParticipants(_groupCall.Id, 100));
         }
 
         public void Dispose()
@@ -45,20 +43,24 @@ namespace Unigram.Collections
 
         public void Handle(UpdateGroupCall update)
         {
-            if (_groupCallId == update.GroupCall.Id)
+            if (_groupCall.Id == update.GroupCall.Id)
             {
-                if (_loadedAllParticipants && _loadedAllParticipants != update.GroupCall.LoadedAllParticipants)
+                if (_groupCall.LoadedAllParticipants && _groupCall.LoadedAllParticipants != update.GroupCall.LoadedAllParticipants)
+                {
+                    Load();
+                }
+                else if (_groupCall.ParticipantCount == Items.Count && _groupCall.ParticipantCount < update.GroupCall.ParticipantCount)
                 {
                     Load();
                 }
 
-                _loadedAllParticipants = update.GroupCall.LoadedAllParticipants;
+                _groupCall = update.GroupCall;
             }
         }
 
         public void Handle(UpdateGroupCallParticipant update)
         {
-            if (_groupCallId == update.GroupCallId)
+            if (_groupCall.Id == update.GroupCallId)
             {
                 if (update.Participant.Order.Length > 0)
                 {

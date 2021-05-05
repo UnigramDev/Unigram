@@ -17,11 +17,14 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Point = Windows.Foundation.Point;
 
 namespace Unigram.Views
 {
@@ -38,7 +41,9 @@ namespace Unigram.Views
 
         private readonly Dictionary<int, VoipVideoRendererToken> _userTokens = new Dictionary<int, VoipVideoRendererToken>();
         private readonly Dictionary<long, VoipVideoRendererToken> _chatTokens = new Dictionary<long, VoipVideoRendererToken>();
-        private VoipVideoRendererToken _viewportToken;
+
+        private GroupCallParticipant _pinnedParticipant;
+        private VoipVideoRendererToken _pinnedToken;
 
         private readonly ButtonWavesDrawable _drawable = new ButtonWavesDrawable();
 
@@ -83,6 +88,8 @@ namespace Unigram.Views
                 Connect(voipService.Manager);
             }
 
+            ElementCompositionPreview.SetIsTranslationEnabled(Viewport, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
             ViewportAspect.Constraint = new Size(16, 9);
         }
 
@@ -189,7 +196,109 @@ namespace Unigram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+        }
 
+        private void Viewport_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ParticipantsPanel == null)
+            {
+                return;
+            }
+
+            Viewport.Height = ActualHeight - BottomPanel.ActualHeight;
+            Viewport.Margin = new Thickness(-12, 0, -12, -(ActualHeight - BottomPanel.ActualHeight - ViewportAspect.ActualHeight));
+
+            var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
+            var visual = ElementCompositionPreview.GetElementVisual(Viewport);
+
+            var rectangle = Window.Current.Compositor.CreateRoundedRectangleGeometry();
+            rectangle.Offset = new Vector2(12, 0);
+            rectangle.CornerRadius = new Vector2(8);
+
+            if (ViewportAspect.ActualSize.X > 0)
+            {
+                rectangle.Size = new Vector2(ViewportAspect.ActualSize.X - 24, ViewportAspect.ActualSize.Y);
+            }
+
+            aspect.Clip = Window.Current.Compositor.CreateGeometricClip(rectangle);
+            visual.Properties.InsertVector3("Translation", new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
+            visual.Scale = new Vector3(ViewportAspect.ActualSize.X / Viewport.ActualSize.X);
+        }
+
+        private bool _pinnedExpanded = false;
+
+        private void Viewport_Click(object sender, RoutedEventArgs e)
+        {
+            var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
+            var visual = ElementCompositionPreview.GetElementVisual(Viewport);
+            var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
+
+            var clip = aspect.Clip as CompositionGeometricClip;
+            var rectangle = clip.Geometry as CompositionRoundedRectangleGeometry;
+
+            if (_pinnedExpanded)
+            {
+                var clipSize = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                clipSize.InsertKeyFrame(1, new Vector2(ViewportAspect.ActualSize.X - 24, ViewportAspect.ActualSize.Y));
+                clipSize.Duration = TimeSpan.FromSeconds(0.5);
+
+                var clipOffset = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                clipOffset.InsertKeyFrame(1, new Vector2(12, 0));
+                clipSize.Duration = TimeSpan.FromSeconds(0.5);
+
+                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                offset.InsertKeyFrame(1, new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
+                offset.Duration = TimeSpan.FromSeconds(0.5);
+
+                var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                scale.InsertKeyFrame(1, new Vector3((ViewportAspect.ActualSize.X - 24) / Viewport.ActualSize.X));
+                scale.Duration = TimeSpan.FromSeconds(0.5);
+
+                var translate = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                translate.InsertKeyFrame(1, Vector3.Zero);
+                translate.Duration = TimeSpan.FromSeconds(0.5);
+
+                rectangle.StartAnimation("Size", clipSize);
+                rectangle.StartAnimation("Offset", clipOffset);
+                visual.StartAnimation("Translation", offset);
+                visual.StartAnimation("Scale", scale);
+                pinned.StartAnimation("Translation", translate);
+
+                _pinnedExpanded = false;
+            }
+            else
+            {
+                var transform = ParticipantsPanel.TransformToVisual(this);
+                var point = transform.TransformPoint(new Point()).ToVector2();
+
+                var clipSize = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                clipSize.InsertKeyFrame(1, Viewport.ActualSize);
+                clipSize.Duration = TimeSpan.FromSeconds(0.5);
+
+                var clipOffset = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                clipOffset.InsertKeyFrame(1, new Vector2(0, -point.Y));
+                clipOffset.Duration = TimeSpan.FromSeconds(0.5);
+
+                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                offset.InsertKeyFrame(1, new Vector3(0, -point.Y, 0));
+                offset.Duration = TimeSpan.FromSeconds(0.5);
+
+                var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                scale.InsertKeyFrame(1, Vector3.One);
+                scale.Duration = TimeSpan.FromSeconds(0.5);
+
+                var translate = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                translate.InsertKeyFrame(1, new Vector3(0, Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y - PinnedInfo.ActualSize.Y, 0));
+                translate.Duration = TimeSpan.FromSeconds(0.5);
+
+                rectangle.StartAnimation("Size", clipSize);
+                rectangle.StartAnimation("Offset", clipOffset);
+                visual.StartAnimation("Translation", offset);
+                visual.StartAnimation("Scale", scale);
+                pinned.StartAnimation("Translation", translate);
+
+                _pinnedExpanded = true;
+            }
         }
 
         public void Update(GroupCall call, GroupCallParticipant currentUser)
@@ -803,6 +912,11 @@ namespace Unigram.Views
         {
             this.BeginOnUIThread(() =>
             {
+                if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
+                {
+                    UpdatePinnedParticipant(participant);
+                }
+
                 var container = List.ContainerFromItem(participant) as SelectorItem;
                 var content = container?.ContentTemplateRoot as Grid;
 
@@ -910,6 +1024,182 @@ namespace Unigram.Views
             }
         }
 
+        private void UpdatePinnedParticipant(GroupCallParticipant participant)
+        {
+            _pinnedParticipant = participant;
+
+            if (participant == null || (participant.ScreenSharingVideoInfo == null && participant.VideoInfo == null))
+            {
+                _pinnedToken = null;
+                ShowHidePinnedParticipant(false);
+                return;
+            }
+
+            ShowHidePinnedParticipant(true);
+
+            if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
+            {
+                PinnedTitle.Text = user.GetFullName();
+            }
+            else if (_cacheService.TryGetChat(participant.ParticipantId, out Chat chat))
+            {
+                PinnedTitle.Text = _protoService.GetTitle(chat);
+            }
+
+            bool HasIncomingVideoOutput(string endpointId)
+            {
+                return _pinnedToken?.IsMatch(endpointId, Viewport) ?? false;
+            }
+
+            void SetIncomingVideoOutput(string endpointId)
+            {
+                if (HasIncomingVideoOutput(endpointId))
+                {
+                    return;
+                }
+
+                _pinnedToken = _manager.SetFullSizeVideoEndpointId(endpointId, Viewport);
+            }
+
+            if (participant.ScreenSharingVideoInfo != null)
+            {
+                SetIncomingVideoOutput(participant.ScreenSharingVideoInfo.EndpointId);
+            }
+            else if (participant.VideoInfo != null)
+            {
+                SetIncomingVideoOutput(participant.VideoInfo.EndpointId);
+            }
+            else
+            {
+                _pinnedToken = null;
+            }
+
+            if (participant.IsHandRaised)
+            {
+                PinnedSpeaking.Text = Strings.Resources.WantsToSpeak;
+                PinnedGlyph.Text = Icons.EmojiHand;
+            }
+            else if (participant.IsSpeaking)
+            {
+                if (participant.VolumeLevel != 10000)
+                {
+                    PinnedSpeaking.Text = string.Format("{0:N0}% {1}", participant.VolumeLevel / 100d, Strings.Resources.Speaking);
+                }
+                else
+                {
+                    PinnedSpeaking.Text = Strings.Resources.Speaking;
+                }
+
+                PinnedGlyph.Text = Icons.MicOn;
+            }
+            else if (participant.IsCurrentUser)
+            {
+                var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
+
+                PinnedSpeaking.Text = Strings.Resources.ThisIsYou;
+                PinnedGlyph.Text = muted ? Icons.MicOff : Icons.MicOn;
+            }
+            else
+            {
+                var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
+
+                PinnedSpeaking.Text = participant.Bio.Length > 0 ? participant.Bio : Strings.Resources.Listening;
+                PinnedGlyph.Text = muted ? Icons.MicOff : Icons.MicOn;
+            }
+        }
+
+        private bool _pinnedCollapsed = true;
+
+        private async void ShowHidePinnedParticipant(bool show)
+        {
+            if ((show && ViewportAspect.Visibility == Visibility.Visible) || (!show && (ViewportAspect.Visibility == Visibility.Collapsed || _pinnedCollapsed)))
+            {
+                return;
+            }
+
+            if (show)
+            {
+                _pinnedCollapsed = false;
+            }
+            else
+            {
+                _pinnedCollapsed = true;
+            }
+
+            ViewportAspect.Visibility = Visibility.Visible;
+
+            await ViewportAspect.UpdateLayoutAsync();
+
+            var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
+            var visual = ElementCompositionPreview.GetElementVisual(Viewport);
+            var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
+
+            var clip = aspect.Clip as CompositionGeometricClip;
+            var rectangle = clip.Geometry as CompositionRoundedRectangleGeometry;
+
+            var participants = ElementCompositionPreview.GetElementVisual(ListRoot);
+
+            var batch = aspect.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                //aspect.Clip = null;
+                participants.Offset = new Vector3();
+
+                if (show)
+                {
+                    _pinnedCollapsed = false;
+                }
+                else
+                {
+                    ViewportAspect.Visibility = Visibility.Collapsed;
+                }
+            };
+
+            var actualSize = ViewportAspect.ActualSize.Y + 8;
+
+            var clipSize = aspect.Compositor.CreateVector2KeyFrameAnimation();
+            clipSize.InsertKeyFrame(0, new Vector2(ViewportAspect.ActualSize.X - 24, show ? 0 : ViewportAspect.ActualSize.Y));
+            clipSize.InsertKeyFrame(1, new Vector2(ViewportAspect.ActualSize.X - 24, show ? ViewportAspect.ActualSize.Y : 0));
+            clipSize.Duration = TimeSpan.FromSeconds(0.5);
+
+            if (_pinnedExpanded)
+            {
+                var clipOffset = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+                clipOffset.InsertKeyFrame(1, new Vector2(12, 0));
+                clipSize.Duration = TimeSpan.FromSeconds(0.5);
+
+                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                offset.InsertKeyFrame(1, new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
+                offset.Duration = TimeSpan.FromSeconds(0.5);
+
+                var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                scale.InsertKeyFrame(1, new Vector3((ViewportAspect.ActualSize.X - 24) / Viewport.ActualSize.X));
+                scale.Duration = TimeSpan.FromSeconds(0.5);
+
+                var translate = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                translate.InsertKeyFrame(1, Vector3.Zero);
+                translate.Duration = TimeSpan.FromSeconds(0.5);
+
+                rectangle.StartAnimation("Size", clipSize);
+                rectangle.StartAnimation("Offset", clipOffset);
+                visual.StartAnimation("Translation", offset);
+                visual.StartAnimation("Scale", scale);
+                pinned.StartAnimation("Translation", translate);
+
+                _pinnedExpanded = false;
+            }
+
+            var participantsOffset = aspect.Compositor.CreateVector3KeyFrameAnimation();
+            participantsOffset.InsertKeyFrame(0, new Vector3(0, show ? -actualSize : 0, 0));
+            participantsOffset.InsertKeyFrame(1, new Vector3(0, show ? 0 : -actualSize, 0));
+            participantsOffset.Duration = TimeSpan.FromSeconds(0.5);
+
+            rectangle.StartAnimation("Size", clipSize);
+            participants.StartAnimation("Offset", participantsOffset);
+
+            batch.End();
+        }
+
         public bool HasIncomingVideoOutput(MessageSender sender, string endpointId, CanvasControl canvas)
         {
             if (sender is MessageSenderUser user && _userTokens.TryGetValue(user.UserId, out var userToken))
@@ -962,17 +1252,6 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var participant = List.ItemFromContainer(sender) as GroupCallParticipant;
 
-            if (participant.ScreenSharingVideoInfo != null)
-            {
-                _viewportToken = _manager.AddIncomingVideoOutput(participant.ScreenSharingVideoInfo.EndpointId, Viewport);
-            }
-            else if (participant.VideoInfo != null)
-            {
-                _viewportToken = _manager.AddIncomingVideoOutput(participant.VideoInfo.EndpointId, Viewport);
-            }
-
-            return;
-
             var call = _service.Call;
 
             if (participant.IsCurrentUser)
@@ -1001,6 +1280,18 @@ namespace Unigram.Views
                 };
 
                 flyout.Items.Add(new ContentMenuFlyoutItem { Content = slider });
+
+                if (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null)
+                {
+                    if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
+                    {
+                        flyout.CreateFlyoutItem(() => UpdatePinnedParticipant(null), "Unpin Video", new FontIcon { Glyph = Icons.PinOff });
+                    }
+                    else
+                    {
+                        flyout.CreateFlyoutItem(() => UpdatePinnedParticipant(participant), "Pin Video", new FontIcon { Glyph = Icons.Pin });
+                    }
+                }
 
                 if (participant.CanBeUnmutedForAllUsers && participant.IsMutedForAllUsers)
                 {

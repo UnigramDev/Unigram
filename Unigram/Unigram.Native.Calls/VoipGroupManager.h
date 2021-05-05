@@ -26,6 +26,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void RemoveSsrcs(IVector<int32_t> ssrcs);
 
 		winrt::Unigram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas);
+		winrt::Unigram::Native::Calls::VoipVideoRendererToken SetFullSizeVideoEndpointId(hstring endpointId, CanvasControl canvas);
 
 		bool IsMuted();
 		void IsMuted(bool value);

@@ -23,6 +23,7 @@ namespace Unigram.Native.Calls
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
         VoipVideoRendererToken AddIncomingVideoOutput(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        VoipVideoRendererToken SetFullSizeVideoEndpointId(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
 
         Boolean IsMuted;
 
