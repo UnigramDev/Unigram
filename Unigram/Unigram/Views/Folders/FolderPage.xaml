@@ -26,6 +26,7 @@
                     <StackPanel MaxWidth="640">
                         <controls:LottieView
                             IsLoopingEnabled="False"
+                            IsCachingEnabled="False"
                             Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs"
                             Width="140"
                             Height="140"
