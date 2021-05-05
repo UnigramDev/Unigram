@@ -321,12 +321,10 @@ namespace Unigram.Controls.Chats
                 }
             }
 
-            // scroll to desired position with animation!
-            if (scrollViewer.ScrollableHeight > 0)
+            if (scrollViewer.ScrollableHeight > 0 && position.Y < scrollViewer.ScrollableHeight)
             {
                 await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center);
             }
-            //scrollViewer.ChangeView(null, position.Y, null, disableAnimation ?? alignment != VerticalAlignment.Center);
 
             _programmaticScrolling = _programmaticExternal = false;
             ViewVisibleMessages?.Invoke(true);
