@@ -34,7 +34,7 @@
 #include "common.h"
 #include "pitch.h"
 
-void _celt_lpc(
+void _celt_lpc1(
       opus_val16       *_lpc, /* out: [0...p-1] LPC coefficients      */
 const opus_val32 *ac,  /* in:  [0...p] autocorrelation values  */
 int          p
@@ -89,7 +89,7 @@ int          p
 
 #if 0 // If this is required make sure it works on MSVC
 
-void celt_fir(
+void celt_fir1(
          const opus_val16 *x,
          const opus_val16 *num,
          opus_val16 *y,
@@ -122,7 +122,7 @@ void celt_fir(
    }
 }
 
-void celt_iir(const opus_val32 *_x,
+void celt_iir1(const opus_val32 *_x,
          const opus_val16 *den,
          opus_val32 *_y,
          int N,
@@ -198,7 +198,7 @@ void celt_iir(const opus_val32 *_x,
 
 #endif // 0
 
-int _celt_autocorr(
+int _celt_autocorr1(
                    const opus_val16 *x,   /*  in: [0...n-1] samples x   */
                    opus_val32       *ac,  /* out: [0...lag-1] ac values */
                    const opus_val16       *window,
@@ -259,7 +259,7 @@ int _celt_autocorr(
          shift = 0;
    }
 #endif
-   celt_pitch_xcorr(xptr, xptr, ac, fastN, lag+1);
+   celt_pitch_xcorr1(xptr, xptr, ac, fastN, lag+1);
    for (k=0;k<=lag;k++)
    {
       for (i = k+fastN, d = 0; i < n; i++)
