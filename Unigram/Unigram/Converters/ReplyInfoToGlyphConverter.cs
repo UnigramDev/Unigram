@@ -101,7 +101,9 @@ namespace Unigram.Converters
         public const string Search = "\uE721"; 
         public const string Settings = "\uE713"; 
         public const string Phone = "\uE717"; 
-        public const string Video = "\uE714"; 
+        public const string Video = "\uE714";
+        public const string VideoFilled = "\uE915";
+        public const string ScreencastFilled = "\uE910";
         public const string Camera = "\uE722"; 
         public const string MusicNote = "\uE8D6"; 
         public const string MicOn = "\uE720"; 

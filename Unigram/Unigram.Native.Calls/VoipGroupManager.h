@@ -7,6 +7,7 @@
 
 #include <winrt/Telegram.Td.Api.h>
 
+using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace winrt::Telegram::Td::Api;
 using namespace winrt::Windows::Foundation::Collections;
 
@@ -24,11 +25,14 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SetJoinResponsePayload(hstring payload);
 		void RemoveSsrcs(IVector<int32_t> ssrcs);
 
+		winrt::Unigram::Native::Calls::VoipVideoRendererToken AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas);
+
 		bool IsMuted();
 		void IsMuted(bool value);
 
 		void SetAudioOutputDevice(hstring id);
 		void SetAudioInputDevice(hstring id);
+		void SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture);
 
 		void SetVolume(int32_t ssrc, double volume);
 
@@ -42,13 +46,19 @@ namespace winrt::Unigram::Native::Calls::implementation
 			IMapView<int32_t, IKeyValuePair<float, bool>>> const& value);
 		void AudioLevelsUpdated(winrt::event_token const& token);
 
-		winrt::event_token FrameRequested(Windows::Foundation::TypedEventHandler<
+		winrt::event_token BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
 			winrt::Unigram::Native::Calls::FrameRequestedEventArgs> const& value);
-		void FrameRequested(winrt::event_token const& token);
+		void BroadcastPartRequested(winrt::event_token const& token);
+
+		winrt::event_token MediaChannelDescriptionsRequested(Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipGroupManager,
+			winrt::Unigram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs> const& value);
+		void MediaChannelDescriptionsRequested(winrt::event_token const& token);
 
 	private:
 		std::unique_ptr<tgcalls::GroupInstanceCustomImpl> m_impl = nullptr;
+		std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
 
 		bool m_isMuted = true;
 
@@ -60,13 +70,16 @@ namespace winrt::Unigram::Native::Calls::implementation
 			IMapView<int32_t, IKeyValuePair<float, bool>>>> m_audioLevelsUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::FrameRequestedEventArgs>> m_frameRequested;
+			winrt::Unigram::Native::Calls::FrameRequestedEventArgs>> m_broadcastPartRequested;
+		winrt::event<Windows::Foundation::TypedEventHandler<
+			winrt::Unigram::Native::Calls::VoipGroupManager,
+			winrt::Unigram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs>> m_mediaChannelDescriptionsRequested;
 	};
 
 
-	class LoadPartTask final : public tgcalls::BroadcastPartTask {
+	class BroadcastPartTaskImpl final : public tgcalls::BroadcastPartTask {
 	public:
-		LoadPartTask(
+		BroadcastPartTaskImpl(
 			int64_t time,
 			int64_t period,
 			std::function<void(tgcalls::BroadcastPart&&)> done)
@@ -120,6 +133,58 @@ namespace winrt::Unigram::Native::Calls::implementation
 		std::function<void(tgcalls::BroadcastPart&&)> _done;
 		webrtc::Mutex _mutex;
 
+	};
+
+	class RequestMediaChannelDescriptionTaskImpl final : public tgcalls::RequestMediaChannelDescriptionTask {
+	public:
+		RequestMediaChannelDescriptionTaskImpl(
+			std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> done)
+			: _done(std::move(done))
+		{
+
+		}
+
+		void done(GroupCallMediaChannelDescriptions descriptions) {
+			webrtc::MutexLock lock(&_mutex);
+
+			if (_done) {
+				if (descriptions) {
+					auto vector = std::vector<tgcalls::MediaChannelDescription>();
+
+					for (const GroupCallMediaChannelDescription& description : descriptions.Descriptions()) {
+						tgcalls::MediaChannelDescription impl;
+						impl.audioSsrc = description.SourceId();
+						impl.videoInformation = string_to_unmanaged(description.Description());
+
+						if (description.IsVideo()) {
+							impl.type = tgcalls::MediaChannelDescription::Type::Video;
+						}
+						else {
+							impl.type = tgcalls::MediaChannelDescription::Type::Audio;
+						}
+
+						vector.push_back(std::move(impl));
+					}
+
+					_done(std::move(vector));
+				}
+			}
+		}
+
+		void cancel() override {
+			webrtc::MutexLock lock(&_mutex);
+
+			if (!_done) {
+				return;
+			}
+
+			_done = nullptr;
+		}
+	private:
+		const int64_t _time = 0;
+		const int32_t _scale = 0;
+		std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> _done;
+		webrtc::Mutex _mutex;
 	};
 }
 

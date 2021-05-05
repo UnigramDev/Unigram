@@ -43,10 +43,6 @@
 #include "celt_lpc.h"
 #include "math.h"
 
-#ifdef USE_MALLOC
-#include <stdlib.h>
-#endif
-
 static void find_best_pitch(opus_val32 *xcorr, opus_val16 *y, int len,
                             int max_pitch, int *best_pitch
 #ifdef FIXED_POINT
@@ -301,15 +297,24 @@ void pitch_search(const opus_val16 *x_lp, opus_val16 *y,
    celt_assert(max_pitch>0);
    lag = len+max_pitch;
 
-#ifdef USE_MALLOC
-   opus_val16 *x_lp4 = malloc(sizeof(*x_lp4) * len>>2);
-   opus_val16 *y_lp4 = malloc(sizeof(*y_lp4) * lag>>2);
-   opus_val32 *xcorr = malloc(sizeof(*xcorr) * max_pitch>>1);
-#else
+#ifdef _MSC_VER // Couldn't build with _malloca :/
+   opus_val16 x_lp4_reserved[240 * 4];
+   opus_val16 y_lp4_reserved[387 * 4];
+   opus_val32 xcorr_reserved[294 * 4];
+   opus_val16 *x_lp4 = ((len >> 2) <= (240 * 4))
+       ? x_lp4_reserved
+       : (opus_val16*)malloc(sizeof(opus_val16) * (len >> 2));
+   opus_val16 *y_lp4 = ((lag >> 2) <= (387 * 4))
+       ? y_lp4_reserved
+       : (opus_val16*)malloc(sizeof(opus_val16) * (lag >> 2));
+   opus_val32 *xcorr = ((max_pitch >> 1) <= (294 * 4))
+       ? xcorr_reserved
+       : (opus_val32*)malloc(sizeof(opus_val32) * (max_pitch >> 1));
+#else // _MSC_VER
    opus_val16 x_lp4[len>>2];
    opus_val16 y_lp4[lag>>2];
    opus_val32 xcorr[max_pitch>>1];
-#endif
+#endif // _MSC_VER
 
    /* Downsample by 2 again */
    for (j=0;j<len>>2;j++)
@@ -393,11 +398,11 @@ void pitch_search(const opus_val16 *x_lp, opus_val16 *y,
    }
    *pitch = 2*best_pitch[0]-offset;
 
-#ifdef USE_MALLOC
-   free(x_lp4);
-   free(y_lp4);
-   free(xcorr);
-#endif
+#ifdef _MSC_VER
+   if (x_lp4 != x_lp4_reserved) free(x_lp4);
+   if (y_lp4 != y_lp4_reserved) free(y_lp4);
+   if (xcorr != xcorr_reserved) free(xcorr);
+#endif // _MSC_VER
 }
 
 #ifdef FIXED_POINT
@@ -443,11 +448,7 @@ opus_val16 remove_doubling(opus_val16 *x, int maxperiod, int minperiod,
    opus_val16 g, g0;
    opus_val16 pg;
    opus_val32 xy,xx,yy,xy2;
-#ifdef USE_MALLOC
-   opus_val32 *xcorr = malloc(sizeof(*xcorr) * 3);
-#else
    opus_val32 xcorr[3];
-#endif
    opus_val32 best_xy, best_yy;
    int offset;
    int minperiod0;
@@ -463,11 +464,16 @@ opus_val16 remove_doubling(opus_val16 *x, int maxperiod, int minperiod,
       *T0_=maxperiod-1;
 
    T = T0 = *T0_;
-#ifdef USE_MALLOC
-   opus_val16 *yy_lookup = malloc(sizeof(*yy_lookup) * (maxperiod+1));
-#else
+
+#ifdef _MSC_VER // Couldn't build with _malloca :/
+   opus_val32 yy_lookup_reserved[385 * 4];
+   opus_val32 *yy_lookup = ((maxperiod + 1) <= 385 * 4)
+       ? yy_lookup_reserved
+       : (opus_val32*)malloc(sizeof(opus_val32) * (maxperiod + 1));
+#else // _MSC_VER
    opus_val32 yy_lookup[maxperiod+1];
-#endif
+#endif // _MSC_VER
+
    dual_inner_prod(x, x, x-T0, N, &xx, &xy);
    yy_lookup[0] = xx;
    yy=xx;
@@ -547,10 +553,9 @@ opus_val16 remove_doubling(opus_val16 *x, int maxperiod, int minperiod,
    if (*T0_<minperiod0)
       *T0_=minperiod0;
 
-#ifdef USE_MALLOC
-   free(xcorr);
-   free(yy_lookup);
-#endif
+#ifdef _MSC_VER
+   if (yy_lookup != yy_lookup_reserved) free(yy_lookup);
+#endif // _MSC_VER
 
    return pg;
 }

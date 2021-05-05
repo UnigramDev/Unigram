@@ -1,10 +1,5 @@
 #include "pch.h"
 #include "RemoteMediaStateUpdatedEventArgs.h"
-#if __has_include("RemoteMediaStateUpdatedEventArgs.g.cpp")
-#include "RemoteMediaStateUpdatedEventArgs.g.cpp"
-#endif
-
-using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::Unigram::Native::Calls::implementation
 {

@@ -1,15 +1,12 @@
 ﻿#include "pch.h"
 #include "FrameRequestedEventArgs.h"
-#if __has_include("FrameRequestedEventArgs.g.cpp")
-#include "FrameRequestedEventArgs.g.cpp"
-#endif
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-    FrameRequestedEventArgs::FrameRequestedEventArgs(int32_t scale, int64_t time, FrameReadyDelegate ready)
+    FrameRequestedEventArgs::FrameRequestedEventArgs(int32_t scale, int64_t time, BroadcastPartRequestedDeferral deferral)
         : m_scale(scale),
         m_time(time),
-        m_ready(ready)
+        m_deferral(deferral)
     {
 
     }
@@ -22,7 +19,7 @@ namespace winrt::Unigram::Native::Calls::implementation
         return m_time;
     }
 
-    FrameReadyDelegate FrameRequestedEventArgs::Ready() {
-        return m_ready;
+    BroadcastPartRequestedDeferral FrameRequestedEventArgs::Deferral() {
+        return m_deferral;
     }
 }

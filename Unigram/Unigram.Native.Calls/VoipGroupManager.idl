@@ -1,7 +1,10 @@
 import "Unigram.Native.Calls.idl";
 import "VoipGroupDescriptor.idl";
+import "VoipVideoCapture.idl";
+import "VoipVideoRendererToken.idl";
 import "GroupNetworkStateChangedEventArgs.idl";
 import "FrameRequestedEventArgs.idl";
+import "MediaChannelDescriptionsRequestedEventArgs.idl";
 
 namespace Unigram.Native.Calls
 {
@@ -19,16 +22,20 @@ namespace Unigram.Native.Calls
         void SetJoinResponsePayload(String payload);
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
+        VoipVideoRendererToken AddIncomingVideoOutput(String endpointId, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+
         Boolean IsMuted;
 
         void SetAudioOutputDevice(String id);
         void SetAudioInputDevice(String id);
+        void SetVideoCapture(VoipVideoCapture videoCapture);
 
         void SetVolume(Int32 ssrc, Double volume);
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, GroupNetworkStateChangedEventArgs> NetworkStateUpdated;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<Int32, Windows.Foundation.Collections.IKeyValuePair<Single, Boolean> > > AudioLevelsUpdated;
 
-        event Windows.Foundation.TypedEventHandler<VoipGroupManager, FrameRequestedEventArgs> FrameRequested;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, FrameRequestedEventArgs> BroadcastPartRequested;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, MediaChannelDescriptionsRequestedEventArgs> MediaChannelDescriptionsRequested;
     }
 }

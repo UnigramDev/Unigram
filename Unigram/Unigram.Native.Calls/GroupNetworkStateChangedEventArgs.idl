@@ -3,8 +3,6 @@ namespace Unigram.Native.Calls
 	[default_interface]
 	runtimeclass GroupNetworkStateChangedEventArgs
 	{
-		GroupNetworkStateChangedEventArgs();
-
 		Boolean IsConnected{ get; };
 		Boolean IsTransitioningFromBroadcastToRtc{ get; };
 	}

@@ -4,8 +4,11 @@
 #include "VoipGroupManager.g.cpp"
 #endif
 
+#include "VoipVideoCapture.h"
+#include "VoipVideoRendererToken.h"
 #include "GroupNetworkStateChangedEventArgs.h"
 #include "FrameRequestedEventArgs.h"
+#include "MediaChannelDescriptionsRequestedEventArgs.h"
 
 #include "StaticThreads.h"
 
@@ -24,7 +27,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		impl.threads = tgcalls::StaticThreads::getThreads();
 		impl.config = config;
 		impl.networkStateUpdated = [this](tgcalls::GroupNetworkState state) {
-			auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::GroupNetworkStateChangedEventArgs>(state.isConnected, state.isTransitioningFromBroadcastToRtc);
+			auto args = winrt::make_self<GroupNetworkStateChangedEventArgs>(state.isConnected, state.isTransitioningFromBroadcastToRtc);
 			m_networkStateUpdated(*this, *args);
 		};
 		impl.audioLevelsUpdated = [this](tgcalls::GroupLevelsUpdate const& levels) {
@@ -36,11 +39,9 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 			m_audioLevelsUpdated(*this, args.GetView());
 		};
-		impl.onAudioFrame = [this](uint32_t, const tgcalls::AudioFrame&) {
-
-		};
 		impl.initialInputDeviceId = string_to_unmanaged(descriptor.AudioInputId());
 		impl.initialOutputDeviceId = string_to_unmanaged(descriptor.AudioOutputId());
+		impl.videoContentType = tgcalls::VideoContentType::Generic;
 		//impl.incomingVideoSourcesUpdated = [this](std::vector<uint32_t> const&) {
 
 		//};
@@ -64,11 +65,25 @@ namespace winrt::Unigram::Native::Calls::implementation
 			case 125: scale = 3; break;
 			}
 
-			auto task = std::make_shared<LoadPartTask>(time, scale, std::move(done));
-			auto args = winrt::make_self<winrt::Unigram::Native::Calls::implementation::FrameRequestedEventArgs>(scale, time,
+			auto task = std::make_shared<BroadcastPartTaskImpl>(time, scale, std::move(done));
+			auto args = winrt::make_self<FrameRequestedEventArgs>(scale, time,
 				[task](int64_t time, int64_t response, FilePart filePart) { task->done(time, response, filePart); });
 
-			m_frameRequested(*this, *args);
+			m_broadcastPartRequested(*this, *args);
+			return task;
+		};
+		impl.requestMediaChannelDescriptions = [this](const std::vector<uint32_t>& ssrcs, std::function<void(std::vector<tgcalls::MediaChannelDescription>&&)> done) {
+			auto task = std::make_shared<RequestMediaChannelDescriptionTaskImpl>(std::move(done));
+			auto vector = winrt::single_threaded_vector<int32_t>();
+
+			for (const uint32_t& ssrc : ssrcs) {
+				vector.Append(ssrc);
+			}
+
+			auto args = winrt::make_self<MediaChannelDescriptionsRequestedEventArgs>(vector,
+				[task](GroupCallMediaChannelDescriptions descriptions) { task->done(descriptions); });
+
+			m_mediaChannelDescriptionsRequested(*this, *args);
 			return task;
 		};
 
@@ -90,6 +105,10 @@ namespace winrt::Unigram::Native::Calls::implementation
 			});
 	}
 
+	void VoipGroupManager::SetJoinResponsePayload(hstring payload) {
+		m_impl->setJoinResponsePayload(string_to_unmanaged(payload));
+	}
+
 	void VoipGroupManager::RemoveSsrcs(IVector<int32_t> ssrcs) {
 		auto impl = std::vector<uint32_t>();
 
@@ -98,6 +117,13 @@ namespace winrt::Unigram::Native::Calls::implementation
 		}
 
 		m_impl->removeSsrcs(impl);
+	}
+
+	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas) {
+		auto renderer = std::make_shared<VoipVideoRenderer>(canvas, true);
+		m_impl->addIncomingVideoOutput(string_to_unmanaged(endpointId), renderer);
+
+		return *winrt::make_self<VoipVideoRendererToken>(renderer, endpointId, canvas);
 	}
 
 
@@ -115,6 +141,18 @@ namespace winrt::Unigram::Native::Calls::implementation
 	}
 	void VoipGroupManager::SetAudioInputDevice(hstring id) {
 		m_impl->setAudioInputDevice(string_to_unmanaged(id));
+	}
+
+	void VoipGroupManager::SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture) {
+		if (videoCapture) {
+			auto implementation = winrt::get_self<implementation::VoipVideoCapture>(videoCapture);
+			m_capturer = implementation->m_impl;
+		}
+		else {
+			m_capturer = nullptr;
+		}
+
+		m_impl->setVideoCapture(m_capturer);
 	}
 
 	void VoipGroupManager::SetVolume(int32_t ssrc, double volume) {
@@ -151,15 +189,29 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 
 
-	winrt::event_token VoipGroupManager::FrameRequested(Windows::Foundation::TypedEventHandler<
+	winrt::event_token VoipGroupManager::BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
 		winrt::Unigram::Native::Calls::VoipGroupManager,
 		winrt::Unigram::Native::Calls::FrameRequestedEventArgs> const& value)
 	{
-		return m_frameRequested.add(value);
+		return m_broadcastPartRequested.add(value);
 	}
 
-	void VoipGroupManager::FrameRequested(winrt::event_token const& token)
+	void VoipGroupManager::BroadcastPartRequested(winrt::event_token const& token)
 	{
-		m_frameRequested.remove(token);
+		m_broadcastPartRequested.remove(token);
+	}
+
+
+
+	winrt::event_token VoipGroupManager::MediaChannelDescriptionsRequested(Windows::Foundation::TypedEventHandler<
+		winrt::Unigram::Native::Calls::VoipGroupManager,
+		winrt::Unigram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs> const& value)
+	{
+		return m_mediaChannelDescriptionsRequested.add(value);
+	}
+
+	void VoipGroupManager::MediaChannelDescriptionsRequested(winrt::event_token const& token)
+	{
+		m_mediaChannelDescriptionsRequested.remove(token);
 	}
 }

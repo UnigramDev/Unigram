@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,6 +14,7 @@ using Unigram.Services.ViewService;
 using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Popups;
+using Windows.Data.Json;
 using Windows.Devices.Enumeration;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,7 +31,7 @@ namespace Unigram.Services
         GroupCallParticipantsCollection Participants { get; }
 
         Chat Chat { get; }
-        
+
         GroupCall Call { get; }
         GroupCallParticipant CurrentUser { get; }
 
@@ -199,7 +201,7 @@ namespace Unigram.Services
                 if (popup.IsScheduleSelected)
                 {
                     var schedule = new ScheduleVoiceChatPopup(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
-                    
+
                     var again = await schedule.ShowQueuedAsync();
                     if (again != ContentDialogResult.Primary)
                     {
@@ -266,7 +268,8 @@ namespace Unigram.Services
                 _manager = new VoipGroupManager(descriptor);
                 _manager.NetworkStateUpdated += OnNetworkStateUpdated;
                 _manager.AudioLevelsUpdated += OnAudioLevelsUpdated;
-                _manager.FrameRequested += OnFrameRequested;
+                _manager.BroadcastPartRequested += OnBroadcastPartRequested;
+                _manager.MediaChannelDescriptionsRequested += OnMediaChannelDescriptionsRequested;
 
                 await ShowAsync(groupCall, _manager);
 
@@ -326,10 +329,21 @@ namespace Unigram.Services
                 Participants?.Dispose();
                 Participants = new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
 
-                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, true, true, string.Empty));
+                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, true, false, string.Empty));
                 if (response is Text json)
                 {
+                    bool broadcast;
+                    if (JsonObject.TryParse(json.TextValue, out JsonObject data))
+                    {
+                        broadcast = data.GetNamedBoolean("stream", false);
+                    }
+                    else
+                    {
+                        broadcast = false;
+                    }
+
                     _source = ssrc;
+                    _manager.SetConnectionMode(broadcast ? VoipGroupConnectionMode.Broadcast : VoipGroupConnectionMode.Rtc, true);
                     _manager.SetJoinResponsePayload(json.TextValue);
 
                     Participants?.Load();
@@ -337,7 +351,7 @@ namespace Unigram.Services
             });
         }
 
-        private async void OnFrameRequested(VoipGroupManager sender, FrameRequestedEventArgs args)
+        private async void OnBroadcastPartRequested(VoipGroupManager sender, FrameRequestedEventArgs args)
         {
             var call = _call;
             if (call == null)
@@ -362,7 +376,21 @@ namespace Unigram.Services
             ProtoService.Send(new GetGroupCallStreamSegment(call.Id, time, args.Scale), result =>
             {
                 stamp = DateTime.Now.ToTimestamp() - stamp;
-                args.Ready(time, response.Value + stamp, result as FilePart);
+                args.Deferral(time, response.Value + stamp, result as FilePart);
+            });
+        }
+
+        private void OnMediaChannelDescriptionsRequested(VoipGroupManager sender, MediaChannelDescriptionsRequestedEventArgs args)
+        {
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
+            ProtoService.Send(new GetGroupCallMediaChannelDescriptions(call.Id, args.Ssrcs), result =>
+            {
+                args.Deferral(result as GroupCallMediaChannelDescriptions);
             });
         }
 
@@ -434,6 +462,8 @@ namespace Unigram.Services
                 {
                     _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
                     _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
+                    _manager.BroadcastPartRequested -= OnBroadcastPartRequested;
+                    _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
 
                     _manager.Dispose();
                     _manager = null;

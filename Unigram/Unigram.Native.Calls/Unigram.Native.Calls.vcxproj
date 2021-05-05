@@ -118,7 +118,8 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
-      <AdditionalOptions>%(AdditionalOptions) /bigobj /Zc:__cplusplus</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <!-- /Zc:__cplusplus -->
       <!--Temporarily disable cppwinrt heap enforcement to work around xaml compiler generated std::shared_ptr use -->
       <AdditionalOptions Condition="'$(CppWinRTHeapEnforcement)'==''">/DWINRT_NO_MAKE_DETECTION %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>
@@ -132,7 +133,6 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\rnnoise\include;C:\tgcalls\tgcalls;C:\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsWinRT>
       <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsWinRT>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
       <!--<LanguageStandard>stdcpplatest</LanguageStandard>-->
     </ClCompile>
     <Link>
@@ -226,6 +226,10 @@
       <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="MediaChannelDescriptionsRequestedEventArgs.h">
+      <DependentUpon>MediaChannelDescriptionsRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
     </ClInclude>
@@ -263,6 +267,10 @@
       <DependentUpon>VoipVideoCapture.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="VoipVideoRenderer.h" />
+    <ClInclude Include="VoipVideoRendererToken.h">
+      <DependentUpon>VoipVideoRendererToken.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\tgcalls\tgcalls\FakeVideoTrackSource.cpp">
@@ -354,13 +362,23 @@
       <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="MediaChannelDescriptionsRequestedEventArgs.cpp">
+      <DependentUpon>MediaChannelDescriptionsRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\celt_lpc.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="rnnoise\src\denoise.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="rnnoise\src\kiss_fft.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\pitch.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="rnnoise\src\rnn.c">
@@ -396,12 +414,19 @@
     <ClCompile Include="VoipVideoCapture.cpp">
       <DependentUpon>VoipVideoCapture.idl</DependentUpon>
     </ClCompile>
+    <ClCompile Include="VoipVideoRendererToken.cpp">
+      <DependentUpon>VoipVideoRendererToken.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="FrameRequestedEventArgs.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="GroupNetworkStateChangedEventArgs.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />
@@ -416,6 +441,9 @@
     </Midl>
     <Midl Include="VoipManager.idl" />
     <Midl Include="VoipVideoCapture.idl" />
+    <Midl Include="VoipVideoRendererToken.idl">
+      <SubType>Designer</SubType>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <None Include="VoipManager.def" />

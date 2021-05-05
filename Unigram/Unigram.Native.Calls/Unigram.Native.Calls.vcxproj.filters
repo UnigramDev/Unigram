@@ -104,6 +104,12 @@
     <ClCompile Include="rnnoise\src\rnn_reader.c">
       <Filter>rnnoise\src</Filter>
     </ClCompile>
+    <ClCompile Include="rnnoise\src\celt_lpc.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\pitch.c">
+      <Filter>rnnoise\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -264,6 +270,8 @@
     <Midl Include="VoipGroupDescriptor.idl" />
     <Midl Include="GroupNetworkStateChangedEventArgs.idl" />
     <Midl Include="FrameRequestedEventArgs.idl" />
+    <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl" />
+    <Midl Include="VoipVideoRendererToken.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

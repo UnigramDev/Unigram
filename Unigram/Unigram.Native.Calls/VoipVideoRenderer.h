@@ -29,11 +29,11 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	CanvasControl m_canvasControl{ nullptr };
 	CanvasBitmap m_canvasBitmap{ nullptr };
 
-	VoipVideoRenderer(CanvasControl canvas) {
+	VoipVideoRenderer(CanvasControl canvas, bool fill) {
 		m_canvasControl = canvas;
 		m_readyToDraw = canvas.ReadyToDraw();
 
-		m_eventToken = canvas.Draw([this](const CanvasControl sender, CanvasDrawEventArgs const args) {
+		m_eventToken = canvas.Draw([this, fill](const CanvasControl sender, CanvasDrawEventArgs const args) {
 			m_readyToDraw = true;
 
 			if (m_canvasBitmap != nullptr) {
@@ -45,7 +45,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 				float ratioX = sender.Size().Width / width;
 				float ratioY = sender.Size().Height / height;
 
-				if (ratioX < ratioY)
+				if (fill && ratioX > ratioY || !fill && ratioX < ratioY)
 				{
 					width = sender.Size().Width;
 					height *= ratioX;

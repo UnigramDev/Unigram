@@ -14,6 +14,7 @@ using Unigram.Services;
 using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -34,6 +35,10 @@ namespace Unigram.Views
 
         private VoipGroupManager _manager;
         private bool _disposed;
+
+        private readonly Dictionary<int, VoipVideoRendererToken> _userTokens = new Dictionary<int, VoipVideoRendererToken>();
+        private readonly Dictionary<long, VoipVideoRendererToken> _chatTokens = new Dictionary<long, VoipVideoRendererToken>();
+        private VoipVideoRendererToken _viewportToken;
 
         private readonly ButtonWavesDrawable _drawable = new ButtonWavesDrawable();
 
@@ -77,6 +82,8 @@ namespace Unigram.Views
             {
                 Connect(voipService.Manager);
             }
+
+            ViewportAspect.Constraint = new Size(16, 9);
         }
 
         enum ButtonState
@@ -515,6 +522,10 @@ namespace Unigram.Views
 
         private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
+            _protoService.Send(new ToggleGroupCallIsMyVideoEnabled(_service.Call.Id, true));
+            _manager.SetVideoCapture(new VoipVideoCapture(""));
+            return;
+
             var flyout = new MenuFlyout();
 
             var chat = _service.Chat;
@@ -770,16 +781,21 @@ namespace Unigram.Views
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var participant = args.Item as GroupCallParticipant;
 
-            UpdateGroupCallParticipant(content, participant);
+            if (args.InRecycleQueue)
+            {
+                if (content?.Children[1] is Border viewport)
+                {
+                    viewport.Child = null;
+                }
 
+                RemoveIncomingVideoOutput(participant.ParticipantId);
+                return;
+            }
+
+            UpdateGroupCallParticipant(content, participant);
             args.Handled = true;
         }
 
@@ -802,9 +818,13 @@ namespace Unigram.Views
         private void UpdateGroupCallParticipant(Grid content, GroupCallParticipant participant)
         {
             var photo = content.Children[0] as ProfilePicture;
-            var title = content.Children[1] as TextBlock;
-            var speaking = content.Children[2] as TextBlock;
-            var glyph = content.Children[3] as TextBlock;
+            var viewport = content.Children[1] as Border;
+            var title = content.Children[2] as TextBlock;
+            var subtitle = content.Children[3] as Grid;
+            var glyph = content.Children[4] as TextBlock;
+
+            var status = subtitle.Children[0] as TextBlock;
+            var speaking = subtitle.Children[1] as TextBlock;
 
             if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
             {
@@ -817,10 +837,41 @@ namespace Unigram.Views
                 title.Text = _protoService.GetTitle(chat);
             }
 
+            void SetIncomingVideoOutput(string endpointId, string glyph)
+            {
+                if (HasIncomingVideoOutput(participant.ParticipantId, endpointId, viewport.Child as CanvasControl))
+                {
+                    return;
+                }
+
+                status.Text = glyph;
+                status.Margin = new Thickness(0, 0, 4, 0);
+                viewport.Child = new CanvasControl();
+
+                AddIncomingVideoOutput(participant.ParticipantId, endpointId, viewport.Child as CanvasControl);
+            }
+
+            if (participant.ScreenSharingVideoInfo != null)
+            {
+                SetIncomingVideoOutput(participant.ScreenSharingVideoInfo.EndpointId, Icons.ScreencastFilled);
+            }
+            else if (participant.VideoInfo != null)
+            {
+                SetIncomingVideoOutput(participant.VideoInfo.EndpointId, Icons.VideoFilled);
+            }
+            else
+            {
+                RemoveIncomingVideoOutput(participant.ParticipantId);
+
+                status.Text = string.Empty;
+                status.Margin = new Thickness(0);
+                viewport.Child = null;
+            }
+
             if (participant.IsHandRaised)
             {
                 speaking.Text = Strings.Resources.WantsToSpeak;
-                speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
+                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
                 glyph.Text = Icons.EmojiHand;
                 glyph.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
             }
@@ -835,7 +886,7 @@ namespace Unigram.Views
                     speaking.Text = Strings.Resources.Speaking;
                 }
 
-                speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
+                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
                 glyph.Text = Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x33, 0xc6, 0x59) };
             }
@@ -844,7 +895,7 @@ namespace Unigram.Views
                 var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
 
                 speaking.Text = Strings.Resources.ThisIsYou;
-                speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
+                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x00, 0x78, 0xff) };
                 glyph.Text = muted ? Icons.MicOff : Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
             }
@@ -853,9 +904,54 @@ namespace Unigram.Views
                 var muted = participant.IsMutedForAllUsers || participant.IsMutedForCurrentUser;
 
                 speaking.Text = participant.Bio.Length > 0 ? participant.Bio : Strings.Resources.Listening;
-                speaking.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+                speaking.Foreground = status.Foreground = new SolidColorBrush { Color = Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
                 glyph.Text = muted ? Icons.MicOff : Icons.MicOn;
                 glyph.Foreground = new SolidColorBrush { Color = muted && !participant.CanUnmuteSelf ? Colors.Red : Color.FromArgb(0xFF, 0x85, 0x85, 0x85) };
+            }
+        }
+
+        public bool HasIncomingVideoOutput(MessageSender sender, string endpointId, CanvasControl canvas)
+        {
+            if (sender is MessageSenderUser user && _userTokens.TryGetValue(user.UserId, out var userToken))
+            {
+                return userToken.IsMatch(endpointId, canvas);
+            }
+            else if (sender is MessageSenderChat chat && _chatTokens.TryGetValue(chat.ChatId, out var chatToken))
+            {
+                return chatToken.IsMatch(endpointId, canvas);
+            }
+
+            return false;
+        }
+
+        private void RemoveIncomingVideoOutput(MessageSender sender)
+        {
+            AddIncomingVideoOutput(sender, null, null);
+        }
+
+        private void AddIncomingVideoOutput(MessageSender sender, string endpointId, CanvasControl canvas)
+        {
+            if (sender is MessageSenderUser user)
+            {
+                if (canvas == null)
+                {
+                    _userTokens.Remove(user.UserId);
+                }
+                else
+                {
+                    _userTokens[user.UserId] = _manager.AddIncomingVideoOutput(endpointId, canvas);
+                }
+            }
+            else if (sender is MessageSenderChat chat)
+            {
+                if (canvas == null)
+                {
+                    _chatTokens.Remove(chat.ChatId);
+                }
+                else
+                {
+                    _chatTokens[chat.ChatId] = _manager.AddIncomingVideoOutput(endpointId, canvas);
+                }
             }
         }
 
@@ -865,6 +961,17 @@ namespace Unigram.Views
 
             var element = sender as FrameworkElement;
             var participant = List.ItemFromContainer(sender) as GroupCallParticipant;
+
+            if (participant.ScreenSharingVideoInfo != null)
+            {
+                _viewportToken = _manager.AddIncomingVideoOutput(participant.ScreenSharingVideoInfo.EndpointId, Viewport);
+            }
+            else if (participant.VideoInfo != null)
+            {
+                _viewportToken = _manager.AddIncomingVideoOutput(participant.VideoInfo.EndpointId, Viewport);
+            }
+
+            return;
 
             var call = _service.Call;
 
