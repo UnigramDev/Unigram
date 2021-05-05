@@ -48,7 +48,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		winrt::event_token BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::FrameRequestedEventArgs> const& value);
+			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs> const& value);
 		void BroadcastPartRequested(winrt::event_token const& token);
 
 		winrt::event_token MediaChannelDescriptionsRequested(Windows::Foundation::TypedEventHandler<
@@ -70,7 +70,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 			IMapView<int32_t, IKeyValuePair<float, bool>>>> m_audioLevelsUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
-			winrt::Unigram::Native::Calls::FrameRequestedEventArgs>> m_broadcastPartRequested;
+			winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs>> m_broadcastPartRequested;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Unigram::Native::Calls::VoipGroupManager,
 			winrt::Unigram::Native::Calls::MediaChannelDescriptionsRequestedEventArgs>> m_mediaChannelDescriptionsRequested;

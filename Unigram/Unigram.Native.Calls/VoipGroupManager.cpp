@@ -66,7 +66,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 			}
 
 			auto task = std::make_shared<BroadcastPartTaskImpl>(time, scale, std::move(done));
-			auto args = winrt::make_self<FrameRequestedEventArgs>(scale, time,
+			auto args = winrt::make_self<BroadcastPartRequestedEventArgs>(scale, time,
 				[task](int64_t time, int64_t response, FilePart filePart) { task->done(time, response, filePart); });
 
 			m_broadcastPartRequested(*this, *args);
@@ -191,7 +191,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	winrt::event_token VoipGroupManager::BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
 		winrt::Unigram::Native::Calls::VoipGroupManager,
-		winrt::Unigram::Native::Calls::FrameRequestedEventArgs> const& value)
+		winrt::Unigram::Native::Calls::BroadcastPartRequestedEventArgs> const& value)
 	{
 		return m_broadcastPartRequested.add(value);
 	}

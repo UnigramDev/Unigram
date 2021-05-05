@@ -351,7 +351,7 @@ namespace Unigram.Services
             });
         }
 
-        private async void OnBroadcastPartRequested(VoipGroupManager sender, FrameRequestedEventArgs args)
+        private async void OnBroadcastPartRequested(VoipGroupManager sender, BroadcastPartRequestedEventArgs args)
         {
             var call = _call;
             if (call == null)

@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-#include "FrameRequestedEventArgs.g.h"
+#include "BroadcastPartRequestedEventArgs.g.h"
 
 namespace winrt::Unigram::Native::Calls::implementation
 {
-    struct FrameRequestedEventArgs : FrameRequestedEventArgsT<FrameRequestedEventArgs>
+    struct BroadcastPartRequestedEventArgs : BroadcastPartRequestedEventArgsT<BroadcastPartRequestedEventArgs>
     {
-        FrameRequestedEventArgs(int32_t scale, int64_t time, BroadcastPartRequestedDeferral deferral);
+        BroadcastPartRequestedEventArgs(int32_t scale, int64_t time, BroadcastPartRequestedDeferral deferral);
 
         int32_t Scale();
         int64_t Time();

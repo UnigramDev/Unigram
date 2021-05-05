@@ -269,7 +269,7 @@
     <Midl Include="VoipGroupManager.idl" />
     <Midl Include="VoipGroupDescriptor.idl" />
     <Midl Include="GroupNetworkStateChangedEventArgs.idl" />
-    <Midl Include="FrameRequestedEventArgs.idl" />
+    <Midl Include="BroadcastPartRequestedEventArgs.idl" />
     <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl" />
     <Midl Include="VoipVideoRendererToken.idl" />
   </ItemGroup>

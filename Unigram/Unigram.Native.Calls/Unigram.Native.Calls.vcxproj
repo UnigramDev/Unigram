@@ -218,8 +218,8 @@
     <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterface.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\VideoCaptureInterfaceImpl.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\VideoCapturerInterface.h" />
-    <ClInclude Include="FrameRequestedEventArgs.h">
-      <DependentUpon>FrameRequestedEventArgs.idl</DependentUpon>
+    <ClInclude Include="BroadcastPartRequestedEventArgs.h">
+      <DependentUpon>BroadcastPartRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="GroupNetworkStateChangedEventArgs.h">
@@ -354,8 +354,8 @@
     <ClCompile Include="C:\tgcalls\tgcalls\VideoCaptureInterfaceImpl.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="FrameRequestedEventArgs.cpp">
-      <DependentUpon>FrameRequestedEventArgs.idl</DependentUpon>
+    <ClCompile Include="BroadcastPartRequestedEventArgs.cpp">
+      <DependentUpon>BroadcastPartRequestedEventArgs.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="GroupNetworkStateChangedEventArgs.cpp">
@@ -420,7 +420,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="FrameRequestedEventArgs.idl">
+    <Midl Include="BroadcastPartRequestedEventArgs.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="GroupNetworkStateChangedEventArgs.idl">
