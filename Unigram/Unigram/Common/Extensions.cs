@@ -893,8 +893,10 @@ namespace Unigram.Common
             try
             {
                 scrollViewer.ViewChanged += viewChanged;
-                scrollViewer.ChangeView(horizontalOffset, verticalOffset, null, disableAnimation);
-                await tcs.Task;
+                if (scrollViewer.ChangeView(horizontalOffset, verticalOffset, null, disableAnimation))
+                {
+                    await tcs.Task;
+                }
             }
             finally
             {

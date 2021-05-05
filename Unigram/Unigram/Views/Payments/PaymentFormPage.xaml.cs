@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Telegram.Td.Api;
+﻿using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels.Payments;

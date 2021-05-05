@@ -56,6 +56,7 @@
                         <controls:LottieView
                             Source="ms-appx:///Assets/Animations/DiscussionGroupSetup.tgs"
                             IsLoopingEnabled="False"
+                            IsCachingEnabled="False"
                             Width="140"
                             Height="140"
                             Margin="0,24,0,0"/>
