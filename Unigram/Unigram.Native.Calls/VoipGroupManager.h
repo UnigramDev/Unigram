@@ -21,9 +21,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		void SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled);
 
 		void EmitJoinPayload(EmitJsonPayloadDelegate completion);
-		void SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload);
-		void SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload, IVector<GroupCallParticipant> participants);
-		void AddParticipants(IVector<GroupCallParticipant> participants);
+		void SetJoinResponsePayload(hstring payload);
 		void RemoveSsrcs(IVector<int32_t> ssrcs);
 
 		bool IsMuted();

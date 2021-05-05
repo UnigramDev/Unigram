@@ -25,7 +25,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 		std::shared_ptr<tgcalls::VideoCaptureInterface> m_capturer = nullptr;
 		//std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> m_renderer = nullptr;
 
-		void VoipManager::Start();
+		void Start();
 
 		//void SetNetworkType(NetworkType networkType);
 		void SetMuteMicrophone(bool muteMicrophone);

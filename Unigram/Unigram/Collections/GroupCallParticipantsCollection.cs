@@ -132,7 +132,9 @@ namespace Unigram.Collections
                 update.VolumeLevel = participant.VolumeLevel;
                 update.Bio = participant.Bio;
                 update.Order = participant.Order;
-                update.Source = participant.Source;
+                update.ScreenSharingVideoInfo = participant.ScreenSharingVideoInfo;
+                update.VideoInfo = participant.VideoInfo;
+                update.AudioSourceId = participant.AudioSourceId;
                 update.ParticipantId = participant.ParticipantId;
             }
 

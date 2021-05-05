@@ -326,19 +326,11 @@ namespace Unigram.Services
                 Participants?.Dispose();
                 Participants = new GroupCallParticipantsCollection(ProtoService, Aggregator, groupCall);
 
-                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, payload, ssrc, true, string.Empty));
-                if (response is GroupCallJoinResponseWebrtc data)
+                var response = await ProtoService.SendAsync(new JoinGroupCall(groupCall.Id, alias, ssrc, payload, true, true, string.Empty));
+                if (response is Text json)
                 {
                     _source = ssrc;
-                    _manager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
-                    _manager.SetJoinResponsePayload(data);
-
-                    Participants?.Load();
-                }
-                else if (response is GroupCallJoinResponseStream)
-                {
-                    _source = ssrc;
-                    _manager.SetConnectionMode(VoipGroupConnectionMode.Broadcast, true);
+                    _manager.SetJoinResponsePayload(json.TextValue);
 
                     Participants?.Load();
                 }
@@ -520,7 +512,7 @@ namespace Unigram.Services
                 return;
             }
 
-            manager.SetVolume(update.Participant.Source, update.Participant.VolumeLevel / 10000d);
+            manager.SetVolume(update.Participant.AudioSourceId, update.Participant.VolumeLevel / 10000d);
         }
 
         public Chat Chat => _chat;

@@ -118,20 +118,22 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
-      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj /Zc:__cplusplus</AdditionalOptions>
       <!--Temporarily disable cppwinrt heap enforcement to work around xaml compiler generated std::shared_ptr use -->
       <AdditionalOptions Condition="'$(CppWinRTHeapEnforcement)'==''">/DWINRT_NO_MAKE_DETECTION %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
-      <PreprocessorDefinitions>_WINRT_DLL;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINRT_DLL;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING;_SILENCE_CXX20_IS_POD_DEPRECATION_WARNING;_USE_MATH_DEFINES;USE_MALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</GenerateXMLDocumentationFiles>
       <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateXMLDocumentationFiles>
       <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateXMLDocumentationFiles>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\tgcalls\tgcalls;C:\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\tgcalls\tgcalls;C:\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\rnnoise\include;C:\tgcalls\tgcalls;C:\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\rnnoise\include;C:\tgcalls\tgcalls;C:\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsWinRT>
       <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsWinRT>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <!--<LanguageStandard>stdcpplatest</LanguageStandard>-->
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,10 +180,15 @@
     </ClCompile>
     <ClCompile>
       <GenerateXMLDocumentationFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateXMLDocumentationFiles>
-      <AdditionalIncludeDirectories>C:\tgcalls\tgcalls;C:\tgcalls;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\rnnoise\include;C:\tgcalls\tgcalls;C:\tgcalls;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="C:\tgcalls\tgcalls\AudioFrame.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\FakeVideoTrackSource.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupJoinPayload.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\group\GroupJoinPayloadInternal.h" />
+    <ClInclude Include="C:\tgcalls\tgcalls\third-party\json11.hpp" />
     <ClInclude Include="C:\tgcalls\tgcalls\FakeAudioDeviceModule.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\StaticThreads.h" />
     <ClInclude Include="C:\tgcalls\tgcalls\group\GroupInstanceCustomImpl.h" />
@@ -222,6 +229,17 @@
     <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="rnnoise\include\rnnoise.h" />
+    <ClInclude Include="rnnoise\src\arch.h" />
+    <ClInclude Include="rnnoise\src\celt_lpc.h" />
+    <ClInclude Include="rnnoise\src\common.h" />
+    <ClInclude Include="rnnoise\src\kiss_fft.h" />
+    <ClInclude Include="rnnoise\src\opus_types.h" />
+    <ClInclude Include="rnnoise\src\pitch.h" />
+    <ClInclude Include="rnnoise\src\rnn.h" />
+    <ClInclude Include="rnnoise\src\rnn_data.h" />
+    <ClInclude Include="rnnoise\src\tansig_table.h" />
+    <ClInclude Include="rnnoise\src\_kiss_fft_guts.h" />
     <ClInclude Include="VoipDescriptor.h">
       <DependentUpon>VoipDescriptor.idl</DependentUpon>
     </ClInclude>
@@ -247,6 +265,15 @@
     <ClInclude Include="VoipVideoRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="C:\tgcalls\tgcalls\FakeVideoTrackSource.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\group\GroupJoinPayloadInternal.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\third-party\json11.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="C:\tgcalls\tgcalls\FakeAudioDeviceModule.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -329,6 +356,21 @@
     </ClCompile>
     <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp">
       <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\denoise.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\kiss_fft.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn_data.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn_reader.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SignalingDataEmittedEventArgs.cpp">
       <DependentUpon>SignalingDataEmittedEventArgs.idl</DependentUpon>

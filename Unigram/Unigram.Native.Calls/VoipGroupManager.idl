@@ -5,7 +5,7 @@ import "FrameRequestedEventArgs.idl";
 
 namespace Unigram.Native.Calls
 {
-    delegate void EmitJsonPayloadDelegate(Int32 ssrc, Telegram.Td.Api.GroupCallPayload payload);
+    delegate void EmitJsonPayloadDelegate(Int32 ssrc, String payload);
 
     [default_interface]
     runtimeclass VoipGroupManager : Windows.Foundation.IClosable
@@ -16,9 +16,7 @@ namespace Unigram.Native.Calls
 
         void EmitJoinPayload(EmitJsonPayloadDelegate completion);
         [default_overload]
-        void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponseWebrtc payload);
-        void SetJoinResponsePayload(Telegram.Td.Api.GroupCallJoinResponseWebrtc payload, Windows.Foundation.Collections.IVector<Telegram.Td.Api.GroupCallParticipant> participants);
-        void AddParticipants(Windows.Foundation.Collections.IVector<Telegram.Td.Api.GroupCallParticipant> participants);
+        void SetJoinResponsePayload(String payload);
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 
         Boolean IsMuted;

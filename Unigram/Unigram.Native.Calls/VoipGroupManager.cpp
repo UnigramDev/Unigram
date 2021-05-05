@@ -41,20 +41,20 @@ namespace winrt::Unigram::Native::Calls::implementation
 		};
 		impl.initialInputDeviceId = string_to_unmanaged(descriptor.AudioInputId());
 		impl.initialOutputDeviceId = string_to_unmanaged(descriptor.AudioOutputId());
-		impl.incomingVideoSourcesUpdated = [this](std::vector<uint32_t> const&) {
+		//impl.incomingVideoSourcesUpdated = [this](std::vector<uint32_t> const&) {
 
-		};
-		impl.participantDescriptionsRequired = [this](std::vector<uint32_t> const& ssrcs) {
-			auto participants = std::vector<tgcalls::GroupParticipantDescription>();
+		//};
+		//impl.participantDescriptionsRequired = [this](std::vector<uint32_t> const& ssrcs) {
+		//	auto participants = std::vector<tgcalls::GroupParticipantDescription>();
 
-			for (const uint32_t& x : ssrcs) {
-				auto participant = tgcalls::GroupParticipantDescription();
-				participant.audioSsrc = x;
-				participants.push_back(participant);
-			}
+		//	for (const uint32_t& x : ssrcs) {
+		//		auto participant = tgcalls::GroupParticipantDescription();
+		//		participant.audioSsrc = x;
+		//		participants.push_back(participant);
+		//	}
 
-			m_impl->addParticipants(std::move(participants));
-		};
+		//	m_impl->addParticipants(std::move(participants));
+		//};
 		impl.requestBroadcastPart = [this](int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done) {
 			int scale = 0;
 			switch (period) {
@@ -86,99 +86,8 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	void VoipGroupManager::EmitJoinPayload(EmitJsonPayloadDelegate completion) {
 		m_impl->emitJoinPayload([completion](auto const& payload) {
-			auto fingerprints = winrt::single_threaded_vector<GroupCallPayloadFingerprint>();
-
-			for (const tgcalls::GroupJoinPayloadFingerprint& x : payload.fingerprints) {
-				fingerprints.Append(GroupCallPayloadFingerprint(
-					string_from_unmanaged(x.hash),
-					string_from_unmanaged(x.setup),
-					string_from_unmanaged(x.fingerprint)
-				));
-			}
-
-			GroupCallPayload result = GroupCallPayload(
-				string_from_unmanaged(payload.ufrag),
-				string_from_unmanaged(payload.pwd),
-				fingerprints
-			);
-
-			completion(payload.ssrc, result);
+			completion(payload.audioSsrc, string_from_unmanaged(payload.json));
 			});
-	}
-
-	void VoipGroupManager::SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload) {
-		SetJoinResponsePayload(payload, nullptr);
-	}
-
-	void VoipGroupManager::SetJoinResponsePayload(GroupCallJoinResponseWebrtc payload, IVector<GroupCallParticipant> participants) {
-		auto fingerprints = std::vector<tgcalls::GroupJoinPayloadFingerprint>();
-		auto candidates = std::vector<tgcalls::GroupJoinResponseCandidate>();
-
-		for (const GroupCallPayloadFingerprint& x : payload.Payload().Fingerprints()) {
-			fingerprints.push_back(tgcalls::GroupJoinPayloadFingerprint{
-				string_to_unmanaged(x.Hash()),
-				string_to_unmanaged(x.Setup()),
-				string_to_unmanaged(x.Fingerprint()),
-				});
-		}
-
-		for (const GroupCallJoinResponseCandidate& x : payload.Candidates()) {
-			candidates.push_back(tgcalls::GroupJoinResponseCandidate{
-				string_to_unmanaged(x.Port()),
-				string_to_unmanaged(x.Protocol()),
-				string_to_unmanaged(x.Network()),
-				string_to_unmanaged(x.Generation()),
-				string_to_unmanaged(x.Id()),
-				string_to_unmanaged(x.Component()),
-				string_to_unmanaged(x.Foundation()),
-				string_to_unmanaged(x.Priority()),
-				string_to_unmanaged(x.Ip()),
-				string_to_unmanaged(x.Type()),
-
-				string_to_unmanaged(x.TcpType()),
-				string_to_unmanaged(x.RelAddr()),
-				string_to_unmanaged(x.RelPort()),
-				});
-		}
-
-		tgcalls::GroupJoinResponsePayload impl = tgcalls::GroupJoinResponsePayload{
-			string_to_unmanaged(payload.Payload().Ufrag()),
-			string_to_unmanaged(payload.Payload().Pwd()),
-			fingerprints,
-			candidates
-		};
-
-		auto participantsImpl = std::vector<tgcalls::GroupParticipantDescription>();
-
-		//for (const VoipGroupParticipantDescription& x : participants) {
-		//	participantsImpl.push_back(tgcalls::GroupParticipantDescription{
-		//		x.EndpointId(),
-		//		x.AudioSsrc(),
-		//		nullptr,
-		//		nullptr,
-		//		nullptr,
-		//		x.IsRemoved()
-		//		});
-		//}
-
-		m_impl->setJoinResponsePayload(std::move(impl), std::move(participantsImpl));
-	}
-
-	void VoipGroupManager::AddParticipants(IVector<GroupCallParticipant> participants) {
-		auto impl = std::vector<tgcalls::GroupParticipantDescription>();
-
-		//for (const VoipGroupParticipantDescription& x : participants) {
-		//	impl.push_back(tgcalls::GroupParticipantDescription{
-		//		x.EndpointId(),
-		//		x.AudioSsrc(),
-		//		nullptr,
-		//		nullptr,
-		//		nullptr,
-		//		x.IsRemoved()
-		//		});
-		//}
-
-		m_impl->addParticipants(std::move(impl));
 	}
 
 	void VoipGroupManager::RemoveSsrcs(IVector<int32_t> ssrcs) {
