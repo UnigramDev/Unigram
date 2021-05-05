@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Numerics;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;

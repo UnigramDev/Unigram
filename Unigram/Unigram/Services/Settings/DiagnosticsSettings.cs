@@ -1,6 +1,4 @@
-﻿using Unigram.Common;
-
-namespace Unigram.Services.Settings
+﻿namespace Unigram.Services.Settings
 {
     public class DiagnosticsSettings : SettingsServiceBase
     {
