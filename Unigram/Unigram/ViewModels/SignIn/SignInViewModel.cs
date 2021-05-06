@@ -153,7 +153,7 @@ namespace Unigram.ViewModels.SignIn
             foreach (var session in _lifetimeService.Items)
             {
                 // We don't want to check other accounts if current one is test
-                if (Settings.UseTestDC)
+                if (Settings.UseTestDC || session.Settings.UseTestDC)
                 {
                     continue;
                 }
