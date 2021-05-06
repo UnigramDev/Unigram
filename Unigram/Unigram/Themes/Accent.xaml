@@ -423,8 +423,7 @@
                                     Radius="17"
                                     Center="20"
                                     Width="40"
-                                    Height="40"
-                                    Style="{StaticResource SmallProgressBarRingStyle}"/>
+                                    Height="40"/>
                             </Grid>
 
                             <ContentPresenter Padding="{TemplateBinding Padding}" Grid.Column="1"/>
