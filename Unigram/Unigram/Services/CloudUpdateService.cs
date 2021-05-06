@@ -87,7 +87,7 @@ namespace Unigram.Services
                 // If this isn't the most recent version and it isn't in use, just delete it
                 if (version <= current)
                 {
-                    var file = await folder.TryGetItemAsync($"{version}.appxbundle") as StorageFile;
+                    var file = await folder.TryGetItemAsync($"{version}.msixbundle") as StorageFile;
                     if (file != null)
                     {
                         await file.DeleteAsync();
@@ -144,7 +144,7 @@ namespace Unigram.Services
                 if (file.Local.IsDownloadingCompleted)
                 {
                     var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
-                    var result = await TryCopyPartLocally(folder, file.Local.Path, cloud.Version, cloud.MessageId);
+                    var result = await TryCopyPartLocally(folder, file.Local.Path, cloud.Version);
 
                     var current = Package.Current.Id.Version.ToVersion();
                     if (current < cloud.Version)
@@ -212,7 +212,7 @@ namespace Unigram.Services
                 }
             }
 
-            if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".appxbundle"))
+            if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
             {
                 return null;
             }
@@ -237,11 +237,11 @@ namespace Unigram.Services
                 {
                     if (set.Document.Local.IsDownloadingCompleted)
                     {
-                        set.File = await TryCopyPartLocally(folder, set.Document.Local.Path, set.Version, set.MessageId);
+                        set.File = await TryCopyPartLocally(folder, set.Document.Local.Path, set.Version);
                     }
                     else
                     {
-                        set.File = await folder.TryGetItemAsync($"{set.Version}.appxbundle") as StorageFile;
+                        set.File = await folder.TryGetItemAsync($"{set.Version}.msixbundle") as StorageFile;
                     }
 
                     return set;
@@ -310,7 +310,7 @@ namespace Unigram.Services
                     }
                 }
 
-                if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".appxbundle"))
+                if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
                 {
                     continue;
                 }
@@ -349,9 +349,9 @@ namespace Unigram.Services
             return results.OrderByDescending(x => x.Version).ToList();
         }
 
-        private static async Task<StorageFile> TryCopyPartLocally(StorageFolder folder, string path, Version version, long messageId)
+        private static async Task<StorageFile> TryCopyPartLocally(StorageFolder folder, string path, Version version)
         {
-            var fileName = $"{version}.appxbundle";
+            var fileName = $"{version}.msixbundle";
 
             var cache = await folder.TryGetItemAsync(fileName) as StorageFile;
             if (cache == null)
