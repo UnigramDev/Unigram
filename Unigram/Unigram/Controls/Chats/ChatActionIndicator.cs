@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Numerics;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -47,11 +46,6 @@ namespace Unigram.Controls.Chats
             {
                 _props.Dispose();
                 _props = null;
-            }
-
-            if (!ApiInfo.CanUseDirectComposition)
-            {
-                return;
             }
 
             var width = 18f;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Controls
 {
@@ -20,8 +19,6 @@ namespace Unigram.Controls
         private readonly Queue<UndoOp> _queue;
 
         private int _remaining = 5;
-
-        private Storyboard _storyboard;
 
         public UndoView()
         {
@@ -49,12 +46,10 @@ namespace Unigram.Controls
 
         public void Show(IList<Chat> chats, UndoType type, Action<IList<Chat>> undo, Action<IList<Chat>> action = null)
         {
-            _timeout.Stop();
-            _storyboard?.Stop();
-
             _remaining = 5;
             _queue.Enqueue(new UndoOp(chats, undo, action));
 
+            _timeout.Stop();
             _timeout.Start();
 
             if (type == UndoType.Archive)
@@ -96,7 +91,7 @@ namespace Unigram.Controls
 
             IsEnabled = true;
 
-            Slice.StartAngle = 0;
+            Slice.Value = null;
             Remaining.Content = 5;
 
             StartAnimation();
@@ -105,20 +100,8 @@ namespace Unigram.Controls
 
         private void StartAnimation()
         {
-            var anim = new DoubleAnimation();
-            anim.Duration = TimeSpan.FromSeconds(5);
-            anim.From = 0;
-            anim.To = 360;
-            anim.EnableDependentAnimation = true;
-
-            Storyboard.SetTarget(anim, Slice);
-            Storyboard.SetTargetProperty(anim, "StartAngle");
-
-            var board = new Storyboard();
-            board.Children.Add(anim);
-            board.Begin();
-
-            _storyboard = board;
+            Slice.Maximum = 5;
+            Slice.Value = DateTime.Now.AddSeconds(5);
         }
 
         private void Undo_Click(object sender, RoutedEventArgs e)
@@ -144,10 +127,9 @@ namespace Unigram.Controls
             _remaining = 5;
 
             _timeout.Stop();
-            _storyboard?.Stop();
-            _storyboard = null;
 
-            IsEnabled = false;
+            IsEnabled = true;
+            Slice.Value = null;
 
             Grid.SetRow(LayoutRoot, 1);
         }

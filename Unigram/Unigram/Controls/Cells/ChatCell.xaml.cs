@@ -469,7 +469,7 @@ namespace Unigram.Controls.Cells
             _onlineBadge.StartAnimation("Scale", scale);
             _onlineBadge.StartAnimation("Opacity", opacity);
 
-            if (visible && activeCall && ApiInfo.CanUseDirectComposition)
+            if (visible && activeCall)
             {
                 var compositor = Window.Current.Compositor;
 
@@ -1335,48 +1335,45 @@ namespace Unigram.Controls.Cells
             var compositor = Window.Current.Compositor;
             //12.711,5.352 11.648,4.289 6.5,9.438 4.352,7.289 3.289,8.352 6.5,11.563
 
-            if (ApiInfo.CanUseDirectComposition)
-            {
-                var polygon = compositor.CreatePathGeometry();
-                polygon.Path = GetCheckMark();
+            var polygon = compositor.CreatePathGeometry();
+            polygon.Path = GetCheckMark();
 
-                var shape1 = compositor.CreateSpriteShape();
-                shape1.Geometry = polygon;
-                shape1.StrokeThickness = 1.5f;
-                shape1.StrokeBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            var shape1 = compositor.CreateSpriteShape();
+            shape1.Geometry = polygon;
+            shape1.StrokeThickness = 1.5f;
+            shape1.StrokeBrush = compositor.CreateColorBrush(Colors.White);
 
-                var ellipse = compositor.CreateEllipseGeometry();
-                ellipse.Radius = new Vector2(8);
-                ellipse.Center = new Vector2(10);
+            var ellipse = compositor.CreateEllipseGeometry();
+            ellipse.Radius = new Vector2(8);
+            ellipse.Center = new Vector2(10);
 
-                var shape2 = compositor.CreateSpriteShape();
-                shape2.Geometry = ellipse;
-                shape2.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.Black);
+            var shape2 = compositor.CreateSpriteShape();
+            shape2.Geometry = ellipse;
+            shape2.FillBrush = compositor.CreateColorBrush(Colors.Black);
 
-                var outer = compositor.CreateEllipseGeometry();
-                outer.Radius = new Vector2(10);
-                outer.Center = new Vector2(10);
+            var outer = compositor.CreateEllipseGeometry();
+            outer.Radius = new Vector2(10);
+            outer.Center = new Vector2(10);
 
-                var shape3 = compositor.CreateSpriteShape();
-                shape3.Geometry = outer;
-                shape3.FillBrush = compositor.CreateColorBrush(Windows.UI.Colors.White);
+            var shape3 = compositor.CreateSpriteShape();
+            shape3.Geometry = outer;
+            shape3.FillBrush = compositor.CreateColorBrush(Colors.White);
 
-                var visual = compositor.CreateShapeVisual();
-                visual.Shapes.Add(shape3);
-                visual.Shapes.Add(shape2);
-                visual.Shapes.Add(shape1);
-                visual.Size = new Vector2(20, 20);
-                visual.Offset = new Vector3(48 - 19, 48 - 19, 0);
-                visual.CenterPoint = new Vector3(8);
-                visual.Scale = new Vector3(0);
+            var visual = compositor.CreateShapeVisual();
+            visual.Shapes.Add(shape3);
+            visual.Shapes.Add(shape2);
+            visual.Shapes.Add(shape1);
+            visual.Size = new Vector2(20, 20);
+            visual.Offset = new Vector3(48 - 19, 48 - 19, 0);
+            visual.CenterPoint = new Vector3(8);
+            visual.Scale = new Vector3(0);
 
-                ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
+            ElementCompositionPreview.SetElementChildVisual(PhotoPanel, visual);
 
-                _polygon = polygon;
-                _ellipse = shape2;
-                _stroke = shape3;
-                _visual = visual;
-            }
+            _polygon = polygon;
+            _ellipse = shape2;
+            _stroke = shape3;
+            _visual = visual;
 
             _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
@@ -1489,11 +1486,6 @@ namespace Unigram.Controls.Cells
 
         private void InitializeTicks()
         {
-            if (!ApiInfo.CanUseDirectComposition)
-            {
-                return;
-            }
-
             var width = 18f;
             var height = 10f;
             var stroke = 2f;
@@ -1717,7 +1709,7 @@ namespace Unigram.Controls.Cells
 
             BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
-            
+
             if (Children.Count > 14)
             {
                 Children[14].Measure(availableSize);
@@ -1789,7 +1781,7 @@ namespace Unigram.Controls.Cells
 
             rect.X = 12 + PhotoPanel.DesiredSize.Width + 12 + TypeIcon.DesiredSize.Width;
             rect.Y = 32 - 2 - TitleLabel.DesiredSize.Height;
-            rect.Width =  titleWidth;
+            rect.Width = titleWidth;
             rect.Height = TitleLabel.DesiredSize.Height;
             TitleLabel.Arrange(rect);
 

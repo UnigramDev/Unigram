@@ -17,8 +17,6 @@ namespace Unigram.Views.Payments
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<PaymentFormViewModel>();
 
-            Transitions = ApiInfo.CreateSlideTransition();
-
             DropShadowEx.Attach(BuyShadow);
         }
 

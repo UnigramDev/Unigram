@@ -46,7 +46,7 @@
                     <RectangleGeometry Rect="0,0,48,32"/>
                 </ContentControl.Clip>
             </ContentControl>
-            <local:ProgressBarRingSlice x:Name="Slice" Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}" StrokeThickness="2" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="360"/>
+            <local:SelfDestructTimer x:Name="Slice" Background="Transparent" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Center="18" Radius="17" Width="36" Height="36" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <mux:AnimatedVisualPlayer x:Name="Player" AutoPlay="False" Width="36" Height="36" />
 

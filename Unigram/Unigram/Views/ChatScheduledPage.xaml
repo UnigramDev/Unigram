@@ -9,7 +9,7 @@
     <Page.Transitions>
         <TransitionCollection>
             <NavigationThemeTransition>
-                <SuppressNavigationTransitionInfo />
+                <SlideNavigationTransitionInfo Effect="FromRight" />
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>

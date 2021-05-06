@@ -1,47 +1,70 @@
 ﻿using System;
+using System.Numerics;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
     public class SelfDestructTimer : Control
     {
-        private ProgressBarRingSlice Indicator;
+        private ShapeVisual _visual;
+        private CompositionSpriteShape _shape;
+        private CompositionEllipseGeometry _ellipse;
 
-        private Storyboard _angleStoryboard;
+        public double Radius { get; set; } = 21;
+        public double Center { get; set; } = 24;
 
         public SelfDestructTimer()
         {
             DefaultStyleKey = typeof(SelfDestructTimer);
+            Visibility = Visibility.Collapsed;
+
+            var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
+            ellipse.Radius = new Vector2((float)Radius);
+            ellipse.Center = new Vector2((float)Center);
+
+            var shape = Window.Current.Compositor.CreateSpriteShape(ellipse);
+            shape.CenterPoint = new Vector2((float)Center);
+            shape.StrokeThickness = 2;
+            shape.StrokeStartCap = CompositionStrokeCap.Round;
+            shape.StrokeEndCap = CompositionStrokeCap.Round;
+
+            if (Foreground is SolidColorBrush brush)
+            {
+                shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
+            }
+
+            var visual = Window.Current.Compositor.CreateShapeVisual();
+            visual.Shapes.Add(shape);
+            visual.Size = new Vector2((float)Center * 2);
+            visual.CenterPoint = new Vector3((float)Center);
+
+            _visual = visual;
+            _shape = shape;
+            _ellipse = ellipse;
+
+            ElementCompositionPreview.SetElementChildVisual(this, visual);
+            RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
         }
 
         protected override void OnApplyTemplate()
         {
-            Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            _ellipse.Radius = new Vector2((float)Radius);
+            _ellipse.Center = new Vector2((float)Center);
 
-            Indicator = (ProgressBarRingSlice)GetTemplateChild("Indicator");
-            Indicator.EndAngle = 359;
+            _shape.CenterPoint = new Vector2((float)Center);
 
-            _angleStoryboard = new Storyboard();
-            var angleAnimation = new DoubleAnimation();
-            angleAnimation.Duration = TimeSpan.FromSeconds(0.25);
-            angleAnimation.EnableDependentAnimation = true;
-
-            Storyboard.SetTarget(angleAnimation, Indicator);
-            Storyboard.SetTargetProperty(angleAnimation, "StartAngle");
-
-            _angleStoryboard.Children.Add(angleAnimation);
-            _angleStoryboard.Completed += OnAngleStoryboardCompleted;
-
-            OnValueChanged(Value);
+            base.OnApplyTemplate();
         }
 
-        private void OnAngleStoryboardCompleted(object sender, object e)
+        private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
         {
-            if (Value == null)
+            if (_shape != null && Foreground is SolidColorBrush brush)
             {
-                Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                _shape.StrokeBrush = Window.Current.Compositor.CreateColorBrush(brush.Color);
             }
         }
 
@@ -78,7 +101,7 @@ namespace Unigram.Controls
 
         private void OnValueChanged(DateTime? newValue)
         {
-            if (Indicator == null)
+            if (_ellipse == null)
             {
                 return;
             }
@@ -96,13 +119,15 @@ namespace Unigram.Controls
             var value = newValue.Value;
             var difference = value - DateTime.Now;
 
-            _angleStoryboard.SkipToFill();
+            var seconds = (float)difference.TotalSeconds;
 
-            var angleAnimation = (DoubleAnimation)_angleStoryboard.Children[0];
-            angleAnimation.From = 359 - (difference.TotalSeconds / (Maximum ?? 0) * 359);
-            angleAnimation.To = 359;
+            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
+            var angleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            angleAnimation.InsertKeyFrame(0, 1f - (seconds / (Maximum ?? 0)));
+            angleAnimation.InsertKeyFrame(1, 1f, easing);
             angleAnimation.Duration = difference;
-            _angleStoryboard.Begin();
+
+            _ellipse.StartAnimation("TrimStart", angleAnimation);
 
             //double value;
             ////if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)

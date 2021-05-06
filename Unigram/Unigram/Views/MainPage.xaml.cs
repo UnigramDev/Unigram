@@ -24,7 +24,6 @@ using Unigram.Views.Settings;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -107,11 +106,6 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
 
             DropShadowEx.Attach(UpdateShadow);
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                SettingsFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
@@ -2524,14 +2518,7 @@ namespace Unigram.Views
                 flyout.CreateFlyoutItem(ViewModel.FilterDeleteCommand, filter, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
             }
 
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
-            {
-                flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
-            }
-            else
-            {
-                flyout.ShowAt(element);
-            }
+            flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
         }
 
         private void ArchivedChats_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

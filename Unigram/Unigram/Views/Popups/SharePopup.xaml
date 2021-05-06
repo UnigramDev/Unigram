@@ -51,7 +51,7 @@
                         Style="{StaticResource HeaderGlyphButtonStyle}"
                         Grid.Column="1">
                     <controls:GlyphButton.Flyout>
-                        <MenuFlyout x:Name="MenuFlyout">
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <ToggleMenuFlyoutItem Text="Send as copy" IsChecked="{x:Bind ViewModel.SendAsCopy, Mode=TwoWay}"/>
                             <ToggleMenuFlyoutItem Text="Remove captions in copies" IsChecked="{x:Bind ViewModel.RemoveCaptions, Mode=TwoWay}"/>
                         </MenuFlyout>

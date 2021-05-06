@@ -50,7 +50,7 @@ namespace Unigram.Controls.Messages
             var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
             cross.Opacity = 0;
 
-            if (ApiInfo.CanUseActualFloats && ApiInfo.CanUseDirectComposition)
+            if (ApiInfo.CanUseActualFloats)
             {
                 _cornerRadiusClip = Window.Current.Compositor.CreateGeometricClip();
                 content.Clip = _cornerRadiusClip;

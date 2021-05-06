@@ -5,7 +5,6 @@ using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -123,15 +122,7 @@ namespace Unigram.Views.Folders
             EmojiList.SelectedItem = ViewModel.Icon;
 
             var flyout = FlyoutBase.GetAttachedFlyout(EmojiButton);
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
-            {
-                flyout.ShowAt(EmojiButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
-            }
-            else
-            {
-                flyout.ShowAt(EmojiButton);
-            }
+            flyout.ShowAt(EmojiButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }
 
         private void EmojiList_ItemClick(object sender, ItemClickEventArgs e)

@@ -254,7 +254,7 @@ namespace Unigram.Controls.Chats
 
         public void ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
         {
-            if (_indicator == null && ApiInfo.CanUseDirectComposition && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
+            if (_indicator == null && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
             {
                 var sprite = _visual.Compositor.CreateSpriteVisual();
                 sprite.Size = new Vector2(30, 30);

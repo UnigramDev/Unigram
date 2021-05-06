@@ -244,7 +244,7 @@
 
                 <controls:MoreButton Grid.Column="2">
                     <Button.Flyout>
-                        <MenuFlyout x:Name="MenuFlyout">
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <MenuFlyoutItem Text="{CustomResource EditName}" Click="Rename_Click">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE104;"/>

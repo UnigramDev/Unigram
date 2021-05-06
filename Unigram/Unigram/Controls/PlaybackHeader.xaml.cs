@@ -6,7 +6,6 @@ using Unigram.Controls.Cells;
 using Unigram.Converters;
 using Unigram.Navigation.Services;
 using Unigram.Services;
-using Windows.Foundation.Metadata;
 using Windows.Media.Playback;
 using Windows.System;
 using Windows.UI.Composition;
@@ -413,14 +412,7 @@ namespace Unigram.Controls
                 flyout.Items.Add(toggle);
             }
 
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                flyout.ShowAt(RateButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
-            }
-            else
-            {
-                flyout.ShowAt(RateButton);
-            }
+            flyout.ShowAt(RateButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)

@@ -12,7 +12,7 @@
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -425,7 +425,6 @@
     <Compile Include="Controls\Payments\LabeledPricesPanel.cs" />
     <Compile Include="Controls\PencilCanvas.cs" />
     <Compile Include="Controls\PhoneTextBox.cs" />
-    <Compile Include="Controls\PeriodTimer.cs" />
     <Compile Include="Controls\PlaybackHeader.xaml.cs">
       <DependentUpon>PlaybackHeader.xaml</DependentUpon>
     </Compile>
@@ -868,9 +867,6 @@
     <Compile Include="Views\Popups\ProxyPopup.xaml.cs">
       <DependentUpon>ProxyPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\RoundVideoPopup.xaml.cs">
-      <DependentUpon>RoundVideoPopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Popups\ScheduleMessagePopup.xaml.cs">
       <DependentUpon>ScheduleMessagePopup.xaml</DependentUpon>
     </Compile>
@@ -1088,7 +1084,6 @@
     <Compile Include="Controls\ImageView.cs" />
     <Compile Include="Controls\OrientableListView.cs" />
     <Compile Include="Controls\ProgressBarRing.cs" />
-    <Compile Include="Controls\ProgressBarRingSlice.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
     <Compile Include="Controls\SimpleButton.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
@@ -1921,10 +1916,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ProxyPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\RoundVideoPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

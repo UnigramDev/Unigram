@@ -3,7 +3,6 @@ using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Numerics;
-using Unigram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -24,11 +23,6 @@ namespace Unigram.Controls
 
         public NumericTextBlock()
         {
-            if (!ApiInfo.CanUseDirectComposition)
-            {
-                return;
-            }
-
             var shape = Window.Current.Compositor.CreateShapeVisual();
             //shape.Clip = Window.Current.Compositor.CreateInsetClip(0, 0, 1, 0);
             //shape.Size = new Vector2(100, 36);

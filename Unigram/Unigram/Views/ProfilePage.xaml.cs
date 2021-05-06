@@ -14,7 +14,6 @@ using Unigram.ViewModels.Users;
 using Unigram.Views.Supergroups;
 using Unigram.Views.Users;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -639,12 +638,7 @@ namespace Unigram.Views
 
             if (flyout.Items.Count > 0)
             {
-                if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-                {
-                    flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-                }
-
-                flyout.ShowAt((Button)sender);
+                flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
             }
         }
 

@@ -34,7 +34,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -1427,7 +1426,7 @@ namespace Unigram.Views
 
             if (ViewModel.CacheService.IsSavedMessages(chat))
             {
-                ViewModel.NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id, infoOverride: ApiInfo.CanUseDirectComposition ? new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight } : null);
+                ViewModel.NavigationService.Navigate(typeof(ChatSharedMediaPage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
             else
             {
@@ -1436,7 +1435,7 @@ namespace Unigram.Views
                     return;
                 }
 
-                ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: ApiInfo.CanUseDirectComposition ? new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight } : null);
+                ViewModel.NavigationService.Navigate(typeof(ProfilePage), chat.Id, infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
         }
 
@@ -1466,14 +1465,7 @@ namespace Unigram.Views
             var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
             if (flyout != null)
             {
-                if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-                {
-                    flyout.ShowAt(ButtonAttach, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
-                }
-                else
-                {
-                    flyout.ShowAt(ButtonAttach);
-                }
+                flyout.ShowAt(ButtonAttach, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
             }
         }
 
@@ -1863,12 +1855,7 @@ namespace Unigram.Views
 
             if (flyout.Items.Count > 0)
             {
-                if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-                {
-                    flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-                }
-
-                flyout.ShowAt((Button)sender);
+                flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
             }
         }
 
@@ -1891,14 +1878,7 @@ namespace Unigram.Views
             flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.SendAsync(true)), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
             flyout.CreateFlyoutItem(new RelayCommand(async () => await TextField.ScheduleAsync()), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
-            {
-                flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
-            }
-            else
-            {
-                flyout.ShowAt(sender as FrameworkElement);
-            }
+            flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
         }
 
         private async void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -2768,7 +2748,7 @@ namespace Unigram.Views
             }
 
             TextField.Document.GetText(TextGetOptions.None, out string text);
-            
+
             if (e.ClickedItem is User user && ChatTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username, out int index))
             {
                 var insert = string.Empty;
@@ -3135,11 +3115,8 @@ namespace Unigram.Views
                         lottie.Source = null;
                     }
 
-                    if (ApiInfo.CanUseDirectComposition)
-                    {
-                        CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
-                        ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-                    }
+                    CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
+                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
                     ViewModel.ProtoService.DownloadFile(file.Id, 1);
                 }
@@ -3612,33 +3589,12 @@ namespace Unigram.Views
 
             var value = show ? 48 : 0;
 
-            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
-            {
-                var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-                rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
-                rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
-                rect.Offset = new Vector2(0, value);
+            var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
+            rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
+            rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
+            rect.Offset = new Vector2(0, value);
 
-                textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
-
-                var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
-                animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
-                animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
-                animClip3.Duration = TimeSpan.FromMilliseconds(150);
-
-                rect.StartAnimation("Offset", animClip3);
-            }
-            else
-            {
-                textArea.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
-
-                var animClip3 = textArea.Compositor.CreateScalarKeyFrameAnimation();
-                animClip3.InsertKeyFrame(0, show ? 48 : 0);
-                animClip3.InsertKeyFrame(1, show ? 0 : 48);
-                animClip3.Duration = TimeSpan.FromMilliseconds(150);
-
-                textArea.Clip.StartAnimation("TopInset", animClip3);
-            }
+            textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
 
             if (messages.Clip is InsetClip messagesClip)
             {
@@ -3685,10 +3641,17 @@ namespace Unigram.Views
             animClip2.InsertKeyFrame(1, show ? 48 : 0);
             animClip2.Duration = TimeSpan.FromMilliseconds(150);
 
+            var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
+            animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
+            animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
+            animClip3.Duration = TimeSpan.FromMilliseconds(150);
+
             var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
             anim1.InsertKeyFrame(0, new Vector3(0, show ? 48 : 0, 0));
             anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
             anim1.Duration = TimeSpan.FromMilliseconds(150);
+
+            rect.StartAnimation("Offset", animClip3);
 
             if (!sendout)
             {
@@ -3752,32 +3715,12 @@ namespace Unigram.Views
 
             var value = show ? 48 : 0;
 
-            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
-            {
-                var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
-                rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
-                rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
-                rect.Offset = new Vector2(0, value);
+            var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
+            rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
+            rect.Size = new Vector2((float)TextArea.ActualWidth, 144);
+            rect.Offset = new Vector2(0, value);
 
-                textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
-
-                var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
-                animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
-                animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
-
-                rect.StartAnimation("Offset", animClip3);
-            }
-            else
-            {
-                textArea.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
-
-                var animClip3 = textArea.Compositor.CreateScalarKeyFrameAnimation();
-                animClip3.InsertKeyFrame(0, show ? 48 : 0);
-                animClip3.InsertKeyFrame(1, show ? 0 : 48);
-                animClip3.Duration = TimeSpan.FromMilliseconds(150);
-
-                textArea.Clip.StartAnimation("TopInset", animClip3);
-            }
+            textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
 
             messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, 0);
 
@@ -3818,12 +3761,17 @@ namespace Unigram.Views
             animClip2.InsertKeyFrame(1, show ? 48 : 0);
             animClip2.Duration = TimeSpan.FromMilliseconds(150);
 
+            var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
+            animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
+            animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
+
             var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
             anim1.InsertKeyFrame(0, new Vector3(0, show ? 48 : 0, 0));
             anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
             anim1.Duration = TimeSpan.FromMilliseconds(150);
 
             //textArea.Clip.StartAnimation("TopInset", animClip);
+            rect.StartAnimation("Offset", animClip3);
             messages.Clip.StartAnimation("TopInset", animClip2);
             messages.StartAnimation("Offset", anim1);
             composer.StartAnimation("Offset", anim1);

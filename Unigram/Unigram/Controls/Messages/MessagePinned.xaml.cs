@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Windows.Input;
 using Telegram.Td.Api;
-using Unigram.Common;
 using Unigram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -85,15 +84,7 @@ namespace Unigram.Controls.Messages
                 ShowHide(true);
             }
 
-            string title;
-            if (ApiInfo.CanUseDirectComposition)
-            {
-                title = Strings.Resources.PinnedMessage + (value >= 0 && maximum > 1 ? " #" : "");
-            }
-            else
-            {
-                title = Strings.Resources.PinnedMessage + (value >= 0 && maximum > 1 ? $" #{value + 1}" : "");
-            }
+            var title = Strings.Resources.PinnedMessage + (value >= 0 && maximum > 1 ? " #" : "");
 
             if (_loading || (_chatId == chat.Id && _messageId == 0))
             {
@@ -344,11 +335,6 @@ namespace Unigram.Controls.Messages
 
         public MessagePinnedLine()
         {
-            if (!ApiInfo.CanUseDirectComposition)
-            {
-                return;
-            }
-
             RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
             RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
             RegisterPropertyChangedCallback(BorderBrushProperty, OnBorderBrushChanged);

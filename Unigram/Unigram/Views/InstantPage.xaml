@@ -190,7 +190,7 @@
                      Grid.Column="1"/>
                 <controls:MoreButton Grid.Column="2">
                     <Button.Flyout>
-                        <MenuFlyout x:Name="EllipsisFlyout">
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}" Text="{CustomResource OpenInExternalApp}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE7AC;" Style="{StaticResource DefaultFontIconStyle}"/>

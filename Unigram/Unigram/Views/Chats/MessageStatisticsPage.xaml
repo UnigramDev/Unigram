@@ -37,7 +37,7 @@
 
                 <controls:MoreButton Grid.Column="2">
                     <Button.Flyout>
-                        <MenuFlyout x:Name="MenuFlyout">
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <MenuFlyoutItem Text="{CustomResource ViewChannelStats}"
                                     Command="{x:Bind ViewModel.OpenChannelCommand}">
                                 <MenuFlyoutItem.Icon>

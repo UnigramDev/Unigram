@@ -1,5 +1,4 @@
-﻿using Unigram.Common;
-using Unigram.ViewModels.Settings.Password;
+﻿using Unigram.ViewModels.Settings.Password;
 
 namespace Unigram.Views.Settings.Password
 {
@@ -11,8 +10,6 @@ namespace Unigram.Views.Settings.Password
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsPasswordHintViewModel>();
-
-            Transitions = ApiInfo.CreateSlideTransition();
         }
     }
 }

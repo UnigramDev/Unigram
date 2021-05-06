@@ -16,13 +16,11 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -50,11 +48,6 @@ namespace Unigram.Views
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<InstantViewModel>();
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                EllipsisFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
 
             var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
             _injectedJs = System.IO.File.ReadAllText(jsPath);

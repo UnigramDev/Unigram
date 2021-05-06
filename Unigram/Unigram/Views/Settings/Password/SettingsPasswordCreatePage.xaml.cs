@@ -14,8 +14,6 @@ namespace Unigram.Views.Settings.Password
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsPasswordCreateViewModel>();
-
-            Transitions = ApiInfo.CreateSlideTransition();
         }
 
         private void Walkthrough_Loaded(object sender, RoutedEventArgs e)

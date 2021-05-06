@@ -72,11 +72,8 @@ namespace Unigram.Controls.Messages.Content
 
         private void UpdateThumbnail(MessageViewModel message, IList<ClosedVectorPath> contours)
         {
-            if (ApiInfo.CanUseDirectComposition)
-            {
-                _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, out ShapeVisual visual);
-                ElementCompositionPreview.SetElementChildVisual(this, visual);
-            }
+            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(contours, out ShapeVisual visual);
+            ElementCompositionPreview.SetElementChildVisual(this, visual);
         }
 
         public bool IsValid(MessageContent content, bool primary)

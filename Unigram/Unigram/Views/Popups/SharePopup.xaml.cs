@@ -12,7 +12,6 @@ using Unigram.Services;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -20,7 +19,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -53,11 +51,6 @@ namespace Unigram.Views.Popups
                     await items.LoadMoreItemsAsync(3);
                 }
             };
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

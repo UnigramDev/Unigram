@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using Unigram.Common;
 using Unigram.Navigation;
 using Unigram.ViewModels;
 using Unigram.ViewModels.Delegates;
@@ -15,8 +14,6 @@ namespace Unigram.Views
         public ChatPinnedPage()
         {
             InitializeComponent();
-
-            Transitions = ApiInfo.CreateSlideTransition();
 
             Content = new ChatView(deleg => (DataContext = TLContainer.Current.Resolve<DialogPinnedViewModel, IDialogDelegate>(deleg)) as DialogPinnedViewModel);
             Header = View.Header;

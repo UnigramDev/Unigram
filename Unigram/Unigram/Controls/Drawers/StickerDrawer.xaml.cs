@@ -408,11 +408,8 @@ namespace Unigram.Controls.Drawers
                     lottie.Source = null;
                 }
 
-                if (ApiInfo.CanUseDirectComposition)
-                {
-                    CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
-                    ElementCompositionPreview.SetElementChildVisual(content.Child, visual);
-                }
+                CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
+                ElementCompositionPreview.SetElementChildVisual(content.Child, visual);
 
                 DownloadFile(_stickers, file.Id, sticker);
             }

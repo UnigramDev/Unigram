@@ -5,10 +5,8 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -32,11 +30,6 @@ namespace Unigram.Views.Settings
             Message2.Mockup(Strings.Resources.FontSizePreviewLine2, true, DateTime.Now);
 
             BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ProtoService, ViewModel.Aggregator);
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

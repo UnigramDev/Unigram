@@ -15,7 +15,6 @@ using Unigram.ViewModels.Delegates;
 using Unigram.ViewModels.Gallery;
 using Unigram.Views;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Graphics.Display;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -413,15 +412,12 @@ namespace Unigram.Controls.Gallery
                 Preview.Opacity = 1;
 
                 var root = Preview.Presenter;
-                if ((ApiInfo.CanUseIsLoaded && root.IsLoaded) || !ApiInfo.CanUseIsLoaded)
+                if (root.IsLoaded)
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
                     if (animation != null)
                     {
-                        if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                        {
-                            animation.Configuration = new BasicConnectedAnimationConfiguration();
-                        }
+                        animation.Configuration = new BasicConnectedAnimationConfiguration();
 
                         var element = _closing();
                         if (element.ActualWidth > 0)
@@ -486,10 +482,7 @@ namespace Unigram.Controls.Gallery
             var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
             if (animation != null)
             {
-                if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.ConnectedAnimation", "Configuration"))
-                {
-                    animation.Configuration = new BasicConnectedAnimationConfiguration();
-                }
+                animation.Configuration = new BasicConnectedAnimationConfiguration();
 
                 _layer.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
                 _bottom.StartAnimation("Opacity", CreateScalarAnimation(0, 1));
@@ -1062,12 +1055,7 @@ namespace Unigram.Controls.Gallery
             flyout.CreateFlyoutItem(x => viewModel.CanOpenWith, viewModel.OpenWithCommand, item, Strings.Resources.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
             flyout.CreateFlyoutItem(x => viewModel.CanDelete, viewModel.DeleteCommand, item, Strings.Resources.Delete, new FontIcon { Glyph = Icons.Delete });
 
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                flyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
-
-            flyout.ShowAt(sender as FrameworkElement);
+            flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
         }
 
         private void ImageView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

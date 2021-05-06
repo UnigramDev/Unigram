@@ -10,6 +10,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SuppressNavigationTransitionInfo />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Page.Resources>
         <Style x:Key="SendButtonStyle" TargetType="Button">
             <Setter Property="Foreground" Value="{ThemeResource TelegramForegroundAccentBrush}"/>

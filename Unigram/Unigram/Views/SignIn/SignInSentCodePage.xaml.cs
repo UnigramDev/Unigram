@@ -15,8 +15,6 @@ namespace Unigram.Views.SignIn
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignInSentCodeViewModel>();
-
-            Transitions = ApiInfo.CreateSlideTransition();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

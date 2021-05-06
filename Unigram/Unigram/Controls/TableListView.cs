@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Numerics;
 using Unigram.Common;
-using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,7 +25,7 @@ namespace Unigram.Controls
             }
 
             var root = ItemsPanelRoot;
-            if (root == null || !ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
+            if (root == null)
             {
                 return;
             }
@@ -93,7 +92,7 @@ namespace Unigram.Controls
             }
 
             var root = ((TableListView)d).ItemsPanelRoot;
-            if (root == null || !ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
+            if (root == null)
             {
                 return;
             }

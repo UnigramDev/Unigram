@@ -68,11 +68,6 @@ namespace Unigram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (message.Ttl > 0)
-            {
-                Timer.Maximum = message.Ttl;
-                Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
-            }
         }
 
         public void UpdateFile(MessageViewModel message, File file)

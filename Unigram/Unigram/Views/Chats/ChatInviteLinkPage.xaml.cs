@@ -19,8 +19,6 @@ namespace Unigram.Views.Chats
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<ChatInviteLinkViewModel>();
-
-            Transitions = ApiInfo.CreateSlideTransition();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

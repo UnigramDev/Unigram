@@ -306,11 +306,6 @@ namespace Unigram.Controls.Messages
 
         private void InitializeTicks()
         {
-            if (!ApiInfo.CanUseDirectComposition)
-            {
-                return;
-            }
-
             var width = 18f;
             var height = 10f;
             var stroke = 2f;
