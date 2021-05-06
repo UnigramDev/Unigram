@@ -15,6 +15,7 @@ using Unigram.Common;
 using Unigram.Entities;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
+using Windows.System.Profile;
 
 namespace Unigram.Services
 {
@@ -565,6 +566,27 @@ namespace Unigram.Services
                     }
 
                     Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, false, false)));
+                }
+            }
+
+            if (_settings.SystemVersion < 17763)
+            {
+                string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
+                ulong version = ulong.Parse(deviceFamilyVersion);
+                ulong build = (version & 0x00000000FFFF0000L) >> 16;
+
+                if (build < 17763)
+                {
+                    var response = await SendAsync(new CreatePrivateChat(777000, false));
+                    if (response is Chat chat)
+                    {
+                        var message = @"It seems that you're using an old version of Windows.
+Future Unigram releases will require Windows 10 October 2018 update to work properly.
+Read more about how to update your device [here](https://support.microsoft.com/help/4028685).";
+
+                        var formattedText = Client.Execute(new ParseMarkdown(new FormattedText(message, new TextEntity[0]))) as FormattedText;
+                        Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
+                    }
                 }
             }
 

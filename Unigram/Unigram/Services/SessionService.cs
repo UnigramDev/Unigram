@@ -19,6 +19,7 @@ namespace Unigram.Services
 
 
         IProtoService ProtoService { get; }
+        ISettingsService Settings { get; }
         IEventAggregator Aggregator { get; }
 
         Task<BaseObject> SetAuthenticationPhoneNumberAsync(SetAuthenticationPhoneNumber function);
