@@ -332,21 +332,22 @@
             </Grid>
         </Border>
 
-        <ListView x:Name="ListAutocomplete"
-                  ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
-                  Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                  ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
-                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                  AllowFocusOnInteraction="False"
-                  IsItemClickEnabled="True"
-                  ItemClick="Autocomplete_ItemClick"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  VerticalAlignment="Top"
-                  MaxHeight="320"
-                  Grid.Row="2">
+        <controls:TextListView
+            x:Name="ListAutocomplete"
+            ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            AllowFocusOnInteraction="False"
+            IsItemClickEnabled="True"
+            ItemClick="Autocomplete_ItemClick"
+            ContainerContentChanging="OnContainerContentChanging"
+            VerticalAlignment="Top"
+            MaxHeight="320"
+            Grid.Row="2">
             <ListView.ItemContainerTransitions>
                 <TransitionCollection/>
             </ListView.ItemContainerTransitions>
-        </ListView>
+        </controls:TextListView>
     </Grid>
 </UserControl>

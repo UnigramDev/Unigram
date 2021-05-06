@@ -5,6 +5,7 @@ using Unigram.Native.Calls;
 using Unigram.Services.Settings;
 using Windows.Globalization;
 using Windows.Storage;
+using Windows.System.Profile;
 
 namespace Unigram.Services
 {
@@ -12,6 +13,7 @@ namespace Unigram.Services
     {
         int Session { get; }
         ulong Version { get; }
+        ulong SystemVersion { get; }
 
         void UpdateVersion();
 
@@ -228,25 +230,25 @@ namespace Unigram.Services
         private ulong? _version;
         public ulong Version
         {
-            get
-            {
-                if (_version == null)
-                {
-                    _version = GetValueOrDefault("LongVersion", 0UL);
-                }
+            get => _version ??= GetValueOrDefault("LongVersion", 0UL);
+            set => AddOrUpdateValue(ref _version, "LongVersion", value);
+        }
 
-                return _version ?? 0;
-            }
-            private set
-            {
-                _version = value;
-                AddOrUpdateValue("LongVersion", value);
-            }
+        private ulong? _systemVersion;
+        public ulong SystemVersion
+        {
+            get => _systemVersion ??= GetValueOrDefault("SystemVersion", 0UL);
+            set => AddOrUpdateValue(ref _systemVersion, "SystemVersion", value);
         }
 
         public void UpdateVersion()
         {
+            string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
+            ulong version = ulong.Parse(deviceFamilyVersion);
+            ulong build = (version & 0x00000000FFFF0000L) >> 16;
+
             Version = CurrentVersion;
+            SystemVersion = build;
         }
 
         #endregion
