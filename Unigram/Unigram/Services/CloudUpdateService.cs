@@ -182,8 +182,8 @@ namespace Unigram.Services
             var chatId = _chatId.Value;
             await _protoService.SendAsync(new OpenChat(chatId));
 
-            var message = await _protoService.SendAsync(new GetChatPinnedMessage(chatId)) as Message;
-            if (message == null)
+            var messages = await _protoService.SendAsync(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 10, new SearchMessagesFilterDocument(), 0)) as Messages;
+            if (messages == null)
             {
                 _protoService.Send(new CloseChat(chatId));
                 return null;
@@ -191,65 +191,68 @@ namespace Unigram.Services
 
             _protoService.Send(new CloseChat(chatId));
 
-            var document = message.Content as MessageDocument;
-            if (document == null)
+            foreach (var message in messages.MessagesValue)
             {
-                return null;
-            }
-
-            var hashtags = new List<string>();
-            var changelog = string.Empty;
-
-            foreach (var entity in document.Caption.Entities)
-            {
-                if (entity.Type is TextEntityTypeHashtag)
+                var document = message.Content as MessageDocument;
+                if (document == null)
                 {
-                    hashtags.Add(document.Caption.Text.Substring(entity.Offset, entity.Length));
+                    continue;
                 }
-                else if (entity.Type is TextEntityTypeCode)
+
+                var hashtags = new List<string>();
+                var changelog = string.Empty;
+
+                foreach (var entity in document.Caption.Entities)
                 {
-                    changelog = document.Caption.Text.Substring(entity.Offset, entity.Length);
-                }
-            }
-
-            if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
-            {
-                return null;
-            }
-
-            var split = document.Document.FileName.Split('_');
-            if (split.Length >= 3 && Version.TryParse(split[1], out Version version))
-            {
-                var set = new CloudUpdate
-                {
-                    MessageId = message.Id,
-                    Changelog = changelog,
-                    Version = version,
-                    Document = document.Document.DocumentValue
-                };
-
-                _mapping[document.Document.DocumentValue.Id].Add(set);
-
-                var current = Package.Current.Id.Version.ToVersion();
-                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
-
-                if (set.Version > current)
-                {
-                    if (set.Document.Local.IsDownloadingCompleted)
+                    if (entity.Type is TextEntityTypeHashtag)
                     {
-                        set.File = await TryCopyPartLocally(folder, set.Document.Local.Path, set.Version);
+                        hashtags.Add(document.Caption.Text.Substring(entity.Offset, entity.Length));
+                    }
+                    else if (entity.Type is TextEntityTypeCode)
+                    {
+                        changelog = document.Caption.Text.Substring(entity.Offset, entity.Length);
+                    }
+                }
+
+                if (!hashtags.Contains("#update") || !document.Document.FileName.Contains("x64") || !document.Document.FileName.EndsWith(".msixbundle"))
+                {
+                    continue;
+                }
+
+                var split = document.Document.FileName.Split('_');
+                if (split.Length >= 3 && Version.TryParse(split[1], out Version version))
+                {
+                    var set = new CloudUpdate
+                    {
+                        MessageId = message.Id,
+                        Changelog = changelog,
+                        Version = version,
+                        Document = document.Document.DocumentValue
+                    };
+
+                    _mapping[document.Document.DocumentValue.Id].Add(set);
+
+                    var current = Package.Current.Id.Version.ToVersion();
+                    var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+
+                    if (set.Version > current)
+                    {
+                        if (set.Document.Local.IsDownloadingCompleted)
+                        {
+                            set.File = await TryCopyPartLocally(folder, set.Document.Local.Path, set.Version);
+                        }
+                        else
+                        {
+                            set.File = await folder.TryGetItemAsync($"{set.Version}.msixbundle") as StorageFile;
+                        }
+
+                        return set;
                     }
                     else
                     {
-                        set.File = await folder.TryGetItemAsync($"{set.Version}.msixbundle") as StorageFile;
+                        // Delete the file from chat cache as it isn't needed anymore
+                        _protoService.Send(new DeleteFileW(set.Document.Id));
                     }
-
-                    return set;
-                }
-                else
-                {
-                    // Delete the file from chat cache as it isn't needed anymore
-                    _protoService.Send(new DeleteFileW(set.Document.Id));
                 }
             }
 
