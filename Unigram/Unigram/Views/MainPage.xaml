@@ -286,7 +286,7 @@
                             <StackPanel x:Name="SettingsOptions" Orientation="Horizontal" Grid.Column="1">
                                 <controls:MoreButton>
                                     <Button.Flyout>
-                                        <MenuFlyout x:Name="SettingsFlyout">
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
                                             <MenuFlyoutItem
                                                 Click="EditName_Click"
                                                 Text="{CustomResource EditName}">

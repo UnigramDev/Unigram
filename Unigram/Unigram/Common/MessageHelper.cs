@@ -15,7 +15,6 @@ using Unigram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
-using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -994,15 +993,8 @@ namespace Unigram.Common
                     var flyout = new MenuFlyout();
                     flyout.Items.Add(copy);
 
-                    if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
-                    {
-                        // We don't want to unfocus the text are when the context menu gets opened
-                        flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-                    }
-                    else
-                    {
-                        flyout.ShowAt(sender, point);
-                    }
+                    // We don't want to unfocus the text are when the context menu gets opened
+                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
 
                     args.Handled = true;
                 }
@@ -1052,15 +1044,8 @@ namespace Unigram.Common
                     copy.Click += LinkCopy_Click;
                     flyout.Items.Add(copy);
 
-                    if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
-                    {
-                        // We don't want to unfocus the text when the context menu gets opened
-                        flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-                    }
-                    else
-                    {
-                        flyout.ShowAt(sender, point);
-                    }
+                    // We don't want to unfocus the text when the context menu gets opened
+                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
 
                     args.Handled = true;
                 }
@@ -1149,15 +1134,8 @@ namespace Unigram.Common
                 flyout.Items.Add(open);
                 flyout.Items.Add(copy);
 
-                if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
-                {
-                    // We don't want to unfocus the text are when the context menu gets opened
-                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
-                }
-                else
-                {
-                    flyout.ShowAt(sender, point);
-                }
+                // We don't want to unfocus the text are when the context menu gets opened
+                flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
 
                 args.Handled = true;
             }

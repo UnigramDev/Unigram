@@ -73,7 +73,7 @@ namespace Unigram.Controls
 
         private void Load()
         {
-            if (_unloaded && _layoutRoot != null && ((ApiInfo.CanUseIsLoaded && _layoutRoot.IsLoaded) || _loaded))
+            if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
                 while (_layoutRoot.Children.Count > 1)
                 {

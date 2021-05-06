@@ -3,10 +3,8 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Unigram.ViewModels.Settings;
-using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Settings
@@ -19,11 +17,6 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsThemesViewModel>();
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
         }
 
         private async void Switch_Click(object sender, RoutedEventArgs e)

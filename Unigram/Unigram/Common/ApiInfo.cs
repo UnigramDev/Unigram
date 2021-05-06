@@ -3,7 +3,6 @@ using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Common
 {
@@ -13,14 +12,6 @@ namespace Unigram.Common
         public static bool IsStoreRelease => _isStoreRelease ??= (Package.Current.SignatureKind == PackageSignatureKind.Store);
 
         public static bool IsPackagedRelease => !IsStoreRelease;
-
-        // 1809
-        private static bool? _canUseDirectComposition;
-        public static bool CanUseDirectComposition => _canUseDirectComposition ??= ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7);
-
-        // 1809
-        private static bool? _canUseViewports;
-        public static bool CanUseViewports => _canUseViewports ??= ApiInformation.IsEventPresent("Windows.UI.Xaml.FrameworkElement", "EffectiveViewportChanged");
 
         // 1903
         private static bool? _canUseWindowManagement;
@@ -38,10 +29,6 @@ namespace Unigram.Common
         private static bool? _canUseActualFloats;
         public static bool CanUseActualFloats => _canUseActualFloats ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.UIElement", "ActualSize");
 
-        // 1809
-        private static bool? _canUseIsLoaded;
-        public static bool CanUseIsLoaded => _canUseIsLoaded ??= ApiInformation.IsPropertyPresent("Windows.UI.Xaml.FrameworkElement", "IsLoaded");
-
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
 
@@ -58,17 +45,6 @@ namespace Unigram.Common
             }
 
             return _build >= compare;
-        }
-
-        public static TransitionCollection CreateSlideTransition()
-        {
-            //if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo", "Effect"))
-            if (CanUseDirectComposition)
-            {
-                return new TransitionCollection { new NavigationThemeTransition { DefaultNavigationTransitionInfo = new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight } } };
-            }
-
-            return null;
         }
 
 

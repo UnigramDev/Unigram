@@ -5,7 +5,6 @@ using System.Globalization;
 using System.IO;
 using Unigram.Services;
 using Unigram.Services.Settings;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -33,7 +32,7 @@ namespace Unigram.Common
 
                 this.Add("MessageServiceBackgroundColor", GetColorOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
 
-                this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d));
+                this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 14d));
 
                 var emojiSet = SettingsService.Current.Appearance.EmojiSet;
                 switch (emojiSet.Id)
@@ -148,13 +147,6 @@ namespace Unigram.Common
 
         public void Update()
         {
-            // Because of Compact, UpdateSource may be executed twice, but there is a bug in XAML and manually clear theme dictionaries here:
-            // Prior to RS5, when ResourceDictionary.Source property is changed, XAML forgot to clear ThemeDictionaries.
-            if (!ApiInfo.IsBuildOrGreater(17763))
-            {
-                ThemeDictionaries.Clear();
-            }
-
             MergedDictionaries.Clear();
             MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ThemeGreen.xaml") });
         }
@@ -211,7 +203,7 @@ namespace Unigram.Common
             {
                 if (_messageFontSize == null)
                 {
-                    _messageFontSize = (int)GetValueOrDefault("MessageFontSize", ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7) ? 14d : 15d);
+                    _messageFontSize = (int)GetValueOrDefault("MessageFontSize", 14d);
                 }
 
                 return _messageFontSize ?? 14;

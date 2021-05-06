@@ -10,7 +10,6 @@ using Unigram.Converters;
 using Unigram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
@@ -211,7 +210,7 @@ namespace Unigram.Controls
             flyout.Items.Add(new MenuFlyoutSeparator());
             flyout.CreateFlyoutItem(!IsEmpty, ContextSelectAll_Click, "Select All", null, VirtualKey.A);
 
-            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.RichEditBox", "ProofingMenuFlyout") && ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
+            if (ProofingMenuFlyout is MenuFlyout proofing && proofing.Items.Count > 0)
             {
                 flyout.CreateFlyoutSeparator();
                 //flyout.Items.Add(_proofingMenu);

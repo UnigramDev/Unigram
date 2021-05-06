@@ -6,12 +6,10 @@ using Unigram.Navigation;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.Views.Popups;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -26,11 +24,6 @@ namespace Unigram.Views.Settings
         public SettingsThemePage()
         {
             InitializeComponent();
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedRight"))
-            {
-                MenuFlyout.Placement = FlyoutPlacementMode.BottomEdgeAlignedRight;
-            }
 
 #if !DEBUG
             Microsoft.AppCenter.Analytics.Analytics.TrackEvent("SettingsThemePage");

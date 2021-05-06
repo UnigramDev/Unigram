@@ -13,8 +13,6 @@ namespace Unigram.Views.Settings.Password
         {
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SettingsPasswordEmailViewModel>();
-
-            Transitions = ApiInfo.CreateSlideTransition();
         }
 
         private void Walkthrough_Loaded(object sender, RoutedEventArgs e)

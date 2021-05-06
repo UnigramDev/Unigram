@@ -302,13 +302,13 @@ namespace Unigram.ViewModels.Chats
                         return;
                     }
                 }
-            }
 
-            SelectedItem = Items[SelectedIndex + 1];
+                SelectedItem = Items[SelectedIndex + 1];
 
-            if (_selectedItem != null)
-            {
-                await Dialog.LoadMessageSliceAsync(null, _selectedItem.Id);
+                if (_selectedItem != null)
+                {
+                    await Dialog.LoadMessageSliceAsync(null, _selectedItem.Id);
+                }
             }
         }
 

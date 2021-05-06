@@ -15,7 +15,6 @@ using Unigram.Entities;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.UI.Core;
@@ -534,14 +533,7 @@ namespace Unigram.Views.Popups
             var flyout = new Flyout();
             flyout.Content = stack;
 
-            if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions"))
-            {
-                flyout.ShowAt(button.Parent as UIElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
-            }
-            else
-            {
-                flyout.ShowAt(button);
-            }
+            flyout.ShowAt(button.Parent as UIElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
         }
 
         private void Mute_Click(object sender, RoutedEventArgs e)
@@ -597,14 +589,7 @@ namespace Unigram.Views.Popups
             flyout.CreateFlyoutItem(new RelayCommand(() => { Silent = true; Hide(ContentDialogResult.Primary); }), Strings.Resources.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
             flyout.CreateFlyoutItem(new RelayCommand(() => { Schedule = true; Hide(ContentDialogResult.Primary); }), self ? Strings.Resources.SetReminder : Strings.Resources.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "TopEdgeAlignedRight"))
-            {
-                flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
-            }
-            else
-            {
-                flyout.ShowAt(sender as FrameworkElement);
-            }
+            flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

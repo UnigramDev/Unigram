@@ -1,6 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas.Geometry;
 using System.Numerics;
-using Unigram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -46,12 +45,6 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            if (!ApiInfo.CanUseDirectComposition)
-            {
-                GetTemplateChild("ContentPresenter");
-                return;
-            }
-
             var w = 16;
             var h = 16;
 

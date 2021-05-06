@@ -240,11 +240,8 @@ namespace Unigram.Views.Popups
                     lottie.Source = null;
                 }
 
-                if (ApiInfo.CanUseDirectComposition)
-                {
-                    CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
-                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-                }
+                CompositionPathParser.ParseThumbnail(sticker.Outline, out ShapeVisual visual, false);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
                 _filesMap[file.Id].Add(sticker);
                 ViewModel.ProtoService.DownloadFile(file.Id, 1);

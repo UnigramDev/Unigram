@@ -17,7 +17,6 @@ using Unigram.ViewModels;
 using Unigram.Views.SignIn;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -552,63 +551,60 @@ namespace Unigram.Views.Host
 
         private async void Theme_Click(object sender, RoutedEventArgs e)
         {
-            if (ApiInformation.IsMethodPresent("Windows.UI.Composition.Compositor", "CreateGeometricClip"))
+            var target = new RenderTargetBitmap();
+            await target.RenderAsync(Navigation);
+
+            LayoutRoot.Background = new ImageBrush { ImageSource = target, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+
+            var actualWidth = (float)ActualWidth;
+            var actualHeight = (float)ActualHeight;
+
+            var transform = Theme.TransformToVisual(this);
+            var point = transform.TransformPoint(new Point()).ToVector2();
+
+            var width = MathF.Max(actualWidth - point.X, actualHeight - point.Y);
+            var diaginal = MathF.Sqrt((width * width) + (width * width));
+
+            var device = CanvasDevice.GetSharedDevice();
+
+            var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, ActualTheme == ElementTheme.Dark ? actualWidth : 0, ActualTheme == ElementTheme.Dark ? actualHeight : 0);
+
+            var elli1 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? 0 : diaginal);
+            var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+            var elli2 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? diaginal : 0);
+            var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+            var visual = ElementCompositionPreview.GetElementVisual(Navigation);
+            var ellipse = visual.Compositor.CreatePathGeometry(new CompositionPath(group2));
+            var clip = visual.Compositor.CreateGeometricClip(ellipse);
+
+            visual.Clip = clip;
+
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
             {
-                var target = new RenderTargetBitmap();
-                await target.RenderAsync(Navigation);
+                visual.Clip = null;
+                LayoutRoot.Background = null;
+            };
 
-                LayoutRoot.Background = new ImageBrush { ImageSource = target, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-
-                var actualWidth = (float)ActualWidth;
-                var actualHeight = (float)ActualHeight;
-
-                var transform = Theme.TransformToVisual(this);
-                var point = transform.TransformPoint(new Point()).ToVector2();
-
-                var width = MathF.Max(actualWidth - point.X, actualHeight - point.Y);
-                var diaginal = MathF.Sqrt((width * width) + (width * width));
-
-                var device = CanvasDevice.GetSharedDevice();
-
-                var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, ActualTheme == ElementTheme.Dark ? actualWidth : 0, ActualTheme == ElementTheme.Dark ? actualHeight : 0);
-
-                var elli1 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? 0 : diaginal);
-                var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
-
-                var elli2 = CanvasGeometry.CreateCircle(device, point.X + 24, point.Y + 24, ActualTheme == ElementTheme.Dark ? diaginal : 0);
-                var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
-
-                var visual = ElementCompositionPreview.GetElementVisual(Navigation);
-                var ellipse = visual.Compositor.CreatePathGeometry(new CompositionPath(group2));
-                var clip = visual.Compositor.CreateGeometricClip(ellipse);
-
-                visual.Clip = clip;
-
-                var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                batch.Completed += (s, args) =>
-                {
-                    visual.Clip = null;
-                    LayoutRoot.Background = null;
-                };
-
-                CompositionEasingFunction ease;
-                if (ActualTheme == ElementTheme.Dark)
-                {
-                    ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(.42f, 0), new Vector2(1, 1));
-                }
-                else
-                {
-                    ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(.58f, 1));
-                }
-
-                var anim = visual.Compositor.CreatePathKeyFrameAnimation();
-                anim.InsertKeyFrame(0, new CompositionPath(group2), ease);
-                anim.InsertKeyFrame(1, new CompositionPath(group1), ease);
-                anim.Duration = TimeSpan.FromMilliseconds(500);
-
-                ellipse.StartAnimation("Path", anim);
-                batch.End();
+            CompositionEasingFunction ease;
+            if (ActualTheme == ElementTheme.Dark)
+            {
+                ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(.42f, 0), new Vector2(1, 1));
             }
+            else
+            {
+                ease = visual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(.58f, 1));
+            }
+
+            var anim = visual.Compositor.CreatePathKeyFrameAnimation();
+            anim.InsertKeyFrame(0, new CompositionPath(group2), ease);
+            anim.InsertKeyFrame(1, new CompositionPath(group1), ease);
+            anim.Duration = TimeSpan.FromMilliseconds(500);
+
+            ellipse.StartAnimation("Path", anim);
+            batch.End();
 
             if (SettingsService.Current.Appearance.NightMode != NightMode.Disabled)
             {

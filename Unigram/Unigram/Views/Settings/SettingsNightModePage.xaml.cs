@@ -6,11 +6,9 @@ using Unigram.Converters;
 using Unigram.Services;
 using Unigram.Services.Settings;
 using Unigram.ViewModels.Settings;
-using Windows.Foundation.Metadata;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace Unigram.Views.Settings
@@ -29,12 +27,6 @@ namespace Unigram.Views.Settings
 
             FromPicker.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
             ToPicker.ClockIdentifier = GlobalizationPreferences.Clocks.FirstOrDefault();
-
-            if (ApiInformation.IsEnumNamedValuePresent("Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode", "BottomEdgeAlignedLeft"))
-            {
-                FromPicker.Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft;
-                ToPicker.Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft;
-            }
 
             //var sensor = LightSensor.GetDefault();
             //if (sensor != null)

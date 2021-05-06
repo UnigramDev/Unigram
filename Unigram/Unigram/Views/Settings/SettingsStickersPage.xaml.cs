@@ -162,7 +162,7 @@ namespace Unigram.Views.Settings
 
             var subtitle = content.Children[2] as TextBlock;
             subtitle.Text = Locale.Declension("Stickers", stickerSet.Size);
-            
+
             var file = stickerSet.GetThumbnail(out var outline, out _);
             if (file == null)
             {
@@ -192,11 +192,8 @@ namespace Unigram.Views.Settings
                     lottie.Source = null;
                 }
 
-                if (ApiInfo.CanUseDirectComposition)
-                {
-                    CompositionPathParser.ParseThumbnail(outline, out ShapeVisual visual, false);
-                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-                }
+                CompositionPathParser.ParseThumbnail(outline, out ShapeVisual visual, false);
+                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
 
                 _filesMap[file.Id].Add(stickerSet);
                 ViewModel.ProtoService.DownloadFile(file.Id, 1);

@@ -23,8 +23,6 @@ namespace Unigram.Views.SignIn
             InitializeComponent();
             DataContext = TLContainer.Current.Resolve<SignInViewModel, ISignInDelegate>(this);
 
-            Transitions = ApiInfo.CreateSlideTransition();
-
             Diagnostics.Text = $"Unigram " + GetVersion();
 
             var token = ElementCompositionPreview.GetElementVisual(Token);

@@ -20,5 +20,4 @@
     </Border>
 
     <controls:FileButton x:Name="Button" Click="Button_Click" Style="{StaticResource ImmersiveFileButtonStyle}"/>
-    <controls:SelfDestructTimer x:Name="Timer" Background="Transparent" Foreground="White" IsHitTestVisible="False"/>
 </controls:AspectView>

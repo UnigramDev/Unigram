@@ -23,7 +23,7 @@
 
                 <controls:MoreButton Grid.Column="1">
                     <Button.Flyout>
-                        <MenuFlyout x:Name="MenuFlyout">
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <MenuFlyoutItem Text="{CustomResource CreateNewThemeMenu}"
                                     Command="{x:Bind ViewModel.NewThemeCommand}">
                                 <MenuFlyoutItem.Icon>
