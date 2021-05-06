@@ -243,7 +243,7 @@ namespace Unigram.Controls.Chats
                 Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("selectorItem == null, {0} try", iter + 1));
 
                 // call task-based ScrollIntoViewAsync to realize the item
-                await this.ScrollIntoViewAsync(item, direction);
+                await this.ScrollIntoViewAsync(item, direction, false);
 
                 // this time the item shouldn't be null again
                 selectorItem = ContainerFromItem(item) as SelectorItem;
@@ -323,7 +323,7 @@ namespace Unigram.Controls.Chats
 
             if (scrollViewer.ScrollableHeight > 0 && position.Y < scrollViewer.ScrollableHeight)
             {
-                await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center);
+                await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center, false);
             }
 
             _programmaticScrolling = _programmaticExternal = false;
