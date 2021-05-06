@@ -800,7 +800,7 @@ namespace Unigram.Common
             if (selectorItem == null)
             {
                 // call task-based ScrollIntoViewAsync to realize the item
-                await listViewBase.ScrollIntoViewAsync(item);
+                await listViewBase.ScrollIntoViewAsync(item, ScrollIntoViewAlignment.Leading, true);
 
                 // this time the item shouldn't be null again
                 selectorItem = (SelectorItem)listViewBase.ContainerFromItem(item);
@@ -851,7 +851,7 @@ namespace Unigram.Common
             }
         }
 
-        public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item, ScrollIntoViewAlignment alignment = ScrollIntoViewAlignment.Leading)
+        public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item, ScrollIntoViewAlignment alignment, bool updateLayout)
         {
             var tcs = new TaskCompletionSource<object>();
             var scrollViewer = listViewBase.GetScrollViewer();
@@ -860,7 +860,11 @@ namespace Unigram.Common
             EventHandler<ScrollViewerViewChangedEventArgs> viewChanged = (s, e) =>
             {
                 scrollViewer.LayoutUpdated += layoutUpdated;
-                scrollViewer.UpdateLayout();
+
+                if (updateLayout)
+                {
+                    scrollViewer.UpdateLayout();
+                }
             };
             try
             {
@@ -875,7 +879,7 @@ namespace Unigram.Common
             }
         }
 
-        public static async Task ChangeViewAsync(this ScrollViewer scrollViewer, double? horizontalOffset, double? verticalOffset, bool disableAnimation)
+        public static async Task ChangeViewAsync(this ScrollViewer scrollViewer, double? horizontalOffset, double? verticalOffset, bool disableAnimation, bool updateLayout)
         {
             var tcs = new TaskCompletionSource<object>();
 
@@ -888,7 +892,11 @@ namespace Unigram.Common
                 }
 
                 scrollViewer.LayoutUpdated += layoutUpdated;
-                scrollViewer.UpdateLayout();
+
+                if (updateLayout)
+                {
+                    scrollViewer.UpdateLayout();
+                }
             };
             try
             {
