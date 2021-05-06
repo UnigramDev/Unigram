@@ -790,11 +790,6 @@ namespace Unigram.Views
         {
             var flyout = new MenuFlyout();
 
-            FontIcon GetCheckmark(bool condition)
-            {
-                return condition ? new FontIcon { Glyph = Icons.Checkmark } : null;
-            }
-
             var videoId = _service.CurrentVideoInput;
             var inputId = _service.CurrentAudioInput;
             var outputId = _service.CurrentAudioOutput;
@@ -806,29 +801,69 @@ namespace Unigram.Views
             var videoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
             foreach (var device in videoDevices)
             {
-                video.CreateFlyoutItem(id => _service.CurrentVideoInput = id, device.Id, device.Name, GetCheckmark(inputId == device.Id));
+                var deviceItem = new ToggleMenuFlyoutItem();
+                deviceItem.Text = device.Name;
+                deviceItem.IsChecked = videoId == device.Id;
+                deviceItem.Click += (s, args) =>
+                {
+                    _service.CurrentVideoInput = device.Id;
+                };
+
+                video.Items.Add(deviceItem);
             }
+
+            var defaultInput = new ToggleMenuFlyoutItem();
+            defaultInput.Text = Strings.Resources.Default;
+            defaultInput.IsChecked = inputId == string.Empty;
+            defaultInput.Click += (s, args) =>
+            {
+                _service.CurrentAudioInput = string.Empty;
+            };
 
             var input = new MenuFlyoutSubItem();
             input.Text = "Microphone";
             input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-            input.CreateFlyoutItem(id => _service.CurrentAudioInput = id, "", Strings.Resources.Default, GetCheckmark(inputId == ""));
+            input.Items.Add(defaultInput);
 
             var inputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioCapture);
             foreach (var device in inputDevices)
             {
-                input.CreateFlyoutItem(id => _service.CurrentAudioInput = id, device.Id, device.Name, GetCheckmark(inputId == device.Id));
+                var deviceItem = new ToggleMenuFlyoutItem();
+                deviceItem.Text = device.Name;
+                deviceItem.IsChecked = inputId == device.Id;
+                deviceItem.Click += (s, args) =>
+                {
+                    _service.CurrentAudioInput = device.Id;
+                };
+
+                input.Items.Add(deviceItem);
             }
+
+            var defaultOutput = new ToggleMenuFlyoutItem();
+            defaultOutput.Text = Strings.Resources.Default;
+            defaultOutput.IsChecked = outputId == string.Empty;
+            defaultOutput.Click += (s, args) =>
+            {
+                _service.CurrentAudioOutput = string.Empty;
+            };
 
             var output = new MenuFlyoutSubItem();
             output.Text = "Speaker";
             output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-            output.CreateFlyoutItem(id => _service.CurrentAudioOutput = id, "", Strings.Resources.Default, GetCheckmark(outputId == ""));
+            output.Items.Add(defaultOutput);
 
             var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
             foreach (var device in outputDevices)
             {
-                output.CreateFlyoutItem(id => _service.CurrentAudioOutput = id, device.Id, device.Name, GetCheckmark(outputId == device.Id));
+                var deviceItem = new ToggleMenuFlyoutItem();
+                deviceItem.Text = device.Name;
+                deviceItem.IsChecked = outputId == device.Id;
+                deviceItem.Click += (s, args) =>
+                {
+                    _service.CurrentAudioOutput = device.Id;
+                };
+
+                output.Items.Add(deviceItem);
             }
 
             flyout.Items.Add(input);
