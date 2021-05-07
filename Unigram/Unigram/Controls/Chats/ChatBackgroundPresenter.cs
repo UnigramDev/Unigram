@@ -1,7 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas.Effects;
 using System;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.InteropServices;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Brushes;
@@ -361,10 +361,22 @@ namespace Unigram.Controls.Chats
             return result;
         }
 
-        private WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
+        [ComImport]
+        [Guid("905A0FEF-BC53-11DF-8C49-001E4FC686DA")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        unsafe interface IBufferByteAccess
+        {
+            long Buffer(out IntPtr value);
+        }
+
+        private unsafe WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
         {
             var context = new WriteableBitmap(width, height);
-            var imageBytes = context.PixelBuffer.AsStream();
+            var buffer = (IBufferByteAccess)context.PixelBuffer;
+            buffer.Buffer(out IntPtr access);
+
+            var imageBytes = (byte*)access;
+            var bytesPerRow = width * 4;
 
             for (int y = 0; y < height; y++)
             {
@@ -372,6 +384,7 @@ namespace Unigram.Controls.Chats
                 var centerDistanceY = directPixelY - 0.5f;
                 var centerDistanceY2 = centerDistanceY * centerDistanceY;
 
+                var lineBytes = imageBytes + bytesPerRow * y;
                 for (int x = 0; x < width; x++)
                 {
                     var directPixelX = x / (float)width;
@@ -410,10 +423,11 @@ namespace Unigram.Controls.Chats
                         b += distance * colors[i].B / 255f;
                     }
 
-                    imageBytes.WriteByte((byte)(b / distanceSum * 255.0f));
-                    imageBytes.WriteByte((byte)(g / distanceSum * 255.0f));
-                    imageBytes.WriteByte((byte)(r / distanceSum * 255.0f));
-                    imageBytes.WriteByte(0xff);
+                    var pixelBytes = lineBytes + x * 4;
+                    pixelBytes[0] = (byte)(b / distanceSum * 255.0f);
+                    pixelBytes[1] = (byte)(g / distanceSum * 255.0f);
+                    pixelBytes[2] = (byte)(r / distanceSum * 255.0f);
+                    pixelBytes[3] = 0xff;
                 }
             }
 
