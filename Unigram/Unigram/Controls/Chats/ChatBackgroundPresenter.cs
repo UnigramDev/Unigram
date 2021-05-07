@@ -362,21 +362,17 @@ namespace Unigram.Controls.Chats
         }
 
         [ComImport]
-        [Guid("905A0FEF-BC53-11DF-8C49-001E4FC686DA")]
-        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        unsafe interface IBufferByteAccess
+        [Guid("905A0FEF-BC53-11DF-8C49-001E4FC686DA"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        interface IBufferByteAccess
         {
-            long Buffer(out IntPtr value);
+            unsafe void Buffer(out byte* value);
         }
 
         private unsafe WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
         {
             var context = new WriteableBitmap(width, height);
             var buffer = (IBufferByteAccess)context.PixelBuffer;
-            buffer.Buffer(out IntPtr access);
-
-            var imageBytes = (byte*)access;
-            var bytesPerRow = width * 4;
+            buffer.Buffer(out byte* imageBytes);
 
             for (int y = 0; y < height; y++)
             {
@@ -384,7 +380,7 @@ namespace Unigram.Controls.Chats
                 var centerDistanceY = directPixelY - 0.5f;
                 var centerDistanceY2 = centerDistanceY * centerDistanceY;
 
-                var lineBytes = imageBytes + bytesPerRow * y;
+                var lineBytes = imageBytes + width * 4 * y;
                 for (int x = 0; x < width; x++)
                 {
                     var directPixelX = x / (float)width;
