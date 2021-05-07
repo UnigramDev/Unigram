@@ -42,7 +42,7 @@
         <TextBlock
             common:TextBlockHelper.Markdown="{CustomResource PhoneNumberHelp}"
             Style="{StaticResource BodyTextBlockStyle}"
-            TextAlignment="Left"
+            TextAlignment="Center"
             Margin="12,0"
             Grid.Row="2"
             MaxWidth="640"/>
