@@ -238,15 +238,26 @@ namespace Unigram.Common
 
         public static T[] Shift<T>(this T[] array, int offset)
         {
-            while (offset > 0)
+            var output = new T[array.Length];
+
+            if (offset > 0)
             {
-                var element = array[0];
-                Array.Copy(array, 1, array, 0, array.Length - 1);
-                array[array.Length - 1] = element;
-                offset -= 1;
+                while (offset > 0)
+                {
+                    var element = array[0];
+                    Array.Copy(array, 1, output, 0, array.Length - 1);
+                    output[output.Length - 1] = element;
+                    offset -= 1;
+
+                    array = output;
+                }
+            }
+            else
+            {
+                Array.Copy(array, 0, output, 0, array.Length);
             }
 
-            return array;
+            return output;
         }
 
         /// <summary>
