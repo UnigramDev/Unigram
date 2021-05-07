@@ -142,7 +142,7 @@
                 <xaml:CanvasControl
                     x:Name="Viewport"
                     Margin="-12,0"/>
-                <Grid x:Name="PinnedInfo" VerticalAlignment="Bottom" Opacity="0.8" Padding="12,6">
+                <Grid x:Name="PinnedInfo" VerticalAlignment="Bottom" Opacity="0.8" Margin="-12,0" Padding="12,6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>

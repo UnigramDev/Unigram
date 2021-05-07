@@ -90,6 +90,7 @@ namespace Unigram.Views
 
             ElementCompositionPreview.SetIsTranslationEnabled(Viewport, true);
             ElementCompositionPreview.SetIsTranslationEnabled(PinnedInfo, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(PinnedGlyph, true);
             ViewportAspect.Constraint = new Size(16, 9);
         }
 
@@ -232,73 +233,59 @@ namespace Unigram.Views
             var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
             var visual = ElementCompositionPreview.GetElementVisual(Viewport);
             var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
+            var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
+
+            pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
 
             var clip = aspect.Clip as CompositionGeometricClip;
             var rectangle = clip.Geometry as CompositionRoundedRectangleGeometry;
 
-            if (_pinnedExpanded)
-            {
-                var clipSize = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                clipSize.InsertKeyFrame(1, new Vector2(ViewportAspect.ActualSize.X - 24, ViewportAspect.ActualSize.Y));
-                clipSize.Duration = TimeSpan.FromSeconds(0.5);
+            var transform = ParticipantsPanel.TransformToVisual(this);
+            var point = transform.TransformPoint(new Point()).ToVector2();
 
-                var clipOffset = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                clipOffset.InsertKeyFrame(1, new Vector2(12, 0));
-                clipSize.Duration = TimeSpan.FromSeconds(0.5);
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var duration = TimeSpan.FromSeconds(0.5);
 
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                offset.InsertKeyFrame(1, new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
-                offset.Duration = TimeSpan.FromSeconds(0.5);
+            var clipSize = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+            clipSize.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector2(ViewportAspect.ActualSize.X - 24, ViewportAspect.ActualSize.Y));
+            clipSize.InsertKeyFrame(_pinnedExpanded ? 0 : 1, Viewport.ActualSize);
+            clipSize.Duration = duration;
 
-                var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                scale.InsertKeyFrame(1, new Vector3((ViewportAspect.ActualSize.X - 24) / Viewport.ActualSize.X));
-                scale.Duration = TimeSpan.FromSeconds(0.5);
+            var clipOffset = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
+            clipOffset.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector2(12, 0));
+            clipOffset.InsertKeyFrame(_pinnedExpanded ? 0 : 1, new Vector2(0, -point.Y));
+            clipOffset.Duration = duration;
 
-                var translate = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                translate.InsertKeyFrame(1, Vector3.Zero);
-                translate.Duration = TimeSpan.FromSeconds(0.5);
+            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            offset.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
+            offset.InsertKeyFrame(_pinnedExpanded ? 0 : 1, new Vector3(0, -point.Y, 0));
+            offset.Duration = duration;
 
-                rectangle.StartAnimation("Size", clipSize);
-                rectangle.StartAnimation("Offset", clipOffset);
-                visual.StartAnimation("Translation", offset);
-                visual.StartAnimation("Scale", scale);
-                pinned.StartAnimation("Translation", translate);
+            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector3((ViewportAspect.ActualSize.X - 24) / Viewport.ActualSize.X));
+            scale.InsertKeyFrame(_pinnedExpanded ? 0 : 1, Vector3.One);
+            scale.Duration = duration;
 
-                _pinnedExpanded = false;
-            }
-            else
-            {
-                var transform = ParticipantsPanel.TransformToVisual(this);
-                var point = transform.TransformPoint(new Point()).ToVector2();
+            var translateInfo = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            translateInfo.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector3(12, 0, 0));
+            translateInfo.InsertKeyFrame(_pinnedExpanded ? 0 : 1, new Vector3(0, Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y - point.Y, 0));
+            translateInfo.Duration = duration;
 
-                var clipSize = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                clipSize.InsertKeyFrame(1, Viewport.ActualSize);
-                clipSize.Duration = TimeSpan.FromSeconds(0.5);
+            var translateGlyph = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            translateGlyph.InsertKeyFrame(_pinnedExpanded ? 1 : 0, new Vector3(-24, 0, 0));
+            translateGlyph.InsertKeyFrame(_pinnedExpanded ? 0 : 1, Vector3.Zero);
+            translateGlyph.Duration = duration;
 
-                var clipOffset = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                clipOffset.InsertKeyFrame(1, new Vector2(0, -point.Y));
-                clipOffset.Duration = TimeSpan.FromSeconds(0.5);
+            rectangle.StartAnimation("Size", clipSize);
+            rectangle.StartAnimation("Offset", clipOffset);
+            visual.StartAnimation("Translation", offset);
+            visual.StartAnimation("Scale", scale);
+            pinned.StartAnimation("Translation", translateInfo);
+            glyph.StartAnimation("Translation", translateGlyph);
 
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                offset.InsertKeyFrame(1, new Vector3(0, -point.Y, 0));
-                offset.Duration = TimeSpan.FromSeconds(0.5);
+            batch.End();
 
-                var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                scale.InsertKeyFrame(1, Vector3.One);
-                scale.Duration = TimeSpan.FromSeconds(0.5);
-
-                var translate = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                translate.InsertKeyFrame(1, new Vector3(0, Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y - PinnedInfo.ActualSize.Y, 0));
-                translate.Duration = TimeSpan.FromSeconds(0.5);
-
-                rectangle.StartAnimation("Size", clipSize);
-                rectangle.StartAnimation("Offset", clipOffset);
-                visual.StartAnimation("Translation", offset);
-                visual.StartAnimation("Scale", scale);
-                pinned.StartAnimation("Translation", translate);
-
-                _pinnedExpanded = true;
-            }
+            _pinnedExpanded = !_pinnedExpanded;
         }
 
         public void Update(GroupCall call, GroupCallParticipant currentUser)
@@ -629,21 +616,30 @@ namespace Unigram.Views
             _prevColors = colors;
         }
 
+        private VoipVideoCapture _capturer;
+
         private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
-            _protoService.Send(new ToggleGroupCallIsMyVideoEnabled(_service.Call.Id, true));
-
-            var picker = new GraphicsCapturePicker();
-            var item = await picker.PickSingleItemAsync();
-
-            if (item != null)
+            if (_capturer != null)
             {
-                _manager.SetVideoCapture(new VoipVideoCapture(item, 0));
+                _manager.SetVideoCapture(_capturer = null);
             }
             else
             {
-                _manager.SetVideoCapture(new VoipVideoCapture(""));
+                var picker = new GraphicsCapturePicker();
+                var item = await picker.PickSingleItemAsync();
+
+                if (item != null)
+                {
+                    _manager.SetVideoCapture(_capturer = new VoipVideoCapture(item, 0));
+                }
+                else
+                {
+                    _manager.SetVideoCapture(_capturer = new VoipVideoCapture(""));
+                }
             }
+
+            _protoService.Send(new ToggleGroupCallIsMyVideoEnabled(_service.Call.Id, _capturer != null));
             return;
 
             var flyout = new MenuFlyout();
@@ -1139,6 +1135,7 @@ namespace Unigram.Views
             var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
             var visual = ElementCompositionPreview.GetElementVisual(Viewport);
             var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
+            var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
 
             var clip = aspect.Clip as CompositionGeometricClip;
             var rectangle = clip.Geometry as CompositionRoundedRectangleGeometry;
@@ -1162,35 +1159,41 @@ namespace Unigram.Views
             };
 
             var actualSize = ViewportAspect.ActualSize.Y + 8;
+            var duration = TimeSpan.FromSeconds(0.5);
 
             var clipSize = aspect.Compositor.CreateVector2KeyFrameAnimation();
             clipSize.InsertKeyFrame(0, new Vector2(ViewportAspect.ActualSize.X - 24, show ? 0 : ViewportAspect.ActualSize.Y));
             clipSize.InsertKeyFrame(1, new Vector2(ViewportAspect.ActualSize.X - 24, show ? ViewportAspect.ActualSize.Y : 0));
-            clipSize.Duration = TimeSpan.FromSeconds(0.5);
+            clipSize.Duration = duration;
 
             if (_pinnedExpanded)
             {
                 var clipOffset = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
                 clipOffset.InsertKeyFrame(1, new Vector2(12, 0));
-                clipSize.Duration = TimeSpan.FromSeconds(0.5);
+                clipOffset.Duration = duration;
 
                 var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                 offset.InsertKeyFrame(1, new Vector3(12, -(Viewport.ActualSize.Y - ViewportAspect.ActualSize.Y) / 2, 0));
-                offset.Duration = TimeSpan.FromSeconds(0.5);
+                offset.Duration = duration;
 
                 var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
                 scale.InsertKeyFrame(1, new Vector3((ViewportAspect.ActualSize.X - 24) / Viewport.ActualSize.X));
-                scale.Duration = TimeSpan.FromSeconds(0.5);
+                scale.Duration = duration;
 
-                var translate = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                translate.InsertKeyFrame(1, Vector3.Zero);
-                translate.Duration = TimeSpan.FromSeconds(0.5);
+                var translateInfo = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                translateInfo.InsertKeyFrame(1, new Vector3(12, 0, 0));
+                translateInfo.Duration = duration;
+
+                var translateGlyph = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                translateGlyph.InsertKeyFrame(1, new Vector3(-24, 0, 0));
+                translateGlyph.Duration = duration;
 
                 rectangle.StartAnimation("Size", clipSize);
                 rectangle.StartAnimation("Offset", clipOffset);
                 visual.StartAnimation("Translation", offset);
                 visual.StartAnimation("Scale", scale);
-                pinned.StartAnimation("Translation", translate);
+                pinned.StartAnimation("Translation", translateInfo);
+                glyph.StartAnimation("Translation", translateGlyph);
 
                 _pinnedExpanded = false;
             }
