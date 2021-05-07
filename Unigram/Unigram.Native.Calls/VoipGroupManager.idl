@@ -18,7 +18,6 @@ namespace Unigram.Native.Calls
         void SetConnectionMode(VoipGroupConnectionMode connectionMode, Boolean keepBroadcastIfWasEnabled);
 
         void EmitJoinPayload(EmitJsonPayloadDelegate completion);
-        [default_overload]
         void SetJoinResponsePayload(String payload);
         void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
 

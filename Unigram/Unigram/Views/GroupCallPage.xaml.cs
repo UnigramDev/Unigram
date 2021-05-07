@@ -15,6 +15,7 @@ using Unigram.ViewModels.Delegates;
 using Unigram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
+using Windows.Graphics.Capture;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
@@ -631,7 +632,18 @@ namespace Unigram.Views
         private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
             _protoService.Send(new ToggleGroupCallIsMyVideoEnabled(_service.Call.Id, true));
-            _manager.SetVideoCapture(new VoipVideoCapture(""));
+
+            var picker = new GraphicsCapturePicker();
+            var item = await picker.PickSingleItemAsync();
+
+            if (item != null)
+            {
+                _manager.SetVideoCapture(new VoipVideoCapture(item, 0));
+            }
+            else
+            {
+                _manager.SetVideoCapture(new VoipVideoCapture(""));
+            }
             return;
 
             var flyout = new MenuFlyout();
@@ -1253,6 +1265,18 @@ namespace Unigram.Views
                 if (participant.IsHandRaised)
                 {
                     flyout.CreateFlyoutItem(() => _protoService.Send(new ToggleGroupCallParticipantIsHandRaised(_service.Call.Id, participant.ParticipantId, false)), Strings.Resources.VoipGroupCancelRaiseHand, new FontIcon { Glyph = Icons.EmojiHand });
+                }
+
+                if (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null)
+                {
+                    if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
+                    {
+                        flyout.CreateFlyoutItem(() => UpdatePinnedParticipant(null), "Unpin Video", new FontIcon { Glyph = Icons.PinOff });
+                    }
+                    else
+                    {
+                        flyout.CreateFlyoutItem(() => UpdatePinnedParticipant(participant), "Pin Video", new FontIcon { Glyph = Icons.Pin });
+                    }
                 }
             }
             else

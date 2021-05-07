@@ -110,6 +110,9 @@
     <ClCompile Include="rnnoise\src\pitch.c">
       <Filter>rnnoise\src</Filter>
     </ClCompile>
+    <ClCompile Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
+      <Filter>tgcalls\platform\uwp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -255,6 +258,12 @@
     <ClInclude Include="rnnoise\include\rnnoise.h">
       <Filter>rnnoise\include</Filter>
     </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h">
+      <Filter>tgcalls\platform\uwp</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\tgcalls\tgcalls\platform\uwp\UwpContext.h">
+      <Filter>tgcalls\platform\uwp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VoipManager.rc" />
@@ -305,6 +314,9 @@
     </Filter>
     <Filter Include="rnnoise\include">
       <UniqueIdentifier>{8228177f-ca00-4b59-a34f-d090a1d1b769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tgcalls\platform\uwp">
+      <UniqueIdentifier>{eee909dd-ec13-4c3c-b8dc-250a4267947f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

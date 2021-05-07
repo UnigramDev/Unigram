@@ -8,7 +8,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 {
 	struct SignalingDataEmittedEventArgs : SignalingDataEmittedEventArgsT<SignalingDataEmittedEventArgs>
 	{
-		SignalingDataEmittedEventArgs() = default;
 		SignalingDataEmittedEventArgs(IVector<uint8_t> data);
 
 		IVector<uint8_t> Data();

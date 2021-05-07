@@ -6,12 +6,11 @@ namespace Unigram.Native.Calls
     runtimeclass VoipVideoCapture : Windows.Foundation.IClosable
     {
         VoipVideoCapture(String id);
+        VoipVideoCapture(Windows.Graphics.Capture.GraphicsCaptureItem item, Int32 zero);
 
         void SwitchToDevice(String deviceId);
         void SetState(VoipVideoState state);
         void SetPreferredAspectRatio(Single aspectRatio);
         void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
-
-        void FeedBytes(Windows.Graphics.Imaging.SoftwareBitmap bitmap);
     }
 } // namespace Unigram.Native.Calls
