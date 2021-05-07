@@ -691,12 +691,15 @@ namespace Unigram.Views
 
                 batch.End();
 
-                var dark = ActualTheme == ElementTheme.Dark;
-
-                var background = ViewModel.ProtoService.GetSelectedBackground(dark);
-                if (background == null && !dark)
+                if (message.IsOutgoing && message.SendingState is MessageSendingStatePending)
                 {
-                    ViewModel.Aggregator.Publish(new UpdateSelectedBackground(dark, null));
+                    var dark = ActualTheme == ElementTheme.Dark;
+
+                    var background = ViewModel.ProtoService.GetSelectedBackground(dark);
+                    if (background == null && !dark)
+                    {
+                        ViewModel.Aggregator.Publish(new UpdateSelectedBackground(dark, null));
+                    }
                 }
             }
         }
