@@ -45,13 +45,10 @@ namespace winrt::Unigram::Native::Calls::implementation
 		impl.videoContentType = (tgcalls::VideoContentType)descriptor.VideoContentType();
 
 		if (descriptor.VideoCapture()) {
-			if (impl.videoContentType == tgcalls::VideoContentType::Screencast) {
-				impl.videoCapture = winrt::get_self<implementation::VoipScreenCapture>(descriptor.VideoCapture())->m_impl;
-			}
-			else {
-				impl.videoCapture = winrt::get_self<implementation::VoipVideoCapture>(descriptor.VideoCapture())->m_impl;
-			}
+			impl.videoCapture = winrt::get_self<VoipVideoCapture>(descriptor.VideoCapture()
+				.as<winrt::default_interface<VoipVideoCapture>>())->m_impl;
 		}
+
 		impl.requestBroadcastPart = [this](int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done) {
 			int scale = 0;
 			switch (period) {
