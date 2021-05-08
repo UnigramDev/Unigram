@@ -94,6 +94,9 @@ namespace Unigram.Converters
         public const string FolderOpen = "\uE838"; 
         public const string OpenIn = "\uE7AC";
 
+        public const string ShareScreenStart = "\uE92F";
+        public const string ShareScreenStop = "\uE92E";
+
         public const string Person = "\uE77B"; 
         public const string PersonAdd = "\uE8FA"; 
 

@@ -362,6 +362,8 @@ namespace Unigram.Services
                     _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
 
                     _manager.SetIncomingVideoOutput(null);
+                    _manager.SetVideoCapture(null);
+
                     _manager.Dispose();
                     _manager = null;
                 }

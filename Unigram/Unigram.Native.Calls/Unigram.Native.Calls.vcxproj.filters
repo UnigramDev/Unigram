@@ -281,6 +281,7 @@
     <Midl Include="BroadcastPartRequestedEventArgs.idl" />
     <Midl Include="MediaChannelDescriptionsRequestedEventArgs.idl" />
     <Midl Include="VoipVideoRendererToken.idl" />
+    <Midl Include="VoipScreenCapture.idl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

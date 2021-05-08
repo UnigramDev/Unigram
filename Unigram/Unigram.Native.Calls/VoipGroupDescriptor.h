@@ -8,13 +8,23 @@ namespace winrt::Unigram::Native::Calls::implementation
     {
         VoipGroupDescriptor() = default;
 
-        hstring m_audioInputId{ L"" };
         hstring AudioInputId();
         void AudioInputId(hstring value);
 
-        hstring m_audioOutputId{ L"" };
         hstring AudioOutputId();
         void AudioOutputId(hstring value);
+
+        VoipVideoContentType VideoContentType();
+        void VideoContentType(VoipVideoContentType value);
+
+        IVoipVideoCapture VideoCapture();
+        void VideoCapture(IVoipVideoCapture value);
+
+    private:
+        hstring m_audioInputId{ L"" };
+        hstring m_audioOutputId{ L"" };
+        VoipVideoContentType m_videoContentType{ VoipVideoContentType::Generic };
+        IVoipVideoCapture m_videoCapture{ nullptr };
 };
 }
 

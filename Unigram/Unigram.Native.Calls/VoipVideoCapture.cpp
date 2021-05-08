@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "VoipVideoCapture.h"
+#if __has_include("VoipVideoCapture.g.cpp")
 #include "VoipVideoCapture.g.cpp"
+#endif
 
 #include "StaticThreads.h"
 #include "platform/uwp/UwpContext.h"
@@ -12,14 +14,6 @@ namespace winrt::Unigram::Native::Calls::implementation
 		m_impl = tgcalls::VideoCaptureInterface::Create(
 			tgcalls::StaticThreads::getThreads(),
 			string_to_unmanaged(id));
-	}
-
-	VoipVideoCapture::VoipVideoCapture(GraphicsCaptureItem item, int32_t zero)
-	{
-		m_impl = tgcalls::VideoCaptureInterface::Create(
-			tgcalls::StaticThreads::getThreads(),
-			"GraphicsCaptureItem",
-			std::make_shared<tgcalls::UwpContext>(item));
 	}
 
 	VoipVideoCapture::~VoipVideoCapture()

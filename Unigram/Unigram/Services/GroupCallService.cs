@@ -15,6 +15,7 @@ using Unigram.Views;
 using Unigram.Views.Popups;
 using Windows.Data.Json;
 using Windows.Devices.Enumeration;
+using Windows.Graphics.Capture;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -47,6 +48,12 @@ namespace Unigram.Services
 
         Task CreateAsync(long chatId);
         void Discard();
+
+        VoipGroupManager ScreenSharing { get; }
+
+        bool IsScreenSharing { get; }
+        void StartScreenSharing();
+        void EndScreenSharing();
     }
 
     public class GroupCallService : TLViewModelBase, IGroupCallService, IHandle<UpdateGroupCall>, IHandle<UpdateGroupCallParticipant>
@@ -66,8 +73,14 @@ namespace Unigram.Services
 
         private GroupCall _call;
         private GroupCallParticipant _currentUser;
+
         private VoipGroupManager _manager;
+        private VoipVideoCapture _capturer;
         private int _source;
+
+        private VoipGroupManager _screenManager;
+        private VoipScreenCapture _screenCapturer;
+        private int _screenSource;
 
         private bool _isScheduled;
         private bool _isConnected;
@@ -350,6 +363,81 @@ namespace Unigram.Services
             });
         }
 
+        #region Screencast
+
+        public VoipGroupManager ScreenSharing => _screenManager;
+        public bool IsScreenSharing => _screenManager != null && _screenCapturer != null;
+
+        public async void StartScreenSharing()
+        {
+            if (_manager == null || _screenManager != null || !GraphicsCaptureSession.IsSupported())
+            {
+                return;
+            }
+
+            var call = _call;
+            if (call == null)
+            {
+                return;
+            }
+
+            var picker = new GraphicsCapturePicker();
+            var item = await picker.PickSingleItemAsync();
+
+            if (item == null)
+            {
+                return;
+            }
+
+            var descriptor = new VoipGroupDescriptor
+            {
+                VideoContentType = VoipVideoContentType.Screencast,
+                VideoCapture = _screenCapturer = new VoipScreenCapture(item)
+            };
+
+            _screenManager = new VoipGroupManager(descriptor);
+            _screenManager.EmitJoinPayload(async (ssrc, payload) =>
+            {
+                var response = await ProtoService.SendAsync(new StartGroupCallScreenSharing(call.Id, payload));
+                if (response is Text json)
+                {
+                    _screenSource = ssrc;
+                    _screenManager.SetConnectionMode(VoipGroupConnectionMode.Rtc, true);
+                    _screenManager.SetJoinResponsePayload(json.TextValue);
+
+                    //_screenManager.SetVideoCapture(_screenCapturer = new VoipVideoCapture(item, 0));
+                }
+            });
+        }
+
+        public void EndScreenSharing()
+        {
+            if (_screenManager != null)
+            {
+                _screenManager.SetVideoCapture(null);
+
+                _screenManager.Dispose();
+                _screenManager = null;
+
+                _screenSource = 0;
+            }
+
+            if (_screenCapturer != null)
+            {
+                //_screenCapturer.SetOutput(null);
+                _screenCapturer.Dispose();
+                _screenCapturer = null;
+            }
+
+            var call = _call;
+            if (call != null)
+            {
+                ProtoService.Send(new EndGroupCallScreenSharing(call.Id));
+            }
+        }
+
+        #endregion
+
         private async void OnBroadcastPartRequested(VoipGroupManager sender, BroadcastPartRequestedEventArgs args)
         {
             var call = _call;
@@ -464,11 +552,22 @@ namespace Unigram.Services
                     _manager.BroadcastPartRequested -= OnBroadcastPartRequested;
                     _manager.MediaChannelDescriptionsRequested -= OnMediaChannelDescriptionsRequested;
 
+                    _manager.SetVideoCapture(null);
+
                     _manager.Dispose();
                     _manager = null;
 
                     _source = 0;
                 }
+
+                if (_capturer != null)
+                {
+                    _capturer.SetOutput(null);
+                    _capturer.Dispose();
+                    _capturer = null;
+                }
+
+                EndScreenSharing();
             });
         }
 

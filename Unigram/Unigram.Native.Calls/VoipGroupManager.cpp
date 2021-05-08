@@ -5,6 +5,7 @@
 #endif
 
 #include "VoipVideoCapture.h"
+#include "VoipScreenCapture.h"
 #include "VoipVideoRendererToken.h"
 #include "GroupNetworkStateChangedEventArgs.h"
 #include "BroadcastPartRequestedEventArgs.h"
@@ -41,21 +42,16 @@ namespace winrt::Unigram::Native::Calls::implementation
 		};
 		impl.initialInputDeviceId = string_to_unmanaged(descriptor.AudioInputId());
 		impl.initialOutputDeviceId = string_to_unmanaged(descriptor.AudioOutputId());
-		impl.videoContentType = tgcalls::VideoContentType::Generic;
-		//impl.incomingVideoSourcesUpdated = [this](std::vector<uint32_t> const&) {
+		impl.videoContentType = (tgcalls::VideoContentType)descriptor.VideoContentType();
 
-		//};
-		//impl.participantDescriptionsRequired = [this](std::vector<uint32_t> const& ssrcs) {
-		//	auto participants = std::vector<tgcalls::GroupParticipantDescription>();
-
-		//	for (const uint32_t& x : ssrcs) {
-		//		auto participant = tgcalls::GroupParticipantDescription();
-		//		participant.audioSsrc = x;
-		//		participants.push_back(participant);
-		//	}
-
-		//	m_impl->addParticipants(std::move(participants));
-		//};
+		if (descriptor.VideoCapture()) {
+			if (impl.videoContentType == tgcalls::VideoContentType::Screencast) {
+				impl.videoCapture = winrt::get_self<implementation::VoipScreenCapture>(descriptor.VideoCapture())->m_impl;
+			}
+			else {
+				impl.videoCapture = winrt::get_self<implementation::VoipVideoCapture>(descriptor.VideoCapture())->m_impl;
+			}
+		}
 		impl.requestBroadcastPart = [this](int64_t time, int64_t period, std::function<void(tgcalls::BroadcastPart&&)> done) {
 			int scale = 0;
 			switch (period) {
@@ -91,41 +87,66 @@ namespace winrt::Unigram::Native::Calls::implementation
 	}
 
 	void VoipGroupManager::Close() {
-		m_impl->stop();
-		m_impl.reset();
+		if (m_impl) {
+			m_impl->stop();
+			m_impl.reset();
+		}
 	}
 
 	void VoipGroupManager::SetConnectionMode(VoipGroupConnectionMode connectionMode, bool keepBroadcastIfWasEnabled) {
-		m_impl->setConnectionMode((tgcalls::GroupConnectionMode)connectionMode, keepBroadcastIfWasEnabled);
+		if (m_impl) {
+			m_impl->setConnectionMode((tgcalls::GroupConnectionMode)connectionMode, keepBroadcastIfWasEnabled);
+		}
 	}
 
 	void VoipGroupManager::EmitJoinPayload(EmitJsonPayloadDelegate completion) {
-		m_impl->emitJoinPayload([completion](auto const& payload) {
-			completion(payload.audioSsrc, string_from_unmanaged(payload.json));
-			});
+		if (m_impl) {
+			m_impl->emitJoinPayload([completion](auto const& payload) {
+				completion(payload.audioSsrc, string_from_unmanaged(payload.json));
+				});
+		}
+		else {
+			completion(0, L"");
+		}
 	}
 
 	void VoipGroupManager::SetJoinResponsePayload(hstring payload) {
-		m_impl->setJoinResponsePayload(string_to_unmanaged(payload));
+		if (m_impl) {
+			m_impl->setJoinResponsePayload(string_to_unmanaged(payload));
+		}
 	}
 
 	void VoipGroupManager::RemoveSsrcs(IVector<int32_t> ssrcs) {
-		auto impl = std::vector<uint32_t>();
+		if (m_impl) {
+			auto impl = std::vector<uint32_t>();
 
-		for (const uint32_t& x : ssrcs) {
-			impl.push_back(x);
+			for (const uint32_t& x : ssrcs) {
+				impl.push_back(x);
+			}
+
+			m_impl->removeSsrcs(impl);
 		}
-
-		m_impl->removeSsrcs(impl);
 	}
 
 	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::AddIncomingVideoOutput(hstring endpointId, CanvasControl canvas) {
-		auto renderer = std::make_shared<VoipVideoRenderer>(canvas, true);
-		m_impl->addIncomingVideoOutput(string_to_unmanaged(endpointId), renderer);
+		if (m_impl) {
+			auto renderer = std::make_shared<VoipVideoRenderer>(canvas, true);
+			m_impl->addIncomingVideoOutput(string_to_unmanaged(endpointId), renderer);
 
-		return *winrt::make_self<VoipVideoRendererToken>(renderer, endpointId, canvas);
+			return *winrt::make_self<VoipVideoRendererToken>(renderer, endpointId, canvas);
+		}
+
+		return nullptr;
 	}
 
+	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::SetFullSizeVideoEndpointId(hstring endpointId, CanvasControl canvas) {
+		if (m_impl) {
+			m_impl->setFullSizeVideoEndpointId(string_to_unmanaged(endpointId));
+			return AddIncomingVideoOutput(endpointId, canvas);
+		}
+
+		return nullptr;
+	}
 
 
 	bool VoipGroupManager::IsMuted() {
@@ -133,35 +154,40 @@ namespace winrt::Unigram::Native::Calls::implementation
 	}
 
 	void VoipGroupManager::IsMuted(bool value) {
-		m_impl->setIsMuted(m_isMuted = value);
+		if (m_impl) {
+			m_impl->setIsMuted(m_isMuted = value);
+		}
 	}
 
 	void VoipGroupManager::SetAudioOutputDevice(hstring id) {
-		m_impl->setAudioOutputDevice(string_to_unmanaged(id));
+		if (m_impl) {
+			m_impl->setAudioOutputDevice(string_to_unmanaged(id));
+		}
 	}
 	void VoipGroupManager::SetAudioInputDevice(hstring id) {
-		m_impl->setAudioInputDevice(string_to_unmanaged(id));
+		if (m_impl) {
+			m_impl->setAudioInputDevice(string_to_unmanaged(id));
+		}
 	}
 
-	void VoipGroupManager::SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture) {
-		if (videoCapture) {
-			auto implementation = winrt::get_self<implementation::VoipVideoCapture>(videoCapture);
-			m_capturer = implementation->m_impl;
-		}
-		else {
-			m_capturer = nullptr;
-		}
+	void VoipGroupManager::SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture) {
+		if (m_impl) {
+			if (videoCapture) {
+				auto implementation = winrt::get_self<implementation::VoipVideoCapture>(videoCapture);
+				m_capturer = implementation->m_impl;
+			}
+			else {
+				m_capturer = nullptr;
+			}
 
-		m_impl->setVideoCapture(m_capturer);
+			m_impl->setVideoCapture(m_capturer);
+		}
 	}
 
 	void VoipGroupManager::SetVolume(int32_t ssrc, double volume) {
-		m_impl->setVolume(ssrc, volume);
-	}
-
-	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::SetFullSizeVideoEndpointId(hstring endpointId, CanvasControl canvas) {
-		m_impl->setFullSizeVideoEndpointId(string_to_unmanaged(endpointId));
-		return AddIncomingVideoOutput(endpointId, canvas);
+		if (m_impl) {
+			m_impl->setVolume(ssrc, volume);
+		}
 	}
 
 

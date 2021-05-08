@@ -97,7 +97,19 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border>
+        <Border x:Name="TitleArea" Background="Transparent"/>
+
+        <controls:GlyphButton
+            x:Name="Menu"
+            Click="Menu_ContextRequested"
+            Glyph="&#xE930;"
+            VerticalAlignment="Top"
+            Width="40"
+            Height="48"
+            Margin="0,0,0,-8"
+            Grid.RowSpan="2"/>
+
+        <Border x:Name="TitlePanel" Margin="32,0,0,0">
             <Grid HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -129,7 +141,7 @@
             Style="{StaticResource CaptionTextBlockStyle}"
             TextWrapping="NoWrap"
             TextTrimming="CharacterEllipsis"
-            Margin="12,-8,0,0"
+            Margin="44,-8,0,0"
             Grid.Row="1"/>
 
         <Grid x:Name="ParticipantsPanel" VerticalAlignment="Top" Margin="0,16" Grid.Row="2">
@@ -139,8 +151,9 @@
             </Grid.RowDefinitions>
 
             <controls:AspectView x:Name="ViewportAspect" SizeChanged="Viewport_SizeChanged" Visibility="Collapsed" Background="{ThemeResource PageHeaderBorderBrush}" Padding="12,0" Margin="0,0,0,8" Canvas.ZIndex="1">
-                <xaml:CanvasControl
+                <Border
                     x:Name="Viewport"
+                    IsHitTestVisible="False"
                     Margin="-12,0"/>
                 <Grid x:Name="PinnedInfo" VerticalAlignment="Bottom" Opacity="0.8" Margin="-12,0" Padding="12,6">
                     <Grid.RowDefinitions>
@@ -324,59 +337,6 @@
         </StackPanel>
 
         <StackPanel x:Name="BottomPanel" Grid.Row="3">
-            <StackPanel.ChildrenTransitions>
-                <TransitionCollection>
-                    <RepositionThemeTransition/>
-                    <AddDeleteThemeTransition/>
-                </TransitionCollection>
-            </StackPanel.ChildrenTransitions>
-
-            <Grid
-                x:Name="AudioOff"
-                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                CornerRadius="{ThemeResource MessageServiceCornerRadius}"
-                Padding="12,2,12,4"
-                Margin="0,0,0,12"
-                HorizontalAlignment="Center"
-                Visibility="Collapsed">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Text="&#xE610;"
-                    FontSize="{StaticResource GlyphMediumFontSize}"
-                    FontFamily="{StaticResource TelegramThemeFontFamily}"
-                    VerticalAlignment="Bottom"
-                    Margin="0,0,8,0"/>
-                <TextBlock
-                    x:Name="AudioOffText"
-                    Grid.Column="1"/>
-            </Grid>
-
-            <Grid
-                x:Name="VideoOff"
-                Background="{ThemeResource MessageServiceBackgroundBrush}"
-                CornerRadius="{ThemeResource MessageServiceCornerRadius}"
-                Padding="12,2,12,4"
-                Margin="0,0,0,12"
-                HorizontalAlignment="Center"
-                Visibility="Collapsed">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Text="&#xE714;"
-                    FontSize="{StaticResource GlyphMediumFontSize}"
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    VerticalAlignment="Bottom"
-                    Margin="0,-2,8,-2"/>
-                <TextBlock
-                    x:Name="VideoOffText"
-                    Grid.Column="1"/>
-            </Grid>
-
             <Grid HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -399,7 +359,25 @@
                     Style="{StaticResource CallGlyphButtonStyle}"
                     Grid.Row="1"/>
                 <TextBlock
+                    x:Name="SettingsInfo"
                     Text="{CustomResource Settings}"
+                    TextAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,4,0,0"
+                    Grid.Row="2"/>
+
+                <controls:GlyphButton
+                    x:Name="Video"
+                    Click="Video_Click"
+                    Glyph="&#xE714;"
+                    Background="#663e3f41"
+                    Foreground="#FFFFFF"
+                    Content="{CustomResource ChatVideo}"
+                    Style="{StaticResource CallGlyphButtonStyle}"
+                    Grid.Row="1"/>
+                <TextBlock
+                    x:Name="VideoInfo"
+                    Text="{CustomResource ChatVideo}"
                     TextAlignment="Center"
                     VerticalAlignment="Top"
                     Margin="0,4,0,0"

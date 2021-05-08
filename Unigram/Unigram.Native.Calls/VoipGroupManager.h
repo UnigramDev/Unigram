@@ -33,7 +33,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 		void SetAudioOutputDevice(hstring id);
 		void SetAudioInputDevice(hstring id);
-		void SetVideoCapture(Unigram::Native::Calls::VoipVideoCapture videoCapture);
+		void SetVideoCapture(Unigram::Native::Calls::IVoipVideoCapture videoCapture);
 
 		void SetVolume(int32_t ssrc, double volume);
 

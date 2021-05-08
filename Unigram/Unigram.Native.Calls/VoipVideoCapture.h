@@ -15,7 +15,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 	struct VoipVideoCapture : VoipVideoCaptureT<VoipVideoCapture>
 	{
 		VoipVideoCapture(hstring id);
-		VoipVideoCapture(GraphicsCaptureItem item, int32_t zero);
+		VoipVideoCapture() = default;
 		~VoipVideoCapture();
 
 		void Close();

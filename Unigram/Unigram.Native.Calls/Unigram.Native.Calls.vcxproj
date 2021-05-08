@@ -265,6 +265,10 @@
     <ClInclude Include="SignalingDataEmittedEventArgs.h">
       <DependentUpon>SignalingDataEmittedEventArgs.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="VoipScreenCapture.h">
+      <DependentUpon>VoipScreenCapture.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="VoipVideoCapture.h">
       <DependentUpon>VoipVideoCapture.idl</DependentUpon>
     </ClInclude>
@@ -416,6 +420,10 @@
       <DependentUpon>VoipManager.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="VoipScreenCapture.cpp">
+      <DependentUpon>VoipScreenCapture.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="VoipVideoCapture.cpp">
       <DependentUpon>VoipVideoCapture.idl</DependentUpon>
     </ClCompile>
@@ -445,6 +453,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="VoipManager.idl" />
+    <Midl Include="VoipScreenCapture.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="VoipVideoCapture.idl" />
     <Midl Include="VoipVideoRendererToken.idl">
       <SubType>Designer</SubType>

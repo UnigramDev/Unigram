@@ -28,7 +28,7 @@ namespace Unigram.Native.Calls
 
         void SetAudioOutputDevice(String id);
         void SetAudioInputDevice(String id);
-        void SetVideoCapture(VoipVideoCapture videoCapture);
+        void SetVideoCapture(IVoipVideoCapture videoCapture);
 
         void SetVolume(Int32 ssrc, Double volume);
 

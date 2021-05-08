@@ -211,6 +211,11 @@ namespace Unigram.Common
             return invoice.NeedShippingAddress || invoice.NeedPhoneNumber || invoice.NeedName || invoice.NeedEmailAddress;
         }
 
+        public static bool HasVideoInfo(this GroupCallParticipant participant)
+        {
+            return participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null;
+        }
+
         public static InputThumbnail ToInputThumbnail(this PhotoSize photo)
         {
             if (photo == null)
