@@ -2618,11 +2618,14 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
+                        ComposerHeader = null;
                         SetText(null, false);
                     }
                 }
-
-                ComposerHeader = null;
+                else
+                {
+                    ComposerHeader = null;
+                }
             }
 
             TextField?.Focus(FocusState.Programmatic);
