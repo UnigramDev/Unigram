@@ -2143,6 +2143,8 @@ namespace Unigram.Views
                 {
                     return restricted.Permissions.CanSendMessages;
                 }
+
+                return supergroup.Status is ChatMemberStatusMember;
             }
             else if (chat != null && chat.Id == ViewModel.CacheService.Options.RepliesBotChatId)
             {
