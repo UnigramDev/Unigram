@@ -87,6 +87,9 @@ namespace Unigram.Controls
 
             _shape.CenterPoint = new Vector2((float)Center);
 
+            _visual.Size = new Vector2((float)Center * 2);
+            _visual.CenterPoint = new Vector3((float)Center);
+
             base.OnApplyTemplate();
         }
 
