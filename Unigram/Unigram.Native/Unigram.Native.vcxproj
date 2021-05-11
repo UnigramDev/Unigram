@@ -39,6 +39,7 @@
     <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <ProjectName>Unigram.Native</ProjectName>
+    <CppWinRTNamespaceMergeDepth>2</CppWinRTNamespaceMergeDepth>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -241,6 +242,9 @@
       <DependentUpon>AudioPitchEffect.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Composition.CompositionDevice.h" />
+    <ClInclude Include="Composition.DirectRectangleClip.h" />
+    <ClInclude Include="dcompex.h" />
     <ClInclude Include="Helpers\COMHelper.h" />
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
@@ -297,6 +301,8 @@
       <DependentUpon>AudioPitchEffect.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Composition.CompositionDevice.cpp" />
+    <ClCompile Include="Composition.DirectRectangleClip.cpp" />
     <ClCompile Include="Generated Files\module.g.cpp" />
     <ClCompile Include="Helpers\LibraryHelper.cpp" />
     <ClCompile Include="HttpProxyWatcher.cpp">
@@ -474,6 +480,8 @@
     <Midl Include="AudioPitchEffect.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="Composition.CompositionDevice.idl" />
+    <Midl Include="Composition.DirectRectangleClip.idl" />
     <Midl Include="HttpProxyWatcher.idl">
       <SubType>Designer</SubType>
     </Midl>

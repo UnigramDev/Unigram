@@ -22,6 +22,9 @@
     <Filter Include="libyuv\source">
       <UniqueIdentifier>{157965a2-87a0-4380-bdc0-420a42492e3e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Composition">
+      <UniqueIdentifier>{721dff3e-daaf-45ba-955e-038df064ed5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -175,6 +178,12 @@
     <ClCompile Include="Helpers\LibraryHelper.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="Composition.CompositionDevice.cpp">
+      <Filter>Composition</Filter>
+    </ClCompile>
+    <ClCompile Include="Composition.DirectRectangleClip.cpp">
+      <Filter>Composition</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -271,6 +280,15 @@
     <ClInclude Include="Helpers\StringHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Composition.CompositionDevice.h">
+      <Filter>Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="Composition.DirectRectangleClip.h">
+      <Filter>Composition</Filter>
+    </ClInclude>
+    <ClInclude Include="dcompex.h">
+      <Filter>Composition</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -284,5 +302,11 @@
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="AudioPitchEffect.idl" />
     <Midl Include="HttpProxyWatcher.idl" />
+    <Midl Include="Composition.CompositionDevice.idl">
+      <Filter>Composition</Filter>
+    </Midl>
+    <Midl Include="Composition.DirectRectangleClip.idl">
+      <Filter>Composition</Filter>
+    </Midl>
   </ItemGroup>
 </Project>
