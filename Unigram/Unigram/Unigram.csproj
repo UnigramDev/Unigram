@@ -1084,7 +1084,6 @@
     <Compile Include="Controls\OrientableListView.cs" />
     <Compile Include="Controls\ProgressBarRing.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
-    <Compile Include="Controls\SimpleButton.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />

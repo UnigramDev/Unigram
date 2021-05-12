@@ -221,7 +221,7 @@
                         FontSize="{StaticResource GlyphSmallFontSize}"
                         Width="30"
                         Height="30"
-                        Radius="15"/>
+                        CornerRadius="15"/>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -256,7 +256,7 @@
                         FontSize="{StaticResource GlyphSmallFontSize}"
                         Width="30"
                         Height="30"
-                        Radius="15"/>
+                        CornerRadius="15"/>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -281,9 +281,10 @@
                     Height="{ThemeResource ChatPhotoSize}"
                     Margin="0,0,12,0"/>
 
-                <controls:SimpleHyperlinkButton
+                <HyperlinkButton
                     x:Name="Profile"
                     Click="Profile_Click"
+                    Style="{StaticResource EmptyHyperlinkButtonStyle}"
                     Grid.Column="1">
                     <HyperlinkButton.Content>
                         <Grid VerticalAlignment="Center" Margin="0,-2,0,2" Grid.Column="1">
@@ -337,7 +338,7 @@
                             </Grid>
                         </Grid>
                     </HyperlinkButton.Content>
-                </controls:SimpleHyperlinkButton>
+                </HyperlinkButton>
 
                 <controls:GlyphButton
                     x:Name="VideoCall"
@@ -725,7 +726,7 @@
                                 Width="36"
                                 Height="36"
                                 Glyph="&#xE168;"
-                                Radius="24"
+                                CornerRadius="24"
                                 AutomationProperties.Name="{CustomResource AccDescrMentionDown}"
                                 ToolTipService.ToolTip="{CustomResource AccDescrMentionDown}"
                                 Style="{StaticResource RoundGlyphButtonStyle}"/>
@@ -762,7 +763,7 @@
                                 Width="36"
                                 Height="36"
                                 Glyph="&#xE74B;"
-                                Radius="24"
+                                CornerRadius="24"
                                 AutomationProperties.Name="{CustomResource AccDescrPageDown}"
                                 ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"
                                 Style="{StaticResource RoundGlyphButtonStyle}"/>

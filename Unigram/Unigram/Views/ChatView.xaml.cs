@@ -3815,12 +3815,12 @@ namespace Unigram.Views
             var max = ComposerHeader.Visibility == Visibility.Visible
                 || TextFormatting.Visibility == Visibility.Visible ? 4 : min;
 
-            ButtonAttach.Radius = new CornerRadius(max, 4, 4, min);
-            btnVoiceMessage.Radius = new CornerRadius(4, max, min, 4);
-            btnSendMessage.Radius = new CornerRadius(4, max, min, 4);
-            btnEdit.Radius = new CornerRadius(4, max, min, 4);
+            ButtonAttach.CornerRadius = new CornerRadius(max, 4, 4, min);
+            btnVoiceMessage.CornerRadius = new CornerRadius(4, max, min, 4);
+            btnSendMessage.CornerRadius = new CornerRadius(4, max, min, 4);
+            btnEdit.CornerRadius = new CornerRadius(4, max, min, 4);
 
-            ComposerHeaderCancel.Radius = new CornerRadius(4, min, 4, 4);
+            ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
             TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = new CornerRadius(radius);
 
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);

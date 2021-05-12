@@ -35,13 +35,13 @@
             <Setter Property="MinWidth" Value="{ThemeResource AppBarThemeCompactHeight}" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}" />
-            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+            <Setter Property="CornerRadius" Value="{StaticResource GlyphButtonCornerRadius}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:PivotRadioButton">
                         <Grid x:Name="RootGrid"
                               Background="{TemplateBinding Background}"
-                              CornerRadius="{TemplateBinding Radius}"
+                              CornerRadius="{TemplateBinding CornerRadius}"
                               Margin="{StaticResource GlyphButtonPadding}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
@@ -175,7 +175,7 @@
                         Height="40"
                         FontFamily="{StaticResource TelegramThemeFontFamily}"
                         FontSize="18"
-                        Radius="12,4,4,12"/>
+                        CornerRadius="12,4,4,12"/>
                     
                     <controls:GlyphToggleButton
                         x:Name="Crop"
@@ -189,7 +189,7 @@
                         IsChecked="{x:Bind IsEdited, Mode=OneWay}"
                         AutomationProperties.Name="{CustomResource CropImage}"
                         ToolTipService.ToolTip="{CustomResource CropImage}"
-                        Radius="12,4,4,12"/>
+                        CornerRadius="12,4,4,12"/>
 
                     <controls:GlyphToggleButton
                         x:Name="Ttl"
@@ -211,7 +211,7 @@
                         Tag="{x:Bind}"
                         Width="40"
                         Height="40"
-                        Radius="4,12,12,4"
+                        CornerRadius="4,12,12,4"
                         Grid.Column="2"/>
                 </Grid>
             </Grid>

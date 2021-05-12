@@ -128,7 +128,7 @@ namespace Unigram.Views.Chats
 
             HeaderMedia.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 8 : 8, 0, 0);
             HeaderFiles.Padding = HeaderLinks.Padding = HeaderMusic.Padding = HeaderVoice.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 8);
-            HeaderFiles.Radius = HeaderLinks.Radius = HeaderMusic.Radius = HeaderVoice.Radius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
+            HeaderFiles.CornerRadius = HeaderLinks.CornerRadius = HeaderMusic.CornerRadius = HeaderVoice.CornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
         }
 
         public ScrollViewer GetScrollViewer()
@@ -409,18 +409,18 @@ namespace Unigram.Views.Chats
             AutomationProperties.SetName(args.ItemContainer,
                 Automation.GetSummary(ViewModel.ProtoService, message, true));
 
-            if (args.ItemContainer.ContentTemplateRoot is SimpleHyperlinkButton hyperlink)
+            if (args.ItemContainer.ContentTemplateRoot is HyperlinkButton hyperlink)
             {
+                var grid = hyperlink.Content as Grid;
+                var photo = grid.Children[0] as Image;
+
                 if (message.Content is MessagePhoto photoMessage)
                 {
                     var small = photoMessage.Photo.GetSmall();
-                    var photo = hyperlink.Content as Image;
                     photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 0, 0);
                 }
                 else if (message.Content is MessageVideo videoMessage && videoMessage.Video.Thumbnail != null)
                 {
-                    var grid = hyperlink.Content as Grid;
-                    var photo = grid.Children[0] as Image;
                     photo.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, videoMessage.Video.Thumbnail.File, 0, 0);
 
                     var panel = grid.Children[1] as Grid;
@@ -475,18 +475,20 @@ namespace Unigram.Views.Chats
                         continue;
                     }
 
-                    var content = container.ContentTemplateRoot as SimpleHyperlinkButton;
+                    var content = container.ContentTemplateRoot as HyperlinkButton;
                     if (content == null)
                     {
                         continue;
                     }
+
+                    var grid = content.Content as Grid;
+                    var thumbnail = grid.Children[0] as Image;
 
                     if (message.Content is MessagePhoto photo)
                     {
                         var small = photo.Photo.GetSmall();
                         if (small != null && small.Photo.Id == file.Id && file.Local.IsDownloadingCompleted)
                         {
-                            var thumbnail = content.Content as Image;
                             thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, small.Photo, 0, 0);
                         }
                     }
@@ -495,8 +497,6 @@ namespace Unigram.Views.Chats
                         var thumb = video.Video.Thumbnail;
                         if (thumb != null && thumb.File.Id == file.Id && file.Local.IsDownloadingCompleted)
                         {
-                            var grid = content.Content as Grid;
-                            var thumbnail = grid.Children[0] as Image;
                             thumbnail.Source = PlaceholderHelper.GetBitmap(ViewModel.ProtoService, thumb.File, 0, 0);
                         }
                     }

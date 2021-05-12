@@ -83,11 +83,11 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="24" />
-        <Setter Property="Radius" Value="24" />
+        <Setter Property="CornerRadius" Value="24" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -168,11 +168,11 @@
         <Setter Property="Width" Value="20" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="16" />
-        <Setter Property="Radius" Value="10" />
+        <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -254,7 +254,7 @@
         <Setter Property="Width" Value="Auto" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="24" />
-        <Setter Property="Radius" Value="24" />
+        <Setter Property="CornerRadius" Value="24" />
         <Setter Property="RequestedTheme" Value="Dark" />
         <Setter Property="Template">
             <Setter.Value>
@@ -311,8 +311,8 @@
                         </VisualStateManager.VisualStateGroups>
                         <!--<controls:BackDrop BlurAmount="5"/>-->
 
-                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding Radius}" Width="48" Height="48">
-                            <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding Radius}">
+                        <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}" Width="48" Height="48">
+                            <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
                                 <TextBlock
                                     x:Name="ContentPresenter1"
                                     HorizontalAlignment="Center"
@@ -349,12 +349,12 @@
         <Setter Property="Width" Value="Auto" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
-        <Setter Property="Radius" Value="12" />
+        <Setter Property="CornerRadius" Value="12" />
         <Setter Property="RequestedTheme" Value="Dark" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
-                    <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -397,7 +397,7 @@
                         </VisualStateManager.VisualStateGroups>
                         <!--<controls:BackDrop BlurAmount="5"/>-->
 
-                        <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding Radius}">
+                        <Grid x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>

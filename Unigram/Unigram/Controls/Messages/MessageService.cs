@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public class MessageService : SimpleButton
+    public class MessageService : Button
     {
         public MessageService()
         {

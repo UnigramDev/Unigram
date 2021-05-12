@@ -70,7 +70,7 @@
                             Style="{StaticResource RoundGlyphButtonStyle}"
                             Width="36"
                             Height="36"
-                            Radius="18"
+                            CornerRadius="18"
                             Padding="0,0,0,0"/>
                     </Border>
                 </Grid>

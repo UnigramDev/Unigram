@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
-    public class AnimatedGlyphButton : SimpleButton
+    public class AnimatedGlyphButton : Button
     {
         private TextBlock _label1;
         private TextBlock _label2;

@@ -860,7 +860,7 @@
                                         Content="{CustomResource UpdateTelegram}"
                                         Style="{StaticResource StartButtonStyle}"
                                         Padding="16,3,16,5"
-                                        Radius="18"
+                                        CornerRadius="18"
                                         Margin="0"
                                         Height="36"/>
                                 </Grid>

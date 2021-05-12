@@ -2,10 +2,11 @@
 using Windows.Graphics;
 using Windows.Graphics.Display;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class SwitchThemeButton : SimpleButton
+    public class SwitchThemeButton : Button
     {
         private LottieView _player;
 

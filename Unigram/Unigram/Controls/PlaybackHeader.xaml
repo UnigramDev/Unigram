@@ -32,13 +32,13 @@
             <Setter Property="Width" Value="48" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+            <Setter Property="CornerRadius" Value="{StaticResource GlyphButtonCornerRadius}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:GlyphToggleButton">
                         <Grid
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{TemplateBinding Radius}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
                             Margin="{StaticResource GlyphButtonPadding}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">

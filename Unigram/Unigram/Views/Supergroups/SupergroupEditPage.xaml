@@ -56,7 +56,7 @@
                                 AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
                                 Style="{StaticResource RoundGlyphButtonStyle}"
                                 RequestedTheme="Dark"
-                                Radius="32"
+                                CornerRadius="32"
                                 Width="64"
                                 Height="64"/>
                         </Grid>

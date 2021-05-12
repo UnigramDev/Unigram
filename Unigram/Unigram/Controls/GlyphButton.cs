@@ -1,8 +1,9 @@
 ﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class GlyphButton : SimpleButton
+    public class GlyphButton : Button
     {
         public GlyphButton()
         {
@@ -21,7 +22,7 @@ namespace Unigram.Controls
         #endregion
     }
 
-    public class GlyphHyperlinkButton : SimpleHyperlinkButton
+    public class GlyphHyperlinkButton : HyperlinkButton
     {
         public GlyphHyperlinkButton()
         {

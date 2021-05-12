@@ -91,7 +91,7 @@
                         Style="{StaticResource RoundGlyphButtonStyle}"
                         Width="32"
                         Height="32"
-                        Radius="16"
+                        CornerRadius="16"
                         Padding="0,0,0,0"/>
                 </Border>
 
@@ -117,7 +117,7 @@
                         Style="{StaticResource RoundGlyphButtonStyle}"
                         Width="32"
                         Height="32"
-                        Radius="16"
+                        CornerRadius="16"
                         Padding="0,0,0,0"/>
                 </Border>
             </Grid>
