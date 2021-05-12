@@ -3023,6 +3023,20 @@ namespace Unigram.Views
                 _autocompleteZoomer.ElementPrepared(args.ItemContainer);
             }
 
+            if (args.Item is EmojiData or Sticker)
+            {
+                var radius = SettingsService.Current.Appearance.BubbleRadius;
+                var min = Math.Max(4, radius - 2);
+
+                args.ItemContainer.Margin = new Thickness(4);
+                args.ItemContainer.CornerRadius = new CornerRadius(args.ItemIndex == 0 ? min : 4, 4, 4, 4);
+            }
+            else
+            {
+                args.ItemContainer.Margin = new Thickness();
+                args.ItemContainer.CornerRadius = new CornerRadius();
+            }
+
             args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
             args.IsContainerPrepared = true;
         }
