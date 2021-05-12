@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Composition.CompositionDevice.g.h"
+#include "Composition/CompositionDevice.g.h"
 
 #include "dcompex.h"
 #include <winrt/windows.ui.composition.h>

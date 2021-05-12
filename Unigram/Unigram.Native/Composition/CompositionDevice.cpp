@@ -1,6 +1,9 @@
 ﻿#include "pch.h"
-#include "Composition.CompositionDevice.h"
-#include "Composition.DirectRectangleClip.h"
+#include "CompositionDevice.h"
+#include "DirectRectangleClip.h"
+#if __has_include("Composition/CompositionDevice.g.cpp")
+#include "Composition/CompositionDevice.g.cpp"
+#endif
 
 namespace winrt::Unigram::Native::Composition::implementation
 {

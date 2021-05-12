@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "NativeUtils.h"
+#if __has_include("NativeUtils.g.cpp")
+#include "NativeUtils.g.cpp"
+#endif
 
 #include "Helpers\LibraryHelper.h"
 

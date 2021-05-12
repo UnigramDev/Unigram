@@ -1,4 +1,4 @@
-import "Composition.DirectRectangleClip.idl";
+import "Composition/DirectRectangleClip.idl";
 
 namespace Unigram.Native.Composition
 {

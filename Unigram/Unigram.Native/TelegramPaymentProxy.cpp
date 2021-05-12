@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "TelegramPaymentProxy.h"
+#if __has_include("TelegramPaymentProxy.g.cpp")
+#include "TelegramPaymentProxy.g.cpp"
+#endif
 
 #include <winrt/Windows.Data.Json.h>
 

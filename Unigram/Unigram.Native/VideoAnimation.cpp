@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
 #include "VideoAnimation.h"
+#if __has_include("VideoAnimation.g.cpp")
+#include "VideoAnimation.g.cpp"
+#endif
 
 #include <Microsoft.Graphics.Canvas.h>
 #include <Microsoft.Graphics.Canvas.native.h>

@@ -178,10 +178,10 @@
     <ClCompile Include="Helpers\LibraryHelper.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Composition.CompositionDevice.cpp">
+    <ClCompile Include="Composition\CompositionDevice.cpp">
       <Filter>Composition</Filter>
     </ClCompile>
-    <ClCompile Include="Composition.DirectRectangleClip.cpp">
+    <ClCompile Include="Composition\DirectRectangleClip.cpp">
       <Filter>Composition</Filter>
     </ClCompile>
   </ItemGroup>
@@ -280,13 +280,13 @@
     <ClInclude Include="Helpers\StringHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Composition.CompositionDevice.h">
+    <ClInclude Include="Composition\CompositionDevice.h">
       <Filter>Composition</Filter>
     </ClInclude>
-    <ClInclude Include="Composition.DirectRectangleClip.h">
+    <ClInclude Include="Composition\dcompex.h">
       <Filter>Composition</Filter>
     </ClInclude>
-    <ClInclude Include="dcompex.h">
+    <ClInclude Include="Composition\DirectRectangleClip.h">
       <Filter>Composition</Filter>
     </ClInclude>
   </ItemGroup>
@@ -302,10 +302,10 @@
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="AudioPitchEffect.idl" />
     <Midl Include="HttpProxyWatcher.idl" />
-    <Midl Include="Composition.CompositionDevice.idl">
+    <Midl Include="Composition\CompositionDevice.idl">
       <Filter>Composition</Filter>
     </Midl>
-    <Midl Include="Composition.DirectRectangleClip.idl">
+    <Midl Include="Composition\DirectRectangleClip.idl">
       <Filter>Composition</Filter>
     </Midl>
   </ItemGroup>

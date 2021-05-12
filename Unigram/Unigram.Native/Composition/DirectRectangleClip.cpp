@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Composition.DirectRectangleClip.h"
+#include "DirectRectangleClip.h"
 
 namespace winrt::Unigram::Native::Composition::implementation
 {

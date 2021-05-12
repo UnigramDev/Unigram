@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "Composition.DirectRectangleClip.g.h"
-#include "Composition.CompositionDevice.h"
+#include "Composition/DirectRectangleClip.g.h"
+#include "CompositionDevice.h"
 #include "dcompex.h"
 
 namespace winrt::Unigram::Native::Composition::implementation

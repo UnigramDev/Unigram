@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "PlaceholderImageHelper.h"
+#if __has_include("PlaceholderImageHelper.g.cpp")
+#include "PlaceholderImageHelper.g.cpp"
+#endif
 
 #include "Qr/QrCode.hpp"
 #include "SVG/nanosvg.h"
