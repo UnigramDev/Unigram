@@ -44,6 +44,16 @@ namespace winrt::Unigram::Native::Composition::implementation
 		return *result;
 	}
 
+	void CompositionDevice::SetClip(Visual visual, winrt::Unigram::Native::Composition::DirectRectangleClip clip)
+	{
+		HRESULT hr;
+
+		auto impl = winrt::get_self<implementation::DirectRectangleClip>(clip);
+
+		auto abi = visual.as<IDCompositionVisual2>();
+		hr = abi->SetClip(impl->m_impl.get());
+	}
+
 
 	HRESULT CompositionDevice::CreateCubicBezierAnimation(Compositor compositor, float from, float to, double duration, IDCompositionAnimation** slideAnimation)
 	{

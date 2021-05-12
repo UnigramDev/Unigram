@@ -27,6 +27,7 @@ namespace winrt::Unigram::Native::Composition::implementation
         HRESULT CreateCubicBezierAnimation(Compositor compositor, float from, float to, double duration, IDCompositionAnimation** slideAnimation);
 
         static winrt::Unigram::Native::Composition::DirectRectangleClip CreateRectangleClip(Visual visual);
+        static void SetClip(Visual visual, winrt::Unigram::Native::Composition::DirectRectangleClip clip);
 
     private:
         winrt::com_ptr<IUIAnimationManager2> _manager;

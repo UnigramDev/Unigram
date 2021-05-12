@@ -97,7 +97,7 @@
             <Border
                 x:Name="BackgroundPanel"
                 Background="{ThemeResource MessageBackgroundBrush}"
-                Margin="0,-4,0,0"
+                Margin="0,-8,0,-4"
                 Grid.Column="0"
                 Grid.ColumnSpan="3"
                 Grid.RowSpan="3">

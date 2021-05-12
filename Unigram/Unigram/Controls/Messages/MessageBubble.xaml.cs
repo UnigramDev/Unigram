@@ -40,16 +40,17 @@ namespace Unigram.Controls.Messages
         {
             InitializeComponent();
 
-            ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
-            ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(Footer, true);
-
             var content = ElementCompositionPreview.GetElementVisual(ContentPanel);
+            //var shadow = ElementCompositionPreview.GetElementVisual(ShadowPanel);
             var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
             cross.Opacity = 0;
 
             _cornerRadius = CompositionDevice.CreateRectangleClip(content);
+            //CompositionDevice.SetClip(shadow, _cornerRadius);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
         }
 
         public void UpdateQuery(string text)

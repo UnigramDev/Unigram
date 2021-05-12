@@ -8,6 +8,8 @@ namespace winrt::Unigram::Native::Composition::implementation
 {
     struct DirectRectangleClip : DirectRectangleClipT<DirectRectangleClip>
     {
+        friend CompositionDevice;
+
         DirectRectangleClip(winrt::com_ptr<IDCompositionRectangleClip> impl)
         : m_impl(impl) {
 
@@ -47,17 +49,15 @@ namespace winrt::Unigram::Native::Composition::implementation
 
     private:
         winrt::com_ptr<IDCompositionRectangleClip> m_impl;
-        winrt::com_ptr<IDCompositionAnimation> m_bottomImpl;
-        winrt::com_ptr<IDCompositionAnimation> m_topImpl;
 
-        float m_left;
-        float m_top;
-        float m_right;
-        float m_bottom;
+        float m_left = 0;
+        float m_top = 0;
+        float m_right = 0;
+        float m_bottom = 0;
 
-        float m_topLeft;
-        float m_topRight;
-        float m_bottomRight;
-        float m_bottomLeft;
+        float m_topLeft = 0;
+        float m_topRight = 0;
+        float m_bottomRight = 0;
+        float m_bottomLeft = 0;
     };
 }

@@ -6,5 +6,6 @@ namespace Unigram.Native.Composition
     static runtimeclass CompositionDevice 
     {
         static DirectRectangleClip CreateRectangleClip(Windows.UI.Composition.Visual visual);
+        static void SetClip(Windows.UI.Composition.Visual visual, DirectRectangleClip clip);
     }
 }
