@@ -1,6 +1,16 @@
 #pragma once
 
-//#include <dcomp.h>
+#define IUnknown ::IUnknown
+#include <UIAnimation.h>
+
+typedef struct
+{
+	LARGE_INTEGER lastFrameTime;
+	DXGI_RATIONAL currentCompositionRate;
+	LARGE_INTEGER currentTime;
+	LARGE_INTEGER timeFrequency;
+	LARGE_INTEGER nextEstimatedFrameTime;
+} DCOMPOSITION_FRAME_STATISTICS;
 
 MIDL_INTERFACE("CBFD91D9-51B2-45e4-B3DE-D19CCFB863C5")
 IDCompositionAnimation : public IUnknown
@@ -299,6 +309,7 @@ DECLARE_INTERFACE_IID_(IDCompositionDevice2, IUnknown, "75F6468D-1B8E-447C-9BC6-
 
 	// Gets timing information about the composition engine.
 	STDMETHOD(GetFrameStatistics)(THIS_
+        _Out_ DCOMPOSITION_FRAME_STATISTICS *statistics
 		) PURE;
 
 	// Creates a new visual object.
@@ -391,3 +402,5 @@ DECLARE_INTERFACE_IID_(IDCompositionDesktopDevice, IDCompositionDevice2, "5F4633
 	STDMETHOD(CreateSurfaceFromHwnd)(THIS_
 		) PURE;
 };
+
+#undef IUnknown
