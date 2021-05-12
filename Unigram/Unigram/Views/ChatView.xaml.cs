@@ -216,13 +216,9 @@ namespace Unigram.Views
             };
 
             var visual = DropShadowEx.Attach(ArrowShadow, 2);
-            visual.RelativeSizeAdjustment = Vector2.Zero;
-            visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
 
             visual = DropShadowEx.Attach(ArrowMentionsShadow, 2);
-            visual.RelativeSizeAdjustment = Vector2.Zero;
-            visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
 
             //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
@@ -2141,10 +2137,8 @@ namespace Unigram.Views
                 }
                 else if (supergroup.Status is ChatMemberStatusRestricted restricted)
                 {
-                    return restricted.Permissions.CanSendMessages;
+                    return restricted.IsMember && restricted.Permissions.CanSendMessages;
                 }
-
-                return supergroup.Status is ChatMemberStatusMember;
             }
             else if (chat != null && chat.Id == ViewModel.CacheService.Options.RepliesBotChatId)
             {
