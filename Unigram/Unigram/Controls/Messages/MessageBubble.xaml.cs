@@ -1418,8 +1418,8 @@ namespace Unigram.Controls.Messages
             {
                 _cornerRadius.Left = 0;
                 _cornerRadius.Top = 0;
-                _cornerRadius.Right = (float)ContentPanel.ActualWidth;
-                _cornerRadius.Bottom = (float)ContentPanel.ActualHeight;
+                _cornerRadius.Right = (float)Math.Truncate(ContentPanel.ActualWidth);
+                _cornerRadius.Bottom = (float)Math.Truncate(ContentPanel.ActualHeight);
             }
         }
 
