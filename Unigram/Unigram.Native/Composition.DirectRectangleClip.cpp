@@ -96,6 +96,8 @@ namespace winrt::Unigram::Native::Composition::implementation
 	}
 
 	void DirectRectangleClip::AnimateTop(Compositor compositor, float from, float to, double duration) {
+		m_top = to;
+		
 		HRESULT hr;
 		auto device = CompositionDevice::Current();
 
@@ -103,14 +105,16 @@ namespace winrt::Unigram::Native::Composition::implementation
 		hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
 
 		if (SUCCEEDED(hr)) {
-			hr = m_impl->SetTop(animation.get());
+			m_impl->SetTop(animation.get());
 		}
 		else {
-			Top(to);
+			m_impl->SetTop(to);
 		}
 	}
 
 	void DirectRectangleClip::AnimateBottom(Compositor compositor, float from, float to, double duration) {
+		m_bottom = to;
+
 		HRESULT hr;
 		auto device = CompositionDevice::Current();
 
@@ -118,10 +122,10 @@ namespace winrt::Unigram::Native::Composition::implementation
 		hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
 
 		if (SUCCEEDED(hr)) {
-			hr = m_impl->SetBottom(animation.get());
+			m_impl->SetBottom(animation.get());
 		}
 		else {
-			Bottom(to);
+			m_impl->SetBottom(to);
 		}
 	}
 }

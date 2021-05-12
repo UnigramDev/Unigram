@@ -1,5 +1,4 @@
-﻿using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,6 +9,7 @@ using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls.Messages.Content;
 using Unigram.Converters;
+using Unigram.Native.Composition;
 using Unigram.Services;
 using Unigram.ViewModels;
 using Windows.Foundation;
@@ -34,8 +34,7 @@ namespace Unigram.Controls.Messages
 
         private bool _ignoreSizeChanged = true;
 
-        private MessageCornerRadius _cornerRadius;
-        private readonly CompositionGeometricClip _cornerRadiusClip;
+        private readonly DirectRectangleClip _cornerRadius;
 
         public MessageBubble()
         {
@@ -50,11 +49,7 @@ namespace Unigram.Controls.Messages
             var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
             cross.Opacity = 0;
 
-            if (ApiInfo.CanUseActualFloats)
-            {
-                _cornerRadiusClip = Window.Current.Compositor.CreateGeometricClip();
-                content.Clip = _cornerRadiusClip;
-            }
+            _cornerRadius = CompositionDevice.CreateRectangleClip(content);
         }
 
         public void UpdateQuery(string text)
@@ -258,11 +253,11 @@ namespace Unigram.Controls.Messages
             {
                 if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
                 {
-                    ContentPanel.CornerRadius = new CornerRadius();
+                    _cornerRadius.Set(0);
                 }
                 else
                 {
-                    ContentPanel.CornerRadius = new CornerRadius(topLeft, topRight, small, small);
+                    _cornerRadius.Set(topLeft, topRight, small, small);
                 }
 
                 if (Markup != null)
@@ -272,15 +267,14 @@ namespace Unigram.Controls.Messages
             }
             else if (content is MessageSticker || content is MessageDice || content is MessageVideoNote || content is MessageBigEmoji)
             {
-                _cornerRadius = new MessageCornerRadius();
+                _cornerRadius.Set(0);
             }
             else
             {
-                _cornerRadius = new MessageCornerRadius(topLeft, topRight, bottomRight, bottomLeft);
+                _cornerRadius.Set(topLeft, topRight, bottomRight, bottomLeft);
             }
 
             Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
-            UpdateClip();
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -1413,48 +1407,19 @@ namespace Unigram.Controls.Messages
 
         private void UpdateClip()
         {
-            if (ApiInfo.CanUseActualFloats)
+            if (_cornerRadius.TopLeft == 0 && _cornerRadius.BottomRight == 0)
             {
-                _cornerRadiusClip.Geometry = GenerateContourPath(ContentPanel.ActualSize, _cornerRadius);
+                _cornerRadius.Left = -float.MaxValue;
+                _cornerRadius.Top = -float.MaxValue;
+                _cornerRadius.Right = float.MaxValue;
+                _cornerRadius.Bottom = float.MaxValue;
             }
             else
             {
-                ContentPanel.CornerRadius = _cornerRadius.ToCornerRadius();
-            }
-        }
-
-        private CompositionGeometry GenerateContourPath(Vector2 size, MessageCornerRadius radius)
-        {
-            if (radius.Zero)
-            {
-                // I am not sure of the reason for this anymore, but light messages reply has a -4 margin
-                // This way the clip will fit those additional 4 pixels on the sides.
-                var rectangle = Window.Current.Compositor.CreateRectangleGeometry();
-                rectangle.Size = new Vector2(size.X + 8, size.Y);
-                rectangle.Offset = new Vector2(-4, 0);
-
-                return rectangle;
-            }
-
-            using (var builder = new CanvasPathBuilder(null))
-            {
-                //size.X = MathF.Truncate(size.X);
-                //size.Y = MathF.Truncate(size.Y);
-
-                builder.BeginFigure(new Vector2(0, radius.TopLeft));
-                builder.AddArc(new Vector2(radius.TopLeft, 0), radius.TopLeft, radius.TopLeft, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-                builder.AddLine(new Vector2(size.X - radius.TopRight, 0));
-                builder.AddArc(new Vector2(size.X, radius.TopRight), radius.TopRight, radius.TopRight, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-                builder.AddLine(new Vector2(size.X, size.Y - radius.BottomRight));
-                builder.AddArc(new Vector2(size.X - radius.BottomRight, size.Y), radius.BottomRight, radius.BottomRight, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-                builder.AddLine(new Vector2(radius.BottomLeft, size.Y));
-                builder.AddArc(new Vector2(0, size.Y - radius.BottomLeft), radius.BottomLeft, radius.BottomLeft, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-                builder.EndFigure(CanvasFigureLoop.Closed);
-
-                var path = CanvasGeometry.CreatePath(builder);
-                var compositionPath = new CompositionPath(path);
-
-                return Window.Current.Compositor.CreatePathGeometry(compositionPath);
+                _cornerRadius.Left = 0;
+                _cornerRadius.Top = 0;
+                _cornerRadius.Right = (float)ContentPanel.ActualWidth;
+                _cornerRadius.Bottom = (float)ContentPanel.ActualHeight;
             }
         }
 
@@ -1472,13 +1437,6 @@ namespace Unigram.Controls.Messages
                 crossScale.DelayTime = TimeSpan.FromMilliseconds(delay);
                 crossScale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
-                var crossScale2 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                crossScale2.InsertKeyFrame(0, new Vector2(1, yScale));
-                crossScale2.InsertKeyFrame(1, new Vector2(1));
-                crossScale2.Duration = TimeSpan.FromMilliseconds(outer);
-                crossScale2.DelayTime = TimeSpan.FromMilliseconds(delay);
-                crossScale2.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-
                 var outOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
                 outOpacity.InsertKeyFrame(0, 1);
                 outOpacity.InsertKeyFrame(1, 0);
@@ -1493,8 +1451,18 @@ namespace Unigram.Controls.Messages
                 background.CenterPoint = new Vector3(0, reply ? 0 : ContentPanel.ActualSize.Y / 2, 0);
                 background.StartAnimation("Scale", crossScale);
 
-                _cornerRadiusClip.CenterPoint = new Vector2(0, reply ? 0 : ContentPanel.ActualSize.Y / 2);
-                _cornerRadiusClip.StartAnimation("Scale", crossScale2);
+                if (reply)
+                {
+                    _cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y * yScale, ContentPanel.ActualSize.Y, outer / 1000);
+                }
+                else
+                {
+                    var scaled = ContentPanel.ActualSize.Y * yScale;
+                    var diff = (scaled - ContentPanel.ActualSize.Y) / 2;
+
+                    _cornerRadius.AnimateTop(Window.Current.Compositor, -diff, 0, outer / 1000);
+                    _cornerRadius.AnimateBottom(Window.Current.Compositor, ContentPanel.ActualSize.Y + diff, ContentPanel.ActualSize.Y, outer / 1000);
+                }
             }
 
             var header = ElementCompositionPreview.GetElementVisual(Header);
@@ -2247,29 +2215,6 @@ namespace Unigram.Controls.Messages
                 default:
                     return false;
             }
-        }
-    }
-
-    public struct MessageCornerRadius
-    {
-        public float TopLeft;
-        public float TopRight;
-        public float BottomRight;
-        public float BottomLeft;
-
-        public MessageCornerRadius(float topLeft, float topRight, float bottomRight, float bottomLeft)
-        {
-            TopLeft = topLeft;
-            TopRight = topRight;
-            BottomRight = bottomRight;
-            BottomLeft = bottomLeft;
-        }
-
-        public bool Zero => TopLeft == 0 && TopRight == 0 && BottomRight == 0 && BottomLeft == 0;
-
-        public CornerRadius ToCornerRadius()
-        {
-            return new CornerRadius(TopLeft, TopRight, BottomRight, BottomLeft);
         }
     }
 }
