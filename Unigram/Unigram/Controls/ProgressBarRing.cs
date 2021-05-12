@@ -10,12 +10,12 @@ namespace Unigram.Controls
 {
     public class ProgressBarRing : ProgressBar
     {
-        private ShapeVisual _visual;
-        private CompositionSpriteShape _shape;
-        private CompositionEllipseGeometry _ellipse;
+        private readonly ShapeVisual _visual;
+        private readonly CompositionSpriteShape _shape;
+        private readonly CompositionEllipseGeometry _ellipse;
 
         private bool _spinning;
-        private ScalarKeyFrameAnimation _foreverAnimation;
+        private readonly ScalarKeyFrameAnimation _foreverAnimation;
 
         public ProgressBarRing()
         {
