@@ -96,30 +96,32 @@ namespace winrt::Unigram::Native::Composition::implementation
 	}
 
 	void DirectRectangleClip::AnimateTop(Compositor compositor, float from, float to, double duration) {
-		//Top(from);
-
 		HRESULT hr;
-		auto device = compositor.as<IDCompositionDesktopDevice>();
+		auto device = CompositionDevice::Current();
 
 		winrt::com_ptr<IDCompositionAnimation> animation;
-		hr = device->CreateAnimation(animation.put());
+		hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
 
-		hr = animation->AddCubic(0.0f, from, (to - from) / duration, 0.0f, 0.0f);
-		hr = animation->End(duration, to);
-		hr = m_impl->SetTop(animation.get());
+		if (SUCCEEDED(hr)) {
+			hr = m_impl->SetTop(animation.get());
+		}
+		else {
+			Top(to);
+		}
 	}
 
 	void DirectRectangleClip::AnimateBottom(Compositor compositor, float from, float to, double duration) {
-		//Bottom(from);
-
 		HRESULT hr;
-		auto device = compositor.as<IDCompositionDesktopDevice>();
+		auto device = CompositionDevice::Current();
 
 		winrt::com_ptr<IDCompositionAnimation> animation;
-		hr = device->CreateAnimation(animation.put());
+		hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
 
-		hr = animation->AddCubic(0.0f, from, (to - from) / duration, 0.0f, 0.0f);
-		hr = animation->End(duration, to);
-		hr = m_impl->SetBottom(animation.get());
+		if (SUCCEEDED(hr)) {
+			hr = m_impl->SetBottom(animation.get());
+		}
+		else {
+			Bottom(to);
+		}
 	}
 }
