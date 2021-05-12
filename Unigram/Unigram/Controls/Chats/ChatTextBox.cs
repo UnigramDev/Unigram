@@ -448,7 +448,7 @@ namespace Unigram.Controls.Chats
                 autocomplete = new EmojiCollection(ViewModel.ProtoService, replacement, CoreTextServicesManager.GetForCurrentView().InputLanguage.LanguageTag);
                 return true;
             }
-            else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
+            else if (SearchByCommand(query, out string command))
             {
                 autocomplete = GetCommands(command.ToLower());
                 return true;
@@ -841,6 +841,11 @@ namespace Unigram.Controls.Chats
         public static bool SearchByCommand(string text, out string searchText)
         {
             searchText = string.Empty;
+
+            if (text.Length < 1 || text[0] != '/')
+            {
+                return false;
+            }
 
             var c = '/';
             var flag = true;
