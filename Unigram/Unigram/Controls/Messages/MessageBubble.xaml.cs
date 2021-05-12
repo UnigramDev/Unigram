@@ -1500,8 +1500,8 @@ namespace Unigram.Controls.Messages
             var inOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             inOpacity.InsertKeyFrame(0, 0);
             inOpacity.InsertKeyFrame(1, 1);
-            inOpacity.Duration = TimeSpan.FromMilliseconds(outer);
-            inOpacity.DelayTime = TimeSpan.FromMilliseconds(delay);
+            inOpacity.Duration = TimeSpan.FromMilliseconds(outer / 3 * 2);
+            inOpacity.DelayTime = TimeSpan.FromMilliseconds(outer / 3);
             inOpacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             var headerLeft = (float)Header.Margin.Left;
