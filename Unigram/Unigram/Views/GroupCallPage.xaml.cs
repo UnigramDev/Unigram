@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Telegram.Td.Api;
 using Unigram.Common;
 using Unigram.Controls;
@@ -43,7 +44,8 @@ namespace Unigram.Views
         private readonly Dictionary<long, VoipVideoRendererToken> _chatTokens = new Dictionary<long, VoipVideoRendererToken>();
 
         private GroupCallParticipant _pinnedParticipant;
-        private VoipVideoRendererToken _pinnedToken;
+        private VoipVideoRendererToken _pinnedVideoToken;
+        private VoipVideoRendererToken _pinnedScreenToken;
 
         private readonly ButtonWavesDrawable _drawable = new ButtonWavesDrawable();
 
@@ -206,20 +208,15 @@ namespace Unigram.Views
 
         private void Viewport_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (ParticipantsPanel == null)
+            //if (ParticipantsPanel == null)
             {
                 return;
             }
-
-            Viewport.Height = ActualHeight - BottomPanel.ActualHeight;
-            Viewport.Margin = new Thickness(-12, 0, -12, -(ActualHeight - BottomPanel.ActualHeight - ViewportAspect.ActualHeight));
 
             var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
             var visual = ElementCompositionPreview.GetElementVisual(Viewport);
             var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
             var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
-
-            pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
 
             var rectangle = Window.Current.Compositor.CreateRoundedRectangleGeometry();
             rectangle.CornerRadius = new Vector2(8);
@@ -228,6 +225,16 @@ namespace Unigram.Views
             {
                 rectangle.Size = new Vector2(ViewportAspect.ActualSize.X - 24, ViewportAspect.ActualSize.Y);
             }
+
+            if (aspect.Clip != null)
+            {
+                return;
+            }
+
+            Viewport.Height = ActualHeight - BottomPanel.ActualHeight;
+            Viewport.Margin = new Thickness(-12, 0, -12, -(ActualHeight - BottomPanel.ActualHeight - ViewportAspect.ActualHeight));
+
+            pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
 
             aspect.Clip = Window.Current.Compositor.CreateGeometricClip(rectangle);
 
@@ -247,20 +254,106 @@ namespace Unigram.Views
 
         private bool _pinnedExpanded = false;
 
-        private void Viewport_Click(object sender, RoutedEventArgs e)
+        [ComImport, Guid("45D64A29-A63E-4CB6-B498-5781D298CB4F")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        interface ICoreWindowInterop
         {
+            IntPtr WindowHandle { get; }
+            bool MessageHandled { set; }
+        }
+
+        [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr GetParent(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;        // x position of upper-left corner
+            public int Top;         // y position of upper-left corner
+            public int Right;       // x position of lower-right corner
+            public int Bottom;      // y position of lower-right corner
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
+
+        private async void Viewport_Click(object sender, RoutedEventArgs e)
+        {
+            //object corewin = Windows.UI.Core.CoreWindow.GetForCurrentThread();
+            //var interop = (ICoreWindowInterop)corewin;
+            //var handle = GetParent(interop.WindowHandle);
+
+            //if (GetWindowRect(handle, out RECT lpRect))
+            //{
+            //    var width = lpRect.Right - lpRect.Left;
+            //    var height = lpRect.Bottom - lpRect.Top;
+
+            //    var a = MoveWindow(handle, lpRect.Left -100, lpRect.Top, width, height, true);
+            //}
+
+            //return;
+            //var expand = !_pinnedExpanded;
+            var prevSize = ActualSize;
+
             var aspect = ElementCompositionPreview.GetElementVisual(ViewportAspect);
             var visual = ElementCompositionPreview.GetElementVisual(Viewport);
             var pinned = ElementCompositionPreview.GetElementVisual(PinnedInfo);
             var glyph = ElementCompositionPreview.GetElementVisual(PinnedGlyph);
 
+            var transform = ParticipantsArea.TransformToVisual(this);
+            var point = transform.TransformPoint(new Point()).ToVector2();
+
+            if (_pinnedExpanded)
+            {
+                ApplicationView.GetForCurrentView().TryResizeView(new Size(380, 580));
+            }
+            else
+            {
+                ApplicationView.GetForCurrentView().TryResizeView(new Size(780, 580));
+            }
+
+            await this.UpdateLayoutAsync();
+            var nextSize = ActualSize;
+
+            if (nextSize.X >= prevSize.X)
+            {
+                Grid.SetRow(ParticipantsPanel, 0);
+                Grid.SetRowSpan(ParticipantsPanel, 4);
+
+                ViewportAspect.Constraint = null;
+                ParticipantsPanel.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
+                ParticipantsPanel.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Auto);
+                ParticipantsPanel.VerticalAlignment = VerticalAlignment.Stretch;
+            }
+            else
+            {
+                Grid.SetRow(ParticipantsPanel, 2);
+                Grid.SetRowSpan(ParticipantsPanel, 1);
+
+                ViewportAspect.Constraint = new Size(16, 9);
+                ParticipantsPanel.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Auto);
+                ParticipantsPanel.RowDefinitions[1].Height = new GridLength(1, GridUnitType.Star);
+                ParticipantsPanel.VerticalAlignment = VerticalAlignment.Top;
+            }
+
+            _pinnedExpanded = !_pinnedExpanded;
+
+            return;
+
+            Viewport.Height = ActualHeight - BottomPanel.ActualHeight;
+            Viewport.Margin = new Thickness(-12, 0, -12, -(ActualHeight - BottomPanel.ActualHeight - ViewportAspect.ActualHeight));
+
             pinned.CenterPoint = new Vector3(PinnedInfo.ActualSize.X / 2, PinnedInfo.ActualSize.Y, 0);
 
             var clip = aspect.Clip as CompositionGeometricClip;
             var rectangle = clip.Geometry as CompositionRoundedRectangleGeometry;
-
-            var transform = ParticipantsPanel.TransformToVisual(this);
-            var point = transform.TransformPoint(new Point()).ToVector2();
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             var duration = TimeSpan.FromSeconds(0.5);
@@ -1076,12 +1169,12 @@ namespace Unigram.Views
 
             if (participant == null || !participant.HasVideoInfo())
             {
-                _pinnedToken = null;
+                _pinnedVideoToken = null;
                 ShowHidePinnedParticipant(false);
                 return;
             }
 
-            ShowHidePinnedParticipant(true);
+            //ShowHidePinnedParticipant(true);
 
             if (_cacheService.TryGetUser(participant.ParticipantId, out User user))
             {
@@ -1092,42 +1185,54 @@ namespace Unigram.Views
                 PinnedTitle.Text = _protoService.GetTitle(chat);
             }
 
-            bool HasIncomingVideoOutput(string endpointId)
+            bool HasIncomingVideoOutput(Border target, string endpointId)
             {
-                return _pinnedToken?.IsMatch(endpointId, Viewport.Child as CanvasControl) ?? false;
+                return _pinnedVideoToken?.IsMatch(endpointId, target.Child as CanvasControl) ?? false;
             }
 
-            void SetIncomingVideoOutput(string endpointId, bool screencast)
+            void SetIncomingVideoOutput(Border target, string endpointId, bool screencast)
             {
-                if (HasIncomingVideoOutput(endpointId))
+                if (HasIncomingVideoOutput(target, endpointId))
                 {
                     return;
                 }
 
-                Viewport.Child = new CanvasControl();
+                target.Child = new CanvasControl();
 
                 if (screencast && participant.IsCurrentUser && _service.IsScreenSharing)
                 {
-                    _pinnedToken = _service.ScreenSharing.SetFullSizeVideoEndpointId(endpointId, Viewport.Child as CanvasControl);
+                    _pinnedScreenToken = _service.ScreenSharing.SetFullSizeVideoEndpointId(endpointId, target.Child as CanvasControl);
                 }
                 else
                 {
-                    _pinnedToken = _manager.SetFullSizeVideoEndpointId(endpointId, Viewport.Child as CanvasControl);
+                    _pinnedVideoToken = _manager.SetFullSizeVideoEndpointId(endpointId, target.Child as CanvasControl);
                 }
             }
 
             if (participant.ScreenSharingVideoInfo != null)
             {
-                SetIncomingVideoOutput(participant.ScreenSharingVideoInfo.EndpointId, true);
+                SetIncomingVideoOutput(ViewportScreenSharing, participant.ScreenSharingVideoInfo.EndpointId, true);
+
+                if (participant.VideoInfo != null)
+                {
+                    SetIncomingVideoOutput(ViewportVideo, participant.VideoInfo.EndpointId, false);
+                }
+                else
+                {
+                    _pinnedVideoToken = null;
+                    ViewportVideo.Child = null;
+                }
             }
             else if (participant.VideoInfo != null)
             {
-                SetIncomingVideoOutput(participant.VideoInfo.EndpointId, false);
+                SetIncomingVideoOutput(ViewportVideo, participant.VideoInfo.EndpointId, false);
             }
             else
             {
-                _pinnedToken = null;
-                Viewport.Child = null;
+                _pinnedVideoToken = null;
+                _pinnedScreenToken = null;
+                ViewportVideo.Child = null;
+                ViewportScreenSharing.Child = null;
             }
 
             if (participant.IsHandRaised)

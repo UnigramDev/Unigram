@@ -138,7 +138,7 @@ namespace winrt::Unigram::Native::Calls::implementation
 
 	winrt::Unigram::Native::Calls::VoipVideoRendererToken VoipGroupManager::SetFullSizeVideoEndpointId(hstring endpointId, CanvasControl canvas) {
 		if (m_impl) {
-			m_impl->setFullSizeVideoEndpointId(string_to_unmanaged(endpointId));
+			//m_impl->setFullSizeVideoEndpointId(string_to_unmanaged(endpointId));
 			return AddIncomingVideoOutput(endpointId, canvas);
 		}
 

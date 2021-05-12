@@ -141,20 +141,29 @@
             Style="{StaticResource CaptionTextBlockStyle}"
             TextWrapping="NoWrap"
             TextTrimming="CharacterEllipsis"
-            Margin="44,-8,0,0"
+            Margin="44,-8,0,16"
             Grid.Row="1"/>
 
-        <Grid x:Name="ParticipantsPanel" VerticalAlignment="Top" Margin="0,16" Grid.Row="2">
+        <Border x:Name="ParticipantsArea" Margin="0,0,0,16" Grid.Row="2"/>
+
+        <Grid x:Name="ParticipantsPanel" VerticalAlignment="Top" Margin="0,0,0,16" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <controls:AspectView x:Name="ViewportAspect" SizeChanged="Viewport_SizeChanged" Visibility="Collapsed" Background="{ThemeResource PageHeaderBorderBrush}" Padding="12,0" Margin="0,0,0,8" Canvas.ZIndex="1">
-                <Border
+            <controls:AspectView x:Name="ViewportAspect" SizeChanged="Viewport_SizeChanged" Visibility="Visible" Background="{ThemeResource PageHeaderBorderBrush}" Padding="12,0" Margin="0,0,0,8" Canvas.ZIndex="1" Grid.Column="1">
+                <Grid
                     x:Name="Viewport"
                     IsHitTestVisible="False"
-                    Margin="-12,0"/>
+                    Margin="-12,0">
+                    <Border x:Name="ViewportScreenSharing"/>
+                    <Border x:Name="ViewportVideo"/>
+                </Grid>
                 <Grid x:Name="PinnedInfo" VerticalAlignment="Bottom" Opacity="0.8" Margin="-12,0" Padding="12,6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -227,7 +236,7 @@
                     Opacity="0"/>
             </controls:AspectView>
 
-            <Grid VerticalAlignment="Top" Margin="12,0" Grid.Row="1">
+            <Grid VerticalAlignment="Top" Margin="12,0" Grid.Row="1" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
