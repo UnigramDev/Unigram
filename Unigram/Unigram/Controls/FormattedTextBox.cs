@@ -680,19 +680,21 @@ namespace Unigram.Controls
 
         }
 
+        protected bool _wasEmpty;
         public virtual bool IsEmpty
         {
             get
             {
-                Document.GetText(TextGetOptions.NoHidden, out string text);
+                var end = Document.GetRange(int.MaxValue, int.MaxValue);
+                var empty = end.EndPosition == 0;
 
-                var isEmpty = string.IsNullOrWhiteSpace(text);
-                if (isEmpty)
+                if (empty && !_wasEmpty)
                 {
                     Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
                 }
 
-                return isEmpty;
+                _wasEmpty = empty;
+                return empty;
             }
         }
 

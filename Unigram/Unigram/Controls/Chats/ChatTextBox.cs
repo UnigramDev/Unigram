@@ -300,10 +300,7 @@ namespace Unigram.Controls.Chats
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
-            //AcceptsReturn = false;
-            UpdateText();
-
-            if (IsEmpty == false)
+            if (_wasEmpty && !IsEmpty)
             {
                 ViewModel.ChatActionManager.SetTyping(new ChatActionTyping());
             }
@@ -680,12 +677,6 @@ namespace Unigram.Controls.Chats
             public Orientation Orientation => Orientation.Vertical;
         }
 
-        private void UpdateText()
-        {
-            Document.GetText(TextGetOptions.NoHidden, out string text);
-            Text = text;
-        }
-
         public async Task SendAsync(bool disableNotification = false)
         {
             if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
@@ -723,22 +714,6 @@ namespace Unigram.Controls.Chats
         protected override void OnSettingText()
         {
             UpdateInlinePlaceholder(null, null);
-        }
-
-        private bool _wasEmpty;
-        public override bool IsEmpty
-        {
-            get
-            {
-                var isEmpty = string.IsNullOrWhiteSpace(Text);
-                if (isEmpty && !_wasEmpty)
-                {
-                    Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
-                }
-
-                _wasEmpty = isEmpty;
-                return isEmpty;
-            }
         }
 
         #region Username
@@ -992,6 +967,11 @@ namespace Unigram.Controls.Chats
             var flag = false;
             searchText = string.Empty;
 
+            if (text.EndsWith('\r'))
+            {
+                text = text.Substring(0, text.Length - 1);
+            }
+
             if (ViewModel.CurrentInlineBot != null)
             {
                 var username = ViewModel.CurrentInlineBot.Username;
@@ -1067,8 +1047,6 @@ namespace Unigram.Controls.Chats
         }
 
         #endregion
-
-        public string Text { get; private set; }
 
         #region Reply
 
