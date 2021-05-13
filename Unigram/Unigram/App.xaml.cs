@@ -205,20 +205,6 @@ namespace Unigram
             SettingsService.Current.Appearance.UpdateTimer();
         }
 
-        private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
-        {
-            //HandleActivated(e.Visible);
-
-            if (e.Visible && TLContainer.Current.Passcode.IsLockscreenRequired)
-            {
-                ShowPasscode(false);
-            }
-            else
-            {
-                TLContainer.Current.Passcode.CloseTime = DateTime.Now;
-            }
-        }
-
         private void HandleActivated(bool active)
         {
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
@@ -322,7 +308,7 @@ namespace Unigram
             }
         }
 
-        public override Task OnInitializeAsync(IActivatedEventArgs args)
+        public override void OnInitialize(IActivatedEventArgs args)
         {
             //Locator.Configure();
             //UnigramContainer.Current.ResolveType<IGenerationService>();
@@ -337,14 +323,10 @@ namespace Unigram
             {
                 Window.Current.Activated -= Window_Activated;
                 Window.Current.Activated += Window_Activated;
-                Window.Current.VisibilityChanged -= Window_VisibilityChanged;
-                Window.Current.VisibilityChanged += Window_VisibilityChanged;
             }
-
-            return base.OnInitializeAsync(args);
         }
 
-        public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
+        public override void OnStart(StartKind startKind, IActivatedEventArgs args)
         {
             if (TLContainer.Current.Passcode.IsLockscreenRequired)
             {
@@ -386,8 +368,6 @@ namespace Unigram
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.Activated += Window_Activated;
-            Window.Current.VisibilityChanged -= Window_VisibilityChanged;
-            Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -512,6 +492,8 @@ namespace Unigram
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
             Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnSuspendingAsync");
+
+            TLContainer.Current.Passcode.CloseTime = DateTime.Now;
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
