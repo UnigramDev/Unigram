@@ -66,8 +66,42 @@ namespace Unigram.ViewModels.Chats
             RaisePropertyChanged(nameof(Music));
             RaisePropertyChanged(nameof(Voice));
 
+            UpdateSharedCount(chatId);
+
             Aggregator.Subscribe(this);
             return Task.CompletedTask;
+        }
+
+        private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
+        public int[] SharedCount
+        {
+            get { return _sharedCount; }
+            set { Set(ref _sharedCount, value); }
+        }
+
+        private void UpdateSharedCount(long chatId)
+        {
+            var filters = new SearchMessagesFilter[]
+            {
+                new SearchMessagesFilterPhotoAndVideo(),
+                new SearchMessagesFilterDocument(),
+                new SearchMessagesFilterUrl(),
+                new SearchMessagesFilterAudio(),
+                new SearchMessagesFilterVoiceNote()
+            };
+
+            for (int i = 0; i < filters.Length; i++)
+            {
+                int index = i + 0;
+                ProtoService.Send(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 1, filters[index], 0), result =>
+                {
+                    if (result is Messages messages)
+                    {
+                        SharedCount[index] = messages.TotalCount;
+                        BeginOnUIThread(() => RaisePropertyChanged(nameof(SharedCount)));
+                    }
+                });
+            }
         }
 
         public override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)

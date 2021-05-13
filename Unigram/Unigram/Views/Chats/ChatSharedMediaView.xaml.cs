@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using Telegram.Td.Api;
 using Unigram.Common;
-using Unigram.Controls;
 using Unigram.Controls.Cells;
 using Unigram.Controls.Chats;
 using Unigram.Controls.Gallery;
@@ -13,6 +12,8 @@ using Unigram.Converters;
 using Unigram.Navigation;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Delegates;
+using Unigram.Views.Supergroups;
+using Unigram.Views.Users;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
@@ -29,20 +30,7 @@ namespace Unigram.Views.Chats
         {
             InitializeComponent();
 
-            InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
-            InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
-            InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
-            InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
-
-            _tabs = new ObservableCollection<ChatSharedMediaTab>();
-            _tabs.Add(_mediaHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedMediaTab2 });
-            _tabs.Add(_filesHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedFilesTab2 });
-            _tabs.Add(_linksHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedLinksTab2 });
-            _tabs.Add(_musicHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedMusicTab2 });
-            _tabs.Add(_voiceHeader = new ChatSharedMediaTab { Title = Strings.Resources.SharedVoiceTab2 });
-
-            Header.ItemsSource = _tabs;
-            Header.SelectedIndex = 0;
+            Header.ItemsSource = _tabs = new ObservableCollection<ChatSharedMediaTab>();
         }
 
         public void OnNavigatedTo(NavigationEventArgs e)
@@ -56,11 +44,6 @@ namespace Unigram.Views.Chats
         }
 
         private readonly ObservableCollection<ChatSharedMediaTab> _tabs;
-        private readonly ChatSharedMediaTab _mediaHeader;
-        private readonly ChatSharedMediaTab _filesHeader;
-        private readonly ChatSharedMediaTab _linksHeader;
-        private readonly ChatSharedMediaTab _musicHeader;
-        private readonly ChatSharedMediaTab _voiceHeader;
 
         private bool _isLocked = false;
 
@@ -83,8 +66,6 @@ namespace Unigram.Views.Chats
                 if (_tab != null && _tab is UserControl prev)
                 {
                     prev.Loaded -= Tab_Loaded;
-
-                    ScrollingHost.Items.RemoveAt(_tab.Index);
                     _tabs.RemoveAt(_tab.Index);
                 }
 
@@ -94,15 +75,26 @@ namespace Unigram.Views.Chats
                 {
                     next.Loaded += Tab_Loaded;
 
-                    var pivotItem = new PivotItem
+                    if (next is SupergroupMembersView)
                     {
-                        Header = value.Text,
-                        Content = next
-                    };
+                        _tabs.Insert(0, new ChatSharedMediaTab { Title = value.Text });
+                        FindName(nameof(PivotMembers));
+                        PivotMembers.Header = value.Text;
+                        PivotMembers.Content = next;
+                    }
+                    else if (next is UserCommonChatsView)
+                    {
+                        _tabs.Add(new ChatSharedMediaTab { Title = value.Text });
+                        FindName(nameof(PivotCommonChats));
+                        PivotCommonChats.Header = value.Text;
+                        PivotCommonChats.Content = next;
+                    }
+                }
 
-                    ScrollingHost.Items.Insert(value.Index, pivotItem);
-
-                    _tabs.Insert(value.Index, new ChatSharedMediaTab { Title = value.Text });
+                if (_tabs.Count > 0)
+                {
+                    HeaderPanel.Visibility = Visibility.Visible;
+                    Header.SelectedItem = _tabs[0];
                 }
             }
         }
@@ -126,9 +118,34 @@ namespace Unigram.Views.Chats
             HeaderPanel.MaxWidth = embedded ? 640 : double.PositiveInfinity;
             HeaderPanel.Margin = new Thickness(embedded ? 12 : 0, 0, embedded ? 12 : 0, 0);
 
-            HeaderMedia.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 8 : 8, 0, 0);
-            HeaderFiles.Padding = HeaderLinks.Padding = HeaderMusic.Padding = HeaderVoice.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 8);
-            HeaderFiles.CornerRadius = HeaderLinks.CornerRadius = HeaderMusic.CornerRadius = HeaderVoice.CornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
+            if (HeaderMedia != null)
+            {
+                HeaderMedia.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 8 : 8, 0, 0);
+            }
+
+            if (HeaderFiles != null)
+            {
+                HeaderFiles.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 8);
+                HeaderFiles.CornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
+            }
+
+            if (HeaderLinks != null)
+            {
+                HeaderLinks.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 8);
+                HeaderLinks.CornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
+            }
+
+            if (HeaderMusic != null)
+            {
+                HeaderMusic.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 8);
+                HeaderMusic.CornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
+            }
+
+            if (HeaderVoice != null)
+            {
+                HeaderVoice.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 8);
+                HeaderVoice.CornerRadius = new CornerRadius(embedded ? 0 : 8, embedded ? 0 : 8, 8, 8);
+            }
         }
 
         public ScrollViewer GetScrollViewer()
@@ -186,31 +203,31 @@ namespace Unigram.Views.Chats
 
         private IEnumerable<ScrollViewer> GetScrollViewers()
         {
-            var viewer1 = ScrollingMedia.GetScrollViewer();
+            var viewer1 = ScrollingMedia?.GetScrollViewer();
             if (viewer1 != null)
             {
                 yield return viewer1;
             }
 
-            var viewer2 = ScrollingFiles.GetScrollViewer();
+            var viewer2 = ScrollingFiles?.GetScrollViewer();
             if (viewer2 != null)
             {
                 yield return viewer2;
             }
 
-            var viewer3 = ScrollingLinks.GetScrollViewer();
+            var viewer3 = ScrollingLinks?.GetScrollViewer();
             if (viewer3 != null)
             {
                 yield return viewer3;
             }
 
-            var viewer4 = ScrollingMusic.GetScrollViewer();
+            var viewer4 = ScrollingMusic?.GetScrollViewer();
             if (viewer4 != null)
             {
                 yield return viewer4;
             }
 
-            var viewer5 = ScrollingVoice.GetScrollViewer();
+            var viewer5 = ScrollingVoice?.GetScrollViewer();
             if (viewer5 != null)
             {
                 yield return viewer5;
@@ -264,6 +281,72 @@ namespace Unigram.Views.Chats
                     case 4:
                         ScrollingVoice.SelectedItems.AddRange(ViewModel.SelectedItems);
                         break;
+                }
+            }
+            else if (e.PropertyName.Equals("SharedCount"))
+            {
+                for (int i = 0; i < ViewModel.SharedCount.Length; i++)
+                {
+                    if (ViewModel.SharedCount[i] < 1)
+                    {
+                        continue;
+                    }
+
+                    var insert = Math.Min(i, _tabs.Count);
+
+                    if (_tab?.Index <= insert)
+                    {
+                        insert = Math.Min(insert + 1, _tabs.Count);
+                    }
+
+                    switch (i)
+                    {
+                        case 0:
+                            if (PivotMedia == null)
+                            {
+                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedMediaTab2 });
+                                FindName(nameof(PivotMedia));
+                            }
+                            break;
+                        case 1:
+                            if (PivotFiles == null)
+                            {
+                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedFilesTab2 });
+                                FindName(nameof(PivotFiles));
+                                InitializeSearch(SearchFiles, () => new SearchMessagesFilterDocument());
+                            }
+                            break;
+                        case 2:
+                            if (PivotLinks == null)
+                            {
+                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedLinksTab2 });
+                                FindName(nameof(PivotLinks));
+                                InitializeSearch(SearchLinks, () => new SearchMessagesFilterUrl());
+                            }
+                            break;
+                        case 3:
+                            if (PivotMusic == null)
+                            {
+                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedMusicTab2 });
+                                FindName(nameof(PivotMusic));
+                                InitializeSearch(SearchMusic, () => new SearchMessagesFilterAudio());
+                            }
+                            break;
+                        case 4:
+                            if (PivotVoice == null)
+                            {
+                                _tabs.Insert(insert, new ChatSharedMediaTab { Title = Strings.Resources.SharedVoiceTab2 });
+                                FindName(nameof(PivotVoice));
+                                InitializeSearch(SearchVoice, () => new SearchMessagesFilterVoiceNote());
+                            }
+                            break;
+                    }
+                }
+
+                if (_tabs.Count > 0)
+                {
+                    HeaderPanel.Visibility = Visibility.Visible;
+                    Header.SelectedItem = _tabs[0];
                 }
             }
         }
@@ -670,31 +753,31 @@ namespace Unigram.Views.Chats
                 return;
             }
 
-            if (ScrollingMedia.ItemsPanelRoot != null)
+            if (ScrollingMedia?.ItemsPanelRoot != null)
             {
                 ScrollingMedia.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
                 ScrollingMedia.GetScrollViewer().ChangeView(null, 12, null, true);
             }
 
-            if (ScrollingFiles.ItemsPanelRoot != null)
+            if (ScrollingFiles?.ItemsPanelRoot != null)
             {
                 ScrollingFiles.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
                 ScrollingFiles.GetScrollViewer().ChangeView(null, 12, null, true);
             }
 
-            if (ScrollingLinks.ItemsPanelRoot != null)
+            if (ScrollingLinks?.ItemsPanelRoot != null)
             {
                 ScrollingLinks.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
                 ScrollingLinks.GetScrollViewer().ChangeView(null, 12, null, true);
             }
 
-            if (ScrollingMusic.ItemsPanelRoot != null)
+            if (ScrollingMusic?.ItemsPanelRoot != null)
             {
                 ScrollingMusic.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
                 ScrollingMusic.GetScrollViewer().ChangeView(null, 12, null, true);
             }
 
-            if (ScrollingVoice.ItemsPanelRoot != null)
+            if (ScrollingVoice?.ItemsPanelRoot != null)
             {
                 ScrollingVoice.ItemsPanelRoot.MinHeight = e.NewSize.Height + 12;
                 ScrollingVoice.GetScrollViewer().ChangeView(null, 12, null, true);
