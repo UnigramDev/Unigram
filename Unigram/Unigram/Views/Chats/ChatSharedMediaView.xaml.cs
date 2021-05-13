@@ -90,12 +90,6 @@ namespace Unigram.Views.Chats
                         PivotCommonChats.Content = next;
                     }
                 }
-
-                if (_tabs.Count > 0)
-                {
-                    HeaderPanel.Visibility = Visibility.Visible;
-                    Header.SelectedItem = _tabs[0];
-                }
             }
         }
 

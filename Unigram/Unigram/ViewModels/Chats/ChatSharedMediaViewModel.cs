@@ -40,7 +40,7 @@ namespace Unigram.ViewModels.Chats
 
         public IPlaybackService PlaybackService => _playbackService;
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -66,10 +66,9 @@ namespace Unigram.ViewModels.Chats
             RaisePropertyChanged(nameof(Music));
             RaisePropertyChanged(nameof(Voice));
 
-            UpdateSharedCount(chatId);
-
             Aggregator.Subscribe(this);
-            return Task.CompletedTask;
+
+            await UpdateSharedCountAsync(chatId);
         }
 
         private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
@@ -79,7 +78,7 @@ namespace Unigram.ViewModels.Chats
             set { Set(ref _sharedCount, value); }
         }
 
-        private void UpdateSharedCount(long chatId)
+        private async Task UpdateSharedCountAsync(long chatId)
         {
             var filters = new SearchMessagesFilter[]
             {
@@ -92,16 +91,14 @@ namespace Unigram.ViewModels.Chats
 
             for (int i = 0; i < filters.Length; i++)
             {
-                int index = i + 0;
-                ProtoService.Send(new SearchChatMessages(chatId, string.Empty, null, 0, 0, 1, filters[index], 0), result =>
+                var response = await ProtoService.SendAsync(new GetChatMessageCount(chatId, filters[i], false));
+                if (response is Count count)
                 {
-                    if (result is Messages messages)
-                    {
-                        SharedCount[index] = messages.TotalCount;
-                        BeginOnUIThread(() => RaisePropertyChanged(nameof(SharedCount)));
-                    }
-                });
+                    SharedCount[i] = count.CountValue;
+                }
             }
+
+            RaisePropertyChanged(nameof(SharedCount));
         }
 
         public override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
