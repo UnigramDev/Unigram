@@ -142,9 +142,9 @@ namespace Unigram.Views.Folders
                 return;
             }
 
-            if (args.ItemContainer.ContentTemplateRoot is BitmapIcon image && args.Item is ChatFilterIcon icon)
+            if (args.ItemContainer.ContentTemplateRoot is FontIcon textBlock && args.Item is ChatFilterIcon icon)
             {
-                image.UriSource = new Uri($"ms-appx:///Assets/Filters/{icon}.png");
+                textBlock.Glyph = Icons.FilterToGlyph(icon).Item1;
             }
         }
 
@@ -155,9 +155,9 @@ namespace Unigram.Views.Folders
             return filter == null ? Strings.Resources.FilterNew : filter.Title;
         }
 
-        private Uri ConvertEmoji(ChatFilterIcon icon)
+        private string ConvertEmoji(ChatFilterIcon icon)
         {
-            return new Uri($"ms-appx:///Assets/Filters/{icon}.png");
+            return Icons.FilterToGlyph(icon).Item1;
         }
 
         #endregion

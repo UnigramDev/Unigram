@@ -171,8 +171,7 @@ namespace Unigram.Converters
             ChatFilterIcon.Channels,
             ChatFilterIcon.Groups,
             ChatFilterIcon.Private,
-            ChatFilterIcon.Custom,
-            ChatFilterIcon.Setup
+            ChatFilterIcon.Custom
         };
 
         public static ChatFilterIcon ParseFilter(ChatFilter filter)
@@ -198,6 +197,36 @@ namespace Unigram.Converters
             }
 
             return ChatFilterIcon.Custom;
+        }
+
+        public static (string, string) FilterToGlyph(ChatFilterIcon icon)
+        {
+            return icon switch
+            {
+                ChatFilterIcon.Cat => ("\uE933", "\uE931"),
+                ChatFilterIcon.Crown => ("\uE935", "\uE934"),
+                ChatFilterIcon.Favorite => ("\uE937", "\uE936"),
+                ChatFilterIcon.Flower => ("\uE939", "\uE938"),
+                ChatFilterIcon.Game => ("\uE93B", "\uE93A"),
+                ChatFilterIcon.Home => ("\uE940", "\uE93C"),
+                ChatFilterIcon.Love => ("\uE942", "\uE941"),
+                ChatFilterIcon.Mask => ("\uE945", "\uE944"),
+                ChatFilterIcon.Party => ("\uE948", "\uE947"),
+                ChatFilterIcon.Sport => ("\uE94A", "\uE949"),
+                ChatFilterIcon.Study => ("\uE94C", "\uE94B"),
+                ChatFilterIcon.Trade => ("\uE94E", "\uE94D"),
+                ChatFilterIcon.Travel => ("\uE950", "\uE94F"),
+                ChatFilterIcon.Work => ("\uE952", "\uE951"),
+                ChatFilterIcon.All => ("\uE954", "\uE953"),
+                ChatFilterIcon.Unread => ("\uE91C", "\uE91C"),
+                ChatFilterIcon.Unmuted => ("\uE958", "\uE957"),
+                ChatFilterIcon.Bots => ("\uE95A", "\uE959"),
+                ChatFilterIcon.Channels => ("\uE95C", "\uE95B"),
+                ChatFilterIcon.Groups => ("\uE95E", "\uE95D"),
+                ChatFilterIcon.Private => ("\uE960", "\uE95F"),
+                ChatFilterIcon.Custom => ("\uE962", "\uE961"),
+                _ => ("\uE962", "\uE961")
+            };
         }
     }
 }

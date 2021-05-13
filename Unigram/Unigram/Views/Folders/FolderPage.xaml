@@ -47,10 +47,10 @@
                                 MaxLength="12"
                                 Margin="12,8,0,8"/>
 
-                            <controls:AnimatedBitmapButton
+                            <controls:AnimatedGlyphButton
                                 x:Name="EmojiButton"
                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                UriSource="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
+                                Glyph="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
                                 Click="Emoji_Click"
                                 Grid.Column="1">
                                 <FlyoutBase.AttachedFlyout>
@@ -67,7 +67,11 @@
                                             Width="258">
                                             <GridView.ItemTemplate>
                                                 <DataTemplate>
-                                                    <BitmapIcon Width="36" Height="36"/>
+                                                    <FontIcon
+                                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                        FontSize="20"
+                                                        Width="20"
+                                                        Height="20"/>
                                                 </DataTemplate>
                                             </GridView.ItemTemplate>
                                             <GridView.ItemContainerStyle>
@@ -90,7 +94,7 @@
                                         </GridView>
                                     </Flyout>
                                 </FlyoutBase.AttachedFlyout>
-                            </controls:AnimatedBitmapButton>
+                            </controls:AnimatedGlyphButton>
                         </Grid>
                     </controls:HeaderedControl>
 

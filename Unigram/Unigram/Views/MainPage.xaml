@@ -145,11 +145,11 @@
                     <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
                         <StackPanel Orientation="Vertical">
                             <Grid>
-                                <BitmapIcon
-                                    UriSource="{x:Bind IconUri, Mode=OneWay}"
+                                <FontIcon
+                                    Glyph="{x:Bind IconGlyph, Mode=OneWay}"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     HorizontalAlignment="Center"
-                                    Width="36"
-                                    Height="36"/>
+                                    FontSize="32"/>
                                 <Border
                                     Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
                                     Background="{ThemeResource ChatUnreadBadgeBrush}"
