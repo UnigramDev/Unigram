@@ -2139,6 +2139,10 @@ namespace Unigram.Views
                 {
                     return restricted.IsMember && restricted.Permissions.CanSendMessages;
                 }
+                else if (supergroup.Status is ChatMemberStatusLeft)
+                {
+                    return ViewModel.Type == DialogType.Thread;
+                }
             }
             else if (chat != null && chat.Id == ViewModel.CacheService.Options.RepliesBotChatId)
             {
