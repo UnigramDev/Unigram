@@ -42,8 +42,6 @@ namespace Unigram.Controls.Messages
 
             var content = ElementCompositionPreview.GetElementVisual(ContentPanel);
             //var shadow = ElementCompositionPreview.GetElementVisual(ShadowPanel);
-            var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
-            cross.Opacity = 0;
 
             _cornerRadius = CompositionDevice.CreateRectangleClip(content);
             //CompositionDevice.SetClip(shadow, _cornerRadius);
@@ -1364,6 +1362,11 @@ namespace Unigram.Controls.Messages
             {
                 VisualStateManager.GoToState(Reply.Content as UserControl, "LightState", false);
             }
+
+            if (BackgroundPanel != null)
+            {
+                UnloadObject(BackgroundPanel);
+            }
         }
 
         private void FooterToMedia()
@@ -1444,6 +1447,11 @@ namespace Unigram.Controls.Messages
                 outOpacity.Duration = TimeSpan.FromMilliseconds(outer);
                 outOpacity.DelayTime = TimeSpan.FromMilliseconds(delay);
                 outOpacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+                if (BackgroundPanel == null)
+                {
+                    FindName(nameof(BackgroundPanel));
+                }
 
                 var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
                 cross.StartAnimation("Opacity", outOpacity);

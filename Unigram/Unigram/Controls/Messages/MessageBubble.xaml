@@ -14,6 +14,7 @@
 
     <UserControl x:Name="LayoutRoot" IsTabStop="False">
         <Grid x:Name="ContentPanel"
+              Background="{ThemeResource MessageBackgroundBrush}"
               MinHeight="30"
               Padding="0,4,0,0"
               SizeChanged="OnSizeChanged">
@@ -26,8 +27,7 @@
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="Footer.Stroke" Value="White"/>
-                            <Setter Target="BackgroundPanel.Background" Value="{x:Null}"/>
-                            <Setter Target="CrossPanel.Background" Value="{x:Null}"/>
+                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
@@ -50,8 +50,7 @@
                             <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="Footer.Stroke" Value="White"/>
-                            <Setter Target="BackgroundPanel.Background" Value="{x:Null}"/>
-                            <Setter Target="CrossPanel.Background" Value="{x:Null}"/>
+                            <Setter Target="ContentPanel.Background" Value="{x:Null}"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
                             <Setter Target="Header.VerticalAlignment" Value="Top"/>
                             <Setter Target="Header.CornerRadius" Value="8"/>
@@ -95,6 +94,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Border
+                x:Load="False"
                 x:Name="BackgroundPanel"
                 Background="{ThemeResource MessageBackgroundBrush}"
                 Margin="0,-8,0,-4"
