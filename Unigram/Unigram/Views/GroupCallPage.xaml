@@ -37,11 +37,11 @@
             <Setter Property="Width" Value="48" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Radius" Value="24" />
+            <Setter Property="CornerRadius" Value="24" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:GlyphButton">
-                        <Grid Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                        <Grid Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -412,7 +412,7 @@
                     VerticalAlignment="Top"
                     Width="96"
                     Height="96"
-                    Radius="48"
+                    CornerRadius="48"
                     Margin="48,0,48,0"
                     Canvas.ZIndex="2"
                     Grid.Column="1"

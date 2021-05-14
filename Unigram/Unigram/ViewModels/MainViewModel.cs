@@ -527,7 +527,7 @@ namespace Unigram.ViewModels
 
             _title = info.Title;
             _icon = Icons.ParseFilter(info.IconName);
-            _iconUri = new Uri($"ms-appx:///Assets/Filters/{_icon}.png");
+            _iconGlyph = Icons.FilterToGlyph(_icon).Item1;
         }
 
         private ChatFilterViewModel(ChatList list)
@@ -539,7 +539,7 @@ namespace Unigram.ViewModels
         {
             Title = info.Title;
             Icon = Icons.ParseFilter(info.IconName);
-            IconUri = new Uri($"ms-appx:///Assets/Filters/{_icon}.png");
+            IconGlyph = Icons.FilterToGlyph(_icon).Item1;
         }
 
         public ChatList ChatList { get; }
@@ -560,11 +560,11 @@ namespace Unigram.ViewModels
             set => Set(ref _icon, value);
         }
 
-        private Uri _iconUri;
-        public Uri IconUri
+        private string _iconGlyph;
+        public string IconGlyph
         {
-            get => _iconUri;
-            set => Set(ref _iconUri, value);
+            get => _iconGlyph;
+            set => Set(ref _iconGlyph, value);
         }
 
         private int _unreadCount;
@@ -612,7 +612,6 @@ namespace Unigram.ViewModels
         Channels,
         Groups,
         Private,
-        Setup,
         Cat,
         Crown,
         Favorite,

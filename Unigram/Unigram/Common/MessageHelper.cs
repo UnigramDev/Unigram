@@ -398,7 +398,7 @@ namespace Unigram.Common
                         var text = url.Substring(index).Replace("/", string.Empty);
                         if (!string.IsNullOrEmpty(text))
                         {
-                            NavigateToInviteLink(protoService, navigation, text);
+                            NavigateToInviteLink(protoService, navigation, url);
                         }
                     }
                 }
@@ -505,7 +505,7 @@ namespace Unigram.Common
                             }
                             else if (username.StartsWith('+'))
                             {
-                                NavigateToInviteLink(protoService, navigation, username.TrimStart('+'));
+                                NavigateToInviteLink(protoService, navigation, url);
                             }
                             else
                             {
@@ -818,6 +818,11 @@ namespace Unigram.Common
 
         public static async void NavigateToInviteLink(IProtoService protoService, INavigationService navigation, string link)
         {
+            if (!link.StartsWith("http"))
+            {
+                link = "https://t.me/joinchat/" + link;
+            }
+
             var response = await protoService.CheckChatInviteLinkAsync(link);
             if (response is ChatInviteLinkInfo info)
             {

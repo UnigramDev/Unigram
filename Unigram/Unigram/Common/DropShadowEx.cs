@@ -12,14 +12,12 @@ namespace Unigram.Common
     {
         public static Visual Attach(UIElement element, float radius = 20, float opacity = 0.25f)
         {
-            var elementVisual = ElementCompositionPreview.GetElementVisual(element);
-
-            var shadow = elementVisual.Compositor.CreateDropShadow();
+            var shadow = Window.Current.Compositor.CreateDropShadow();
             shadow.BlurRadius = radius;
             shadow.Opacity = opacity;
             shadow.Color = Colors.Black;
 
-            var visual = elementVisual.Compositor.CreateSpriteVisual();
+            var visual = Window.Current.Compositor.CreateSpriteVisual();
             visual.Shadow = shadow;
             visual.Size = new Vector2(0, 0);
             visual.Offset = new Vector3(0, 0, 0);

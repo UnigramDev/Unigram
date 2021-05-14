@@ -40,7 +40,7 @@ namespace Unigram.ViewModels.Chats
 
         public IPlaybackService PlaybackService => _playbackService;
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             var chatId = (long)parameter;
 
@@ -67,7 +67,38 @@ namespace Unigram.ViewModels.Chats
             RaisePropertyChanged(nameof(Voice));
 
             Aggregator.Subscribe(this);
-            return Task.CompletedTask;
+
+            await UpdateSharedCountAsync(chatId);
+        }
+
+        private int[] _sharedCount = new int[] { 0, 0, 0, 0, 0, 0 };
+        public int[] SharedCount
+        {
+            get { return _sharedCount; }
+            set { Set(ref _sharedCount, value); }
+        }
+
+        private async Task UpdateSharedCountAsync(long chatId)
+        {
+            var filters = new SearchMessagesFilter[]
+            {
+                new SearchMessagesFilterPhotoAndVideo(),
+                new SearchMessagesFilterDocument(),
+                new SearchMessagesFilterUrl(),
+                new SearchMessagesFilterAudio(),
+                new SearchMessagesFilterVoiceNote()
+            };
+
+            for (int i = 0; i < filters.Length; i++)
+            {
+                var response = await ProtoService.SendAsync(new GetChatMessageCount(chatId, filters[i], false));
+                if (response is Count count)
+                {
+                    SharedCount[i] = count.CountValue;
+                }
+            }
+
+            RaisePropertyChanged(nameof(SharedCount));
         }
 
         public override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)

@@ -10,9 +10,9 @@ namespace Unigram.Controls
 {
     public class SelfDestructTimer : Control
     {
-        private ShapeVisual _visual;
-        private CompositionSpriteShape _shape;
-        private CompositionEllipseGeometry _ellipse;
+        private readonly ShapeVisual _visual;
+        private readonly CompositionSpriteShape _shape;
+        private readonly CompositionEllipseGeometry _ellipse;
 
         public double Radius { get; set; } = 21;
         public double Center { get; set; } = 24;

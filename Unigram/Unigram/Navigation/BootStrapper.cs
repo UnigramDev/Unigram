@@ -137,51 +137,51 @@ namespace Unigram.Navigation
         protected override sealed void OnActivated(IActivatedEventArgs e)
         {
             Logger.Info();
-            CallInternalActivatedAsync(e);
+            CallInternalActivated(e);
         }
 
         protected override sealed void OnCachedFileUpdaterActivated(CachedFileUpdaterActivatedEventArgs args)
         {
             Logger.Info();
-            CallInternalActivatedAsync(args);
+            CallInternalActivated(args);
         }
 
         protected override sealed void OnFileActivated(FileActivatedEventArgs args)
         {
             Logger.Info();
-            CallInternalActivatedAsync(args);
+            CallInternalActivated(args);
         }
 
         protected override sealed void OnFileOpenPickerActivated(FileOpenPickerActivatedEventArgs args)
         {
             Logger.Info();
-            CallInternalActivatedAsync(args);
+            CallInternalActivated(args);
         }
 
         protected override sealed void OnFileSavePickerActivated(FileSavePickerActivatedEventArgs args)
         {
             Logger.Info();
-            CallInternalActivatedAsync(args);
+            CallInternalActivated(args);
         }
 
         protected override sealed void OnSearchActivated(SearchActivatedEventArgs args)
         {
             Logger.Info();
-            CallInternalActivatedAsync(args);
+            CallInternalActivated(args);
         }
 
         protected override sealed void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
             Logger.Info();
-            CallInternalActivatedAsync(args);
+            CallInternalActivated(args);
         }
 
         public bool PrelaunchActivated { get; private set; }
 
-        private async void CallInternalActivatedAsync(IActivatedEventArgs e)
+        private void CallInternalActivated(IActivatedEventArgs e)
         {
             CurrentState = States.BeforeActivate;
-            await InternalActivatedAsync(e);
+            InternalActivated(e);
             CurrentState = States.AfterActivate;
         }
 
@@ -190,19 +190,19 @@ namespace Unigram.Navigation
         /// This is private because it is a specialized prelude to OnStartAsync().
         /// OnStartAsync will not be called if state restore is determined.
         /// </summary>
-        private async Task InternalActivatedAsync(IActivatedEventArgs e)
+        private void InternalActivated(IActivatedEventArgs e)
         {
             Logger.Info();
 
             // sometimes activate requires a frame to be built
             if (Window.Current.Content == null)
             {
-                Logger.Info("Calling", member: nameof(InternalActivatedAsync));
-                await InitializeFrameAsync(e);
+                Logger.Info("Calling", member: nameof(InternalActivated));
+                InitializeFrame(e);
             }
 
             // onstart is shared with activate and launch
-            await CallOnStartAsync(e, true, StartKind.Activate);
+            CallOnStart(e, true, StartKind.Activate);
 
             // ensure active (this will hide any custom splashscreen)
             CallActivateWindow(WindowLogic.ActivateWindowSources.Activating);
@@ -242,7 +242,7 @@ namespace Unigram.Navigation
             {
                 try
                 {
-                    await InitializeFrameAsync(e);
+                    InitializeFrame(e);
                 }
                 catch (Exception)
                 {
@@ -285,7 +285,7 @@ namespace Unigram.Navigation
             if (e.PrelaunchActivated)
             {
                 bool runOnStartAsync;
-                await OnPrelaunchAsync(e, out runOnStartAsync);
+                OnPrelaunch(e, out runOnStartAsync);
                 if (!runOnStartAsync)
                 {
                     return;
@@ -295,7 +295,7 @@ namespace Unigram.Navigation
             if (!restored)
             {
                 var kind = e.PreviousExecutionState == ApplicationExecutionState.Running ? StartKind.Activate : StartKind.Launch;
-                await CallOnStartAsync(e, true, kind);
+                CallOnStart(e, true, kind);
             }
 
             CallActivateWindow(WindowLogic.ActivateWindowSources.Launching);
@@ -445,12 +445,11 @@ namespace Unigram.Navigation
         /// For Prelaunch Template 10 does not continue the typical startup pipeline by default. 
         /// OnActivated will occur if the application has been prelaunched.
         /// </remarks>
-        public virtual Task OnPrelaunchAsync(IActivatedEventArgs args, out bool runOnStartAsync)
+        public virtual void OnPrelaunch(IActivatedEventArgs args, out bool runOnStartAsync)
         {
             Logger.Info("Virtual");
 
             runOnStartAsync = false;
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -458,18 +457,16 @@ namespace Unigram.Navigation
         /// Template 10 will not call OnStartAsync if the app is restored from state.
         /// An app restores from state when the app was suspended and then terminated (PreviousExecutionState terminated).
         /// </summary>
-        public abstract Task OnStartAsync(StartKind startKind, IActivatedEventArgs args);
+        public abstract void OnStart(StartKind startKind, IActivatedEventArgs args);
 
         /// <summary>
         /// OnInitializeAsync is where your app will do must-have up-front operations
         /// OnInitializeAsync will be called even if the application is restoring from state.
         /// An app restores from state when the app was suspended and then terminated (PreviousExecutionState terminated).
         /// </summary>
-        public virtual Task OnInitializeAsync(IActivatedEventArgs args)
+        public virtual void OnInitialize(IActivatedEventArgs args)
         {
             Logger.Info($"Virtual {nameof(IActivatedEventArgs)}:{args.Kind}");
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -623,7 +620,7 @@ namespace Unigram.Navigation
 
         readonly Dictionary<string, States> CurrentStateHistory = new Dictionary<string, States>();
 
-        private async Task InitializeFrameAsync(IActivatedEventArgs e)
+        private void InitializeFrame(IActivatedEventArgs e)
         {
             /*
                 InitializeFrameAsync creates a default Frame preceeded by the optional 
@@ -633,7 +630,7 @@ namespace Unigram.Navigation
 
             Logger.Info($"{nameof(IActivatedEventArgs)}:{e.Kind}");
 
-            await CallOnInitializeAsync(false, e);
+            CallOnInitialize(false, e);
 
             if (Window.Current.Content == null)
             {
@@ -664,7 +661,7 @@ namespace Unigram.Navigation
 
         public abstract UIElement CreateRootElement(INavigationService navigationService);
 
-        private async Task CallOnInitializeAsync(bool canRepeat, IActivatedEventArgs e)
+        private void CallOnInitialize(bool canRepeat, IActivatedEventArgs e)
         {
             Logger.Info();
 
@@ -674,11 +671,11 @@ namespace Unigram.Navigation
             }
 
             CurrentState = States.BeforeInit;
-            await OnInitializeAsync(e);
+            OnInitialize(e);
             CurrentState = States.AfterInit;
         }
 
-        private async Task CallOnStartAsync(IActivatedEventArgs args, bool canRepeat, StartKind startKind)
+        private void CallOnStart(IActivatedEventArgs args, bool canRepeat, StartKind startKind)
         {
             Logger.Info();
 
@@ -688,12 +685,7 @@ namespace Unigram.Navigation
             }
 
             CurrentState = States.BeforeStart;
-            while (!CurrentStateHistory.ContainsValue(States.AfterInit))
-            {
-                // this could happen if app is activated before previous init completes
-                await Task.Delay(500);
-            }
-            await OnStartAsync(startKind, args);
+            OnStart(startKind, args);
             CurrentState = States.AfterStart;
         }
 

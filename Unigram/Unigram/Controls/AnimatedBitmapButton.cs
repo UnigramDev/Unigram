@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Unigram.Controls
 {
-    public class AnimatedBitmapButton : SimpleButton
+    public class AnimatedBitmapButton : Button
     {
         private BitmapIcon _label1;
         private BitmapIcon _label2;

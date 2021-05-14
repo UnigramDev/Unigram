@@ -47,19 +47,6 @@ namespace Unigram.Controls.Chats
             base.OnApplyTemplate();
         }
 
-        #region Radius
-
-        public CornerRadius Radius
-        {
-            get { return (CornerRadius)GetValue(RadiusProperty); }
-            set { SetValue(RadiusProperty, value); }
-        }
-
-        public static readonly DependencyProperty RadiusProperty =
-            DependencyProperty.Register("Radius", typeof(CornerRadius), typeof(ChatStickerButton), new PropertyMetadata(default(CornerRadius)));
-
-        #endregion
-
         #region Glyph
 
         public string Glyph

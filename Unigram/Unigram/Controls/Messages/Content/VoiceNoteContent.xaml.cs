@@ -200,6 +200,10 @@ namespace Unigram.Controls.Messages.Content
                 {
                     _message.ProtoService.DownloadFile(file.Id, 32);
                 }
+                else
+                {
+                    UpdateDuration();
+                }
             }
             else
             {

@@ -17,8 +17,22 @@
         <Setter Property="BorderBrush" Value="{ThemeResource TelegramSeparatorMediumBrush}"/>
     </Style>
 
+    <Style x:Key="EmptyHyperlinkButtonStyle" TargetType="HyperlinkButton">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="HyperlinkButton">
+                    <ContentPresenter
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="FooteredControlStyle" TargetType="controls:HeaderedControl">
-        <Setter Property="Radius" Value="8"/>
+        <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="0,16,0,0"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -48,7 +62,7 @@
                                     Grid.Column="1"/>
                         </Grid>
 
-                        <Border x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="{TemplateBinding Radius}" Grid.Column="1" Grid.Row="1">
+                        <Border x:Name="ContentPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" CornerRadius="{TemplateBinding CornerRadius}" Grid.Column="1" Grid.Row="1">
                             <ItemsPresenter x:Name="Presenter" Margin="0,0,0,-1"/>
                         </Border>
                     </Grid>
@@ -75,14 +89,14 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-3" />
-        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
                     <Grid
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding Radius}">
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -462,12 +476,12 @@
         <Setter Property="Background" Value="{ThemeResource StartButtonBackground}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource StartButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Radius" Value="16" />
+        <Setter Property="CornerRadius" Value="16" />
         <Setter Property="UseSystemFocusVisuals" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal"/>
@@ -522,7 +536,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter x:Name="ContentPresenter"
-                                          CornerRadius="{TemplateBinding Radius}"
+                                          CornerRadius="{TemplateBinding CornerRadius}"
                                           BorderBrush="{TemplateBinding BorderBrush}"
                                           BorderThickness="{TemplateBinding BorderThickness}"
                                           Content="{TemplateBinding Content}"
@@ -533,7 +547,7 @@
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                           AutomationProperties.AccessibilityView="Raw" />
 
-                        <Border x:Name="FocusEllipse" CornerRadius="{TemplateBinding Radius}" BorderBrush="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}" BorderThickness="2" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" />
+                        <Border x:Name="FocusEllipse" CornerRadius="{TemplateBinding CornerRadius}" BorderBrush="{ThemeResource SystemControlBackgroundChromeBlackHighBrush}" BorderThickness="2" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -553,7 +567,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:BadgeButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
@@ -1659,7 +1673,8 @@
                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                            ContentMargin="{TemplateBinding Padding}"
-                                           CheckMode="{ThemeResource ListViewItemCheckMode}" />
+                                           CheckMode="{ThemeResource ListViewItemCheckMode}"
+                                           CornerRadius="{TemplateBinding CornerRadius}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1694,13 +1709,13 @@
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{StaticResource GlyphMediumFontSize}" />
-        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphToggleButton">
                     <Grid
                         Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding Radius}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -1828,14 +1843,14 @@
         <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}" />
         <Setter Property="Width" Value="48" />
-        <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+        <Setter Property="CornerRadius" Value="{StaticResource GlyphButtonCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
                     <Grid
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding Radius}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         Margin="{StaticResource GlyphButtonPadding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -3045,11 +3060,11 @@
         <Setter Property="Glyph" Value=""/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="Auto"/>
-        <Setter Property="Radius" Value="{StaticResource ControlCornerRadius}"/>
+        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
@@ -3113,7 +3128,7 @@
                         <Border x:Name="BorderPresenter"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding Radius}"/>
+                                CornerRadius="{TemplateBinding CornerRadius}"/>
 
                         <TextBlock Margin="4"
                                    FontSize="12"
@@ -3156,11 +3171,11 @@
         <Setter Property="Glyph" Value=""/>
         <Setter Property="Width" Value="Auto"/>
         <Setter Property="Height" Value="36"/>
-        <Setter Property="Radius" Value="{StaticResource ControlCornerRadius}"/>
+        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GlyphButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding Radius}">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">

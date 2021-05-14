@@ -82,7 +82,7 @@
                                     Width="40"
                                     Height="40"
                                     Margin="4"
-                                    Radius="20"
+                                    CornerRadius="20"
                                     Grid.Column="1"/>
                             </Grid>
 

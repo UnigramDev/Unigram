@@ -26,7 +26,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Grid x:Name="HeaderPanel">
+        <Grid x:Name="HeaderPanel" Visibility="Collapsed">
             <Border x:Name="HeaderAnimator" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource TelegramSeparatorMediumBrush}" BorderThickness="0,0,0,1"/>
             <!--<Border x:Name="HeaderAnimator" />-->
             <controls:ContentPageHeader x:Name="HeaderPage">
@@ -41,7 +41,8 @@
                 IsLocked="{x:Bind ConvertSelectionMode(ViewModel.SelectionMode), Mode=OneWay}"
                 Style="{StaticResource HeaderlessPivotStyle}"
                 Grid.Row="1">
-            <PivotItem>
+            <PivotItem x:Name="PivotMembers" x:Load="False"/>
+            <PivotItem  x:Name="PivotMedia" x:Load="False">
                 <controls:SelectGridView
                     x:Name="ScrollingMedia"
                     ItemsSource="{x:Bind ViewModel.Media, Mode=OneWay}"
@@ -74,15 +75,17 @@
                         <selectors:MessageContentTemplateSelector>
                             <selectors:MessageContentTemplateSelector.PhotoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                                        <Image Stretch="UniformToFill"/>
-                                    </controls:SimpleHyperlinkButton>
+                                    <HyperlinkButton Click="Photo_Click" Style="{StaticResource EmptyHyperlinkButtonStyle}">
+                                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                            <Image Stretch="UniformToFill"/>
+                                        </Grid>
+                                    </HyperlinkButton>
                                 </DataTemplate>
                             </selectors:MessageContentTemplateSelector.PhotoTemplate>
                             <selectors:MessageContentTemplateSelector.VideoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                                        <Grid>
+                                    <HyperlinkButton Click="Photo_Click" Style="{StaticResource EmptyHyperlinkButtonStyle}">
+                                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                             <Image Stretch="UniformToFill"/>
                                                 
                                             <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" Padding="4,4,8,4">
@@ -90,7 +93,7 @@
                                                 <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                                             </Grid>
                                         </Grid>
-                                    </controls:SimpleHyperlinkButton>
+                                    </HyperlinkButton>
                                 </DataTemplate>
                             </selectors:MessageContentTemplateSelector.VideoTemplate>
                             <selectors:MessageContentTemplateSelector.HeaderDateTemplate>
@@ -109,7 +112,7 @@
                     </GridView.ItemsPanel>
                 </controls:SelectGridView>
             </PivotItem>
-            <PivotItem>
+            <PivotItem x:Name="PivotFiles" x:Load="False">
                 <controls:SelectListView
                     x:Name="ScrollingFiles"
                     ItemsSource="{x:Bind ViewModel.Files, Mode=OneWay}"
@@ -164,7 +167,7 @@
                     </ListView.ItemsPanel>
                 </controls:SelectListView>
             </PivotItem>
-            <PivotItem>
+            <PivotItem x:Name="PivotLinks" x:Load="False">
                 <controls:SelectListView
                     x:Name="ScrollingLinks"
                     ItemsSource="{x:Bind ViewModel.Links, Mode=OneWay}"
@@ -219,7 +222,7 @@
                     </ListView.ItemsPanel>
                 </controls:SelectListView>
             </PivotItem>
-            <PivotItem>
+            <PivotItem x:Name="PivotMusic" x:Load="False">
                 <controls:SelectListView
                     x:Name="ScrollingMusic"
                     ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
@@ -274,7 +277,7 @@
                     </ListView.ItemsPanel>
                 </controls:SelectListView>
             </PivotItem>
-            <PivotItem>
+            <PivotItem x:Name="PivotVoice" x:Load="False">
                 <controls:SelectListView
                     x:Name="ScrollingVoice"
                     ItemsSource="{x:Bind ViewModel.Voice, Mode=OneWay}"
@@ -329,6 +332,7 @@
                     </ListView.ItemsPanel>
                 </controls:SelectListView>
             </PivotItem>
+            <PivotItem x:Name="PivotCommonChats" x:Load="False"/>
         </Pivot>
     </Grid>
 </UserControl>

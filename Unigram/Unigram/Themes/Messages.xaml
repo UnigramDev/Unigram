@@ -112,7 +112,7 @@
         </selectors:AutocompleteTemplateSelector.StickerTemplate>
         <selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>
             <DataTemplate>
-                <Grid Padding="4,8" Width="68" Height="76">
+                <Grid Padding="4" Width="72" Height="72">
                     <controls:LottieView30Fps x:Name="Player" AutoPlay="False"/>
                 </Grid>
             </DataTemplate>
@@ -129,7 +129,7 @@
                     </Border>
                     <TextBlock Text="{x:Bind Value}" VerticalAlignment="Center" Grid.Column="1"/>
                 </Grid>-->
-                <Border Width="48" Height="48">
+                <Border Width="40" Height="40">
                     <TextBlock Text="{x:Bind Value}" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
             </DataTemplate>

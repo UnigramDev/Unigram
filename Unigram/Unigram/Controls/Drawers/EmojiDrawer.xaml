@@ -324,7 +324,7 @@
                                     <TextBlock
                                         Text="{x:Bind Glyph}"
                                         FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                        FontSize="16"
+                                        FontSize="20"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         IsColorFontEnabled="False"/>

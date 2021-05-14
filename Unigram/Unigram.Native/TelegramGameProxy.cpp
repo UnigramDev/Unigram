@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "TelegramGameProxy.h"
+#if __has_include("TelegramGameProxy.g.cpp")
+#include "TelegramGameProxy.g.cpp"
+#endif
 
 namespace winrt::Unigram::Native::implementation
 {

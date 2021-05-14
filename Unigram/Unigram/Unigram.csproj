@@ -21,7 +21,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>B87C6AEEAAB0BCB6EC3EBC452C77E47086B56D4E</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -1084,7 +1084,6 @@
     <Compile Include="Controls\OrientableListView.cs" />
     <Compile Include="Controls\ProgressBarRing.cs" />
     <Compile Include="Controls\ReplyMarkupPanel.cs" />
-    <Compile Include="Controls\SimpleButton.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
@@ -1181,29 +1180,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="Assets\Filters\all.png" />
-    <Content Include="Assets\Filters\bots.png" />
-    <Content Include="Assets\Filters\cat.png" />
-    <Content Include="Assets\Filters\channels.png" />
-    <Content Include="Assets\Filters\crown.png" />
-    <Content Include="Assets\Filters\custom.png" />
-    <Content Include="Assets\Filters\favorite.png" />
-    <Content Include="Assets\Filters\flower.png" />
-    <Content Include="Assets\Filters\game.png" />
-    <Content Include="Assets\Filters\groups.png" />
-    <Content Include="Assets\Filters\home.png" />
-    <Content Include="Assets\Filters\love.png" />
-    <Content Include="Assets\Filters\mask.png" />
-    <Content Include="Assets\Filters\party.png" />
-    <Content Include="Assets\Filters\private.png" />
-    <Content Include="Assets\Filters\setup.png" />
-    <Content Include="Assets\Filters\sport.png" />
-    <Content Include="Assets\Filters\study.png" />
-    <Content Include="Assets\Filters\trade.png" />
-    <Content Include="Assets\Filters\travel.png" />
-    <Content Include="Assets\Filters\unmuted.png" />
-    <Content Include="Assets\Filters\unread.png" />
-    <Content Include="Assets\Filters\work.png" />
     <Content Include="Assets\Emoji\apple.ttf" />
     <Content Include="Assets\Animations\SendingGrams.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupDone.tgs" />

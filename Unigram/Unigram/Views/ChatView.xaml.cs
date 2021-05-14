@@ -216,13 +216,9 @@ namespace Unigram.Views
             };
 
             var visual = DropShadowEx.Attach(ArrowShadow, 2);
-            visual.RelativeSizeAdjustment = Vector2.Zero;
-            visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
 
             visual = DropShadowEx.Attach(ArrowMentionsShadow, 2);
-            visual.RelativeSizeAdjustment = Vector2.Zero;
-            visual.Size = new Vector2(36, 36);
             visual.Offset = new Vector3(0, 1, 0);
 
             //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
@@ -1023,7 +1019,7 @@ namespace Unigram.Views
                 target.Focus(FocusState.Keyboard);
                 args.Handled = true;
             }
-            else if ((args.VirtualKey == Windows.System.VirtualKey.PageDown || args.VirtualKey == Windows.System.VirtualKey.Down) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == TextField.Text?.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
+            else if ((args.VirtualKey == Windows.System.VirtualKey.PageDown || args.VirtualKey == Windows.System.VirtualKey.Down) && !ctrl && !alt && !shift && TextField.Document.Selection.StartPosition == TextField.Document.GetRange(int.MaxValue, int.MaxValue).EndPosition && ViewModel.Autocomplete == null)
             {
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
                 if (popups.Count > 0)
@@ -2141,7 +2137,11 @@ namespace Unigram.Views
                 }
                 else if (supergroup.Status is ChatMemberStatusRestricted restricted)
                 {
-                    return restricted.Permissions.CanSendMessages;
+                    return restricted.IsMember && restricted.Permissions.CanSendMessages;
+                }
+                else if (supergroup.Status is ChatMemberStatusLeft)
+                {
+                    return ViewModel.Type == DialogType.Thread;
                 }
 
                 return supergroup.Status is ChatMemberStatusMember;
@@ -3023,6 +3023,20 @@ namespace Unigram.Views
                 _autocompleteZoomer.ElementPrepared(args.ItemContainer);
             }
 
+            if (args.Item is EmojiData or Sticker)
+            {
+                var radius = SettingsService.Current.Appearance.BubbleRadius;
+                var min = Math.Max(4, radius - 2);
+
+                args.ItemContainer.Margin = new Thickness(4);
+                args.ItemContainer.CornerRadius = new CornerRadius(args.ItemIndex == 0 ? min : 4, 4, 4, 4);
+            }
+            else
+            {
+                args.ItemContainer.Margin = new Thickness();
+                args.ItemContainer.CornerRadius = new CornerRadius();
+            }
+
             args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
             args.IsContainerPrepared = true;
         }
@@ -3815,12 +3829,12 @@ namespace Unigram.Views
             var max = ComposerHeader.Visibility == Visibility.Visible
                 || TextFormatting.Visibility == Visibility.Visible ? 4 : min;
 
-            ButtonAttach.Radius = new CornerRadius(max, 4, 4, min);
-            btnVoiceMessage.Radius = new CornerRadius(4, max, min, 4);
-            btnSendMessage.Radius = new CornerRadius(4, max, min, 4);
-            btnEdit.Radius = new CornerRadius(4, max, min, 4);
+            ButtonAttach.CornerRadius = new CornerRadius(max, 4, 4, min);
+            btnVoiceMessage.CornerRadius = new CornerRadius(4, max, min, 4);
+            btnSendMessage.CornerRadius = new CornerRadius(4, max, min, 4);
+            btnEdit.CornerRadius = new CornerRadius(4, max, min, 4);
 
-            ComposerHeaderCancel.Radius = new CornerRadius(4, min, 4, 4);
+            ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
             TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = new CornerRadius(radius);
 
             InlinePanel.CornerRadius = new CornerRadius(radius, radius, 0, 0);

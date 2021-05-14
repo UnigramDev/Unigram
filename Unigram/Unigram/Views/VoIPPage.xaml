@@ -37,14 +37,14 @@
             <Setter Property="Width" Value="48" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Radius" Value="{StaticResource GlyphButtonCornerRadius}" />
+            <Setter Property="CornerRadius" Value="{StaticResource GlyphButtonCornerRadius}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:GlyphButton">
                         <Grid
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding Radius}">
+                        CornerRadius="{TemplateBinding CornerRadius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -276,7 +276,7 @@
                         Glyph="&#xE711;"
                         Foreground="#777777"
                         RequestedTheme="Light"
-                        Radius="30"
+                        CornerRadius="30"
                         Width="60"
                         Height="60"
                         AutomationProperties.Name="{CustomResource Close}"

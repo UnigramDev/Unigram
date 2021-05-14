@@ -118,8 +118,8 @@ namespace Unigram.Services
             var tsc = _availableAliasesTask;
             if (tsc != null)
             {
-                var yolo = await tsc.Task;
-                return yolo.TotalCount > 1;
+                var response = await tsc.Task;
+                return response?.TotalCount > 1;
             }
 
             tsc = _availableAliasesTask = new TaskCompletionSource<MessageSenders>();
@@ -127,7 +127,7 @@ namespace Unigram.Services
             var result = await CanChooseAliasAsyncInternal(chatId);
             tsc.TrySetResult(result);
 
-            return result.TotalCount > 1;
+            return result?.TotalCount > 1;
         }
 
         private async Task<MessageSenders> CanChooseAliasAsyncInternal(long chatId)

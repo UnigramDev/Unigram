@@ -150,7 +150,7 @@ namespace Unigram.Controls
             if (container != null && _layoutRoot.Children.Count < _maxCount)
             {
                 Canvas.SetZIndex(container, -_maxCount);
-                _layoutRoot.Children.Insert(_maxCount, container);
+                _layoutRoot.Children.Add(container);
             }
 
             AnimateAlignment();

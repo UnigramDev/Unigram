@@ -40,16 +40,15 @@ namespace Unigram.Controls.Messages
         {
             InitializeComponent();
 
+            var content = ElementCompositionPreview.GetElementVisual(ContentPanel);
+            //var shadow = ElementCompositionPreview.GetElementVisual(ShadowPanel);
+
+            _cornerRadius = CompositionDevice.CreateRectangleClip(content);
+            //CompositionDevice.SetClip(shadow, _cornerRadius);
+
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
-            //ElementCompositionPreview.SetIsTranslationEnabled(Footer, true);
-
-            var content = ElementCompositionPreview.GetElementVisual(ContentPanel);
-            var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
-            cross.Opacity = 0;
-
-            _cornerRadius = CompositionDevice.CreateRectangleClip(content);
         }
 
         public void UpdateQuery(string text)
@@ -1363,6 +1362,11 @@ namespace Unigram.Controls.Messages
             {
                 VisualStateManager.GoToState(Reply.Content as UserControl, "LightState", false);
             }
+
+            if (BackgroundPanel != null)
+            {
+                UnloadObject(BackgroundPanel);
+            }
         }
 
         private void FooterToMedia()
@@ -1418,8 +1422,8 @@ namespace Unigram.Controls.Messages
             {
                 _cornerRadius.Left = 0;
                 _cornerRadius.Top = 0;
-                _cornerRadius.Right = (float)ContentPanel.ActualWidth;
-                _cornerRadius.Bottom = (float)ContentPanel.ActualHeight;
+                _cornerRadius.Right = (float)Math.Truncate(ContentPanel.ActualWidth);
+                _cornerRadius.Bottom = (float)Math.Truncate(ContentPanel.ActualHeight);
             }
         }
 
@@ -1443,6 +1447,11 @@ namespace Unigram.Controls.Messages
                 outOpacity.Duration = TimeSpan.FromMilliseconds(outer);
                 outOpacity.DelayTime = TimeSpan.FromMilliseconds(delay);
                 outOpacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+
+                if (BackgroundPanel == null)
+                {
+                    FindName(nameof(BackgroundPanel));
+                }
 
                 var cross = ElementCompositionPreview.GetElementVisual(CrossPanel);
                 cross.StartAnimation("Opacity", outOpacity);
@@ -1500,8 +1509,8 @@ namespace Unigram.Controls.Messages
             var inOpacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             inOpacity.InsertKeyFrame(0, 0);
             inOpacity.InsertKeyFrame(1, 1);
-            inOpacity.Duration = TimeSpan.FromMilliseconds(outer);
-            inOpacity.DelayTime = TimeSpan.FromMilliseconds(delay);
+            inOpacity.Duration = TimeSpan.FromMilliseconds(outer / 3 * 2);
+            inOpacity.DelayTime = TimeSpan.FromMilliseconds(outer / 3);
             inOpacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
 
             var headerLeft = (float)Header.Margin.Left;
