@@ -2223,12 +2223,12 @@ namespace Unigram.Views
             else
             {
                 var tail = columns - (rows * columns - count);
-                if (tail > 0 && rows >= columns + tail)
+                if (tail > 0 && rows >= columns + tail && rows > 1)
                 {
                     columns++;
                     rows--;
                 }
-                else if (tail > 0 && columns >= columns - 1 + tail)
+                else if (tail > 0 && columns >= columns - 1 + tail && columns > 1)
                 {
                     columns--;
                 }
@@ -2274,12 +2274,12 @@ namespace Unigram.Views
             else
             {
                 var tail = columns - (rows * columns - count);
-                if (tail > 0 && rows >= columns + tail)
+                if (tail > 0 && rows >= columns + tail && rows > 1)
                 {
                     columns++;
                     rows--;
                 }
-                else if (tail > 0 && columns >= columns - 1 + tail)
+                else if (tail > 0 && columns >= columns - 1 + tail && columns > 1)
                 {
                     columns--;
                 }
