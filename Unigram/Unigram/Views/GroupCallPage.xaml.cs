@@ -1304,7 +1304,14 @@ namespace Unigram.Views
 
             if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
+                if (sender == Settings)
+                {
+                    flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
+                }
+                else
+                {
+                    flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+                }
             }
         }
 
