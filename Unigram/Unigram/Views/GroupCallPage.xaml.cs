@@ -8,7 +8,6 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Telegram.Td.Api;
-using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Cells;
@@ -1858,7 +1857,7 @@ namespace Unigram.Views
                 last = Viewport.Children.Count - 1;
             }
 
-            if (last < Viewport.Children.Count && first < last && first >= 0)
+            if (last < Viewport.Children.Count && first <= last && first >= 0)
             {
                 var next = new Dictionary<MessageSender, GroupCallParticipantGridCell>(new MessageSenderEqualityComparer());
 
